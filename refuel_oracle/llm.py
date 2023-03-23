@@ -3,7 +3,6 @@ from enum import Enum
 from typing import Dict, List
 
 import openai
-from loguru import logger
 from openai.error import AuthenticationError as OpenAIAuthenticationError
 from pydantic import BaseModel
 from tenacity import (
@@ -100,13 +99,9 @@ class OpenAI(LLM):
             model=self.model_name, prompt=prompts, **self.params
         )
         num_tokens = response.usage.total_tokens
-        logger.info(num_tokens)
-        logger.info(len(response.choices))
         llm_results = []
         for item in response.choices:
             llm_results.append(LLMResult(completion=item.to_dict_recursive()))
-
-        logger.info(response)
 
         return LLMResults(
             completions=llm_results,
