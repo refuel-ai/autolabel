@@ -17,19 +17,25 @@ class LLMProvider(str, Enum):
     openai = "openai"
 
 
-class LLMResult(BaseModel):
-    completion: Dict
-
-
 class LLMResults(BaseModel):
-    completions: List[LLMResult]
-    usage: Dict
+    completions: List[Dict]
+    usage_cost: float
+    usage_num_tokens: int
 
 
 class LLM(ABC):
     def __init__(
-        self, model_name: str, provider: LLMProvider, params: Dict = None
+        self, provider: LLMProvider, model_name: str, params: Dict = None
     ) -> None:
+        """
+        Create a new instance of an LLM client.
+
+        Args:
+            provider (LLMProvider): Provider for the LLM (currently, only openai supported)
+            model_name (str): Model name from the provider. Model names supported:
+            openai: ["text-davinci-003", "text-curie-001"]
+
+        """
         self.model_name = model_name
         self.provider = provider
         self.params = self._resolve_params(params)
@@ -38,7 +44,7 @@ class LLM(ABC):
     def _default_params(self) -> Dict:
         return "Not Implemented"
 
-    def _resolve_params(self, provided_params) -> Dict:
+    def _resolve_params(self, provided_params: Dict) -> Dict:
         final_params = self._default_params()
         if not provided_params or type(provided_params) != "dict":
             return final_params
@@ -47,8 +53,9 @@ class LLM(ABC):
             final_params[key] = val
         return final_params
 
+    # TODO: providing this as an async API
     @abstractmethod
-    def generate(self, prompts: List[str]) -> List[LLMResult]:
+    def generate(self, prompts: List[str]) -> LLMResults:
         """
         This function generate outputs from this LLM for a list of prompts.
 
@@ -72,7 +79,7 @@ class OpenAI(LLM):
             error_message = f"Model name: {model_name} not supported by provider: {LLMProvider.openai}"
             raise ValueError(error_message)
         self._validate_environment()
-        super().__init__(model_name, LLMProvider.openai, params)
+        super().__init__(LLMProvider.openai, model_name, params)
 
     def _validate_environment(self):
         try:
@@ -94,16 +101,17 @@ class OpenAI(LLM):
         stop=stop_after_attempt(6),
         retry=retry_if_not_exception_type(OpenAIAuthenticationError),
     )
-    def generate(self, prompts: List[str]) -> List[LLMResults]:
+    def generate(self, prompts: List[str]) -> LLMResults:
         response = openai.Completion.create(
             model=self.model_name, prompt=prompts, **self.params
         )
         num_tokens = response.usage.total_tokens
         llm_results = []
         for item in response.choices:
-            llm_results.append(LLMResult(completion=item.to_dict_recursive()))
+            llm_results.append(item.to_dict_recursive())
 
         return LLMResults(
             completions=llm_results,
-            usage={"tokens": num_tokens, "cost": self._cost(num_tokens)},
+            usage_num_tokens=num_tokens,
+            usage_cost=self._cost(num_tokens),
         )
