@@ -1,0 +1,7 @@
+loguru
+numpy
+openai
+pandas
+scikit-learn
+tenacity
+tiktoken
