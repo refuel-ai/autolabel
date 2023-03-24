@@ -1,11 +1,10 @@
 import json
-from abc import ABC
 from typing import Dict
 
 from loguru import logger
 
 
-class Config(ABC):
+class Config:
     def __init__(self, config_dict: Dict) -> None:
         self._validate()
         self.config = config_dict
