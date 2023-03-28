@@ -16,6 +16,9 @@ class Config:
     def get(self, key: str):
         return self.config.get(key, None)
 
+    def __getitem__(self, key):
+        return self.config[key]
+
     @classmethod
     def from_json(cls, json_file_path: str):
         try:

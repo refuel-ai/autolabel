@@ -1,4 +1,5 @@
 from refuel_oracle.llm import LLM, LLMProvider, LLMResults, OpenAI
+from refuel_oracle.config import Config
 
 import json
 import pprint
@@ -18,29 +19,9 @@ def get_num_tokens_from_string(string: str, text_model: str) -> int:
 
 class Oracle:
     def __init__(self, config: str, debug: bool = False) -> None:
-        self.config = config
         self.debug = debug
-        self.parse_config_json(config)
-        self.llm = OpenAI(self.model_name)
-
-    def parse_config_json(self, config: str) -> None:
-        f = open(config)
-        data = json.load(f)
-
-        if self.debug:
-            pp = pprint.PrettyPrinter(indent=4)
-            pp.pprint(data)
-
-        # TODO , add checks to ensure data is correctly formatted
-        self.name = data["project_name"]
-        self.task_type = data["task_type"]
-        self.provider = data["provider_name"]
-        self.model_name = data["model_name"]
-        self.instruction = data["instruction"]
-        self.labels = data["labels_list"]
-        self.prompt = data["prompt"]
-        self.seed_examples = data["seed_examples"]
-        return
+        self.config = Config.from_json(config)
+        self.llm = OpenAI(self.config["model_name"])
 
     def annotate(
         self,
@@ -49,7 +30,6 @@ class Oracle:
         output_column: str,
         output_dataset: str = "output.csv",
         ground_truth_column=None,
-        verbose: bool = False,
         n_trials: int = 1,
         max_items: int = 100,
     ):
@@ -73,13 +53,13 @@ class Oracle:
                     print(f"{i+1}/{len(input)}...")
 
                 # Construct Prompt to pass to LLM
-                annotation_instruction = self.instruction
+                annotation_instruction = self.config["instruction"]
                 annotation_instruction += (
                     f"\n\nDo you know the answer(YES/NO):\nCategories:\n"
                 )
-                for label_category in self.labels:
+                for label_category in self.config["labels_list"]:
                     annotation_instruction += f"{label_category}\n"
-                examples = self.seed_examples
+                examples = self.config["seed_examples"]
                 examples_string = (
                     "Some examples with their categories are provided below:\n\n"
                 )
@@ -88,12 +68,14 @@ class Oracle:
                     examples_string += (
                         f"{example['yes_or_no']}\nCATEGORY:\n{example['label']}\n\n"
                     )
-                prompt = self.prompt
+                prompt = self.config["prompt"]
                 instruction = prompt.replace("{example}", input_i)
                 final_prompt = (
                     f"""{annotation_instruction}\n{examples_string}\n{instruction}"""
                 )
-                num_tokens = get_num_tokens_from_string(final_prompt, self.model_name)
+                num_tokens = get_num_tokens_from_string(
+                    final_prompt, self.config["model_name"]
+                )
                 total_tokens += num_tokens
                 prompt_list.append(final_prompt)
             # Get response from LLM
