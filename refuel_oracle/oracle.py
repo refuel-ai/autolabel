@@ -15,8 +15,8 @@ def get_num_tokens_from_string(string: str, text_model: str) -> int:
 class Oracle:
     def __init__(self, config: str, debug: bool = False) -> None:
         self.config = config
-        self.parse_config_json(config)
         self.debug = debug
+        self.parse_config_json(config)
         self.llm = OpenAI(self.model_name)
 
     def parse_config_json(self, config: str) -> None:
@@ -30,7 +30,7 @@ class Oracle:
         # TODO , add checks to ensure data is correctly formatted
         self.name = data["project_name"]
         self.task_type = data["task_type"]
-        self.provider = data["provider"]
+        self.provider = data["provider_name"]
         self.model_name = data["model_name"]
         self.instruction = data["instruction"]
         self.labels = data["labels_list"]
