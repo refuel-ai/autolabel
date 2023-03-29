@@ -12,6 +12,8 @@ from tenacity import (
     wait_random_exponential,
 )
 
+openai.api_key = "***REMOVED***"
+
 
 class LLMProvider(str, Enum):
     openai = "openai"
