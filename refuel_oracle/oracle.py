@@ -53,26 +53,7 @@ class Oracle:
                     print(f"{i+1}/{len(input)}...")
 
                 # Construct Prompt to pass to LLM
-                annotation_instruction = self.config["instruction"]
-                annotation_instruction += (
-                    f"\n\nDo you know the answer(YES/NO):\nCategories:\n"
-                )
-                for label_category in self.config["labels_list"]:
-                    annotation_instruction += f"{label_category}\n"
-                examples = self.config["seed_examples"]
-                examples_string = (
-                    "Some examples with their categories are provided below:\n\n"
-                )
-                for example in examples:
-                    examples_string += f"Example:\n{example['example']}\n\nDo you know the answer(YES/NO):\n"
-                    examples_string += (
-                        f"{example['yes_or_no']}\nCATEGORY:\n{example['label']}\n\n"
-                    )
-                prompt = self.config["prompt"]
-                instruction = prompt.replace("{example}", input_i)
-                final_prompt = (
-                    f"""{annotation_instruction}\n{examples_string}\n{instruction}"""
-                )
+                final_prompt = self.construct_prompt(input_i)
                 num_tokens = get_num_tokens_from_string(
                     final_prompt, self.config["model_name"]
                 )
@@ -92,7 +73,52 @@ class Oracle:
         dat.to_csv(output_dataset)
         return
 
-    def plan(self):
+    def construct_prompt(self, input):
+        annotation_instruction = self.config["instruction"]
+        annotation_instruction += f"\n\nDo you know the answer(YES/NO):\nCategories:\n"
+        for label_category in self.config["labels_list"]:
+            annotation_instruction += f"{label_category}\n"
+        examples = self.config["seed_examples"]
+        examples_string = "Some examples with their categories are provided below:\n\n"
+        for example in examples:
+            examples_string += (
+                f"Example:\n{example['example']}\n\nDo you know the answer(YES/NO):\n"
+            )
+            examples_string += (
+                f"{example['yes_or_no']}\nCATEGORY:\n{example['label']}\n\n"
+            )
+        prompt = self.config["prompt"]
+        instruction = prompt.replace("{example}", input)
+        final_prompt = f"""{annotation_instruction}\n{examples_string}\n{instruction}"""
+        return final_prompt
+
+    def plan(
+        self,
+        dataset: str,
+        input_column: str,
+    ):
+        dat = pd.read_csv(dataset)
+        input = dat[input_column].tolist()
+        prompt_list = []
+        total_tokens = 0
+
+        num_sections = max(len(input) / CHUNK_SIZE, 1)
+        for chunk_id, chunk in enumerate(
+            np.array_split(input[: len(input)], num_sections)
+        ):
+            for i, input_i in enumerate(chunk):
+                if (i + 1) % 10 == 0:
+                    print(f"{i+1}/{len(input)}...")
+                final_prompt = self.construct_prompt(input_i)
+                num_tokens = get_num_tokens_from_string(
+                    final_prompt, self.config["model_name"]
+                )
+                total_tokens += num_tokens
+                prompt_list.append(final_prompt)
+        total_cost = self.llm._cost(num_tokens)
+        print(f"Total Estimated Cost: {total_cost}")
+        print(f"Number of examples to label: {len(input)}")
+        print(f"Average cost per example: {total_cost/len(input)}")
         return
 
     def test(self):
