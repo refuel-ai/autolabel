@@ -12,6 +12,8 @@ from tenacity import (
     wait_random_exponential,
 )
 
+openai.api_key = "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"
+
 
 class LLMProvider(str, Enum):
     openai = "openai"
