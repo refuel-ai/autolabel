@@ -1,3 +1,4 @@
+import os
 from abc import ABC, abstractmethod
 from enum import Enum
 from typing import Dict, List
@@ -11,8 +12,6 @@ from tenacity import (
     stop_after_attempt,
     wait_random_exponential,
 )
-
-openai.api_key = "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"
 
 
 class LLMProvider(str, Enum):
@@ -90,6 +89,12 @@ class OpenAI(LLM):
             raise ValueError(
                 "Could not import `openai` python package. "
                 "Please install it with `pip install openai`."
+            )
+        try:
+            openai.api_key = os.environ["OPENAI_API_KEY"]
+        except KeyError:
+            raise ValueError(
+                "OpenAI API key needs to be available in the environment as `OPENAI_API_KEY`"
             )
 
     def _default_params(self) -> Dict:
