@@ -16,9 +16,18 @@ annotator.plan(
 )
 
 print("Running Oracle.annotate() on a subset of items in dataset")
-annotator.annotate(
+annotation_obj = annotator.annotate(
     dataset=os.path.join(curr_directory, ag_news_file_name),
     input_column="description",
     output_column="llm_labels",
     max_items=10,
 )
+
+for i in range(5):
+    print(f"\n\n#### output[{i}] ####")
+    print("Data:")
+    print(annotation_obj.data[i])
+    print("Label:")
+    print(annotation_obj.labels[i])
+    print("Confidence:")
+    print(annotation_obj.confidence[i])
