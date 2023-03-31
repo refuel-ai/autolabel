@@ -1,22 +1,17 @@
-from refuel_oracle.llm import LLM, LLMProvider, LLMResults, OpenAI
+from refuel_oracle.llm import LLMFactory
 from refuel_oracle.config import Config
+from refuel_oracle.utils import (
+    calculate_num_tokens,
+    calculate_cost
+)
 
 from math import exp
 import pandas as pd
 import numpy as np
-import tiktoken
 from typing import List
 from collections import Counter
 
 CHUNK_SIZE = 5
-
-
-def get_num_tokens_from_string(string: str, text_model: str) -> int:
-    """Returns the number of tokens in a text string."""
-    encoding = tiktoken.encoding_for_model(text_model)
-    num_tokens = len(encoding.encode(string))
-    return num_tokens
-
 
 def evaluate(true_labels: List, pred_labels: List, verbose: bool = False):
     # Calculate accuracy of predictions vs provided true labels
@@ -52,12 +47,11 @@ class Annotation:
         self.labels = labels
         self.confidence = confidence
 
-
 class Oracle:
     def __init__(self, config: str, debug: bool = False) -> None:
         self.debug = debug
         self.config = Config.from_json(config)
-        self.llm = OpenAI(self.config["model_name"])
+        self.llm = LLMFactory.build_llm(self.config)
 
     def annotate(
         self,
@@ -91,18 +85,22 @@ class Oracle:
 
                 # Construct Prompt to pass to LLM
                 final_prompt = self.construct_prompt(input_i)
-                num_tokens = get_num_tokens_from_string(
-                    final_prompt, self.config["model_name"]
+                num_tokens = calculate_num_tokens(
+                    self.config,
+                    final_prompt
                 )
                 total_tokens += num_tokens
                 prompt_list.append(final_prompt)
             # Get response from LLM
             response = self.llm.generate(prompt_list)
-            for response_item in response.completions:
-                parts = response_item["text"].split("\n")
+            for response_item in response.generations:
+                parts = response_item[0].text.split("\n")
                 yes_or_no.append(parts[0])
                 llm_labels.append(parts[-1])
-                logprobs.append(exp(response_item["logprobs"]["token_logprobs"][-1]))
+                generation_info = response_item[0].generation_info
+                logprobs.append(
+                    exp(generation_info["logprobs"]["token_logprobs"][-1])
+                )
 
         # if true labels are provided, evaluate accuracy of predictions
         if truth:
@@ -115,7 +113,7 @@ class Oracle:
         dat.to_csv(output_dataset)
 
         return Annotation(
-            data=input[:max_items], labels=llm_labels, confidence=logprobs
+            data=input[:max_items], labels=llm_labels[:max_items], confidence=logprobs
         )
 
     def construct_prompt(self, input):
@@ -155,12 +153,12 @@ class Oracle:
                 if (i + 1) % 10 == 0:
                     print(f"{i+1}/{len(input)}...")
                 final_prompt = self.construct_prompt(input_i)
-                num_tokens = get_num_tokens_from_string(
-                    final_prompt, self.config["model_name"]
+                num_tokens = calculate_num_tokens(
+                    self.config, final_prompt
                 )
                 total_tokens += num_tokens
                 prompt_list.append(final_prompt)
-        total_cost = self.llm._cost(num_tokens)
+        total_cost = calculate_cost(self.config, total_tokens)
         print(f"Total Estimated Cost: {total_cost}")
         print(f"Number of examples to label: {len(input)}")
         print(f"Average cost per example: {total_cost/len(input)}")
