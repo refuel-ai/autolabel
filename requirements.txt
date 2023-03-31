@@ -1,5 +1,6 @@
 loguru
 numpy
+langchain
 openai
 pandas
 scikit-learn
