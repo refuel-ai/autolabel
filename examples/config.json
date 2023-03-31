@@ -3,6 +3,8 @@
     "task_type": "classification",
     "provider_name": "openai",
     "model_name": "text-davinci-003",
+    "model_params": {
+    },
     "instruction": "You are an expert at understanding news. Your job is to correctly classify the provided news article into one of the following nine categories, and if you can't say \"Sorry I don't know\".",
     "labels_list": [
         "Sports",
