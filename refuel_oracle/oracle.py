@@ -93,11 +93,14 @@ class Oracle:
                 prompt_list.append(final_prompt)
             # Get response from LLM
             response = self.llm.generate(prompt_list)
-            for response_item in response.generations[0]:
-                parts = response_item.text.split("\n")
+            for response_item in response.generations:
+                parts = response_item[0].text.split("\n")
                 yes_or_no.append(parts[0])
                 llm_labels.append(parts[-1])
-                logprobs.append(exp(response_item["logprobs"]["token_logprobs"][-1]))
+                generation_info = response_item[0].generation_info
+                logprobs.append(
+                    exp(generation_info["logprobs"]["token_logprobs"][-1])
+                )
 
         # if true labels are provided, evaluate accuracy of predictions
         if truth:
@@ -110,7 +113,7 @@ class Oracle:
         dat.to_csv(output_dataset)
 
         return Annotation(
-            data=input[:max_items], labels=llm_labels, confidence=logprobs
+            data=input[:max_items], labels=llm_labels[:max_items], confidence=logprobs
         )
 
     def construct_prompt(self, input):
