@@ -1,8 +1,7 @@
 from refuel_oracle.llm import LLM, LLMProvider, LLMResults, OpenAI
 from refuel_oracle.config import Config
 
-import json
-import pprint
+from math import exp
 import pandas as pd
 import numpy as np
 import tiktoken
@@ -15,6 +14,15 @@ def get_num_tokens_from_string(string: str, text_model: str) -> int:
     encoding = tiktoken.encoding_for_model(text_model)
     num_tokens = len(encoding.encode(string))
     return num_tokens
+
+
+class Annotation:
+    __slots__ = "data", "labels", "confidence"
+
+    def __init__(self, data, labels, confidence) -> None:
+        self.data = data
+        self.labels = labels
+        self.confidence = confidence
 
 
 class Oracle:
@@ -32,7 +40,7 @@ class Oracle:
         ground_truth_column=None,
         n_trials: int = 1,
         max_items: int = 100,
-    ):
+    ) -> Annotation:
         dat = pd.read_csv(dataset)
 
         input = dat[input_column].tolist()
@@ -40,6 +48,7 @@ class Oracle:
 
         yes_or_no = []
         llm_labels = []
+        logprobs = []
         prompt_list = []
         total_tokens = 0
 
@@ -65,13 +74,17 @@ class Oracle:
                 parts = response_item["text"].split("\n")
                 yes_or_no.append(parts[0])
                 llm_labels.append(parts[-1])
+                logprobs.append(exp(response_item["logprobs"]["token_logprobs"][-1]))
 
         # Write output to CSV
         if len(llm_labels) < len(dat):
             llm_labels = llm_labels + [None for i in range(len(dat) - len(llm_labels))]
         dat[output_column] = llm_labels
         dat.to_csv(output_dataset)
-        return
+
+        return Annotation(
+            data=input[:max_items], labels=llm_labels, confidence=logprobs
+        )
 
     def construct_prompt(self, input):
         annotation_instruction = self.config["instruction"]
