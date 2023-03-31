@@ -1,8 +1,6 @@
 from refuel_oracle.llm import LLM, LLMProvider, LLMResults, OpenAI
 from refuel_oracle.config import Config
 
-import json
-import pprint
 import pandas as pd
 import numpy as np
 import tiktoken
