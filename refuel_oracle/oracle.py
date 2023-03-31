@@ -5,6 +5,8 @@ from math import exp
 import pandas as pd
 import numpy as np
 import tiktoken
+from typing import List
+from collections import Counter
 
 CHUNK_SIZE = 5
 
@@ -14,6 +16,32 @@ def get_num_tokens_from_string(string: str, text_model: str) -> int:
     encoding = tiktoken.encoding_for_model(text_model)
     num_tokens = len(encoding.encode(string))
     return num_tokens
+
+
+def evaluate(true_labels: List, pred_labels: List, verbose: bool = False):
+    # Calculate accuracy of predictions vs provided true labels
+    lower_case_true_labels = [s.lower() for s in true_labels]
+    true_distribution = Counter(lower_case_true_labels)
+    if verbose:
+        print("Ground truth label distribution:")
+        print(true_distribution)
+        print("#" * 80)
+
+    lower_case_preds = [s.lower() for s in pred_labels]
+    preds_distribution = Counter(lower_case_preds)
+    if verbose:
+        print("Predictions distribution:")
+        print(preds_distribution)
+        print("#" * 80)
+
+    correct = 0
+    for i in range(len(lower_case_preds)):
+        if lower_case_preds[i] == lower_case_true_labels[i]:
+            correct += 1
+
+    print(f'Final number of examples labeled "successfully": {correct}')
+    print(f"Accuracy: {correct / len(lower_case_preds)}")
+    print("#" * 80)
 
 
 class Annotation:
@@ -75,6 +103,10 @@ class Oracle:
                 yes_or_no.append(parts[0])
                 llm_labels.append(parts[-1])
                 logprobs.append(exp(response_item["logprobs"]["token_logprobs"][-1]))
+
+        # if true labels are provided, evaluate accuracy of predictions
+        if truth:
+            evaluate(true_labels=truth, pred_labels=llm_labels, verbose=self.debug)
 
         # Write output to CSV
         if len(llm_labels) < len(dat):
