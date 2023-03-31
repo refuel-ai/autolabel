@@ -18,7 +18,17 @@ class LLMProvider(str, Enum):
 
 # Default parameters that we will use to initialize LLMs from a provider
 PROVIDER_TO_DEFAULT_PARAMS = {
-    LLMProvider.openai: {"max_tokens": 30, "temperature": 0.0},
+    LLMProvider.openai: {
+        "max_tokens": 30,
+        "temperature": 0.0,
+        "model_kwargs": {"logprobs": 1}
+    },
+    LLMProvider.cohere: {
+        # TODO
+    },
+    LLMProvider.anthropic: {
+        # TODO
+    }
 }
 
 # Provider mapping to the langchain LLM wrapper
@@ -43,14 +53,17 @@ class LLMFactory:
 
     @staticmethod
     def build_llm(config: Config) -> BaseLLM:
-        llm_provider = LLMProvider(config["provider_name"])
         # TODO: llm_model might need to be rolled up into llm_params in the future
-        llm_model = config.get("model_name", "")
+        llm_provider = config.get_provider()
+        llm_model = config.get_model_name()
         llm_params = config.get("model_params", {})
         llm_cls = PROVIDER_TO_LLM[llm_provider]
         llm_params = LLMFactory._resolve_params(
             PROVIDER_TO_DEFAULT_PARAMS[llm_provider], llm_params
         )
-        return llm_cls(model_name=llm_model, **llm_params)
+        if llm_provider == LLMProvider.openai:
+            return llm_cls(model_name=llm_model, **llm_params)
+        else:
+            return llm_cls(model=llm_model, **llm_params)
 
     
