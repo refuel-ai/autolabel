@@ -18,4 +18,11 @@ annotation_obj = annotator.annotate(
     max_items=10,
 )
 
-print(annotation_obj)
+for i in range(5):
+    print(f"\n\n#### output[{i}] ####")
+    print("Data:")
+    print(annotation_obj.data[i])
+    print("Label:")
+    print(annotation_obj.labels[i])
+    print("Confidence:")
+    print(annotation_obj.confidence[i])

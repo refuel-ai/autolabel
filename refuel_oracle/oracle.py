@@ -75,7 +75,7 @@ class Oracle:
                 parts = response_item["text"].split("\n")
                 yes_or_no.append(parts[0])
                 llm_labels.append(parts[-1])
-                logprobs.append(response_item["logprobs"])
+                logprobs.append(response_item["logprobs"]["token_logprobs"][-1])
 
         # Write output to CSV
         if len(llm_labels) < len(dat):
