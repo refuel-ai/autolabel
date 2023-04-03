@@ -66,7 +66,6 @@ class Oracle:
         output_column: str,
         output_dataset: str = "output.csv",
         ground_truth_column=None,
-        n_trials: int = 1,
         max_items: int = 100,
     ) -> Annotation:
         dat = pd.read_csv(dataset)
@@ -166,5 +165,19 @@ class Oracle:
         print(f"Average cost per example: {total_cost/len(input)}")
         return
 
-    def test(self):
+    def test(
+        self,
+        dataset: str,
+        input_column: str,
+        output_column: str,
+        output_dataset: str = "test_output.csv",
+        ground_truth_column=None,
+    ):
+        test_annotate_output = self.annotate(
+            dataset=dataset,
+            input_column=input_column,
+            output_column=output_column,
+            ground_truth_column=ground_truth_column,
+            max_items=5,
+        )
         return
