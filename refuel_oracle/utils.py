@@ -42,3 +42,4 @@ def calculate_cost(config: Config, num_tokens: int) -> float:
     llm_model = config.get_model_name()
     cost_per_token = PROVIDER_TO_COST_PER_TOKEN[llm_provider][llm_model]
     return num_tokens * cost_per_token
+

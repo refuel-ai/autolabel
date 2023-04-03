@@ -52,7 +52,7 @@ class LLMFactory:
         return final_params
 
     @staticmethod
-    def build_llm(config: Config) -> BaseLLM:
+    def from_config(config: Config) -> BaseLLM:
         # TODO: llm_model might need to be rolled up into llm_params in the future
         llm_provider = config.get_provider()
         llm_model = config.get_model_name()

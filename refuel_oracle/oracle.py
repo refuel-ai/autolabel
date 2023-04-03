@@ -1,10 +1,12 @@
 from refuel_oracle.llm import LLMFactory
 from refuel_oracle.config import Config
+from refuel_oracle.tasks import TaskFactory
 from refuel_oracle.utils import (
     calculate_num_tokens,
     calculate_cost
 )
 
+import json
 from math import exp
 import pandas as pd
 import numpy as np
@@ -51,7 +53,8 @@ class Oracle:
     def __init__(self, config: str, debug: bool = False) -> None:
         self.debug = debug
         self.config = Config.from_json(config)
-        self.llm = LLMFactory.build_llm(self.config)
+        self.llm = LLMFactory.from_config(self.config)
+        self.task = TaskFactory.from_config(self.config)
 
     def annotate(
         self,
@@ -84,7 +87,8 @@ class Oracle:
                     print(f"{i+1}/{len(input)}...")
 
                 # Construct Prompt to pass to LLM
-                final_prompt = self.construct_prompt(input_i)
+                final_prompt = self.task.construct_prompt(input_i)
+
                 num_tokens = calculate_num_tokens(
                     self.config,
                     final_prompt
@@ -94,9 +98,11 @@ class Oracle:
             # Get response from LLM
             response = self.llm.generate(prompt_list)
             for response_item in response.generations:
-                parts = response_item[0].text.split("\n")
-                yes_or_no.append(parts[0])
-                llm_labels.append(parts[-1])
+                parts = response_item[0].text
+                print(parts)
+                parts = json.loads(parts.strip())
+                yes_or_no.append(parts["answered"])
+                llm_labels.append(parts["label"])
                 generation_info = response_item[0].generation_info
                 logprobs.append(
                     exp(generation_info["logprobs"]["token_logprobs"][-1])
@@ -116,25 +122,6 @@ class Oracle:
             data=input[:max_items], labels=llm_labels[:max_items], confidence=logprobs
         )
 
-    def construct_prompt(self, input):
-        annotation_instruction = self.config["instruction"]
-        annotation_instruction += f"\n\nDo you know the answer(YES/NO):\nCategories:\n"
-        for label_category in self.config["labels_list"]:
-            annotation_instruction += f"{label_category}\n"
-        examples = self.config["seed_examples"]
-        examples_string = "Some examples with their categories are provided below:\n\n"
-        for example in examples:
-            examples_string += (
-                f"Example:\n{example['example']}\n\nDo you know the answer(YES/NO):\n"
-            )
-            examples_string += (
-                f"{example['yes_or_no']}\nCATEGORY:\n{example['label']}\n\n"
-            )
-        prompt = self.config["prompt"]
-        instruction = prompt.replace("{example}", input)
-        final_prompt = f"""{annotation_instruction}\n{examples_string}\n{instruction}"""
-        return final_prompt
-
     def plan(
         self,
         dataset: str,
@@ -152,7 +139,7 @@ class Oracle:
             for i, input_i in enumerate(chunk):
                 if (i + 1) % 10 == 0:
                     print(f"{i+1}/{len(input)}...")
-                final_prompt = self.construct_prompt(input_i)
+                final_prompt = self.construct_final_prompt(input_i)
                 num_tokens = calculate_num_tokens(
                     self.config, final_prompt
                 )

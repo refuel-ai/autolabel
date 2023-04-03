@@ -1,3 +1,4 @@
+Jinja2
 loguru
 numpy
 langchain
