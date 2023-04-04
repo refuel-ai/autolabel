@@ -1,3 +1,4 @@
+from ast import List
 import json
 from typing import Any, Dict
 
@@ -21,6 +22,9 @@ class Config:
 
     def get(self, key: str, default_value: Any = None) -> Any:
         return self.config.get(key, default_value)
+
+    def keys(self) -> List:
+        return list(self.config.keys())
 
     def __getitem__(self, key):
         return self.config[key]
