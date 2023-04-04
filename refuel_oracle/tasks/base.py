@@ -1,10 +1,11 @@
 
 
-"""Base interface for all prediction tasks to expose."""
+"""Base interface that all prediction tasks will implement."""
 
 from abc import ABC, abstractmethod
+from typing import List
 from langchain.prompts.prompt import PromptTemplate
-from langchain.schema import LLMResult
+from langchain.schema import Generation
 
 from refuel_oracle.config import Config
 from refuel_oracle.schema import LLMAnnotation
@@ -13,21 +14,18 @@ class BaseTask(ABC):
 
     def __init__(self, config: Config) -> None:
         self.config = config
+        self.prompt_template = self.initialize_prompt_template()
 
     @abstractmethod
-    def get_example_generation_template(self) -> PromptTemplate:
+    def initialize_prompt_template(self) -> PromptTemplate:
         pass
 
     @abstractmethod
-    def get_prompt_template(self) -> PromptTemplate:
+    def construct_prompt(self, input: str, examples: List) -> str:
         pass
 
     @abstractmethod
-    def construct_prompt(self, **kwargs) -> str:
-        pass
-
-    @abstractmethod
-    def parse_llm_response(self, prompt: str, response: LLMResult) -> LLMAnnotation:
+    def parse_llm_response(self, prompt: str, response: Generation) -> LLMAnnotation:
         pass
 
     
