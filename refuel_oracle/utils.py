@@ -8,6 +8,8 @@ PROVIDER_TO_COST_PER_TOKEN = {
     LLMProvider.openai: {
         'text-davinci-003': 0.02/1000,
         'text-curie-001': 0.002/1000,
+    },
+    LLMProvider.openai_chat: {
         'gpt-3.5-turbo': 0.002/1000
     }
 }
