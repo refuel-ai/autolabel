@@ -61,7 +61,6 @@ class Oracle:
         input = dat[input_column].tolist()
         truth = None if not ground_truth_column else dat[ground_truth_column].tolist()
 
-        yes_or_no = []
         llm_labels = []
         prompt_list = []
         total_tokens = 0
@@ -94,12 +93,14 @@ class Oracle:
                 generation = response_item[0]
                 llm_annotation: LLMAnnotation = self.task.parse_llm_response(
                     prompt, generation)
-                yes_or_no.append(llm_annotation.successfully_labeled)
                 llm_labels.append(llm_annotation.label)
 
         # if true labels are provided, evaluate accuracy of predictions
         if truth:
-            evaluate(true_labels=truth, pred_labels=llm_labels, verbose=self.debug)
+            eval_result = self.task.eval(llm_labels, truth)
+            # TODO: serialize and write to file
+            for metric, val in eval_result.items():
+                print(f"{metric}: {val}")
 
         # Write output to CSV
         if len(llm_labels) < len(dat):

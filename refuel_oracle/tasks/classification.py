@@ -1,12 +1,12 @@
 import json
-from typing import List
+from typing import Dict, List
 
 from langchain.prompts.prompt import PromptTemplate
 from langchain.schema import Generation
 from loguru import logger
 
 from refuel_oracle.config import Config
-from refuel_oracle.schema import LLMAnnotation
+from refuel_oracle.schema import Metric, LLMAnnotation
 from refuel_oracle.tasks import BaseTask
 
 class ClassificationTask(BaseTask):
@@ -112,3 +112,29 @@ class ClassificationTask(BaseTask):
             label=llm_label,
             generation_info=response.generation_info
         )
+    
+    def eval(self, llm_labels: List[LLMAnnotation], gt_labels: List[str]) -> Dict:
+        """Evaluate the LLM generated labels by comparing them against ground truth
+
+        Args:
+            llm_labels (List[LLMAnnotation]): _description_
+            gt_labels (List[str]): _description_
+
+        Returns:
+            Dict: metric name -> metric value
+        """
+        eval_metrics = {}
+
+        # support
+        support = len(gt_labels)
+        eval_metrics[Metric.SUPPORT] = support
+        
+        # completion rate
+        num_labeled = sum([l.successfully_labeled for l in llm_labels])
+        eval_metrics[Metric.COMPLETION_RATE] = num_labeled * 1.0 / support
+        # accuracy
+        eval_metrics[Metric.ACCURACY] = sum([x == y.label for x, y in zip(gt_labels, llm_labels)])
+        
+        return eval_metrics
+
+

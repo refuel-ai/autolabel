@@ -1,6 +1,13 @@
+from enum import Enum
 from typing import Any, Dict, Optional
 
 from pydantic import BaseModel
+
+class Metric(str, Enum):
+    SUPPORT = "support"
+    COMPLETION_RATE = "completion_rate"
+    ACCURACY = "accuracy"
+
 
 class LLMAnnotation(BaseModel):
     prompt: str
