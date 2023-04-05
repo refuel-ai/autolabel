@@ -4,9 +4,10 @@ from typing import List
 from langchain.prompts.prompt import PromptTemplate
 from langchain.schema import Generation
 from loguru import logger
+from sklearn.metrics import accuracy_score
 
 from refuel_oracle.config import Config
-from refuel_oracle.schema import LLMAnnotation
+from refuel_oracle.schema import Metric, MetricResult, LLMAnnotation
 from refuel_oracle.tasks import BaseTask
 
 class ClassificationTask(BaseTask):
@@ -112,3 +113,36 @@ class ClassificationTask(BaseTask):
             label=llm_label,
             generation_info=response.generation_info
         )
+    
+    def eval(self, llm_labels: List[LLMAnnotation], gt_labels: List[str]) -> List[MetricResult]:
+        """Evaluate the LLM generated labels by comparing them against ground truth
+
+        Args:
+            llm_labels (List[LLMAnnotation]): _description_
+            gt_labels (List[str]): _description_
+
+        Returns:
+            List[MetricResult]: list of metrics and corresponding values
+        """
+        eval_metrics = []
+
+        # support
+        support = len(gt_labels)
+        eval_metrics.append(
+            MetricResult(metric_type=Metric.SUPPORT, name="support", value=support))
+
+        # completion rate
+        num_labeled = sum([l.successfully_labeled for l in llm_labels])
+        fraction_completed = round(num_labeled * 1.0 / support, 2)
+        eval_metrics.append(
+            MetricResult(metric_type=Metric.COMPLETION_RATE, name="completion_rate", value=fraction_completed))
+        
+        # accuracy
+        pred_labels = [l.label for l in llm_labels]
+        accuracy = accuracy_score(gt_labels, pred_labels)
+        eval_metrics.append(
+            MetricResult(metric_type=Metric.ACCURACY, name="accuracy", value=accuracy))
+        
+        return eval_metrics
+
+

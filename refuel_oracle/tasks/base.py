@@ -3,12 +3,12 @@
 """Base interface that all prediction tasks will implement."""
 
 from abc import ABC, abstractmethod
-from typing import List
+from typing import Dict, List
 from langchain.prompts.prompt import PromptTemplate
 from langchain.schema import Generation
 
 from refuel_oracle.config import Config
-from refuel_oracle.schema import LLMAnnotation
+from refuel_oracle.schema import LLMAnnotation, MetricResult
 
 class BaseTask(ABC):
 
@@ -26,6 +26,10 @@ class BaseTask(ABC):
 
     @abstractmethod
     def parse_llm_response(self, prompt: str, response: Generation) -> LLMAnnotation:
+        pass
+
+    @abstractmethod
+    def eval(self, llm_labels: List, gt_labels: List) -> List[MetricResult]:
         pass
 
     

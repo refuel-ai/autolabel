@@ -1,8 +1,8 @@
+evaluate
+langchain
 loguru
 numpy
-langchain
 openai
 pandas
-scikit-learn
 tenacity
 tiktoken
