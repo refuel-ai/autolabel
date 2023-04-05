@@ -1,12 +1,13 @@
 import json
-from typing import Dict, List
+from typing import List
 
 from langchain.prompts.prompt import PromptTemplate
 from langchain.schema import Generation
 from loguru import logger
+from sklearn.metrics import accuracy_score
 
 from refuel_oracle.config import Config
-from refuel_oracle.schema import Metric, LLMAnnotation
+from refuel_oracle.schema import Metric, MetricResult, LLMAnnotation
 from refuel_oracle.tasks import BaseTask
 
 class ClassificationTask(BaseTask):
@@ -113,7 +114,7 @@ class ClassificationTask(BaseTask):
             generation_info=response.generation_info
         )
     
-    def eval(self, llm_labels: List[LLMAnnotation], gt_labels: List[str]) -> Dict:
+    def eval(self, llm_labels: List[LLMAnnotation], gt_labels: List[str]) -> List[MetricResult]:
         """Evaluate the LLM generated labels by comparing them against ground truth
 
         Args:
@@ -121,19 +122,26 @@ class ClassificationTask(BaseTask):
             gt_labels (List[str]): _description_
 
         Returns:
-            Dict: metric name -> metric value
+            List[MetricResult]: list of metrics and corresponding values
         """
-        eval_metrics = {}
+        eval_metrics = []
 
         # support
         support = len(gt_labels)
-        eval_metrics[Metric.SUPPORT] = support
-        
+        eval_metrics.append(
+            MetricResult(metric_type=Metric.SUPPORT, name="support", value=support))
+
         # completion rate
         num_labeled = sum([l.successfully_labeled for l in llm_labels])
-        eval_metrics[Metric.COMPLETION_RATE] = num_labeled * 1.0 / support
+        fraction_completed = round(num_labeled * 1.0 / support, 2)
+        eval_metrics.append(
+            MetricResult(metric_type=Metric.COMPLETION_RATE, name="completion_rate", value=fraction_completed))
+        
         # accuracy
-        eval_metrics[Metric.ACCURACY] = sum([x == y.label for x, y in zip(gt_labels, llm_labels)])
+        pred_labels = [l.label for l in llm_labels]
+        accuracy = accuracy_score(gt_labels, pred_labels)
+        eval_metrics.append(
+            MetricResult(metric_type=Metric.ACCURACY, name="accuracy", value=accuracy))
         
         return eval_metrics
 

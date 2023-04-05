@@ -8,7 +8,7 @@ from langchain.prompts.prompt import PromptTemplate
 from langchain.schema import Generation
 
 from refuel_oracle.config import Config
-from refuel_oracle.schema import LLMAnnotation
+from refuel_oracle.schema import LLMAnnotation, MetricResult
 
 class BaseTask(ABC):
 
@@ -29,7 +29,7 @@ class BaseTask(ABC):
         pass
 
     @abstractmethod
-    def eval(self, llm_labels: List, gt_labels: List) -> Dict:
+    def eval(self, llm_labels: List, gt_labels: List) -> List[MetricResult]:
         pass
 
     
