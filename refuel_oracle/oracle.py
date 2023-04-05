@@ -57,7 +57,7 @@ class Oracle:
                 total_tokens += num_tokens
                 prompt_list.append(final_prompt)
             # Get response from LLM
-            response = self.llm.generate(prompt_list)
+            response = self.llm.generate(final_prompts)
             for prompt, response_item in zip(final_prompts, response.generations):
                 generation = response_item[0]
                 llm_labels.append(self.task.parse_llm_response(prompt, generation))
