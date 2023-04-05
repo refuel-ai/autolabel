@@ -124,7 +124,10 @@ class Oracle:
             for i, input_i in enumerate(chunk):
                 if (i + 1) % 10 == 0:
                     print(f"{i+1}/{len(input)}...")
-                final_prompt = self.construct_final_prompt(input_i)
+                # Fetch few-shot seed examples
+                examples = self.config["seed_examples"]
+
+                final_prompt = self.task.construct_prompt(input_i, examples)
                 num_tokens = calculate_num_tokens(
                     self.config, final_prompt
                 )
