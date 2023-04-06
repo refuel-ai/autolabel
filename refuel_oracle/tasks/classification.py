@@ -92,18 +92,18 @@ class ClassificationTask(BaseTask):
         # if the user specified an explicit output format prompt, don't postprocess the result
         # we will change this to allow a UDF to do this postprocessing
         if "output_format_prompt" in self.config.keys():
-            successfully_labeled = True
+            successfully_labeled = "yes"
             llm_label = response.text
         else:
             try:
                 output = self._parse_default_output_format(response.text)
-                successfully_labeled = output.get("answered", False)
+                successfully_labeled = output.get("answered", "no")
                 llm_label = output.get("label", "")
             except Exception as e:
                 logger.error(
                     f"Error parsing LLM response: {response.text}\nEncountered exception: {e}"
                 )
-                successfully_labeled = False
+                successfully_labeled = "no"
                 llm_label = ""
 
         # TODO: parse generation info correctly to fetch & transform logprobs -> score
@@ -135,7 +135,7 @@ class ClassificationTask(BaseTask):
         )
 
         # completion rate
-        num_labeled = sum([l.successfully_labeled for l in llm_labels])
+        num_labeled = sum([l.successfully_labeled.lower() == 'yes' for l in llm_labels])
         fraction_completed = round(num_labeled * 1.0 / support, 2)
         eval_metrics.append(
             MetricResult(
