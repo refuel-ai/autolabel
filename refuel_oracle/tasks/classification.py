@@ -101,8 +101,10 @@ class ClassificationTask(BaseTask):
                 llm_label = output.get("label", "")
             except Exception as e:
                 logger.error(
-                    f"Error parsing LLM response: {response.text}. Encountered exception: {e}"
+                    f"Error parsing LLM response: {response.text}\nEncountered exception: {e}"
                 )
+                successfully_labeled = False
+                llm_label = ""
 
         # TODO: parse generation info correctly to fetch & transform logprobs -> score
         return LLMAnnotation(
