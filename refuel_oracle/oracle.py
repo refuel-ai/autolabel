@@ -105,6 +105,7 @@ class Oracle:
         print(f"Total Estimated Cost: {total_cost}")
         print(f"Number of examples to label: {len(input)}")
         print(f"Average cost per example: {total_cost/len(input)}")
+        print(f"\n\nFinal prompt example:\n\n{prompt_list[0]}")
         return
 
     def test(self):
