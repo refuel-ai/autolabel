@@ -5,10 +5,8 @@ import numpy as np
 from refuel_oracle.llm import LLMFactory
 from refuel_oracle.config import Config
 from refuel_oracle.tasks import TaskFactory
-from refuel_oracle.utils import (
-    calculate_num_tokens,
-    calculate_cost
-)
+from refuel_oracle.utils import calculate_num_tokens, calculate_cost
+
 
 class Oracle:
     CHUNK_SIZE = 5
@@ -19,7 +17,7 @@ class Oracle:
         self.config = Config.from_json(config)
         self.llm = LLMFactory.from_config(self.config)
         self.task = TaskFactory.from_config(self.config)
-    
+
     # TODO: all this will move to a separate input parser class
     # this is a temporary solution to quickly add this feature and unblock expts
     def _read_csv(self, csv_file: str, max_items: int = None) -> Tuple:
@@ -28,34 +26,39 @@ class Oracle:
         input_columns = dataset_schema.get("input_columns", [])
         input_template = dataset_schema.get("input_template")
         label_column = dataset_schema.get("label_column")
-        
+
         dat = pd.read_csv(csv_file, sep=delimiter)
         if max_items and max_items > 0:
             max_items = min(max_items, len(dat))
             dat = dat[:max_items]
-        
+
         # construct input row
         if input_template:
             # User has explicitly passed in a template to stitch together input columns. use this directly
-            inputs = dat[input_columns].apply(
-                lambda row: input_template.format(**row), axis=1).tolist()
+            inputs = (
+                dat[input_columns]
+                .apply(lambda row: input_template.format(**row), axis=1)
+                .tolist()
+            )
         else:
             # use a default format
-            inputs = dat[input_columns].apply(
-                lambda row: "; ".join([str(v) for (k, v) in row.items()]), axis=1).tolist()
+            inputs = (
+                dat[input_columns]
+                .apply(
+                    lambda row: "; ".join([str(v) for (k, v) in row.items()]), axis=1
+                )
+                .tolist()
+            )
 
         gt_labels = None if not label_column else dat[label_column].tolist()
         return (dat, inputs, gt_labels)
 
-
     def annotate(
-        self,
-        dataset: str,
-        max_items: int = 100,
+        self, dataset: str, max_items: int = 100, output_name: str = None
     ) -> None:
-        
+
         df, inputs, gt_labels = self._read_csv(dataset, max_items)
-        
+
         llm_labels = []
         prompt_list = []
         total_tokens = 0
@@ -74,10 +77,7 @@ class Oracle:
                 # Construct Prompt to pass to LLM
                 final_prompt = self.task.construct_prompt(input_i, examples)
                 final_prompts.append(final_prompt)
-                num_tokens = calculate_num_tokens(
-                    self.config,
-                    final_prompt
-                )
+                num_tokens = calculate_num_tokens(self.config, final_prompt)
                 total_tokens += num_tokens
                 prompt_list.append(final_prompt)
             # Get response from LLM
@@ -95,9 +95,20 @@ class Oracle:
 
         # Write output to CSV
         output_df = df.copy()
-        output_df["llm_labeled_successfully"] = [l.successfully_labeled for l in llm_labels]
+        output_df["llm_labeled_successfully"] = [
+            l.successfully_labeled for l in llm_labels
+        ]
         output_df["llm_label"] = [l.label for l in llm_labels]
-        output_df.to_csv(f"{dataset}_labeled.csv", sep=self.DEFAULT_SEPARATOR, header=True, index=False)
+        if output_name:
+            csv_file_name = output_name
+        else:
+            csv_file_name = f"{self.config.get_project_name()}_{dataset}_labeled.csv"
+        output_df.to_csv(
+            csv_file_name,
+            sep=self.DEFAULT_SEPARATOR,
+            header=True,
+            index=False,
+        )
 
     def plan(
         self,
@@ -118,9 +129,7 @@ class Oracle:
                 examples = self.config["seed_examples"]
 
                 final_prompt = self.task.construct_prompt(input_i, examples)
-                num_tokens = calculate_num_tokens(
-                    self.config, final_prompt
-                )
+                num_tokens = calculate_num_tokens(self.config, final_prompt)
                 total_tokens += num_tokens
                 prompt_list.append(final_prompt)
         total_cost = calculate_cost(self.config, total_tokens)
