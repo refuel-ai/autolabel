@@ -25,7 +25,7 @@ class BaseTask(ABC):
         pass
 
     @abstractmethod
-    def parse_llm_response(self, prompt: str, response: Generation) -> LLMAnnotation:
+    def parse_llm_response(self, response: Generation) -> LLMAnnotation:
         pass
 
     @abstractmethod
