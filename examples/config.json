@@ -7,6 +7,12 @@
     "prefix_prompt": "You are an expert at understanding news articles.",
     "task_prompt": "Your job is to correctly label the provided news article into one of the following eight categories.\nCategories: Sports, Health, Business, Entertainment, Sci/Tech, Software, Music Feeds, Toons",
     "output_format_prompt": "You will return the answer in JSON format with two keys: {\"answered\": \"can you answere this question. say YES or NO\", \"label\": \"the correct label\"}",
+    "dataset_schema": {
+        "input_columns": [
+            "description"
+        ],
+        "label_column": "label"
+    },
     "seed_examples": [
         {
             "example": "The NHL and the players' association appeared headed toward a lockout when talks broke off yesterday after the union's first new proposal in nearly a year.",
