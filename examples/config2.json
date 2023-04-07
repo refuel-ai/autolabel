@@ -16,6 +16,10 @@
         "Music Feeds",
         "Toons"
     ],
+    "dataset_schema": {
+        "input_columns": ["description"],
+        "label_column": "label"
+    },
     "seed_examples": [
         {
             "example": "The NHL and the players' association appeared headed toward a lockout when talks broke off yesterday after the union's first new proposal in nearly a year.",
