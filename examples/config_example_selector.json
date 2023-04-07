@@ -1,0 +1,48 @@
+{
+    "project_name": "Transactions classification",
+    "task_type": "classification",
+    "provider_name": "openai",
+    "model_name": "text-davinci-003",
+    "model_params": {},
+    "prefix_prompt": "You are an expert at categorizing credit card transactions.",
+    "labels_list": [
+        "Meals out / delivery",
+        "Business",
+        "Gifts",
+        "Self care",
+        "Subscriptions",
+        "Transportation",
+        "Shopping",
+        "Travel",
+        "Healthcare",
+        "Donations",
+        "Business",
+        "Home",
+        "Entertainment + Hobbies",
+        "Groceries",
+        "Bills",
+        "Rent + utilities",
+        "Insurance",
+        "Taxes"
+    ],
+    "seed_examples": [
+        {
+            "example": "Birthday breakfast",
+            "output": "Meals out / delivery"
+        },
+        {
+            "example": "Netflix subscription",
+            "output": "Subscriptions"
+        },
+        {
+            "example": "GEICO monthly car insurance",
+            "output": "Insurance"
+        }
+    ],
+    "example_selector": {
+        "name": "semantic_similarity",
+        "params": {
+            "k": 2
+        }
+    }
+}

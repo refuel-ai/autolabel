@@ -1,13 +1,12 @@
-import pandas as pd
 import numpy as np
+import pandas as pd
 
-from refuel_oracle.llm import LLMFactory
 from refuel_oracle.config import Config
+from refuel_oracle.example_selector import ExampleSelector
+from refuel_oracle.llm import LLMFactory
 from refuel_oracle.tasks import TaskFactory
-from refuel_oracle.utils import (
-    calculate_num_tokens,
-    calculate_cost
-)
+from refuel_oracle.utils import calculate_cost, calculate_num_tokens
+
 
 class Oracle:
     CHUNK_SIZE = 5
@@ -23,14 +22,18 @@ class Oracle:
         dataset: str,
         input_column: str,
         ground_truth_column: str = None,
-        delimiter: str = ',',
+        delimiter: str = ",",
         max_items: int = 100,
     ) -> None:
         dat = pd.read_csv(dataset, sep=delimiter)
         max_items = min(max_items, len(dat))
 
         input = dat[:max_items][input_column].tolist()
-        truth = None if not ground_truth_column else dat[:max_items][ground_truth_column].tolist()
+        truth = (
+            None
+            if not ground_truth_column
+            else dat[:max_items][ground_truth_column].tolist()
+        )
 
         llm_labels = []
         prompt_list = []
@@ -46,14 +49,12 @@ class Oracle:
                 # Fetch few-shot seed examples
                 # In the future this task will be delegated to an example selector
                 examples = self.config["seed_examples"]
-
+                example_selector = ExampleSelector(self.config)
+                examples = example_selector.get_examples(input_i)
                 # Construct Prompt to pass to LLM
                 final_prompt = self.task.construct_prompt(input_i, examples)
                 final_prompts.append(final_prompt)
-                num_tokens = calculate_num_tokens(
-                    self.config,
-                    final_prompt
-                )
+                num_tokens = calculate_num_tokens(self.config, final_prompt)
                 total_tokens += num_tokens
                 prompt_list.append(final_prompt)
             # Get response from LLM
@@ -71,9 +72,13 @@ class Oracle:
 
         # Write output to CSV
         output_df = dat[:max_items].copy()
-        output_df["llm_labeled_successfully"] = [l.successfully_labeled for l in llm_labels]
+        output_df["llm_labeled_successfully"] = [
+            l.successfully_labeled for l in llm_labels
+        ]
         output_df["llm_label"] = [l.label for l in llm_labels]
-        output_df.to_csv(f"{dataset}_labeled.csv", sep=delimiter, header=True, index=False)
+        output_df.to_csv(
+            f"{dataset}_labeled.csv", sep=delimiter, header=True, index=False
+        )
 
     def plan(
         self,
@@ -96,9 +101,7 @@ class Oracle:
                 examples = self.config["seed_examples"]
 
                 final_prompt = self.task.construct_prompt(input_i, examples)
-                num_tokens = calculate_num_tokens(
-                    self.config, final_prompt
-                )
+                num_tokens = calculate_num_tokens(self.config, final_prompt)
                 total_tokens += num_tokens
                 prompt_list.append(final_prompt)
         total_cost = calculate_cost(self.config, total_tokens)
