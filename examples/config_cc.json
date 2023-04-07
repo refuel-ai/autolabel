@@ -27,21 +27,22 @@
     ],
     "dataset_schema": {
         "input_columns": [
-            "description"
+            "description","amount"
         ],
+        "input_template": "{amount} charged for {description}",
         "label_column": "label"
     },
     "seed_examples": [
         {
-            "example": "Birthday breakfast",
+            "example": "$20 charged for Birthday breakfast",
             "output": "Meals out / delivery"
         },
         {
-            "example": "Netflix subscription",
+            "example": "$9.99 charged for Netflix subscription",
             "output": "Subscriptions"
         },
         {
-            "example": "GEICO monthly car insurance",
+            "example": "$200 charged for GEICO monthly car insurance",
             "output": "Insurance"
         }
     ]
