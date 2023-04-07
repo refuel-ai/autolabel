@@ -88,27 +88,19 @@ class ClassificationTask(BaseTask):
             seed_examples="\n".join(formatted_examples), current_example=current_example
         )
 
-    def parse_llm_response(self, prompt: str, response: Generation) -> LLMAnnotation:
-        # if the user specified an explicit output format prompt, don't postprocess the result
-        # we will change this to allow a UDF to do this postprocessing
-        if "output_format_prompt" in self.config.keys():
-            successfully_labeled = "yes"
-            llm_label = response.text
-        else:
-            try:
-                output = self._parse_default_output_format(response.text)
-                successfully_labeled = output.get("answered", "no")
-                llm_label = output.get("label", "")
-            except Exception as e:
-                logger.error(
-                    f"Error parsing LLM response: {response.text}\nEncountered exception: {e}"
-                )
-                successfully_labeled = "no"
-                llm_label = ""
+    def parse_llm_response(self, response: Generation) -> LLMAnnotation:
+        output = {}
+        try:
+            output = self._parse_default_output_format(response.text)
+        except Exception as e:
+            logger.info(
+                f"Error parsing LLM response: {response.text}"
+            )
+        successfully_labeled = output.get("answered", "no")
+        llm_label = output.get("label") or ""
 
         # TODO: parse generation info correctly to fetch & transform logprobs -> score
         return LLMAnnotation(
-            prompt=prompt,
             successfully_labeled=successfully_labeled,
             label=llm_label,
             generation_info=response.generation_info,

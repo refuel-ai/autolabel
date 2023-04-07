@@ -18,7 +18,6 @@ class MetricResult(BaseModel):
     value: Any
 
 class LLMAnnotation(BaseModel):
-    prompt: str
     successfully_labeled: str
     label: str
     confidence_score: Optional[float] = None
