@@ -53,9 +53,7 @@ class Oracle:
         gt_labels = None if not label_column else dat[label_column].tolist()
         return (dat, inputs, gt_labels)
 
-    def annotate(
-        self, dataset: str, max_items: int = 100, output_name: str = None
-    ) -> None:
+    def annotate(self, dataset: str, max_items: int = 100) -> None:
 
         df, inputs, gt_labels = self._read_csv(dataset, max_items)
 
@@ -98,13 +96,8 @@ class Oracle:
         output_df["llm_labeled_successfully"] = [
             l.successfully_labeled for l in llm_labels
         ]
-        output_df["llm_label"] = [l.label for l in llm_labels]
-        if output_name:
-            csv_file_name = output_name
-        else:
-            csv_file_name = f"{self.config.get_project_name()}_{dataset}_labeled.csv"
         output_df.to_csv(
-            csv_file_name,
+            f"{dataset}_labeled.csv",
             sep=self.DEFAULT_SEPARATOR,
             header=True,
             index=False,
