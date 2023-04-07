@@ -49,8 +49,9 @@ class Oracle:
                 # Fetch few-shot seed examples
                 # In the future this task will be delegated to an example selector
                 examples = self.config["seed_examples"]
-                example_selector = ExampleSelector(self.config)
-                examples = example_selector.get_examples(input_i)
+                if "example_selector" in self.config.keys():
+                    example_selector = ExampleSelector(self.config)
+                    examples = example_selector.get_examples(input_i)
                 # Construct Prompt to pass to LLM
                 final_prompt = self.task.construct_prompt(input_i, examples)
                 final_prompts.append(final_prompt)
