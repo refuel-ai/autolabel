@@ -7,8 +7,7 @@ from loguru import logger
 from refuel_oracle.config import Config
 from refuel_oracle.schema import LLMAnnotation, Metric, MetricResult
 from refuel_oracle.tasks import BaseTask
-from sklearn.metrics import accuracy_score
-from sklearn.metrics import confusion_matrix
+from sklearn.metrics import accuracy_score, confusion_matrix, recall_score
 
 
 class ClassificationTask(BaseTask):
@@ -156,5 +155,18 @@ class ClassificationTask(BaseTask):
                 value=confusion,
             )
         )
+
+        # recall
+        recall = recall_score(gt_labels, pred_labels, average=None)
+        eval_metrics.append(
+            MetricResult(
+                metric_type=Metric.RECALL,
+                name="recall",
+                value=confusion,
+            )
+        )
+
+        # error examples
+        # TODO, need a way to access input dataset in order to display them here
 
         return eval_metrics
