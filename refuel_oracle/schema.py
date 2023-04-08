@@ -3,6 +3,7 @@ from typing import Any, Dict, Optional, Union
 
 from pydantic import BaseModel
 
+
 class Metric(str, Enum):
     # Task agnostic
     SUPPORT = "support"
@@ -11,16 +12,17 @@ class Metric(str, Enum):
     ACCURACY = "accuracy"
     CONFUSION_MATRIX = "confusion_matrix"
     LABEL_DISTRIBUTION = "label_distribution"
+    RECALL = "recall"
+
 
 class MetricResult(BaseModel):
     metric_type: Metric
     name: str
     value: Any
 
+
 class LLMAnnotation(BaseModel):
     successfully_labeled: str
     label: str
     confidence_score: Optional[float] = None
     generation_info: Optional[Dict[str, Any]] = None
-
-
