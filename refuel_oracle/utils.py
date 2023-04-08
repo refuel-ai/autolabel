@@ -10,7 +10,10 @@ PROVIDER_TO_COST_PER_TOKEN = {
         'text-curie-001': 0.002/1000,
     },
     LLMProvider.openai_chat: {
-        'gpt-3.5-turbo': 0.002/1000
+        'gpt-3.5-turbo': 0.002/1000,
+        # TODO: gpt-4 needs a better pricing computation 
+        # since prompt vs completion tokens are priced differently
+        'gpt-4': 0.03/1000
     }
 }
 
