@@ -67,7 +67,7 @@ class Oracle:
         for chunk_id, chunk in enumerate(np.array_split(inputs, num_sections)):
             if chunk_id % 10 == 0:
                 print(
-                    f"Labeling {chunk_id*self.CHUNK_SIZE}-{chunk_id*self.CHUNK_SIZE+(self.CHUNK_SIZE*10-1)}"
+                    f"Labeling {chunk_id*self.CHUNK_SIZE+1}-{chunk_id*self.CHUNK_SIZE+(self.CHUNK_SIZE*10)}"
                 )
             final_prompts = []
             for i, input_i in enumerate(chunk):
