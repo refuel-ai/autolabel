@@ -65,11 +65,11 @@ class Oracle:
 
         num_sections = max(max_items / self.CHUNK_SIZE, 1)
         for chunk_id, chunk in enumerate(np.array_split(inputs, num_sections)):
+            print(
+                f"Labeling {chunk_id*self.CHUNK_SIZE}-{chunk_id*self.CHUNK_SIZE+self.CHUNK_SIZE}"
+            )
             final_prompts = []
             for i, input_i in enumerate(chunk):
-                if (i + 1) % 10 == 0:
-                    print(f"{i+1}/{len(inputs)}...")
-
                 # Fetch few-shot seed examples
                 # In the future this task will be delegated to an example selector
                 examples = self.config["seed_examples"]
