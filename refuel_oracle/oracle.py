@@ -103,7 +103,7 @@ class Oracle:
         if output_name:
             csv_file_name = output_name
         else:
-            csv_file_name = f"{dataset}_labeled.csv"
+            csv_file_name = f"{dataset.replace('.csv','')}_labeled.csv"
         output_df.to_csv(
             csv_file_name,
             sep=self.DEFAULT_SEPARATOR,
