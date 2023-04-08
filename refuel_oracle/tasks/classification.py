@@ -7,7 +7,7 @@ from loguru import logger
 from refuel_oracle.config import Config
 from refuel_oracle.schema import LLMAnnotation, Metric, MetricResult
 from refuel_oracle.tasks import BaseTask
-from sklearn.metrics import accuracy_score
+from sklearn.metrics import accuracy_score, confusion_matrix, recall_score
 
 
 class ClassificationTask(BaseTask):
@@ -93,9 +93,7 @@ class ClassificationTask(BaseTask):
         try:
             output = self._parse_default_output_format(response.text)
         except Exception as e:
-            logger.info(
-                f"Error parsing LLM response: {response.text}"
-            )
+            logger.info(f"Error parsing LLM response: {response.text}")
         successfully_labeled = output.get("answered", "no")
         llm_label = output.get("label") or ""
 
@@ -127,7 +125,7 @@ class ClassificationTask(BaseTask):
         )
 
         # completion rate
-        num_labeled = sum([l.successfully_labeled.lower() == 'yes' for l in llm_labels])
+        num_labeled = sum([l.successfully_labeled.lower() == "yes" for l in llm_labels])
         fraction_completed = round(num_labeled * 1.0 / support, 2)
         eval_metrics.append(
             MetricResult(
@@ -143,5 +141,32 @@ class ClassificationTask(BaseTask):
         eval_metrics.append(
             MetricResult(metric_type=Metric.ACCURACY, name="accuracy", value=accuracy)
         )
+
+        # confusion matrix
+        labels_list = self.config.get("labels_list", [])
+        if labels_list:
+            confusion = confusion_matrix(gt_labels, pred_labels, labels=labels_list)
+        else:
+            confusion = confusion_matrix(gt_labels, pred_labels)
+        eval_metrics.append(
+            MetricResult(
+                metric_type=Metric.CONFUSION_MATRIX,
+                name="confusion_matrix",
+                value=confusion,
+            )
+        )
+
+        # recall
+        recall = recall_score(gt_labels, pred_labels, average=None)
+        eval_metrics.append(
+            MetricResult(
+                metric_type=Metric.RECALL,
+                name="recall",
+                value=confusion,
+            )
+        )
+
+        # error examples
+        # TODO, need a way to access input dataset in order to display them here
 
         return eval_metrics
