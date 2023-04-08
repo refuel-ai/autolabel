@@ -7,7 +7,7 @@ from loguru import logger
 from refuel_oracle.config import Config
 from refuel_oracle.schema import LLMAnnotation, Metric, MetricResult
 from refuel_oracle.tasks import BaseTask
-from sklearn.metrics import accuracy_score, confusion_matrix, recall_score
+from sklearn.metrics import accuracy_score, confusion_matrix
 
 
 class ClassificationTask(BaseTask):
@@ -24,6 +24,7 @@ class ClassificationTask(BaseTask):
     ]
     EXAMPLE_PROMPT_TEMPLATE = "Example: {example}\nOutput: {output}\n"
     EXAMPLE_PROMPT_VARIABLES = ["example", "output"]
+    NULL_LABEL_TOKEN = "NO_LABEL"
 
     def __init__(self, config: Config) -> None:
         super().__init__(config)
@@ -31,9 +32,6 @@ class ClassificationTask(BaseTask):
     def _to_default_output_format(self, label: str) -> str:
         output = {"answered": "yes", "label": label}
         return json.dumps(output)
-
-    def _parse_default_output_format(self, output: str) -> dict:
-        return json.loads(output.strip())
 
     def initialize_prompt_template(self) -> PromptTemplate:
         # provide context about the problem domain
@@ -48,11 +46,6 @@ class ClassificationTask(BaseTask):
                 num_labels=num_labels, labels_list="\n".join(labels_list)
             )
 
-        # output format instructions
-        output_prompt = self.config.get(
-            "output_format_prompt", self.DEFAULT_OUTPUT_FORMAT_PROMPT
-        )
-
         pt = PromptTemplate(
             input_variables=self.PROMPT_TEMPLATE_VARIABLES,
             template=self.PROMPT_TEMPLATE,
@@ -60,7 +53,7 @@ class ClassificationTask(BaseTask):
         return pt.partial(
             prefix_prompt=prefix_prompt,
             task_prompt=task_prompt,
-            output_prompt=output_prompt,
+            output_prompt=self.DEFAULT_OUTPUT_FORMAT_PROMPT,
         )
 
     def construct_prompt(self, input: str, examples: List) -> str:
@@ -71,12 +64,7 @@ class ClassificationTask(BaseTask):
         )
         formatted_examples = []
         for eg in examples:
-            # if the user specified an explicit output format prompt, don't preprocess the seed examples
-            # we might change this to allow a UDF to do this processing
-            if "output_format_prompt" in self.config.keys():
-                expected_output = eg["output"]
-            else:
-                expected_output = self._to_default_output_format(eg["output"])
+            expected_output = self._to_default_output_format(eg["output"])
             formatted_examples.append(
                 example_prompt.format(example=eg["example"], output=expected_output)
             )
@@ -91,11 +79,19 @@ class ClassificationTask(BaseTask):
     def parse_llm_response(self, response: Generation) -> LLMAnnotation:
         output = {}
         try:
-            output = self._parse_default_output_format(response.text)
+            completion_text = response.text
+            output = json.loads(completion_text.strip())
         except Exception as e:
-            logger.info(f"Error parsing LLM response: {response.text}")
+            logger.info(
+                f"Error parsing LLM response: {response.text}"
+            )
+    
         successfully_labeled = output.get("answered", "no")
-        llm_label = output.get("label") or ""
+        if successfully_labeled.lower() == 'yes':
+            llm_label = output.get("label") or self.NULL_LABEL_TOKEN
+            llm_label = str(llm_label)
+        else:
+            llm_label = self.NULL_LABEL_TOKEN
 
         # TODO: parse generation info correctly to fetch & transform logprobs -> score
         return LLMAnnotation(
@@ -143,26 +139,14 @@ class ClassificationTask(BaseTask):
         )
 
         # confusion matrix
-        labels_list = self.config.get("labels_list", [])
-        if labels_list:
-            confusion = confusion_matrix(gt_labels, pred_labels, labels=labels_list)
-        else:
-            confusion = confusion_matrix(gt_labels, pred_labels)
+        labels_list = self.config.get("labels_list", None)
+        labels_list.append(self.NULL_LABEL_TOKEN)
+        confusion = confusion_matrix(gt_labels, pred_labels, labels=labels_list)
         eval_metrics.append(
             MetricResult(
                 metric_type=Metric.CONFUSION_MATRIX,
                 name="confusion_matrix",
-                value=confusion,
-            )
-        )
-
-        # recall
-        recall = recall_score(gt_labels, pred_labels, average=None)
-        eval_metrics.append(
-            MetricResult(
-                metric_type=Metric.RECALL,
-                name="recall",
-                value=confusion,
+                value={'labels': labels_list, 'value': confusion},
             )
         )
 
