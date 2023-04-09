@@ -4,7 +4,7 @@ from refuel_oracle.oracle import Oracle
 
 curr_directory = os.path.dirname(os.path.abspath(__file__))
 
-config_path = os.path.join(curr_directory, "examples/config.json")
+config_path = os.path.join(curr_directory, "examples/config2.json")
 ag_news_file_name = "examples/ag_news_filtered_labels_sampled.csv"
 
 annotator = Oracle(config_path, debug=True)
