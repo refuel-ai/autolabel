@@ -1,8 +1,8 @@
 {
     "project_name": "AG News classification",
     "task_type": "classification",
-    "provider_name": "openai",
-    "model_name": "text-davinci-003",
+    "provider_name": "openai_chat",
+    "model_name": "gpt-3.5-turbo",
     "model_params": {},
     "prefix_prompt": "You are an expert at understanding news articles.",
     "labels_list": [
@@ -17,7 +17,9 @@
         "Toons"
     ],
     "dataset_schema": {
-        "input_columns": ["description"],
+        "input_columns": [
+            "description"
+        ],
         "label_column": "label"
     },
     "seed_examples": [
