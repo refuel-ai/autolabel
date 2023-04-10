@@ -150,6 +150,7 @@ class ClassificationTask(BaseTask):
             )
         )
 
-        # TODO: other NER eval metrics
+        # error examples
+        # TODO, need a way to access input dataset in order to display them here
 
         return eval_metrics

@@ -126,7 +126,6 @@ class EntityRecognitionTask(BaseTask):
             )
         )
 
-        # error examples
-        # TODO, need a way to access input dataset in order to display them here
+        # TODO: NER label quality metrics
 
         return eval_metrics
