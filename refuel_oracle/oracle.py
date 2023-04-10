@@ -1,11 +1,11 @@
 from typing import Tuple
-import pandas as pd
-import numpy as np
 
-from refuel_oracle.llm import LLMFactory
+import numpy as np
+import pandas as pd
 from refuel_oracle.config import Config
+from refuel_oracle.llm import LLMFactory
 from refuel_oracle.tasks import TaskFactory
-from refuel_oracle.utils import calculate_num_tokens, calculate_cost
+from refuel_oracle.utils import calculate_cost, calculate_num_tokens
 
 
 class Oracle:
@@ -134,10 +134,10 @@ class Oracle:
                 total_tokens += num_tokens
                 prompt_list.append(final_prompt)
         total_cost = calculate_cost(self.config, total_tokens)
-        print(f"Total Estimated Cost: {total_cost}")
+        print(f"Total Estimated Cost: ${round(total_cost, 3)}")
         print(f"Number of examples to label: {len(inputs)}")
-        print(f"Average cost per example: {total_cost/len(inputs)}")
-        print(f"\n\nFinal prompt example:\n\n{prompt_list[0]}")
+        print(f"Average cost per example: ${round(total_cost/len(inputs), 5)}")
+        print(f"\n\nA prompt example:\n\n{prompt_list[0]}")
         return
 
     def test(self):
