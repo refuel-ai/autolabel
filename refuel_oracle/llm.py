@@ -73,10 +73,11 @@ class LLMFactory:
     @staticmethod
     def _resolve_params(default_params: Dict, provided_params: Dict) -> Dict:
         final_params = copy.deepcopy(default_params)
-        if not provided_params or type(provided_params) != "dict":
+
+        if not provided_params or not isinstance(provided_params, dict):
             return final_params
 
-        for key, val in provided_params:
+        for key, val in provided_params.items():
             final_params[key] = val
         return final_params
 

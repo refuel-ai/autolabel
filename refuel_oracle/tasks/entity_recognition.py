@@ -7,13 +7,12 @@ from loguru import logger
 from refuel_oracle.config import Config
 from refuel_oracle.schema import LLMAnnotation, Metric, MetricResult
 from refuel_oracle.tasks import BaseTask
-from sklearn.metrics import accuracy_score, confusion_matrix
 
 
-class ClassificationTask(BaseTask):
+class EntityRecognitionTask(BaseTask):
 
-    DEFAULT_TASK_PROMPT = "Your job is to correctly label the provided input example into one of the following {num_labels} categories.\nCategories:\n{labels_list}\n"
-    DEFAULT_OUTPUT_FORMAT_PROMPT = 'You will return the answer in JSON format with two keys: {"answered": "can you answer this question. say YES or NO", "label": "the correct label"}'
+    DEFAULT_TASK_PROMPT = "Your job is to extract location, person or organization named entities present in the provided input text, and the associated text spans.\n"
+    DEFAULT_OUTPUT_FORMAT_PROMPT = 'You will return the answer in JSON format with two keys: {"answered": can you answer this question. say YES or NO, "entities": a list of extracted entities from text}.'
     PROMPT_TEMPLATE = "{prefix_prompt}\n{task_prompt}\n\n{output_prompt}\n\nSome examples with their output answers are provided below:\n{seed_examples}\n{current_example}"
     PROMPT_TEMPLATE_VARIABLES = [
         "prefix_prompt",
@@ -24,13 +23,13 @@ class ClassificationTask(BaseTask):
     ]
     EXAMPLE_PROMPT_TEMPLATE = "Example: {example}\nOutput: {output}\n"
     EXAMPLE_PROMPT_VARIABLES = ["example", "output"]
-    NULL_LABEL_TOKEN = "NO_LABEL"
+    NULL_LABEL = []
 
     def __init__(self, config: Config) -> None:
         super().__init__(config)
 
-    def _to_default_output_format(self, label: str) -> str:
-        output = {"answered": "yes", "label": label}
+    def _to_default_output_format(self, entities: List) -> str:
+        output = {"answered": "yes", "entities": entities}
         return json.dumps(output)
 
     def initialize_prompt_template(self) -> PromptTemplate:
@@ -38,13 +37,7 @@ class ClassificationTask(BaseTask):
         prefix_prompt = self.config.get("prefix_prompt", "")
 
         # provide context about the prediction task
-        labels_list = self.config.get("labels_list", [])
-        num_labels = len(labels_list)
-        task_prompt = self.config.get("task_prompt")
-        if not task_prompt:
-            task_prompt = self.DEFAULT_TASK_PROMPT.format(
-                num_labels=num_labels, labels_list="\n".join(labels_list)
-            )
+        task_prompt = self.config.get("task_prompt", self.DEFAULT_TASK_PROMPT)
 
         pt = PromptTemplate(
             input_variables=self.PROMPT_TEMPLATE_VARIABLES,
@@ -66,7 +59,8 @@ class ClassificationTask(BaseTask):
         for eg in examples:
             expected_output = self._to_default_output_format(eg["output"])
             formatted_examples.append(
-                example_prompt.format(example=eg["example"], output=expected_output)
+                example_prompt.format(
+                    example=eg["example"], output=expected_output)
             )
 
         # populate the current example in the prompt
@@ -85,13 +79,12 @@ class ClassificationTask(BaseTask):
             logger.info(
                 f"Error parsing LLM response: {response.text}"
             )
-    
+
         successfully_labeled = output.get("answered", "no")
         if successfully_labeled.lower() == 'yes':
-            llm_label = output.get("label") or self.NULL_LABEL_TOKEN
-            llm_label = str(llm_label)
+            llm_label = output.get("entities") or self.NULL_LABEL
         else:
-            llm_label = self.NULL_LABEL_TOKEN
+            llm_label = self.NULL_LABEL
 
         # TODO: parse generation info correctly to fetch & transform logprobs -> score
         return LLMAnnotation(
@@ -117,11 +110,13 @@ class ClassificationTask(BaseTask):
         # support
         support = len(gt_labels)
         eval_metrics.append(
-            MetricResult(metric_type=Metric.SUPPORT, name="support", value=support)
+            MetricResult(metric_type=Metric.SUPPORT,
+                         name="support", value=support)
         )
 
         # completion rate
-        num_labeled = sum([l.successfully_labeled.lower() == "yes" for l in llm_labels])
+        num_labeled = sum([l.successfully_labeled.lower()
+                          == "yes" for l in llm_labels])
         fraction_completed = round(num_labeled * 1.0 / support, 2)
         eval_metrics.append(
             MetricResult(
@@ -131,25 +126,7 @@ class ClassificationTask(BaseTask):
             )
         )
 
-        # accuracy
-        pred_labels = [l.label for l in llm_labels]
-        accuracy = accuracy_score(gt_labels, pred_labels)
-        eval_metrics.append(
-            MetricResult(metric_type=Metric.ACCURACY, name="accuracy", value=accuracy)
-        )
-
-        # confusion matrix
-        labels_list = self.config.get("labels_list", None)
-        labels_list.append(self.NULL_LABEL_TOKEN)
-        confusion = confusion_matrix(gt_labels, pred_labels, labels=labels_list)
-        eval_metrics.append(
-            MetricResult(
-                metric_type=Metric.CONFUSION_MATRIX,
-                name="confusion_matrix",
-                value={'labels': labels_list, 'value': confusion},
-            )
-        )
-
-        # TODO: other NER eval metrics
+        # error examples
+        # TODO, need a way to access input dataset in order to display them here
 
         return eval_metrics
