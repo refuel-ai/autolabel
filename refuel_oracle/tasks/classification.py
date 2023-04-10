@@ -79,9 +79,12 @@ class ClassificationTask(BaseTask):
     def parse_llm_response(self, response: Generation) -> LLMAnnotation:
         output = {}
         try:
-            completion_text = response.text.replace(
-                "Output: ", ""
-            )  # FIXME , anthropic responses seem to always have 'Output: ' at the start of the string
+            completion_text = response.text
+            # FIXME , anthropic responses include stuff other than the JSON we are interested in
+            # working around this by finding the JSON section {} manually
+            json_start = completion_text.find("{")
+            json_end = completion_text.find("}")
+            completion_text = completion_text[json_start : json_end + 1]
             output = json.loads(completion_text.strip())
         except Exception as e:
             logger.info(f"Error parsing LLM response: {response.text}")

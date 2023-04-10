@@ -51,7 +51,7 @@ class LLMFactory:
             # TODO
         },
         LLMProvider.anthropic: {
-            "max_tokens_to_sample": 1000,
+            "max_tokens_to_sample": 100,
             "temperature": 0.0,
         },
     }
