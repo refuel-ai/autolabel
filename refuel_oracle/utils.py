@@ -58,7 +58,6 @@ def calculate_cost(config: Config, num_tokens: int) -> float:
     cost_per_token = PROVIDER_TO_COST_PER_TOKEN[llm_provider][llm_model]
     return num_tokens * cost_per_token
 
-
 def extract_valid_json_substring(string):
     pattern = (
         r"{(?:[^{}]|(?R))*}"  # Regular expression pattern to match a valid JSON object
