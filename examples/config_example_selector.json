@@ -6,7 +6,7 @@
     "model_params": {},
     "prefix_prompt": "You are an expert at categorizing credit card transactions.",
     "labels_list": [
-        "Meals out / delivery",
+        "Meals out/delivery",
         "Business",
         "Gifts",
         "Self care",
@@ -27,22 +27,23 @@
     ],
     "dataset_schema": {
         "input_columns": [
-            "description","amount"
+            "description",
+            "amount"
         ],
         "input_template": "{amount} charged for {description}",
         "label_column": "label"
     },
     "seed_examples": [
         {
-            "example": "Birthday breakfast",
-            "output": "Meals out / delivery"
+            "example": "$20 charged for Birthday breakfast",
+            "output": "Meals out/delivery"
         },
         {
-            "example": "Netflix subscription",
+            "example": "$9.99 charged for Netflix subscription",
             "output": "Subscriptions"
         },
         {
-            "example": "GEICO monthly car insurance",
+            "example": "$200 charged for GEICO monthly car insurance",
             "output": "Insurance"
         }
     ],
