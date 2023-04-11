@@ -23,6 +23,6 @@ class MetricResult(BaseModel):
 
 class LLMAnnotation(BaseModel):
     successfully_labeled: str
-    label: str
+    label: Any
     confidence_score: Optional[float] = None
     generation_info: Optional[Dict[str, Any]] = None
