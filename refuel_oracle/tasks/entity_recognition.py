@@ -11,9 +11,9 @@ from refuel_oracle.tasks import BaseTask
 
 class EntityRecognitionTask(BaseTask):
 
-    DEFAULT_TASK_PROMPT = "Your job is to extract location, person or organization named entities present in the provided input text, and the associated text spans.\n"
-    DEFAULT_OUTPUT_FORMAT_PROMPT = 'You will return the answer in JSON format with two keys: {"answered": can you answer this question. say YES or NO, "entities": a list of extracted entities from text}.'
-    PROMPT_TEMPLATE = "{prefix_prompt}\n{task_prompt}\n\n{output_prompt}\n\nSome examples with their output answers are provided below:\n{seed_examples}\n{current_example}"
+    DEFAULT_TASK_PROMPT = "Your job is to extract named entities mentioned in text, and classify them into one of the following {num_labels} categories.\nCategories:\n{labels_list}\n "
+    DEFAULT_OUTPUT_FORMAT_PROMPT = 'You will return the answer in JSON format with two keys: {"answered": can you answer this question. say YES or NO, "entities": a JSON list of extracted entities from text, with the text spans}.'
+    PROMPT_TEMPLATE = "{prefix_prompt}\n{task_prompt}\n{output_prompt}\n\nSome examples with their output answers are provided below:\n{seed_examples}\nBegin:{current_example}"
     PROMPT_TEMPLATE_VARIABLES = [
         "prefix_prompt",
         "task_prompt",
@@ -37,7 +37,13 @@ class EntityRecognitionTask(BaseTask):
         prefix_prompt = self.config.get("prefix_prompt", "")
 
         # provide context about the prediction task
-        task_prompt = self.config.get("task_prompt", self.DEFAULT_TASK_PROMPT)
+        labels_list = self.config.get("labels_list", [])
+        num_labels = len(labels_list)
+        task_prompt = self.config.get("task_prompt")
+        if not task_prompt:
+            task_prompt = self.DEFAULT_TASK_PROMPT.format(
+                num_labels=num_labels, labels_list="\n".join(labels_list)
+            )
 
         pt = PromptTemplate(
             input_variables=self.PROMPT_TEMPLATE_VARIABLES,

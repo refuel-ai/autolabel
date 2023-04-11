@@ -6,7 +6,7 @@
     "model_params": {
         "max_tokens": 512
     },
-    "prefix_prompt": "You are an expert at recognizing named entities in text data. Named entities are names of people, places or organizations that are mentioned in text.\n",
+    "prefix_prompt": "",
     "labels_list": [
         "People",
         "Location",
