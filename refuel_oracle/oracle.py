@@ -96,10 +96,10 @@ class Oracle:
 
         # Write output to CSV
         output_df = df.copy()
-        output_df["llm_label"] = [l.label for l in llm_labels]
         output_df["llm_labeled_successfully"] = [
             l.successfully_labeled for l in llm_labels
         ]
+        output_df["llm_label"] = [l.label for l in llm_labels]
         if output_name:
             csv_file_name = output_name
         else:
