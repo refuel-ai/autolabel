@@ -1,0 +1,43 @@
+{
+    "project_name": "AG News classification",
+    "task_type": "classification",
+    "provider_name": "anthropic",
+    "model_name": "claude-v1",
+    "model_params": {},
+    "prefix_prompt": "You are an expert at understanding news articles.",
+    "labels_list": [
+        "Sports",
+        "Health",
+        "Business",
+        "Entertainment",
+        "Sci/Tech",
+        "Italia",
+        "Software",
+        "Music Feeds",
+        "Toons"
+    ],
+    "dataset_schema": {
+        "input_columns": [
+            "description"
+        ],
+        "label_column": "label"
+    },
+    "seed_examples": [
+        {
+            "example": "The NHL and the players' association appeared headed toward a lockout when talks broke off yesterday after the union's first new proposal in nearly a year.",
+            "output": "Sports"
+        },
+        {
+            "example": "Computer Associates International Inc. said Monday it has revoked home security and office support benefits to former Chief Executive Officer Sanjay Kumar, who was indicted last week on",
+            "output": "Business"
+        },
+        {
+            "example": "Big Blue adds \"innovaton center\" to its China Research Lab to develop technology catering to small and midsize businesses.",
+            "output": "Sci/Tech"
+        },
+        {
+            "example": "Before you wear your your cool yellow LiveStrong wristband at the hospital, think twice. Morton Plant Mease hospitals, St. Joseph #39;s and St Anthony #39;s are putting the brakes on Lance Armstrong #39;s",
+            "output": "Health"
+        }
+    ]
+}

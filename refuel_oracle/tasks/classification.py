@@ -7,14 +7,14 @@ from loguru import logger
 from refuel_oracle.config import Config
 from refuel_oracle.schema import LLMAnnotation, Metric, MetricResult
 from refuel_oracle.tasks import BaseTask
+from refuel_oracle.utils import extract_valid_json_substring
 from sklearn.metrics import accuracy_score, confusion_matrix
 
 
 class ClassificationTask(BaseTask):
-
     DEFAULT_TASK_PROMPT = "Your job is to correctly label the provided input example into one of the following {num_labels} categories.\nCategories:\n{labels_list}\n"
     DEFAULT_OUTPUT_FORMAT_PROMPT = 'You will return the answer in JSON format with two keys: {"answered": "can you answer this question. say YES or NO", "label": "the correct label"}'
-    PROMPT_TEMPLATE = "{prefix_prompt}\n{task_prompt}\n\n{output_prompt}\n\nSome examples with their output answers are provided below:\n{seed_examples}\n{current_example}"
+    PROMPT_TEMPLATE = "{prefix_prompt}\n{task_prompt}\n\n{output_prompt}\n\nSome examples with their output answers are provided below:\n{seed_examples}\n Now I want you to label the following example in the same way: {current_example}"
     PROMPT_TEMPLATE_VARIABLES = [
         "prefix_prompt",
         "task_prompt",
@@ -79,15 +79,13 @@ class ClassificationTask(BaseTask):
     def parse_llm_response(self, response: Generation) -> LLMAnnotation:
         output = {}
         try:
-            completion_text = response.text
+            completion_text = extract_valid_json_substring(response.text)
             output = json.loads(completion_text.strip())
         except Exception as e:
-            logger.info(
-                f"Error parsing LLM response: {response.text}"
-            )
-    
+            logger.info(f"Error parsing LLM response: {response.text}")
+
         successfully_labeled = output.get("answered", "no")
-        if successfully_labeled.lower() == 'yes':
+        if successfully_labeled.lower() == "yes":
             llm_label = output.get("label") or self.NULL_LABEL_TOKEN
             llm_label = str(llm_label)
         else:
@@ -146,7 +144,7 @@ class ClassificationTask(BaseTask):
             MetricResult(
                 metric_type=Metric.CONFUSION_MATRIX,
                 name="confusion_matrix",
-                value={'labels': labels_list, 'value': confusion},
+                value={"labels": labels_list, "value": confusion},
             )
         )
 
