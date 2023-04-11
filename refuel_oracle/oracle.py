@@ -19,6 +19,8 @@ class Oracle:
         self.config = Config.from_json(config)
         self.llm = LLMFactory.from_config(self.config)
         self.task = TaskFactory.from_config(self.config)
+        if "example_selector" in self.config.keys():
+            self.example_selector = ExampleSelector(self.config)
 
     # TODO: all this will move to a separate input parser class
     # this is a temporary solution to quickly add this feature and unblock expts
@@ -74,11 +76,10 @@ class Oracle:
             final_prompts = []
             for i, input_i in enumerate(chunk):
                 # Fetch few-shot seed examples
-                # In the future this task will be delegated to an example selector
-                examples = self.config["seed_examples"]
-                if "example_selector" in self.config.keys():
-                    example_selector = ExampleSelector(self.config)
-                    examples = example_selector.get_examples(input_i)
+                if self.example_selector:
+                    examples = self.example_selector.get_examples(input_i)
+                else:
+                    examples = self.config["seed_examples"]
                 # Construct Prompt to pass to LLM
                 final_prompt = self.task.construct_prompt(input_i, examples)
                 final_prompts.append(final_prompt)
