@@ -25,6 +25,13 @@
         "Insurance",
         "Taxes"
     ],
+    "dataset_schema": {
+        "input_columns": [
+            "description","amount"
+        ],
+        "input_template": "{amount} charged for {description}",
+        "label_column": "label"
+    },
     "seed_examples": [
         {
             "example": "Birthday breakfast",
