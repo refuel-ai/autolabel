@@ -2,7 +2,9 @@ from typing import Tuple
 
 import numpy as np
 import pandas as pd
+
 from refuel_oracle.config import Config
+from refuel_oracle.example_selector import ExampleSelector
 from refuel_oracle.llm import LLMFactory
 from refuel_oracle.tasks import TaskFactory
 from refuel_oracle.utils import calculate_cost, calculate_num_tokens
@@ -74,7 +76,9 @@ class Oracle:
                 # Fetch few-shot seed examples
                 # In the future this task will be delegated to an example selector
                 examples = self.config["seed_examples"]
-
+                if "example_selector" in self.config.keys():
+                    example_selector = ExampleSelector(self.config)
+                    examples = example_selector.get_examples(input_i)
                 # Construct Prompt to pass to LLM
                 final_prompt = self.task.construct_prompt(input_i, examples)
                 final_prompts.append(final_prompt)

@@ -6,3 +6,4 @@ pandas
 scikit-learn
 tenacity
 tiktoken
+chromadb
