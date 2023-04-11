@@ -1,24 +1,32 @@
-
 import tiktoken
 
 from refuel_oracle.config import Config
 from refuel_oracle.llm import LLMProvider
+from anthropic import tokenizer
+import json
+import regex
 
 PROVIDER_TO_COST_PER_TOKEN = {
     LLMProvider.openai: {
-        'text-davinci-003': 0.02/1000,
-        'text-curie-001': 0.002/1000,
+        "text-davinci-003": 0.02 / 1000,
+        "text-curie-001": 0.002 / 1000,
     },
     LLMProvider.openai_chat: {
-        'gpt-3.5-turbo': 0.002/1000,
-        # TODO: gpt-4 needs a better pricing computation 
+        "gpt-3.5-turbo": 0.002 / 1000,
+        # TODO: gpt-4 needs a better pricing computation
         # since prompt vs completion tokens are priced differently
-        'gpt-4': 0.03/1000
-    }
+        "gpt-4": 0.03 / 1000,
+    },
+    LLMProvider.anthropic: {
+        # TODO prompt vs completion are priced differently
+        # price is per character, not tokens
+        "claude-v1": 8.60
+        / 1000000,  # $8.60 per million characters for completion
+    },
 }
 
 
-def calculate_num_tokens(config: Config,  string: str) -> int:
+def calculate_num_tokens(config: Config, string: str) -> int:
     """Returns the number of tokens in a text string
 
     Args:
@@ -28,6 +36,8 @@ def calculate_num_tokens(config: Config,  string: str) -> int:
     Returns:
         int: num tokens
     """
+    if config.get_provider() == "anthropic":
+        return tokenizer.count_tokens(string)
     encoding = tiktoken.encoding_for_model(config.get_model_name())
     num_tokens = len(encoding.encode(string))
     return num_tokens
@@ -48,3 +58,17 @@ def calculate_cost(config: Config, num_tokens: int) -> float:
     cost_per_token = PROVIDER_TO_COST_PER_TOKEN[llm_provider][llm_model]
     return num_tokens * cost_per_token
 
+
+def extract_valid_json_substring(string):
+    pattern = (
+        r"{(?:[^{}]|(?R))*}"  # Regular expression pattern to match a valid JSON object
+    )
+    match = regex.search(pattern, string)
+    if match:
+        json_string = match.group(0)
+        try:
+            json.loads(json_string)
+            return json_string
+        except ValueError:
+            pass
+    return None
