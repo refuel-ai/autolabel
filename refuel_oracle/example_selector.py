@@ -55,7 +55,7 @@ class ExampleSelector:
     def is_example_selector(self) -> bool:
         if self.example_selector_strategy:
             return self.example_selector_strategy in [
-                member.value for member in ExampleSelectorStrategy
+                strategy.value for strategy in ExampleSelectorStrategy
             ]
         return False
 
