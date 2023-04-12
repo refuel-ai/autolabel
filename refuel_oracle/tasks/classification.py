@@ -151,7 +151,7 @@ class ClassificationTask(BaseTask):
         disp = ConfusionMatrixDisplay(
             confusion_matrix=confusion, display_labels=labels_list
         )
-        disp.plot()
+        disp.plot(cmap="Purples")
         plt.xticks(rotation=90)
         plt.show()
 
