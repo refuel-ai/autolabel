@@ -61,7 +61,6 @@ class Oracle:
     def annotate(
         self, dataset: str, max_items: int = 100, output_name: str = None
     ) -> None:
-
         df, inputs, gt_labels = self._read_csv(dataset, max_items)
 
         llm_labels = []
@@ -129,11 +128,13 @@ class Oracle:
         for chunk_id, chunk in enumerate(
             np.array_split(inputs[: len(inputs)], num_sections)
         ):
+            if chunk_id % 10 == 0:
+                print(
+                    f"Processing {chunk_id*self.CHUNK_SIZE+1}-{chunk_id*self.CHUNK_SIZE+(self.CHUNK_SIZE*10)}"
+                )
             for i, input_i in enumerate(chunk):
-                if (i + 1) % 10 == 0:
-                    print(f"{i+1}/{len(inputs)}...")
                 # Fetch few-shot seed examples
-                examples = self.config["seed_examples"]
+                examples = self.config.get("seed_examples", [])
 
                 final_prompt = self.task.construct_prompt(input_i, examples)
                 num_tokens = calculate_num_tokens(self.config, final_prompt)
