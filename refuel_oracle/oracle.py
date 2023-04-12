@@ -19,6 +19,7 @@ class Oracle:
         self.config = Config.from_json(config)
         self.llm = LLMFactory.from_config(self.config)
         self.task = TaskFactory.from_config(self.config)
+        self.example_selector = None
         if "example_selector" in self.config.keys():
             self.example_selector = ExampleSelector(self.config)
 
