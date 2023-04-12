@@ -8,7 +8,8 @@ from refuel_oracle.config import Config
 from refuel_oracle.schema import LLMAnnotation, Metric, MetricResult
 from refuel_oracle.tasks import BaseTask
 from refuel_oracle.utils import extract_valid_json_substring
-from sklearn.metrics import accuracy_score, confusion_matrix
+from sklearn.metrics import accuracy_score, confusion_matrix, ConfusionMatrixDisplay
+import matplotlib.pyplot as plt
 
 
 class ClassificationTask(BaseTask):
@@ -147,6 +148,12 @@ class ClassificationTask(BaseTask):
                 value={"labels": labels_list, "value": confusion},
             )
         )
+        disp = ConfusionMatrixDisplay(
+            confusion_matrix=confusion, display_labels=labels_list
+        )
+        disp.plot()
+        plt.xticks(rotation=90)
+        plt.show()
 
         # error examples
         # TODO, need a way to access input dataset in order to display them here
