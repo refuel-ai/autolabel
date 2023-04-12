@@ -79,7 +79,7 @@ class Oracle:
                 if self.example_selector:
                     examples = self.example_selector.get_examples(input_i)
                 else:
-                    examples = self.config["seed_examples"]
+                    examples = self.config.get("seed_examples", [])
                 # Construct Prompt to pass to LLM
                 final_prompt = self.task.construct_prompt(input_i, examples)
                 final_prompts.append(final_prompt)
