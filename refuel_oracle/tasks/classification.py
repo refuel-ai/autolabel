@@ -154,7 +154,7 @@ class ClassificationTask(BaseTask):
         disp.plot(cmap="Purples")
         plt.xticks(rotation=90)
         plt.show(block=False)
-        input("Displaying confusion matrix. Press any key to continue..")
+        input("Displaying confusion matrix. Press enter to continue..")
 
         # error examples
         # TODO, need a way to access input dataset in order to display them here
