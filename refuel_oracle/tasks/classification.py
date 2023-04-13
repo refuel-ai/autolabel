@@ -1,6 +1,7 @@
 import json
 from typing import List
 
+import matplotlib.pyplot as plt
 from langchain.prompts.prompt import PromptTemplate
 from langchain.schema import Generation
 from loguru import logger
@@ -8,8 +9,7 @@ from refuel_oracle.config import Config
 from refuel_oracle.schema import LLMAnnotation, Metric, MetricResult
 from refuel_oracle.tasks import BaseTask
 from refuel_oracle.utils import extract_valid_json_substring
-from sklearn.metrics import accuracy_score, confusion_matrix, ConfusionMatrixDisplay
-import matplotlib.pyplot as plt
+from sklearn.metrics import ConfusionMatrixDisplay, accuracy_score, confusion_matrix
 
 
 class ClassificationTask(BaseTask):
@@ -77,7 +77,7 @@ class ClassificationTask(BaseTask):
             seed_examples="\n".join(formatted_examples), current_example=current_example
         )
 
-    def parse_llm_response(self, response: Generation, input_i: str) -> LLMAnnotation:
+    def parse_llm_response(self, response: Generation, input: str) -> LLMAnnotation:
         output = {}
         try:
             completion_text = extract_valid_json_substring(response.text)
