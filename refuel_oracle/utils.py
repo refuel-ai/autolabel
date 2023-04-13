@@ -24,11 +24,11 @@ PROVIDER_TO_COST_PER_TOKEN = {
 }
 PROVIDER_TO_COST_OF_COMPLETION = {
     LLMProvider.openai: {
-        "text-davinci-003": 0,
-        "text-curie-001": 0,
+        "text-davinci-003": 0.02 / 1000,
+        "text-curie-001": 0.002 / 1000,
     },
     LLMProvider.openai_chat: {
-        "gpt-3.5-turbo": 0,
+        "gpt-3.5-turbo": 0.002 / 1000,
         "gpt-4": 0.06 / 1000,  # $0.03 per 1000 tokens in response
     },
     LLMProvider.anthropic: {
