@@ -29,7 +29,7 @@ PROVIDER_TO_COST_OF_COMPLETION = {
     },
     LLMProvider.openai_chat: {
         "gpt-3.5-turbo": 0.002 / 1000,
-        "gpt-4": 0.06 / 1000,  # $0.03 per 1000 tokens in response
+        "gpt-4": 0.06 / 1000,  # $0.06 per 1000 tokens in response
     },
     LLMProvider.anthropic: {
         # $8.60 per million characters in response
