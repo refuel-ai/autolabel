@@ -25,14 +25,16 @@ class Oracle:
 
     # TODO: all this will move to a separate input parser class
     # this is a temporary solution to quickly add this feature and unblock expts
-    def _read_csv(self, csv_file: str, max_items: int = None) -> Tuple:
+    def _read_csv(
+        self, csv_file: str, max_items: int = None, start_index: int = 0
+    ) -> Tuple:
         dataset_schema = self.config.get("dataset_schema", {})
         delimiter = dataset_schema.get("delimiter", self.DEFAULT_SEPARATOR)
         input_columns = dataset_schema.get("input_columns", [])
         input_template = dataset_schema.get("input_template")
         label_column = dataset_schema.get("label_column")
 
-        dat = pd.read_csv(csv_file, sep=delimiter)
+        dat = pd.read_csv(csv_file, sep=delimiter)[start_index:]
         if max_items and max_items > 0:
             max_items = min(max_items, len(dat))
             dat = dat[:max_items]
@@ -59,9 +61,13 @@ class Oracle:
         return (dat, inputs, gt_labels)
 
     def annotate(
-        self, dataset: str, max_items: int = 100, output_name: str = None
+        self,
+        dataset: str,
+        max_items: int = 100,
+        output_name: str = None,
+        start_index: int = 0,
     ) -> None:
-        df, inputs, gt_labels = self._read_csv(dataset, max_items)
+        df, inputs, gt_labels = self._read_csv(dataset, max_items, start_index)
 
         llm_labels = []
         prompt_list = []
