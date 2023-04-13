@@ -1,7 +1,7 @@
 import tiktoken
 
 from refuel_oracle.config import Config
-from refuel_oracle.llm import LLMProvider
+from refuel_oracle.llm import LLMProvider, LLMFactory
 from anthropic import tokenizer
 import json
 import regex
@@ -13,15 +13,29 @@ PROVIDER_TO_COST_PER_TOKEN = {
     },
     LLMProvider.openai_chat: {
         "gpt-3.5-turbo": 0.002 / 1000,
-        # TODO: gpt-4 needs a better pricing computation
-        # since prompt vs completion tokens are priced differently
-        "gpt-4": 0.03 / 1000,
+        "gpt-4": 0.03 / 1000,  # $0.03 per 1000 tokens for prompts
     },
     LLMProvider.anthropic: {
-        # TODO prompt vs completion are priced differently
-        # price is per character, not tokens
-        "claude-v1": 8.60
-        / 1000000,  # $8.60 per million characters for completion
+        # $2.90 per million characters for prompts
+        # For Claude the average token is about 3.5 characters
+        "claude-v1": (2.90 / 1000000)
+        * 3.5,
+    },
+}
+PROVIDER_TO_COST_OF_COMPLETION = {
+    LLMProvider.openai: {
+        "text-davinci-003": 0.02 / 1000,
+        "text-curie-001": 0.002 / 1000,
+    },
+    LLMProvider.openai_chat: {
+        "gpt-3.5-turbo": 0.002 / 1000,
+        "gpt-4": 0.06 / 1000,  # $0.06 per 1000 tokens in response
+    },
+    LLMProvider.anthropic: {
+        # $8.60 per million characters in response
+        # For Claude the average token is about 3.5 characters
+        "claude-v1": (8.60 / 1000000)
+        * 3.5,
     },
 }
 
@@ -55,8 +69,20 @@ def calculate_cost(config: Config, num_tokens: int) -> float:
     """
     llm_provider = config.get_provider()
     llm_model = config.get_model_name()
-    cost_per_token = PROVIDER_TO_COST_PER_TOKEN[llm_provider][llm_model]
-    return num_tokens * cost_per_token
+    cost_per_prompt_token = PROVIDER_TO_COST_PER_TOKEN[llm_provider][llm_model]
+    cost_per_completion_token = PROVIDER_TO_COST_OF_COMPLETION[llm_provider][llm_model]
+    if llm_provider == "anthropic":
+        max_tokens = LLMFactory.PROVIDER_TO_DEFAULT_PARAMS[llm_provider].get(
+            "max_tokens_to_sample", 0
+        )
+    else:
+        max_tokens = LLMFactory.PROVIDER_TO_DEFAULT_PARAMS[llm_provider].get(
+            "max_tokens", 0
+        )
+    return (num_tokens * cost_per_prompt_token) + (
+        cost_per_completion_token * max_tokens
+    )
+
 
 def extract_valid_json_substring(string):
     pattern = (
