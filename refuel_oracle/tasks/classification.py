@@ -42,6 +42,9 @@ class ClassificationTask(BaseTask):
         labels_list = self.config.get("labels_list", [])
         num_labels = len(labels_list)
         task_prompt = self.config.get("task_prompt")
+        output_prompt = self.config.get(
+            "output_prompt", self.DEFAULT_OUTPUT_FORMAT_PROMPT
+        )
         if not task_prompt:
             task_prompt = self.DEFAULT_TASK_PROMPT.format(
                 num_labels=num_labels, labels_list="\n".join(labels_list)
@@ -54,7 +57,7 @@ class ClassificationTask(BaseTask):
         return pt.partial(
             prefix_prompt=prefix_prompt,
             task_prompt=task_prompt,
-            output_prompt=self.DEFAULT_OUTPUT_FORMAT_PROMPT,
+            output_prompt=output_prompt,
         )
 
     def construct_prompt(self, input: str, examples: List) -> str:
