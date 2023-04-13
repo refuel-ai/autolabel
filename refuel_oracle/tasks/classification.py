@@ -77,7 +77,7 @@ class ClassificationTask(BaseTask):
             seed_examples="\n".join(formatted_examples), current_example=current_example
         )
 
-    def parse_llm_response(self, response: Generation) -> LLMAnnotation:
+    def parse_llm_response(self, response: Generation, input_i: str) -> LLMAnnotation:
         output = {}
         try:
             completion_text = extract_valid_json_substring(response.text)
