@@ -134,11 +134,6 @@ class EntityRecognitionTask(BaseTask):
             List[MetricResult]: list of metrics and corresponding values
         """
         eval_metrics = []
-        logger.info(
-            f"llm_labels labeled: {[l.successfully_labeled for l in llm_labels]}"
-        )
-        logger.info(f"llm_labels: {[l.label for l in llm_labels]}")
-        logger.info(f"gt_labels: {gt_labels}")
 
         # support
         support = len(gt_labels)
