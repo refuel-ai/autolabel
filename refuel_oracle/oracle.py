@@ -8,6 +8,7 @@ from refuel_oracle.example_selector import ExampleSelector
 from refuel_oracle.llm import LLMFactory
 from refuel_oracle.tasks import TaskFactory
 from refuel_oracle.utils import calculate_cost, calculate_num_tokens
+from tqdm import tqdm
 
 
 class Oracle:
@@ -25,14 +26,16 @@ class Oracle:
 
     # TODO: all this will move to a separate input parser class
     # this is a temporary solution to quickly add this feature and unblock expts
-    def _read_csv(self, csv_file: str, max_items: int = None) -> Tuple:
+    def _read_csv(
+        self, csv_file: str, max_items: int = None, start_index: int = 0
+    ) -> Tuple:
         dataset_schema = self.config.get("dataset_schema", {})
         delimiter = dataset_schema.get("delimiter", self.DEFAULT_SEPARATOR)
         input_columns = dataset_schema.get("input_columns", [])
         input_template = dataset_schema.get("input_template")
         label_column = dataset_schema.get("label_column")
 
-        dat = pd.read_csv(csv_file, sep=delimiter)
+        dat = pd.read_csv(csv_file, sep=delimiter)[start_index:]
         if max_items and max_items > 0:
             max_items = min(max_items, len(dat))
             dat = dat[:max_items]
@@ -59,16 +62,20 @@ class Oracle:
         return (dat, inputs, gt_labels)
 
     def annotate(
-        self, dataset: str, max_items: int = 100, output_name: str = None
+        self,
+        dataset: str,
+        max_items: int = 100,
+        output_name: str = None,
+        start_index: int = 0,
     ) -> None:
-        df, inputs, gt_labels = self._read_csv(dataset, max_items)
+        df, inputs, gt_labels = self._read_csv(dataset, max_items, start_index)
 
         llm_labels = []
         prompt_list = []
         total_tokens = 0
 
         num_sections = max(max_items / self.CHUNK_SIZE, 1)
-        for chunk_id, chunk in enumerate(np.array_split(inputs, num_sections)):
+        for chunk_id, chunk in enumerate(tqdm(np.array_split(inputs, num_sections))):
             if chunk_id % 10 == 0:
                 print(
                     f"Labeling {chunk_id*self.CHUNK_SIZE+1}-{chunk_id*self.CHUNK_SIZE+(self.CHUNK_SIZE*10)}"

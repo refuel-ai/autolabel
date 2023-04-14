@@ -1,7 +1,6 @@
 import json
 from typing import List
 
-import matplotlib.pyplot as plt
 from langchain.prompts.prompt import PromptTemplate
 from langchain.schema import Generation
 from loguru import logger
@@ -9,13 +8,13 @@ from refuel_oracle.config import Config
 from refuel_oracle.schema import LLMAnnotation, Metric, MetricResult
 from refuel_oracle.tasks import BaseTask
 from refuel_oracle.utils import extract_valid_json_substring
-from sklearn.metrics import ConfusionMatrixDisplay, accuracy_score, confusion_matrix
+from sklearn.metrics import accuracy_score, confusion_matrix, ConfusionMatrixDisplay
+import matplotlib.pyplot as plt
 
 
-class ClassificationTask(BaseTask):
-    DEFAULT_TASK_PROMPT = "Your job is to correctly label the provided input example into one of the following {num_labels} categories.\nCategories:\n{labels_list}\n"
-    JSON_OUTPUT_FORMAT_PROMPT = 'You will return the answer in JSON format with two keys: {"answered": "can you answer this question. say yes or no", "label": "the correct label"}'
-    CSV_OUTPUT_FORMAT_PROMPT = 'You will return the answer in CSV format with two elements: "can you answer this question. say Yes or No", "the correct label"'
+class ClassificationTaskCSV(BaseTask):
+    DEFAULT_TASK_PROMPT = "Your job is to correctly label the provided input example into one of the following {num_labels} options. Options:\n{labels_list}\n"
+    DEFAULT_OUTPUT_FORMAT_PROMPT = 'You will return the answer in CSV format with two elements: "can you answer this question. say Yes or No", "the correct label"'
     PROMPT_TEMPLATE = "{prefix_prompt}\n{task_prompt}\n\n{output_prompt}\n\nSome examples with their output answers are provided below:\n{seed_examples}\n Now I want you to label the following example in the same way: {current_example}"
     PROMPT_TEMPLATE_VARIABLES = [
         "prefix_prompt",
@@ -29,15 +28,11 @@ class ClassificationTask(BaseTask):
     NULL_LABEL_TOKEN = "NO_LABEL"
 
     def __init__(self, config: Config) -> None:
-        self.output_format = config.get("output_format", "json")
         super().__init__(config)
 
-    def _to_output_format(self, label: str) -> str:
-        if self.output_format == "json":
-            output = {"answered": "yes", "label": label}
-            return json.dumps(output)
-        elif self.output_format == "csv":
-            return f"yes, {label}"
+    def _to_default_output_format(self, label: str) -> str:
+        output = f"yes, {label}"
+        return output
 
     def initialize_prompt_template(self) -> PromptTemplate:
         # provide context about the problem domain
@@ -47,9 +42,6 @@ class ClassificationTask(BaseTask):
         labels_list = self.config.get("labels_list", [])
         num_labels = len(labels_list)
         task_prompt = self.config.get("task_prompt")
-        output_prompt = self.config.get(
-            "output_prompt", self.DEFAULT_OUTPUT_FORMAT_PROMPT
-        )
         if not task_prompt:
             task_prompt = self.DEFAULT_TASK_PROMPT.format(
                 num_labels=num_labels, labels_list="\n".join(labels_list)
@@ -59,15 +51,10 @@ class ClassificationTask(BaseTask):
             input_variables=self.PROMPT_TEMPLATE_VARIABLES,
             template=self.PROMPT_TEMPLATE,
         )
-
-        if self.output_format == "csv":
-            output_prompt = self.CSV_OUTPUT_FORMAT_PROMPT
-        else:
-            output_prompt = self.JSON_OUTPUT_FORMAT_PROMPT
         return pt.partial(
             prefix_prompt=prefix_prompt,
             task_prompt=task_prompt,
-            output_prompt=output_prompt,
+            output_prompt=self.DEFAULT_OUTPUT_FORMAT_PROMPT,
         )
 
     def construct_prompt(self, input: str, examples: List) -> str:
@@ -78,7 +65,7 @@ class ClassificationTask(BaseTask):
         )
         formatted_examples = []
         for eg in examples:
-            expected_output = self._to_output_format(eg["output"])
+            expected_output = self._to_default_output_format(eg["output"])
             formatted_examples.append(
                 example_prompt.format(example=eg["example"], output=expected_output)
             )
@@ -90,29 +77,8 @@ class ClassificationTask(BaseTask):
             seed_examples="\n".join(formatted_examples), current_example=current_example
         )
 
-    def parse_llm_response(self, response: Generation, input: str) -> LLMAnnotation:
-        output = {}
-        try:
-            completion_text = extract_valid_json_substring(response.text)
-            output = json.loads(completion_text.strip())
-        except Exception as e:
-            logger.info(f"Error parsing LLM response: {response.text}")
-
-        successfully_labeled = output.get("answered", "no")
-        if successfully_labeled.lower() == "yes":
-            llm_label = output.get("label") or self.NULL_LABEL_TOKEN
-            llm_label = str(llm_label)
-        else:
-            llm_label = self.NULL_LABEL_TOKEN
-
-        # TODO: parse generation info correctly to fetch & transform logprobs -> score
-        return LLMAnnotation(
-            successfully_labeled=successfully_labeled,
-            label=llm_label,
-            generation_info=response.generation_info,
-        )
-
-    def parse_csv_llm_response(self, response: Generation) -> LLMAnnotation:
+    def parse_llm_response(self, response: Generation) -> LLMAnnotation:
+        """Parse the LLM response to extract the generated label"""
         completion_text = response.text.strip().split(",")
         if len(completion_text) != 2:
             successfully_labeled = "no"

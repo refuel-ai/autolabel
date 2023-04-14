@@ -1,11 +1,14 @@
 import copy
-from typing import Dict, List
 from enum import Enum
-from langchain.chat_models import ChatOpenAI
-from langchain.llms import Anthropic, BaseLLM, Cohere, OpenAI
-from langchain.schema import HumanMessage, LLMResult
+from typing import Dict, List
 
+from langchain.chat_models import ChatOpenAI
+from langchain.llms import Anthropic, BaseLLM, Cohere, HuggingFacePipeline, OpenAI
+from langchain.schema import HumanMessage, LLMResult
 from refuel_oracle.config import Config
+from transformers import AutoModelForSeq2SeqLM, AutoTokenizer, pipeline
+import torch
+
 
 # All available LLM providers
 class LLMProvider(str, Enum):
@@ -13,6 +16,7 @@ class LLMProvider(str, Enum):
     openai_chat = "openai_chat"
     anthropic = "anthropic"
     cohere = "cohere"
+    huggingface = "huggingface"
 
 
 class LLMLabeler:
@@ -35,7 +39,6 @@ class LLMLabeler:
 
 
 class LLMFactory:
-
     # Default parameters that we will use to initialize LLMs from a provider
     PROVIDER_TO_DEFAULT_PARAMS = {
         LLMProvider.openai: {
@@ -54,6 +57,10 @@ class LLMFactory:
             "max_tokens_to_sample": 100,
             "temperature": 0.0,
         },
+        LLMProvider.huggingface: {
+            "max_tokens": 30,
+            "temperature": 0.0,
+        },
     }
 
     # Provider mapping to the langchain LLM wrapper
@@ -62,6 +69,7 @@ class LLMFactory:
         LLMProvider.cohere: Cohere,
         LLMProvider.openai: OpenAI,
         LLMProvider.openai_chat: ChatOpenAI,
+        LLMProvider.huggingface: HuggingFacePipeline,
     }
 
     @staticmethod
@@ -87,6 +95,23 @@ class LLMFactory:
         )
         if llm_provider in [LLMProvider.openai, LLMProvider.openai_chat]:
             base_llm = llm_cls(model_name=llm_model, **llm_params)
+        elif llm_provider == LLMProvider.huggingface:
+            tokenizer = AutoTokenizer.from_pretrained(llm_model)
+            quantize_bits = config.get("quantize", "")
+            if quantize_bits == "8":
+                model = AutoModelForSeq2SeqLM.from_pretrained(
+                    llm_model, load_in_8bit=True, device_map="auto"
+                )
+            elif quantize_bits == "16":
+                model = AutoModelForSeq2SeqLM.from_pretrained(
+                    llm_model, torch_dtype=torch.float16, device_map="auto"
+                )
+            else:
+                model = AutoModelForSeq2SeqLM.from_pretrained(
+                    llm_model, device_map="auto"
+                )
+            pipe = pipeline("text2text-generation", model=model, tokenizer=tokenizer)
+            base_llm = llm_cls(pipeline=pipe, model_kwargs=llm_params)
         else:
             base_llm = llm_cls(model=llm_model, **llm_params)
         return LLMLabeler(config, base_llm)
