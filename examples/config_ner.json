@@ -25,21 +25,15 @@
             "output": [
                 {
                     "type": "Location",
-                    "text": "Germany",
-                    "start": 0,
-                    "end": 7
+                    "text": "Germany"
                 },
                 {
                     "type": "Organization",
-                    "text": "European Union",
-                    "start": 27,
-                    "end": 62
+                    "text": "European Union"
                 },
                 {
                     "type": "Location",
-                    "text": "Britain",
-                    "start": 86,
-                    "end": 93
+                    "text": "Britain"
                 }
             ]
         }

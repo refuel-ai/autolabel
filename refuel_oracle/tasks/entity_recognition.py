@@ -13,7 +13,7 @@ from refuel_oracle.tasks import BaseTask
 class EntityRecognitionTask(BaseTask):
 
     DEFAULT_TASK_PROMPT = "Your job is to extract named entities mentioned in text, and classify them into one of the following {num_labels} categories.\nCategories:\n{labels_list}\n "
-    DEFAULT_OUTPUT_FORMAT_PROMPT = 'You will return the answer in JSON format with two keys: {"answered": can you answer this question. say YES or NO, "entities": a JSON list of extracted entities from text, with the text spans}.'
+    DEFAULT_OUTPUT_FORMAT_PROMPT = 'You will return the answer in JSON format with two keys: {"answered": can you answer this question. say YES or NO, "entities": a JSON list of extracted entities from text}.'
     PROMPT_TEMPLATE = "{prefix_prompt}\n{task_prompt}\n{output_prompt}\n\nSome examples with their output answers are provided below:\n{seed_examples}\nBegin:{current_example}"
     PROMPT_TEMPLATE_VARIABLES = [
         "prefix_prompt",
@@ -88,29 +88,23 @@ class EntityRecognitionTask(BaseTask):
         if successfully_labeled.lower() == "yes":
             llm_label = output.get("entities") or self.NULL_LABEL
 
+            # create a frequency dict of each named entity in the input to determine text spans for repeated entities
+            frequency_count = {label["text"]: 0 for label in llm_label}
+
             for label in llm_label:
                 text = label["text"]
                 matches = [i.start() for i in re.finditer(text, input)]
-                if len(matches) > 0:
-                    closest_start_idx = matches[0]
-                    closest_end_idx = closest_start_idx + len(text)
-                    closest_interval_dist = abs(
-                        label["start"] - closest_start_idx
-                    ) + abs(label["end"] - closest_end_idx)
-                    for start_idx in matches:
-                        end_idx = start_idx + len(text)
-                        interval_dist = abs(label["start"] - start_idx) + abs(
-                            label["end"] - end_idx
-                        )
-                        if interval_dist < closest_interval_dist:
-                            closest_start_idx = start_idx
-                            closest_end_idx = end_idx
-                            closest_interval_dist = interval_dist
-                    label["start"] = closest_start_idx
-                    label["end"] = closest_end_idx
-                else:
-                    label["start"] = matches[0]
-                    label["end"] = matches[0] + len(label.get("text", ""))
+                # if no occurence of named entity in input, default text span to start: -1, end: -1
+                if len(matches) == 0:
+                    label["start"] = -1
+                    label["end"] = -1
+                count = frequency_count[text]
+                # if count of the named entity is greater than the number of matches, default to last found match
+                if count >= len(matches):
+                    count = -1
+                label["start"] = matches[count]
+                label["end"] = matches[count] + len(text)
+                frequency_count[text] += 1
         else:
             llm_label = self.NULL_LABEL
 
