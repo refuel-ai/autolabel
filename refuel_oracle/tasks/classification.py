@@ -47,9 +47,6 @@ class ClassificationTask(BaseTask):
         labels_list = self.config.get("labels_list", [])
         num_labels = len(labels_list)
         task_prompt = self.config.get("task_prompt")
-        output_prompt = self.config.get(
-            "output_prompt", self.DEFAULT_OUTPUT_FORMAT_PROMPT
-        )
         if not task_prompt:
             task_prompt = self.DEFAULT_TASK_PROMPT.format(
                 num_labels=num_labels, labels_list="\n".join(labels_list)
@@ -89,7 +86,7 @@ class ClassificationTask(BaseTask):
         return self.prompt_template.format(
             seed_examples="\n".join(formatted_examples), current_example=current_example
         )
-    
+
     def parse_llm_response(self, response: Generation, input: str) -> LLMAnnotation:
         if self.output_format == "json":
             return self.parse_json_llm_response(response)
