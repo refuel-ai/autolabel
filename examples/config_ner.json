@@ -16,12 +16,26 @@
         "input_columns": [
             "text"
         ],
-        "delimiter": "\t"
+        "label_column": "llm_label",
+        "delimiter": "%"
     },
     "seed_examples": [
         {
             "example": "Germany's representative to the European Union's veterinary committee said on Wednesday that consumers should buy sheepmeat from countries other than Britain",
-            "output": [{"type": "Location", "text": "Germany", "start": 0, "end": 7}, {"type": "Organization", "text": "European Union", "start": 27, "end": 62}, {"type": "Location", "text": "Britain", "start": 86, "end": 93}]
+            "output": [
+                {
+                    "type": "Location",
+                    "text": "Germany"
+                },
+                {
+                    "type": "Organization",
+                    "text": "European Union"
+                },
+                {
+                    "type": "Location",
+                    "text": "Britain"
+                }
+            ]
         }
     ]
 }
