@@ -89,8 +89,14 @@ class ClassificationTask(BaseTask):
         return self.prompt_template.format(
             seed_examples="\n".join(formatted_examples), current_example=current_example
         )
-
+    
     def parse_llm_response(self, response: Generation, input: str) -> LLMAnnotation:
+        if self.output_format == "json":
+            return self.parse_json_llm_response(response)
+        elif self.output_format == "csv":
+            return self.parse_csv_llm_response(response)
+
+    def parse_json_llm_response(self, response: Generation) -> LLMAnnotation:
         output = {}
         try:
             completion_text = extract_valid_json_substring(response.text)
