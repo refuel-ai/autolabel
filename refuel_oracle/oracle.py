@@ -95,9 +95,11 @@ class Oracle:
                 prompt_list.append(final_prompt)
             # Get response from LLM
             response = self.llm.generate(final_prompts)
-            for response_item in response.generations:
+            for i in range(len(response.generations)):
+                response_item = response.generations[i]
+                input_i = chunk[i]
                 generation = response_item[0]
-                llm_labels.append(self.task.parse_llm_response(generation))
+                llm_labels.append(self.task.parse_llm_response(generation, input_i))
 
         # if true labels are provided, evaluate accuracy of predictions
         if gt_labels:
