@@ -83,9 +83,14 @@ class ClassificationTaskCSV(BaseTask):
         if len(completion_text) != 2:
             successfully_labeled = "no"
             llm_label = self.NULL_LABEL_TOKEN
-            logger.info(f"Error parsing LLM response: {response.text}")
+            logger.error(f"Error parsing LLM response: {response.text}")
+            return LLMAnnotation(
+                successfully_labeled=successfully_labeled,
+                label=llm_label,
+                generation_info=response.generation_info,
+            )
 
-        successfully_labeled = completion_text[0].lower()
+        successfully_labeled = completion_text[0].strip().lower()
         if successfully_labeled == "yes":
             llm_label = completion_text[1].strip()
         else:
@@ -133,7 +138,7 @@ class ClassificationTaskCSV(BaseTask):
         pred_labels = [l.label for l in llm_labels]
         filtered_gt_labels = []
         filtered_pred_labels = []
-        for ind, label in enumerate(filtered_pred_labels):
+        for ind, label in enumerate(pred_labels):
             if label != self.NULL_LABEL_TOKEN:
                 filtered_gt_labels.append(gt_labels[ind])
                 filtered_pred_labels.append(pred_labels[ind])

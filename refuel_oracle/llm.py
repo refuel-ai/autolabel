@@ -7,6 +7,7 @@ from langchain.llms import Anthropic, BaseLLM, Cohere, HuggingFacePipeline, Open
 from langchain.schema import HumanMessage, LLMResult
 from refuel_oracle.config import Config
 from transformers import AutoModelForSeq2SeqLM, AutoTokenizer, pipeline
+import torch
 
 
 # All available LLM providers
@@ -96,7 +97,19 @@ class LLMFactory:
             base_llm = llm_cls(model_name=llm_model, **llm_params)
         elif llm_provider == LLMProvider.huggingface:
             tokenizer = AutoTokenizer.from_pretrained(llm_model)
-            model = AutoModelForSeq2SeqLM.from_pretrained(llm_model)
+            quantize_bits = config.get("quantize", "")
+            if quantize_bits == "8":
+                model = AutoModelForSeq2SeqLM.from_pretrained(
+                    llm_model, load_in_8bit=True, device_map="auto"
+                )
+            elif quantize_bits == "16":
+                model = AutoModelForSeq2SeqLM.from_pretrained(
+                    llm_model, torch_dtype=torch.float16, device_map="auto"
+                )
+            else:
+                model = AutoModelForSeq2SeqLM.from_pretrained(
+                    llm_model, device_map="auto"
+                )
             pipe = pipeline("text2text-generation", model=model, tokenizer=tokenizer)
             base_llm = llm_cls(pipeline=pipe, model_kwargs=llm_params)
         else:

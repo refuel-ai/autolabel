@@ -14,7 +14,8 @@ import matplotlib.pyplot as plt
 
 class ClassificationTask(BaseTask):
     DEFAULT_TASK_PROMPT = "Your job is to correctly label the provided input example into one of the following {num_labels} categories.\nCategories:\n{labels_list}\n"
-    DEFAULT_OUTPUT_FORMAT_PROMPT = 'You will return the answer in JSON format with two keys: {"answered": "can you answer this question. say YES or NO", "label": "the correct label"}'
+    JSON_OUTPUT_FORMAT_PROMPT = 'You will return the answer in JSON format with two keys: {"answered": "can you answer this question. say yes or no", "label": "the correct label"}'
+    CSV_OUTPUT_FORMAT_PROMPT = 'You will return the answer in CSV format with two elements: "can you answer this question. say Yes or No", "the correct label"'
     PROMPT_TEMPLATE = "{prefix_prompt}\n{task_prompt}\n\n{output_prompt}\n\nSome examples with their output answers are provided below:\n{seed_examples}\n Now I want you to label the following example in the same way: {current_example}"
     PROMPT_TEMPLATE_VARIABLES = [
         "prefix_prompt",
@@ -28,11 +29,15 @@ class ClassificationTask(BaseTask):
     NULL_LABEL_TOKEN = "NO_LABEL"
 
     def __init__(self, config: Config) -> None:
+        self.output_format = config.get("output_format", "json")
         super().__init__(config)
 
-    def _to_default_output_format(self, label: str) -> str:
-        output = {"answered": "yes", "label": label}
-        return json.dumps(output)
+    def _to_output_format(self, label: str) -> str:
+        if self.output_format == "json":
+            output = {"answered": "yes", "label": label}
+            return json.dumps(output)
+        elif self.output_format == "csv":
+            return f"yes, {label}"
 
     def initialize_prompt_template(self) -> PromptTemplate:
         # provide context about the problem domain
@@ -54,6 +59,11 @@ class ClassificationTask(BaseTask):
             input_variables=self.PROMPT_TEMPLATE_VARIABLES,
             template=self.PROMPT_TEMPLATE,
         )
+
+        if self.output_format == "csv":
+            output_prompt = self.CSV_OUTPUT_FORMAT_PROMPT
+        else:
+            output_prompt = self.JSON_OUTPUT_FORMAT_PROMPT
         return pt.partial(
             prefix_prompt=prefix_prompt,
             task_prompt=task_prompt,
@@ -68,7 +78,7 @@ class ClassificationTask(BaseTask):
         )
         formatted_examples = []
         for eg in examples:
-            expected_output = self._to_default_output_format(eg["output"])
+            expected_output = self._to_output_format(eg["output"])
             formatted_examples.append(
                 example_prompt.format(example=eg["example"], output=expected_output)
             )
@@ -81,6 +91,12 @@ class ClassificationTask(BaseTask):
         )
 
     def parse_llm_response(self, response: Generation) -> LLMAnnotation:
+        if self.output_format == "json":
+            return self.parse_json_llm_response(response)
+        elif self.output_format == "csv":
+            return self.parse_csv_llm_response(response)
+
+    def parse_json_llm_response(self, response: Generation) -> LLMAnnotation:
         output = {}
         try:
             completion_text = extract_valid_json_substring(response.text)
@@ -92,6 +108,31 @@ class ClassificationTask(BaseTask):
         if successfully_labeled.lower() == "yes":
             llm_label = output.get("label") or self.NULL_LABEL_TOKEN
             llm_label = str(llm_label)
+        else:
+            llm_label = self.NULL_LABEL_TOKEN
+
+        # TODO: parse generation info correctly to fetch & transform logprobs -> score
+        return LLMAnnotation(
+            successfully_labeled=successfully_labeled,
+            label=llm_label,
+            generation_info=response.generation_info,
+        )
+
+    def parse_csv_llm_response(self, response: Generation) -> LLMAnnotation:
+        completion_text = response.text.strip().split(",")
+        if len(completion_text) != 2:
+            successfully_labeled = "no"
+            llm_label = self.NULL_LABEL_TOKEN
+            logger.error(f"Error parsing LLM response: {response.text}")
+            return LLMAnnotation(
+                successfully_labeled=successfully_labeled,
+                label=llm_label,
+                generation_info=response.generation_info,
+            )
+
+        successfully_labeled = completion_text[0].strip().lower()
+        if successfully_labeled == "yes":
+            llm_label = completion_text[1].strip()
         else:
             llm_label = self.NULL_LABEL_TOKEN
 
@@ -135,7 +176,17 @@ class ClassificationTask(BaseTask):
 
         # accuracy
         pred_labels = [l.label for l in llm_labels]
-        accuracy = accuracy_score(gt_labels, pred_labels)
+        filtered_gt_labels = []
+        filtered_pred_labels = []
+        for ind, label in enumerate(pred_labels):
+            if label != self.NULL_LABEL_TOKEN:
+                filtered_gt_labels.append(gt_labels[ind])
+                filtered_pred_labels.append(pred_labels[ind])
+        if len(filtered_gt_labels) == 0:
+            logger.error("No labels were successfully labeled by the LLM")
+            accuracy = 0
+        else:
+            accuracy = accuracy_score(filtered_gt_labels, filtered_pred_labels)
         eval_metrics.append(
             MetricResult(metric_type=Metric.ACCURACY, name="accuracy", value=accuracy)
         )
