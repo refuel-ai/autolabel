@@ -7,3 +7,4 @@ scikit-learn
 tenacity
 tiktoken
 chromadb
+nervaluate

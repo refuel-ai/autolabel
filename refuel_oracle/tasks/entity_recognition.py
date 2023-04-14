@@ -5,6 +5,7 @@ from typing import List
 from langchain.prompts.prompt import PromptTemplate
 from langchain.schema import Generation
 from loguru import logger
+from nervaluate import Evaluator
 from refuel_oracle.config import Config
 from refuel_oracle.schema import LLMAnnotation, Metric, MetricResult
 from refuel_oracle.tasks import BaseTask
@@ -145,7 +146,57 @@ class EntityRecognitionTask(BaseTask):
                 value=fraction_completed,
             )
         )
+        llm_preds = [l.label for l in llm_labels]
 
-        # TODO: NER label quality metrics
+        llm_preds = [
+            [{**entity, "label": entity.pop("type")} for entity in llm_pred]
+            for llm_pred in llm_preds
+        ]
+
+        gt_labels = [
+            [{**entity, "label": entity.pop("type")} for entity in json.loads(gt_label)]
+            for gt_label in gt_labels
+        ]
+
+        entity_types_set = list(
+            set(
+                [
+                    gt_entity.get("label")
+                    for gt_label in gt_labels
+                    for gt_entity in gt_label
+                ]
+            )
+        )
+
+        evaluator = Evaluator(llm_preds, gt_labels, tags=entity_types_set)
+        results, results_per_tag = evaluator.evaluate()
+        precision = results.get("strict").get("precision")
+        recall = results.get("strict").get("recall")
+        f1 = results.get("strict").get("f1")
+
+        # precision and recall and f1 score
+        eval_metrics.append(
+            MetricResult(
+                metric_type=Metric.PRECISION,
+                name="precision",
+                value=precision,
+            )
+        )
+
+        eval_metrics.append(
+            MetricResult(
+                metric_type=Metric.RECALL,
+                name="recall",
+                value=recall,
+            )
+        )
+
+        eval_metrics.append(
+            MetricResult(
+                metric_type=Metric.F1,
+                name="f1",
+                value=f1,
+            )
+        )
 
         return eval_metrics
