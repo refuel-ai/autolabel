@@ -8,6 +8,7 @@ from refuel_oracle.example_selector import ExampleSelector
 from refuel_oracle.llm import LLMFactory
 from refuel_oracle.tasks import TaskFactory
 from refuel_oracle.utils import calculate_cost, calculate_num_tokens
+from tqdm import tqdm
 
 
 class Oracle:
@@ -74,7 +75,7 @@ class Oracle:
         total_tokens = 0
 
         num_sections = max(max_items / self.CHUNK_SIZE, 1)
-        for chunk_id, chunk in enumerate(np.array_split(inputs, num_sections)):
+        for chunk_id, chunk in enumerate(tqdm(np.array_split(inputs, num_sections))):
             if chunk_id % 10 == 0:
                 print(
                     f"Labeling {chunk_id*self.CHUNK_SIZE+1}-{chunk_id*self.CHUNK_SIZE+(self.CHUNK_SIZE*10)}"

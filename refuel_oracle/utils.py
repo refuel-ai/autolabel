@@ -2,7 +2,8 @@ import tiktoken
 
 from refuel_oracle.config import Config
 from refuel_oracle.llm import LLMProvider, LLMFactory
-from anthropic import tokenizer
+from anthropic import tokenizer as anthropic_tokenizer
+from transformers import AutoTokenizer
 import json
 import regex
 
@@ -51,7 +52,10 @@ def calculate_num_tokens(config: Config, string: str) -> int:
         int: num tokens
     """
     if config.get_provider() == "anthropic":
-        return tokenizer.count_tokens(string)
+        return anthropic_tokenizer.count_tokens(string)
+    elif config.get_provider() == "huggingface":
+        tokenizer = AutoTokenizer.from_pretrained(config.get_model_name())
+        return len(tokenizer.encode(string))
     encoding = tiktoken.encoding_for_model(config.get_model_name())
     num_tokens = len(encoding.encode(string))
     return num_tokens
