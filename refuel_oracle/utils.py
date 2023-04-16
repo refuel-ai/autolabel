@@ -1,11 +1,12 @@
-import tiktoken
-
-from refuel_oracle.config import Config
-from refuel_oracle.llm import LLMProvider, LLMFactory
-from anthropic import tokenizer as anthropic_tokenizer
-from transformers import AutoTokenizer
 import json
+
 import regex
+import tiktoken
+from anthropic import tokenizer as anthropic_tokenizer
+from langchain.document_loaders import WebBaseLoader
+from refuel_oracle.config import Config
+from refuel_oracle.llm import LLMFactory, LLMProvider
+from transformers import AutoTokenizer
 
 PROVIDER_TO_COST_PER_TOKEN = {
     LLMProvider.openai: {
@@ -101,3 +102,14 @@ def extract_valid_json_substring(string):
         except ValueError:
             pass
     return None
+
+
+def get_web_content(input_text):
+    if "web(" not in input_text:
+        return input_text
+
+    url = input_text[input_text.find("web(") + 4 : input_text.find(")")]
+
+    loader = WebBaseLoader(url)
+    data = loader.load()
+    return data[0].page_content
