@@ -1,0 +1,25 @@
+{
+    "project_name": "Foundry",
+    "task_type": "completion",
+    "provider_name": "openai_chat",
+    "model_name": "gpt-3.5-turbo",
+    "prefix_prompt": "You have expert knowledge of universities and companies in the United States. You know where they are located or headquartered. You'll be provided an educational institution or company and the state and city it's located in, and you have to output the valid 5-digit zip code.",
+    "dataset_schema": {
+        "input_columns": [
+            "Institution",
+            "llm_state",
+            "llm_city"
+        ],
+        "input_template": "{Institution}, located in {llm_city}, {llm_state}."
+    },
+    "seed_examples": [
+        {
+            "example": "Stanford University, located in Stanford, CA.",
+            "output": "94305"
+        },
+        {
+            "example": "aBeam Technologies, Inc., located in Hayward, CA.",
+            "output": "94541"
+        }
+    ]
+}
