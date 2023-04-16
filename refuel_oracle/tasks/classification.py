@@ -87,7 +87,7 @@ class ClassificationTask(BaseTask):
         return self.prompt_template.format(
             seed_examples="\n".join(formatted_examples), current_example=current_example
         )
-    
+
     def parse_llm_response(self, response: Generation, input: str) -> LLMAnnotation:
         if self.output_format == "json":
             return self.parse_json_llm_response(response)

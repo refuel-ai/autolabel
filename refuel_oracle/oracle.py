@@ -2,7 +2,6 @@ from typing import Tuple
 
 import numpy as np
 import pandas as pd
-
 from refuel_oracle.config import Config
 from refuel_oracle.example_selector import ExampleSelector
 from refuel_oracle.llm import LLMFactory
@@ -35,7 +34,7 @@ class Oracle:
         input_template = dataset_schema.get("input_template")
         label_column = dataset_schema.get("label_column")
 
-        dat = pd.read_csv(csv_file, sep=delimiter)[start_index:]
+        dat = pd.read_csv(csv_file, sep=delimiter, dtype="str")[start_index:]
         if max_items and max_items > 0:
             max_items = min(max_items, len(dat))
             dat = dat[:max_items]
@@ -64,11 +63,14 @@ class Oracle:
     def annotate(
         self,
         dataset: str,
-        max_items: int = 100,
+        max_items: int = None,
         output_name: str = None,
         start_index: int = 0,
     ) -> None:
         df, inputs, gt_labels = self._read_csv(dataset, max_items, start_index)
+
+        if not max_items:
+            max_items = len(df)
 
         llm_labels = []
         prompt_list = []
@@ -137,10 +139,6 @@ class Oracle:
         for chunk_id, chunk in enumerate(
             np.array_split(inputs[: len(inputs)], num_sections)
         ):
-            if chunk_id % 10 == 0:
-                print(
-                    f"Processing {chunk_id*self.CHUNK_SIZE+1}-{chunk_id*self.CHUNK_SIZE+(self.CHUNK_SIZE*10)}"
-                )
             for i, input_i in enumerate(chunk):
                 # Fetch few-shot seed examples
                 examples = self.config.get("seed_examples", [])
