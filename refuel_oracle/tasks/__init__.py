@@ -1,13 +1,15 @@
 from loguru import logger
+from refuel_oracle.config import Config
+
 from .base import BaseTask
 from .classification import ClassificationTask
+from .completion import CompletionTask
 from .entity_recognition import EntityRecognitionTask
-
-from refuel_oracle.config import Config
 
 TASK_TYPE_TO_IMPLEMENTATION = {
     "classification": ClassificationTask,
     "entity_recognition": EntityRecognitionTask,
+    "completion": CompletionTask,
 }
 
 
