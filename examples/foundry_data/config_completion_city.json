@@ -1,0 +1,24 @@
+{
+    "project_name": "Foundry",
+    "task_type": "completion",
+    "provider_name": "openai_chat",
+    "model_name": "gpt-3.5-turbo",
+    "prefix_prompt": "You have expert knowledge of universities and companies in the United States. You know where they are located or headquartered. You'll be provided an educational institution or company and the state it's located in, and you have to output the city it's located in.",
+    "dataset_schema": {
+        "input_columns": [
+            "Institution",
+            "llm_state"
+        ],
+        "input_template": "{Institution}, located in {llm_state}."
+    },
+    "seed_examples": [
+        {
+            "example": "Stanford University, located in CA.",
+            "output": "Stanford"
+        },
+        {
+            "example": "aBeam Technologies, Inc., located in CA.",
+            "output": "Hayward"
+        }
+    ]
+}

@@ -1,0 +1,22 @@
+{
+    "project_name": "Foundry",
+    "task_type": "completion",
+    "provider_name": "openai_chat",
+    "model_name": "gpt-3.5-turbo",
+    "model_params": {
+        "max_tokens": 512
+    },
+    "prefix_prompt": "You are an expert at parsing the text content of websites. You are provided the text content of a webpage from the House of Representatives website, and you must answer who are the representatives that are mentioned on that page. There might be up to 4 names on the webpage. Provide the names as a comma separated list.",
+    "dataset_schema": {
+        "input_columns": [
+            "llm_zip"
+        ],
+        "input_template": "web(https://ziplook.house.gov/htbin/findrep_house?ZIP={llm_zip})"
+    },
+    "seed_examples": [
+        {
+            "example": "'\n\n\n\n\n\n\n\n\n\n| house.gov\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n      Skip to main content\n    \n\n\n\n\n\n\n\n\nhouse.gov\n\nSearch: Search\n\n\n\nFind Your Representative\n\n\n\nEnter your zip code: \nLook up\n\n\n\n\n\n\n\n\nRepresentatives\n\n\nLeadership\n\n\nCommittees\n\n\nLegislative Activity\n\n\nThe House Explained\n\n\n\n\nSecondary navigation\n\n\nVisitors\n\n\nEducators and Students\n\n\nMedia\n\n\nDoing Business with the House\n\n\nEmployment\n\n\n\n\n\n\n\n\n\n      ☰\n    \n\n\n\n\nSearch: \nSearch\n\n\n\n\n\n\nRepresentatives\n\n\nLeadership\n\n\nCommittees\n\n\nLegislative Activity\n\n\nThe House Explained\n\n\n\n\nSecondary navigation\n\n\nVisitors\n\n\nEducators and Students\n\n\nMedia\n\n\nDoing Business with the House\n\n\nEmployment\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nProvide Additional Information\nThe information you provided (Zip code: 90089\n) overlaps multiple congressional districts.\nProviding additional information will allow an exact match.\n\n\nEnter Street Address\n\n\n\n\n\nSelect a State\nAlabama\nAlaska\nAmerican Samoa\nArizona\nArkansas\nCalifornia\nColorado\nConnecticut\nDelaware\nDistrict of Columbia\nFlorida\nGeorgia\nGuam\nHawaii\nIdaho\nIllinois\nIndiana\nIowa\nKansas\nKentucky\nLouisiana\nMaine\nMaryland\nMassachusetts\nMichigan\nMinnesota\nMississippi\nMissouri\nMontana\nNebraska\nNevada\nNew Hampshire\nNew Jersey\nNew Mexico\nNew York\nNorth Carolina\nNorth Dakota\nNorthern Mariana Islands\nOhio\nOklahoma\nOregon\nPennsylvania\nPuerto Rico\nRhode Island\nSouth Carolina\nSouth Dakota\nTennessee\nTexas\nUtah\nVermont\nVirgin Islands\nVirginia\nWashington\nWest Virginia\nWisconsin\nWyoming\n\n\n\n\n \n\n\n\n\n\n\n\r\n\t    Visit the \r\n\t    \r\n\t    United States Postal Service web site if you\r\n\t    need help determining your\r\n\t    \r\n\t    +4 zip code extension\n\n\n\n\n\n\n\nYour Possible Representatives\n\n\n\n\nJimmy Gomez \r\n        \t        Democrat\r\n\t\t\tCalifornia District 34\r\n\t\t    \n\n\n\n\nSydney Kamlager-Dove \r\n        \t        Democrat\r\n\t\t\tCalifornia District 37\r\n\t\t    \n\n\n\n\n\n\n\n\n\n\n\n\n\n\nU.S. House of Representatives\nWashington, DC 20515\nPhone: 202-224-3121\nTTY: 202-225-1904\n\n\n\n\n\n\n\n\n\nAccessibility\n\n\nContact Webmaster\n\n\nFeature Stories\n\n\nPrivacy Policy\n\n\nSite Map\n\n\nSite Tools\n\n\nTerms of Use\n\n\nWatch live.house.gov\n\n\n\n\n\n\n\n\n\n\n\n'",
+            "output": "Jimmy Gomez, Sydney Kamlager-Dove"
+        }
+    ]
+}
