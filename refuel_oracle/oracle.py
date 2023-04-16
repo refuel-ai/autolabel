@@ -6,7 +6,7 @@ from refuel_oracle.config import Config
 from refuel_oracle.example_selector import ExampleSelector
 from refuel_oracle.llm import LLMFactory
 from refuel_oracle.tasks import TaskFactory
-from refuel_oracle.utils import calculate_cost, calculate_num_tokens
+from refuel_oracle.utils import calculate_cost, calculate_num_tokens, get_web_content
 from tqdm import tqdm
 
 
@@ -44,7 +44,9 @@ class Oracle:
             # User has explicitly passed in a template to stitch together input columns. use this directly
             inputs = (
                 dat[input_columns]
-                .apply(lambda row: input_template.format(**row), axis=1)
+                .apply(
+                    lambda row: get_web_content(input_template.format(**row)), axis=1
+                )
                 .tolist()
             )
         else:
