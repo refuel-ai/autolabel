@@ -1,3 +1,4 @@
+anthropic
 langchain
 loguru
 numpy
