@@ -29,3 +29,19 @@ class BaseTask(ABC):
     @abstractmethod
     def eval(self, llm_labels: List, gt_labels: List) -> List[MetricResult]:
         pass
+
+    def get_single_input(self, input: Dict) -> str:
+        dataset_schema = self.config.get("dataset_schema", {})
+        if not dataset_schema:
+            raise ValueError("Dataset schema not found in config")
+
+        if dataset_schema.get("input_template", ""):
+            current_input = dataset_schema["input_template"].format(**input)
+        else:
+            input_column_list = dataset_schema.get("input_columns", [])
+            if len(input_column_list) != 1:
+                raise ValueError("Expected exactly one input column in dataset schema")
+
+            current_input = input[input_column_list[0]]
+
+        return current_input

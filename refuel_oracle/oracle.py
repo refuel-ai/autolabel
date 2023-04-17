@@ -1,4 +1,4 @@
-from typing import Tuple
+from typing import Tuple, List, Dict
 
 import numpy as np
 import pandas as pd
@@ -26,12 +26,11 @@ class Oracle:
     # TODO: all this will move to a separate input parser class
     # this is a temporary solution to quickly add this feature and unblock expts
     def _read_csv(
-        self, csv_file: str, max_items: int = None, start_index: int = 0
-    ) -> Tuple:
+        self, csv_file: str, max_items: int = None
+    ) -> Tuple[pd.DataFrame, List[Dict], List]:
         dataset_schema = self.config.get("dataset_schema", {})
         delimiter = dataset_schema.get("delimiter", self.DEFAULT_SEPARATOR)
         input_columns = dataset_schema.get("input_columns", [])
-        input_template = dataset_schema.get("input_template")
         label_column = dataset_schema.get("label_column")
 
         dat = pd.read_csv(csv_file, sep=delimiter, dtype="str")[start_index:]
@@ -39,24 +38,7 @@ class Oracle:
             max_items = min(max_items, len(dat))
             dat = dat[:max_items]
 
-        # construct input row
-        if input_template:
-            # User has explicitly passed in a template to stitch together input columns. use this directly
-            inputs = (
-                dat[input_columns]
-                .apply(lambda row: input_template.format(**row), axis=1)
-                .tolist()
-            )
-        else:
-            # use a default format
-            inputs = (
-                dat[input_columns]
-                .apply(
-                    lambda row: "; ".join([str(v) for (k, v) in row.items()]), axis=1
-                )
-                .tolist()
-            )
-
+        inputs = dat[input_columns].to_dict(orient="records")
         gt_labels = None if not label_column else dat[label_column].tolist()
         return (dat, inputs, gt_labels)
 
@@ -141,6 +123,7 @@ class Oracle:
         ):
             for i, input_i in enumerate(chunk):
                 # Fetch few-shot seed examples
+                # TODO: Check if this needs to use the example selector
                 examples = self.config.get("seed_examples", [])
 
                 final_prompt = self.task.construct_prompt(input_i, examples)
