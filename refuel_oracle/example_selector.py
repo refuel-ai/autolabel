@@ -1,3 +1,4 @@
+import os
 from abc import ABC, abstractmethod
 from enum import Enum
 from typing import Dict, List
@@ -35,14 +36,18 @@ class ExampleSelector:
     EXAMPLE_SELECTOR_STRATEGY_DEFAULT_PARAMS = {
         ExampleSelectorStrategy.semantic_similarity: {
             "vectorstore_cls": Chroma,
-            "embeddings": OpenAIEmbeddings(),
+            "embeddings": OpenAIEmbeddings()
+            if "OPENAI_API_KEY" in os.environ
+            else None,
             "k": 3,
         },
         ExampleSelectorStrategy.n_gram_overlap: {"threshold": -1.0},
         ExampleSelectorStrategy.length_based: {"max_length": 25},
         ExampleSelectorStrategy.maximal_marginal_relevance: {
             "vectorstore_cls": Chroma,
-            "embeddings": OpenAIEmbeddings(),
+            "embeddings": OpenAIEmbeddings()
+            if "OPENAI_API_KEY" in os.environ
+            else None,
             "k": 3,
         },
     }
