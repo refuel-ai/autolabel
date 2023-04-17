@@ -34,7 +34,7 @@ class Config:
 
     def get_model_name(self) -> str:
         return self.config[self.LLM_MODEL_KEY]
-    
+
     def get_project_name(self) -> str:
         return self.config[self.PROJECT_NAME_KEY]
 
