@@ -170,32 +170,16 @@ class EntityRecognitionTask(BaseTask):
 
         evaluator = Evaluator(llm_preds, gt_labels, tags=entity_types_set)
         results, results_per_tag = evaluator.evaluate()
-        precision = results.get("strict").get("precision")
-        recall = results.get("strict").get("recall")
-        f1 = results.get("strict").get("f1")
+        accuracy = results.get("strict").get("correct") / results.get("strict").get(
+            "possible"
+        )
 
         # precision and recall and f1 score
         eval_metrics.append(
             MetricResult(
-                metric_type=Metric.PRECISION,
-                name="precision",
-                value=precision,
-            )
-        )
-
-        eval_metrics.append(
-            MetricResult(
-                metric_type=Metric.RECALL,
-                name="recall",
-                value=recall,
-            )
-        )
-
-        eval_metrics.append(
-            MetricResult(
-                metric_type=Metric.F1,
-                name="f1",
-                value=f1,
+                metric_type=Metric.ACCURACY,
+                name="accuracy",
+                value=accuracy,
             )
         )
 
