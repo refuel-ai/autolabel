@@ -26,7 +26,7 @@ class Oracle:
     # TODO: all this will move to a separate input parser class
     # this is a temporary solution to quickly add this feature and unblock expts
     def _read_csv(
-        self, csv_file: str, max_items: int = None
+        self, csv_file: str, max_items: int = None, start_index: int = 0
     ) -> Tuple[pd.DataFrame, List[Dict], List]:
         dataset_schema = self.config.get("dataset_schema", {})
         delimiter = dataset_schema.get("delimiter", self.DEFAULT_SEPARATOR)
