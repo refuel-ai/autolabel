@@ -11,3 +11,4 @@ matplotlib
 anthropic
 torch
 transformers
+nervaluate

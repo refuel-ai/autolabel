@@ -5,6 +5,7 @@ from typing import List
 from langchain.prompts.prompt import PromptTemplate
 from langchain.schema import Generation
 from loguru import logger
+from nervaluate import Evaluator
 from refuel_oracle.config import Config
 from refuel_oracle.schema import LLMAnnotation, Metric, MetricResult
 from refuel_oracle.tasks import BaseTask
@@ -145,7 +146,41 @@ class EntityRecognitionTask(BaseTask):
                 value=fraction_completed,
             )
         )
+        llm_preds = [l.label for l in llm_labels]
 
-        # TODO: NER label quality metrics
+        llm_preds = [
+            [{**entity, "label": entity.pop("type")} for entity in llm_pred]
+            for llm_pred in llm_preds
+        ]
+
+        gt_labels = [
+            [{**entity, "label": entity.pop("type")} for entity in json.loads(gt_label)]
+            for gt_label in gt_labels
+        ]
+
+        entity_types_set = list(
+            set(
+                [
+                    gt_entity.get("label")
+                    for gt_label in gt_labels
+                    for gt_entity in gt_label
+                ]
+            )
+        )
+
+        evaluator = Evaluator(llm_preds, gt_labels, tags=entity_types_set)
+        results, results_per_tag = evaluator.evaluate()
+        accuracy = results.get("strict").get("correct") / results.get("strict").get(
+            "possible"
+        )
+
+        # precision and recall and f1 score
+        eval_metrics.append(
+            MetricResult(
+                metric_type=Metric.ACCURACY,
+                name="accuracy",
+                value=accuracy,
+            )
+        )
 
         return eval_metrics

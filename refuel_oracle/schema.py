@@ -12,7 +12,6 @@ class Metric(str, Enum):
     ACCURACY = "accuracy"
     CONFUSION_MATRIX = "confusion_matrix"
     LABEL_DISTRIBUTION = "label_distribution"
-    RECALL = "recall"
 
 
 class MetricResult(BaseModel):
