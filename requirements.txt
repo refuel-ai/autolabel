@@ -7,4 +7,8 @@ scikit-learn
 tenacity
 tiktoken
 chromadb
+matplotlib
+anthropic
+torch
+transformers
 nervaluate
