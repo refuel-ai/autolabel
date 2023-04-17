@@ -16,11 +16,12 @@ class ClassificationTask(BaseTask):
     DEFAULT_TASK_PROMPT = "Your job is to correctly label the provided input example into one of the following {num_labels} categories.\nCategories:\n{labels_list}\n"
     JSON_OUTPUT_FORMAT_PROMPT = 'You will return the answer in JSON format with two keys: {"answered": "can you answer this question. say yes or no", "label": "the correct label"}'
     CSV_OUTPUT_FORMAT_PROMPT = 'You will return the answer in CSV format with two elements: "can you answer this question. say Yes or No", "the correct label"'
-    PROMPT_TEMPLATE = "{prefix_prompt}\n{task_prompt}\n\n{output_prompt}\n\nSome examples with their output answers are provided below:\n{seed_examples}\n Now I want you to label the following example in the same way: {current_example}"
+    PROMPT_TEMPLATE = "{prefix_prompt}\n{task_prompt}\n\n{output_prompt}\n\n{seed_examples_prompt}\n{seed_examples}\nNow I want you to label the following example: {current_example}"
     PROMPT_TEMPLATE_VARIABLES = [
         "prefix_prompt",
         "task_prompt",
         "output_prompt",
+        "seed_examples_prompt",
         "seed_examples",
         "current_example",
     ]
@@ -84,8 +85,17 @@ class ClassificationTask(BaseTask):
         # populate the current example in the prompt
         current_example = example_prompt.format(example=input, output="")
 
+        if len(examples):
+            seed_examples_prompt = (
+                "Some examples with their output answers are provided below:"
+            )
+        else:
+            seed_examples_prompt = ""
+
         return self.prompt_template.format(
-            seed_examples="\n".join(formatted_examples), current_example=current_example
+            seed_examples="\n".join(formatted_examples),
+            current_example=current_example,
+            seed_examples_prompt=seed_examples_prompt,
         )
 
     def parse_llm_response(self, response: Generation, input: str) -> LLMAnnotation:

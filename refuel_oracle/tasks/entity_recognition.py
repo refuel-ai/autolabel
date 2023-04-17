@@ -12,14 +12,14 @@ from refuel_oracle.tasks import BaseTask
 
 
 class EntityRecognitionTask(BaseTask):
-
     DEFAULT_TASK_PROMPT = "Your job is to extract named entities mentioned in text, and classify them into one of the following {num_labels} categories.\nCategories:\n{labels_list}\n "
     DEFAULT_OUTPUT_FORMAT_PROMPT = 'You will return the answer in JSON format with two keys: {"answered": can you answer this question. say YES or NO, "entities": a JSON list of extracted entities from text}.'
-    PROMPT_TEMPLATE = "{prefix_prompt}\n{task_prompt}\n{output_prompt}\n\nSome examples with their output answers are provided below:\n{seed_examples}\nBegin:{current_example}"
+    PROMPT_TEMPLATE = "{prefix_prompt}\n{task_prompt}\n{output_prompt}\n\n{seed_examples_prompt}\n{seed_examples}\nBegin:{current_example}"
     PROMPT_TEMPLATE_VARIABLES = [
         "prefix_prompt",
         "task_prompt",
         "output_prompt",
+        "seed_examples_prompt",
         "seed_examples",
         "current_example",
     ]
@@ -73,8 +73,17 @@ class EntityRecognitionTask(BaseTask):
         # populate the current example in the prompt
         current_example = example_prompt.format(example=input, output="")
 
+        if len(examples):
+            seed_examples_prompt = (
+                "Some examples with their output answers are provided below:"
+            )
+        else:
+            seed_examples_prompt = ""
+
         return self.prompt_template.format(
-            seed_examples="\n".join(formatted_examples), current_example=current_example
+            seed_examples="\n".join(formatted_examples),
+            current_example=current_example,
+            seed_examples_prompt=seed_examples_prompt,
         )
 
     def parse_llm_response(self, response: Generation, input: str) -> LLMAnnotation:
