@@ -35,14 +35,12 @@ class ExampleSelector:
     EXAMPLE_SELECTOR_STRATEGY_DEFAULT_PARAMS = {
         ExampleSelectorStrategy.semantic_similarity: {
             "vectorstore_cls": Chroma,
-            "embeddings": OpenAIEmbeddings(),
             "k": 3,
         },
         ExampleSelectorStrategy.n_gram_overlap: {"threshold": -1.0},
         ExampleSelectorStrategy.length_based: {"max_length": 25},
         ExampleSelectorStrategy.maximal_marginal_relevance: {
             "vectorstore_cls": Chroma,
-            "embeddings": OpenAIEmbeddings(),
             "k": 3,
         },
     }
@@ -62,6 +60,7 @@ class ExampleSelector:
             | example_selector_params
         )
         example_selector_params["examples"] = self.examples
+        example_selector_params["embeddings"] = OpenAIEmbeddings()
         self.example_selector = example_selector_class.from_examples(
             **example_selector_params
         )
