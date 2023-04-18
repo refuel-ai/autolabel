@@ -8,13 +8,13 @@
     },
     "prefix_prompt": "",
     "labels_list": [
-        "Person",
         "Location",
-        "Organization"
+        "Organization",
+        "Person"
     ],
     "dataset_schema": {
         "input_columns": [
-            "text"
+            "Text"
         ],
         "label_column": "CategorizedLabels",
         "delimiter": "%"

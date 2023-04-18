@@ -8,7 +8,7 @@ from refuel_oracle.config import Config
 
 TASK_TYPE_TO_IMPLEMENTATION = {
     "classification": ClassificationTask,
-    "entity_recognition": EntityRecognitionTask,
+    "named_entity_recognition": EntityRecognitionTask,
     "multi_choice_question_answering": MultiChoiceQATask,
 }
 

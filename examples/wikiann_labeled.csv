@@ -1,0 +1,2 @@
+Text,IndividualLabels,CategorizedLabels,llm_labeled_successfully,llm_label
+: Kanye West featuring Jamie Foxx — `` Gold Digger '' ( 2005 ),"[{""Description"": ""Person"", ""Text"": ""Kanye West""}, {""Description"": ""Person"", ""Text"": ""Jamie Foxx""}, {""Description"": ""Organization"", ""Text"": ""Gold Digger""}]","{""Location"": [], ""Organization"": [""Gold Digger""], ""Person"": [""Kanye West"", ""Jamie Foxx""]}",yes,"[{'text': 'Kanye West', 'start': 2, 'end': 12}, {'text': 'Jamie Foxx', 'start': 23, 'end': 33}]"

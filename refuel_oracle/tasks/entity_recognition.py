@@ -77,6 +77,31 @@ class EntityRecognitionTask(BaseTask):
             seed_examples="\n".join(formatted_examples), current_example=current_example
         )
 
+    def convert_raw_output_to_conll(self, raw_output, input):
+        conll_output = []
+        for entity_type in raw_output:
+            for curr_entity in raw_output[entity_type]:
+                conll_output.append({"type": entity_type, "text": curr_entity})
+
+        # create a frequency dict of each named entity in the input to determine text spans for repeated entities
+        frequency_count = {label["text"]: 0 for label in conll_output}
+
+        for label in conll_output:
+            text = label["text"]
+            matches = [i.start() for i in re.finditer(text, input)]
+            # if no occurence of named entity in input, default text span to start: -1, end: -1
+            if len(matches) == 0:
+                label["start"] = -1
+                label["end"] = -1
+            count = frequency_count[text]
+            # if count of the named entity is greater than the number of matches, default to last found match
+            if count >= len(matches):
+                count = -1
+            label["start"] = matches[count]
+            label["end"] = matches[count] + len(text)
+            frequency_count[text] += 1
+        return conll_output
+
     def parse_llm_response(self, response: Generation, input: str) -> LLMAnnotation:
         output = {}
         try:
@@ -87,30 +112,14 @@ class EntityRecognitionTask(BaseTask):
 
         successfully_labeled = output.get("answered", "no")
         if successfully_labeled.lower() == "yes":
-            llm_label = output.get("entities") or self.NULL_LABEL
-
-            # create a frequency dict of each named entity in the input to determine text spans for repeated entities
-            frequency_count = {label["text"]: 0 for label in llm_label}
-
-            for label in llm_label:
-                text = label["text"]
-                matches = [i.start() for i in re.finditer(text, input)]
-                # if no occurence of named entity in input, default text span to start: -1, end: -1
-                if len(matches) == 0:
-                    label["start"] = -1
-                    label["end"] = -1
-                count = frequency_count[text]
-                # if count of the named entity is greater than the number of matches, default to last found match
-                if count >= len(matches):
-                    count = -1
-                label["start"] = matches[count]
-                label["end"] = matches[count] + len(text)
-                frequency_count[text] += 1
+            raw_output = output.get("entities") or self.NULL_LABEL
+            llm_label = self.convert_raw_output_to_conll(raw_output, input["Text"])
         else:
             llm_label = self.NULL_LABEL
 
         # TODO: parse generation info correctly to fetch & transform logprobs -> score
         return LLMAnnotation(
+            input=input["Text"],
             successfully_labeled=successfully_labeled,
             label=llm_label,
             generation_info=response.generation_info,
@@ -128,10 +137,16 @@ class EntityRecognitionTask(BaseTask):
         Returns:
             List[MetricResult]: list of metrics and corresponding values
         """
-        eval_metrics = []
+        gt_labels = [
+            self.convert_raw_output_to_conll(
+                json.loads(gt_labels[index]), llm_labels[index].input
+            )
+            for index in range(len(gt_labels))
+        ]
 
         # support
         support = len(gt_labels)
+        eval_metrics = []
         eval_metrics.append(
             MetricResult(metric_type=Metric.SUPPORT, name="support", value=support)
         )
@@ -146,40 +161,44 @@ class EntityRecognitionTask(BaseTask):
                 value=fraction_completed,
             )
         )
-        llm_preds = [l.label for l in llm_labels]
 
-        llm_preds = [
-            [{**entity, "label": entity.pop("type")} for entity in llm_pred]
-            for llm_pred in llm_preds
-        ]
+        answered_llm_preds = []
+        answered_gt_labels = []
 
-        gt_labels = [
-            [{**entity, "label": entity.pop("type")} for entity in json.loads(gt_label)]
-            for gt_label in gt_labels
-        ]
+        for index, l in enumerate(llm_labels):
+            if l.successfully_labeled.lower() == "yes":
+                answered_llm_preds.append(
+                    [{**entity, "label": entity.pop("type")} for entity in l.label]
+                )
+                answered_gt_labels.append(
+                    [
+                        {**entity, "label": entity.pop("type")}
+                        for entity in gt_labels[index]
+                    ]
+                )
 
         entity_types_set = list(
             set(
                 [
                     gt_entity.get("label")
-                    for gt_label in gt_labels
+                    for gt_label in answered_gt_labels
                     for gt_entity in gt_label
                 ]
             )
         )
 
-        evaluator = Evaluator(llm_preds, gt_labels, tags=entity_types_set)
-        results, results_per_tag = evaluator.evaluate()
-        accuracy = results.get("strict").get("correct") / results.get("strict").get(
-            "possible"
+        evaluator = Evaluator(
+            answered_gt_labels, answered_llm_preds, tags=entity_types_set
         )
+        results, results_per_tag = evaluator.evaluate()
+        print(results)
 
-        # precision and recall and f1 score
+        # f1 score
         eval_metrics.append(
             MetricResult(
-                metric_type=Metric.ACCURACY,
-                name="accuracy",
-                value=accuracy,
+                metric_type=Metric.F1,
+                name="f1",
+                value=results["exact"]["f1"],
             )
         )
 
