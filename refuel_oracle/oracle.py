@@ -26,6 +26,9 @@ class Oracle:
         if "example_selector" in self.config.keys():
             self.example_selector = ExampleSelector(self.config)
 
+        if not debug:
+            self.set_cache()
+
     # TODO: all this will move to a separate input parser class
     # this is a temporary solution to quickly add this feature and unblock expts
     def _read_csv(
