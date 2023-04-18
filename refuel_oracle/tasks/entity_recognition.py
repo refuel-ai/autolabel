@@ -1,6 +1,6 @@
 import json
 import re
-from typing import List
+from typing import List, Dict
 
 from langchain.prompts.prompt import PromptTemplate
 from langchain.schema import Generation
@@ -12,7 +12,6 @@ from refuel_oracle.tasks import BaseTask
 
 
 class EntityRecognitionTask(BaseTask):
-
     DEFAULT_TASK_PROMPT = "Your job is to extract named entities mentioned in text, and classify them into one of the following {num_labels} categories.\nCategories:\n{labels_list}\n "
     DEFAULT_OUTPUT_FORMAT_PROMPT = 'You will return the answer in JSON format with two keys: {"answered": can you answer this question. say YES or NO, "entities": a JSON list of extracted entities from text}.'
     PROMPT_TEMPLATE = "{prefix_prompt}\n{task_prompt}\n{output_prompt}\n\nSome examples with their output answers are provided below:\n{seed_examples}\nBegin:{current_example}"
@@ -57,7 +56,7 @@ class EntityRecognitionTask(BaseTask):
             output_prompt=self.DEFAULT_OUTPUT_FORMAT_PROMPT,
         )
 
-    def construct_prompt(self, input: str, examples: List) -> str:
+    def construct_prompt(self, input: Dict, examples: List) -> str:
         # populate seed examples in the prompt
         example_prompt = PromptTemplate(
             input_variables=self.EXAMPLE_PROMPT_VARIABLES,
@@ -70,8 +69,9 @@ class EntityRecognitionTask(BaseTask):
                 example_prompt.format(example=eg["example"], output=expected_output)
             )
 
+        current_input = self.get_single_input(input)
         # populate the current example in the prompt
-        current_example = example_prompt.format(example=input, output="")
+        current_example = example_prompt.format(example=current_input, output="")
 
         return self.prompt_template.format(
             seed_examples="\n".join(formatted_examples), current_example=current_example
