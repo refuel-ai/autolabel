@@ -3,7 +3,6 @@ from enum import Enum
 from typing import Dict, List
 
 from langchain.embeddings import OpenAIEmbeddings
-from langchain.prompts import FewShotPromptTemplate, PromptTemplate
 from langchain.prompts.example_selector import (
     LengthBasedExampleSelector,
     MaxMarginalRelevanceExampleSelector,
@@ -62,9 +61,20 @@ class ExampleSelector:
             | example_selector_params
         )
         example_selector_params["examples"] = self.examples
+        string_examples = [" ".join(self.sorted_values(eg)) for eg in self.examples]
+        input_keys = ["example"]
+        input_key_string_example = [
+                " ".join(self.sorted_values({k: eg[k] for k in input_keys}))
+                for eg in self.examples
+            ]
+        print(f"string_examples: {string_examples}")
         self.example_selector = example_selector_class.from_examples(
             **example_selector_params
         )
+
+    def sorted_values(self, values: Dict[str, str]) -> List:
+        """Return a list of values in dict sorted by key."""
+        return [values[val] for val in sorted(values)]
 
     def is_example_selector(self) -> bool:
         if self.example_selector_strategy:
@@ -75,6 +85,8 @@ class ExampleSelector:
 
     def get_examples(self, input):
         if self.is_example_selector():
-            return self.example_selector.select_examples(input)
+            res = self.example_selector.select_examples(input)
+            print(f"res: {res}")
+            return res
         else:
             return self.examples
