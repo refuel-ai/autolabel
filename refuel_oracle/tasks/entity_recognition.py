@@ -89,16 +89,18 @@ class EntityRecognitionTask(BaseTask):
         for label in conll_output:
             text = label["text"]
             matches = [i.start() for i in re.finditer(text, input)]
-            # if no occurence of named entity in input, default text span to start: -1, end: -1
-            if len(matches) == 0:
-                label["start"] = -1
-                label["end"] = -1
             count = frequency_count[text]
             # if count of the named entity is greater than the number of matches, default to last found match
             if count >= len(matches):
                 count = -1
-            label["start"] = matches[count]
-            label["end"] = matches[count] + len(text)
+
+            # if no occurence of named entity in input, default text span to start: -1, end: -1
+            if len(matches) == 0:
+                label["start"] = -1
+                label["end"] = -1
+            else:
+                label["start"] = matches[count]
+                label["end"] = matches[count] + len(text)
             frequency_count[text] += 1
         return conll_output
 
@@ -190,7 +192,7 @@ class EntityRecognitionTask(BaseTask):
         evaluator = Evaluator(
             answered_gt_labels, answered_llm_preds, tags=entity_types_set
         )
-        results, results_per_tag = evaluator.evaluate()
+        results, _ = evaluator.evaluate()
         print(results)
 
         # f1 score
