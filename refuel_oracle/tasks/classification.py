@@ -1,5 +1,5 @@
 import json
-from typing import List
+from typing import List, Dict
 
 import matplotlib.pyplot as plt
 from langchain.prompts.prompt import PromptTemplate
@@ -68,7 +68,7 @@ class ClassificationTask(BaseTask):
             output_prompt=output_prompt,
         )
 
-    def construct_prompt(self, input: str, examples: List) -> str:
+    def construct_prompt(self, input: Dict, examples: List) -> str:
         # populate seed examples in the prompt
         example_prompt = PromptTemplate(
             input_variables=self.EXAMPLE_PROMPT_VARIABLES,
@@ -81,8 +81,10 @@ class ClassificationTask(BaseTask):
                 example_prompt.format(example=eg["example"], output=expected_output)
             )
 
+        current_input = self.get_single_input(input)
+
         # populate the current example in the prompt
-        current_example = example_prompt.format(example=input, output="")
+        current_example = example_prompt.format(example=current_input, output="")
 
         return self.prompt_template.format(
             seed_examples="\n".join(formatted_examples), current_example=current_example
