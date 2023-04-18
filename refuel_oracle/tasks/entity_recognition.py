@@ -14,6 +14,7 @@ from refuel_oracle.tasks import BaseTask
 class EntityRecognitionTask(BaseTask):
     DEFAULT_TASK_PROMPT = "Your job is to extract named entities mentioned in text, and classify them into one of the following {num_labels} categories.\nCategories:\n{labels_list}\n "
     DEFAULT_OUTPUT_FORMAT_PROMPT = 'You will return the answer in JSON format with two keys: {"answered": can you answer this question. say YES or NO, "entities": a JSON list of extracted entities from text}.'
+    SEED_EXAMPLES_PROMPT = 'Some examples with their output answers are provided below:'
     PROMPT_TEMPLATE = "{prefix_prompt}\n{task_prompt}\n{output_prompt}\n\n{seed_examples_prompt}\n{seed_examples}\nBegin:{current_example}"
     PROMPT_TEMPLATE_VARIABLES = [
         "prefix_prompt",
@@ -74,9 +75,7 @@ class EntityRecognitionTask(BaseTask):
         current_example = example_prompt.format(example=input, output="")
 
         if len(examples):
-            seed_examples_prompt = (
-                "Some examples with their output answers are provided below:"
-            )
+            seed_examples_prompt = self.SEED_EXAMPLES_PROMPT
         else:
             seed_examples_prompt = ""
 
