@@ -27,7 +27,9 @@ class EntityMatchingTask(BaseTask):
         "seed_examples",
         "current_example",
     ]
-    EXAMPLE_PROMPT_TEMPLATE = "Are the following entities duplicate?\nEntity1: {entity1}\nEntity2: {entity2}\nAnswer:{answer}\n"
+    EXAMPLE_PROMPT_TEMPLATE = (
+        "Entity1: {entity1}\nEntity2: {entity2}\nAnswer:{answer}\n"
+    )
     EXAMPLE_PROMPT_VARIABLES = ["entity1", "entity2", "answer"]
     NULL_LABEL_TOKEN = "NO_LABEL"
 
