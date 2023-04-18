@@ -3,7 +3,7 @@ from transformers import AutoTokenizer
 import json
 
 dataset_csv = open("wikiann.csv", "w")
-dataset_csv.write("Text%IndividualLabels%CategorizedLabels")
+dataset_csv.write("Text%IndividualLabels%CategorizedLabels\n")
 dataset = load_dataset("wikiann", "en")
 entity_category_mapping = {"LOC": "Location", "ORG": "Organization", "PER": "Person"}
 for item in dataset["test"]:
