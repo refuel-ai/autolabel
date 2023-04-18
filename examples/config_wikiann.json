@@ -67,6 +67,43 @@
                     "Magnus Samuelsson"
                 ]
             }
+        },
+        {
+            "example": "He was called to the Bar in at the Middle Temple in London in 1972 .",
+            "output": {
+                "Location": [
+                    "London"
+                ],
+                "Organization": [
+                    "called to the Bar",
+                    "Middle Temple"
+                ],
+                "Person": []
+            }
+        },
+        {
+            "example": "The Manitoba Grain Growers ' Association ( MGGA ) was formed at a meeting on March 3–4 , 1903 in Brandon , Manitoba .",
+            "output": {
+                "Location": [
+                    "Brandon , Manitoba"
+                ],
+                "Organization": [
+                    "Manitoba Grain Growers ' Association"
+                ],
+                "Person": []
+            }
+        },
+        {
+            "example": "World Heavyweight Championship – Jack Dempsey",
+            "output": {
+                "Location": [],
+                "Organization": [
+                    "World Heavyweight Championship"
+                ],
+                "Person": [
+                    "Jack Dempsey"
+                ]
+            }
         }
     ]
 }

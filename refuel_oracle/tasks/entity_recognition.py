@@ -204,4 +204,16 @@ class EntityRecognitionTask(BaseTask):
             )
         )
 
+        # accuracy
+        accuracy = results.get("strict").get("correct") / results.get("strict").get(
+            "possible"
+        )
+        eval_metrics.append(
+            MetricResult(
+                metric_type=Metric.ACCURACY,
+                name="accuracy",
+                value=accuracy,
+            )
+        )
+
         return eval_metrics
