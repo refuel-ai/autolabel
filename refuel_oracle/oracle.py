@@ -9,6 +9,9 @@ from refuel_oracle.tasks import TaskFactory
 from refuel_oracle.utils import calculate_cost, calculate_num_tokens
 from tqdm import tqdm
 
+import langchain
+from langchain.cache import SQLiteCache
+
 
 class Oracle:
     CHUNK_SIZE = 5
@@ -136,6 +139,10 @@ class Oracle:
         print(f"Average cost per example: ${round(total_cost/len(inputs), 5)}")
         print(f"\n\nA prompt example:\n\n{prompt_list[0]}")
         return
+
+    def set_cache(self):
+        # Set cache for langchain
+        langchain.llm_cache = SQLiteCache(database_path=".langchain.db")
 
     def test(self):
         return
