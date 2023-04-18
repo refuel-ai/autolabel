@@ -2,12 +2,13 @@ from typing import Tuple
 
 import numpy as np
 import pandas as pd
+from tqdm import tqdm
+
 from refuel_oracle.config import Config
 from refuel_oracle.example_selector import ExampleSelector
 from refuel_oracle.llm import LLMFactory
 from refuel_oracle.tasks import TaskFactory
 from refuel_oracle.utils import calculate_cost, calculate_num_tokens
-from tqdm import tqdm
 
 
 class Oracle:
@@ -20,8 +21,6 @@ class Oracle:
         self.llm = LLMFactory.from_config(self.config)
         self.task = TaskFactory.from_config(self.config)
         self.example_selector = None
-        if "example_selector" in self.config.keys():
-            self.example_selector = ExampleSelector(self.config)
 
     # TODO: all this will move to a separate input parser class
     # this is a temporary solution to quickly add this feature and unblock expts
@@ -67,6 +66,8 @@ class Oracle:
         output_name: str = None,
         start_index: int = 0,
     ) -> None:
+        if "example_selector" in self.config.keys():
+            self.example_selector = ExampleSelector(self.config)
         df, inputs, gt_labels = self._read_csv(dataset, max_items, start_index)
 
         if not max_items:
