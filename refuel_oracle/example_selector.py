@@ -3,16 +3,15 @@ from enum import Enum
 from typing import Dict, List
 
 from langchain.embeddings import OpenAIEmbeddings
-from langchain.prompts import FewShotPromptTemplate, PromptTemplate
 from langchain.prompts.example_selector import (
     LengthBasedExampleSelector,
     MaxMarginalRelevanceExampleSelector,
     SemanticSimilarityExampleSelector,
 )
 from langchain.prompts.example_selector.ngram_overlap import NGramOverlapExampleSelector
-from langchain.vectorstores import Chroma
 
 from refuel_oracle.config import Config
+from refuel_oracle.vector_store import VectorStoreWrapper
 
 
 # All available LLM providers
@@ -34,13 +33,15 @@ class ExampleSelector:
 
     EXAMPLE_SELECTOR_STRATEGY_DEFAULT_PARAMS = {
         ExampleSelectorStrategy.semantic_similarity: {
-            "vectorstore_cls": Chroma,
+            "vectorstore_cls": VectorStoreWrapper,
+            "embeddings": OpenAIEmbeddings(),
             "k": 3,
         },
         ExampleSelectorStrategy.n_gram_overlap: {"threshold": -1.0},
         ExampleSelectorStrategy.length_based: {"max_length": 25},
         ExampleSelectorStrategy.maximal_marginal_relevance: {
-            "vectorstore_cls": Chroma,
+            "vectorstore_cls": VectorStoreWrapper,
+            "embeddings": OpenAIEmbeddings(),
             "k": 3,
         },
     }
