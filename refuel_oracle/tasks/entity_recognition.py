@@ -14,6 +14,7 @@ from refuel_oracle.tasks import BaseTask
 class EntityRecognitionTask(BaseTask):
     DEFAULT_TASK_PROMPT = "Your job is to extract named entities mentioned in text, and classify them into one of the following {num_labels} categories.\nCategories:\n{labels_list}\n "
     DEFAULT_OUTPUT_FORMAT_PROMPT = 'You will return the answer in JSON format with two keys: {"answered": can you answer this question. say YES or NO, "entities": a JSON list of extracted entities from text}.'
+    CSV_OUTPUT_FORMAT = "You will return the answer in CSV format seperated by % charcter: answered%can you answer this question. say YES or NO%entities%a list of extracted entities from text."
     SEED_EXAMPLES_PROMPT = "Some examples with their output answers are provided below:"
     PROMPT_TEMPLATE = "{prefix_prompt}\n{task_prompt}\n{output_prompt}\n\n{seed_examples_prompt}\n{seed_examples}\nBegin:{current_example}"
     PROMPT_TEMPLATE_VARIABLES = [
@@ -35,6 +36,14 @@ class EntityRecognitionTask(BaseTask):
         output = {"answered": "yes", "entities": entities}
         return json.dumps(output)
 
+    def _to_csv_output_format(self, entities: List) -> str:
+        output = "answered:%yes%entities"
+        for entity_type in entities:
+            output += f"%{entity_type}"
+            for text in entities[entity_type]:
+                output += f"%{text}"
+        return output
+
     def initialize_prompt_template(self) -> PromptTemplate:
         # provide context about the problem domain
         prefix_prompt = self.config.get("prefix_prompt", "")
@@ -55,7 +64,9 @@ class EntityRecognitionTask(BaseTask):
         return pt.partial(
             prefix_prompt=prefix_prompt,
             task_prompt=task_prompt,
-            output_prompt=self.DEFAULT_OUTPUT_FORMAT_PROMPT,
+            output_prompt=self.CSV_OUTPUT_FORMAT
+            if self.config.get("prompt_encoding") == "csv"
+            else self.DEFAULT_OUTPUT_FORMAT_PROMPT,
         )
 
     def construct_prompt(self, input: Dict, examples: List) -> str:
@@ -66,7 +77,10 @@ class EntityRecognitionTask(BaseTask):
         )
         formatted_examples = []
         for eg in examples:
-            expected_output = self._to_default_output_format(eg["output"])
+            if self.config.get("prompt_encoding") == "csv":
+                expected_output = self._to_csv_output_format(eg["output"])
+            else:
+                expected_output = self._to_default_output_format(eg["output"])
             formatted_examples.append(
                 example_prompt.format(example=eg["example"], output=expected_output)
             )
@@ -86,40 +100,72 @@ class EntityRecognitionTask(BaseTask):
             seed_examples_prompt=seed_examples_prompt,
         )
 
-    def parse_llm_response(self, response: Generation, input: str) -> LLMAnnotation:
-        output = {}
-        try:
-            completion_text = response.text
-            output = json.loads(completion_text.strip())
-        except Exception as e:
-            logger.info(f"Error parsing LLM response: {response.text}")
+    def convert_raw_output_to_conll(self, raw_output, input):
+        conll_output = []
+        for entity_type in raw_output:
+            for curr_entity in raw_output[entity_type]:
+                conll_output.append({"type": entity_type, "text": curr_entity})
 
-        successfully_labeled = output.get("answered", "no")
-        if successfully_labeled.lower() == "yes":
-            llm_label = output.get("entities") or self.NULL_LABEL
+        # create a frequency dict of each named entity in the input to determine text spans for repeated entities
+        frequency_count = {label["text"]: 0 for label in conll_output}
 
-            # create a frequency dict of each named entity in the input to determine text spans for repeated entities
-            frequency_count = {label["text"]: 0 for label in llm_label}
+        for label in conll_output:
+            text = label["text"]
+            matches = [i.start() for i in re.finditer(text, input)]
+            count = frequency_count[text]
+            # if count of the named entity is greater than the number of matches, default to last found match
+            if count >= len(matches):
+                count = -1
 
-            for label in llm_label:
-                text = label["text"]
-                matches = [i.start() for i in re.finditer(text, input)]
-                # if no occurence of named entity in input, default text span to start: -1, end: -1
-                if len(matches) == 0:
-                    label["start"] = -1
-                    label["end"] = -1
-                count = frequency_count[text]
-                # if count of the named entity is greater than the number of matches, default to last found match
-                if count >= len(matches):
-                    count = -1
+            # if no occurence of named entity in input, default text span to start: -1, end: -1
+            if len(matches) == 0:
+                label["start"] = -1
+                label["end"] = -1
+            else:
                 label["start"] = matches[count]
                 label["end"] = matches[count] + len(text)
-                frequency_count[text] += 1
-        else:
+            frequency_count[text] += 1
+        return conll_output
+
+    def jsonify_csv_output(self, response: str):
+        split_response = response.split("%")
+        json_output = {
+            "answered": split_response[1],
+            "entities": {i: [] for i in self.config["labels_list"]},
+        }
+        current_entity = None
+        for text_or_type in split_response[3:]:
+            if text_or_type in json_output["entities"]:
+                current_entity = text_or_type
+            else:
+                if current_entity is not None:
+                    json_output["entities"][current_entity].append(text_or_type)
+        return json_output
+
+    def parse_llm_response(self, response: Generation, input: str) -> LLMAnnotation:
+        output = {}
+        successfully_labeled = "no"
+        try:
+            completion_text = response.text
+            if self.config.get("prompt_encoding") == "csv":
+                output = self.jsonify_csv_output(completion_text.strip())
+            else:
+                output = json.loads(completion_text.strip())
+
+            successfully_labeled = output.get("answered", "no")
+            if successfully_labeled.lower() == "yes":
+                raw_output = output.get("entities") or self.NULL_LABEL
+                llm_label = self.convert_raw_output_to_conll(raw_output, input["Text"])
+            else:
+                llm_label = self.NULL_LABEL
+        except Exception as e:
+            logger.info(f"Error parsing LLM response: {response.text}, Error: {e}")
             llm_label = self.NULL_LABEL
+            successfully_labeled = "no"
 
         # TODO: parse generation info correctly to fetch & transform logprobs -> score
         return LLMAnnotation(
+            input=input["Text"],
             successfully_labeled=successfully_labeled,
             label=llm_label,
             generation_info=response.generation_info,
@@ -137,10 +183,16 @@ class EntityRecognitionTask(BaseTask):
         Returns:
             List[MetricResult]: list of metrics and corresponding values
         """
-        eval_metrics = []
+        gt_labels = [
+            self.convert_raw_output_to_conll(
+                json.loads(gt_labels[index]), llm_labels[index].input
+            )
+            for index in range(len(gt_labels))
+        ]
 
         # support
         support = len(gt_labels)
+        eval_metrics = []
         eval_metrics.append(
             MetricResult(metric_type=Metric.SUPPORT, name="support", value=support)
         )
@@ -155,35 +207,51 @@ class EntityRecognitionTask(BaseTask):
                 value=fraction_completed,
             )
         )
-        llm_preds = [l.label for l in llm_labels]
 
-        llm_preds = [
-            [{**entity, "label": entity.pop("type")} for entity in llm_pred]
-            for llm_pred in llm_preds
-        ]
+        answered_llm_preds = []
+        answered_gt_labels = []
 
-        gt_labels = [
-            [{**entity, "label": entity.pop("type")} for entity in json.loads(gt_label)]
-            for gt_label in gt_labels
-        ]
+        for index, l in enumerate(llm_labels):
+            if l.successfully_labeled.lower() == "yes":
+                answered_llm_preds.append(
+                    [{**entity, "label": entity.pop("type")} for entity in l.label]
+                )
+                answered_gt_labels.append(
+                    [
+                        {**entity, "label": entity.pop("type")}
+                        for entity in gt_labels[index]
+                    ]
+                )
 
         entity_types_set = list(
             set(
                 [
                     gt_entity.get("label")
-                    for gt_label in gt_labels
+                    for gt_label in answered_gt_labels
                     for gt_entity in gt_label
                 ]
             )
         )
 
-        evaluator = Evaluator(llm_preds, gt_labels, tags=entity_types_set)
-        results, results_per_tag = evaluator.evaluate()
+        evaluator = Evaluator(
+            answered_gt_labels, answered_llm_preds, tags=entity_types_set
+        )
+        results, _ = evaluator.evaluate()
+        print(results)
+
+        # f1 score
+        eval_metrics.append(
+            MetricResult(
+                metric_type=Metric.F1,
+                name="f1",
+                value=results["exact"]["f1"],
+            )
+        )
+
+        # accuracy
         accuracy = results.get("strict").get("correct") / results.get("strict").get(
             "possible"
         )
-
-        # precision and recall and f1 score
         eval_metrics.append(
             MetricResult(
                 metric_type=Metric.ACCURACY,

@@ -1,0 +1,107 @@
+{
+    "project_name": "WikiANN",
+    "task_type": "named_entity_recognition",
+    "provider_name": "anthropic",
+    "model_name": "claude-v1",
+    "prompt_encoding": "csv",
+    "prefix_prompt": "",
+    "labels_list": [
+        "Location",
+        "Organization",
+        "Person"
+    ],
+    "dataset_schema": {
+        "input_columns": [
+            "Text"
+        ],
+        "label_column": "CategorizedLabels",
+        "delimiter": "%"
+    },
+    "seed_examples": [
+        {
+            "example": "Shortly afterward , an encouraging response influenced him to go to India ; he arrived at Adyar in 1884 .",
+            "output": {
+                "Location": [
+                    "India",
+                    "Adyar"
+                ],
+                "Organization": [],
+                "Person": []
+            }
+        },
+        {
+            "example": "2010 Southern Conference Men 's Basketball Tournament",
+            "output": {
+                "Location": [],
+                "Organization": [
+                    "2010 Southern Conference Men 's Basketball Tournament"
+                ],
+                "Person": []
+            }
+        },
+        {
+            "example": "; Jenny Wolek : played by Kathy Glass ( 1975–78 ) ; Brynn Thayer ( 1978–86 )",
+            "output": {
+                "Location": [],
+                "Organization": [
+                    "Kathy Glass"
+                ],
+                "Person": [
+                    "Jenny Wolek",
+                    "Brynn Thayer"
+                ]
+            }
+        },
+        {
+            "example": "Svend Karlsen from Norway finished second after finishing third the previous year , and 1998 winner Magnus Samuelsson from Sweden finished third .",
+            "output": {
+                "Location": [
+                    "Norway",
+                    "Sweden"
+                ],
+                "Organization": [],
+                "Person": [
+                    "Svend Karlsen",
+                    "Magnus Samuelsson"
+                ]
+            }
+        },
+        {
+            "example": "He was called to the Bar in at the Middle Temple in London in 1972 .",
+            "output": {
+                "Location": [
+                    "London"
+                ],
+                "Organization": [
+                    "called to the Bar",
+                    "Middle Temple"
+                ],
+                "Person": []
+            }
+        },
+        {
+            "example": "The Manitoba Grain Growers ' Association ( MGGA ) was formed at a meeting on March 3–4 , 1903 in Brandon , Manitoba .",
+            "output": {
+                "Location": [
+                    "Brandon , Manitoba"
+                ],
+                "Organization": [
+                    "Manitoba Grain Growers ' Association"
+                ],
+                "Person": []
+            }
+        },
+        {
+            "example": "World Heavyweight Championship – Jack Dempsey",
+            "output": {
+                "Location": [],
+                "Organization": [
+                    "World Heavyweight Championship"
+                ],
+                "Person": [
+                    "Jack Dempsey"
+                ]
+            }
+        }
+    ]
+}

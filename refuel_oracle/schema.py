@@ -12,6 +12,7 @@ class Metric(str, Enum):
     ACCURACY = "accuracy"
     CONFUSION_MATRIX = "confusion_matrix"
     LABEL_DISTRIBUTION = "label_distribution"
+    F1 = "f1"
 
 
 class MetricResult(BaseModel):
@@ -23,5 +24,6 @@ class MetricResult(BaseModel):
 class LLMAnnotation(BaseModel):
     successfully_labeled: str
     label: Any
+    input: Optional[str] = ""
     confidence_score: Optional[float] = None
     generation_info: Optional[Dict[str, Any]] = None
