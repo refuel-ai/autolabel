@@ -9,7 +9,7 @@ from langchain.prompts.example_selector import (
     SemanticSimilarityExampleSelector,
 )
 from langchain.prompts.example_selector.ngram_overlap import NGramOverlapExampleSelector
-from langchain.vectorstores import Chroma
+from refuel_oracle.vector_store import VectorStoreWrapper
 
 from refuel_oracle.config import Config
 
@@ -33,14 +33,14 @@ class ExampleSelector:
 
     EXAMPLE_SELECTOR_STRATEGY_DEFAULT_PARAMS = {
         ExampleSelectorStrategy.semantic_similarity: {
-            "vectorstore_cls": Chroma,
+            "vectorstore_cls": VectorStoreWrapper,
             "embeddings": OpenAIEmbeddings(),
             "k": 3,
         },
         ExampleSelectorStrategy.n_gram_overlap: {"threshold": -1.0},
         ExampleSelectorStrategy.length_based: {"max_length": 25},
         ExampleSelectorStrategy.maximal_marginal_relevance: {
-            "vectorstore_cls": Chroma,
+            "vectorstore_cls": VectorStoreWrapper,
             "embeddings": OpenAIEmbeddings(),
             "k": 3,
         },
@@ -61,20 +61,9 @@ class ExampleSelector:
             | example_selector_params
         )
         example_selector_params["examples"] = self.examples
-        string_examples = [" ".join(self.sorted_values(eg)) for eg in self.examples]
-        input_keys = ["example"]
-        input_key_string_example = [
-                " ".join(self.sorted_values({k: eg[k] for k in input_keys}))
-                for eg in self.examples
-            ]
-        print(f"string_examples: {string_examples}")
         self.example_selector = example_selector_class.from_examples(
             **example_selector_params
         )
-
-    def sorted_values(self, values: Dict[str, str]) -> List:
-        """Return a list of values in dict sorted by key."""
-        return [values[val] for val in sorted(values)]
 
     def is_example_selector(self) -> bool:
         if self.example_selector_strategy:
@@ -85,6 +74,7 @@ class ExampleSelector:
 
     def get_examples(self, input):
         if self.is_example_selector():
+            print(f"input: {input}")
             res = self.example_selector.select_examples(input)
             print(f"res: {res}")
             return res

@@ -1,255 +1,344 @@
-# from __future__ import annotations
+from __future__ import annotations
 
-# import logging
-# import uuid
-# from typing import TYPE_CHECKING, Any, Dict, Iterable, List, Optional, Tuple, Type
+import heapq
+import logging
+import uuid
+from typing import (
+    TYPE_CHECKING,
+    Any,
+    Callable,
+    Dict,
+    Iterable,
+    List,
+    Optional,
+    Tuple,
+    Type,
+)
 
-# import numpy as np
-# from langchain.docstore.document import Document
-# from langchain.embeddings.base import Embeddings
-# from langchain.vectorstores.base import VectorStore
-# from langchain.vectorstores.utils import maximal_marginal_relevance
-# from torch import Tensor
+import numpy as np
+import torch
+from langchain.docstore.document import Document
+from langchain.embeddings.base import Embeddings
+from langchain.vectorstores.base import VectorStore
+from langchain.vectorstores.utils import maximal_marginal_relevance
+from torch import Tensor
 
-# logger = logging.getLogger(__name__)
-
-
-# def _results_to_docs(results: Any) -> List[Document]:
-#     return [doc for doc, _ in _results_to_docs_and_scores(results)]
-
-
-# def _results_to_docs_and_scores(results: Any) -> List[Tuple[Document, float]]:
-#     return [
-#         (Document(page_content=result[0], metadata=result[1] or {}), result[2])
-#         for result in zip(
-#             results["documents"][0],
-#             results["metadatas"][0],
-#             results["distances"][0],
-#         )
-#     ]
+logger = logging.getLogger(__name__)
 
 
-# class VectorStoreWrapper(VectorStore):
-#     def __init__(
-#         self,
-#         embedding_function: Optional[Embeddings] = None,
-#         corpus_embeddings: Optional[Tensor] = None,
-#         texts: Optional[List[str]] = None,
-#     ) -> None:
-#         self._embedding_function = embedding_function
-#         self._corpus_embeddings = corpus_embeddings
-#         self._texts = texts
+def _results_to_docs(results: Any) -> List[Document]:
+    return [doc for doc, _ in _results_to_docs_and_scores(results)]
 
-#     def add_texts(
-#         self,
-#         texts: Iterable[str],
-#         ids: Optional[List[str]] = None,
-#         **kwargs: Any,
-#     ) -> List[str]:
-#         """Run more texts through the embeddings and add to the vectorstore.
-#         Args:
-#             texts (Iterable[str]): Texts to add to the vectorstore.
-#             metadatas (Optional[List[dict]], optional): Optional list of metadatas.
-#             ids (Optional[List[str]], optional): Optional list of IDs.
-#         Returns:
-#             List[str]: List of IDs of the added texts.
-#         """
-#         if ids is None:
-#             ids = [str(uuid.uuid1()) for _ in texts]
-#         embeddings = None
-#         if self._embedding_function is not None:
-#             embeddings = self._embedding_function.embed_documents(list(texts))
-#         self._corpus_embeddings.append(embeddings)
-#         self._texts.append(texts)
-#         return ids
 
-#     def similarity_search(
-#         self,
-#         query: str,
-#         k: int = 4,
-#         filter: Optional[Dict[str, str]] = None,
-#         **kwargs: Any,
-#     ) -> List[Document]:
-#         """Run similarity search with Chroma.
-#         Args:
-#             query (str): Query text to search for.
-#             k (int): Number of results to return. Defaults to 4.
-#             filter (Optional[Dict[str, str]]): Filter by metadata. Defaults to None.
-#         Returns:
-#             List[Document]: List of documents most similar to the query text.
-#         """
-#         docs_and_scores = self.similarity_search_with_score(query, k, filter=filter)
-#         return [doc for doc, _ in docs_and_scores]
+def _results_to_docs_and_scores(results: Any) -> List[Tuple[Document, float]]:
+    return [
+        (Document(page_content=result[0], metadata=result[1] or {}), result[2])
+        for result in zip(
+            results["documents"][0],
+            results["metadatas"][0],
+            results["distances"][0],
+        )
+    ]
 
-#     def similarity_search_by_vector(
-#         self,
-#         embedding: List[float],
-#         k: int = 4,
-#         filter: Optional[Dict[str, str]] = None,
-#         **kwargs: Any,
-#     ) -> List[Document]:
-#         """Return docs most similar to embedding vector.
-#         Args:
-#             embedding: Embedding to look up documents similar to.
-#             k: Number of Documents to return. Defaults to 4.
-#         Returns:
-#             List of Documents most similar to the query vector.
-#         """
-#         results = self._collection.query(
-#             query_embeddings=embedding, n_results=k, where=filter
-#         )
-#         return _results_to_docs(results)
 
-#     def similarity_search_with_score(
-#         self,
-#         query: str,
-#         k: int = 4,
-#         filter: Optional[Dict[str, str]] = None,
-#         **kwargs: Any,
-#     ) -> List[Tuple[Document, float]]:
-#         """Run similarity search with Chroma with distance.
-#         Args:
-#             query (str): Query text to search for.
-#             k (int): Number of results to return. Defaults to 4.
-#             filter (Optional[Dict[str, str]]): Filter by metadata. Defaults to None.
-#         Returns:
-#             List[Tuple[Document, float]]: List of documents most similar to the query
-#                 text with distance in float.
-#         """
-#         query_embedding = self._embedding_function.embed_query(query)
+def cos_sim(a: Tensor, b: Tensor):
+    """
+    Computes the cosine similarity cos_sim(a[i], b[j]) for all i and j.
+    :return: Matrix with res[i][j]  = cos_sim(a[i], b[j])
+    """
+    if not isinstance(a, torch.Tensor):
+        a = torch.tensor(a)
 
-#         results = self._collection.query(
-#             query_embeddings=[query_embedding], n_results=k, where=filter
-#         )
+    if not isinstance(b, torch.Tensor):
+        b = torch.tensor(b)
 
-#         return _results_to_docs_and_scores(results)
+    if len(a.shape) == 1:
+        a = a.unsqueeze(0)
 
-#     def max_marginal_relevance_search_by_vector(
-#         self,
-#         embedding: List[float],
-#         k: int = 4,
-#         fetch_k: int = 20,
-#         filter: Optional[Dict[str, str]] = None,
-#         **kwargs: Any,
-#     ) -> List[Document]:
-#         """Return docs selected using the maximal marginal relevance.
-#         Maximal marginal relevance optimizes for similarity to query AND diversity
-#         among selected documents.
-#         Args:
-#             embedding: Embedding to look up documents similar to.
-#             k: Number of Documents to return. Defaults to 4.
-#             fetch_k: Number of Documents to fetch to pass to MMR algorithm.
-#             filter (Optional[Dict[str, str]]): Filter by metadata. Defaults to None.
-#         Returns:
-#             List of Documents selected by maximal marginal relevance.
-#         """
+    if len(b.shape) == 1:
+        b = b.unsqueeze(0)
 
-#         results = self._collection.query(
-#             query_embeddings=embedding,
-#             n_results=fetch_k,
-#             where=filter,
-#             include=["metadatas", "documents", "distances", "embeddings"],
-#         )
-#         mmr_selected = maximal_marginal_relevance(
-#             np.array(embedding, dtype=np.float32), results["embeddings"][0], k=k
-#         )
+    a_norm = torch.nn.functional.normalize(a, p=2, dim=1)
+    b_norm = torch.nn.functional.normalize(b, p=2, dim=1)
+    return torch.mm(a_norm, b_norm.transpose(0, 1))
 
-#         candidates = _results_to_docs(results)
 
-#         selected_results = [r for i, r in enumerate(candidates) if i in mmr_selected]
-#         return selected_results
+def semantic_search(
+    query_embeddings: Tensor,
+    corpus_embeddings: Tensor,
+    query_chunk_size: int = 100,
+    corpus_chunk_size: int = 500000,
+    top_k: int = 10,
+    score_function: Callable[[Tensor, Tensor], Tensor] = cos_sim,
+):
+    """
+    This function performs a cosine similarity search between a list of query embeddings  and a list of corpus embeddings.
+    It can be used for Information Retrieval / Semantic Search for corpora up to about 1 Million entries.
+    :param query_embeddings: A 2 dimensional tensor with the query embeddings.
+    :param corpus_embeddings: A 2 dimensional tensor with the corpus embeddings.
+    :param query_chunk_size: Process 100 queries simultaneously. Increasing that value increases the speed, but requires more memory.
+    :param corpus_chunk_size: Scans the corpus 100k entries at a time. Increasing that value increases the speed, but requires more memory.
+    :param top_k: Retrieve top k matching entries.
+    :param score_function: Function for computing scores. By default, cosine similarity.
+    :return: Returns a list with one entry for each query. Each entry is a list of dictionaries with the keys 'corpus_id' and 'score', sorted by decreasing cosine similarity scores.
+    """
 
-#     def max_marginal_relevance_search(
-#         self,
-#         query: str,
-#         k: int = 4,
-#         fetch_k: int = 20,
-#         filter: Optional[Dict[str, str]] = None,
-#         **kwargs: Any,
-#     ) -> List[Document]:
-#         """Return docs selected using the maximal marginal relevance.
-#         Maximal marginal relevance optimizes for similarity to query AND diversity
-#         among selected documents.
-#         Args:
-#             query: Text to look up documents similar to.
-#             k: Number of Documents to return. Defaults to 4.
-#             fetch_k: Number of Documents to fetch to pass to MMR algorithm.
-#             filter (Optional[Dict[str, str]]): Filter by metadata. Defaults to None.
-#         Returns:
-#             List of Documents selected by maximal marginal relevance.
-#         """
-#         if self._embedding_function is None:
-#             raise ValueError(
-#                 "For MMR search, you must specify an embedding function on" "creation."
-#             )
+    if isinstance(query_embeddings, (np.ndarray, np.generic)):
+        query_embeddings = torch.from_numpy(query_embeddings)
+    elif isinstance(query_embeddings, list):
+        query_embeddings = torch.stack(query_embeddings)
 
-#         embedding = self._embedding_function.embed_query(query)
-#         docs = self.max_marginal_relevance_search_by_vector(
-#             embedding, k, fetch_k, filter
-#         )
-#         return docs
+    if len(query_embeddings.shape) == 1:
+        query_embeddings = query_embeddings.unsqueeze(0)
 
-#     @classmethod
-#     def from_texts(
-#         cls: Type[VectorStoreWrapper],
-#         texts: List[str],
-#         embedding: Optional[Embeddings] = None,
-#         metadatas: Optional[List[dict]] = None,
-#         ids: Optional[List[str]] = None,
-#         **kwargs: Any,
-#     ) -> VectorStoreWrapper:
-#         """Create a Chroma vectorstore from a raw documents.
-#         If a persist_directory is specified, the collection will be persisted there.
-#         Otherwise, the data will be ephemeral in-memory.
-#         Args:
-#             texts (List[str]): List of texts to add to the collection.
-#             collection_name (str): Name of the collection to create.
-#             persist_directory (Optional[str]): Directory to persist the collection.
-#             embedding (Optional[Embeddings]): Embedding function. Defaults to None.
-#             metadatas (Optional[List[dict]]): List of metadatas. Defaults to None.
-#             ids (Optional[List[str]]): List of document IDs. Defaults to None.
-#             client_settings (Optional[chromadb.config.Settings]): Chroma client settings
-#         Returns:
-#             Chroma: Chroma vectorstore.
-#         """
-#         chroma_collection = cls(
-#             collection_name=collection_name,
-#             embedding_function=embedding,
-#         )
-#         chroma_collection.add_texts(texts=texts, metadatas=metadatas, ids=ids)
-#         return chroma_collection
+    if isinstance(corpus_embeddings, (np.ndarray, np.generic)):
+        corpus_embeddings = torch.from_numpy(corpus_embeddings)
+    elif isinstance(corpus_embeddings, list):
+        corpus_embeddings = torch.stack(corpus_embeddings)
 
-#     @classmethod
-#     def from_documents(
-#         cls: Type[VectorStoreWrapper],
-#         documents: List[Document],
-#         embedding: Optional[Embeddings] = None,
-#         ids: Optional[List[str]] = None,
-#         persist_directory: Optional[str] = None,
-#         **kwargs: Any,
-#     ) -> VectorStoreWrapper:
-#         """Create a Chroma vectorstore from a list of documents.
-#         If a persist_directory is specified, the collection will be persisted there.
-#         Otherwise, the data will be ephemeral in-memory.
-#         Args:
-#             collection_name (str): Name of the collection to create.
-#             persist_directory (Optional[str]): Directory to persist the collection.
-#             ids (Optional[List[str]]): List of document IDs. Defaults to None.
-#             documents (List[Document]): List of documents to add to the vectorstore.
-#             embedding (Optional[Embeddings]): Embedding function. Defaults to None.
-#             client_settings (Optional[chromadb.config.Settings]): Chroma client settings
-#         Returns:
-#             Chroma: Chroma vectorstore.
-#         """
-#         texts = [doc.page_content for doc in documents]
-#         metadatas = [doc.metadata for doc in documents]
-#         return cls.from_texts(
-#             texts=texts,
-#             embedding=embedding,
-#             metadatas=metadatas,
-#             ids=ids,
-#             collection_name=collection_name,
-#             persist_directory=persist_directory,
-#             client_settings=client_settings,
-#             client=client,
-#         )
+    # Check that corpus and queries are on the same device
+    if corpus_embeddings.device != query_embeddings.device:
+        query_embeddings = query_embeddings.to(corpus_embeddings.device)
+
+    queries_result_list = [[] for _ in range(len(query_embeddings))]
+
+    for query_start_idx in range(0, len(query_embeddings), query_chunk_size):
+        # Iterate over chunks of the corpus
+        for corpus_start_idx in range(0, len(corpus_embeddings), corpus_chunk_size):
+            # Compute cosine similarities
+            cos_scores = score_function(
+                query_embeddings[query_start_idx : query_start_idx + query_chunk_size],
+                corpus_embeddings[
+                    corpus_start_idx : corpus_start_idx + corpus_chunk_size
+                ],
+            )
+
+            # Get top-k scores
+            cos_scores_top_k_values, cos_scores_top_k_idx = torch.topk(
+                cos_scores,
+                min(top_k, len(cos_scores[0])),
+                dim=1,
+                largest=True,
+                sorted=False,
+            )
+            cos_scores_top_k_values = cos_scores_top_k_values.cpu().tolist()
+            cos_scores_top_k_idx = cos_scores_top_k_idx.cpu().tolist()
+
+            for query_itr in range(len(cos_scores)):
+                for sub_corpus_id, score in zip(
+                    cos_scores_top_k_idx[query_itr], cos_scores_top_k_values[query_itr]
+                ):
+                    corpus_id = corpus_start_idx + sub_corpus_id
+                    query_id = query_start_idx + query_itr
+                    if len(queries_result_list[query_id]) < top_k:
+                        heapq.heappush(
+                            queries_result_list[query_id], (score, corpus_id)
+                        )  # heaqp tracks the quantity of the first element in the tuple
+                    else:
+                        heapq.heappushpop(
+                            queries_result_list[query_id], (score, corpus_id)
+                        )
+
+    # change the data format and sort
+    for query_id in range(len(queries_result_list)):
+        for doc_itr in range(len(queries_result_list[query_id])):
+            score, corpus_id = queries_result_list[query_id][doc_itr]
+            queries_result_list[query_id][doc_itr] = {
+                "corpus_id": corpus_id,
+                "score": score,
+            }
+        queries_result_list[query_id] = sorted(
+            queries_result_list[query_id], key=lambda x: x["score"], reverse=True
+        )
+    return queries_result_list
+
+
+class VectorStoreWrapper(VectorStore):
+    def __init__(
+        self,
+        embedding_function: Optional[Embeddings] = None,
+        corpus_embeddings: Optional[Tensor] = None,
+        texts: Optional[List[str]] = None,
+        metadatas: Optional[List[Dict[str, str]]] = None,
+    ) -> None:
+        self._embedding_function = embedding_function
+        self._corpus_embeddings = corpus_embeddings
+        self._texts = texts
+        self._metadatas = metadatas
+
+    def add_texts(
+        self,
+        texts: Iterable[str],
+        metadatas: Optional[List[Dict[str, str]]] = None,
+    ) -> List[str]:
+        """Run more texts through the embeddings and add to the vectorstore.
+        Args:
+            texts (Iterable[str]): Texts to add to the vectorstore.
+            metadatas (Optional[List[dict]], optional): Optional list of metadatas.
+            ids (Optional[List[str]], optional): Optional list of IDs.
+        Returns:
+            List[str]: List of IDs of the added texts.
+        """
+        embeddings = None
+        if self._embedding_function is not None:
+            embeddings = self._embedding_function.embed_documents(list(texts))
+        self._corpus_embeddings = torch.tensor(embeddings)
+        self._texts = texts
+        self._metadatas = metadatas
+        return metadatas
+
+    def similarity_search(
+        self,
+        query: str,
+        k: int = 4,
+        filter: Optional[Dict[str, str]] = None,
+        **kwargs: Any,
+    ) -> List[Document]:
+        """Run similarity search with Chroma.
+        Args:
+            query (str): Query text to search for.
+            k (int): Number of results to return. Defaults to 4.
+            filter (Optional[Dict[str, str]]): Filter by metadata. Defaults to None.
+        Returns:
+            List[Document]: List of documents most similar to the query text.
+        """
+        docs_and_scores = self.similarity_search_with_score(query, k, filter=filter)
+        return [doc for doc, _ in docs_and_scores]
+
+    def similarity_search_by_vector(
+        self,
+        embedding: List[float],
+        k: int = 4,
+        filter: Optional[Dict[str, str]] = None,
+        **kwargs: Any,
+    ) -> List[Document]:
+        """Return docs most similar to embedding vector.
+        Args:
+            embedding: Embedding to look up documents similar to.
+            k: Number of Documents to return. Defaults to 4.
+        Returns:
+            List of Documents most similar to the query vector.
+        """
+        results = self._collection.query(
+            query_embeddings=embedding, n_results=k, where=filter
+        )
+        return _results_to_docs(results)
+
+    def similarity_search_with_score(
+        self,
+        query: str,
+        k: int = 4,
+        filter: Optional[Dict[str, str]] = None,
+        **kwargs: Any,
+    ) -> List[Tuple[Document, float]]:
+        """Run similarity search with Chroma with distance.
+        Args:
+            query (str): Query text to search for.
+            k (int): Number of results to return. Defaults to 4.
+            filter (Optional[Dict[str, str]]): Filter by metadata. Defaults to None.
+        Returns:
+            List[Tuple[Document, float]]: List of documents most similar to the query
+                text with distance in float.
+        """
+        query_embeddings = torch.tensor([self._embedding_function.embed_query(query)])
+        result_ids_and_scores = semantic_search(
+            corpus_embeddings=self._corpus_embeddings,
+            query_embeddings=query_embeddings,
+            top_k=k,
+        )
+        result_ids = [result["corpus_id"] for result in result_ids_and_scores[0]]
+        scores = [result["score"] for result in result_ids_and_scores[0]]
+        results = {}
+        results["documents"] = [[self._texts[index] for index in result_ids]]
+        results["distances"] = [scores]
+        results["metadatas"] = [[self._metadatas[index] for index in result_ids]]
+
+        return _results_to_docs_and_scores(results)
+
+    def max_marginal_relevance_search_by_vector(
+        self,
+        embedding: List[float],
+        k: int = 4,
+        fetch_k: int = 20,
+        filter: Optional[Dict[str, str]] = None,
+        **kwargs: Any,
+    ) -> List[Document]:
+        """Return docs selected using the maximal marginal relevance.
+        Maximal marginal relevance optimizes for similarity to query AND diversity
+        among selected documents.
+        Args:
+            embedding: Embedding to look up documents similar to.
+            k: Number of Documents to return. Defaults to 4.
+            fetch_k: Number of Documents to fetch to pass to MMR algorithm.
+            filter (Optional[Dict[str, str]]): Filter by metadata. Defaults to None.
+        Returns:
+            List of Documents selected by maximal marginal relevance.
+        """
+
+        results = self._collection.query(
+            query_embeddings=embedding,
+            n_results=fetch_k,
+            where=filter,
+            include=["metadatas", "documents", "distances", "embeddings"],
+        )
+        mmr_selected = maximal_marginal_relevance(
+            np.array(embedding, dtype=np.float32), results["embeddings"][0], k=k
+        )
+
+        candidates = _results_to_docs(results)
+
+        selected_results = [r for i, r in enumerate(candidates) if i in mmr_selected]
+        return selected_results
+
+    def max_marginal_relevance_search(
+        self,
+        query: str,
+        k: int = 4,
+        fetch_k: int = 20,
+        filter: Optional[Dict[str, str]] = None,
+        **kwargs: Any,
+    ) -> List[Document]:
+        """Return docs selected using the maximal marginal relevance.
+        Maximal marginal relevance optimizes for similarity to query AND diversity
+        among selected documents.
+        Args:
+            query: Text to look up documents similar to.
+            k: Number of Documents to return. Defaults to 4.
+            fetch_k: Number of Documents to fetch to pass to MMR algorithm.
+            filter (Optional[Dict[str, str]]): Filter by metadata. Defaults to None.
+        Returns:
+            List of Documents selected by maximal marginal relevance.
+        """
+        if self._embedding_function is None:
+            raise ValueError(
+                "For MMR search, you must specify an embedding function on" "creation."
+            )
+
+        embedding = self._embedding_function.embed_query(query)
+        docs = self.max_marginal_relevance_search_by_vector(
+            embedding, k, fetch_k, filter
+        )
+        return docs
+
+    @classmethod
+    def from_texts(
+        cls: Type[VectorStoreWrapper],
+        texts: List[str],
+        embedding: Optional[Embeddings] = None,
+        metadatas: Optional[List[dict]] = None,
+        **kwargs: Any,
+    ) -> VectorStoreWrapper:
+        """Create a vectorstore from raw text.
+        The data will be ephemeral in-memory.
+        Args:
+            texts (List[str]): List of texts to add to the collection.
+            embedding (Optional[Embeddings]): Embedding function. Defaults to None.
+            metadatas (Optional[List[dict]]): List of metadatas. Defaults to None.
+        Returns:
+            vector_store: Vectorstore with seedset embeddings
+        """
+        vector_store = cls(
+            embedding_function=embedding, corpus_embeddings=None, texts=None, **kwargs
+        )
+        vector_store.add_texts(texts=texts, metadatas=metadatas)
+        return vector_store
