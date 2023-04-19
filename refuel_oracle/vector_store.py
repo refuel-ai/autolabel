@@ -193,7 +193,7 @@ class VectorStoreWrapper(VectorStore):
         filter: Optional[Dict[str, str]] = None,
         **kwargs: Any,
     ) -> List[Document]:
-        """Run similarity search with Chroma.
+        """Run semantic similarity search.
         Args:
             query (str): Query text to search for.
             k (int): Number of results to return. Defaults to 4.
@@ -211,7 +211,7 @@ class VectorStoreWrapper(VectorStore):
         filter: Optional[Dict[str, str]] = None,
         **kwargs: Any,
     ) -> List[Tuple[Document, float]]:
-        """Run similarity search with Chroma with distance.
+        """Run semantic similarity search and retrieve distances.
         Args:
             query (str): Query text to search for.
             k (int): Number of results to return. Defaults to 4.
