@@ -18,9 +18,9 @@ class Oracle:
     CHUNK_SIZE = 5
     DEFAULT_SEPARATOR = ","
 
-    def __init__(self, config: str, debug: bool = False) -> None:
+    def __init__(self, config: str, debug: bool = False, **kwargs) -> None:
         self.debug = debug
-        self.set_config(config)
+        self.set_config(config, **kwargs)
         if not debug:
             self.set_cache()
 
@@ -151,8 +151,8 @@ class Oracle:
         # Set cache for langchain
         langchain.llm_cache = SQLiteCache(database_path=".langchain.db")
 
-    def set_config(self, config: str, load_llm: bool = True):
-        self.config = Config.from_json(config)
+    def set_config(self, config: str, load_llm: bool = True, **kwargs):
+        self.config = Config.from_json(config, **kwargs)
         if load_llm:
             self.llm = LLMFactory.from_config(self.config)
         self.task = TaskFactory.from_config(self.config)
