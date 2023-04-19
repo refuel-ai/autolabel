@@ -74,9 +74,7 @@ class ExampleSelector:
 
     def get_examples(self, input):
         if self.is_example_selector():
-            print(f"input: {input}")
             res = self.example_selector.select_examples(input)
-            print(f"res: {res}")
             return res
         else:
             return self.examples
