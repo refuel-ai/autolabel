@@ -63,7 +63,7 @@ class EntityRecognitionTask(BaseTask):
             prefix_prompt=prefix_prompt,
             task_prompt=task_prompt,
             output_prompt=self.CSV_OUTPUT_FORMAT
-            if self.config.get("promp_encoding") == "csv"
+            if self.config.get("prompt_encoding") == "csv"
             else self.DEFAULT_OUTPUT_FORMAT_PROMPT,
         )
 
@@ -122,9 +122,7 @@ class EntityRecognitionTask(BaseTask):
         split_response = response.split("%")
         json_output = {
             "answered": split_response[1],
-            "entities": {
-                i: [] for i in self.config.label_list
-            },
+            "entities": {i: [] for i in self.config["labels_list"]},
         }
         current_entity = None
         for text_or_type in split_response[3:]:
@@ -144,7 +142,7 @@ class EntityRecognitionTask(BaseTask):
             else:
                 output = json.loads(completion_text.strip())
         except Exception as e:
-            logger.info(f"Error parsing LLM response: {response.text}")
+            logger.info(f"Error parsing LLM response: {response.text}, Error: {e}")
 
         successfully_labeled = output.get("answered", "no")
         if successfully_labeled.lower() == "yes":
