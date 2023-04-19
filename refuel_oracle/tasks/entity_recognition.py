@@ -152,6 +152,7 @@ class EntityRecognitionTask(BaseTask):
         except Exception as e:
             logger.info(f"Error parsing LLM response: {response.text}, Error: {e}")
             llm_label = self.NULL_LABEL
+            successfully_labeled = "no"
 
         # TODO: parse generation info correctly to fetch & transform logprobs -> score
         return LLMAnnotation(
