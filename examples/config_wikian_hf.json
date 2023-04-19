@@ -1,8 +1,9 @@
 {
     "project_name": "WikiANN",
     "task_type": "named_entity_recognition",
-    "provider_name": "anthropic",
-    "model_name": "claude-v1",
+    "provider_name": "huggingface",
+    "model_name": "google/flan-t5-xxl",
+    "quantize": "16",
     "prompt_encoding": "csv",
     "prefix_prompt": "",
     "labels_list": [
