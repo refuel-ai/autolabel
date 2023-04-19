@@ -15,5 +15,5 @@ annotator.plan(dataset=os.path.join(curr_directory, wikiann_dataset))
 print("Running Oracle.annotate() on a subset of items in dataset")
 annotator.annotate(
     dataset=os.path.join(curr_directory, wikiann_dataset),
-    max_items=500,
+    max_items=5,
 )

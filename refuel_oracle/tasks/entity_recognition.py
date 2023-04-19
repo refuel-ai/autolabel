@@ -33,6 +33,14 @@ class EntityRecognitionTask(BaseTask):
         output = {"answered": "yes", "entities": entities}
         return json.dumps(output)
 
+    def _to_csv_output_format(self, entities: List) -> str:
+        output = "answered:%yes%entities"
+        for entity_type in entities:
+            output += f"%{entity_type}"
+            for text in entities[entity_type]:
+                output += f"%{text}"
+        return output
+
     def initialize_prompt_template(self) -> PromptTemplate:
         # provide context about the problem domain
         prefix_prompt = self.config.get("prefix_prompt", "")
@@ -64,7 +72,10 @@ class EntityRecognitionTask(BaseTask):
         )
         formatted_examples = []
         for eg in examples:
-            expected_output = self._to_default_output_format(eg["output"])
+            if self.config.get("prompt_encoding") == "csv":
+                expected_output = self._to_csv_output_format(eg["output"])
+            else:
+                expected_output = self._to_default_output_format(eg["output"])
             formatted_examples.append(
                 example_prompt.format(example=eg["example"], output=expected_output)
             )
@@ -104,11 +115,33 @@ class EntityRecognitionTask(BaseTask):
             frequency_count[text] += 1
         return conll_output
 
+    def jsonify_csv_output(self, response: str):
+        split_response = response.split("%")
+        json_output = {
+            "answered": split_response[1],
+            "entities": {
+                "Location": [],
+                "Organization": [],
+                "Person": [],
+            },
+        }
+        current_entity = None
+        for text_or_type in split_response[3:]:
+            if text_or_type in json_output["entities"]:
+                current_entity = text_or_type
+            else:
+                if current_entity is not None:
+                    json_output["entities"][current_entity].append(text_or_type)
+        return json_output
+
     def parse_llm_response(self, response: Generation, input: str) -> LLMAnnotation:
         output = {}
         try:
             completion_text = response.text
-            output = json.loads(completion_text.strip())
+            if self.config.get("prompt_encoding") == "csv":
+                output = self.jsonify_csv_output(completion_text.strip())
+            else:
+                output = json.loads(completion_text.strip())
         except Exception as e:
             logger.info(f"Error parsing LLM response: {response.text}")
 

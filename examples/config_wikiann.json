@@ -1,11 +1,12 @@
 {
     "project_name": "WikiANN",
     "task_type": "named_entity_recognition",
-    "provider_name": "openai",
-    "model_name": "text-davinci-003",
+    "provider_name": "openai_chat",
+    "model_name": "gpt-3.5-turbo",
     "model_params": {
         "max_tokens": 512
     },
+    "prompt_encoding": "csv",
     "prefix_prompt": "",
     "labels_list": [
         "Location",
