@@ -9,9 +9,9 @@ from langchain.prompts.example_selector import (
     SemanticSimilarityExampleSelector,
 )
 from langchain.prompts.example_selector.ngram_overlap import NGramOverlapExampleSelector
-from refuel_oracle.vector_store import VectorStoreWrapper
 
 from refuel_oracle.config import Config
+from refuel_oracle.vector_store import VectorStoreWrapper
 
 
 # All available LLM providers
@@ -75,7 +75,6 @@ class ExampleSelector:
 
     def get_examples(self, input):
         if self.is_example_selector():
-            res = self.example_selector.select_examples(input)
-            return res
+            return self.example_selector.select_examples(input)
         else:
             return self.examples
