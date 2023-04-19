@@ -42,7 +42,6 @@ class Oracle:
         if max_items and max_items > 0:
             max_items = min(max_items, len(dat))
             dat = dat[:max_items]
-
         inputs = dat[input_columns].to_dict(orient="records")
         gt_labels = None if not label_column else dat[label_column].tolist()
         return (dat, inputs, gt_labels)
