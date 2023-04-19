@@ -170,7 +170,7 @@ class VectorStoreWrapper(VectorStore):
         texts: Iterable[str],
         metadatas: Optional[List[Dict[str, str]]] = None,
     ) -> List[str]:
-        """Run more texts through the embeddings and add to the vectorstore.
+        """Run texts through the embeddings and add to the vectorstore. Currently, the vectorstore is reinitialized each time, because we do not require a persistent vector store for example selection.
         Args:
             texts (Iterable[str]): Texts to add to the vectorstore.
             metadatas (Optional[List[dict]], optional): Optional list of metadatas.
