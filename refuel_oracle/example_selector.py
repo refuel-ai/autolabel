@@ -61,6 +61,7 @@ class ExampleSelector:
             | example_selector_params
         )
         example_selector_params["examples"] = self.examples
+        example_selector_params["embeddings"] = OpenAIEmbeddings()
         self.example_selector = example_selector_class.from_examples(
             **example_selector_params
         )

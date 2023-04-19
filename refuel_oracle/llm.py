@@ -4,7 +4,7 @@ from typing import Dict, List
 
 from langchain.chat_models import ChatOpenAI
 from langchain.llms import Anthropic, BaseLLM, Cohere, HuggingFacePipeline, OpenAI
-from langchain.schema import HumanMessage, LLMResult
+from langchain.schema import Generation, HumanMessage, LLMResult
 from refuel_oracle.config import Config
 from transformers import AutoModelForSeq2SeqLM, AutoTokenizer, pipeline
 import torch
@@ -35,7 +35,12 @@ class LLMLabeler:
             # Currently the entire prompt is stuck into the "human message"
             # We might consider breaking this up into human vs system message in future
             prompts = [[HumanMessage(content=prompt)] for prompt in prompts]
-        return self.base_llm.generate(prompts)
+        try:
+            return self.base_llm.generate(prompts)
+        except Exception as e:
+            print(f"Error generating from LLM: {e}, returning empty result")
+            generations = [[Generation(text="")] for prompt in prompts]
+            return LLMResult(generations=generations)
 
 
 class LLMFactory:
