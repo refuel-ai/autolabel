@@ -135,6 +135,7 @@ class EntityRecognitionTask(BaseTask):
 
     def parse_llm_response(self, response: Generation, input: str) -> LLMAnnotation:
         output = {}
+        successfully_labeled = "no"
         try:
             completion_text = response.text
             if self.config.get("prompt_encoding") == "csv":
