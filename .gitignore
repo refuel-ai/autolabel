@@ -130,3 +130,5 @@ dmypy.json
 
 # Temporary CSVs
 dataset_processors/*.csv
+# Data directory
+data/
