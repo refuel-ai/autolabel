@@ -71,15 +71,7 @@ def semantic_search(
     score_function: Callable[[Tensor, Tensor], Tensor] = cos_sim,
 ):
     """
-    This function performs a cosine similarity search between a list of query embeddings  and a list of corpus embeddings.
-    It can be used for Information Retrieval / Semantic Search for corpora up to about 1 Million entries.
-    :param query_embeddings: A 2 dimensional tensor with the query embeddings.
-    :param corpus_embeddings: A 2 dimensional tensor with the corpus embeddings.
-    :param query_chunk_size: Process 100 queries simultaneously. Increasing that value increases the speed, but requires more memory.
-    :param corpus_chunk_size: Scans the corpus 100k entries at a time. Increasing that value increases the speed, but requires more memory.
-    :param top_k: Retrieve top k matching entries.
-    :param score_function: Function for computing scores. By default, cosine similarity.
-    :return: Returns a list with one entry for each query. Each entry is a list of dictionaries with the keys 'corpus_id' and 'score', sorted by decreasing cosine similarity scores.
+    Semantic similarity search based on cosine similarity score. Implementation from this project: https://github.com/UKPLab/sentence-transformers
     """
 
     if isinstance(query_embeddings, (np.ndarray, np.generic)):
