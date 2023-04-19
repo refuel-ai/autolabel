@@ -141,14 +141,15 @@ class EntityRecognitionTask(BaseTask):
                 output = self.jsonify_csv_output(completion_text.strip())
             else:
                 output = json.loads(completion_text.strip())
+
+            successfully_labeled = output.get("answered", "no")
+            if successfully_labeled.lower() == "yes":
+                raw_output = output.get("entities") or self.NULL_LABEL
+                llm_label = self.convert_raw_output_to_conll(raw_output, input["Text"])
+            else:
+                llm_label = self.NULL_LABEL
         except Exception as e:
             logger.info(f"Error parsing LLM response: {response.text}, Error: {e}")
-
-        successfully_labeled = output.get("answered", "no")
-        if successfully_labeled.lower() == "yes":
-            raw_output = output.get("entities") or self.NULL_LABEL
-            llm_label = self.convert_raw_output_to_conll(raw_output, input["Text"])
-        else:
             llm_label = self.NULL_LABEL
 
         # TODO: parse generation info correctly to fetch & transform logprobs -> score
