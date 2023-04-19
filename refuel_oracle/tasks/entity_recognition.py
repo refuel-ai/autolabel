@@ -15,11 +15,13 @@ class EntityRecognitionTask(BaseTask):
     DEFAULT_TASK_PROMPT = "Your job is to extract named entities mentioned in text, and classify them into one of the following {num_labels} categories.\nCategories:\n{labels_list}\n "
     DEFAULT_OUTPUT_FORMAT_PROMPT = 'You will return the answer in JSON format with two keys: {"answered": can you answer this question. say YES or NO, "entities": a JSON list of extracted entities from text}.'
     CSV_OUTPUT_FORMAT = "You will return the answer in CSV format seperated by % charcter: answered%can you answer this question. say YES or NO%entities%a list of extracted entities from text."
-    PROMPT_TEMPLATE = "{prefix_prompt}\n{task_prompt}\n{output_prompt}\n\nSome examples with their output answers are provided below:\n{seed_examples}\nBegin:{current_example}"
+    SEED_EXAMPLES_PROMPT = "Some examples with their output answers are provided below:"
+    PROMPT_TEMPLATE = "{prefix_prompt}\n{task_prompt}\n{output_prompt}\n\n{seed_examples_prompt}\n{seed_examples}\nBegin:{current_example}"
     PROMPT_TEMPLATE_VARIABLES = [
         "prefix_prompt",
         "task_prompt",
         "output_prompt",
+        "seed_examples_prompt",
         "seed_examples",
         "current_example",
     ]
@@ -87,8 +89,15 @@ class EntityRecognitionTask(BaseTask):
         # populate the current example in the prompt
         current_example = example_prompt.format(example=current_input, output="")
 
+        if len(examples):
+            seed_examples_prompt = self.SEED_EXAMPLES_PROMPT
+        else:
+            seed_examples_prompt = ""
+
         return self.prompt_template.format(
-            seed_examples="\n".join(formatted_examples), current_example=current_example
+            seed_examples="\n".join(formatted_examples),
+            current_example=current_example,
+            seed_examples_prompt=seed_examples_prompt,
         )
 
     def convert_raw_output_to_conll(self, raw_output, input):
