@@ -14,6 +14,7 @@ from refuel_oracle.tasks import BaseTask
 class EntityRecognitionTask(BaseTask):
     DEFAULT_TASK_PROMPT = "Your job is to extract named entities mentioned in text, and classify them into one of the following {num_labels} categories.\nCategories:\n{labels_list}\n "
     DEFAULT_OUTPUT_FORMAT_PROMPT = 'You will return the answer in JSON format with two keys: {"answered": can you answer this question. say YES or NO, "entities": a JSON list of extracted entities from text}.'
+    CSV_OUTPUT_FORMAT = "You will return the answer in CSV format seperated by % charcter: answered%can you answer this question. say YES or NO%entities%a list of extracted entities from text."
     PROMPT_TEMPLATE = "{prefix_prompt}\n{task_prompt}\n{output_prompt}\n\nSome examples with their output answers are provided below:\n{seed_examples}\nBegin:{current_example}"
     PROMPT_TEMPLATE_VARIABLES = [
         "prefix_prompt",
@@ -61,7 +62,9 @@ class EntityRecognitionTask(BaseTask):
         return pt.partial(
             prefix_prompt=prefix_prompt,
             task_prompt=task_prompt,
-            output_prompt=self.DEFAULT_OUTPUT_FORMAT_PROMPT,
+            output_prompt=self.CSV_OUTPUT_FORMAT
+            if self.config.get("promp_encoding") == "csv"
+            else self.DEFAULT_OUTPUT_FORMAT_PROMPT,
         )
 
     def construct_prompt(self, input: Dict, examples: List) -> str:
@@ -120,9 +123,7 @@ class EntityRecognitionTask(BaseTask):
         json_output = {
             "answered": split_response[1],
             "entities": {
-                "Location": [],
-                "Organization": [],
-                "Person": [],
+                i: [] for i in self.config.label_list
             },
         }
         current_entity = None
