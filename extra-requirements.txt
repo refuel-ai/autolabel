@@ -1,0 +1,6 @@
+
+openai:                     openai
+transformers:               huggingface
+scikit-learn:               multi_choice_question_answering, classification
+nervaluate:                 named_entity_recognition
+anthropic:                  anthropic
