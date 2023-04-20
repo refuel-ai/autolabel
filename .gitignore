@@ -132,3 +132,4 @@ dmypy.json
 dataset_processors/*.csv
 # Data directory
 data/
+!data/get_data.py

@@ -1,15 +1,6 @@
 import time
 from refuel_oracle.oracle import Oracle
-
-SUPPORTED_DATASETS = [
-    "ledgar",
-    "banking",
-    "emotion",
-    "sciq",
-    "medqa",
-    "pubmed_qa",
-    "walmart_amazon",
-]
+from data.get_data import SUPPORTED_DATASETS
 
 
 class Benchmark:
@@ -17,7 +8,7 @@ class Benchmark:
         pass
 
     def run(self, **kwargs):
-        for i, dataset_name in enumerate(SUPPORTED_DATASETS):
+        for i, dataset_name in enumerate(SUPPORTED_DATASETS.keys()):
             config_path = f"examples/config_{dataset_name}_hf.json"
             print(f"Running {dataset_name} with config {config_path}")
             # Only load the llm the first time

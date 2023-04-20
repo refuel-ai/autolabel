@@ -8,16 +8,6 @@ import random
 import pandas as pd
 import urllib.request
 
-SUPPORTED_DATASETS = [
-    "ledgar",
-    "banking",
-    "emotion",
-    "sciq",
-    "medqa",
-    "pubmed_qa",
-    "walmart_amazon",
-]
-
 
 def map_label_to_string(dataset, col):
     label_dict = {k: v for k, v in enumerate(dataset.features[col].names)}
@@ -185,7 +175,19 @@ def get_walmart_amazon(output_folder="."):
         dict_writer.writerows(dataset)
 
 
+SUPPORTED_DATASETS = {
+    "ledgar": get_ledgar,
+    "banking": get_banking,
+    "emotion": get_emotion,
+    "sciq": get_sciq,
+    "medqa": get_medqa,
+    "pubmed_qa": get_pubmed_qa,
+    "walmart_amazon": get_walmart_amazon,
+}
+
+
 def get_dataset(dataset, output_folder="."):
+    assert dataset in SUPPORTED_DATASETS, f"Dataset {dataset} not supported"
     if dataset == "ledgar":
         get_ledgar(output_folder)
     elif dataset == "banking":
