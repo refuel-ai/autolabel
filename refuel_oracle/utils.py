@@ -17,10 +17,8 @@ PROVIDER_TO_COST_PER_TOKEN = {
         "gpt-4": 0.03 / 1000,  # $0.03 per 1000 tokens for prompts
     },
     LLMProvider.anthropic: {
-        # $2.90 per million characters for prompts
-        # For Claude the average token is about 3.5 characters
-        "claude-v1": (2.90 / 1000000)
-        * 3.5,
+        # $11.02 per million tokens for prompts
+        "claude-v1": (11.02 / 1000000)
     },
 }
 PROVIDER_TO_COST_OF_COMPLETION = {
@@ -33,10 +31,8 @@ PROVIDER_TO_COST_OF_COMPLETION = {
         "gpt-4": 0.06 / 1000,  # $0.06 per 1000 tokens in response
     },
     LLMProvider.anthropic: {
-        # $8.60 per million characters in response
-        # For Claude the average token is about 3.5 characters
-        "claude-v1": (8.60 / 1000000)
-        * 3.5,
+        # $32.68 per million tokens in response
+        "claude-v1": (32.68 / 1000000)
     },
 }
 
