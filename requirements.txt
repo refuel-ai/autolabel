@@ -1,13 +1,7 @@
 langchain
 loguru
 numpy
-openai
 pandas
-scikit-learn
-tenacity
 tiktoken
 matplotlib
-anthropic
 torch
-transformers
-nervaluate

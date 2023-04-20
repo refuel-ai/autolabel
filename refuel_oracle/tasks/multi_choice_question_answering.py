@@ -10,10 +10,6 @@ from refuel_oracle.schema import LLMAnnotation, Metric, MetricResult
 from refuel_oracle.tasks import BaseTask
 from refuel_oracle.utils import extract_valid_json_substring
 from sklearn.metrics import accuracy_score, confusion_matrix, ConfusionMatrixDisplay
-import matplotlib.pyplot as plt
-import transformers
-
-transformers.logging.set_verbosity_error()
 
 
 class MultiChoiceQATask(BaseTask):

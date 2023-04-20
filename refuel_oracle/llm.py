@@ -2,12 +2,14 @@ import copy
 from enum import Enum
 from typing import Dict, List
 
+import torch
+import transformers
 from langchain.chat_models import ChatOpenAI
 from langchain.llms import Anthropic, BaseLLM, Cohere, HuggingFacePipeline, OpenAI
 from langchain.schema import Generation, HumanMessage, LLMResult
-from refuel_oracle.config import Config
 from transformers import AutoModelForSeq2SeqLM, AutoTokenizer, pipeline
-import torch
+
+from refuel_oracle.config import Config
 
 
 # All available LLM providers
@@ -101,6 +103,7 @@ class LLMFactory:
         if llm_provider in [LLMProvider.openai, LLMProvider.openai_chat]:
             base_llm = llm_cls(model_name=llm_model, **llm_params)
         elif llm_provider == LLMProvider.huggingface:
+            transformers.logging.set_verbosity_error()
             tokenizer = AutoTokenizer.from_pretrained(llm_model)
             quantize_bits = config.get("quantize", "")
             if quantize_bits == "8":
