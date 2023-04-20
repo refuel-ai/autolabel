@@ -58,6 +58,7 @@ class Oracle:
 
         llm_labels = []
         prompt_list = []
+        num_failures = 0
         total_tokens = 0
 
         num_sections = max(max_items / self.CHUNK_SIZE, 1)
@@ -80,13 +81,18 @@ class Oracle:
                 total_tokens += num_tokens
                 prompt_list.append(final_prompt)
             # Get response from LLM
-            response = self.llm.generate(final_prompts)
-            for i in range(len(response.generations)):
-                response_item = response.generations[i]
-                input_i = chunk[i]
-                generation = response_item[0]
-                llm_labels.append(self.task.parse_llm_response(generation, input_i))
+            try:
+                response = self.llm.generate(final_prompts)
+                for i in range(len(response.generations)):
+                    response_item = response.generations[i]
+                    input_i = chunk[i]
+                    generation = response_item[0]
+                    llm_labels.append(self.task.parse_llm_response(generation, input_i))
+            except Exception as e:
+                print("Error in generating response:", e)
+                num_failures += 1
 
+        eval_result = None
         # if true labels are provided, evaluate accuracy of predictions
         if gt_labels:
             eval_result = self.task.eval(llm_labels, gt_labels)
@@ -110,6 +116,8 @@ class Oracle:
             header=True,
             index=False,
         )
+        print(f"Total number of failures: {num_failures}")
+        return output_df["llm_label"], eval_result
 
     def plan(
         self,

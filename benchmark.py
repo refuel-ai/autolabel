@@ -1,12 +1,13 @@
+import time
 from refuel_oracle.oracle import Oracle
 
 SUPPORTED_DATASETS = [
-    # "ledgar",
-    # "banking",
-    # "emotion",
-    # "sciq",
-    # "medqa",
-    # "pubmed_qa",
+    "ledgar",
+    "banking",
+    "emotion",
+    "sciq",
+    "medqa",
+    "pubmed_qa",
     "walmart_amazon",
 ]
 
@@ -25,8 +26,13 @@ class Benchmark:
             else:
                 annotator.set_config(config_path, load_llm=False, **kwargs)
             annotator.plan(f"data/{dataset_name}_test.csv")
-            annotator.annotate(f"data/{dataset_name}_test.csv", max_items=500)
+            start_time = time.time()
+            annotator.annotate(f"data/{dataset_name}_test.csv", max_items=2000)
+            time_taken = time.time() - start_time
+            print(f"Time taken for {dataset_name}: {time_taken} seconds")
 
 
 if __name__ == "__main__":
-    Benchmark().run()
+    Benchmark().run(
+        model_name="text-davinci-003", provider_name="openai", output_format="json"
+    )
