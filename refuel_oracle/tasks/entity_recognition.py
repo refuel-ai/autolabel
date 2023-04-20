@@ -169,6 +169,7 @@ class EntityRecognitionTask(BaseTask):
             successfully_labeled=successfully_labeled,
             label=llm_label,
             generation_info=response.generation_info,
+            raw_text=response.text,
         )
 
     def eval(

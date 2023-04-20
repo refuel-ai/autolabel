@@ -23,7 +23,7 @@ class Oracle:
         self.debug = debug
         self.config = Config.from_json(config)
         self.llm = LLMFactory.from_config(self.config)
-        self.confidence = ConfidenceCalculator(llm=self.llm)
+        self.confidence = ConfidenceCalculator(score_type="p_true", llm=self.llm)
         self.task = TaskFactory.from_config(self.config)
         self.example_selector = None
 
@@ -97,6 +97,7 @@ class Oracle:
                             generation, input_i
                         ),
                         empty_response=self.config.get("empty_response", ""),
+                        prompt=final_prompts[i],
                     )
                 )
 

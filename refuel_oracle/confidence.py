@@ -41,8 +41,19 @@ class ConfidenceCalculator:
         else:
             raise NotImplementedError()
 
-    def p_true(self, model_generation: LLMAnnotation, **kwargs) -> float:
-        return 0
+    def p_true(self, model_generation: LLMAnnotation, prompt: str, **kwargs) -> float:
+        p_true_prompt = f"{prompt}{model_generation.raw_text} \n Is the answer to the last example correct? Answer in one word on the same line [Yes/No]: "
+        response = self.llm.generate([p_true_prompt])
+        response_logprobs = response.generations[0][0].generation_info["logprobs"][
+            "top_logprobs"
+        ]
+        for token in response_logprobs:
+            token_str = list(token.keys())[0]
+            if token_str.lower() == "yes":
+                return math.e ** token[token_str]
+            elif token_str.lower() == "no":
+                return -math.e ** token[token_str]
+        return 0.5
 
     def calculate(self, model_generation: LLMAnnotation, **kwargs) -> LLMAnnotation:
         SUPPORTED_CALCULATORS = {
