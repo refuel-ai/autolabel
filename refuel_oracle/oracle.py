@@ -4,6 +4,7 @@ import numpy as np
 import pandas as pd
 from tqdm import tqdm
 
+from refuel_oracle.confidence import ConfidenceCalculator
 from refuel_oracle.config import Config
 from refuel_oracle.example_selector import ExampleSelector
 from refuel_oracle.llm import LLMFactory
@@ -22,6 +23,7 @@ class Oracle:
         self.debug = debug
         self.config = Config.from_json(config)
         self.llm = LLMFactory.from_config(self.config)
+        self.confidence = ConfidenceCalculator(llm=self.llm)
         self.task = TaskFactory.from_config(self.config)
         self.example_selector = None
 
@@ -89,7 +91,14 @@ class Oracle:
                 response_item = response.generations[i]
                 input_i = chunk[i]
                 generation = response_item[0]
-                llm_labels.append(self.task.parse_llm_response(generation, input_i))
+                llm_labels.append(
+                    self.confidence.calculate(
+                        model_generation=self.task.parse_llm_response(
+                            generation, input_i
+                        ),
+                        empty_response=self.config.get("empty_response", ""),
+                    )
+                )
 
         # if true labels are provided, evaluate accuracy of predictions
         if gt_labels:

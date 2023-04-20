@@ -1,8 +1,8 @@
 {
     "project_name": "WikiANN",
     "task_type": "named_entity_recognition",
-    "provider_name": "anthropic",
-    "model_name": "claude-v1",
+    "provider_name": "openai",
+    "model_name": "text-davinci-003",
     "prompt_encoding": "csv",
     "prefix_prompt": "",
     "labels_list": [
@@ -17,6 +17,7 @@
         "label_column": "CategorizedLabels",
         "delimiter": "%"
     },
+    "empty_response": "answered:%%entities%Location%Organization%Person",
     "seed_examples": [
         {
             "example": "Shortly afterward , an encouraging response influenced him to go to India ; he arrived at Adyar in 1884 .",
