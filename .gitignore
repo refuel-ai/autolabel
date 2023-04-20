@@ -130,3 +130,6 @@ dmypy.json
 
 # Temporary CSVs
 dataset_processors/*.csv
+
+# DS_Store
+*.DS_Store
