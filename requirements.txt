@@ -3,5 +3,4 @@ loguru
 numpy
 pandas
 tiktoken
-matplotlib
 torch

@@ -10,7 +10,7 @@ with open(os.path.join(current_file_path, "README.md"), encoding="utf-8") as rd:
     long_description = "\n" + rd.read()
 
 
-def get_extra_requires(path, add_all=True):
+def parse_extra_requirements(path, add_all=True):
     import re
     from collections import defaultdict
 
@@ -65,5 +65,5 @@ setup(
         "Operating System :: OS Independent",
         "Programming Language :: Python",
     ],
-    extras_require=get_extra_requires("extra-requirements.txt"),
+    extras_require=parse_extra_requirements("extra-requirements.txt"),
 )
