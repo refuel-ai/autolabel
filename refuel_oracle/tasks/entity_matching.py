@@ -1,6 +1,5 @@
 import json
 from typing import List, Dict
-import ast
 
 from langchain.prompts.prompt import PromptTemplate
 from langchain.schema import Generation
@@ -9,17 +8,17 @@ from refuel_oracle.config import Config
 from refuel_oracle.schema import LLMAnnotation, Metric, MetricResult
 from refuel_oracle.tasks import BaseTask
 from refuel_oracle.utils import extract_valid_json_substring
-from sklearn.metrics import accuracy_score, confusion_matrix, ConfusionMatrixDisplay
-import matplotlib.pyplot as plt
+from sklearn.metrics import accuracy_score
 import transformers
 
 transformers.logging.set_verbosity_error()
 
 
-class MultiChoiceQATask(BaseTask):
-    DEFAULT_TASK_PROMPT = "Your job is to answer the following questions using the options provided for each question. Choose the best answer for the question.\n"
-    JSON_OUTPUT_FORMAT_PROMPT = 'You will return the answer in JSON format with two keys: {"answered": "can you answer this question. say yes or no", "label": "the correct label"}\n'
-    CSV_OUTPUT_FORMAT_PROMPT = 'You will return the answer in CSV format with two elements: "can you answer this question. say Yes or No", "the correct label"\n'
+class EntityMatchingTask(BaseTask):
+    DEFAULT_TASK_PROMPT = "Your job is to tell if the two given entities are duplicates or not. Say duplicate, if they are duplicate and not duplicate otherwise. Options:\nduplicate\nnot duplicate\n"
+    JSON_OUTPUT_FORMAT_PROMPT = 'You will return the answer in JSON format with two keys: {"answered": "can you answer this question. say yes or no", "label": "duplicate or not duplicate"}\n'
+    CSV_OUTPUT_FORMAT_PROMPT = 'You will return the answer in CSV format with two elements: "can you answer this question. say yes or no", "duplicate or not duplicate"\n'
+    NO_OUTPUT_FORMAT_PROMPT = 'You will return the answer in plain text format with one element: "duplicate or not duplicate"\n'
     PROMPT_TEMPLATE = "{prefix_prompt}\n{task_prompt}\n\n{output_prompt}\n\nSome examples with their output answers are provided below:\n{seed_examples}\n Now I want you to label the following example in the same way: {current_example}"
     PROMPT_TEMPLATE_VARIABLES = [
         "prefix_prompt",
@@ -29,9 +28,9 @@ class MultiChoiceQATask(BaseTask):
         "current_example",
     ]
     EXAMPLE_PROMPT_TEMPLATE = (
-        "{context}\nQuestion: {question}\nOptions:\n{options}\nAnswer:{answer}\n"
+        "Entity1: {entity1}\nEntity2: {entity2}\nAnswer:{answer}\n"
     )
-    EXAMPLE_PROMPT_VARIABLES = ["context", "question", "options", "answer"]
+    EXAMPLE_PROMPT_VARIABLES = ["entity1", "entity2", "answer"]
     NULL_LABEL_TOKEN = "NO_LABEL"
 
     def __init__(self, config: Config) -> None:
@@ -44,6 +43,8 @@ class MultiChoiceQATask(BaseTask):
             return json.dumps(output)
         elif self.output_format == "csv":
             return f"yes, {label}"
+        elif self.output_format == "no":
+            return label
 
     def initialize_prompt_template(self) -> PromptTemplate:
         # provide context about the problem domain
@@ -61,6 +62,8 @@ class MultiChoiceQATask(BaseTask):
 
         if self.output_format == "csv":
             output_prompt = self.CSV_OUTPUT_FORMAT_PROMPT
+        elif self.output_format == "no":
+            output_prompt = self.NO_OUTPUT_FORMAT_PROMPT
         else:
             output_prompt = self.JSON_OUTPUT_FORMAT_PROMPT
         return pt.partial(
@@ -83,29 +86,26 @@ class MultiChoiceQATask(BaseTask):
         )
         formatted_examples = []
         for eg in examples:
-            expected_output = self._to_output_format(eg["answer"])
+            expected_output = self._to_output_format(eg["label"])
             formatted_examples.append(
                 example_prompt.format(
-                    context=self.get_context(eg),
-                    question=eg["question"],
-                    options="\n".join(eg["options"]),
+                    entity1=eg["entity1"],
+                    entity2=eg["entity2"],
                     answer=expected_output,
                 )
             )
 
         # populate the current example in the prompt
         current_example = example_prompt.format(
-            context=self.get_context(input),
-            question=input["question"],
-            options="\n".join(
-                ast.literal_eval(input["options"])
-            ),  # Arrays sent as a list of strings in the csv right now
+            entity1=input["entity1"],
+            entity2=input["entity2"],
             answer="",  # we don't know the answer yet
         )
 
-        return self.prompt_template.format(
+        prompt = self.prompt_template.format(
             seed_examples="\n".join(formatted_examples), current_example=current_example
         )
+        return prompt
 
     # TODO: Should parsing of responses be moved to a generic class?
     def parse_llm_response(self, response: Generation, input: str) -> LLMAnnotation:
@@ -113,6 +113,8 @@ class MultiChoiceQATask(BaseTask):
             return self.parse_json_llm_response(response)
         elif self.output_format == "csv":
             return self.parse_csv_llm_response(response)
+        elif self.output_format == "no":
+            return self.parse_no_llm_response(response)
 
     def parse_json_llm_response(self, response: Generation) -> LLMAnnotation:
         output = {}
@@ -158,6 +160,14 @@ class MultiChoiceQATask(BaseTask):
         return LLMAnnotation(
             successfully_labeled=successfully_labeled,
             label=llm_label,
+            generation_info=response.generation_info,
+        )
+
+    def parse_no_llm_response(self, response: Generation) -> LLMAnnotation:
+        completion_text = response.text.strip()
+        return LLMAnnotation(
+            successfully_labeled="yes",
+            label=completion_text,
             generation_info=response.generation_info,
         )
 

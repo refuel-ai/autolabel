@@ -20,6 +20,7 @@ PROVIDER_TO_COST_PER_TOKEN = {
         # $11.02 per million tokens for prompts
         "claude-v1": (11.02 / 1000000)
     },
+    LLMProvider.huggingface: {},
 }
 PROVIDER_TO_COST_OF_COMPLETION = {
     LLMProvider.openai: {
@@ -69,6 +70,12 @@ def calculate_cost(config: Config, num_tokens: int) -> float:
     """
     llm_provider = config.get_provider()
     llm_model = config.get_model_name()
+
+    # Cost for HuggingFace models is the cost of the hardware used to run the model
+    # which is out of the scope of this library
+    if llm_provider == "huggingface":
+        return 0
+
     cost_per_prompt_token = PROVIDER_TO_COST_PER_TOKEN[llm_provider][llm_model]
     cost_per_completion_token = PROVIDER_TO_COST_OF_COMPLETION[llm_provider][llm_model]
     if llm_provider == "anthropic":
