@@ -31,11 +31,7 @@ class ConfidenceCalculator:
             logprob_cumulative, count = 0, 0
             for token in token_to_prob:
                 token_str = list(token.keys())[0]
-                if empty_response_template.startswith(token_str):
-                    empty_response_template = empty_response_template.removeprefix(
-                        token_str
-                    )
-                else:
+                if token_str not in empty_response_template:
                     logprob_cumulative += token[token_str]
                     count += 1
             return math.e**logprob_cumulative / count
@@ -68,6 +64,7 @@ class ConfidenceCalculator:
             model_generation=model_generation, **kwargs
         )
         model_generation.confidence_score = confidence
+        print(model_generation.confidence_score)
         return model_generation
 
     @classmethod

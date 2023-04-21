@@ -111,7 +111,7 @@ class ClassificationTask(BaseTask):
             completion_text = extract_valid_json_substring(response.text)
             output = json.loads(completion_text.strip())
         except Exception as e:
-            logger.info(f"Error parsing LLM response: {response.text}")
+            logger.info(f"Error parsing LLM response: {response.text}. {e}")
 
         successfully_labeled = output.get("answered", "no")
         if successfully_labeled.lower() == "yes":

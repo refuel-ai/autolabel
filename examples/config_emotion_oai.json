@@ -13,6 +13,8 @@
         "fear",
         "surprise"
     ],
+    "has_logprob": "True",
+    "empty_response": "{\"answered\": \"\", \"label\": \"\"}",
     "dataset_schema": {
         "input_columns": [
             "description"
