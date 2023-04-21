@@ -13,6 +13,7 @@ class Metric(str, Enum):
     CONFUSION_MATRIX = "confusion_matrix"
     LABEL_DISTRIBUTION = "label_distribution"
     F1 = "f1"
+    AUROC = "auroc"
 
 
 class MetricResult(BaseModel):

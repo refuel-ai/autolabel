@@ -1,5 +1,6 @@
-from typing import Optional
+from typing import List, Optional
 import math
+import sklearn
 
 from refuel_oracle.schema import LLMAnnotation
 from refuel_oracle.llm import LLMLabeler
@@ -53,7 +54,7 @@ class ConfidenceCalculator:
                 return math.e ** token[token_str]
             elif token_str.lower() == "no":
                 return -math.e ** token[token_str]
-        return 0.5
+        return 0
 
     def calculate(self, model_generation: LLMAnnotation, **kwargs) -> LLMAnnotation:
         SUPPORTED_CALCULATORS = {
@@ -68,3 +69,7 @@ class ConfidenceCalculator:
         )
         model_generation.confidence_score = confidence
         return model_generation
+
+    @classmethod
+    def compute_auroc(cls, match: List[int], confidence: List[float]):
+        return sklearn.metrics.roc_auc_score(match, confidence)
