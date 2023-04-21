@@ -236,7 +236,7 @@ class EntityRecognitionTask(BaseTask):
 
         answered_llm_preds = []
         answered_gt_labels = []
-
+        conf_available = True
         for index, l in enumerate(llm_labels):
             if l.successfully_labeled.lower() == "yes":
                 answered_llm_preds.append(
@@ -255,6 +255,8 @@ class EntityRecognitionTask(BaseTask):
                         for entity in gt_labels[index]
                     ]
                 )
+                if l.confidence_score is None:
+                    conf_available = False
 
         entity_types_set = list(
             set(
@@ -269,16 +271,17 @@ class EntityRecognitionTask(BaseTask):
         evaluator = Evaluator(
             answered_gt_labels, answered_llm_preds, tags=entity_types_set
         )
-        labels, confidences = self.auroc_score_labels(
-            answered_gt_labels, answered_llm_preds
-        )
-        eval_metrics.append(
-            MetricResult(
-                metric_type=Metric.AUROC,
-                name="auroc",
-                value=ConfidenceCalculator.compute_auroc(labels, confidences),
+        if conf_available:
+            labels, confidences = self.auroc_score_labels(
+                answered_gt_labels, answered_llm_preds
             )
-        )
+            eval_metrics.append(
+                MetricResult(
+                    metric_type=Metric.AUROC,
+                    name="auroc",
+                    value=ConfidenceCalculator.compute_auroc(labels, confidences),
+                )
+            )
 
         results, _ = evaluator.evaluate()
         # f1 score

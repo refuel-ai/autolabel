@@ -91,15 +91,22 @@ class Oracle:
                 response_item = response.generations[i]
                 input_i = chunk[i]
                 generation = response_item[0]
-                llm_labels.append(
-                    self.confidence.calculate(
+                if self.config.get("has_logprob", "False") == "True":
+                    llm_labels.append(
+                        self.confidence.calculate(
+                            model_generation=self.task.parse_llm_response(
+                                generation, input_i
+                            ),
+                            empty_response=self.config.get("empty_response", ""),
+                            prompt=final_prompts[i],
+                        )
+                    )
+                else:
+                    llm_labels.append(
                         model_generation=self.task.parse_llm_response(
                             generation, input_i
                         ),
-                        empty_response=self.config.get("empty_response", ""),
-                        prompt=final_prompts[i],
                     )
-                )
 
         # if true labels are provided, evaluate accuracy of predictions
         if gt_labels:
