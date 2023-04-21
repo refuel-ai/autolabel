@@ -1,11 +1,13 @@
 import json
 import re
-from typing import List, Dict
+from typing import List, Dict, Tuple
 
 from langchain.prompts.prompt import PromptTemplate
 from langchain.schema import Generation
 from loguru import logger
 from nervaluate import Evaluator
+
+from refuel_oracle.confidence import ConfidenceCalculator
 from refuel_oracle.config import Config
 from refuel_oracle.schema import LLMAnnotation, Metric, MetricResult
 from refuel_oracle.tasks import BaseTask
@@ -169,7 +171,31 @@ class EntityRecognitionTask(BaseTask):
             successfully_labeled=successfully_labeled,
             label=llm_label,
             generation_info=response.generation_info,
+            raw_text=response.text,
         )
+
+    def auroc_score_labels(
+        self, gt_labels, llm_labels_with_conf
+    ) -> Tuple[List[int], List[float]]:
+        labels = []
+        confidences = []
+        for index, pred_entities in enumerate(llm_labels_with_conf):
+            gt_entities = gt_labels[index]
+            pred_conf = pred_entities[0]["conf"] if len(pred_entities) > 0 else 0
+            for gt_entity in gt_entities:
+                match_found = False
+                pred_index = 0
+                while not match_found and pred_index < len(pred_entities):
+                    curr_match = True
+                    for key in gt_entity:
+                        if gt_entity[key] != pred_entities[pred_index][key]:
+                            curr_match = False
+                    if curr_match:
+                        match_found = True
+                    pred_index += 1
+                labels.append(int(match_found))
+                confidences.append(pred_conf)
+        return labels, confidences
 
     def eval(
         self, llm_labels: List[LLMAnnotation], gt_labels: List[str]
@@ -210,11 +236,18 @@ class EntityRecognitionTask(BaseTask):
 
         answered_llm_preds = []
         answered_gt_labels = []
-
+        conf_available = True
         for index, l in enumerate(llm_labels):
             if l.successfully_labeled.lower() == "yes":
                 answered_llm_preds.append(
-                    [{**entity, "label": entity.pop("type")} for entity in l.label]
+                    [
+                        {
+                            **entity,
+                            "label": entity.pop("type"),
+                            "conf": l.confidence_score,
+                        }
+                        for entity in l.label
+                    ],
                 )
                 answered_gt_labels.append(
                     [
@@ -222,6 +255,8 @@ class EntityRecognitionTask(BaseTask):
                         for entity in gt_labels[index]
                     ]
                 )
+                if l.confidence_score is None:
+                    conf_available = False
 
         entity_types_set = list(
             set(
@@ -236,9 +271,19 @@ class EntityRecognitionTask(BaseTask):
         evaluator = Evaluator(
             answered_gt_labels, answered_llm_preds, tags=entity_types_set
         )
-        results, _ = evaluator.evaluate()
-        print(results)
+        if conf_available:
+            labels, confidences = self.auroc_score_labels(
+                answered_gt_labels, answered_llm_preds
+            )
+            eval_metrics.append(
+                MetricResult(
+                    metric_type=Metric.AUROC,
+                    name="auroc",
+                    value=ConfidenceCalculator.compute_auroc(labels, confidences),
+                )
+            )
 
+        results, _ = evaluator.evaluate()
         # f1 score
         eval_metrics.append(
             MetricResult(

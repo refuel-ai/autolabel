@@ -4,6 +4,7 @@ import numpy as np
 import pandas as pd
 from tqdm import tqdm
 
+from refuel_oracle.confidence import ConfidenceCalculator
 from refuel_oracle.config import Config
 from refuel_oracle.example_selector import ExampleSelector
 from refuel_oracle.llm import LLMFactory, LLMProvider
@@ -87,7 +88,20 @@ class Oracle:
                     response_item = response.generations[i]
                     input_i = chunk[i]
                     generation = response_item[0]
-                    llm_labels.append(self.task.parse_llm_response(generation, input_i))
+                    if self.config.get("has_logprob", "False") == "True":
+                        llm_labels.append(
+                            self.confidence.calculate(
+                                model_generation=self.task.parse_llm_response(
+                                    generation, input_i
+                                ),
+                                empty_response=self.config.get("empty_response", ""),
+                                prompt=final_prompts[i],
+                            )
+                        )
+                    else:
+                        llm_labels.append(
+                            self.task.parse_llm_response(generation, input_i)
+                        )
             except Exception as e:
                 print("Error in generating response:", e)
                 num_failures += 1
@@ -163,6 +177,7 @@ class Oracle:
         self.config = Config.from_json(config, **kwargs)
         if load_llm:
             self.llm = LLMFactory.from_config(self.config)
+            self.confidence = ConfidenceCalculator(score_type="p_true", llm=self.llm)
         self.task = TaskFactory.from_config(self.config)
         self.example_selector = None
         if "example_selector" in self.config.keys():
