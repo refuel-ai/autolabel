@@ -1,10 +1,12 @@
-from typing import Tuple, List, Dict, Union, Optional
-
-import langchain
 from loguru import logger
+from pathlib import Path
+from tqdm import tqdm
+from typing import Tuple, List, Dict, Union, Optional
+import langchain
 import numpy as np
 import pandas as pd
 from tqdm import tqdm
+import sys
 
 from refuel_oracle.confidence import ConfidenceCalculator
 from refuel_oracle.llm_cache import RefuelSQLLangchainCache
@@ -12,8 +14,18 @@ from refuel_oracle.task_config import TaskConfig
 from refuel_oracle.example_selector import ExampleSelector
 from refuel_oracle.models import ModelConfig, ModelFactory, BaseModel
 from refuel_oracle.schema import LLMAnnotation
+from refuel_oracle.task_config import TaskConfig
 from refuel_oracle.tasks import TaskFactory
 from refuel_oracle.dataset_config import DatasetConfig
+from refuel_oracle.database import Database
+from refuel_oracle.utils import calculate_md5
+from refuel_oracle.schema import TaskResult, TaskStatus, Task, Dataset
+from refuel_oracle.data_models import (
+    DatasetModel,
+    TaskModel,
+    TaskResultModel,
+    AnnotationModel,
+)
 
 
 class Oracle:
@@ -29,7 +41,14 @@ class Oracle:
         self.set_task_config(task_config, **kwargs)
         self.set_llm_config(llm_config, **kwargs)
         self.debug = debug
-        if not debug:
+        self.dir_path = Path(Path.home() / ".refuel_oracle")
+        if not self.dir_path.exists():
+            self.dir_path.mkdir(parents=True)
+        self.db = Database(f"sqlite:///{self.dir_path}/database.db")
+        log_level = "DEBUG" if self.debug else "INFO"
+        logger.remove()
+        logger.add(sys.stdout, level=log_level)
+        if not self.debug:
             self.set_cache()
 
     # TODO: all this will move to a separate input parser class
@@ -41,6 +60,7 @@ class Oracle:
         max_items: int = None,
         start_index: int = 0,
     ) -> Tuple[pd.DataFrame, List[Dict], List]:
+        logger.debug(f"reading the csv from: {start_index}")
         delimiter = dataset_config.get_delimiter()
         input_columns = dataset_config.get_input_columns()
         label_column = dataset_config.get_label_column()
@@ -91,6 +111,13 @@ class Oracle:
         """
         dataset_config = self.create_dataset_config(dataset_config)
         self.task.set_dataset_config(dataset_config)
+        self.db.initialize()
+        self.dataset = self.initialize_dataset(dataset, max_items, start_index)
+        self.task_object = self.initialize_task()
+        csv_file_name = (
+            output_name if output_name else f"{dataset.replace('.csv','')}_labeled.csv"
+        )
+        self.task_result = self.initialize_task_result(csv_file_name)
 
         if isinstance(dataset, str):
             df, inputs, gt_labels = self._read_csv(
@@ -304,5 +331,96 @@ class Oracle:
             dataset_config = DatasetConfig.from_json(dataset_config)
         else:
             dataset_config = DatasetConfig(dataset_config)
-
         return dataset_config
+
+    def initialize_dataset(self, input_file, start_index, max_items):
+        dataset_id = calculate_md5(open(input_file, "rb"))
+        dataset_orm = DatasetModel.get_by_id(self.db.session, dataset_id)
+        if dataset_orm:
+            return Dataset.from_orm(dataset_orm)
+
+        dataset = Dataset(
+            id=dataset_id,
+            input_file=input_file,
+            start_index=start_index,
+            end_index=start_index + max_items,
+        )
+        return Dataset.from_orm(DatasetModel.create(self.db.session, dataset))
+
+    def initialize_task(self):
+        task_id = calculate_md5(self.task_config.config)
+        task_orm = TaskModel.get_by_id(self.db.session, task_id)
+        if task_orm:
+            return Task.from_orm(task_orm)
+
+        task = Task(
+            id=task_id,
+            config=self.task_config.to_json(),
+            task_type=self.task_config.get_task_type(),
+            provider=self.llm_config.get_provider(),
+            model_name=self.llm_config.get_model_name(),
+        )
+        return Task.from_orm(TaskModel.create(self.db.session, task))
+
+    def initialize_task_result(self, output_file):
+        task_result_orm = TaskResultModel.get(
+            self.db.session, self.task_object.id, self.dataset.id
+        )
+        task_result = TaskResult.from_orm(task_result_orm) if task_result_orm else None
+        logger.debug(f"existing task_result: {task_result}")
+        new_task_result = TaskResult(
+            task_id=self.task_object.id,
+            dataset_id=self.dataset.id,
+            status=TaskStatus.ACTIVE,
+            current_index=self.dataset.start_index,
+            output_file=output_file,
+        )
+
+        create_new_task_result = False
+        # TODO: handle parallel tasks in ACTIVE state
+        if task_result:
+            print(f"There is an existing task with following details: {task_result}")
+            if task_result.status in [
+                TaskStatus.ACTIVE,
+                TaskStatus.FAILURE,
+            ]:
+                raise Exception("There is an existing task in ACTIVE or FAILURE state")
+            elif task_result.status == TaskStatus.PAUSED:
+                user_input = input("Do you want to resume it? (y/n)")
+                if user_input.lower() in ["y", "yes"]:
+                    task_result.status = TaskStatus.ACTIVE
+                    task_result_orm.update(self.db.session, task_result)
+                else:
+                    task_result_orm.delete(self.db.session)
+                    self.db.delete_annotation_table(task_result.id)
+                    create_new_task_result = True
+            else:
+                user_input = input("Do you want to start a new task? (y/n)")
+                if user_input.lower() in ["y", "yes"]:
+                    task_result_orm.delete(self.db.session)
+                    self.db.delete_annotation_table(task_result.id)
+                    create_new_task_result = True
+                else:
+                    exit(0)
+        else:
+            create_new_task_result = True
+
+        if create_new_task_result:
+            task_result_orm = TaskResultModel.create(self.db.session, new_task_result)
+            self.db.create_annotation_table(task_result_orm.id)
+
+        self.annotations_model = AnnotationModel.get_annotation_model(
+            task_result_orm.id
+        )
+        self.task_result_orm = task_result_orm
+        # print(Database.get_annotation_table(task_result_orm.id))
+        return TaskResult.from_orm(task_result_orm)
+
+    def save_state(self, error: str = None):
+        # Save the current state of the task
+        self.task_result.error = error
+        self.task_result.status = TaskStatus.PAUSED
+        self.task_result_orm.update(self.db.session, self.task_result)
+
+    def test(self):
+        return

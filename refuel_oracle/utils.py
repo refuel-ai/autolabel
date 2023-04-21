@@ -1,3 +1,4 @@
+import hashlib
 import json
 import regex
 
@@ -15,3 +16,22 @@ def extract_valid_json_substring(string):
         except ValueError:
             pass
     return None
+
+
+def calculate_md5(input_data):
+    if isinstance(input_data, dict):
+        # Convert dictionary to a JSON-formatted string
+        input_str = json.dumps(input_data, sort_keys=True).encode("utf-8")
+    elif hasattr(input_data, "read"):
+        # Read binary data from file-like object
+        md5_hash = hashlib.md5()
+        for chunk in iter(lambda: input_data.read(4096), b""):
+            md5_hash.update(chunk)
+        return md5_hash.hexdigest()
+    else:
+        # Convert other input to byte string
+        input_str = str(input_data).encode("utf-8")
+
+    # Calculate MD5 hash of byte string
+    md5_hash = hashlib.md5(input_str)
+    return md5_hash.hexdigest()
