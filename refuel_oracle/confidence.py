@@ -28,7 +28,7 @@ class ConfidenceCalculator:
         ):
             token_to_prob = model_generation.generation_info["logprobs"]["top_logprobs"]
             empty_response_template = empty_response
-            logprob_cumulative = [0.0, 0.0]
+            logprob_cumulative, count = 0, 0
             for token in token_to_prob:
                 token_str = list(token.keys())[0]
                 if empty_response_template.startswith(token_str):
@@ -36,9 +36,9 @@ class ConfidenceCalculator:
                         token_str
                     )
                 else:
-                    logprob_cumulative[0] += token[token_str]
-                    logprob_cumulative[1] += 1
-            return math.e ** logprob_cumulative[0] / logprob_cumulative[1]
+                    logprob_cumulative += token[token_str]
+                    count += 1
+            return math.e**logprob_cumulative / count
         else:
             raise NotImplementedError()
 
