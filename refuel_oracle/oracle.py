@@ -177,7 +177,9 @@ class Oracle:
         self.config = Config.from_json(config, **kwargs)
         if load_llm:
             self.llm = LLMFactory.from_config(self.config)
-            self.confidence = ConfidenceCalculator(score_type="p_true", llm=self.llm)
+            self.confidence = ConfidenceCalculator(
+                score_type="logprob_average", llm=self.llm
+            )
         self.task = TaskFactory.from_config(self.config)
         self.example_selector = None
         if "example_selector" in self.config.keys():

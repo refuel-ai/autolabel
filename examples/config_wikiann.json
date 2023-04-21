@@ -4,7 +4,10 @@
     "provider_name": "openai",
     "model_name": "text-davinci-003",
     "has_logprob": "True",
-    "prompt_encoding": "csv",
+    "model_params": {
+        "max_tokens": 512
+    },
+    "prompt_encoding": "json",
     "prefix_prompt": "",
     "labels_list": [
         "Location",
@@ -18,7 +21,8 @@
         "label_column": "CategorizedLabels",
         "delimiter": "%"
     },
-    "empty_response": "answered:%%entities%Location%Organization%Person",
+    "csv_empty_response": "answered:%%entities%Location%Organization%Person",
+    "empty_response": "{\"answered\": , \"entities\": {\"Location\": [], \"Organization\": [], \"Person\": []}}",
     "seed_examples": [
         {
             "example": "Shortly afterward , an encouraging response influenced him to go to India ; he arrived at Adyar in 1884 .",
