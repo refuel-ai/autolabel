@@ -4,6 +4,8 @@
     "provider_name": "openai",
     "model_name": "text-davinci-003",
     "model_params": {},
+    "empty_response": "{\"answered\": \"\", \"label\": \"\"}",
+    "has_logprob": "True",
     "prefix_prompt": "You are an expert at answering medicine questions.",
     "dataset_schema": {
         "input_columns": [

@@ -3,6 +3,8 @@
     "task_type": "classification_csv",
     "provider_name": "openai",
     "model_name": "text-davinci-003",
+    "empty_response": "{\"answered\": \"\", \"label\": \"\"}",
+    "has_logprob": "True",
     "model_params": {},
     "prefix_prompt": "You are an expert at understanding contracts.",
     "labels_list": [
