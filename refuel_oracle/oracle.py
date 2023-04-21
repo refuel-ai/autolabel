@@ -1,7 +1,9 @@
-from typing import Tuple, List, Dict
+from typing import Dict, List, Tuple
 
+import langchain
 import numpy as np
 import pandas as pd
+from langchain.cache import SQLiteCache
 from tqdm import tqdm
 
 from refuel_oracle.confidence import ConfidenceCalculator
@@ -10,9 +12,6 @@ from refuel_oracle.example_selector import ExampleSelector
 from refuel_oracle.llm import LLMFactory, LLMProvider
 from refuel_oracle.tasks import TaskFactory
 from refuel_oracle.utils import calculate_cost, calculate_num_tokens
-
-import langchain
-from langchain.cache import SQLiteCache
 
 
 class Oracle:
@@ -87,6 +86,7 @@ class Oracle:
                 for i in range(len(response.generations)):
                     response_item = response.generations[i]
                     input_i = chunk[i]
+                    print(f"input i : {input_i}")
                     generation = response_item[0]
                     if self.config.get("has_logprob", "False") == "True":
                         llm_labels.append(

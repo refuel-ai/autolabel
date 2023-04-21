@@ -1,22 +1,21 @@
 import json
 import re
-from typing import List, Dict, Tuple
+from typing import Dict, List, Tuple
 
 from langchain.prompts.prompt import PromptTemplate
 from langchain.schema import Generation
 from loguru import logger
 from nervaluate import Evaluator
-
 from refuel_oracle.confidence import ConfidenceCalculator
 from refuel_oracle.config import Config
 from refuel_oracle.schema import LLMAnnotation, Metric, MetricResult
 from refuel_oracle.tasks import BaseTask
 
 
-class EntityRecognitionTask(BaseTask):
+class NamedEntityRecognitionTask(BaseTask):
     DEFAULT_TASK_PROMPT = "Your job is to extract named entities mentioned in text, and classify them into one of the following {num_labels} categories.\nCategories:\n{labels_list}\n "
     DEFAULT_OUTPUT_FORMAT_PROMPT = 'You will return the answer in JSON format with two keys: {"answered": can you answer this question. say YES or NO, "entities": a JSON list of extracted entities from text}.'
-    CSV_OUTPUT_FORMAT = "You will return the answer in CSV format seperated by % charcter: answered%can you answer this question. say YES or NO%entities%a list of extracted entities from text."
+    CSV_OUTPUT_FORMAT = "You will return the answer in CSV format seperated by % character: answered%can you answer this question. say YES or NO%entities%a list of extracted entities from text."
     SEED_EXAMPLES_PROMPT = "Some examples with their output answers are provided below:"
     PROMPT_TEMPLATE = "{prefix_prompt}\n{task_prompt}\n{output_prompt}\n\n{seed_examples_prompt}\n{seed_examples}\nBegin:{current_example}"
     PROMPT_TEMPLATE_VARIABLES = [
@@ -102,16 +101,12 @@ class EntityRecognitionTask(BaseTask):
             seed_examples_prompt=seed_examples_prompt,
         )
 
-    def convert_raw_output_to_conll(self, raw_output, input):
-        conll_output = []
-        for entity_type in raw_output:
-            for curr_entity in raw_output[entity_type]:
-                conll_output.append({"type": entity_type, "text": curr_entity})
+    def add_text_spans(self, raw_output: list, input: str) -> list:
 
         # create a frequency dict of each named entity in the input to determine text spans for repeated entities
-        frequency_count = {label["text"]: 0 for label in conll_output}
+        frequency_count = {label["text"]: 0 for label in raw_output}
 
-        for label in conll_output:
+        for label in raw_output:
             text = label["text"]
             matches = [i.start() for i in re.finditer(text, input)]
             count = frequency_count[text]
@@ -127,7 +122,7 @@ class EntityRecognitionTask(BaseTask):
                 label["start"] = matches[count]
                 label["end"] = matches[count] + len(text)
             frequency_count[text] += 1
-        return conll_output
+        return raw_output
 
     def jsonify_csv_output(self, response: str):
         split_response = response.split("%")
@@ -144,9 +139,10 @@ class EntityRecognitionTask(BaseTask):
                     json_output["entities"][current_entity].append(text_or_type)
         return json_output
 
-    def parse_llm_response(self, response: Generation, input: str) -> LLMAnnotation:
+    def parse_llm_response(self, response: Generation, input: Dict) -> LLMAnnotation:
         output = {}
         successfully_labeled = "no"
+        input_str = self.get_single_input(input)
         try:
             completion_text = response.text
             if self.config.get("prompt_encoding") == "csv":
@@ -157,7 +153,7 @@ class EntityRecognitionTask(BaseTask):
             successfully_labeled = output.get("answered", "no")
             if successfully_labeled.lower() == "yes":
                 raw_output = output.get("entities") or self.NULL_LABEL
-                llm_label = self.convert_raw_output_to_conll(raw_output, input["Text"])
+                llm_label = self.add_text_spans(raw_output, input_str)
             else:
                 llm_label = self.NULL_LABEL
         except Exception as e:
@@ -167,7 +163,7 @@ class EntityRecognitionTask(BaseTask):
 
         # TODO: parse generation info correctly to fetch & transform logprobs -> score
         return LLMAnnotation(
-            input=input["Text"],
+            input=input_str,
             successfully_labeled=successfully_labeled,
             label=llm_label,
             generation_info=response.generation_info,
@@ -210,9 +206,7 @@ class EntityRecognitionTask(BaseTask):
             List[MetricResult]: list of metrics and corresponding values
         """
         gt_labels = [
-            self.convert_raw_output_to_conll(
-                json.loads(gt_labels[index]), llm_labels[index].input
-            )
+            self.add_text_spans(json.loads(gt_labels[index]), llm_labels[index].input)
             for index in range(len(gt_labels))
         ]
 
