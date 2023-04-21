@@ -120,6 +120,8 @@ class Oracle:
             l.successfully_labeled for l in llm_labels
         ]
         output_df["llm_label"] = [l.label for l in llm_labels]
+        if self.config.get("has_logprob", "False") == "True":
+            output_df["llm_confidence"] = [l.confidence_score for l in llm_labels]
         if output_name:
             csv_file_name = output_name
         else:
