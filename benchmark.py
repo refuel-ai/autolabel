@@ -1,4 +1,5 @@
 import time
+from typing import List
 from refuel_oracle.oracle import Oracle
 from data.get_data import SUPPORTED_DATASETS
 
@@ -7,8 +8,10 @@ class Benchmark:
     def __init__(self):
         pass
 
-    def run(self, **kwargs):
-        for i, dataset_name in enumerate(SUPPORTED_DATASETS.keys()):
+    def run(self, datasets: List[str] = None, **kwargs):
+        if datasets is None:
+            datasets = list(SUPPORTED_DATASETS.keys())
+        for i, dataset_name in enumerate(datasets):
             config_path = f"examples/config_{dataset_name}_hf.json"
             print(f"Running {dataset_name} with config {config_path}")
             # Only load the llm the first time
@@ -25,5 +28,5 @@ class Benchmark:
 
 if __name__ == "__main__":
     Benchmark().run(
-        model_name="text-davinci-003", provider_name="openai", output_format="json"
+        datasets=["wikiann"], provider_name="anthropic", model_name="claude-v1"
     )
