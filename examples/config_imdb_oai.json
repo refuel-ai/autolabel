@@ -1,0 +1,41 @@
+{
+    "project_name": "IMDb classification",
+    "task_type": "classification",
+    "provider_name": "openai",
+    "model_name": "text-davinci-003",
+    "has_logprob": "True",
+    "model_params": {
+        "max_tokens": 512
+    },
+    "output_format": "json",
+    "empty_response": "{\"answered\": \"\", \"label\": \"\"}",
+    "prefix_prompt": "You are an expert at understanding movie reviews.",
+    "labels_list": [
+        "Positive",
+        "Negative"
+    ],
+    "dataset_schema": {
+        "input_columns": [
+            "description"
+        ],
+        "label_column": "label"
+    },
+    "seed_examples": [
+        {
+            "example": "Very possibly one of the funniest movies in the world. Oscar material. Trey Parker and Matt Stone are hilarious and before you see this I suggest you see South Park one of the funniest cartoons created. Buy it, you will laugh every time you see it. Pure stroke of genius. If you don't think its funny then you have no soul or sense of humor. 10 out of 10.",
+            "output": "Positive"
+        },
+        {
+            "example": "1940. - A visit to the Lodz ghetto in Nazi-occupied Poland, recorded by a German cameramen with the naive co-operation of the Jewish community, is combined with archival footage, clips from international newsreels, and excerpts from related cultural films to portray the World's Jews as swindlers and parasites. This 'documentary' interprets Jewish life from the viewpoint of traditional anti-Semitism and Nazi ideology. A candid, cinematically-unique expression of racial hatred. I personally find this film frightening and highly offensive. One can only hope that such pictures as this will never reach the screen again.",
+            "output": "Negative"
+        },
+        {
+            "example": "Sandler is amazing again... I have already become a Sandler fan. This movie is the saddest Sandler story. Its expression is fantastic. I cried more watching Click but there are some similar points. To consider the value of the family before losing it and to be able to say 'I love you' are a few of the most impressive truths in life... It is tough, it is real... and actually there is a real owner of this success, Binder. I don't think another director could give these emotions in such a way. <br /><br />Cheadle and Burrows are also amazing... Cheadle is one of my favorites since Crash. Don't expect laughing or much positive atmosphere... If you are ready to face the realities of life, don't miss this movie.",
+            "output": "Positive"
+        },
+        {
+            "example": "Must confess to having seen a few howlers in my time, but this one is up there with the worst of them. Plot troubling to follow. Sex and violence thrown in to disorient and distract from the really poorly put together film.<br /><br />I can only imagine that the cast will look back on the end product and wish it to gather dust on a shelf not to be disturbed for a generation or two. Sadly, in my case, I have the DVD. It will sit on the shelf and look at me from time to time.",
+            "output": "Negative"
+        }
+    ]
+}

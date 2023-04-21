@@ -64,9 +64,12 @@ class ConfidenceCalculator:
             model_generation=model_generation, **kwargs
         )
         model_generation.confidence_score = confidence
-        print(model_generation.confidence_score)
         return model_generation
 
     @classmethod
     def compute_auroc(cls, match: List[int], confidence: List[float]):
+        if len(set(match)) == 1:
+            # ROC AUC score is not defined for a label list with
+            # just one prediction
+            return 1.0
         return sklearn.metrics.roc_auc_score(match, confidence)
