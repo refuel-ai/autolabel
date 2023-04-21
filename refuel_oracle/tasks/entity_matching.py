@@ -181,6 +181,7 @@ class EntityMatchingTask(BaseTask):
             labels.append(gt_labels[index] == llm_label.label)
             confidences.append(llm_label.confidence_score)
 
+        ConfidenceCalculator.plot_data_distribution(labels, confidences)
         return labels, confidences
 
     def eval(

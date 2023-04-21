@@ -1,6 +1,10 @@
 from typing import List, Optional
 import math
 import sklearn
+import matplotlib.pyplot as plt
+import numpy as np
+import pickle as pkl
+import scipy.stats as stats
 
 from refuel_oracle.schema import LLMAnnotation
 from refuel_oracle.llm import LLMLabeler
@@ -32,6 +36,7 @@ class ConfidenceCalculator:
             for token in token_to_prob:
                 token_str = list(token.keys())[0]
                 if token_str not in empty_response_template:
+                    print(token_str)
                     logprob_cumulative += token[token_str]
                     count += 1
             return math.e ** (logprob_cumulative / count)
@@ -73,3 +78,25 @@ class ConfidenceCalculator:
             # just one prediction
             return 1.0
         return sklearn.metrics.roc_auc_score(match, confidence)
+
+    @classmethod
+    def plot_data_distribution(
+        cls, match: List[int], confidence: List[float], plot_name: str = "temp.png"
+    ):
+        pkl.dump(match, open("matches.pkl", "wb"))
+        pkl.dump(confidence, open("confidences.pkl", "wb"))
+
+        normalized_conf = stats.zscore(np.array(confidence))
+
+        correct = [
+            normalized_conf[i] for i in range(len(normalized_conf)) if match[i] == 1
+        ]
+        incorrect = [
+            normalized_conf[i] for i in range(len(normalized_conf)) if match[i] == 0
+        ]
+
+        bins = np.linspace(0.25, 0.5, 100)
+        plt.hist(correct, bins, alpha=0.5, label="Correct Conf")
+        plt.hist(incorrect, bins, alpha=0.5, label="Incorrect Conf")
+        plt.legend(loc="upper right")
+        plt.savefig(plot_name)

@@ -161,6 +161,8 @@ class ClassificationTask(BaseTask):
         for index, llm_label in enumerate(llm_labels):
             labels.append(llm_label.label == gt_labels[index])
             confidences.append(llm_label.confidence_score)
+
+        ConfidenceCalculator.plot_data_distribution(labels, confidences)
         return labels, confidences
 
     def eval(

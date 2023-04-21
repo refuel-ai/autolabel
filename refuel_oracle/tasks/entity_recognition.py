@@ -195,6 +195,8 @@ class EntityRecognitionTask(BaseTask):
                     pred_index += 1
                 labels.append(int(match_found))
                 confidences.append(pred_conf)
+
+        ConfidenceCalculator.plot_data_distribution(labels, confidences)
         return labels, confidences
 
     def eval(

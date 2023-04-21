@@ -137,3 +137,6 @@ dataset_processors/*.csv
 # Data directory
 data/
 !data/get_data.py
+
+# Temporary images
+*temp.png
