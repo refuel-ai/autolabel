@@ -7,6 +7,7 @@ import zipfile
 import random
 import pandas as pd
 import urllib.request
+from transformers import AutoTokenizer
 
 
 def map_label_to_string(dataset, col):
@@ -175,6 +176,42 @@ def get_walmart_amazon(output_folder="."):
         dict_writer.writerows(dataset)
 
 
+def get_wikiann(output_folder="."):
+    dataset_csv = open(f"{output_folder}/wikiann_test.csv", "w")
+    dataset_csv.write("Text%IndividualLabels%CategorizedLabels\n")
+    dataset = load_dataset("wikiann", "en")
+    entity_category_mapping = {
+        "LOC": "Location",
+        "ORG": "Organization",
+        "PER": "Person",
+    }
+    for item in dataset["test"]:
+        curr_text = " ".join(item["tokens"]).replace("%", " ")
+        curr_labels = item["spans"]
+        individual_labels = []
+        individual_entity_categories = {
+            "Location": [],
+            "Organization": [],
+            "Person": [],
+        }
+
+        for label in curr_labels:
+            entity_category = entity_category_mapping[label.split(":")[0]]
+            entity_text = (
+                ":".join(label.split(":")[1:]).strip(" ").strip("\n").replace("%", " ")
+            )
+            individual_entity_categories[entity_category].append(entity_text)
+            individual_labels.append(
+                {"Description": entity_category, "Text": entity_text}
+            )
+
+        dataset_csv.write(
+            f"{curr_text}%{json.dumps(individual_labels)}%{json.dumps(individual_entity_categories)}\n"
+        )
+
+    dataset_csv.close()
+
+
 SUPPORTED_DATASETS = {
     "ledgar": get_ledgar,
     "banking": get_banking,
@@ -183,25 +220,14 @@ SUPPORTED_DATASETS = {
     "medqa": get_medqa,
     "pubmed_qa": get_pubmed_qa,
     "walmart_amazon": get_walmart_amazon,
+    "wikiann": get_wikiann,
 }
 
 
 def get_dataset(dataset, output_folder="."):
     assert dataset in SUPPORTED_DATASETS, f"Dataset {dataset} not supported"
-    if dataset == "ledgar":
-        get_ledgar(output_folder)
-    elif dataset == "banking":
-        get_banking(output_folder)
-    elif dataset == "emotion":
-        get_emotion(output_folder)
-    elif dataset == "sciq":
-        get_sciq(output_folder)
-    elif dataset == "medqa":
-        get_medqa(output_folder)
-    elif dataset == "pubmed_qa":
-        get_pubmed_qa(output_folder)
-    elif dataset == "walmart_amazon":
-        get_walmart_amazon(output_folder)
+    # Call the necessary function corresponding to the dataset
+    SUPPORTED_DATASETS[dataset](output_folder)
 
 
 if __name__ == "__main__":
