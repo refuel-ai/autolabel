@@ -34,14 +34,12 @@ class ExampleSelector:
     EXAMPLE_SELECTOR_STRATEGY_DEFAULT_PARAMS = {
         ExampleSelectorStrategy.semantic_similarity: {
             "vectorstore_cls": VectorStoreWrapper,
-            "embeddings": OpenAIEmbeddings(),
             "k": 3,
         },
         ExampleSelectorStrategy.n_gram_overlap: {"threshold": -1.0},
         ExampleSelectorStrategy.length_based: {"max_length": 25},
         ExampleSelectorStrategy.maximal_marginal_relevance: {
             "vectorstore_cls": VectorStoreWrapper,
-            "embeddings": OpenAIEmbeddings(),
             "k": 3,
         },
     }
