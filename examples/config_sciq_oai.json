@@ -3,7 +3,9 @@
     "task_type": "multi_choice_question_answering",
     "provider_name": "openai",
     "model_name": "text-davinci-003",
+    "has_logprob": "True",
     "model_params": {},
+    "empty_response": "{\"answered\": \"\", \"label\": \"telomerase\"}",
     "prefix_prompt": "You are an expert at answer science questions.",
     "dataset_schema": {
         "input_columns": [
