@@ -42,11 +42,13 @@ class Config:
         return self.config[self.TASK_TYPE_KEY]
 
     @classmethod
-    def from_json(cls, json_file_path: str):
+    def from_json(cls, json_file_path: str, **kwargs):
         try:
             config_dict = json.load(open(json_file_path))
         except ValueError:
             logger.error("JSON file: {} not loaded successfully", json_file_path)
             return None
+
+        config_dict.update(kwargs)
 
         return Config(config_dict)
