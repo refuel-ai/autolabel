@@ -34,7 +34,7 @@ class ConfidenceCalculator:
                 if token_str not in empty_response_template:
                     logprob_cumulative += token[token_str]
                     count += 1
-            return math.e**logprob_cumulative / count
+            return math.e ** (logprob_cumulative / count)
         else:
             raise NotImplementedError()
 

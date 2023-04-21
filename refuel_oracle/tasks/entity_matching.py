@@ -1,9 +1,10 @@
 import json
-from typing import List, Dict
+from typing import List, Dict, Tuple
 
 from langchain.prompts.prompt import PromptTemplate
 from langchain.schema import Generation
 from loguru import logger
+from refuel_oracle.confidence import ConfidenceCalculator
 from refuel_oracle.config import Config
 from refuel_oracle.schema import LLMAnnotation, Metric, MetricResult
 from refuel_oracle.tasks import BaseTask
@@ -171,6 +172,17 @@ class EntityMatchingTask(BaseTask):
             generation_info=response.generation_info,
         )
 
+    def auroc_score_labels(
+        self, gt_labels, llm_labels_with_conf
+    ) -> Tuple[List[int], List[float]]:
+        labels = []
+        confidences = []
+        for index, llm_label in enumerate(llm_labels_with_conf):
+            labels.append(gt_labels[index] == llm_label.label)
+            confidences.append(llm_label.confidence_score)
+
+        return labels, confidences
+
     def eval(
         self, llm_labels: List[LLMAnnotation], gt_labels: List[str]
     ) -> List[MetricResult]:
@@ -185,6 +197,17 @@ class EntityMatchingTask(BaseTask):
         """
         eval_metrics = []
 
+        if llm_labels[0].confidence_score is not None:
+            # Assuming that if the first element has a confidence score
+            # then all following elements have a confidence score too
+            labels, confidences = self.auroc_score_labels(gt_labels, llm_labels)
+            eval_metrics.append(
+                MetricResult(
+                    metric_type=Metric.AUROC,
+                    name="auroc",
+                    value=ConfidenceCalculator.compute_auroc(labels, confidences),
+                )
+            )
         # support
         support = len(gt_labels)
         eval_metrics.append(
