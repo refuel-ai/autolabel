@@ -1,7 +1,9 @@
-from typing import Tuple, List, Dict
+from typing import Dict, List, Tuple
 
+import langchain
 import numpy as np
 import pandas as pd
+from langchain.cache import SQLiteCache
 from tqdm import tqdm
 
 from refuel_oracle.confidence import ConfidenceCalculator
@@ -10,9 +12,6 @@ from refuel_oracle.example_selector import ExampleSelector
 from refuel_oracle.llm import LLMFactory, LLMProvider
 from refuel_oracle.tasks import TaskFactory
 from refuel_oracle.utils import calculate_cost, calculate_num_tokens
-
-import langchain
-from langchain.cache import SQLiteCache
 
 
 class Oracle:
@@ -148,8 +147,10 @@ class Oracle:
         ):
             for i, input_i in enumerate(chunk):
                 # Fetch few-shot seed examples
-                # TODO: Check if this needs to use the example selector
-                examples = self.config.get("seed_examples", [])
+                if self.example_selector:
+                    examples = self.example_selector.get_examples(input_i)
+                else:
+                    examples = self.config.get("seed_examples", [])
 
                 final_prompt = self.task.construct_prompt(input_i, examples)
                 prompt_list.append(final_prompt)
