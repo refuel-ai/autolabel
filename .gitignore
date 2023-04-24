@@ -138,5 +138,6 @@ dataset_processors/*.csv
 data/
 !data/get_data.py
 
-# Temporary images
-*temp.png
+# Data files
+*.pkl
+*.png

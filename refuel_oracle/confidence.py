@@ -36,7 +36,6 @@ class ConfidenceCalculator:
             for token in token_to_prob:
                 token_str = list(token.keys())[0]
                 if token_str not in empty_response_template:
-                    print(token_str)
                     logprob_cumulative += token[token_str]
                     count += 1
             return math.e ** (logprob_cumulative / count)
@@ -72,19 +71,56 @@ class ConfidenceCalculator:
         return model_generation
 
     @classmethod
-    def compute_auroc(cls, match: List[int], confidence: List[float]):
+    def compute_completion(cls, confidence: List[float], threshold: float):
+        return sum([i > threshold for i in confidence]) / float(len(confidence))
+
+    @classmethod
+    def compute_auroc(
+        cls, match: List[int], confidence: List[float], plot: bool = False
+    ):
         if len(set(match)) == 1:
             # ROC AUC score is not defined for a label list with
             # just one prediction
             return 1.0
-        return sklearn.metrics.roc_auc_score(match, confidence)
+        area = sklearn.metrics.roc_auc_score(match, confidence)
+        if plot:
+            fpr, tpr, thresholds = sklearn.metrics.roc_curve(
+                match, confidence, pos_label=1
+            )
+            print(f"FPR: {fpr}")
+            print(f"TPR: {tpr}")
+            print(f"Thresholds: {thresholds}")
+            print(
+                f"Completion Rate: {[ConfidenceCalculator.compute_completion(confidence, i) for i in thresholds]}"
+            )
+            plt.plot(
+                fpr,
+                tpr,
+                color="darkorange",
+                label="ROC curve (area = %0.2f)" % area,
+            )
+            plt.plot([0, 1], [0, 1], color="navy", linestyle="--")
+            plt.xlim([0.0, 1.0])
+            plt.ylim([0.0, 1.05])
+            plt.xlabel("False Positive Rate")
+            plt.ylabel("True Positive Rate")
+            plt.title("Receiver operating characteristic example")
+            plt.legend(loc="lower right")
+            plt.savefig("AUROC_CURVE.png")
+            plt.close()
+        return area
 
     @classmethod
     def plot_data_distribution(
-        cls, match: List[int], confidence: List[float], plot_name: str = "temp.png"
+        cls,
+        match: List[int],
+        confidence: List[float],
+        plot_name: str = "temp.png",
+        save_data: bool = True,
     ):
-        pkl.dump(match, open("matches.pkl", "wb"))
-        pkl.dump(confidence, open("confidences.pkl", "wb"))
+        if save_data:
+            pkl.dump(match, open("matches.pkl", "wb"))
+            pkl.dump(confidence, open("confidences.pkl", "wb"))
 
         normalized_conf = stats.zscore(np.array(confidence))
 
@@ -95,8 +131,9 @@ class ConfidenceCalculator:
             normalized_conf[i] for i in range(len(normalized_conf)) if match[i] == 0
         ]
 
-        bins = np.linspace(0.25, 0.5, 100)
+        bins = np.linspace(-3, 1, 100)
         plt.hist(correct, bins, alpha=0.5, label="Correct Conf")
         plt.hist(incorrect, bins, alpha=0.5, label="Incorrect Conf")
         plt.legend(loc="upper right")
         plt.savefig(plot_name)
+        plt.close()
