@@ -86,7 +86,6 @@ class Oracle:
                 for i in range(len(response.generations)):
                     response_item = response.generations[i]
                     input_i = chunk[i]
-                    print(f"input i : {input_i}")
                     generation = response_item[0]
                     if self.config.get("has_logprob", "False") == "True":
                         llm_labels.append(
