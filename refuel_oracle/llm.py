@@ -1,13 +1,14 @@
 import copy
 from enum import Enum
-from typing import Dict, List
+from typing import Dict, List, Any
+from loguru import logger
 
 from langchain.chat_models import ChatOpenAI
 from langchain.llms import Anthropic, BaseLLM, Cohere, HuggingFacePipeline, OpenAI
 from langchain.schema import Generation, HumanMessage, LLMResult
-from refuel_oracle.config import Config
 from transformers import AutoModelForSeq2SeqLM, AutoTokenizer, pipeline
 import torch
+import json
 
 
 # All available LLM providers
@@ -19,8 +20,52 @@ class LLMProvider(str, Enum):
     huggingface = "huggingface"
 
 
+class LLMConfig:
+    LLM_PROVIDER_KEY = "provider_name"
+    LLM_MODEL_KEY = "model_name"
+    QUANTIZE_BITS_KEY = "quantize"
+    MODEL_PARAMS_KEY = "model_params"
+
+    def __init__(self, config_dict: Dict) -> None:
+        self.dict = config_dict
+
+    def get(self, key: str, default_value: Any = None) -> Any:
+        return self.dict.get(key, default_value)
+
+    def keys(self) -> List:
+        return list(self.dict.keys())
+
+    def __getitem__(self, key):
+        return self.dict[key]
+
+    def get_provider(self) -> str:
+        return self.dict[self.LLM_PROVIDER_KEY]
+
+    def get_model_name(self) -> str:
+        return self.dict[self.LLM_MODEL_KEY]
+
+    def get_model_params(self) -> Dict:
+        return self.dict.get(self.MODEL_PARAMS_KEY, {})
+
+    def get_quantize_bits(self) -> str:
+        # Support quantization default value as 16 bits.
+        return self.dict.get(self.QUANTIZE_BITS_KEY, "16")
+
+    @classmethod
+    def from_json(cls, json_file_path: str, **kwargs):
+        try:
+            config_dict = json.load(open(json_file_path))
+        except ValueError:
+            logger.error("JSON file: {} not loaded successfully", json_file_path)
+            return None
+
+        config_dict.update(kwargs)
+
+        return LLMConfig(config_dict)
+
+
 class LLMLabeler:
-    def __init__(self, config: Config, base_llm: BaseLLM) -> None:
+    def __init__(self, config: LLMConfig, base_llm: BaseLLM) -> None:
         self.config = config
         self.base_llm = base_llm
 
@@ -89,11 +134,11 @@ class LLMFactory:
         return final_params
 
     @staticmethod
-    def from_config(config: Config) -> LLMLabeler:
+    def from_config(config: LLMConfig) -> LLMLabeler:
         # TODO: llm_model might need to be rolled up into llm_params in the future
         llm_provider = config.get_provider()
         llm_model = config.get_model_name()
-        llm_params = config.get("model_params", {})
+        llm_params = config.get_model_params()
         llm_cls = LLMFactory.PROVIDER_TO_LLM[llm_provider]
         llm_params = LLMFactory._resolve_params(
             LLMFactory.PROVIDER_TO_DEFAULT_PARAMS[llm_provider], llm_params
@@ -102,7 +147,7 @@ class LLMFactory:
             base_llm = llm_cls(model_name=llm_model, **llm_params)
         elif llm_provider == LLMProvider.huggingface:
             tokenizer = AutoTokenizer.from_pretrained(llm_model)
-            quantize_bits = config.get("quantize", "")
+            quantize_bits = config.get_quantize_bits()
             if quantize_bits == "8":
                 model = AutoModelForSeq2SeqLM.from_pretrained(
                     llm_model, load_in_8bit=True, device_map="auto"
@@ -116,6 +161,7 @@ class LLMFactory:
                     llm_model, device_map="auto"
                 )
             pipe = pipeline("text2text-generation", model=model, tokenizer=tokenizer)
+            # TODO: Does not support batch inference yet
             base_llm = llm_cls(pipeline=pipe, model_kwargs=llm_params)
         else:
             base_llm = llm_cls(model=llm_model, **llm_params)

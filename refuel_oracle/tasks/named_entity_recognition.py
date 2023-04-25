@@ -7,18 +7,20 @@ from langchain.schema import Generation
 from loguru import logger
 from nervaluate import Evaluator
 from refuel_oracle.confidence import ConfidenceCalculator
-from refuel_oracle.config import Config
+from refuel_oracle.task_config import TaskConfig
+from refuel_oracle.dataset_config import DatasetConfig
 from refuel_oracle.schema import LLMAnnotation, Metric, MetricResult
 from refuel_oracle.tasks import BaseTask
 
 
 class NamedEntityRecognitionTask(BaseTask):
-    DEFAULT_TASK_PROMPT = "Your job is to extract named entities mentioned in text, and classify them into one of the following {num_labels} categories.\nCategories:\n{labels_list}\n "
-    DEFAULT_OUTPUT_FORMAT_PROMPT = 'You will return the answer in JSON format with two keys: {"answered": can you answer this question. say YES or NO, "entities": a JSON list of extracted entities from text}.'
-    CSV_OUTPUT_FORMAT = "You will return the answer in CSV format seperated by % character: answered%can you answer this question. say YES or NO%entities%a list of extracted entities from text."
-    SEED_EXAMPLES_PROMPT = "Some examples with their output answers are provided below:"
-    PROMPT_TEMPLATE = "{prefix_prompt}\n{task_prompt}\n{output_prompt}\n\n{seed_examples_prompt}\n{seed_examples}\nBegin:{current_example}"
-    PROMPT_TEMPLATE_VARIABLES = [
+    JSON_OUTPUT_FORMAT_PROMPT = 'You will return the answer in JSON format with two keys: {"answered": can you answer this question. say YES or NO, "entities": a JSON list of extracted entities from text}.'
+    CSV_OUTPUT_FORMAT_PROMPT = "You will return the answer in CSV format seperated by % charcter: answered%can you answer this question. say YES or NO%entities%a list of extracted entities from text."
+    NULL_LABEL = {}
+
+    task_prompt = "Your job is to extract named entities mentioned in text, and classify them into one of the following {num_labels} categories.\nCategories:\n{labels_list}\n "
+    prompt_template = "{prefix_prompt}\n{task_prompt}\n{output_prompt}\n\n{seed_examples_prompt}\n{seed_examples}\nBegin:{current_example}"
+    prompt_template_variables = [
         "prefix_prompt",
         "task_prompt",
         "output_prompt",
@@ -26,76 +28,63 @@ class NamedEntityRecognitionTask(BaseTask):
         "seed_examples",
         "current_example",
     ]
-    EXAMPLE_PROMPT_TEMPLATE = "Example: {example}\nOutput: {output}\n"
-    EXAMPLE_PROMPT_VARIABLES = ["example", "output"]
-    NULL_LABEL = {}
+    example_prompt_template = "Example: {example}\nOutput: {output}\n"
+    example_prompt_variables = ["example", "output"]
 
-    def __init__(self, config: Config) -> None:
-        super().__init__(config)
+    def __init__(self, config: TaskConfig, dataset_config: DatasetConfig) -> None:
+        super().__init__(config, dataset_config)
 
-    def _to_default_output_format(self, entities: List) -> str:
-        output = {"answered": "yes", "entities": entities}
-        return json.dumps(output)
-
-    def _to_csv_output_format(self, entities: List) -> str:
-        output = "answered:%yes%entities"
-        for entity_type in entities:
-            output += f"%{entity_type}"
-            for text in entities[entity_type]:
-                output += f"%{text}"
-        return output
+    def _to_output_format(self, entities: List) -> str:
+        if self.output_format == "json":
+            output = {"answered": "yes", "entities": entities}
+            return json.dumps(output)
+        elif self.output_format == "csv":
+            output = "answered:%yes%entities"
+            for entity_type in entities:
+                output += f"%{entity_type}"
+                for text in entities[entity_type]:
+                    output += f"%{text}"
+            return output
 
     def initialize_prompt_template(self) -> PromptTemplate:
-        # provide context about the problem domain
-        prefix_prompt = self.config.get("prefix_prompt", "")
-
         # provide context about the prediction task
-        labels_list = self.config.get("labels_list", [])
+        labels_list = self.dataset_config.get_labels_list()
         num_labels = len(labels_list)
-        task_prompt = self.config.get("task_prompt")
-        if not task_prompt:
-            task_prompt = self.DEFAULT_TASK_PROMPT.format(
-                num_labels=num_labels, labels_list="\n".join(labels_list)
-            )
+        task_prompt = self.task_prompt.format(
+            num_labels=num_labels, labels_list="\n".join(labels_list)
+        )
 
         pt = PromptTemplate(
-            input_variables=self.PROMPT_TEMPLATE_VARIABLES,
-            template=self.PROMPT_TEMPLATE,
+            input_variables=self.prompt_template_variables,
+            template=self.prompt_template,
         )
         return pt.partial(
-            prefix_prompt=prefix_prompt,
+            prefix_prompt=self.prefix_prompt,
             task_prompt=task_prompt,
-            output_prompt=self.CSV_OUTPUT_FORMAT
-            if self.config.get("prompt_encoding") == "csv"
-            else self.DEFAULT_OUTPUT_FORMAT_PROMPT,
+            output_prompt=self.output_prompt,
         )
 
     def construct_prompt(self, input: Dict, examples: List) -> str:
         # populate seed examples in the prompt
         example_prompt = PromptTemplate(
-            input_variables=self.EXAMPLE_PROMPT_VARIABLES,
-            template=self.EXAMPLE_PROMPT_TEMPLATE,
+            input_variables=self.example_prompt_variables,
+            template=self.example_prompt_template,
         )
         formatted_examples = []
         for eg in examples:
-            if self.config.get("prompt_encoding") == "csv":
-                expected_output = self._to_csv_output_format(eg["output"])
-            else:
-                expected_output = self._to_default_output_format(eg["output"])
+            expected_output = self._to_output_format(eg["output"])
             formatted_examples.append(
                 example_prompt.format(example=eg["example"], output=expected_output)
             )
 
-        current_input = self.get_single_input(input)
-        # populate the current example in the prompt
-        current_example = example_prompt.format(example=current_input, output="")
+        current_example = example_prompt.format(example=input["example"], output="")
 
         if len(examples):
-            seed_examples_prompt = self.SEED_EXAMPLES_PROMPT
+            seed_examples_prompt = self.seed_examples_prompt
         else:
             seed_examples_prompt = ""
 
-        return self.prompt_template.format(
+        return self.partial_prompt.format(
             seed_examples="\n".join(formatted_examples),
             current_example=current_example,
             seed_examples_prompt=seed_examples_prompt,
