@@ -1,4 +1,4 @@
-from typing import Tuple, List, Dict, Union
+from typing import Tuple, List, Dict, Union, Optional
 
 import langchain
 from langchain.cache import SQLiteCache
@@ -19,11 +19,15 @@ from refuel_oracle.dataset_config import DatasetConfig
 
 class Oracle:
     CHUNK_SIZE = 5
+    DEFAULT_LLM_CONFIG = {
+        "model_name": "gpt-3.5-turbo",
+        "provider_name": "openai",
+    }
 
     def __init__(
         self,
         task_config: Union[str, Dict],
-        llm_config: Union[str, Dict],
+        llm_config: Optional[Union[str, Dict]] = None,
         debug: bool = False,
         **kwargs,
     ) -> None:
@@ -222,7 +226,9 @@ class Oracle:
             self.example_selector = ExampleSelector(self.task_config)
 
     def set_llm_config(self, llm_config: Union[str, Dict]):
-        if isinstance(llm_config, str):
+        if llm_config is None:
+            self.llm_config = LLMConfig(self.DEFAULT_LLM_CONFIG)
+        elif isinstance(llm_config, str):
             self.llm_config = LLMConfig.from_json_file(llm_config)
         else:
             self.llm_config = LLMConfig(llm_config)

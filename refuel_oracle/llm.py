@@ -10,6 +10,9 @@ from transformers import AutoModelForSeq2SeqLM, AutoTokenizer, pipeline
 import torch
 import json
 
+# All chat models
+CHAT_MODELS = ["gpt-3.5-turbo"]
+
 
 # All available LLM providers
 class LLMProvider(str, Enum):
@@ -39,7 +42,13 @@ class LLMConfig:
         return self.dict[key]
 
     def get_provider(self) -> str:
-        return self.dict[self.LLM_PROVIDER_KEY]
+        provider_name = self.dict[self.LLM_PROVIDER_KEY]
+        # Converting an open ai provider to openai_chat internally to handle
+        # chat models separately
+        if provider_name == LLMProvider.openai and self.get_model_name() in CHAT_MODELS:
+            provider_name = LLMProvider.openai_chat
+
+        return provider_name
 
     def get_model_name(self) -> str:
         return self.dict[self.LLM_MODEL_KEY]
