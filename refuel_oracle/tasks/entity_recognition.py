@@ -245,17 +245,14 @@ class EntityRecognitionTask(BaseTask):
                     [
                         {
                             **entity,
-                            "label": entity.pop("type"),
+                            "label": entity["type"],
                             "conf": l.confidence_score,
                         }
                         for entity in l.label
                     ],
                 )
                 answered_gt_labels.append(
-                    [
-                        {**entity, "label": entity.pop("type")}
-                        for entity in gt_labels[index]
-                    ]
+                    [{**entity, "label": entity["type"]} for entity in gt_labels[index]]
                 )
                 if l.confidence_score is None:
                     conf_available = False
