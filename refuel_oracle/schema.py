@@ -29,3 +29,4 @@ class LLMAnnotation(BaseModel):
     confidence_score: Optional[float] = None
     generation_info: Optional[Dict[str, Any]] = None
     raw_text: Optional[str] = ""
+    prompt: Optional[str] = ""

@@ -100,13 +100,17 @@ class ClassificationTask(BaseTask):
             seed_examples_prompt=seed_examples_prompt,
         )
 
-    def parse_llm_response(self, response: Generation, input: str) -> LLMAnnotation:
+    def parse_llm_response(
+        self, response: Generation, input: Dict, prompt: str
+    ) -> LLMAnnotation:
         if self.output_format == "json":
-            return self.parse_json_llm_response(response)
+            return self.parse_json_llm_response(response, prompt)
         elif self.output_format == "csv":
-            return self.parse_csv_llm_response(response)
+            return self.parse_csv_llm_response(response, prompt)
 
-    def parse_json_llm_response(self, response: Generation) -> LLMAnnotation:
+    def parse_json_llm_response(
+        self, response: Generation, prompt: str
+    ) -> LLMAnnotation:
         output = {}
         try:
             completion_text = extract_valid_json_substring(response.text)
@@ -127,9 +131,12 @@ class ClassificationTask(BaseTask):
             label=llm_label,
             generation_info=response.generation_info,
             raw_text=response.text,
+            prompt=prompt,
         )
 
-    def parse_csv_llm_response(self, response: Generation) -> LLMAnnotation:
+    def parse_csv_llm_response(
+        self, response: Generation, prompt: str
+    ) -> LLMAnnotation:
         completion_text = response.text.strip().split(",")
         if len(completion_text) != 2:
             successfully_labeled = "no"
@@ -139,6 +146,8 @@ class ClassificationTask(BaseTask):
                 successfully_labeled=successfully_labeled,
                 label=llm_label,
                 generation_info=response.generation_info,
+                raw_text="",
+                prompt=prompt,
             )
 
         successfully_labeled = completion_text[0].strip().lower()
@@ -153,6 +162,7 @@ class ClassificationTask(BaseTask):
             label=llm_label,
             generation_info=response.generation_info,
             raw_text=response.text,
+            prompt=prompt,
         )
 
     def auroc_score_labels(

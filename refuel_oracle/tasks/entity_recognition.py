@@ -144,7 +144,9 @@ class EntityRecognitionTask(BaseTask):
                     json_output["entities"][current_entity].append(text_or_type)
         return json_output
 
-    def parse_llm_response(self, response: Generation, input: str) -> LLMAnnotation:
+    def parse_llm_response(
+        self, response: Generation, input: str, prompt: str
+    ) -> LLMAnnotation:
         output = {}
         successfully_labeled = "no"
         try:
@@ -172,6 +174,7 @@ class EntityRecognitionTask(BaseTask):
             label=llm_label,
             generation_info=response.generation_info,
             raw_text=response.text,
+            prompt=prompt,
         )
 
     def auroc_score_labels(

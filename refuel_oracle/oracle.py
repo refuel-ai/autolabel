@@ -93,7 +93,7 @@ class Oracle:
                         llm_labels.append(
                             self.confidence.calculate(
                                 model_generation=self.task.parse_llm_response(
-                                    generation, input_i
+                                    generation, input_i, final_prompts[i]
                                 ),
                                 empty_response=self.config.get("empty_response", ""),
                                 prompt=final_prompts[i],
@@ -113,7 +113,7 @@ class Oracle:
                 # than the gt_labels array, with the 1:1 mapping not being
                 # maintained either. We should either remove the elements we errored
                 # out on from gt_labels or add None labels to the llm_labels.
-                print("Error in generating response:", e)
+                print("Error in generating response:", e, "Prompt: ", chunk[i])
                 for i in range(len(chunk)):
                     llm_labels.append(
                         LLMAnnotation(

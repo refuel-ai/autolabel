@@ -109,15 +109,19 @@ class EntityMatchingTask(BaseTask):
         return prompt
 
     # TODO: Should parsing of responses be moved to a generic class?
-    def parse_llm_response(self, response: Generation, input: str) -> LLMAnnotation:
+    def parse_llm_response(
+        self, response: Generation, input: str, prompt: str
+    ) -> LLMAnnotation:
         if self.output_format == "json":
-            return self.parse_json_llm_response(response)
+            return self.parse_json_llm_response(response, prompt)
         elif self.output_format == "csv":
-            return self.parse_csv_llm_response(response)
+            return self.parse_csv_llm_response(response, prompt)
         elif self.output_format == "no":
-            return self.parse_no_llm_response(response)
+            return self.parse_no_llm_response(response, prompt)
 
-    def parse_json_llm_response(self, response: Generation) -> LLMAnnotation:
+    def parse_json_llm_response(
+        self, response: Generation, prompt: str
+    ) -> LLMAnnotation:
         output = {}
         try:
             completion_text = extract_valid_json_substring(response.text)
@@ -137,9 +141,12 @@ class EntityMatchingTask(BaseTask):
             successfully_labeled=successfully_labeled,
             label=llm_label,
             generation_info=response.generation_info,
+            prompt=prompt,
         )
 
-    def parse_csv_llm_response(self, response: Generation) -> LLMAnnotation:
+    def parse_csv_llm_response(
+        self, response: Generation, prompt: str
+    ) -> LLMAnnotation:
         completion_text = response.text.strip().split(",", 1)
         if len(completion_text) != 2:
             successfully_labeled = "no"
@@ -149,6 +156,7 @@ class EntityMatchingTask(BaseTask):
                 successfully_labeled=successfully_labeled,
                 label=llm_label,
                 generation_info=response.generation_info,
+                prompt=prompt,
             )
 
         successfully_labeled = completion_text[0].strip().lower()
@@ -164,12 +172,13 @@ class EntityMatchingTask(BaseTask):
             generation_info=response.generation_info,
         )
 
-    def parse_no_llm_response(self, response: Generation) -> LLMAnnotation:
+    def parse_no_llm_response(self, response: Generation, prompt: str) -> LLMAnnotation:
         completion_text = response.text.strip()
         return LLMAnnotation(
             successfully_labeled="yes",
             label=completion_text,
             generation_info=response.generation_info,
+            prompt=prompt,
         )
 
     def auroc_score_labels(

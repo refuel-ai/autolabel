@@ -82,7 +82,7 @@ class ConfidenceCalculator:
         logprobs = None
         if not logprobs_available:
             logprobs = ConfidenceCalculator.compute_confidence(
-                model_generation.input, model_generation.raw_text
+                model_generation.prompt, model_generation.raw_text
             )
         else:
             logprobs = model_generation.generation_info["logprobs"]["top_logprobs"]
@@ -95,11 +95,15 @@ class ConfidenceCalculator:
 
     @classmethod
     def compute_confidence(cls, model_input, model_output):
-        prediction_logprob = requests.get(
-            "http://129.146.101.153:3456/get_probs/",
-            params={"model_input": model_input, "model_output": model_output},
-        )
-        return json.loads(prediction_logprob.content.decode("utf-8"))["probs"]
+        model_output = model_output.replace("Negative", "Neg")
+        try:
+            prediction_logprob = requests.post(
+                "http://129.146.101.153:3456/get_probs/",
+                json={"model_input": model_input, "model_output": model_output},
+            )
+            return json.loads(prediction_logprob.content.decode("utf-8"))["probs"]
+        except Exception as e:
+            raise AttributeError(f"Unable to compute confidence prediction {e}")
 
     @classmethod
     def compute_completion(cls, confidence: List[float], threshold: float):
