@@ -47,12 +47,12 @@ class LLMFactory:
     # Default parameters that we will use to initialize LLMs from a provider
     PROVIDER_TO_DEFAULT_PARAMS = {
         LLMProvider.openai: {
-            "max_tokens": 30,
+            "max_tokens": 100,
             "temperature": 0.0,
             "model_kwargs": {"logprobs": 1},
         },
         LLMProvider.openai_chat: {
-            "max_tokens": 30,
+            "max_tokens": 100,
             "temperature": 0.0,
         },
         LLMProvider.cohere: {
