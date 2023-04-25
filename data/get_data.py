@@ -295,9 +295,9 @@ def get_civil_comments(output_folder="."):
             if ex[col] >= 0.5:
                 labels.append(col)
         if len(labels) > 0:
-            ex['label'] = 'toxic'
+            ex["label"] = "toxic"
         else:
-            ex['label'] = 'not toxic'
+            ex["label"] = "not toxic"
         return ex
 
     dataset = dataset["test"].map(process, remove_columns=cols)
