@@ -23,7 +23,7 @@ TASK_TYPE_TO_IMPLEMENTATION = {
 
 class TaskFactory:
     @staticmethod
-    def from_config(config: TaskConfig, dataset_config: DatasetConfig) -> BaseTask:
+    def from_config(config: TaskConfig) -> BaseTask:
         task_type = config.get_task_type()
         if task_type not in TASK_TYPE_TO_IMPLEMENTATION:
             logger.error(
@@ -31,4 +31,4 @@ class TaskFactory:
             )
             return None
         task_cls = TASK_TYPE_TO_IMPLEMENTATION[task_type]
-        return task_cls(config, dataset_config)
+        return task_cls(config)

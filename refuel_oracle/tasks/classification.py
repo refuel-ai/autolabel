@@ -3,10 +3,8 @@ from typing import List, Dict
 
 import matplotlib.pyplot as plt
 from langchain.prompts.prompt import PromptTemplate
-from langchain.schema import Generation
 from loguru import logger
 from refuel_oracle.task_config import TaskConfig
-from refuel_oracle.dataset_config import DatasetConfig
 from refuel_oracle.schema import LLMAnnotation, Metric, MetricResult
 from refuel_oracle.tasks import BaseTask
 from refuel_oracle.utils import extract_valid_json_substring
@@ -22,17 +20,11 @@ class ClassificationTask(BaseTask):
     example_prompt_template = "Example: {example}\nOutput: {output}\n"
     example_prompt_variables = ["example", "output"]
 
-    def __init__(self, config: TaskConfig, dataset_config: DatasetConfig) -> None:
-        super().__init__(config, dataset_config)
+    def __init__(self, config: TaskConfig) -> None:
+        super().__init__(config)
 
     def initialize_prompt_template(self) -> PromptTemplate:
         # provide context about the prediction task
-        labels_list = self.dataset_config.get_labels_list()
-        num_labels = len(labels_list)
-        task_prompt = self.task_prompt.format(
-            num_labels=num_labels, labels_list="\n".join(labels_list)
-        )
-
         pt = PromptTemplate(
             input_variables=self.prompt_template_variables,
             template=self.prompt_template,
@@ -40,11 +32,17 @@ class ClassificationTask(BaseTask):
 
         return pt.partial(
             prefix_prompt=self.prefix_prompt,
-            task_prompt=task_prompt,
             output_prompt=self.output_prompt,
         )
 
     def construct_prompt(self, input: Dict, examples: List) -> str:
+        # Create the task prompt based on the dataset config
+        labels_list = self.dataset_config.get_labels_list()
+        num_labels = len(labels_list)
+        task_prompt = self.task_prompt.format(
+            num_labels=num_labels, labels_list="\n".join(labels_list)
+        )
+
         # populate seed examples in the prompt
         example_prompt = PromptTemplate(
             input_variables=self.example_prompt_variables,
@@ -69,6 +67,7 @@ class ClassificationTask(BaseTask):
             seed_examples_prompt=seed_examples_prompt,
             seed_examples="\n".join(formatted_examples),
             current_example=current_example,
+            task_prompt=task_prompt,
         )
 
     def eval(

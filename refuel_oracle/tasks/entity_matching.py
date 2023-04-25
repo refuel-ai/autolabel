@@ -5,7 +5,6 @@ from langchain.prompts.prompt import PromptTemplate
 from langchain.schema import Generation
 from loguru import logger
 from refuel_oracle.task_config import TaskConfig
-from refuel_oracle.dataset_config import DatasetConfig
 from refuel_oracle.schema import LLMAnnotation, Metric, MetricResult
 from refuel_oracle.tasks import BaseTask
 from sklearn.metrics import accuracy_score
@@ -25,8 +24,8 @@ class EntityMatchingTask(BaseTask):
     )
     example_prompt_variables = ["entity1", "entity2", "answer"]
 
-    def __init__(self, config: TaskConfig, dataset_config: DatasetConfig) -> None:
-        super().__init__(config, dataset_config)
+    def __init__(self, config: TaskConfig) -> None:
+        super().__init__(config)
 
     def initialize_prompt_template(self) -> PromptTemplate:
         pt = PromptTemplate(

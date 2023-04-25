@@ -36,9 +36,8 @@ class BaseTask(ABC):
 
     NULL_LABEL_TOKEN = "NO_LABEL"
 
-    def __init__(self, config: TaskConfig, dataset_config: DatasetConfig) -> None:
+    def __init__(self, config: TaskConfig) -> None:
         self.config = config
-        self.dataset_config = dataset_config
 
         # Update the default prompt template with the prompt template from the config
         if self.config.get_prompt_template():
@@ -71,6 +70,10 @@ class BaseTask(ABC):
         self.partial_prompt = self.initialize_prompt_template()
 
     @abstractmethod
+    # This initialzes the prompt template for the task but leaves out dataset
+    # specific information such as the seed examples and the current example,
+    # Dataset specific initialization should be done in the construct prompt
+    # method
     def initialize_prompt_template(self) -> PromptTemplate:
         pass
 
@@ -85,6 +88,10 @@ class BaseTask(ABC):
     @abstractmethod
     def eval(self, llm_labels: List, gt_labels: List) -> List[MetricResult]:
         pass
+
+    # Should be called before the construct prompt for a specific input is called
+    def set_dataset_config(self, dataset_config: DatasetConfig) -> None:
+        self.dataset_config = dataset_config
 
     def _to_output_format(self, label: str) -> str:
         if self.output_format == "json":

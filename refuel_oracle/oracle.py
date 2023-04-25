@@ -1,6 +1,8 @@
 from typing import Tuple, List, Dict, Union
 
 import langchain
+from langchain.cache import SQLiteCache
+from loguru import logger
 import numpy as np
 import pandas as pd
 from langchain.cache import SQLiteCache
@@ -22,11 +24,9 @@ class Oracle:
         self,
         task_config: Union[str, Dict],
         llm_config: Union[str, Dict],
-        dataset_config: Union[str, Dict],
         debug: bool = False,
         **kwargs,
     ) -> None:
-        self.set_dataset_config(dataset_config, **kwargs)
         self.set_task_config(task_config, **kwargs)
         self.set_llm_config(llm_config, **kwargs)
         self.debug = debug
@@ -58,20 +58,24 @@ class Oracle:
     def annotate(
         self,
         dataset: str,
+        dataset_config: Union[str, Dict],
         max_items: int = None,
         output_name: str = None,
         start_index: int = 0,
     ) -> None:
+        dataset_config = self.create_dataset_config(dataset_config)
+        self.task.set_dataset_config(dataset_config)
+
         df, inputs, gt_labels = self._read_csv(
-            dataset, self.dataset_config, max_items, start_index
+            dataset, dataset_config, max_items, start_index
         )
 
         # Get the seed examples from the dataset config
-        seed_examples = self.dataset_config.get_seed_examples()
+        seed_examples = dataset_config.get_seed_examples()
 
         # If this dataset config is a string, read the corrresponding csv file
         if isinstance(seed_examples, str):
-            _, seed_examples, _ = self._read_csv(seed_examples, self.dataset_config)
+            _, seed_examples, _ = self._read_csv(seed_examples, dataset_config)
 
         if self.task_config.get_example_selector():
             self.example_selector = ExampleSelector(
@@ -122,7 +126,7 @@ class Oracle:
                             self.task.parse_llm_response(generation, input_i)
                         )
             except Exception as e:
-                print("Error in generating response:", e)
+                logger.error("Error in generating response:" + repr(e))
                 num_failures += 1
 
         eval_result = None
@@ -147,7 +151,7 @@ class Oracle:
             csv_file_name = f"{dataset.replace('.csv','')}_labeled.csv"
         output_df.to_csv(
             csv_file_name,
-            sep=self.dataset_config.get_delimiter(),
+            sep=dataset_config.get_delimiter(),
             header=True,
             index=False,
         )
@@ -161,21 +165,23 @@ class Oracle:
     def plan(
         self,
         dataset: str,
+        dataset_config: Union[str, Dict],
         max_items: int = None,
         start_index: int = 0,
     ):
-        _, inputs, _ = self._read_csv(
-            dataset, self.dataset_config, max_items, start_index
-        )
+        dataset_config = self.create_dataset_config(dataset_config)
+        self.task.set_dataset_config(dataset_config)
+
+        _, inputs, _ = self._read_csv(dataset, dataset_config, max_items, start_index)
         prompt_list = []
         total_tokens = 0
 
         # Get the seed examples from the dataset config
-        seed_examples = self.dataset_config.get_seed_examples()
+        seed_examples = dataset_config.get_seed_examples()
 
         # If this dataset config is a string, read the corrresponding csv file
         if isinstance(seed_examples, str):
-            _, seed_examples, _ = self._read_csv(seed_examples, self.dataset_config)
+            _, seed_examples, _ = self._read_csv(seed_examples, dataset_config)
 
         input_limit = min(len(inputs), 100)
         num_sections = max(input_limit / self.CHUNK_SIZE, 1)
@@ -210,7 +216,7 @@ class Oracle:
         else:
             self.task_config = TaskConfig(task_config)
 
-        self.task = TaskFactory.from_config(self.task_config, self.dataset_config)
+        self.task = TaskFactory.from_config(self.task_config)
         self.example_selector = None
         if "example_selector" in self.task_config.keys():
             self.example_selector = ExampleSelector(self.task_config)
@@ -224,16 +230,13 @@ class Oracle:
         self.llm = LLMFactory.from_config(self.llm_config)
         self.confidence = ConfidenceCalculator(score_type="p_true", llm=self.llm)
 
-    def set_dataset_config(
-        self, dataset_config: Union[str, Dict], update_task=False, **kwargs
-    ):
+    def create_dataset_config(self, dataset_config: Union[str, Dict]):
         if isinstance(dataset_config, str):
-            self.dataset_config = DatasetConfig.from_json_file(dataset_config)
+            dataset_config = DatasetConfig.from_json_file(dataset_config)
         else:
-            self.dataset_config = DatasetConfig(dataset_config)
+            dataset_config = DatasetConfig(dataset_config)
 
-        if update_task:
-            self.set_task_config(self.task_config, self.dataset_config, **kwargs)
+        return dataset_config
 
     def test(self):
         return

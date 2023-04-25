@@ -243,7 +243,7 @@ def get_company(output_folder="."):
 
 def get_wikiann(output_folder="."):
     dataset_csv = open(f"{output_folder}/wikiann_test.csv", "w")
-    dataset_csv.write("Text%IndividualLabels%CategorizedLabels\n")
+    dataset_csv.write("example%IndividualLabels%CategorizedLabels\n")
     dataset = load_dataset("wikiann", "en")
     entity_category_mapping = {
         "LOC": "Location",

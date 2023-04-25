@@ -8,7 +8,6 @@ from loguru import logger
 from nervaluate import Evaluator
 from refuel_oracle.confidence import ConfidenceCalculator
 from refuel_oracle.task_config import TaskConfig
-from refuel_oracle.dataset_config import DatasetConfig
 from refuel_oracle.schema import LLMAnnotation, Metric, MetricResult
 from refuel_oracle.tasks import BaseTask
 
@@ -31,8 +30,8 @@ class NamedEntityRecognitionTask(BaseTask):
     example_prompt_template = "Example: {example}\nOutput: {output}\n"
     example_prompt_variables = ["example", "output"]
 
-    def __init__(self, config: TaskConfig, dataset_config: DatasetConfig) -> None:
-        super().__init__(config, dataset_config)
+    def __init__(self, config: TaskConfig) -> None:
+        super().__init__(config)
 
     def _to_output_format(self, entities: List) -> str:
         if self.output_format == "json":
@@ -48,23 +47,23 @@ class NamedEntityRecognitionTask(BaseTask):
 
     def initialize_prompt_template(self) -> PromptTemplate:
         # provide context about the prediction task
-        labels_list = self.dataset_config.get_labels_list()
-        num_labels = len(labels_list)
-        task_prompt = self.task_prompt.format(
-            num_labels=num_labels, labels_list="\n".join(labels_list)
-        )
-
         pt = PromptTemplate(
             input_variables=self.prompt_template_variables,
             template=self.prompt_template,
         )
         return pt.partial(
             prefix_prompt=self.prefix_prompt,
-            task_prompt=task_prompt,
             output_prompt=self.output_prompt,
         )
 
     def construct_prompt(self, input: Dict, examples: List) -> str:
+        # Create the task prompt based on the dataset config
+        labels_list = self.dataset_config.get_labels_list()
+        num_labels = len(labels_list)
+        task_prompt = self.task_prompt.format(
+            num_labels=num_labels, labels_list="\n".join(labels_list)
+        )
+
         # populate seed examples in the prompt
         example_prompt = PromptTemplate(
             input_variables=self.example_prompt_variables,
@@ -88,6 +87,7 @@ class NamedEntityRecognitionTask(BaseTask):
             seed_examples="\n".join(formatted_examples),
             current_example=current_example,
             seed_examples_prompt=seed_examples_prompt,
+            task_prompt=task_prompt,
         )
 
     def add_text_spans(self, raw_output: dict, input: str) -> list:
@@ -135,7 +135,7 @@ class NamedEntityRecognitionTask(BaseTask):
     def parse_llm_response(self, response: Generation, input: Dict) -> LLMAnnotation:
         output = {}
         successfully_labeled = "no"
-        input_str = self.get_single_input(input)
+        input_str = input["example"]
         try:
             completion_text = response.text
             if self.config.get("prompt_encoding") == "csv":
