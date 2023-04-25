@@ -126,6 +126,7 @@ class ClassificationTask(BaseTask):
             successfully_labeled=successfully_labeled,
             label=llm_label,
             generation_info=response.generation_info,
+            raw_text=response.text,
         )
 
     def parse_csv_llm_response(self, response: Generation) -> LLMAnnotation:
@@ -151,6 +152,7 @@ class ClassificationTask(BaseTask):
             successfully_labeled=successfully_labeled,
             label=llm_label,
             generation_info=response.generation_info,
+            raw_text=response.text,
         )
 
     def auroc_score_labels(

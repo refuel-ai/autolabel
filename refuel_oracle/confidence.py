@@ -4,6 +4,8 @@ import sklearn
 import matplotlib.pyplot as plt
 import numpy as np
 import pickle as pkl
+import requests
+import json
 import scipy.stats as stats
 
 from refuel_oracle.schema import LLMAnnotation
@@ -16,9 +18,13 @@ class ConfidenceCalculator:
     ):
         self.score_type = score_type
         self.llm = llm
+        self.tokens_to_ignore = {"<unk>"}
 
     def logprob_average(
-        self, model_generation: LLMAnnotation, empty_response: str, **kwargs
+        self,
+        empty_response: str,
+        logprobs: list,
+        **kwargs,
     ) -> float:
         """
         This function has only been tested with the Davinci model so far
@@ -26,28 +32,34 @@ class ConfidenceCalculator:
         called "logprobs". This dictionary further must contain "top_logprobs"
         that is a list of JSONs mapping tokens to their logprobs
         """
-        if (
-            model_generation.generation_info is not None
-            and "logprobs" in model_generation.generation_info
-        ):
-            token_to_prob = model_generation.generation_info["logprobs"]["top_logprobs"]
-            empty_response_template = empty_response
-            logprob_cumulative, count = 0, 0
-            for token in token_to_prob:
-                token_str = list(token.keys())[0]
+        empty_response_template = empty_response
+        logprob_cumulative, count = 0, 0
+        for token in logprobs:
+            token_str = list(token.keys())[0]
+            if token_str not in self.tokens_to_ignore:
                 if token_str not in empty_response_template:
                     logprob_cumulative += token[token_str]
                     count += 1
-            return math.e ** (logprob_cumulative / count)
-        else:
-            raise NotImplementedError()
+                else:
+                    empty_response_template = empty_response_template.replace(
+                        token_str, "", 1
+                    )
+        return math.e ** (logprob_cumulative / count)
 
     def p_true(self, model_generation: LLMAnnotation, prompt: str, **kwargs) -> float:
         p_true_prompt = f"{prompt}{model_generation.raw_text} \n Is the answer to the last example correct? Answer in one word on the same line [Yes/No]: "
         response = self.llm.generate([p_true_prompt])
-        response_logprobs = response.generations[0][0].generation_info["logprobs"][
-            "top_logprobs"
-        ]
+        if (
+            response.generations[0][0].generation_info is not None
+            and "logprobs" in response.generations[0][0].generation_info
+        ):
+            response_logprobs = response.generations[0][0].generation_info["logprobs"][
+                "top_logprobs"
+            ]
+        else:
+            response_logprobs = ConfidenceCalculator.compute_completion(
+                p_true_prompt, response.generations[0][0].text
+            )
         for token in response_logprobs:
             token_str = list(token.keys())[0]
             if token_str.lower() == "yes":
@@ -56,7 +68,9 @@ class ConfidenceCalculator:
                 return -math.e ** token[token_str]
         return 0
 
-    def calculate(self, model_generation: LLMAnnotation, **kwargs) -> LLMAnnotation:
+    def calculate(
+        self, model_generation: LLMAnnotation, logprobs_available: bool, **kwargs
+    ) -> LLMAnnotation:
         SUPPORTED_CALCULATORS = {
             "logprob_average": self.logprob_average,
             "p_true": self.p_true,
@@ -64,11 +78,28 @@ class ConfidenceCalculator:
 
         if self.score_type not in SUPPORTED_CALCULATORS:
             raise NotImplementedError()
+
+        logprobs = None
+        if not logprobs_available:
+            logprobs = ConfidenceCalculator.compute_confidence(
+                model_generation.input, model_generation.raw_text
+            )
+        else:
+            logprobs = model_generation.generation_info["logprobs"]["top_logprobs"]
+
         confidence = SUPPORTED_CALCULATORS[self.score_type](
-            model_generation=model_generation, **kwargs
+            model_generation=model_generation, logprobs=logprobs, **kwargs
         )
         model_generation.confidence_score = confidence
         return model_generation
+
+    @classmethod
+    def compute_confidence(cls, model_input, model_output):
+        prediction_logprob = requests.get(
+            "http://129.146.101.153:3456/get_probs/",
+            params={"model_input": model_input, "model_output": model_output},
+        )
+        return json.loads(prediction_logprob.content.decode("utf-8"))["probs"]
 
     @classmethod
     def compute_completion(cls, confidence: List[float], threshold: float):

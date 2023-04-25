@@ -8,6 +8,7 @@ from refuel_oracle.confidence import ConfidenceCalculator
 from refuel_oracle.config import Config
 from refuel_oracle.example_selector import ExampleSelector
 from refuel_oracle.llm import LLMFactory, LLMProvider
+from refuel_oracle.schema import LLMAnnotation
 from refuel_oracle.tasks import TaskFactory
 from refuel_oracle.utils import calculate_cost, calculate_num_tokens
 
@@ -88,7 +89,7 @@ class Oracle:
                     response_item = response.generations[i]
                     input_i = chunk[i]
                     generation = response_item[0]
-                    if self.config.get("has_logprob", "False") == "True":
+                    if self.config.get("compute_confidence", "False") == "True":
                         llm_labels.append(
                             self.confidence.calculate(
                                 model_generation=self.task.parse_llm_response(
@@ -96,6 +97,10 @@ class Oracle:
                                 ),
                                 empty_response=self.config.get("empty_response", ""),
                                 prompt=final_prompts[i],
+                                logprobs_available=self.config.get(
+                                    "has_logprob", "False"
+                                )
+                                == "True",
                             )
                         )
                     else:
@@ -103,7 +108,21 @@ class Oracle:
                             self.task.parse_llm_response(generation, input_i)
                         )
             except Exception as e:
+                # TODO (dhruva): We need to handle this case carefully
+                # When we erorr out, we will have less elements in the llm_labels
+                # than the gt_labels array, with the 1:1 mapping not being
+                # maintained either. We should either remove the elements we errored
+                # out on from gt_labels or add None labels to the llm_labels.
                 print("Error in generating response:", e)
+                for i in range(len(chunk)):
+                    llm_labels.append(
+                        LLMAnnotation(
+                            successfully_labeled="No",
+                            label=None,
+                            input=final_prompts[i],
+                            confidence_score=0,
+                        )
+                    )
                 num_failures += 1
 
         eval_result = None

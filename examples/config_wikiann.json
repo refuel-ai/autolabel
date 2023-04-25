@@ -3,7 +3,8 @@
     "task_type": "named_entity_recognition",
     "provider_name": "openai",
     "model_name": "text-davinci-003",
-    "has_logprob": "True",
+    "has_logprob": "False",
+    "compute_confidence": "True",
     "model_params": {
         "max_tokens": 512
     },
