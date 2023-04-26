@@ -1,17 +1,11 @@
 from loguru import logger
-from refuel_oracle.config import Config
 
 from .base import BaseTask
 from .classification import ClassificationTask
 from .entity_matching import EntityMatchingTask
-<<<<<<< HEAD
 from .multi_choice_question_answering import MultiChoiceQATask
 from .named_entity_recognition import NamedEntityRecognitionTask
-=======
-
 from refuel_oracle.task_config import TaskConfig
-from refuel_oracle.dataset_config import DatasetConfig
->>>>>>> Separate configs and unify tasks
 
 TASK_TYPE_TO_IMPLEMENTATION = {
     "classification": ClassificationTask,
