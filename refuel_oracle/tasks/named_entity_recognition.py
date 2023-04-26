@@ -28,7 +28,7 @@ class NamedEntityRecognitionTask(BaseTask):
     ]
     EXAMPLE_PROMPT_TEMPLATE = "Example: {example}\nOutput: {output}\n"
     EXAMPLE_PROMPT_VARIABLES = ["example", "output"]
-    NULL_LABEL = []
+    NULL_LABEL = {}
 
     def __init__(self, config: Config) -> None:
         super().__init__(config)
@@ -101,12 +101,16 @@ class NamedEntityRecognitionTask(BaseTask):
             seed_examples_prompt=seed_examples_prompt,
         )
 
-    def add_text_spans(self, raw_output: list, input: str) -> list:
+    def add_text_spans(self, raw_output: dict, input: str) -> list:
+        processed_output = []
+        for entity_type in raw_output:
+            for curr_entity in raw_output[entity_type]:
+                processed_output.append({"type": entity_type, "text": curr_entity})
 
         # create a frequency dict of each named entity in the input to determine text spans for repeated entities
-        frequency_count = {label["text"]: 0 for label in raw_output}
+        frequency_count = {label["text"]: 0 for label in processed_output}
 
-        for label in raw_output:
+        for label in processed_output:
             text = label["text"]
             matches = [i.start() for i in re.finditer(text, input)]
             count = frequency_count[text]
@@ -122,7 +126,7 @@ class NamedEntityRecognitionTask(BaseTask):
                 label["start"] = matches[count]
                 label["end"] = matches[count] + len(text)
             frequency_count[text] += 1
-        return raw_output
+        return processed_output
 
     def jsonify_csv_output(self, response: str):
         split_response = response.split("%")
