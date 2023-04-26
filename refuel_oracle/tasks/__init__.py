@@ -1,15 +1,15 @@
 from loguru import logger
+from refuel_oracle.config import Config
+
 from .base import BaseTask
 from .classification import ClassificationTask
-from .entity_recognition import EntityRecognitionTask
-from .multi_choice_question_answering import MultiChoiceQATask
 from .entity_matching import EntityMatchingTask
-
-from refuel_oracle.config import Config
+from .multi_choice_question_answering import MultiChoiceQATask
+from .named_entity_recognition import NamedEntityRecognitionTask
 
 TASK_TYPE_TO_IMPLEMENTATION = {
     "classification": ClassificationTask,
-    "named_entity_recognition": EntityRecognitionTask,
+    "named_entity_recognition": NamedEntityRecognitionTask,
     "multi_choice_question_answering": MultiChoiceQATask,
     "entity_matching": EntityMatchingTask,
 }
