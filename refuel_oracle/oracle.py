@@ -1,85 +1,109 @@
-from typing import Dict, List, Tuple
+from typing import Tuple, List, Dict, Union, Optional
 
 import langchain
+from langchain.cache import SQLiteCache
+from loguru import logger
 import numpy as np
 import pandas as pd
 from langchain.cache import SQLiteCache
 from tqdm import tqdm
 
 from refuel_oracle.confidence import ConfidenceCalculator
-from refuel_oracle.config import Config
+from refuel_oracle.task_config import TaskConfig
 from refuel_oracle.example_selector import ExampleSelector
-from refuel_oracle.llm import LLMFactory, LLMProvider
+from refuel_oracle.llm import LLMFactory, LLMProvider, LLMConfig
 from refuel_oracle.tasks import TaskFactory
 from refuel_oracle.utils import calculate_cost, calculate_num_tokens
+from refuel_oracle.dataset_config import DatasetConfig
 
 
 class Oracle:
     CHUNK_SIZE = 5
-    DEFAULT_SEPARATOR = ","
 
-    def __init__(self, config: str, debug: bool = False, **kwargs) -> None:
+    def __init__(
+        self,
+        task_config: Union[str, Dict],
+        llm_config: Optional[Union[str, Dict]] = None,
+        debug: bool = False,
+        **kwargs,
+    ) -> None:
+        self.set_task_config(task_config, **kwargs)
+        self.set_llm_config(llm_config, **kwargs)
         self.debug = debug
-        self.set_config(config, **kwargs)
         if not debug:
             self.set_cache()
 
     # TODO: all this will move to a separate input parser class
     # this is a temporary solution to quickly add this feature and unblock expts
     def _read_csv(
-        self, csv_file: str, max_items: int = None, start_index: int = 0
+        self,
+        csv_file: str,
+        dataset_config: DatasetConfig,
+        max_items: int = None,
+        start_index: int = 0,
     ) -> Tuple[pd.DataFrame, List[Dict], List]:
-        dataset_schema = self.config.get("dataset_schema", {})
-        delimiter = dataset_schema.get("delimiter", self.DEFAULT_SEPARATOR)
-        input_columns = dataset_schema.get("input_columns", [])
-        label_column = dataset_schema.get("label_column")
+        delimiter = dataset_config.get_delimiter()
+        input_columns = dataset_config.get_input_columns()
+        label_column = dataset_config.get_label_column()
 
         dat = pd.read_csv(csv_file, sep=delimiter, dtype="str")[start_index:]
         if max_items and max_items > 0:
             max_items = min(max_items, len(dat))
             dat = dat[:max_items]
-        inputs = dat[input_columns].to_dict(orient="records")
+
+        inputs = dat[input_columns + [label_column]].to_dict(orient="records")
         gt_labels = None if not label_column else dat[label_column].tolist()
         return (dat, inputs, gt_labels)
 
     def annotate(
         self,
         dataset: str,
+        dataset_config: Union[str, Dict],
         max_items: int = None,
         output_name: str = None,
         start_index: int = 0,
     ) -> None:
-        if "example_selector" in self.config.keys():
-            self.example_selector = ExampleSelector(self.config)
-        df, inputs, gt_labels = self._read_csv(dataset, max_items, start_index)
+        dataset_config = self.create_dataset_config(dataset_config)
+        self.task.set_dataset_config(dataset_config)
 
-        if not max_items:
-            max_items = len(df)
+        df, inputs, gt_labels = self._read_csv(
+            dataset, dataset_config, max_items, start_index
+        )
+
+        # Get the seed examples from the dataset config
+        seed_examples = dataset_config.get_seed_examples()
+
+        # If this dataset config is a string, read the corrresponding csv file
+        if isinstance(seed_examples, str):
+            _, seed_examples, _ = self._read_csv(seed_examples, dataset_config)
+
+        if self.task_config.get_example_selector():
+            self.example_selector = ExampleSelector(
+                self.task_config.get_example_selector(), seed_examples
+            )
+        else:
+            self.example_selector = None
 
         llm_labels = []
         prompt_list = []
         num_failures = 0
-        total_tokens = 0
 
-        num_sections = max(max_items / self.CHUNK_SIZE, 1)
-        for chunk_id, chunk in enumerate(tqdm(np.array_split(inputs, num_sections))):
-            if chunk_id % 10 == 0:
-                print(
-                    f"Labeling {chunk_id*self.CHUNK_SIZE+1}-{chunk_id*self.CHUNK_SIZE+(self.CHUNK_SIZE*10)}"
-                )
+        num_sections = max(len(df) / self.CHUNK_SIZE, 1)
+        for chunk in tqdm(np.array_split(inputs, num_sections)):
             final_prompts = []
             for i, input_i in enumerate(chunk):
                 # Fetch few-shot seed examples
                 if self.example_selector:
                     examples = self.example_selector.get_examples(input_i)
                 else:
-                    examples = self.config.get("seed_examples", [])
+                    examples = seed_examples
+
                 # Construct Prompt to pass to LLM
                 final_prompt = self.task.construct_prompt(input_i, examples)
                 final_prompts.append(final_prompt)
-                num_tokens = calculate_num_tokens(self.config, final_prompt)
-                total_tokens += num_tokens
+
                 prompt_list.append(final_prompt)
+
             # Get response from LLM
             try:
                 response = self.llm.generate(final_prompts)
@@ -87,13 +111,13 @@ class Oracle:
                     response_item = response.generations[i]
                     input_i = chunk[i]
                     generation = response_item[0]
-                    if self.config.get("has_logprob", "False") == "True":
+                    if self.task_config.get_has_logprob() == "True":
                         llm_labels.append(
                             self.confidence.calculate(
                                 model_generation=self.task.parse_llm_response(
                                     generation, input_i
                                 ),
-                                empty_response=self.config.get("empty_response", ""),
+                                empty_response=self.task_config.get_empty_response(),
                                 prompt=final_prompts[i],
                             )
                         )
@@ -102,7 +126,7 @@ class Oracle:
                             self.task.parse_llm_response(generation, input_i)
                         )
             except Exception as e:
-                print("Error in generating response:", e)
+                logger.error("Error in generating response:" + repr(e))
                 num_failures += 1
 
         eval_result = None
@@ -115,54 +139,66 @@ class Oracle:
 
         # Write output to CSV
         output_df = df.copy()
-        output_df["llm_labeled_successfully"] = [
+        output_df[self.task_config.get_task_name() + "_llm_labeled_successfully"] = [
             l.successfully_labeled for l in llm_labels
         ]
-        output_df["llm_label"] = [l.label for l in llm_labels]
+        output_df[self.task_config.get_task_name() + "_llm_label"] = [
+            l.label for l in llm_labels
+        ]
         if output_name:
             csv_file_name = output_name
         else:
             csv_file_name = f"{dataset.replace('.csv','')}_labeled.csv"
         output_df.to_csv(
             csv_file_name,
-            sep=self.DEFAULT_SEPARATOR,
+            sep=dataset_config.get_delimiter(),
             header=True,
             index=False,
         )
         print(f"Total number of failures: {num_failures}")
-        return output_df["llm_label"], eval_result
+        return (
+            output_df[self.task_config.get_task_name() + "_llm_label"],
+            output_df,
+            eval_result,
+        )
 
     def plan(
         self,
         dataset: str,
+        dataset_config: Union[str, Dict],
+        max_items: int = None,
+        start_index: int = 0,
     ):
-        _, inputs, _ = self._read_csv(dataset)
+        dataset_config = self.create_dataset_config(dataset_config)
+        self.task.set_dataset_config(dataset_config)
+
+        _, inputs, _ = self._read_csv(dataset, dataset_config, max_items, start_index)
         prompt_list = []
         total_tokens = 0
 
+        # Get the seed examples from the dataset config
+        seed_examples = dataset_config.get_seed_examples()
+
+        # If this dataset config is a string, read the corrresponding csv file
+        if isinstance(seed_examples, str):
+            _, seed_examples, _ = self._read_csv(seed_examples, dataset_config)
+
         input_limit = min(len(inputs), 100)
         num_sections = max(input_limit / self.CHUNK_SIZE, 1)
-        for chunk_id, chunk in enumerate(
-            tqdm(np.array_split(inputs[:input_limit], num_sections))
-        ):
+        for chunk in tqdm(np.array_split(inputs[:input_limit], num_sections)):
             for i, input_i in enumerate(chunk):
-                # Fetch few-shot seed examples
-                if self.example_selector:
-                    examples = self.example_selector.get_examples(input_i)
-                else:
-                    examples = self.config.get("seed_examples", [])
-
-                final_prompt = self.task.construct_prompt(input_i, examples)
+                # TODO: Check if this needs to use the example selector
+                final_prompt = self.task.construct_prompt(input_i, seed_examples)
                 prompt_list.append(final_prompt)
 
-                if self.config.get_provider() == LLMProvider.huggingface:
+                if self.llm_config.get_provider() == LLMProvider.huggingface:
                     # Locally hosted Huggingface models do not have a cost per token
                     continue
 
                 # Calculate the number of tokens
-                num_tokens = calculate_num_tokens(self.config, final_prompt)
+                num_tokens = calculate_num_tokens(self.llm_config, final_prompt)
                 total_tokens += num_tokens
-        total_cost = calculate_cost(self.config, total_tokens)
+        total_cost = calculate_cost(self.llm_config, total_tokens)
         total_cost = total_cost * (len(inputs) / input_limit)
         print(f"Total Estimated Cost: ${round(total_cost, 3)}")
         print(f"Number of examples to label: {len(inputs)}")
@@ -174,15 +210,33 @@ class Oracle:
         # Set cache for langchain
         langchain.llm_cache = SQLiteCache(database_path=".langchain.db")
 
-    def set_config(self, config: str, load_llm: bool = True, **kwargs):
-        self.config = Config.from_json(config, **kwargs)
-        if load_llm:
-            self.llm = LLMFactory.from_config(self.config)
-            self.confidence = ConfidenceCalculator(score_type="p_true", llm=self.llm)
-        self.task = TaskFactory.from_config(self.config)
+    def set_task_config(self, task_config: Union[str, Dict], **kwargs):
+        if isinstance(task_config, str):
+            self.task_config = TaskConfig.from_json_file(task_config, **kwargs)
+        else:
+            self.task_config = TaskConfig(task_config)
+
+        self.task = TaskFactory.from_config(self.task_config)
         self.example_selector = None
-        if "example_selector" in self.config.keys():
-            self.example_selector = ExampleSelector(self.config)
+        if "example_selector" in self.task_config.keys():
+            self.example_selector = ExampleSelector(self.task_config)
+
+    def set_llm_config(self, llm_config: Union[str, Dict]):
+        if isinstance(llm_config, str):
+            self.llm_config = LLMConfig.from_json_file(llm_config)
+        else:
+            self.llm_config = LLMConfig(llm_config)
+
+        self.llm = LLMFactory.from_config(self.llm_config)
+        self.confidence = ConfidenceCalculator(score_type="p_true", llm=self.llm)
+
+    def create_dataset_config(self, dataset_config: Union[str, Dict]):
+        if isinstance(dataset_config, str):
+            dataset_config = DatasetConfig.from_json_file(dataset_config)
+        else:
+            dataset_config = DatasetConfig(dataset_config)
+
+        return dataset_config
 
     def test(self):
         return
