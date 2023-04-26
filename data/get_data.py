@@ -30,7 +30,7 @@ def get_ledgar(output_folder="."):
 
     test_ds = map_label_to_string(test_ds, "label")
 
-    test_ds = test_ds.rename_column("text", "description")
+    test_ds = test_ds.rename_column("text", "example")
     test_ds.to_csv(f"{output_folder}/ledgar_test.csv")
 
 
@@ -40,7 +40,7 @@ def get_banking(output_folder="."):
 
     test_ds = map_label_to_string(test_ds, "label")
 
-    test_ds = test_ds.rename_column("text", "description")
+    test_ds = test_ds.rename_column("text", "example")
     test_ds.to_csv(f"{output_folder}/banking_test.csv")
 
 
@@ -50,7 +50,7 @@ def get_emotion(output_folder="."):
 
     test_ds = map_label_to_string(test_ds, "label")
 
-    test_ds = test_ds.rename_column("text", "description")
+    test_ds = test_ds.rename_column("text", "example")
     test_ds.to_csv(f"{output_folder}/emotion_test.csv")
 
 
@@ -243,7 +243,7 @@ def get_company(output_folder="."):
 
 def get_wikiann(output_folder="."):
     dataset_csv = open(f"{output_folder}/wikiann_test.csv", "w")
-    dataset_csv.write("Text%IndividualLabels%CategorizedLabels\n")
+    dataset_csv.write("example%IndividualLabels%CategorizedLabels\n")
     dataset = load_dataset("wikiann", "en")
     entity_category_mapping = {
         "LOC": "Location",
