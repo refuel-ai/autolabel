@@ -1,4 +1,4 @@
-from run_benchmark import Benchmark
+from benchmark import Benchmark
 
 if __name__ == "__main__":
     Benchmark().run()

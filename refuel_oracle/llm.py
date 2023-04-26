@@ -10,9 +10,6 @@ from transformers import AutoModelForSeq2SeqLM, AutoTokenizer, pipeline
 import torch
 import json
 
-# All chat models
-CHAT_MODELS = ["gpt-3.5-turbo"]
-
 
 # All available LLM providers
 class LLMProvider(str, Enum):
@@ -23,13 +20,30 @@ class LLMProvider(str, Enum):
     huggingface = "huggingface"
 
 
+# All chat models
+CHAT_MODELS = {LLMProvider.openai: (["gpt-3.5-turbo"], LLMProvider.openai_chat)}
+
+# Default model names for each provider
+DEFAULT_MODEL_NAMES = {
+    LLMProvider.openai: "gpt-3.5-turbo",
+    LLMProvider.anthropic: "claude-v1",
+    LLMProvider.huggingface: "google/flant-t5-xxl",
+}
+
+
 class LLMConfig:
     LLM_PROVIDER_KEY = "provider_name"
     LLM_MODEL_KEY = "model_name"
     QUANTIZE_BITS_KEY = "quantize"
     MODEL_PARAMS_KEY = "model_params"
+    DEFAULT_LLM_CONFIG = {
+        "model_name": "gpt-3.5-turbo",
+        "provider_name": "openai",
+    }
 
     def __init__(self, config_dict: Dict) -> None:
+        if config_dict is None:
+            config_dict = self.DEFAULT_LLM_CONFIG
         self.dict = config_dict
 
     def get(self, key: str, default_value: Any = None) -> Any:
@@ -42,16 +56,21 @@ class LLMConfig:
         return self.dict[key]
 
     def get_provider(self) -> str:
-        provider_name = self.dict[self.LLM_PROVIDER_KEY]
+        provider_name = self.dict.get(self.LLM_PROVIDER_KEY, LLMProvider.openai)
+        model_name = self.dict.get_model_name()
         # Converting an open ai provider to openai_chat internally to handle
         # chat models separately
-        if provider_name == LLMProvider.openai and self.get_model_name() in CHAT_MODELS:
-            provider_name = LLMProvider.openai_chat
+        if provider_name in CHAT_MODELS and model_name in CHAT_MODELS[provider_name][0]:
+            provider_name = CHAT_MODELS[provider_name][1]
 
         return provider_name
 
     def get_model_name(self) -> str:
-        return self.dict[self.LLM_MODEL_KEY]
+        provider_name = self.dict.get(self.LLM_PROVIDER_KEY, LLMProvider.openai)
+        model_name = self.dict.get(
+            self.LLM_MODEL_KEY, DEFAULT_MODEL_NAMES[provider_name]
+        )
+        return model_name
 
     def get_model_params(self) -> Dict:
         return self.dict.get(self.MODEL_PARAMS_KEY, {})
