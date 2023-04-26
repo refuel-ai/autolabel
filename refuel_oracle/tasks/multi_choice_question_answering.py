@@ -12,6 +12,7 @@ from refuel_oracle.utils import extract_valid_json_substring
 from sklearn.metrics import accuracy_score, confusion_matrix, ConfusionMatrixDisplay
 import matplotlib.pyplot as plt
 import transformers
+from refuel_oracle.tasks.utils import normalize_text, compute_f1
 
 transformers.logging.set_verbosity_error()
 
@@ -29,7 +30,7 @@ class MultiChoiceQATask(BaseTask):
         "current_example",
     ]
     EXAMPLE_PROMPT_TEMPLATE = (
-        "{context}\nQuestion: {question}\nOptions:\n{options}\nAnswer:{answer}\n"
+        "{context}\nQuestion: {question}\n{options}\nAnswer:{answer}\n"
     )
     EXAMPLE_PROMPT_VARIABLES = ["context", "question", "options", "answer"]
     NULL_LABEL_TOKEN = "NO_LABEL"
@@ -75,6 +76,17 @@ class MultiChoiceQATask(BaseTask):
             context = f"Context: {context}"
         return context
 
+    def get_options(self, input: Dict) -> str:
+        options = input.get("options", [])
+        if options:
+            if isinstance(options, list):
+                options = "\n".join(options)
+            else:
+                options = "\n".join(ast.literal_eval(options))
+            options = f"Options:\n{options}"
+        else:
+            return ""
+
     def construct_prompt(self, input: Dict, examples: List[Dict]) -> str:
         # populate seed examples in the prompt
         example_prompt = PromptTemplate(
@@ -88,7 +100,7 @@ class MultiChoiceQATask(BaseTask):
                 example_prompt.format(
                     context=self.get_context(eg),
                     question=eg["question"],
-                    options="\n".join(eg["options"]),
+                    options=self.get_options(eg),
                     answer=expected_output,
                 )
             )
@@ -97,9 +109,7 @@ class MultiChoiceQATask(BaseTask):
         current_example = example_prompt.format(
             context=self.get_context(input),
             question=input["question"],
-            options="\n".join(
-                ast.literal_eval(input["options"])
-            ),  # Arrays sent as a list of strings in the csv right now
+            options=self.get_options(input),
             answer="",  # we don't know the answer yet
         )
 
@@ -198,8 +208,8 @@ class MultiChoiceQATask(BaseTask):
         filtered_pred_labels = []
         for ind, label in enumerate(pred_labels):
             if label != self.NULL_LABEL_TOKEN:
-                filtered_gt_labels.append(gt_labels[ind])
-                filtered_pred_labels.append(pred_labels[ind])
+                filtered_gt_labels.append(normalize_text(gt_labels[ind].lower()))
+                filtered_pred_labels.append(normalize_text(pred_labels[ind].lower()))
         if len(filtered_gt_labels) == 0:
             logger.error("No labels were successfully labeled by the LLM")
             accuracy = 0
@@ -207,6 +217,16 @@ class MultiChoiceQATask(BaseTask):
             accuracy = accuracy_score(filtered_gt_labels, filtered_pred_labels)
         eval_metrics.append(
             MetricResult(metric_type=Metric.ACCURACY, name="accuracy", value=accuracy)
+        )
+
+        f1 = 0
+        cnt_f1 = 0
+        for ind, label in enumerate(pred_labels):
+            if label != self.NULL_LABEL_TOKEN:
+                f1 += compute_f1(pred_labels[ind], gt_labels[ind])
+                cnt_f1 += 1
+        eval_metrics.append(
+            MetricResult(metric_type=Metric.F1, name="f1", value=f1 / cnt_f1)
         )
 
         # error examples
