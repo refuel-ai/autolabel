@@ -3,7 +3,13 @@
     "task_type": "classification",
     "provider_name": "openai",
     "model_name": "text-davinci-003",
-    "model_params": {},
+    "has_logprob": "False",
+    "compute_confidence": "True",
+    "model_params": {
+        "max_tokens": 512
+    },
+    "output_format": "csv",
+    "empty_response": ", ",
     "prefix_prompt": "You are an expert at understanding emotions of human texts.",
     "labels_list": [
         "sadness",
@@ -13,8 +19,6 @@
         "fear",
         "surprise"
     ],
-    "has_logprob": "True",
-    "empty_response": "{\"answered\": \"\", \"label\": \"\"}",
     "dataset_schema": {
         "input_columns": [
             "description"

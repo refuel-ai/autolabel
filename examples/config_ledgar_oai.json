@@ -1,10 +1,12 @@
 {
     "project_name": "Ledgar Classification",
-    "task_type": "classification_csv",
+    "task_type": "classification",
     "provider_name": "openai",
     "model_name": "text-davinci-003",
-    "empty_response": "{\"answered\": \"\", \"label\": \"\"}",
     "has_logprob": "True",
+    "compute_confidence": "True",
+    "output_format": "csv",
+    "empty_response": ", ",
     "model_params": {},
     "prefix_prompt": "You are an expert at understanding contracts.",
     "labels_list": [

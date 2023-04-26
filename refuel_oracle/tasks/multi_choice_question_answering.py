@@ -140,6 +140,7 @@ class MultiChoiceQATask(BaseTask):
             label=llm_label,
             generation_info=response.generation_info,
             prompt=prompt,
+            raw_text=response.text,
         )
 
     def parse_csv_llm_response(
@@ -155,6 +156,7 @@ class MultiChoiceQATask(BaseTask):
                 label=llm_label,
                 generation_info=response.generation_info,
                 prompt=prompt,
+                raw_text=response.text,
             )
 
         successfully_labeled = completion_text[0].strip().lower()
@@ -169,6 +171,7 @@ class MultiChoiceQATask(BaseTask):
             label=llm_label,
             generation_info=response.generation_info,
             prompt=prompt,
+            raw_text=response.text,
         )
 
     def auroc_score_labels(

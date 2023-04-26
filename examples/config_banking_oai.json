@@ -1,9 +1,15 @@
 {
     "project_name": "Ledgar Classification",
     "task_type": "classification",
-    "provider_name": "openai_chat",
-    "model_name": "gpt-3.5-turbo",
-    "model_params": {},
+    "provider_name": "openai",
+    "model_name": "text-davinci-003",
+    "has_logprob": "False",
+    "compute_confidence": "True",
+    "model_params": {
+        "max_tokens": 512
+    },
+    "output_format": "csv",
+    "empty_response": ", ",
     "prefix_prompt": "You are an expert at understanding twitter complaints.",
     "labels_list": [
         "activate_my_card",

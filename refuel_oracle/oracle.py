@@ -105,7 +105,9 @@ class Oracle:
                         )
                     else:
                         llm_labels.append(
-                            self.task.parse_llm_response(generation, input_i)
+                            self.task.parse_llm_response(
+                                generation, input_i, final_prompts[i]
+                            )
                         )
             except Exception as e:
                 # TODO (dhruva): We need to handle this case carefully

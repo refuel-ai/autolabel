@@ -48,17 +48,19 @@ class ConfidenceCalculator:
 
     def p_true(self, model_generation: LLMAnnotation, prompt: str, **kwargs) -> float:
         p_true_prompt = f"{prompt}{model_generation.raw_text} \n Is the answer to the last example correct? Answer in one word on the same line [Yes/No]: "
-        response = self.llm.generate([p_true_prompt])
-        if (
-            response.generations[0][0].generation_info is not None
-            and "logprobs" in response.generations[0][0].generation_info
-        ):
+
+        if kwargs.get("logprobs_available", False):
+            response = self.llm.generate([p_true_prompt])
             response_logprobs = response.generations[0][0].generation_info["logprobs"][
                 "top_logprobs"
             ]
         else:
-            response_logprobs = ConfidenceCalculator.compute_completion(
-                p_true_prompt, response.generations[0][0].text
+            yes_logprob = ConfidenceCalculator.compute_confidence(p_true_prompt, "Yes")
+            no_logprob = ConfidenceCalculator.compute_confidence(p_true_prompt, "No")
+            response_logprobs = (
+                yes_logprob
+                if list(yes_logprob[0].values())[0] > list(no_logprob[0].values())[0]
+                else no_logprob
             )
         for token in response_logprobs:
             token_str = list(token.keys())[0]
@@ -88,7 +90,10 @@ class ConfidenceCalculator:
             logprobs = model_generation.generation_info["logprobs"]["top_logprobs"]
 
         confidence = SUPPORTED_CALCULATORS[self.score_type](
-            model_generation=model_generation, logprobs=logprobs, **kwargs
+            model_generation=model_generation,
+            logprobs=logprobs,
+            logprobs_available=logprobs_available,
+            **kwargs,
         )
         model_generation.confidence_score = confidence
         return model_generation

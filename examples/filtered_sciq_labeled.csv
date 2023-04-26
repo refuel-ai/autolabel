@@ -1,501 +1,101 @@
-question,options,answer,llm_labeled_successfully,llm_label,llm_confidence
-The volume of blood each ventricle pumps per minute is called what?,"['cardiac output', 'brain output', 'blood output', 'trauma output']",cardiac output,yes,cardiac output,0.999507516283286
-"For an exothermic chemical reaction, energy is given off as reactants are converted to what?","['products', 'forms', 'imports', 'exports']",products,yes,products,0.9990277635334305
-Elements that do not need to conduct electricity are known as what?,"['silicates', 'carbonates', 'alloys', 'nonmetals']",nonmetals,yes,nonmetals,0.9994220070799702
-What is the amount of energy required to begin a chemical reaction known as?,"['reaction energy', 'activation energy', 'positive energy', 'decomposition energy']",activation energy,yes,activation energy,0.9993437678129214
-What guards the opening between the right atrium and the right ventricle?,"['superior vena cava', 'aorta', 'brachiocephalic trunk', 'tricuspid valve']",tricuspid valve,yes,tricuspid valve,0.9996162122923274
-What is the opposite of melting?,"['evaporation', 'compression', 'freezing', 'liquidation']",freezing,yes,freezing,0.9987463413873516
-What is the thin coat of phospholipids that surrounds the cell and controls what enters and leaves?,"['blood', 'myelin', 'plasma', 'cell membrane']",cell membrane,yes,cell membrane,0.9993373650628958
-What is the process of the blastula forming 3 layers of cells called?,"['fermentation', 'Mitosis', 'gastrulation', 'internalization']",gastrulation,yes,gastrulation,0.9904413584978449
-What occurs when two opposite charges are separated by some amount of distance?,"['particle', 'radioactivity', 'dipole', 'diffusion']",dipole,yes,dipole,0.9991659423905737
-Water is allowed to flow downhill into a large turbine to harness power. what helps the turbine spin?,"['electrostatic energy', 'residual energy', 'kinetic energy', 'polar energy']",kinetic energy,yes,kinetic energy,0.9994499079301518
-Nervous tissue consists of just two basic types of nerve cells: neurons and?,"['red blood cells', 'white blood cells', 'glial cells', 'mammalian cells']",glial cells,yes,glial cells,0.9993675620398971
-What term is used to describe the line of latitude right in the middle of the planet?,"['pole', 'orbital', 'equator', 'Prime Meridian']",equator,yes,equator,0.9935561224636973
-What type of mapping is critical for identifying  the location of genes that cause genetic diseases?,"['interaction mapping', 'chemical mapping', 'diagnostic mapping', 'linkage mapping']",linkage mapping,yes,linkage mapping,0.9994226833191416
-What three forms does frozen precipitation take?,"['snow, sleet, freezing rain', 'blizzard, frost, fog', 'hail, wind, typhoon', 'vapor, fog, ice']","snow, sleet, freezing rain",yes,"snow, sleet, freezing rain",0.9996892111278702
-Average acceleration is the rate of change of what?,"['displacement', 'velocity', 'speed', 'direction']",velocity,yes,velocity,0.9992581502273752
-What kind of mountainous formation can often be found near trenches?,"['craters', 'earthquakes', 'volcanoes', 'caves']",volcanoes,yes,volcanoes,0.9986196110535703
-The ends of linear chromosomes are maintained by the action of which enzyme?,"['cytokine', 'pepsin', 'insulin', 'telomerase']",telomerase,yes,telomerase,0.9994839820819544
-What forms when atoms share or transfer valence electrons?,"['fusion', 'replicas', 'levels', 'bonds']",bonds,yes,bonds,0.999168574866555
-What is the scale on which acidity is measured?,"['ph', 'hp', 'μg', 'μm']",ph,yes,ph,0.7925889546615933
-The amniotes are distinguished from amphibians by the presence of a terrestrially adapted egg protected by what?,"['albumen', 'amniotic membranes', 'yolk', 'hard shell']",amniotic membranes,yes,amniotic membranes,0.8499101606076338
-B cells and t cells are examples of what type of cells?,"['white blood cells', 'cancer cells', 'heart cells', 'skin cells']",white blood cells,yes,white blood cells,0.9992452545447436
-What are some uses of chlorine gas?,"['rooting plant cuttings', 'fueling airplanes', 'cleaning, disinfecting and in swimming pools', 'washing hands']","cleaning, disinfecting and in swimming pools",yes,"cleaning, disinfecting and in swimming pools",0.9991313643265046
-"Which type of skeleton supports the animal, protects internal organs, and allows for movement?","['internal', 'mechanical', 'shell', 'external']",internal,yes,external,0.965762078986747
-Deletions remove one or more what from the dna?,"['nucleotides', 'exons', 'codons', 'genes']",nucleotides,yes,nucleotides,0.9995062828519067
-What makes up the core of the endoskeleton?,"['notochord', 'thorax', 'dermis', 'vertebral column']",vertebral column,yes,vertebral column,0.9993109719752468
-The general term peptide refers to an amino acid chain of what?,"['unspecified length', 'small length', 'incomplete length', 'large length']",unspecified length,yes,unspecified length,0.9994796682370491
-What are the key to species evolving?,"['radiation', 'microbes', 'parasites', 'mutations']",mutations,yes,mutations,0.9990943819850752
-What kind of muscle is found in the heart?,"['pulminary', 'cord', 'respiratory', 'cardiac']",cardiac,yes,cardiac,0.9991982468205083
-What type of ecosystem do polar bears live in?,"['oceanic', 'arctic', 'tropical', 'natural']",arctic,yes,arctic,0.9990179689229961
-What is the long-term average of weather in a particular spot called?,"['climate', 'migration', 'weather', 'temperature']",climate,yes,climate,0.9989849244231164
-What happens to the temperature of matter as light is absorbed?,"['it increases', 'it stays the same', 'it drops', 'it triples']",it increases,yes,it increases,0.9987677358660789
-What is the order and family of a meat-eating cat like a tiger?,"['Mammalia felidae', 'hierarchies felidae', 'carnivora felidae', 'Synapsida felidae']",carnivora felidae,yes,Carnivora Felidae,0.9623140793908849
-What process involves two cell divisions and produces four haploid cells?,"['Mitosis', 'meiosis', 'mutations', 'Klerokinesis']",meiosis,yes,meiosis,0.9934508999631586
-What water is about 3.5% salt?,"['spring water', 'seawater', 'glacial water', 'fresh water']",seawater,yes,seawater,0.999237781858912
-What in the axils of leaves and stems give rise to branches?,"['nodules', 'chloroplasts', 'meristems', 'axillary buds']",axillary buds,yes,axillary buds,0.9993273051043815
-"Calvin cycle reactions can be organized into three basic stages: fixation, reduction, and this?","['creation', 'transformation', 'regeneration', 'demarcation']",regeneration,yes,regeneration,0.9994323523752837
-Where does the christmas tree worm live?,"['Atlantic shoreline', 'rainforests', 'northeast coral reefs', 'tropical coral reefs']",tropical coral reefs,yes,tropical coral reefs,0.9988092051137797
-"What broad group of animals - which includes rats, dogs and camels - have highly developed brains and often perform work for humans?","['mammals', 'arachnids', 'reptiles', 'amphibians']",mammals,yes,mammals,0.999481531766579
-What is the common term for animals in the phylum porifera?,"['sharks', 'sponges', 'corals', 'crustaceans']",sponges,yes,sponges,0.9993010773023846
-All living things are able to produce what?,"['offspring', 'proteins', 'toxins', 'tissue']",offspring,yes,offspring,0.9980848023124302
-The energy a chemical reaction needs to get started is called what kind of energy?,"['function', 'conduction', 'activation', 'fusion']",activation,yes,activation,0.9989808309579103
-"Due to the time it takes for light to reach us, galaxies at the edge of the universe are distant in terms of space and what else?","['energy', 'time', 'temperature', 'gravity']",time,yes,time,0.9986281366660098
-What is a type of plant tissue consisting of undifferentiated cells that can continue to divide and differentiate?,"['meristem', 'ganglion', 'epidermis', 'cambium']",meristem,yes,meristem,0.9992367322115393
-What is the most important factor determining soil type?,"['climate', 'landscape', 'plant life', 'ecology']",climate,yes,climate,0.9987650204506788
-What type of plant keeps it green leaves year-round?,"['deciduous', 'evergreen plant', 'cactus', 'conifer']",evergreen plant,yes,evergreen plant,0.9991102375900813
-A diploid zygote is formed when one sperm does what?,"['repels the egg', 'cracks the egg', 'incapacitates the egg', 'fertilizes the egg']",fertilizes the egg,yes,fertilizes the egg,0.9995072205674953
-The external female reproductive structures are referred to collectively as what?,"['the Fallopian tube', 'the uterus', 'the vulva', 'the cervix']",the vulva,yes,the vulva,0.9993103920487013
-What important process takes place in specialized tissue inside plant leaves?,"['reproduction', 'photosynthesis', 'mitosis', 'pollination']",photosynthesis,yes,photosynthesis,0.9991098227497223
-What is a fibrocartilaginous pad that fills the gap between adjacent vertebral bodies?,"['Back Disk', 'intervertebral disc', 'subsidence disc', 'unidirectional disc']",intervertebral disc,yes,intervertebral disc,0.9993909551095459
-What do we call the solid form of hydrocarbons?,"['shale', 'coal', 'methane', 'bauxite']",coal,yes,coal,0.9979098252389187
-What is the hollow and muscular balloon-shaped organ that collects urine?,"['kidney', 'prostate', 'urethra', 'urinary bladder']",urinary bladder,yes,urinary bladder,0.9994436377465578
-What is the name for a substance that can be used to follow the pathway of that substance through some structure?,"['tracker', 'tracer', 'solution', 'gel']",tracer,yes,tracer,0.9991896463026444
-What do all sound waves begin with?,"['vibrating matter', 'oscillating matter', 'talking matter', 'enclosing matter']",vibrating matter,yes,vibrating matter,0.9993640329161027
-What is the tissue beneath a mollusks' shell called?,"['mucous', 'cartilage', 'mantle', 'skin']",mantle,yes,mantle,0.9991976384110126
-What is the process by which the remains of living things become fossils?,"['sublimation', 'fossilization', 'decomposition', 'petrification']",fossilization,yes,fossilization,0.9994705193944914
-A reptile's what doesn't generate enough energy to keep their body temperature stable?,"['metabolism', 'respiration', 'skin', 'tissue']",metabolism,yes,metabolism,0.9843281289302067
-"The laws of what field of science apply to galaxies and atoms, an indication of the underlying unity in the universe?","['anthropology', 'physics', 'geology', 'astronomy']",physics,yes,physics,0.9990011071014879
-What characteristic of particles determines how they are carried by flowing water?,"['density', 'size', 'color', 'texture']",size,yes,density,0.8555446360213147
-"Most body fluids that you release from your body contain chemicals that kill pathogens. for example, mucus, sweat, tears, and saliva contain enzymes called?","['enzymes', 'lysozymes', 'sporozoans', 'lipids']",lysozymes,yes,lysozymes,0.9995828722136955
-Hfcs are used as a replacement for what?,"['pollutants', 'cfcs', 'gases', 'nitrofluorocarbons']",cfcs,yes,cfcs,0.9972239268966966
-The anterior muscles of the neck facilitate swallowing and what else?,"['speech', 'hearing', 'perspiration', 'crying']",speech,yes,speech,0.998722867274029
-The bright color of poison dart frogs serves what purpose?,"['attracting predators', 'attracting mates', 'warning predators', 'no purpose']",warning predators,yes,warning predators,0.9989602932822926
-What is the sac-like organ of the body that is important for both mechanical and chemical digestion?,"['gall bladder', 'kidney', 'spleen', 'stomach']",stomach,yes,stomach,0.99920064813882
-What two types of atoms bond to form sulfate minerals?,"['oxygen and sulfur', 'oxygen and carbon', 'carbon and sulfur', 'oxygen and calcium']",oxygen and sulfur,yes,oxygen and sulfur,0.9995060666855787
-What causes continents to drift closer to the poles or the equator?,"['plate movements', 'sediment movements', 'tidal pull', 'wind']",plate movements,yes,plate movements,0.999098892914386
-Both endocytosis and ______ are active transport processes.,"['cellular respiration', 'proteolysis', 'exocytosis', 'biosynthesis']",exocytosis,yes,exocytosis,0.9993176094865925
-When do homologous chromosomes separate and go to different gametes?,"['before meiosis', 'during meiosis', 'during electrolysis', 'after meiosis']",during meiosis,yes,during meiosis,0.9991834840749457
-Cells that are divided by oncogenes contain damaged what?,"['atoms', 'dna', 'bacteria', 'cells']",dna,yes,DNA,0.9914490018952185
-The number of neutrons and electrons may vary or change in an atom. what happens to the number of protons?,"['depends', 'remains the same', 'decreases', 'increases']",remains the same,yes,remains the same,0.9997223177474753
-"What do you call large, y-shaped proteins that recognize and bind to antigens?","['antibodies', 'membranes', 'proteins', 'parasites']",antibodies,yes,antibodies,0.9988071111484658
-"After the film is developed, any unexposed silver bromide must be removed by a process called what?","['washing', 'sweeping', 'fixing', 'watering']",fixing,yes,fixing,0.9993207108014432
-What type of relationship is parasitism?,"['hypodermic relationship', 'enzymatic relationship', 'symbiotic relationship', 'primordial relationship']",symbiotic relationship,yes,symbiotic relationship,0.9993539436128929
-"What provides an early, rapid, and nonspecific defense against invading pathogens?","['neutrophils', 'bacteria', 'microorganisms', 'toxins']",neutrophils,yes,neutrophils,0.9993670493702715
-"What common process is used in the production of bread, cheese and alcoholic beverages?","['oxidation', 'cloning', 'fermentation', 'condensation']",fermentation,yes,fermentation,0.9985729715937457
-Most scientists think that ordinary matter makes up how much of the total matter in the universe?,"['about half', 'more than half', 'greater than half', 'less than half']",less than half,yes,less than half,0.9994419142118381
-"If you find dna floating in a cell's cytoplasm, what kind of organism is it?","['xerophytic', 'eurocratic', 'unicellular', 'prokaryotic']",prokaryotic,yes,prokaryotic,0.9992491139628239
-An atom that gains or loses electrons is called what?,"['quark', 'isotope', 'ion', 'photon']",ion,yes,ion,0.9991735891167245
-What part of the cell in plants and algae does photosynthesis take place?,"['mitochondria', 'cell wall', 'fibers', 'organelles']",organelles,yes,organelles,0.9986578997560311
-"What are resources that can not be remade, or would take too long to remake to keep up wiht human use called?","['renewable resources', 'nonrewable resources', 'green resources', 'photoreactive resources']",nonrewable resources,yes,nonrenewable resources,0.951582041588531
-"Due to the difference in the distribution of charge, water is what type of molecule?","['uneven', 'ionic', 'polar', 'crooked']",polar,yes,polar,0.999240333604066
-"What are the most energetic of all electromagnetic waves, which can be used to treat cancer?","['gamma rays', 'ultraviolet', 'X-ray', 'infrared']",gamma rays,yes,gamma rays,0.9988885536322574
-What kind of reasoning involves formulating generalizations inferred from careful observation and the analysis of a large amount of data?,"['deductive', 'inductive', 'reflexive', 'skepticism']",deductive,yes,inductive,0.9986271823262554
-In what unit is heat measured in?,"['joules', 'velocities', 'thermals', 'amperes']",joules,yes,joules,0.9988069146534743
-"Several neuropeptides, relatively short chains of amino acids, serve as neurotransmitters that operate via metabotropic what?","['lipids', 'organelles', 'membranes', 'receptors']",receptors,yes,receptors,0.9992382208289257
-What is the most common type of organic compound?,"['hydrocarbons', 'lipids', 'proteins', 'carbohydrates']",carbohydrates,yes,carbohydrates,0.9992252367707651
-"Animals produce most of what chemicals, which are needed to synthesize the fatty acids they need?","['hormones', 'carbohydrates', 'solvents', 'enzymes']",enzymes,yes,enzymes,0.9987943935112094
-What do scientists use to search other planets suitable for living?,"['optics', 'lasers', 'microscopes', 'telescopes']",telescopes,yes,telescopes,0.999449164103592
-Amoebas and paramecia are examples of what?,"['bacteria', 'protists', 'vertebrates', 'protozoa']",protozoa,yes,protozoa,0.9992276639756132
-Constriction and dilation allow the circulatory system to change the amount of blood flowing to which body parts?,"['muscles', 'organs', 'tissues', 'arteries']",organs,yes,organs,0.9472553145926974
-What is the very slow movement of rock and soil down a hillside?,"['evaporate', 'creep', 'landslide', 'drop']",creep,yes,creep,0.9986968912058128
-Bryophyta is the formal taxonomic name for the phylum that consists solely of what?,"['lichens', 'trees', 'grasses', 'mosses']",mosses,yes,mosses,0.9995408009063061
-What percentage of men suffer from some form of erectile dysfunction by age 40?,"['approximately 40 percent', 'approximately 10 percent', 'approximately 60 percent', 'approximately 80 percent']",approximately 40 percent,yes,approximately 10 percent,0.9229727316632671
-What is a collection of lymphatic tissue that combines with epithelial tissue lining the mucosa throughout the body?,"['cottony associated lymphoid tissue ( malt )', 'unassociated lymphoid tissue', 'mucosa associated lymphoid tissue (malt)', 'spheroids associated lymphoid tissue ( malt )']",mucosa associated lymphoid tissue (malt),yes,mucosa associated lymphoid tissue (malt),0.9754659010648365
-Sucrose consists of one molecule of glucose and one molecule of what else?,"['alcohol', 'lactose', 'protein', 'fructose']",fructose,yes,fructose,0.9989460429683851
-A wave is the transfer of energy through what else?,"['liquid', 'gas', 'matter', 'air']",matter,yes,matter,0.9728515063764577
-Which of newton's laws states that the quantity of angular momentum in a closed system is fixed?,"['third conservation law', 'sixth conservation law\u200b', 'second conservation law', 'fourth conservation law']",third conservation law,yes,third conservation law,0.9364830255687632
-The process of transferring pollen from the male reproductive part of a flower known as the anthers to the female reproductive part of the flower known as the stigma is referred to as what?,"['pollination', 'inoculation', 'fertilization', 'reproduction']",pollination,yes,pollination,0.9990648031313552
-What are the three primary pigment colors?,"['green, orange, purple', 'red, green, blue', 'cyan, yellow, magenta', 'red, white, blue']","cyan, yellow, magenta",yes,"red, green, blue",0.9991024378534299
-What are changes in makeup and chemical properties of matter called?,"['carbonate changes', 'chemical changes', 'radical changes', 'mineral changes']",chemical changes,yes,chemical changes,0.9992579573619105
-Only finished mrnas are exported from the nucleus to what?,"['cerebellum', 'electron', 'cytoplasm', 'amino acids']",cytoplasm,yes,cytoplasm,0.9991628878305023
-Bicarbonate is the second most abundant anion in the blood. its principal function is to maintain your body’s acid-base balance by being part of these?,"['compound systems', 'curb systems', 'stream systems', 'buffer systems']",buffer systems,yes,buffer systems,0.9989304208646236
-What type of cells make up tumors?,"['consumption cells', 'white blood cells', 'boyle cells', 'cancer cells']",cancer cells,yes,cancer cells,0.9990863256101984
-What corrosive substances capable of dissolving many metals can cause contamination if spilled?,"['ions', 'acids', 'salts', 'bases']",acids,yes,acids,0.9992148996093808
-Combining nonpolar olive oil and polar vinegar yields what type of mixture?,"['heterogeneous', 'amorphous', 'homogeneous', 'omnigeneous']",heterogeneous,yes,homogeneous,0.9950226385541291
-What emerges from an insect egg?,"['larva', 'parasite', 'fungi', 'cocoon']",larva,yes,larva,0.9991960883715734
-What makes sunsets appear red?,"['wavelength scattering', 'rayleigh scattering', 'floral scattering', 'reflection scattering']",rayleigh scattering,yes,rayleigh scattering,0.9965183063892483
-Cilia and flagella are extensions of what?,"['protoplasm', 'cell wall', 'cell nucleus', 'plasma membrane']",plasma membrane,yes,plasma membrane,0.9995363056682116
-"When electrons return to a lower energy level, they emit the excess energy in the form of what?","['electricity', 'weight', 'light', 'energy']",light,yes,light,0.9990168294941411
-What kind of diagrams can be used to illustrate electron movements and ion formation?,"['electron dot diagrams', 'venn diagrams', 'contour maps', 'atomic models']",electron dot diagrams,yes,electron dot diagrams,0.9993078280231006
-"Respiratory development in the embryo begins around week 4. ectodermal tissue from the anterior head region invaginates posteriorly to form olfactory pits, which fuse with endodermal tissue of the developing pharynx. an olfactory pit is one of a pair of structures that will enlarge to become this?","['anal cavity', 'eye cavity', 'fluid cavity', 'nasal cavity']",nasal cavity,yes,nasal cavity,0.9992030253578937
-What is the arch called that forms when plasma of the sun flows along the loop that connects sunspots?,"['Energy prominence.', 'vertical prominence', 'large prominence', 'solar prominence']",solar prominence,yes,solar prominence,0.9989841144389756
-What process is the opposite of nitrogen fixation?,"['denitrification', 'digestion', 'percolation', 'respiration']",denitrification,yes,denitrification,0.9991653576497845
-What can be looked at to see a record of how horses evolved?,"['erosion records', 'fossil records', 'carbon dating', 'pattern records']",fossil records,yes,fossil records,0.9995533250102299
-What paired organs help regulate blood pressure through sodium ion and water retention and loss?,"['tissues', 'kidneys', 'lungs', 'lymph nodes']",kidneys,yes,kidneys,0.9983871701109279
-The attraction of an atom for the electrons of a covalent bond is its what?,"['hardness', 'brightness', 'electronegativity', 'weight']",electronegativity,yes,electronegativity,0.9994920511335678
-Which vertebrae carry the greatest amount of body weight and are thus characterized by the large size and thickness of the vertebral body?,"['invertebrae', 'thickness vertebrae', 'lumbar vertebrae', 'artery vertebrae']",lumbar vertebrae,yes,lumbar vertebrae,0.9994355391234907
-Which ocean zone is the narrow strip along a coastline that is covered by water at high tide and exposed to air at low tide?,"['deep zone', 'miniscule zone', 'intertidal zone', 'calcareous zone']",intertidal zone,yes,intertidal zone,0.9995135944916529
-Obligate anaerobes live and grow in the absence of what?,"['atomic oxygen', 'molecular nitrogen', 'molecular oxygen', 'molecular carbon']",molecular oxygen,yes,molecular oxygen,0.9994132235135559
-"An increase in what, across the periodic table, explains why elements go from metals to metalloids and then to nonmetals?","['neutrons', 'electrons', 'temperature', 'protons']",electrons,yes,electrons,0.9989271086444622
-Much of the iron produced is refined and converted into what?,"['sugar', 'plastic', 'wood', 'steel']",steel,yes,steel,0.9991331285853076
-What is the force that causes centripetal acceleration?,"['gravity', 'centripetal force', 'Tension Force', 'pressure']",centripetal force,yes,centripetal force,0.9992314408006471
-"What disease, caused by vitamin c deficiency, causes bleeding gums, nosebleeds, and other symptoms?","['dehydration', 'rickets', 'leukemia', 'scurvy']",scurvy,yes,scurvy,0.9992596842884991
-"What sac, which was sitting on top of the flat embryo, envelops the embryo as it folds?","['uterus', 'amniotic sac', 'epithelial sac', 'umbilical sac']",amniotic sac,yes,amniotic sac,0.9996004441701993
-Elements that specifically are noted to have properties of both metals and nonmetals are known as what?,"['alkali metals', 'compund metals', 'metalloids', 'alloys']",metalloids,yes,metalloids,0.9995170469004354
-"In their pure form, all elements have an oxidation number of what?","['7', '2', '3', 'zero']",zero,yes,zero,0.9986891692601434
-What natural part of the water cycle can cause damage and death?,"['clouds', 'expiration', 'evaporation', 'floods']",floods,yes,floods,0.9987075835649707
-Which part of the body has mucus and hair to trap dust and also warms and moistens air so to not harm lung tissue?,"['the nose', 'the throat', 'the tongue', 'the ear']",the nose,yes,the nose,0.9991158892863854
-What are protons and neutrons that make up the nucleus of an atom called?,"['nucleons', 'electron shells', 'pions', 'baryons']",nucleons,yes,nucleons,0.9991995939990791
-The ozone layer protects the earth from what?,"['light waves', 'uv radiation', 'pollution', 'radio waves']",uv radiation,yes,uv radiation,0.9956599846421159
-What is defined as a loss of hydrogen atoms?,"['conduction', 'Reduction', 'oxidation', 'evaporation']",oxidation,yes,oxidation,0.8316998917632582
-What is cytology.,"['the study of plants', 'the study of cancers', 'the study of cell structure', 'the study of atomic structure']",the study of cell structure,yes,the study of cell structure,0.9994649294898096
-Hormones send what through your body?,"['signals', 'nutrients', 'cells', 'proteins']",signals,yes,signals,0.9993386805883712
-What compound gives tarnished copper it's green color?,"['bronze', 'brass', 'zinc', 'copper carbonate']",copper carbonate,yes,copper carbonate,0.999496519076995
-One seismogram indicates the distance to the what?,"['the moon', 'researchers', 'epicenter', 'houses']",epicenter,yes,epicenter,0.9994091490087338
-In what kind of bond does one atom contribute both of the electrons in the shared pair?,"['a metallic bond', 'an ionic bond', 'a valence bond', 'a covalent bond']",a covalent bond,yes,covalent bond,0.9610270983690099
-"Receptors for what chemical messengers recognize molecules with specific shapes and side groups, and respond only to those that are recognized?","['enzymes', 'hormones', 'acids', 'chromosomes']",hormones,yes,hormones,0.9996818247557324
-"Most plants grow continuously, except for what periods?","['mutant', 'winter', 'dormant', 'abnormal']",dormant,yes,dormant,0.9992295850050109
-Long distance runners try to maintain constant velocity with very little acceleration or deceleration to conserve what?,"['fuel', 'energy', 'pressure', 'momentum']",energy,yes,energy,0.9990019676973563
-What tissue consists of cells that form the body’s structure?,"['fibrous', 'reproductive', 'connective', 'congenital']",connective,yes,connective,0.9979360112690167
-The number of waves that pass a fixed point in a given amount of time is referred to as what?,"['wave frequency', 'wave harmonics', 'tendency frequency', 'wave speed']",wave frequency,yes,wave frequency,0.9991706654764653
-What is unique and found in all living things because it can form up to four covalent bonds between atoms or molecules?,"['carbon', 'hydrogen', 'oxygen', 'potassium']",carbon,yes,carbon,0.9983458890020659
-"Visible light is the narrow segment of what, to which the normal human eye responds?","['molecular spectrum', 'electromagnetic spectrum', 'phenomena spectrum', 'radio spectrum']",electromagnetic spectrum,yes,electromagnetic spectrum,0.999578074191779
-"Organs, vessels, and lymph make up what system?","['nervous', 'lymphatic', 'circulatory', 'digestive']",lymphatic,yes,lymphatic,0.9848655318906405
-"Categorized based on how they produce their mrna using the baltimore classification method, what consist of a nucleic acid core surrounded by a protein capsid with or without an outer lipid envelope?","['parasites', 'amphibians', 'viruses', 'bacteria']",viruses,yes,viruses,0.9991593651351293
-Which law means that the simplest of competing theories is most likely to be correct?,"[""Newton's law"", 'Law of Conservation', 'law of parsimony', ""Murphy's Law""]",law of parsimony,yes,law of parsimony,0.9930680653271335
-An individual with down's syndrome has 47 of what instead of the normal 46?,"['chromosomes', 'ribosomes', 'prokaryotes', 'mitochondria']",chromosomes,yes,chromosomes,0.9993746314819691
-"In the mouth, enzymes present in what begin to chemically break down food?","['acid', 'lymph', 'saliva', 'blood']",saliva,yes,saliva,0.9992352472149177
-The number of electrons in the outer energy level determines what property of nonmetals?,"['reactivity', 'permeability', 'vibration', 'density']",reactivity,yes,reactivity,0.9989953841028758
-Atoms of what element ultimately form in a red supergiant?,"['gold', 'iron', 'coal', 'steel']",iron,yes,iron,0.9987988228584803
-What consists of one or two closed loops through which current can flow?,"['cooling circuit', 'thermal reaction', 'magnetic poles', 'electric circuit']",electric circuit,yes,electric circuit,0.9991311350159658
-What is the measure of the energy released when an extra electron is added to an atom?,"['electron affinity', 'mass affinity', 'neutron affinity', 'volume affinity']",electron affinity,yes,electron affinity,0.999322128920982
-What is the difference in voltage across a resistor or other electrical devices called?,"['falling voltage', 'power drop', 'volt effect', 'voltage drop']",voltage drop,yes,voltage drop,0.9994123648821055
-"What effect occurs when a few individuals start, or found, a new population?","['founder', 'convergent', 'divergent', 'pioneer']",founder,yes,founder,0.9990742318679764
-Which body organ filters the blood in the body and creates urine?,"['intestines', 'the arteries', 'the kidneys', 'liver']",the kidneys,yes,the kidneys,0.9851334527519059
-What is magnetism produced by electricity called?,"['momentum', 'electrical attraction', 'excitation', 'electromagnetism']",electromagnetism,yes,electromagnetism,0.9996291635343626
-What is released into the atmosphere when fossil fuels are burned?,"['hydrogen monoxide', 'ferris oxide', 'hydrogen dioxide', 'carbon dioxide']",carbon dioxide,yes,carbon dioxide,0.9993593389455478
-What are materials that are good conductors of thermal energy called?,"['thermal conductors', 'geospatial conductors', 'atmospheric conductors', 'reflective conductors']",thermal conductors,yes,thermal conductors,0.9993315843122006
-Calcium hydroxide and calcium carbonate are effective in neutralizing the effects of what on lakes?,"['ozone rain', 'oil rain', 'acid rain', 'dioxide rain']",acid rain,yes,acid rain,0.9993067064367854
-"Most hormones are controlled by what type of feedback, which causes the hormone to decrease its own production?","['neutral', 'negative', 'positive', 'unusual']",negative,yes,negative,0.9988399323223512
-Where is the only place an electric charge can be found?,"['neuron', 'ion', 'conductor', 'translator']",conductor,yes,ion,0.9885951130748711
-The end of the phospholipid molecule that is polar and attracts water is called what?,"['hydrophobic', 'hydrophilic', 'cytosolic', 'magnetic']",hydrophilic,yes,hydrophilic,0.999380837267028
-What term is used to describe a simple diagram that shows one way energy flows through an ecosystem?,"['water cycle', 'food pyramid', 'fuel chain', 'food chain']",food chain,yes,food chain,0.9987276334023205
-What is quantified by measuring the number of decay processes per unit time?,"['radioactivity', 'fossil age', 'temperature', 'microwave power']",radioactivity,yes,radioactivity,0.9990384167610834
-What is defined as an organism in the earliest stages of development?,"['a gamete', 'an embryo', 'a zygote', 'an nucleus']",an embryo,yes,zygote,0.9983574388931509
-Where does most geologic activity take place?,"['outer core', 'asthenosphere', 'plate boundaries', 'inner core']",plate boundaries,yes,plate boundaries,0.9992847465357961
-What is the name for creatures such as bears and humans that eat both consumers and producers?,"['omnivores', 'insectivores', 'carnivorous', 'paleo diet']",omnivores,yes,omnivores,0.9986857607225481
-"Because their cells are arranged in bundles, the appearance of skeletal and cardiac muscles is described as what?","['striated', 'incised', 'cylindrical', 'quadrant']",striated,yes,striated,0.9989706200366204
-An elastic collision is one that conserves internal energy of what type?,"['potential', 'kinetic', 'seismic', 'thermal']",kinetic,yes,kinetic,0.9992321366700481
-In what system can energy change forms but the total amount of energy stay constant?,"['closed', 'open', 'primary', 'heterogeneous']",closed,yes,closed,0.9988523424332462
-Essential minerals that the body needs in tiny quantities are called what?,"['draw minerals', 'byproduct minerals', 'flux minerals', 'trace minerals']",trace minerals,yes,trace minerals,0.9993508574996505
-What is the name of the glands that produce milk in female mammals ?,"['recombinant glands', 'mammary glands', 'sebaceous glands', 'fetal glands']",mammary glands,yes,mammary glands,0.9990997546902839
-During which process in bacteria do the chromosome replicates and the two daughter chromosomes actively move apart?,"['function fission', 'binary fission', 'secondary fission', 'matter fission']",binary fission,yes,binary fission,0.9993067478721228
-What kind of bonds are there between carbon atoms in saturated fatty acids?,"['double', 'chemical', 'single', 'electrical']",single,yes,chemical,0.863784913653576
-"Unlike the biological species concept, the ecological species concept can accommodate asexual as well as ________ species.","['homosexual', 'homologous', 'artificial', 'sexual']",sexual,yes,sexual,0.9983000658076961
-Incomplete dominance and epistasis are both terms that define what?,"['genetic relationships', 'genetic habits', 'genetic difficulties', 'learned behaviors']",genetic relationships,yes,genetic relationships,0.9995271928794506
-What is one trait that the sponge and tarantula share?,"['lack of ogranic', 'lack of a emerge', 'lack of a cycle', 'lack of a backbone']",lack of a backbone,yes,lack of a backbone,0.9989906467749364
-The ocean basin begins where the ocean meets what?,"['sea', 'bay', 'land', 'river']",land,yes,land,0.9990499093422064
-What serves to replace nonreproducing specialized cells as needed in the adult body?,"['osteoclast cells', 'monocyte cells', 'stem cells', 'dendritic cells']",stem cells,yes,stem cells,0.9991612108021646
-What is formed when plant bodies are lithified?,"['methane', 'fossils', 'copper', 'coal']",coal,yes,fossils,0.9994000559371965
-What has increased the greenhouse effect?,"['climate change', 'ozone depletion', 'temperature changes', 'human actions']",human actions,yes,human actions,0.9991039033446212
-The overall purpose of the light-dependent reactions is to convert light energy into this?,"['photosynthesis', 'chemical reactions', 'thermal energy', 'calories']",chemical reactions,yes,chemical reactions,0.9874786817248051
-Where does the shoot system get the water and minerals that it depends on?,"['the soil', 'the air', 'the seeds', 'surrounding plants']",the soil,yes,the soil,0.9991061457858935
-Breaking a window with a baseball is an example of what kind of change in matter?,"['unusual', 'physical', 'chemical', 'sudden']",physical,yes,physical,0.9985030216315898
-Most of food's chemical energy ultimately comes from what source?,"['sunlight', 'minerals', 'air', 'plants']",sunlight,yes,sunlight,0.9993350337631086
-"What category of food includes sugars, starches and fibers?","['proteins', 'alcohols', 'enzymes', 'carbohydrates']",carbohydrates,yes,carbohydrates,0.9993595771430646
-What do corals secrete that builds up to become a coral reef?,"['tentacles', 'saliva', 'exoskeletons', 'actuators']",exoskeletons,yes,exoskeletons,0.9994560068003037
-"Composed largely of the polysaccharide chitin, the exoskeleton provides an effective barrier defense against most what?","['vaccines', 'pathogens', 'parasites', 'white blood cells']",pathogens,yes,pathogens,0.9991864845356119
-Pairs of fish that do not practice broadcast what may exhibit courtship behavior?,"['migration', 'inheritance', 'spawning', 'feeding']",spawning,yes,spawning,0.9990589360816678
-How does consuming enterobactin help our body?,"['eliminates excess iron', 'builds excess iron', 'eliminates excess fat', 'eliminates excess oxygen']",eliminates excess iron,yes,builds excess iron,0.9227148770139901
-"A mitotic spindle forms from the centrioles and passes through the nuclear membrane, which remains intact. chromosomes attach to the mitotic spindle, which separates the chromosomes and does what?","['elongates the cell', 'destroys the cell', 'migrates the cell', 'manipulates the cell']",elongates the cell,yes,manipulates the cell,0.9913177298803175
-In what year was the hardy-weinberg theorem formulated?,"['1908', '1938', '1901', '1928']",1908,yes,1908,0.998817076955046
-What kind of gland produces an oily substance that waterproofs the hair and skin?,"['nail gland', 'secretion gland', 'sebaceous gland', 'mucous gland']",sebaceous gland,yes,sebaceous gland,0.9994369894463797
-What is the term for the measure of the average kinetic energy of the particles in matter?,"['temperature', 'friction', 'voltage', 'precipitation']",temperature,yes,temperature,0.9989777506584461
-What is the tough tissue that contains collagen?,"['muscle', 'membrane', 'fiber', 'cartilage']",cartilage,yes,cartilage,0.9991478385959351
-Metabolism is the sum of all catabolic and which other reactions in the body?,"['systic', 'abolic', 'anabolic', 'inbolic']",anabolic,yes,anabolic,0.9987714650809189
-In which way do vertebrates reproduce?,"['sexually', 'asexually', 'unisexually', 'bisexually']",sexually,yes,sexually,0.9990623580998095
-What process within cells makes sure that every gamete receives a copy of every chromosome?,"['mutations', 'fission', 'genomes', 'meiosis']",meiosis,yes,meiosis,0.9991800388153818
-What do you call any device that makes work easier by changing a force?,"['battery', 'machine', 'technology', 'invention']",machine,yes,machine,0.9988286473397232
-"The heart, blood vessels, and blood make up which system in the body?","['cardiovascular', 'respiratory', 'digestive', 'pulminary']",cardiovascular,yes,cardiovascular,0.9990775054999123
-Mutation of beneficial proto-oncogenes is a prime culprit in what disease?,"['diabetes', 'heart disease', 'obesity', 'cancer']",cancer,yes,cancer,0.998745563434167
-What happens to cells in a hypertonic solution as water leaves the cell via osmosis?,"['shrinkage', 'evaporation', 'self destruction', 'get larger']",shrinkage,yes,shrinkage,0.9992545428376528
-How many different main types of diabetes are there?,"['four', 'two', 'ten', 'three']",two,yes,three,0.9607768501068576
-What are the three fundamental phases of matter?,"['big, small. and medium', 'air, water, and land', 'fast, slow, normal', 'solid, liquid, and gas']","solid, liquid, and gas",yes,"solid, liquid, and gas",0.998969768744989
-"In vascular plants, the sporophyte generation is what?","['submissive', 'resting', 'non-existant', 'dominant']",dominant,yes,dominant,0.9992675998535815
-What takes the shape of the container they are placed in and have a definite volume?,"['loads', 'liquids', 'solids', 'gases']",liquids,yes,liquids,0.9991492450719192
-The abnormal cells cannot carry oxygen properly and can get stuck where?,"['capillaries', 'muscles', 'Arteries', 'Viens']",capillaries,yes,capillaries,0.980741204837688
-"What substances are involved in most of the chemical reactions that take place in organisms, including digestion?","['vitamins', 'hormones', 'enzymes', 'proteins']",enzymes,yes,enzymes,0.9992100979643156
-"The pelvic girdle, consisting of a hip bone, serves to attach a lower limb to this?","['appendicular skeleton', 'cytoskeleton', 'exoskeleton', 'axial skeleton']",axial skeleton,yes,axial skeleton,0.998861581130967
-The innermost layer of the sun is known as what?,"['surface', 'core', 'convective zone', 'photosphere']",core,yes,core,0.9991178306603649
-For what kind of animal is communication essential?,"['anti-social animals', 'migrating animals', 'new born animals', 'social animals']",social animals,yes,social animals,0.9988857990846315
-What term is also known as the contact activation pathway?,"['intrinsic pathway', 'internal pathway', 'central pathway', 'identical pathway']",intrinsic pathway,yes,intrinsic pathway,0.9994370309894253
-Which theory explains how populations of organisms can change over time?,"['evolution by natural selection', 'changes by natural selection', 'free by natural selection', 'intelligent selection']",evolution by natural selection,yes,evolution by natural selection,0.9995376367101986
-Animals that molt their exoskeletons belong to which clade?,"['ecdysozoa', 'trichina', 'protists', 'spirogyra']",ecdysozoa,yes,ecdysozoa,0.9994749113496632
-What part of an atom is electrically neutral?,"['protons', 'electrons', 'neutrons', 'newtons']",neutrons,yes,neutrons,0.9989811198402818
-What is the movement of fluid out of the capillaries called?,"['absorption', 'filtration', 'osmosis', 'diffusion']",filtration,yes,filtration,0.999203263270329
-What organism carries out only fermentation or anaerobic respiration?,"['aerobicc enzymes', 'metabolites', 'aldehydes', 'obligate anaerobes']",obligate anaerobes,yes,obligate anaerobes,0.999499562562069
-What element chemically weathers rock by combining with a metal?,"['nitrogen', 'carbon', 'hydrogen', 'oxygen']",oxygen,yes,oxygen,0.995156812607848
-Programmed cell death is also known as?,"['suicide', 'necrosis', 'apoptosis', 'sepsis']",apoptosis,yes,apoptosis,0.9995068480281915
-"What kind of joints are capable of a wide range of movements, classified as gliding, angular, rotational, or special?","['fibrous', 'glandular', 'synovial', 'locking']",synovial,yes,synovial,0.9992032156840158
-What is the most common cause of cancer?,"['cell mutations', 'poor diet', 'smoking', 'technology mutations']",cell mutations,yes,cell mutations,0.9850662957591949
-Sexually reproducing organisms alternate between which stages?,"['binary and diploid', 'diploid and traploid', 'haploid and diploid', 'binary and haploid']",haploid and diploid,yes,haploid and diploid,0.9997074480278962
-What is a molecule with two fatty acids and a modified phosphate group attached to a glycerol backbone?,"['carbohydrate', 'polymer', 'phospholipid', 'amino acid']",phospholipid,yes,phospholipid,0.9989843126526448
-What happens when materials return to their original shape?,"['restoration principle', 'second life', 'reverberation', 'elastic rebound']",elastic rebound,yes,elastic rebound,0.9991317514767359
-Inducible enzymes usually function in what type of pathways?,"['anabolic', 'catabolic', 'enzymatic', 'biogenic']",catabolic,yes,catabolic,0.9993969633134878
-"Aflatoxins are toxic, carcinogenic compounds released by fungi of this?","['protist group', 'arthropod class', 'genus sporozoa', 'genus aspergillus']",genus aspergillus,yes,genus aspergillus,0.9928638792511348
-What amazing machines smash particles that are smaller than atoms into each other head-on?,"['absorption accelerators', 'particle accelerators', 'observant accelerators', 'nitrogen accelerators']",particle accelerators,yes,particle accelerators,0.9985879804792861
-What is the most dangerous type of radiation?,"['plasma rays', 'gamma rays', 'sunlight rays', 'beta rays']",gamma rays,yes,gamma rays,0.9992416313267901
-How many times does the height of the largest wave increase with each level?,"['20 times', '10 times', '5 times', '100 times']",10 times,yes,20 times,0.7591026796348761
-What type of work called occurs when a system pushes back the surroundings against a restraining pressure?,"['contrast work', 'expansion work', 'retention work', 'shape work']",expansion work,yes,expansion work,0.9992498769987819
-What do you call the entire range of wavelengths of electromagnetic waves?,"['gaseous spectrum', 'electromagnetic spectrum', 'molecular spectrum', 'electric spectrum']",electromagnetic spectrum,yes,electromagnetic spectrum,0.9995633390563121
-What type of pressure may build up inside the cell when water moves into a cell by osmosis?,"['pleasurable pressure', 'transverse pressure', 'impervious pressure', 'osmotic pressure']",osmotic pressure,yes,osmotic pressure,0.9995737842214819
-What is the male gamete called in humans?,"['testes', 'sperm', 'dna', 'egg']",sperm,yes,sperm,0.9985859976201524
-What disease is given as an example of a sex-linked trait?,"['hypertension', 'emphysema', 'hemophilia', 'arthritis']",hemophilia,yes,hemophilia,0.9991904404213963
-Chloroplasts and chromoplasts are examples of which membrane bound organelle containing their own dna?,"['polymers', 'chromosomes', 'bacteria', 'plastids']",plastids,yes,plastids,0.9992499406239863
-What occur because solid lithosphere travels on a round planet?,"['volcanos', 'intraplate earthquakes', 'aeration earthquakes', 'ejecta earthquakes']",intraplate earthquakes,yes,intraplate earthquakes,0.9991005933393061
-"For most waves, energy is proportional to what, a term that describes the height of the wave?","['wave volume', 'wave threshold', 'wave frequency', 'wave amplitude']",wave amplitude,yes,wave amplitude,0.9992994848277328
-What is the process whereby excess water and waste is removed from the body?,"['excretion', 'filtration', 'exhalation', 'diffusion']",excretion,yes,excretion,0.998840338996803
-Why does the fish odour diminish when you put lemon juice over cooked fish?,"['due to oxidation', 'due to acidification', 'due to neutralization', 'due to evaporation']",due to neutralization,yes,due to acidification,0.9983775722481564
-"Tropomyosin is a type of what, that winds around the chains of the actin filament and covers the myosin-binding sites to prevent actin from binding to myosin?","['amine', 'bacteria', 'protein', 'enzyme']",protein,yes,protein,0.9987533442816746
-During which phase does dna replication occur in the cell cycle?,"['resting', 'synthesis', 'gap', 'mitosis']",synthesis,yes,synthesis,0.999068188714613
-"Weathering is fundamental to the creation of what, which exists as a very thin layer over solid rock?","['fungus', 'aquifers', 'soil', 'moss']",soil,yes,soil,0.9991472634658225
-Most fungi can reproduce in which 2 ways?,"['asexually and sexually', 'sexually and binary fusion', 'binary fission and fusion', 'sexually and autonomously']",asexually and sexually,yes,asexually and sexually,0.9996430593173051
-What are major temperature zones primarily based on?,"['latitute', 'gps', 'altitude', 'longitude']",latitute,yes,latitude,0.9838066724436916
-What is one way of classifying organisms called?,"['cluster', 'spasm', 'clade', 'tuck']",clade,yes,clade,0.9989999072633173
-A very small artery that leads to a capillary is known as what?,"['vein', 'arterium', 'arteriole', 'capillary junction']",arteriole,yes,arteriole,0.999484617017199
-"Within each sporangium, hundreds of what kind of spores develop and are dispersed through the air?","['polyploid', 'diploid', 'haploid', 'infertile']",haploid,yes,haploid,0.9993220297577424
-Renal plasma flow equals the blood flow per minute times the what?,"['hemoglobin', 'erythrocytes', 'leukocytes', 'hematocrit']",hematocrit,yes,hematocrit,0.9971710013989118
-What element is the most common element in the universe?,"['helium', 'hydrogen', 'carbon', 'nitrogen']",hydrogen,yes,hydrogen,0.9992534717460858
-What are the male gametes called?,"['sperm', 'cytoplasm', 'pollen', 'urea']",sperm,yes,sperm,0.9980247591585185
-The fuel that burns in a combustion reaction in many fossil fuels such as natural gas that consists of carbon hydrogen is known as what?,"['fossil', 'hydrocarbon', 'helium', 'catalyst']",hydrocarbon,yes,hydrocarbon,0.999215421554899
-"Inside the nasal area of the skull, the nasal cavity is divided into halves by the what?","['cell wall', 'cytoplasm', 'nasal septum', 'cerebral cortex']",nasal septum,yes,nasal septum,0.9995513714312746
-Photographs of the heat emitted by an object are called what?,"['cosmic images', 'radio images', 'thermal images', 'variable images']",thermal images,yes,thermal images,0.9994459927246335
-Differences in fitness among different members of a population can lead to what kind of selection?,"['subliminal selection', 'origin selection', 'natural selection', 'fluid selection']",natural selection,yes,natural selection,0.9992504464623725
-What type of logic can lead to important conclusions from the collecting and analyzing of observations?,"['gravitational reasoning', 'inductive reasoning', 'primitive reasoning', 'conductive reasoning']",inductive reasoning,yes,inductive reasoning,0.9983717003027562
-Which region is just posterior to the mouth?,"['the esophagus', 'the pharynx', 'the duodenum', 'the diaphragm']",the pharynx,yes,the pharynx,0.9987451678956466
-"A minority of people on earth use up most of the planet's what, including energy?","['sand', 'resources', 'water', 'air']",resources,yes,resources,0.9989421372517192
-Which metal is not solid at room temperature?,"['titanium', 'aluminum', 'mercury', 'silver']",mercury,yes,mercury,0.9990539822139464
-What are the two major types of seed plants called?,"['flowers and fruits', 'deciduous and evergreen', 'perennials and annuals', 'gymnosperms and angiosperms']",gymnosperms and angiosperms,yes,gymnosperms and angiosperms,0.9997533964087127
-What are accessory digestive organs critical for breaking down?,"['hormones', 'enzymes', 'pathogens', 'food']",food,yes,food,0.9962451479034241
-What is the name of the two metalloids in the carbon group called?,"['silicon and germanium', 'silicon and gold', 'titantium and copper', 'silver and gold']",silicon and germanium,yes,silicon and germanium,0.999413104796804
-What is the supply of water to land or crops to help growth called?,"['precipitation', 'drainage', 'irrigation', 'absorbtion']",irrigation,yes,irrigation,0.9992671607395792
-What is the primary gas produced from burning of wood?,"['carbon dioxide', 'Hydrogen Dioxide', 'toxic dioxide', 'liquid dioxide']",carbon dioxide,yes,carbon dioxide,0.9986426555537257
-"What is vital for nervous system functions that include muscle stimulation, memory formation, and learning?","['thiamine', 'acetylcholine', 'glutamate', 'glycogen']",acetylcholine,yes,acetylcholine,0.9993029392839791
-"What is the term for protists that produce spores, such as the toxoplasm?","['spermatozoa', 'newborns', 'protozoans', 'sporozoans']",sporozoans,yes,sporozoans,0.9991904938487017
-Most lipid hormones are derived from what?,"['fat', 'tissue', 'cholesterol', 'protein']",cholesterol,yes,cholesterol,0.9993511532401586
-"What are the ""code words"" of the genetic code?","['nucleotides', 'polymers', 'lipids', 'codons']",codons,yes,codons,0.9993035638644668
-What term is used to describe the energy reserve carbohydrate of animals?,"['lactose', 'fructose', 'glycogen', 'sucrose']",glycogen,yes,glycogen,0.9993654795444259
-Where do the eggs develop?,"['the glands', 'the uterus', 'the follicles', 'the ovaries']",the ovaries,yes,the ovaries,0.9960687213264812
-What is the scientific name for the human species?,"['primate', 'homo sapiens', 'Neanderthal', 'homo erectus']",homo sapiens,yes,homo sapiens,0.9974394706587771
-What broad category of animals is primarily ectothermic and covered with scales that facilitate swimming?,"['armadillo', 'turtles', 'deer', 'fish']",fish,yes,fish,0.9983965985987407
-What are nutrients the body needs in relatively large amounts called?,"['abundances', 'adulterants', 'macronutrients', 'vitamins']",macronutrients,yes,macronutrients,0.9994487808936786
-The long mouth-tube that some insects  use to suck up the nectar of the flower is called what?,"['stamen', 'pistil', 'prosthesis', 'proboscis']",proboscis,yes,proboscis,0.9996988815307594
-"What machine is used to determine the calories in food, as well as the average heat yield from burning various grades of coal and oil?","['radio telescope', 'thermometer', 'calorimeter', 'alethiometer']",calorimeter,yes,calorimeter,0.9990962519397437
-What reproductive part is stored in a plant's pollen?,"['the sperm', 'the mimic', 'the gamete', 'the egg']",the sperm,yes,the gamete,0.9973837537236955
-Groundwater does what to the rock beneath the ground surface?,"['boosts it', 'erodes it', 'creates it', 'accelerates it']",erodes it,yes,erodes it,0.9993557878931804
-What kind of chain is formed by subduction of oceanic crust beneath a continental or oceanic plate?,"['volcano', 'mountain', 'tsunami', 'chain reaction']",volcano,yes,chain reaction,0.8511263484449364
-What helps regulate the production of urine?,"['the discrete gland', 'the fetal gland', 'the temporal gland', 'the pituitary gland']",the pituitary gland,yes,the pituitary gland,0.9983549006849175
-Some hormones produced by the anterior pituitary regulate the production of hormones by other tissues belonging to what system?,"['nervous', 'digestive', 'cardiovascular', 'endocrine']",endocrine,yes,endocrine,0.9991045493577542
-Where are some of the greatest concentrations of species found?,"['at high altitudes', 'in the arctic', 'in the tropics', 'in mould colonies']",in the tropics,yes,in the tropics,0.9992853057375074
-What type of creature is a scallop?,"['insect', 'vertabrate', 'mollusk', 'algae']",mollusk,yes,mollusk,0.9991568242527841
-"Capillaries in the chorionic villi filter fetal wastes out of the blood and return clean, oxygenated blood to the fetus through what?","['skin vein', 'Back Vein', 'separates vein', 'umbilical vein']",umbilical vein,yes,umbilical vein,0.9995545109767154
-What type of radio waves exist in the 540 to 1600 khz frequency range?,"['am radio waves', 'fm radio waves', 'microwaves', 'sound waves']",am radio waves,yes,am radio waves,0.9979504672908265
-What part of the body does the mycobacterium tuberculosis bacterium usually attack?,"['lungs', 'muscles', 'heart', 'Pancreas']",lungs,yes,lungs,0.9986053068515807
-What type of organisms do not need blood?,"['marine', 'cold-blooded', 'vertebrate', 'single-celled']",single-celled,yes,cold-blooded,0.9954629991093019
-The galápagos islands are a group of 16 volcanic islands 600 miles off the west coast of what continent?,"['north america', 'europe', 'asia', 'south america']",south america,yes,south america,0.9053531219679859
-What cause the rippled surface of the ocean?,"['winds', 'tides', 'waves', 'earthquakes']",waves,yes,winds,0.9308688094238078
-Aging occurs as cells lose their ability to do what?,"['build', 'join', 'grow', 'divide']",divide,yes,divide,0.9990152492026172
-What term is used to describe the organism that is invaded and often harmed by a pathogen?,"['initial', 'guardian', 'host', 'parent']",host,yes,host,0.9990675403874056
-Biomass is the mass of biological what?,"['lipids', 'proteins', 'tissues', 'organisms']",organisms,yes,organisms,0.9991176552252803
-Name the bacteria that make food through photosynthesis and release oxygen into the air?,"['fusobacteria', 'phytoplankton', 'algae', 'cyanobacteria']",cyanobacteria,yes,cyanobacteria,0.9976329825338247
-An isometric type of what occurs as the muscle produces tension without changing the angle of a skeletal joint?,"['contraction', 'compression', 'acceleration', 'extension']",contraction,yes,contraction,0.9992605251393302
-What disease unique to humans and is caused by two variola viruses?,"['ebola', 'diabetes', 'AIDS', 'smallpox']",smallpox,yes,smallpox,0.9989386980569612
-"Food chains and what describe the transfer of energy within an ecosystem, from one organism to another?","['spider webs', 'fuel webs', 'the webs', 'food webs']",food webs,yes,food webs,0.9993743822584393
-"Which plant group has vascular tissue, seeds, and flowers?","['microbes', 'spores', 'fungi', 'angiosperms']",angiosperms,yes,angiosperms,0.999198723363752
-The amount of kinetic energy in a moving object depends directly on its mass and what else?,"['velocity', 'density', 'volume', 'direction']",velocity,yes,velocity,0.9992437046003103
-What term is used to describe the full range of electromagnetic waves?,"['electromagnetic scale', 'electromagnetic spectrum', 'electromagnetic series', 'mechanical spectrum']",electromagnetic spectrum,yes,electromagnetic spectrum,0.9995668925391262
-A change in temperature with distance is called a what?,"['speed gradient', 'oxygen gradient', 'temperature gradient', 'solution gradient']",temperature gradient,yes,temperature gradient,0.9995102628035984
-What releases fatty acids and other components from fats and phospholipids?,"['metabolism', 'peristaltic hydrolysis', 'enzymatic hydrolysis', 'enzyme respiration']",enzymatic hydrolysis,yes,enzymatic hydrolysis,0.9995467873801087
-"Which type of cell can carry out more functions, eukaryotic cells or prokaryotic cells?","['both', 'Prokaryotic Cells', 'chromosomal cells', 'eukaryotic cells']",eukaryotic cells,yes,eukaryotic cells,0.9986760058181623
-What is typical weather for chicago in winter?,"['rain and wind', 'ice and humidity', 'cold & snow', 'dry and windy']",cold & snow,no,NO_LABEL,0.9928637325499191
-Energy comes in discrete packages called what?,"['quota', 'quasi', 'quanta', 'quasar']",quanta,yes,quanta,0.9993964982021778
-Sperm propel themselves through secretions in the uterus and enter what tube?,"['ovarian', 'uterine', 'fallopian', 'gaseous']",fallopian,yes,fallopian,0.9967844747001909
-"What kind of compounds are named for their positive metal ion first, followed by their negative nonmetal ion?","['horizontal compounds', 'magnetic compounds', 'magnetic compounds', 'ionic compounds']",ionic compounds,yes,ionic compounds,0.9988412265340738
-Traditional classification of mammals are based on similarities in what two things?,"['Density and Structure', 'structure & function', 'solution & function', 'density & function']",structure & function,yes,structure & function,0.9988220676366115
-What type of mining is used to recover ores that are deeper into earth’s surface?,"['underwater mining', 'explosive mining', 'underground', 'deep mining']",underground,yes,underground mining,0.944341999572514
-What two structures are found on mars?,"['volcanoes and canyons', 'geysers and canyons', 'Trees and Canyons', 'Mountains and Creeks']",volcanoes and canyons,yes,volcanoes and canyons,0.9926369791420996
-What does hair get its color from?,"['fluorescent pigments', 'melanin pigments', 'elasticity pigments', 'stimulating pigments']",melanin pigments,yes,melanin pigments,0.9994200969205158
-What elements do water and hydrogen peroxide consist of?,"['calcium and oxygen', 'hydrogen and oxygen', 'hydrogen and helium', 'carbon and oxygen']",hydrogen and oxygen,yes,hydrogen and oxygen,0.9991720097403871
-"If the experimental value is less than the accepted value, the error is what?","['effective', 'negative', 'caused', 'positive']",negative,yes,positive,0.9844677794696012
-"The mouth, stomach, esophagus, small intestine, and large intestine are all part of what organ system?","['muscular', 'digestive', 'respiratory', 'lymphatic']",digestive,yes,digestive,0.9990080837220082
-The term “vapor” refers to the gas phase when it exists at a temperature below what?,"['liquid temperature', 'freezing temperature', 'boiling temperature', 'contaminated temperature']",boiling temperature,yes,boiling temperature,0.9991193983025988
-What is the name for spherical groups of old stars held tightly together by gravity?,"['elliptical clusters', 'dark matter', 'nebula', 'globular clusters']",globular clusters,yes,globular clusters,0.9995290425670237
-Which crust lies deep inside the ocean?,"['oldest', 'shallowest', 'youngest', 'thickest']",oldest,yes,oldest,0.9993339410055235
-"Other than nitrogen, which nutrient most often limits marine production?","['potassium', 'phosphorus', 'calcium', 'zinc']",phosphorus,yes,phosphorus,0.9994239316263868
-How many types of tissue are found in animals?,"['three', 'six', 'Ten', 'four']",four,yes,four,0.9977324581659807
-What happens when heated water is released into a body of water?,"['geysers', 'thermal pollution', 'crystalline pollution', 'gaseous pollution']",thermal pollution,yes,thermal pollution,0.9993673854031702
-Active and passive forms of what enable the body to resist damage from pathogens?,"['immunity', 'stem cells', 'potential', 'autonomy']",immunity,yes,immunity,0.9993137729359037
-"What cause rabies, measles, diarrheal diseases, hepatitis, polio, and cold sores?","['parasites', 'bacteria', 'viruses', 'contaminants']",viruses,yes,viruses,0.9990511491340416
-"Compression, tension and shear refer to what type of force that can cause rock to change?","['process', 'stress', 'gravity', 'seismic force']",stress,yes,stress,0.9988515758842871
-"What group includes the simplest eukaryotes, including most single-celled eukaryotes?","['fungi', 'arthropods', 'bivalves', 'protists']",protists,yes,protists,0.9985871371984221
-"Spontaneous reactions release what type of energy, meaning it is available to do work?","['free energy', 'potential energy', 'radioactive energy', 'kinetic energy']",free energy,yes,free energy,0.9992269624842421
-What french chemist discovered the radioactive elements polonium and radium?,"['margaret curie', 'marie curie', 'pascal curie', 'louis pasteur']",marie curie,yes,marie curie,0.963107545048335
-Amines are classified according to the number of carbon atoms bonded directly to what atom?,"['oxygen', 'hydrogen', 'nitrogen', 'helium']",nitrogen,yes,nitrogen,0.9988563043066808
-What are muscle cells in the muscles called?,"['job fibers', 'human fibers', 'use fibers', 'muscle fibers']",muscle fibers,yes,muscle fibers,0.9994414365031237
-"What has hot days and cool nights, and are typically covered with sand dunes or sparse but hardy plants?","['arctic', 'tundra', 'deserts', 'rain forest']",deserts,yes,deserts,0.9992047260859523
-"In multicellular organisms, mutations can be subdivided into germline mutations and?","['resultant mutations', 'somatic mutations', 'elective mutations', 'comparative mutations']",somatic mutations,yes,somatic mutations,0.9990987755342471
-Convection is the transfer of what type of energy by particles moving through a fluid?,"['thermal', 'atmospheric', 'Chemical', 'Nuclear']",thermal,yes,thermal,0.9981498320974174
-"The process of photosynthesis uses chlorophyll, which is located in organelles called what?","['fibroblasts', 'chloroplasts', 'nucleus', 'mitochondria']",chloroplasts,yes,chloroplasts,0.9994130430781496
-Sickle cell diseas is caused by what?,"['anterior allele', 'posterior allele', 'receccisve allele', 'bronchiole allele']",receccisve allele,yes,recessive allele,0.997366277224818
-"What structures include the vagina, uterus, ovaries, and fallopian tubes?","['respiration', 'digestion', 'skeletal', 'reproductive']",reproductive,yes,reproductive,0.9990002339189579
-Why is the drift velocity negligible?,"['less free charges', 'need free charges', 'many free charges', 'shows free charges']",many free charges,yes,less free charges,0.999034437886308
-What kind of membrane do prokaryotic cells have?,"['cell wall', 'cellulose', 'plasma membrane', 'plasma wall']",plasma membrane,yes,plasma membrane,0.9993026246322381
-What is the name of the location in which a stream or river starts?,"['spring', 'mouth', 'shore', 'source']",source,yes,source,0.9989843093762593
-What element is released into the atmosphere by the burning of fossil fuels?,"['helium', 'sulfur', 'carbon', 'oxygen']",sulfur,yes,carbon,0.9988161337432269
-What causes acid rain?,"['chemicals in waterways', 'air pollution', 'carbon dioxide', 'heavy pollution']",air pollution,yes,air pollution,0.999168907869533
-An offspring that inherits a mutation in a gamete will have the mutation in all of its?,"['cells', 'eggs', 'proteins', 'seeds']",cells,yes,cells,0.9989021868782144
-What type of masses are structureless particles that cannot spin?,"['turning masses', 'inertial mass', 'point masses', 'weightless masses']",point masses,yes,point masses,0.9957214427214233
-The roughness of interacting surfaces and the magnitude of force pushing one object onto another are two factors related to what force?,"['tension', 'temperature', 'energy', 'friction']",friction,yes,friction,0.9992293125409203
-As roots grow longer they will always do what?,"['change direction', 'get larger', 'get thicker', 'grow downward']",grow downward,yes,grow downward,0.9990372242462685
-What determines which type of precipitation falls?,"['air pressure', 'air currents', 'air temperature', 'ground temperature']",air temperature,yes,air temperature,0.9992672770360053
-What is the leading cause of soil erosion?,"['tidal winds', 'volcanic explosions', 'running water', 'glacier movement']",running water,yes,running water,0.9991951860079854
-What is the main type of organism that gets its energy directly from the sun?,"['plants', 'consumers', 'carnivores', 'animals']",plants,yes,plants,0.9988992430578734
-"When a metal is oxidized and a nonmetal is reduced in a redox reaction, what is the resulting compound called?","['magnetic compound', 'soluble compound', 'ionic compound', 'alloy']",ionic compound,yes,ionic compound,0.9995619161820836
-"First, high temperature denatures proteins and does what to cells?","['develops them', 'finds them', 'kills them', 'exposes them']",kills them,yes,kills them,0.9994182806490477
-What is another name for flatworms such as tapeworms and flukes?,"['platyhelminthes', 'trematodes', 'polychaetes', 'epiphytes']",platyhelminthes,yes,platyhelminthes,0.987685175527204
-Which organisms break down either organic or inorganic molecules to supply energy for the cell?,"['asexual organisms', 'spicule organisms', 'chemotrophic organisms', 'photoreactive organisms']",chemotrophic organisms,yes,chemotrophic organisms,0.9991077983361409
-Nucleic acids contain the information needed for cells to make what?,"['lipids', 'metabolytes', 'protons', 'proteins']",proteins,yes,proteins,0.9996451123125382
-What is the process by which wind blows to make the  ground surface gets lower and rockier ?,"['inflation', 'stagnation', 'layering', 'deflation']",deflation,yes,deflation,0.9990993414146289
-What are oil in folded layers of rock called?,"['oscillations', 'macroparticle', 'dendrites', 'anticlines']",anticlines,yes,anticlines,0.999086134036746
-The regions of a material where the north and south poles of atoms are aligned are called what?,"['magnetic rays', 'observed domains', 'cores', 'magnetic domains']",magnetic domains,yes,magnetic domains,0.9995583002589652
-What kind of proteins either activate or deactivate the transcription of other genes?,"['carbon proteins', 'master regulatory proteins', 'master complex proteins', 'perfect regulatory proteins']",master regulatory proteins,yes,master regulatory proteins,0.9993930985702199
-"In the case of the thyroid hormone pathway, thyroid hormone itself carries out what kind of feedback?","['effective', 'negative', 'positive', 'continued']",negative,yes,negative,0.9506526801965554
-In which process do two light nuclei combine to produce a heavier nucleus and great energy?,"['nuclear fusion', 'general fusion', 'light fusion', 'certain fusion']",nuclear fusion,yes,nuclear fusion,0.9991935939036347
-What is biomass made into fuel called?,"['bio fuel', 'toxic fuel', 'renewable fuel', 'benign fuel']",bio fuel,yes,bio fuel,0.9003468299711791
-What type of climate is found mostly near the equator?,"['warm subtropical', 'warm tropical', 'hot dessert', 'cool tropical']",warm tropical,yes,warm tropical,0.9992753990458234
-What term describes the ability of matter to combine chemically with other substances?,"['reactivity', 'permeability', 'oxidation', 'Diffusion']",reactivity,yes,reactivity,0.9985076222802077
-What is the study of ecosystems?,"['botany', 'geology', 'physics', 'ecology']",ecology,yes,ecology,0.9993316403397807
-Photosynthesis changes light energy to what type of energy?,"['chemical', 'potential', 'radiation', 'solar']",chemical,yes,chemical,0.9991473819520058
-What is the second state of photosynthesis?,"['calvin cycle', 'glover cycle', 'morton cycle', 'Phillip cycle']",calvin cycle,yes,calvin cycle,0.9913499317324844
-Scientists utilize what natural process to teach cranes born in captivity to migrate along safe routes?,"['imprinting', 'expediting', 'neuroimaging', 'natural selection']",imprinting,yes,imprinting,0.9994389328113439
-What is the second line of defense?,"['fight or flight', 'rejection of foreign bodies', 'immune response', 'inflammatory response']",inflammatory response,yes,immune response,0.9954260122362139
-What keeps the earth orbiting the sun?,"['magnetic force', 'strong nuclear force', 'gravity', 'weak nuclear force']",gravity,yes,gravity,0.9989846966206141
-"The cytoskeleton is a cellular ""scaffolding"" or ""skeleton"" that crisscrosses what?","['golgi apparatus', 'cell membrane', 'cerebellum', 'cytoplasm']",cytoplasm,yes,cytoplasm,0.999344583246356
-What bonds form when pairs of electrons are shared?,"['neutron bonds', 'ionized bonds', 'dissonance bonds', 'covalent bonds']",covalent bonds,yes,covalent bonds,0.999256164364285
-What type of pressure is the pressure exerted by gas particles in earth’s atmosphere as those particles collide with objects?,"['adjacent pressure', 'atmospheric pressure', 'adjacent pressure', 'vertical pressure']",atmospheric pressure,yes,atmospheric pressure,0.9990647170630917
-"In an endothermic reaction, what is absorbed by the reaction?","['atoms', 'fuel', 'food', 'energy']",energy,yes,energy,0.9990939456253706
-What is another name for a reasonable explanation for something that might be formed near the beginning of a scientific inquiry into a problem?,"['experiment', 'hypothesis', 'theory', 'conclusion']",hypothesis,yes,hypothesis,0.9990845493226281
-Anything that has mass and takes up space is considered what?,"['energy', 'light', 'power', 'matter']",matter,yes,matter,0.9990405206399656
-Rapidly produced genetic vairants are found in organisms with what type of generation time?,"['short', 'long', 'oscillating', 'repeating']",short,yes,short,0.9989934429787088
-Where is most of the cell's dna contained?,"['nucleus', 'epidermis', 'cell membrane', 'vacuole']",nucleus,yes,nucleus,0.9991366661504342
-"The ostrich, kiwi, rhea, cassowary, and moa are examples of what kind of birds?","['raptors', 'predators', 'prehistoric', 'flightless']",flightless,yes,flightless,0.9995644669233047
-What will you see if you look at a star through a prism?,"['spots', 'rainbow', 'spectrum', 'kaleidoscope']",spectrum,yes,spectrum,0.973742210844409
-Makemake and pluto are classified as what type of celestial object?,"['nebula', 'gas giants', 'dwarf planets', 'black holes']",dwarf planets,yes,dwarf planets,0.9995248383735588
-What causes waves to bring sand up onto the beach during summers?,"['no energy', 'low energy', 'high energy', 'low sand density']",low energy,yes,high energy,0.9989203011253894
-Which is the ultimate energy source in a bear's food chain?,"['plants', 'heat', 'decomposers', 'sun']",sun,yes,sun,0.9985010850967674
-A spontaneous change process called neutrino oscillations can occur only if neutrinos have what property?,"['velocity', 'temperature', 'color', 'mass']",mass,yes,mass,0.998684420891424
-What is formed when an element gains one or more electrons?,"['cation', 'ion', 'anion', 'neutron']",anion,yes,anion,0.9988604346053497
-"In naming ternary compounds, which type of particle is stated first?","['subatomic', 'molecule', 'cation', 'anion']",cation,yes,cation,0.9965112831137876
-How is communication initiated and maintained with spacecraft?,"['sonar', 'telegraph', 'radio waves', 'wi-fi']",radio waves,yes,radio waves,0.9988115156575914
-"What happens when more glucose is present than the proteins can handle, in the body?","['metamorphosed as urine', 'forms urine', 'cultured as urine', 'excreted as urine']",excreted as urine,yes,excreted as urine,0.9993527389204218
-Types of compounds include covalent and which other compounds?,"['reactant', 'ionic', 'solvent', 'soluble']",ionic,yes,ionic,0.9988119478853779
-What is the evolutionary history of group of related organisms,"['history', 'iteration', 'phylogeny', 'substructure']",phylogeny,yes,phylogeny,0.9992978321672643
-What is pollution that enters water at just one point called?,"['point supply pollution', 'point source pollution', 'point supply pollution', 'entry point pollution']",point source pollution,yes,point source pollution,0.9994347198013372
-What is the term for the study of how living things interact with each other and with their environment?,"['radiology', 'ecology', 'anthropology', 'biology']",ecology,yes,ecology,0.9989798796229906
-The group of plants that can make their own food from inorganic raw materials in the presence of sunlight are referred to as what?,"['heterotrophic', 'autotrophic', 'symbiotic', 'autosynonomys']",autotrophic,yes,autotrophic,0.9990155823415406
-"A fundamental particle of matter, protons and neutrons are made of these?","['quarks', 'atoms', 'particles', 'neutrinos']",quarks,yes,quarks,0.9993733619951548
-Some animals prepare for the long winter by going into what?,"['pollination', 'fermentation', 'hibernation', 'suspended animation']",hibernation,yes,hibernation,0.9995067506329756
-The smallest part of an element that maintains the identity of that element is called what?,"['atom', 'lattice', 'neutron', 'nucleus']",atom,yes,atom,0.9989646646948165
-"Referring to low what, hypovolemia may be caused by bleeding, dehydration, vomiting, severe burns, or some medications used to treat hypertension?","['blood volume', 'heart volume', 'brain volume', 'Secretion Volume']",blood volume,yes,blood volume,0.9988154337381671
-"What is the part of the cardiovascular system that carries oxygen-rich blood away from the heart, to the body, and returns oxygen-poor blood back to the heart?","['systemic circulation', 'somatic system', 'molecular circulation', 'peripheral nervous system']",systemic circulation,yes,systemic circulation,0.9989310602892643
-What energy is the energy of motion?,"['kinetic', 'potential', 'thermal', 'optimal']",kinetic,yes,kinetic,0.9990247310354119
-A phospholipid is a bond between the glycerol component of a lipid and what else?,"['elemental molecule', 'chlorine molecule', 'phosphorous molecule', 'oxygen molecule']",phosphorous molecule,yes,phosphorous molecule,0.9977227901245611
-The turbine of a windmill spins and creates what?,"['pollution', 'grains', 'lightning', 'electricity']",electricity,yes,electricity,0.9994238138071214
-"Prostaglandins also help regulate the aggregation of platelets, one step in the formation of what?","['cysts', 'bloats', 'blood clots', 'acne']",blood clots,yes,blood clots,0.9993776252055889
-What is the study of how living organisms interact with each other and with their environment?,"['botany', 'zoology', 'ecology', 'genetics']",ecology,yes,ecology,0.9990572574618892
-What type of butterfly do birds avoid eating since it makes them sick?,"['pyralidae', 'sphingidae', 'noctuidae', 'monarch butterflies']",monarch butterflies,yes,monarch butterflies,0.9983917681204119
-What are the largest known proteins called?,"['obscures', 'aminos', 'titins', 'sporozoans']",titins,yes,titins,0.9992769206039142
-What are chromosomes in the same pair called?,"['homogeneous chromosomes', 'regulated chromosomes', 'homologous chromosomes', 'reversible chromosomes']",homologous chromosomes,yes,homologous chromosomes,0.9994946754914338
-"What technique is used by insects and birds to find food, mates, and safety from predators?","['playing', 'flying', 'sleeping', 'mating']",flying,yes,flying,0.9986294553203828
-What is another term for the parabolic motion of a thrown object?,"['newtonian motion', 'regular motion', 'projectile motion', 'simple motion']",projectile motion,yes,projectile motion,0.9988965511695096
-What is a compound in which all of the atoms are connected to one another by covalent bonds?,"['compound metal', 'covalent mixture', 'covalent bond element', 'covalent network solid']",covalent network solid,yes,covalent network solid,0.9918047111184326
-What substance do the leaves of plants take in from the environment?,"['oxygen', 'carbon dioxide', 'acid rain', 'hydrogen']",carbon dioxide,yes,carbon dioxide,0.9986950748641126
-What are terrestrial biomes determined by?,"['temperature and moisture', 'pressure and temperature', 'moisture and elevation', 'time and temperature']",temperature and moisture,yes,temperature and moisture,0.9996168741909839
-Both diffusion and effusion are related to the speed at which what objects move?,"['copper molecules', 'electricity', 'gas molecules', 'solids']",gas molecules,yes,gas molecules,0.9993756636750826
-What are genes located on the sex chromosomes called?,"['dimorphism - linked genes', 'diploid genes', 'autosomes', 'sex-linked genes']",sex-linked genes,yes,sex-linked genes,0.9994225426830899
-Water that is lost through the skin through evaporation from the skin surface without overt sweating and from air expelled from the lungs is known as what?,"['dehydration', 'insensible water loss', 'logical water loss', 'osmotic process']",insensible water loss,yes,insensible water loss,0.9995216964788088
-What allows theories to be widely accepted?,"['observation', 'hypothesis', 'theory', 'evidence']",evidence,yes,evidence,0.9982670707737966
-"Plants can absorb inorganic nutrients and water through their root system, and what gas from the environment?","['nitrogen dioxide', 'hydrogen dioxide', 'chemical dioxide', 'carbon dioxide']",carbon dioxide,yes,carbon dioxide,0.9993808496533825
-What is the cutting and burning trees to clear land for farming called?,"['slash-and-burn agriculture', 'cut-and-smoke farming', 'reduce-and-ignite agriculture', 'drop-and-blaze agriculture']",slash-and-burn agriculture,yes,slash-and-burn agriculture,0.999791272788976
-"Fishes were the earliest example of what subphylum, and jawless fishes were the earliest of these?","['ferns', 'vertebrates', 'mammals', 'grasses']",vertebrates,yes,vertebrates,0.9949627875362766
-Which organ will bladder infections commonly damage if untreated?,"['kidney', 'heart', 'lungs', 'tissue']",kidney,yes,kidney,0.9990061160534817
-Protists are the simplest of what?,"['plants', 'fungi', 'eukaryotes', 'prokaryotes']",eukaryotes,yes,eukaryotes,0.9994570923207863
-What are flightless birds that are strong swimmers and spend much of their time in the water?,"['Cassowaries', 'Emus', 'Ostriches', 'penguins']",penguins,yes,penguins,0.9968672209901351
-Lodgepole cones remain closed until exposed to what?,"['precipitation', 'extreme heat', 'predators', 'UV light']",extreme heat,yes,extreme heat,0.9992019602245915
-What carbohydrate from fruit juices is a gel-forming substance important in jelly making?,"['cellulose', 'gelatin', 'pectin', 'potassium']",pectin,yes,pectin,0.9991102935385078
-What does blood pickup from the lungs to be carried throughout the rest of the body?,"['oxygen', 'carbon', 'white blood cells', 'platelets']",oxygen,yes,oxygen,0.9986889890933045
-What is the largest organelle in a eukaryotic cell?,"['apoptosis', 'nucleus', 'cortex', 'epidermis']",nucleus,yes,nucleus,0.9992125892793533
-The muscles of the anterior neck assist in deglutition also known as what?,"['breathing', 'swallowing', 'pulling', 'staring']",swallowing,yes,swallowing,0.9990059972849816
-How many types of leptons are there?,"['twelve', 'two', 'nine', 'six']",six,yes,six,0.786879499665902
-"If everything in a system stays the same but the pressure deceases, gas bubbles will change in what way?","['they pop', 'they multiply', 'they get smaller', 'they get bigger']",they get bigger,yes,they get smaller,0.8827523039934313
-Helium-3 is produced by beta decay of a certain what?,"['particle', 'nuclide', 'quark', 'electron']",nuclide,yes,nuclide,0.9995152028048544
-What is a popular treatment for kidney failure?,"['metastasis', 'electrolysis', 'dialysis', 'psychotherapy']",dialysis,yes,dialysis,0.9990526390994893
-What is the largest body in the solar system?,"['planet', 'asteroids', 'sun', 'earth']",sun,yes,sun,0.9981495629735676
-What type of particles can a beta particle be?,"['cytoplasm or positron', 'anode or positron', 'electron or positron', 'diode or positron']",electron or positron,yes,electron or positron,0.9993931268058402
-Tuna have been shown to contain high levels of what metal?,"['titanium', 'cadmium', 'mercury', 'iron']",mercury,yes,mercury,0.9993163324428347
-The part of the ecosystem required by a particular species is endangered when human activity threatens loss of what?,"['habitat', 'biodiversity', 'primary producers', 'primary speciation']",habitat,yes,habitat,0.9995112765499702
-What type of winds blow only over a limited area?,"['periodic', 'Planetary', 'local', 'trade']",local,yes,local,0.9985450231366663
-Latitude affects the amount of which radiation a place receives?,"['thermal', 'solar', 'surface', 'molecular']",solar,yes,solar,0.9991039417002208
-"Remember electrons are negatively charged, so ions with a positive charge have lost what?","['neutron', 'electron', 'proton', 'atom']",electron,yes,electron,0.9973087545931153
-"During adulthood, what is needed for the production of sperm?","['androgen', 'estrogen', 'steroids', 'testosterone']",testosterone,yes,testosterone,0.9992543595411113
-What is the term for body parts that do not serve their original function?,"['vestigial structures', 'abnormal structures', 'false structures', 'amenable structures']",vestigial structures,yes,vestigial structures,0.9995566818795055
-The reaction rate usually increases as the concentration of what increases?,"['generators', 'mutations', 'complexes', 'reactants']",reactants,yes,reactants,0.9993734432958468
-"A visual ""copy"" of an object that is formed by reflected or refracted light is called what?","['instance', 'image', 'mirror', 'photo']",image,yes,image,0.9991895340151171
-Calculations are described showing conversions between molar mass and what for gases?,"['length', 'density', 'weight', 'volume']",density,yes,volume,0.894416208670545
-What will happen to sea levels due to increased global temperatures?,"['reverse', 'surge', 'rise', 'Drop']",rise,yes,rise,0.9970206877356199
-"Over many generations, the resulting genetic diversity provides valuable raw material for what?","['natural selection', 'intelligent selection', 'coral selection', 'characteristic selection']",natural selection,yes,natural selection,0.9993935952084165
-Scientists use what scale to illustrate the order in which events on earth have happened?,"['cataclysmic time scale', 'ecological succession', 'fossil record', 'geologic time scale']",geologic time scale,yes,geologic time scale,0.9995570595131148
-What do solar cells convert the energy in sunlight into?,"['electrical energy', 'subsequent energy', 'free energy', 'experimental energy']",electrical energy,yes,electrical energy,0.9988403045326302
-"Objects moving at different speeds, in different directions have different what?","['velocities', 'protons', 'electrons', 'vibrations']",velocities,yes,velocities,0.9992708567428568
-What effect is responsible for flight paths looking curved?,"['tonal effect', 'resonant effect', 'coriolis effect', 'volumetric effect']",coriolis effect,yes,coriolis effect,0.9993405895796539
-The simplest class of organic compounds is the what?,"['Phenols', 'gas', 'hydrocarbons', 'particles']",hydrocarbons,yes,hydrocarbons,0.9991528548223175
-What kind of energy positions do electrons occupy during ground state?,"['closest energy positions', 'lowest energy positions', 'relative energy positions', 'highest energy positions']",lowest energy positions,yes,lowest energy positions,0.9993893831437335
-Individuals with what condition experience depigmentation that results in lighter colored patches of skin?,"['eczema', 'vitiligo', 'psoriasis', 'dementia']",vitiligo,yes,vitiligo,0.9979945587058734
-"What kind of bonding between alcohol molecules means that more energy is required to convert the liquid to vapor, and boiling points are therefore high?","['weaker carbon bonding', 'stronger mineral bonding', 'stronger hydrogen bonding', 'stronger diffusion bonding']",stronger hydrogen bonding,yes,stronger hydrogen bonding,0.9992775618574373
-Plaque is surgically removed from the walls of a vessel in which surgery?,"['discectomy', 'arthroscopy', 'endarterectomy', 'lumpectomy']",endarterectomy,yes,endarterectomy,0.9995093597439072
-What parts of comets make them easy to see?,"['arcs and tails', 'novas and tails', 'comas and tails', 'craters and tails']",comas and tails,yes,comas and tails,0.999459204529712
-Which blood leaves the placenta through veins leading back to the fetus?,"['molecular', 'immunity', 'fetal', 'pelvic']",fetal,yes,fetal,0.9991457965449981
-"Along with climate, this also influences the type of vegetation that can grow in the region?","['population density', 'soil type', 'fertilizer use', 'gravity']",soil type,yes,soil type,0.9994845287639706
-"By applying salt to an icy road, the melting point of the ice is what?","['concentrated', 'decreased', 'increased', 'compounded']",decreased,yes,decreased,0.9992454738854295
-"Redox reactions, like other chemical reactions, begin with a product and end with what?","['reactant', 'stimulant', 'plasma', 'decomposition']",reactant,yes,reactant,0.9992670060727286
-About 95 percent of lipids are absorbed in what organ of the digestive system?,"['kidneys', 'large intestine', 'small intestine', 'stomach']",small intestine,yes,small intestine,0.9992666136393347
-"When oxygen is not bound to heme and the partial pressure of oxygen is low, hemoglobin readily binds to what?","['carbon dioxide', 'iron', 'carbon', 'sulfur']",carbon dioxide,yes,carbon dioxide,0.9860653041862388
-What are the three forms of water as found in nature?,"['balanced , liquid , gas', 'solid, liquid, gas', 'solid , mixture , gas', 'ice, vapor, sleet']","solid, liquid, gas",yes,"solid, liquid, gas",0.9989025330118668
-What term is defined as the area where a species lives and to which it has become adapted?,"['nature', 'range', 'habitat', 'farmland']",habitat,yes,habitat,0.9996622098414963
-Plant-like protists are commonly called what?,"['fungus', 'algae', 'seaweed', 'sponge']",algae,yes,algae,0.9993718725780094
-Prokaryotic cells have what structure outside their plasma membrane?,"['sodium channel', 'cell wall', 'plasma wall', 'cell membrane']",cell wall,yes,cell wall,0.9991857106236803
-"A black solid by itself, this element is incredibly important because of what it makes when it combines with many other elements, including oxygen?","['carbon', 'dioxide', 'lead', 'hydrogen']",carbon,yes,carbon,0.998553484488558
-What are the lines of force in the electric field around a charged particle called?,"['terrain lines', 'ionic zone', 'field lines', 'voltage lines']",field lines,yes,field lines,0.9993597208109244
-What kind of bonds are forces of attraction between positive metal ions and the valence electrons that are constantly moving around them?,"['neutron bonds', 'liquid bonds', 'metallic bonds', 'ionized bonds']",metallic bonds,yes,metallic bonds,0.9993345178762575
-What is the measure of the amount of energy found in sound waves?,"['density', 'decibels', 'frequency', 'intensity']",intensity,yes,intensity,0.9979958319821354
-The adrenal cortex directly influences the function of what organs through the production of the hormone aldosterone to stimulate sodium reabsorption?,"['kidneys', 'lungs', 'heart', 'tumors']",kidneys,yes,kidneys,0.9986836610158734
-What do you call vesicle transport into the cell?,"['passive transport', 'dialysis', 'endocytosis', 'metastasis']",endocytosis,yes,endocytosis,0.9994036217039037
-The ability of matter to burn is called?,"['unpredictability', 'eccentricity', 'solubility', 'flammability']",flammability,yes,flammability,0.9993161474503117
-What are hydrocarbons with double bonds called?,"['amines', 'alkenes', 'alcohols', 'aldehydes']",alkenes,yes,alkenes,0.9991167824850663
-Cells must also be able to separate their relatively stable interior from what?,"['predators', 'competition and chaos', 'their habitat', 'the external environment']",the external environment,yes,the external environment,0.9992643049873801
-Magnetite crystals of different ages and on different continents pointed to different spots. the simplest explanation is that the continents have done what?,"['evolved', 'reacted', 'changed', 'moved']",moved,yes,moved,0.9993625789721539
-Which types of compounds are more likely to burn easily?,"['hydroxyl', 'covalent', 'chlorophyll', 'salty']",covalent,yes,hydroxyl,0.9551863075511473
-During what in the small intestine do rings of smooth muscle repeatedly contract and then relax?,"['mitosis', 'segmentation', 'compression', 'contraction']",segmentation,yes,contraction,0.9973090475670991
-In which organ does a baby develop?,"['pancreas', 'uterus', 'pelvis', 'ovaries']",uterus,yes,uterus,0.9989860670295367
-"There are several types of wetlands including marshes, swamps, bogs, mudflats, and salt marshes. the three shared characteristics among these types—what makes them wetlands—are their hydrology, hydrophytic vegetation, and this?","['niya soils', 'sandy soils', 'stibnite soils', 'hydric soils']",hydric soils,yes,hydric soils,0.9994174427527783
-"A unique characteristic of mammals is the ability to chew, this happens by the temporalis and the masseter allowing what?","['side-to-side movement', 'Grinding', 'Up and down', 'Bakward and forward']",side-to-side movement,yes,Grinding,0.9896136279639642
-"What law shows the relationships among temperature, volume, and pressure?","['combined gas', ""Newton's law"", 'Law of Conservation', ""Murphy's Law""]",combined gas,yes,combined gas,0.9170374901493296
-"What is needed to create muscles, regulate chemical reactions, and transport oxygen?","['proteins', 'cytoplasm', 'lipids', 'enzymes']",proteins,yes,proteins,0.9976873400657025
-What are 2 common growth patterns of population?,"['organic and inorganic', 'exponential and economical', 'exponential and logistic', 'migratory and logistic']",exponential and logistic,yes,exponential and logistic,0.9995000735570714
-Bivalvia and gastropoda are classes of what phylum?,"['diatoms', 'mollusks', 'fishes', 'Insects']",mollusks,yes,mollusks,0.9071167579745565
-What are the three main types of rocks?,"['limestone , igneous and metamorphic', 'plutonic, igneous and metmorphic', 'sedimentary, igneous and metamorphic', 'crystalline , igneous and metamorphic']","sedimentary, igneous and metamorphic",yes,"sedimentary, igneous and metamorphic",0.9991812347398595
-"As a diver descends, the increase in pressure causes the body’s air pockets in the ears and lungs to do what?","['compress', 'blow up', 'heat up', 'expand']",compress,yes,compress,0.9973851976080141
-"What liquid is referred to as the ""universal solvent""?","['gasoline', 'blood', 'bromine', 'water']",water,yes,water,0.9991080928758209
-Where does mechanical digestion begin?,"['intestines', 'stomach', 'brain', 'mouth']",mouth,yes,mouth,0.9989422836452018
-Which body part is unsuitable for animals living on land?,"['gills', 'feet', 'hands', 'lungs']",gills,yes,gills,0.9989529886113141
-Producing light without heat is called what?,"['osmosis', 'luminescence', 'bioluminescence', 'thermoluminescence']",luminescence,yes,luminescence,0.9995035993635843
-What increases in processes in which solid or liquid reactants form gaseous products and when solid reactants form liquid products?,"['evaporation', 'entropy', 'glucose', 'respiration']",entropy,yes,evaporation,0.9987472457980662
-"In an experiment, what is kept constant so they will not affect the results, including affecting the dependent variable?","['educated controls', 'experimental controls', 'atmospheric controls', 'similar controls']",experimental controls,yes,experimental controls,0.9993736754006891
-What work together in pairs to bend or straighten a joint?,"['nerve fibers', 'muscles', 'collagen bands', 'cartilage tissues']",muscles,yes,muscles,0.9990842432635305
-What are the outpocketings of the digestive tract that remove nitrogenous wastes and function in osmoregulation?,"['intestinal tubules', 'olivary tubules', 'malpighian tubules', 'integumentary tubules']",malpighian tubules,yes,malpighian tubules,0.9953152845932425
-What type of rocks form from sediments that are cemented and compacted?,"['sedimentary', 'limestone', 'granite', 'crystalline']",sedimentary,yes,sedimentary,0.9993369251580158
-Dietary proteins are broken down into amino acids during what process?,"['digestion', 'photosynthesis', 'accumulation', 'filtration']",digestion,yes,digestion,0.9992821536063567
-"Like the mitochondria, chloroplasts have their own dna and ribosomes, but chloroplasts have an entirely different function. chloroplasts are plant cell organelles that carry out what?","['growth', 'digestion', 'reproduction', 'photosynthesis']",photosynthesis,yes,photosynthesis,0.9984785848006542
-What is often the cause of phenotypic differences between identical twins?,"['natural selection', 'genetics', 'environment', 'learned behavior']",environment,yes,environment,0.9951494411407424
-What does a solar power plant turn sunlight into?,"['machinery', 'mechanical energy', 'batteries', 'electricity']",electricity,yes,electricity,0.9994064251173134
-What is a measure of the size of sound waves?,"['frequency', 'voltage', 'amplitude', 'wavelength']",amplitude,yes,amplitude,0.9995037206110445
-What exactly happens during rna translation?,"['protein is synthesized', 'chromosome is synthesized', 'carbohydrate is synthesized', 'membrane is synthesized']",protein is synthesized,yes,protein is synthesized,0.9979332649699041
-Robert merrifield developed the first synthetic approach for making what essential cell substances in the lab?,"['proteins', 'cells', 'acids', 'lipids']",proteins,yes,proteins,0.960856437696101
-An estimated 100 trillion of these live in the gut of an average person?,"['algae', 'pathogens', 'bacteria', 'viruses']",bacteria,yes,bacteria,0.999039951453615
-The sum of the kinetic and potential energies of a system’s atoms and molecules is called what?,"['internal energy', 'stored energy', 'mechanical energy', 'used energy']",internal energy,yes,internal energy,0.9990465371301904
-Ultraviolet radiation has the highest energy; which has the lowest?,"['kinetic', 'nuclear', 'thermal', 'infrared']",infrared,yes,infrared,0.9965650979239905
-What type of generators use electromagnetic induction to change kinetic energy to electrical energy?,"['thermal generators', 'radiators', 'electric generators', 'conductors']",electric generators,yes,electric generators,0.9991028148401614
-Which nerve carries electrical signals from the rods and cones to the brain?,"['optic', 'auditory', 'neurotransmitter', 'axon']",optic,yes,optic,0.9987936272766627
-What are formed when crystals precipitate out from a liquid?,"['chemical sedimentary rocks', 'gaseous sedimentary rocks', 'additive sedimentary rocks', 'diamonds']",chemical sedimentary rocks,yes,chemical sedimentary rocks,0.9995512820058574
-Why are the stems of many xerophytes fleshy?,"['drains water', 'pressures water', 'stores water', 'collects water']",stores water,yes,stores water,0.9990274791432346
+question,options,answer,llm_labeled_successfully,llm_label
+The volume of blood each ventricle pumps per minute is called what?,"['cardiac output', 'brain output', 'blood output', 'trauma output']",cardiac output,yes,cardiac output
+"For an exothermic chemical reaction, energy is given off as reactants are converted to what?","['products', 'forms', 'imports', 'exports']",products,yes,products
+Elements that do not need to conduct electricity are known as what?,"['silicates', 'carbonates', 'alloys', 'nonmetals']",nonmetals,yes,nonmetals
+What is the amount of energy required to begin a chemical reaction known as?,"['reaction energy', 'activation energy', 'positive energy', 'decomposition energy']",activation energy,yes,activation energy
+What guards the opening between the right atrium and the right ventricle?,"['superior vena cava', 'aorta', 'brachiocephalic trunk', 'tricuspid valve']",tricuspid valve,yes,tricuspid valve
+What is the opposite of melting?,"['evaporation', 'compression', 'freezing', 'liquidation']",freezing,yes,freezing
+What is the thin coat of phospholipids that surrounds the cell and controls what enters and leaves?,"['blood', 'myelin', 'plasma', 'cell membrane']",cell membrane,yes,cell membrane
+What is the process of the blastula forming 3 layers of cells called?,"['fermentation', 'Mitosis', 'gastrulation', 'internalization']",gastrulation,yes,gastrulation
+What occurs when two opposite charges are separated by some amount of distance?,"['particle', 'radioactivity', 'dipole', 'diffusion']",dipole,yes,dipole
+Water is allowed to flow downhill into a large turbine to harness power. what helps the turbine spin?,"['electrostatic energy', 'residual energy', 'kinetic energy', 'polar energy']",kinetic energy,yes,kinetic energy
+Nervous tissue consists of just two basic types of nerve cells: neurons and?,"['red blood cells', 'white blood cells', 'glial cells', 'mammalian cells']",glial cells,yes,glial cells
+What term is used to describe the line of latitude right in the middle of the planet?,"['pole', 'orbital', 'equator', 'Prime Meridian']",equator,yes,equator
+What type of mapping is critical for identifying  the location of genes that cause genetic diseases?,"['interaction mapping', 'chemical mapping', 'diagnostic mapping', 'linkage mapping']",linkage mapping,yes,linkage mapping
+What three forms does frozen precipitation take?,"['snow, sleet, freezing rain', 'blizzard, frost, fog', 'hail, wind, typhoon', 'vapor, fog, ice']","snow, sleet, freezing rain",yes,"snow, sleet, freezing rain"
+Average acceleration is the rate of change of what?,"['displacement', 'velocity', 'speed', 'direction']",velocity,yes,velocity
+What kind of mountainous formation can often be found near trenches?,"['craters', 'earthquakes', 'volcanoes', 'caves']",volcanoes,yes,volcanoes
+The ends of linear chromosomes are maintained by the action of which enzyme?,"['cytokine', 'pepsin', 'insulin', 'telomerase']",telomerase,yes,telomerase
+What forms when atoms share or transfer valence electrons?,"['fusion', 'replicas', 'levels', 'bonds']",bonds,yes,bonds
+What is the scale on which acidity is measured?,"['ph', 'hp', 'μg', 'μm']",ph,yes,pH
+The amniotes are distinguished from amphibians by the presence of a terrestrially adapted egg protected by what?,"['albumen', 'amniotic membranes', 'yolk', 'hard shell']",amniotic membranes,yes,hard shell
+B cells and t cells are examples of what type of cells?,"['white blood cells', 'cancer cells', 'heart cells', 'skin cells']",white blood cells,yes,white blood cells
+What are some uses of chlorine gas?,"['rooting plant cuttings', 'fueling airplanes', 'cleaning, disinfecting and in swimming pools', 'washing hands']","cleaning, disinfecting and in swimming pools",yes,"cleaning, disinfecting and in swimming pools"
+"Which type of skeleton supports the animal, protects internal organs, and allows for movement?","['internal', 'mechanical', 'shell', 'external']",internal,yes,external
+Deletions remove one or more what from the dna?,"['nucleotides', 'exons', 'codons', 'genes']",nucleotides,yes,nucleotides
+What makes up the core of the endoskeleton?,"['notochord', 'thorax', 'dermis', 'vertebral column']",vertebral column,yes,vertebral column
+The general term peptide refers to an amino acid chain of what?,"['unspecified length', 'small length', 'incomplete length', 'large length']",unspecified length,yes,unspecified length
+What are the key to species evolving?,"['radiation', 'microbes', 'parasites', 'mutations']",mutations,yes,mutations
+What kind of muscle is found in the heart?,"['pulminary', 'cord', 'respiratory', 'cardiac']",cardiac,yes,cardiac
+What type of ecosystem do polar bears live in?,"['oceanic', 'arctic', 'tropical', 'natural']",arctic,yes,arctic
+What is the long-term average of weather in a particular spot called?,"['climate', 'migration', 'weather', 'temperature']",climate,yes,climate
+What happens to the temperature of matter as light is absorbed?,"['it increases', 'it stays the same', 'it drops', 'it triples']",it increases,yes,it increases
+What is the order and family of a meat-eating cat like a tiger?,"['Mammalia felidae', 'hierarchies felidae', 'carnivora felidae', 'Synapsida felidae']",carnivora felidae,yes,Carnivora Felidae
+What process involves two cell divisions and produces four haploid cells?,"['Mitosis', 'meiosis', 'mutations', 'Klerokinesis']",meiosis,yes,meiosis
+What water is about 3.5% salt?,"['spring water', 'seawater', 'glacial water', 'fresh water']",seawater,yes,seawater
+What in the axils of leaves and stems give rise to branches?,"['nodules', 'chloroplasts', 'meristems', 'axillary buds']",axillary buds,yes,axillary buds
+"Calvin cycle reactions can be organized into three basic stages: fixation, reduction, and this?","['creation', 'transformation', 'regeneration', 'demarcation']",regeneration,yes,regeneration
+Where does the christmas tree worm live?,"['Atlantic shoreline', 'rainforests', 'northeast coral reefs', 'tropical coral reefs']",tropical coral reefs,yes,tropical coral reefs
+"What broad group of animals - which includes rats, dogs and camels - have highly developed brains and often perform work for humans?","['mammals', 'arachnids', 'reptiles', 'amphibians']",mammals,yes,mammals
+What is the common term for animals in the phylum porifera?,"['sharks', 'sponges', 'corals', 'crustaceans']",sponges,yes,sponges
+All living things are able to produce what?,"['offspring', 'proteins', 'toxins', 'tissue']",offspring,yes,offspring
+The energy a chemical reaction needs to get started is called what kind of energy?,"['function', 'conduction', 'activation', 'fusion']",activation,yes,activation
+"Due to the time it takes for light to reach us, galaxies at the edge of the universe are distant in terms of space and what else?","['energy', 'time', 'temperature', 'gravity']",time,yes,time
+What is a type of plant tissue consisting of undifferentiated cells that can continue to divide and differentiate?,"['meristem', 'ganglion', 'epidermis', 'cambium']",meristem,yes,meristem
+What is the most important factor determining soil type?,"['climate', 'landscape', 'plant life', 'ecology']",climate,yes,climate
+What type of plant keeps it green leaves year-round?,"['deciduous', 'evergreen plant', 'cactus', 'conifer']",evergreen plant,yes,evergreen plant
+A diploid zygote is formed when one sperm does what?,"['repels the egg', 'cracks the egg', 'incapacitates the egg', 'fertilizes the egg']",fertilizes the egg,yes,fertilizes the egg
+The external female reproductive structures are referred to collectively as what?,"['the Fallopian tube', 'the uterus', 'the vulva', 'the cervix']",the vulva,yes,the vulva
+What important process takes place in specialized tissue inside plant leaves?,"['reproduction', 'photosynthesis', 'mitosis', 'pollination']",photosynthesis,yes,photosynthesis
+What is a fibrocartilaginous pad that fills the gap between adjacent vertebral bodies?,"['Back Disk', 'intervertebral disc', 'subsidence disc', 'unidirectional disc']",intervertebral disc,yes,intervertebral disc
+What do we call the solid form of hydrocarbons?,"['shale', 'coal', 'methane', 'bauxite']",coal,yes,coal
+What is the hollow and muscular balloon-shaped organ that collects urine?,"['kidney', 'prostate', 'urethra', 'urinary bladder']",urinary bladder,yes,urinary bladder
+What is the name for a substance that can be used to follow the pathway of that substance through some structure?,"['tracker', 'tracer', 'solution', 'gel']",tracer,yes,tracer
+What do all sound waves begin with?,"['vibrating matter', 'oscillating matter', 'talking matter', 'enclosing matter']",vibrating matter,yes,vibrating matter
+What is the tissue beneath a mollusks' shell called?,"['mucous', 'cartilage', 'mantle', 'skin']",mantle,yes,mantle
+What is the process by which the remains of living things become fossils?,"['sublimation', 'fossilization', 'decomposition', 'petrification']",fossilization,yes,fossilization
+A reptile's what doesn't generate enough energy to keep their body temperature stable?,"['metabolism', 'respiration', 'skin', 'tissue']",metabolism,yes,metabolism
+"The laws of what field of science apply to galaxies and atoms, an indication of the underlying unity in the universe?","['anthropology', 'physics', 'geology', 'astronomy']",physics,yes,physics
+What characteristic of particles determines how they are carried by flowing water?,"['density', 'size', 'color', 'texture']",size,yes,density
+"Most body fluids that you release from your body contain chemicals that kill pathogens. for example, mucus, sweat, tears, and saliva contain enzymes called?","['enzymes', 'lysozymes', 'sporozoans', 'lipids']",lysozymes,yes,lysozymes
+Hfcs are used as a replacement for what?,"['pollutants', 'cfcs', 'gases', 'nitrofluorocarbons']",cfcs,yes,cfcs
+The anterior muscles of the neck facilitate swallowing and what else?,"['speech', 'hearing', 'perspiration', 'crying']",speech,yes,speech
+The bright color of poison dart frogs serves what purpose?,"['attracting predators', 'attracting mates', 'warning predators', 'no purpose']",warning predators,yes,warning predators
+What is the sac-like organ of the body that is important for both mechanical and chemical digestion?,"['gall bladder', 'kidney', 'spleen', 'stomach']",stomach,yes,stomach
+What two types of atoms bond to form sulfate minerals?,"['oxygen and sulfur', 'oxygen and carbon', 'carbon and sulfur', 'oxygen and calcium']",oxygen and sulfur,yes,oxygen and sulfur
+What causes continents to drift closer to the poles or the equator?,"['plate movements', 'sediment movements', 'tidal pull', 'wind']",plate movements,yes,plate movements
+Both endocytosis and ______ are active transport processes.,"['cellular respiration', 'proteolysis', 'exocytosis', 'biosynthesis']",exocytosis,yes,exocytosis
+When do homologous chromosomes separate and go to different gametes?,"['before meiosis', 'during meiosis', 'during electrolysis', 'after meiosis']",during meiosis,yes,during meiosis
+Cells that are divided by oncogenes contain damaged what?,"['atoms', 'dna', 'bacteria', 'cells']",dna,yes,DNA
+The number of neutrons and electrons may vary or change in an atom. what happens to the number of protons?,"['depends', 'remains the same', 'decreases', 'increases']",remains the same,yes,remains the same
+"What do you call large, y-shaped proteins that recognize and bind to antigens?","['antibodies', 'membranes', 'proteins', 'parasites']",antibodies,yes,antibodies
+"After the film is developed, any unexposed silver bromide must be removed by a process called what?","['washing', 'sweeping', 'fixing', 'watering']",fixing,yes,fixing
+What type of relationship is parasitism?,"['hypodermic relationship', 'enzymatic relationship', 'symbiotic relationship', 'primordial relationship']",symbiotic relationship,yes,symbiotic relationship
+"What provides an early, rapid, and nonspecific defense against invading pathogens?","['neutrophils', 'bacteria', 'microorganisms', 'toxins']",neutrophils,yes,neutrophils
+"What common process is used in the production of bread, cheese and alcoholic beverages?","['oxidation', 'cloning', 'fermentation', 'condensation']",fermentation,yes,fermentation
+Most scientists think that ordinary matter makes up how much of the total matter in the universe?,"['about half', 'more than half', 'greater than half', 'less than half']",less than half,yes,less than half
+"If you find dna floating in a cell's cytoplasm, what kind of organism is it?","['xerophytic', 'eurocratic', 'unicellular', 'prokaryotic']",prokaryotic,yes,prokaryotic
+An atom that gains or loses electrons is called what?,"['quark', 'isotope', 'ion', 'photon']",ion,yes,ion
+What part of the cell in plants and algae does photosynthesis take place?,"['mitochondria', 'cell wall', 'fibers', 'organelles']",organelles,yes,organelles
+"What are resources that can not be remade, or would take too long to remake to keep up wiht human use called?","['renewable resources', 'nonrewable resources', 'green resources', 'photoreactive resources']",nonrewable resources,yes,nonrenewable resources
+"Due to the difference in the distribution of charge, water is what type of molecule?","['uneven', 'ionic', 'polar', 'crooked']",polar,yes,polar
+"What are the most energetic of all electromagnetic waves, which can be used to treat cancer?","['gamma rays', 'ultraviolet', 'X-ray', 'infrared']",gamma rays,yes,gamma rays
+What kind of reasoning involves formulating generalizations inferred from careful observation and the analysis of a large amount of data?,"['deductive', 'inductive', 'reflexive', 'skepticism']",deductive,yes,inductive
+In what unit is heat measured in?,"['joules', 'velocities', 'thermals', 'amperes']",joules,yes,joules
+"Several neuropeptides, relatively short chains of amino acids, serve as neurotransmitters that operate via metabotropic what?","['lipids', 'organelles', 'membranes', 'receptors']",receptors,yes,receptors
+What is the most common type of organic compound?,"['hydrocarbons', 'lipids', 'proteins', 'carbohydrates']",carbohydrates,yes,carbohydrates
+"Animals produce most of what chemicals, which are needed to synthesize the fatty acids they need?","['hormones', 'carbohydrates', 'solvents', 'enzymes']",enzymes,yes,enzymes
+What do scientists use to search other planets suitable for living?,"['optics', 'lasers', 'microscopes', 'telescopes']",telescopes,yes,telescopes
+Amoebas and paramecia are examples of what?,"['bacteria', 'protists', 'vertebrates', 'protozoa']",protozoa,yes,protozoa
+Constriction and dilation allow the circulatory system to change the amount of blood flowing to which body parts?,"['muscles', 'organs', 'tissues', 'arteries']",organs,yes,arteries
+What is the very slow movement of rock and soil down a hillside?,"['evaporate', 'creep', 'landslide', 'drop']",creep,yes,creep
+Bryophyta is the formal taxonomic name for the phylum that consists solely of what?,"['lichens', 'trees', 'grasses', 'mosses']",mosses,yes,mosses
+What percentage of men suffer from some form of erectile dysfunction by age 40?,"['approximately 40 percent', 'approximately 10 percent', 'approximately 60 percent', 'approximately 80 percent']",approximately 40 percent,yes,approximately 10 percent
+What is a collection of lymphatic tissue that combines with epithelial tissue lining the mucosa throughout the body?,"['cottony associated lymphoid tissue ( malt )', 'unassociated lymphoid tissue', 'mucosa associated lymphoid tissue (malt)', 'spheroids associated lymphoid tissue ( malt )']",mucosa associated lymphoid tissue (malt),yes,mucosa associated lymphoid tissue (malt)
+Sucrose consists of one molecule of glucose and one molecule of what else?,"['alcohol', 'lactose', 'protein', 'fructose']",fructose,yes,fructose
+A wave is the transfer of energy through what else?,"['liquid', 'gas', 'matter', 'air']",matter,yes,air
+Which of newton's laws states that the quantity of angular momentum in a closed system is fixed?,"['third conservation law', 'sixth conservation law\u200b', 'second conservation law', 'fourth conservation law']",third conservation law,yes,third conservation law
+The process of transferring pollen from the male reproductive part of a flower known as the anthers to the female reproductive part of the flower known as the stigma is referred to as what?,"['pollination', 'inoculation', 'fertilization', 'reproduction']",pollination,yes,pollination
+What are the three primary pigment colors?,"['green, orange, purple', 'red, green, blue', 'cyan, yellow, magenta', 'red, white, blue']","cyan, yellow, magenta",yes,"red, green, blue"
+What are changes in makeup and chemical properties of matter called?,"['carbonate changes', 'chemical changes', 'radical changes', 'mineral changes']",chemical changes,yes,chemical changes
+Only finished mrnas are exported from the nucleus to what?,"['cerebellum', 'electron', 'cytoplasm', 'amino acids']",cytoplasm,yes,cytoplasm

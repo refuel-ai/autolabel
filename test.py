@@ -4,6 +4,18 @@ from refuel_oracle.oracle import Oracle
 
 curr_directory = os.path.dirname(os.path.abspath(__file__))
 
+config_path = os.path.join(curr_directory, "examples/config_imdb_oai.json")
+data_file_name = "examples/filtered_imdb.csv"
+
+# config_path = os.path.join(curr_directory, "examples/config_banking_oai.json")
+# data_file_name = "examples/filtered_banking.csv"
+
+# config_path = os.path.join(curr_directory, "examples/config_emotion_oai.json")
+# data_file_name = "examples/filtered_emotion.csv"
+
+# config_path = os.path.join(curr_directory, "examples/config_ledgar_oai.json")
+# data_file_name = "examples/filtered_ledgar.csv"
+
 # config_path = os.path.join(curr_directory, "examples/config_imdb_oai.json")
 # data_file_name = "examples/filtered_imdb.csv"
 
@@ -16,8 +28,8 @@ curr_directory = os.path.dirname(os.path.abspath(__file__))
 # config_path = os.path.join(curr_directory, "examples/config_sciq_oai.json")
 # data_file_name = "examples/filtered_sciq.csv"
 
-config_path = os.path.join(curr_directory, "examples/config_wikiann.json")
-data_file_name = "examples/wikiann.csv"
+# config_path = os.path.join(curr_directory, "examples/config_wikiann.json")
+# data_file_name = "examples/wikiann.csv"
 
 annotator = Oracle(config_path, debug=True)
 plan_first = False
