@@ -1,0 +1,61 @@
+{
+    "dataset_schema": {
+        "input_columns": [
+            "question",
+            "options"
+        ],
+        "label_column": "answer"
+    },
+    "seed_examples": [
+        {
+            "question": "Neurons are classified based on the direction in which they carry what?",
+            "options": [
+                "nerve impulses",
+                "energy",
+                "metabolism impulses",
+                "neurotransmitters"
+            ],
+            "answer": "nerve impulses"
+        },
+        {
+            "question": "Anabolic reactions require energy, so they are considered what type of reaction?",
+            "options": [
+                "autotrophic",
+                "endothermic",
+                "hydrostatic",
+                "exothermic"
+            ],
+            "answer": "endothermic"
+        },
+        {
+            "question": "Concentric circles that spread out through the water around the droplets are actually types of what moving through the water?",
+            "options": [
+                "winds",
+                "lines",
+                "troughs",
+                "waves"
+            ],
+            "answer": "waves"
+        },
+        {
+            "question": "Photoautotrophs including  (a) plants, (b) algae, and (c) cyanobacteria synthesize their organic compounds via photosynthesis using sunlight as this?",
+            "options": [
+                "energy source",
+                "fuel source",
+                "heating source",
+                "light source4"
+            ],
+            "answer": "energy source"
+        },
+        {
+            "question": "The community of all of the living and nonliving parts of an environment is known as what?",
+            "options": [
+                "habitat",
+                "ecosystem",
+                "population",
+                "biodiversity"
+            ],
+            "answer": "ecosystem"
+        }
+    ]
+}

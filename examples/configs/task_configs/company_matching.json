@@ -1,0 +1,11 @@
+{
+    "project_name": "Company Entity Matching",
+    "task_type": "entity_matching",
+    "provider_name": "openai_chat",
+    "model_name": "gpt-3.5-turbo",
+    "output_format": "no",
+    "model_params": {
+        "max_tokens": 100
+    },
+    "prefix_prompt": "You are an expert at identifying duplicate companies. You are able to read the description of companies from their website and from their wikipedia pages to link them together."
+}

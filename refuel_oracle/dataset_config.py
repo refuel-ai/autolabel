@@ -10,6 +10,7 @@ class DatasetConfig:
     DATASET_SCHEMA_KEY = "dataset_schema"
     DELIMITER_KEY = "delimiter"
     LABELS_LIST_KEY = "labels_list"
+    EMPTY_RESPONSE_KEY = "empty_response"
 
     DEFAULT_SEPARATOR = ","
 
@@ -39,6 +40,9 @@ class DatasetConfig:
 
     def get_delimiter(self) -> str:
         return self.dict[self.DATASET_SCHEMA_KEY].get("delimiter", ",")
+
+    def get_empty_response(self) -> str:
+        return self.config.get(self.EMPTY_RESPONSE_KEY, "")
 
     @classmethod
     def from_json(cls, json_file_path: str, **kwargs):

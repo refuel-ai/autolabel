@@ -57,7 +57,7 @@ class LLMConfig:
 
     def get_provider(self) -> str:
         provider_name = self.dict.get(self.LLM_PROVIDER_KEY, LLMProvider.openai)
-        model_name = self.dict.get_model_name()
+        model_name = self.get_model_name()
         # Converting an open ai provider to openai_chat internally to handle
         # chat models separately
         if provider_name in CHAT_MODELS and model_name in CHAT_MODELS[provider_name][0]:
