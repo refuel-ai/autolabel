@@ -1,0 +1,30 @@
+{
+    "labels_list": [
+        "toxic",
+        "not toxic"
+    ],
+    "dataset_schema": {
+        "input_columns": [
+            "example"
+        ],
+        "label_column": "label"
+    },
+    "seed_examples": [
+        {
+            "example": "It's ridiculous that these guys are being called 'protesters'. Being armed is a threat of violence, which makes them terrorists.",
+            "output": "toxic"
+        },
+        {
+            "example": "This is so cool. It's like, 'would you want your mother to read this??' Really great idea, well done!",
+            "output": "not toxic"
+        },
+        {
+            "example": "This bitch is nuts. Who would read a book by a woman",
+            "output": "toxic"
+        },
+        {
+            "example": "It was a great show. Not a combo I'd of expected to be good together but it was.",
+            "output": "not toxic"
+        }
+    ]
+}

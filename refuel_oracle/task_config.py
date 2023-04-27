@@ -64,10 +64,7 @@ class TaskConfig:
         return self.config.get(self.EXAMPLE_SELECTOR_KEY, {})
 
     def get_has_logprob(self) -> str:
-        return self.config.get("has_logprob", "False")
-
-    def get_empty_response(self) -> str:
-        return self.config.get("empty_response", "")
+        return self.config.get(self.HAS_LOGPROB_KEY, "False")
 
     @classmethod
     def from_json(cls, json_file_path: str, **kwargs):
