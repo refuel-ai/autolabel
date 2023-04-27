@@ -49,6 +49,14 @@ class Oracle:
         output_name: str = None,
         start_index: int = 0,
     ) -> None:
+        """Labels data in a given dataset. Output written to new CSV file.
+
+        Args:
+            dataset: path to CSV dataset to be annotated
+            max_items: maximum items in dataset to be annotated
+            output_name: custom name of output CSV file
+            start_index: skips annotating [0, start_index)
+        """
         if "example_selector" in self.config.keys():
             self.example_selector = ExampleSelector(self.config)
         df, inputs, gt_labels = self._read_csv(dataset, max_items, start_index)
@@ -136,6 +144,11 @@ class Oracle:
         self,
         dataset: str,
     ):
+        """Calculates and prints the cost of calling oracle.annotate() on a given dataset
+
+        Args:
+            dataset: path to a CSV dataset
+        """
         _, inputs, _ = self._read_csv(dataset)
         prompt_list = []
         total_tokens = 0
