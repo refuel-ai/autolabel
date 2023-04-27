@@ -1,20 +1,8 @@
 {
-    "project_name": "Science Question",
-    "task_type": "multi_choice_question_answering",
-    "provider_name": "openai",
-    "model_name": "text-davinci-003",
-    "has_logprob": "False",
-    "compute_confidence": "True",
-    "output_format": "csv",
-    "model_params": {},
-    "empty_response": "yes, ",
-    "json_empty_response": "{\"answered\": \"\", \"label\": \"\"}",
-    "prefix_prompt": "You are an expert at answer science questions.",
     "dataset_schema": {
         "input_columns": [
             "question",
-            "options",
-            "answer"
+            "options"
         ],
         "label_column": "answer"
     },

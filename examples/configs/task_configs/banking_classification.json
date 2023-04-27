@@ -1,0 +1,5 @@
+{
+    "project_name": "BankingClassification",
+    "task_type": "classification",
+    "prefix_prompt": "You are an expert at understanding twitter complaints."
+}

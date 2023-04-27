@@ -1,11 +1,4 @@
 {
-    "project_name": "WikiANN",
-    "task_type": "named_entity_recognition",
-    "provider_name": "huggingface",
-    "model_name": "google/flan-t5-xxl",
-    "quantize": "16",
-    "prompt_encoding": "csv",
-    "prefix_prompt": "",
     "labels_list": [
         "Location",
         "Organization",
@@ -13,11 +6,12 @@
     ],
     "dataset_schema": {
         "input_columns": [
-            "Text"
+            "example"
         ],
         "label_column": "CategorizedLabels",
         "delimiter": "%"
     },
+    "empty_response": "answered:%%entities%Location%Organization%Person",
     "seed_examples": [
         {
             "example": "Shortly afterward , an encouraging response influenced him to go to India ; he arrived at Adyar in 1884 .",

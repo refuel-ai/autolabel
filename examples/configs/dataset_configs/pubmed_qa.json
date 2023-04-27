@@ -1,17 +1,8 @@
 {
-    "project_name": "Medicine Question",
-    "task_type": "multi_choice_question_answering",
-    "provider_name": "huggingface",
-    "model_name": "google/flan-t5-xxl",
-    "quantize": "16",
-    "output_format": "csv",
-    "model_params": {},
-    "prefix_prompt": "You are an expert at answer medicine questions.",
     "dataset_schema": {
         "input_columns": [
             "question",
             "options",
-            "answer",
             "context"
         ],
         "label_column": "answer"

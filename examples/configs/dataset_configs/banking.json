@@ -1,12 +1,4 @@
 {
-    "project_name": "Banking Classification",
-    "task_type": "classification",
-    "provider_name": "huggingface",
-    "model_name": "google/flan-t5-xxl",
-    "quantize": "16",
-    "output_format": "csv",
-    "model_params": {},
-    "prefix_prompt": "You are an expert at understanding twitter complaints.",
     "labels_list": [
         "activate_my_card",
         "age_limit",
@@ -78,7 +70,7 @@
         "transfer_timing",
         "unable_to_verify_identity",
         "verify_my_identity",
-        "verify_source_of_funds",   
+        "verify_source_of_funds",
         "verify_top_up",
         "virtual_card_not_working",
         "visa_or_mastercard",
@@ -88,7 +80,7 @@
     ],
     "dataset_schema": {
         "input_columns": [
-            "description"
+            "example"
         ],
         "label_column": "label"
     },

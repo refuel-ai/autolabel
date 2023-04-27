@@ -1,17 +1,8 @@
 {
-    "project_name": "Entity Matching for Walmart-Amazon",
-    "task_type": "entity_matching",
-    "provider_name": "huggingface",
-    "model_name": "google/flan-t5-xxl",
-    "quantize": "16",
-    "output_format": "no",
-    "model_params": {},
-    "prefix_prompt": "You are an expert at identifying duplicate products.",
     "dataset_schema": {
         "input_columns": [
             "entity1",
-            "entity2",
-            "label"
+            "entity2"
         ],
         "label_column": "label"
     },

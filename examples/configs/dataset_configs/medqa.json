@@ -1,22 +1,8 @@
 {
-    "project_name": "Medical Question",
-    "task_type": "multi_choice_question_answering",
-    "provider_name": "openai",
-    "model_name": "text-davinci-003",
-    "output_format": "json",
-    "csv_empty_response": "yes, ",
-    "empty_response": "{\"answered\": \"\", \"label\": \"\"}",
-    "has_logprob": "False",
-    "compute_confidence": "True",
-    "model_params": {
-        "max_tokens": 512
-    },
-    "prefix_prompt": "You are an expert at answer medical questions.",
     "dataset_schema": {
         "input_columns": [
             "question",
-            "options",
-            "answer"
+            "options"
         ],
         "label_column": "answer"
     },

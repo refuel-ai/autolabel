@@ -1,19 +1,8 @@
 {
-    "project_name": "Company Entity Matching",
-    "task_type": "entity_matching",
-    "provider_name": "huggingface",
-    "model_name": "flan-t5-xxl",
-    "quantize": 16,
-    "output_format": "no",
-    "model_params": {
-        "max_tokens": 100
-    },
-    "prefix_prompt": "You are an expert at identifying duplicate companies. You are able to read the description of companies from their website and from their wikipedia pages to link them together.",
     "dataset_schema": {
         "input_columns": [
             "entity1",
-            "entity2",
-            "label"
+            "entity2"
         ],
         "label_column": "label"
     },

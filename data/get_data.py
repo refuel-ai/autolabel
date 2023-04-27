@@ -301,6 +301,7 @@ def get_civil_comments(output_folder="."):
         return ex
 
     dataset = dataset["test"].map(process, remove_columns=cols)
+    dataset = dataset.rename_column("text", "example")
     dataset.to_csv(f"{output_folder}/civil_comments_test.csv")
 
 
@@ -316,6 +317,20 @@ SUPPORTED_DATASETS = {
     "civil_comments": get_civil_comments,
     "company": get_company,
     "squad_v2": get_squad_v2,
+}
+
+DATASET_TASK_PATH = {
+    "ledgar": "ledgar_classification.json",
+    "banking": "banking_classification.json",
+    "emotion": "emotion_classification.json",
+    "sciq": "sciq_qa.json",
+    "medqa": "medqa_qa.json",
+    "pubmed_qa": "pubmed_qa_qa.json",
+    "walmart_amazon": "walmart_amazon_matching.json",
+    "wikiann": "wikiann_ner.json",
+    "civil_comments": "civil_comments_classification.json",
+    "company": "company_matching.json",
+    "squad_v2": "squad_v2_qa.json",
 }
 
 

@@ -1,12 +1,4 @@
 {
-    "project_name": "Ledgar Classification",
-    "task_type": "classification",
-    "provider_name": "huggingface",
-    "model_name": "google/flan-t5-xxl",
-    "quantize": "16",
-    "output_format": "csv",
-    "model_params": {},
-    "prefix_prompt": "You are an expert at understanding contracts.",
     "labels_list": [
         "Agreements",
         "Amendments",
@@ -110,7 +102,7 @@
     ],
     "dataset_schema": {
         "input_columns": [
-            "description"
+            "example"
         ],
         "label_column": "label"
     },

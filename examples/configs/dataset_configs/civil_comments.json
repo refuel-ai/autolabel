@@ -1,18 +1,11 @@
 {
-    "project_name": "Toxic Comment Classification",
-    "task_type": "classification",
-    "provider_name": "openai_chat",
-    "model_name": "gpt-3.5-turbo",
-    "output_format": "json",
-    "model_params": {},
-    "prefix_prompt": "You are an expert at identifying toxic comments and understanding if a comment is sexually explicit, obscene, toxic, insults a person, demographic or race.",
     "labels_list": [
         "toxic",
         "not toxic"
     ],
     "dataset_schema": {
         "input_columns": [
-            "text"
+            "example"
         ],
         "label_column": "label"
     },

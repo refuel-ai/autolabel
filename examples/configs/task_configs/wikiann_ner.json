@@ -1,0 +1,5 @@
+{
+    "project_name": "WikiANN",
+    "task_type": "named_entity_recognition",
+    "prefix_prompt": ""
+}
