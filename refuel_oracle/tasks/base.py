@@ -82,10 +82,6 @@ class BaseTask(ABC):
         pass
 
     @abstractmethod
-    def parse_llm_response(self, response: Generation, input: str) -> LLMAnnotation:
-        pass
-
-    @abstractmethod
     def eval(self, llm_labels: List, gt_labels: List) -> List[MetricResult]:
         pass
 
@@ -100,16 +96,18 @@ class BaseTask(ABC):
         elif self.output_format == "csv":
             return f"yes, {label}"
 
-    def parse_llm_response(self, response: Generation, prompt: str) -> LLMAnnotation:
+    def parse_llm_response(
+        self, response: Generation, curr_sample: str, prompt: str
+    ) -> LLMAnnotation:
         if self.output_format == "json":
-            return self.parse_json_llm_response(response, prompt)
+            return self.parse_json_llm_response(response, curr_sample, prompt)
         elif self.output_format == "csv":
-            return self.parse_csv_llm_response(response, prompt)
+            return self.parse_csv_llm_response(response, curr_sample, prompt)
         elif self.output_format == "no":
-            return self.parse_no_llm_response(response, prompt)
+            return self.parse_no_llm_response(response, curr_sample, prompt)
 
     def parse_json_llm_response(
-        self, response: Generation, prompt: str
+        self, response: Generation, curr_sample: str, prompt: str
     ) -> LLMAnnotation:
         output = {}
         try:
@@ -130,12 +128,13 @@ class BaseTask(ABC):
             successfully_labeled=successfully_labeled,
             label=llm_label,
             generation_info=response.generation_info,
-            raw_text=response.text,
+            raw_response=response.text,
             prompt=prompt,
+            curr_sample=curr_sample,
         )
 
     def parse_csv_llm_response(
-        self, response: Generation, prompt: str
+        self, response: Generation, curr_sample: str, prompt: str
     ) -> LLMAnnotation:
         completion_text = response.text.strip().split(",")
         if len(completion_text) != 2:
@@ -154,16 +153,20 @@ class BaseTask(ABC):
             successfully_labeled=successfully_labeled,
             label=llm_label,
             generation_info=response.generation_info,
-            raw_text=response.text,
+            raw_response=response.text,
             prompt=prompt,
+            curr_sample=curr_sample,
         )
 
-    def parse_no_llm_response(self, response: Generation, prompt: str) -> LLMAnnotation:
+    def parse_no_llm_response(
+        self, response: Generation, curr_sample: str, prompt: str
+    ) -> LLMAnnotation:
         completion_text = response.text.strip()
         return LLMAnnotation(
             successfully_labeled="yes",
             label=completion_text,
             generation_info=response.generation_info,
-            raw_text=response.text,
+            raw_response=response.text,
             prompt=prompt,
+            curr_sample=curr_sample,
         )

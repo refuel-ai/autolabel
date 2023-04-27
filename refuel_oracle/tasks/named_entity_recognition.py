@@ -132,10 +132,12 @@ class NamedEntityRecognitionTask(BaseTask):
                     json_output["entities"][current_entity].append(text_or_type)
         return json_output
 
-    def parse_llm_response(self, response: Generation, input: Dict) -> LLMAnnotation:
+    def parse_llm_response(
+        self, response: Generation, curr_sample: Dict, prompt: str
+    ) -> LLMAnnotation:
         output = {}
         successfully_labeled = "no"
-        input_str = input["example"]
+        input_str = curr_sample["example"]
         try:
             completion_text = response.text
             if self.config.get("prompt_encoding") == "csv":
@@ -154,13 +156,15 @@ class NamedEntityRecognitionTask(BaseTask):
             llm_label = self.NULL_LABEL
             successfully_labeled = "no"
 
+        print(response)
         # TODO: parse generation info correctly to fetch & transform logprobs -> score
         return LLMAnnotation(
-            input=input_str,
+            curr_sample=input_str,
             successfully_labeled=successfully_labeled,
             label=llm_label,
             generation_info=response.generation_info,
-            raw_text=response.text,
+            raw_response=response.text,
+            prompt=prompt,
         )
 
     def auroc_score_labels(
@@ -199,7 +203,9 @@ class NamedEntityRecognitionTask(BaseTask):
             List[MetricResult]: list of metrics and corresponding values
         """
         gt_labels = [
-            self.add_text_spans(json.loads(gt_labels[index]), llm_labels[index].input)
+            self.add_text_spans(
+                json.loads(gt_labels[index]), llm_labels[index].curr_sample
+            )
             for index in range(len(gt_labels))
         ]
 

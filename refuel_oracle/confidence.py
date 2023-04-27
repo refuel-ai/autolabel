@@ -47,7 +47,7 @@ class ConfidenceCalculator:
         return math.e ** (logprob_cumulative / count) if count > 0 else 0
 
     def p_true(self, model_generation: LLMAnnotation, prompt: str, **kwargs) -> float:
-        p_true_prompt = f"{prompt}{model_generation.raw_text} \n Is the answer to the last example correct? Answer in one word on the same line [Yes/No]: "
+        p_true_prompt = f"{prompt}{model_generation.raw_response} \n Is the answer to the last example correct? Answer in one word on the same line [Yes/No]: "
 
         if kwargs.get("logprobs_available", False):
             response = self.llm.generate([p_true_prompt])
@@ -84,7 +84,7 @@ class ConfidenceCalculator:
         logprobs = None
         if not logprobs_available:
             logprobs = ConfidenceCalculator.compute_confidence(
-                model_generation.prompt, model_generation.raw_text
+                model_generation.prompt, model_generation.raw_response
             )
         else:
             logprobs = model_generation.generation_info["logprobs"]["top_logprobs"]

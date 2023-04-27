@@ -122,7 +122,7 @@ class LLMFactory:
         LLMProvider.openai: {
             "max_tokens": 100,
             "temperature": 0.0,
-            "model_kwargs": {"logprobs": 1},
+            "model_kwargs": {"logprobs": 5},
         },
         LLMProvider.openai_chat: {
             "max_tokens": 100,

@@ -11,7 +11,6 @@
         "label_column": "CategorizedLabels",
         "delimiter": "%"
     },
-    "empty_response": "answered:%%entities%Location%Organization%Person",
     "seed_examples": [
         {
             "example": "Shortly afterward , an encouraging response influenced him to go to India ; he arrived at Adyar in 1884 .",
