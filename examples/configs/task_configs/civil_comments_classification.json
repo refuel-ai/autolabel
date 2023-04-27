@@ -1,0 +1,6 @@
+{
+    "project_name": "ToxicCommentClassification",
+    "task_type": "classification",
+    "output_format": "json",
+    "prefix_prompt": "You are an expert at identifying toxic comments and understanding if a comment is sexually explicit, obscene, toxic, insults a person, demographic or race."
+}

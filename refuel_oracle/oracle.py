@@ -117,7 +117,7 @@ class Oracle:
                                 model_generation=self.task.parse_llm_response(
                                     generation, input_i
                                 ),
-                                empty_response=self.task_config.get_empty_response(),
+                                empty_response=dataset_config.get_empty_response(),
                                 prompt=final_prompts[i],
                             )
                         )
@@ -212,7 +212,7 @@ class Oracle:
 
     def set_task_config(self, task_config: Union[str, Dict], **kwargs):
         if isinstance(task_config, str):
-            self.task_config = TaskConfig.from_json_file(task_config, **kwargs)
+            self.task_config = TaskConfig.from_json(task_config, **kwargs)
         else:
             self.task_config = TaskConfig(task_config)
 
@@ -223,7 +223,7 @@ class Oracle:
 
     def set_llm_config(self, llm_config: Union[str, Dict]):
         if isinstance(llm_config, str):
-            self.llm_config = LLMConfig.from_json_file(llm_config)
+            self.llm_config = LLMConfig.from_json(llm_config)
         else:
             self.llm_config = LLMConfig(llm_config)
 
@@ -232,7 +232,7 @@ class Oracle:
 
     def create_dataset_config(self, dataset_config: Union[str, Dict]):
         if isinstance(dataset_config, str):
-            dataset_config = DatasetConfig.from_json_file(dataset_config)
+            dataset_config = DatasetConfig.from_json(dataset_config)
         else:
             dataset_config = DatasetConfig(dataset_config)
 
