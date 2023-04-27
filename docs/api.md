@@ -24,59 +24,5 @@ Example Output of plan()
     Average cost per example: 0.0006918
 
 
-## __Config__
-
-The Config class is used to parse, validate, and store the information contained in the config.json files.
-
-
-::: refuel_oracle.config.Config.from_json
-    rendering:
-        show_root_heading: yes
-        show_root_full_path: no
-        heading_level: 3
-
-::: refuel_oracle.config.Config.get
-    rendering:
-        show_root_heading: yes
-        show_root_full_path: no
-        heading_level: 3
-
-::: refuel_oracle.config.Config.get_model_name
-    rendering:
-        show_root_heading: yes
-        show_root_full_path: no
-        heading_level: 3
-
-::: refuel_oracle.config.Config.get_project_name
-    rendering:
-        show_root_heading: yes
-        show_root_full_path: no
-        heading_level: 3
-
-::: refuel_oracle.config.Config.get_provider
-    rendering:
-        show_root_heading: yes
-        show_root_full_path: no
-        heading_level: 3
-
-::: refuel_oracle.config.Config.get_task_type
-    rendering:
-        show_root_heading: yes
-        show_root_full_path: no
-        heading_level: 3
-
-::: refuel_oracle.config.Config.keys
-    rendering:
-        show_root_heading: yes
-        show_root_full_path: no
-        heading_level: 3
-
-::: refuel_oracle.config.Config._validate
-    rendering:
-        show_root_heading: yes
-        show_root_full_path: no
-        heading_level: 3
-
-
 
 
