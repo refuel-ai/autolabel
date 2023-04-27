@@ -77,7 +77,26 @@ The DatasetConfig class is used to parse, validate, and store information about 
         show_root_full_path: no
         heading_level: 3
 
+## __TaskConfig__
 
+The TaskConfig class is used to parse, validate, and store information about the annotation task being performed (i.e. Classification, Entity Recognition, Question Answering).
 
+::: refuel_oracle.task_config.TaskConfig._validate
+    rendering:
+        show_root_heading: yes
+        show_root_full_path: no
+        heading_level: 3
+
+::: refuel_oracle.task_config.TaskConfig.from_json
+    rendering:
+        show_root_heading: yes
+        show_root_full_path: no
+        heading_level: 3
+
+::: refuel_oracle.task_config.TaskConfig.get_has_logprob
+    rendering:
+        show_root_heading: yes
+        show_root_full_path: no
+        heading_level: 3
 
 
