@@ -3,7 +3,7 @@
 
 
 
-## __The Oracle Class__ (oracle.py)
+## __The Oracle Class__
 
 ::: refuel_oracle.oracle.Oracle.annotate
     rendering:
@@ -24,9 +24,7 @@ Example Output of plan()
     Average cost per example: 0.0006918
 
 
-## Config
-refuel_oracle/config.py
-
+## __Config__
 
 The Config class is used to parse, validate, and store the information contained in the config.json files.
 
