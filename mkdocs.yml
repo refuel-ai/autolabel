@@ -33,6 +33,7 @@ theme:
 
 plugins:
   - mkdocstrings
+  - search
 
 markdown_extensions:
   - pymdownx.highlight:
