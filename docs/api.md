@@ -24,5 +24,60 @@ Example Output of plan()
     Average cost per example: 0.0006918
 
 
+## __DatasetConfig__
+
+The DatasetConfig class is used to parse, validate, and store information about the dataset being annotated.
+
+
+::: refuel_oracle.dataset_config.DatasetConfig.from_json
+    rendering:
+        show_root_heading: yes
+        show_root_full_path: no
+        heading_level: 3
+
+::: refuel_oracle.dataset_config.DatasetConfig.get
+    rendering:
+        show_root_heading: yes
+        show_root_full_path: no
+        heading_level: 3
+
+::: refuel_oracle.dataset_config.DatasetConfig.get_input_columns
+    rendering:
+        show_root_heading: yes
+        show_root_full_path: no
+        heading_level: 3
+
+::: refuel_oracle.dataset_config.DatasetConfig.get_label_column
+    rendering:
+        show_root_heading: yes
+        show_root_full_path: no
+        heading_level: 3
+
+::: refuel_oracle.dataset_config.DatasetConfig.get_labels_list
+    rendering:
+        show_root_heading: yes
+        show_root_full_path: no
+        heading_level: 3
+
+::: refuel_oracle.dataset_config.DatasetConfig.get_seed_examples
+    rendering:
+        show_root_heading: yes
+        show_root_full_path: no
+        heading_level: 3
+
+::: refuel_oracle.dataset_config.DatasetConfig.get_delimiter
+    rendering:
+        show_root_heading: yes
+        show_root_full_path: no
+        heading_level: 3
+
+::: refuel_oracle.dataset_config.DatasetConfig.keys
+    rendering:
+        show_root_heading: yes
+        show_root_full_path: no
+        heading_level: 3
+
+
+
 
 
