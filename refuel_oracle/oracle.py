@@ -63,6 +63,14 @@ class Oracle:
         output_name: str = None,
         start_index: int = 0,
     ) -> None:
+        """Labels data in a given dataset. Output written to new CSV file.
+
+        Args:
+            dataset: path to CSV dataset to be annotated
+            max_items: maximum items in dataset to be annotated
+            output_name: custom name of output CSV file
+            start_index: skips annotating [0, start_index)
+        """
         dataset_config = self.create_dataset_config(dataset_config)
         self.task.set_dataset_config(dataset_config)
 
@@ -169,6 +177,11 @@ class Oracle:
         max_items: int = None,
         start_index: int = 0,
     ):
+        """Calculates and prints the cost of calling oracle.annotate() on a given dataset
+
+        Args:
+            dataset: path to a CSV dataset
+        """
         dataset_config = self.create_dataset_config(dataset_config)
         self.task.set_dataset_config(dataset_config)
 
