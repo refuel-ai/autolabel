@@ -1,6 +1,6 @@
 import tiktoken
 
-from refuel_oracle.config import Config
+from refuel_oracle.task_config import TaskConfig
 from refuel_oracle.llm import LLMProvider, LLMFactory
 from anthropic import tokenizer as anthropic_tokenizer
 from transformers import AutoTokenizer
@@ -38,11 +38,11 @@ PROVIDER_TO_COST_OF_COMPLETION = {
 }
 
 
-def calculate_num_tokens(config: Config, string: str) -> int:
+def calculate_num_tokens(config: TaskConfig, string: str) -> int:
     """Returns the number of tokens in a text string
 
     Args:
-        config (Config): Task config passed to the library
+        config (TaskConfig): Task config passed to the library
         string (str): string input for which to calculate num tokens
 
     Returns:
@@ -58,11 +58,11 @@ def calculate_num_tokens(config: Config, string: str) -> int:
     return num_tokens
 
 
-def calculate_cost(config: Config, num_tokens: int) -> float:
+def calculate_cost(config: TaskConfig, num_tokens: int) -> float:
     """Calculate total usage cost from num_tokens
 
     Args:
-        config (Config): Task config passed to the library
+        config (TaskConfig): Task config passed to the library
         num_tokens (int): num tokens to compute cost
 
     Returns:

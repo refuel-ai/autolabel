@@ -10,7 +10,7 @@ from langchain.prompts.example_selector import (
 )
 from langchain.prompts.example_selector.ngram_overlap import NGramOverlapExampleSelector
 
-from refuel_oracle.config import Config
+from refuel_oracle.task_config import TaskConfig
 from refuel_oracle.vector_store import VectorStoreWrapper
 
 
@@ -23,7 +23,6 @@ class ExampleSelectorStrategy(str, Enum):
 
 
 class ExampleSelector:
-
     STRATEGY_TO_SELECTOR = {
         ExampleSelectorStrategy.semantic_similarity: SemanticSimilarityExampleSelector,
         ExampleSelectorStrategy.n_gram_overlap: NGramOverlapExampleSelector,
@@ -44,9 +43,9 @@ class ExampleSelector:
         },
     }
 
-    def __init__(self, config: Config) -> None:
-        self.config = config.get("example_selector", {})
-        self.examples = config.get("seed_examples", [])
+    def __init__(self, config: Dict, seed_examples: List[Dict]) -> None:
+        self.config = config
+        self.examples = seed_examples
         self.example_selector_strategy = self.config.get("name", None)
         example_selector_params = self.config.get("params", {})
         example_selector_class = ExampleSelector.STRATEGY_TO_SELECTOR[

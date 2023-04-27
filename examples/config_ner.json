@@ -1,6 +1,6 @@
 {
     "project_name": "CONLL2003 NER",
-    "task_type": "entity_recognition",
+    "task_type": "named_entity_recognition",
     "provider_name": "openai",
     "model_name": "text-davinci-003",
     "model_params": {
