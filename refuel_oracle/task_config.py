@@ -24,6 +24,10 @@ class TaskConfig:
         self.config = config_dict
 
     def _validate(self) -> bool:
+        """
+        Returns:
+            True if valid TaskConfig settings, False otherwise
+        """
         # TODO: validate provider and model names, task, prompt and seed sets, etc
         return True
 
@@ -64,10 +68,23 @@ class TaskConfig:
         return self.config.get(self.EXAMPLE_SELECTOR_KEY, {})
 
     def get_has_logprob(self) -> str:
+        """
+        Returns whether or not current task supports returning LogProb confidence of its response
+        """
         return self.config.get(self.HAS_LOGPROB_KEY, "False")
 
     @classmethod
-    def from_json(cls, json_file_path: str, **kwargs):
+    def from_json(cls, json_file_path: str, **kwargs) -> TaskConfig:
+        """
+        parses a given json file for task settings and returns it in a new Config object
+
+        Args:
+            json_file_path: path to json configuration file
+            **kwargs: additional settings not found in json file can be passed from here
+
+        Returns:
+            Config object containing project settings found in json_file_path
+        """
         try:
             config_dict = json.load(open(json_file_path))
         except ValueError:
