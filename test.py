@@ -36,7 +36,7 @@ data_config_path = "examples/configs/dataset_configs/wikiann.json"
 # config_path = os.path.join(curr_directory, "examples/config_wikiann.json")
 # data_file_name = "examples/wikiann.csv"
 
-o = Oracle(task_config_path, model_config_path)
+o = Oracle(task_config_path, model_config_path, debug=True)
 labels, df, metrics_list = o.annotate(
     data_file_name,
     data_config_path,

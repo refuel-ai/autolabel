@@ -121,7 +121,7 @@ class NamedEntityRecognitionTask(BaseTask):
         split_response = response.split("%")
         json_output = {
             "answered": split_response[1],
-            "entities": {i: [] for i in self.config["labels_list"]},
+            "entities": {i: [] for i in self.dataset_config.get_labels_list()},
         }
         current_entity = None
         for text_or_type in split_response[3:]:
@@ -140,7 +140,7 @@ class NamedEntityRecognitionTask(BaseTask):
         input_str = curr_sample["example"]
         try:
             completion_text = response.text
-            if self.config.get("prompt_encoding") == "csv":
+            if self.output_format == "csv":
                 output = self.jsonify_csv_output(completion_text.strip())
             else:
                 output = json.loads(completion_text.strip())
@@ -156,7 +156,6 @@ class NamedEntityRecognitionTask(BaseTask):
             llm_label = self.NULL_LABEL
             successfully_labeled = "no"
 
-        print(response)
         # TODO: parse generation info correctly to fetch & transform logprobs -> score
         return LLMAnnotation(
             curr_sample=input_str,

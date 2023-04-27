@@ -255,7 +255,9 @@ class Oracle:
             self.llm_config = LLMConfig(llm_config)
 
         self.llm = LLMFactory.from_config(self.llm_config)
-        self.confidence = ConfidenceCalculator(score_type="p_true", llm=self.llm)
+        self.confidence = ConfidenceCalculator(
+            score_type="logprob_average", llm=self.llm
+        )
 
     def create_dataset_config(self, dataset_config: Union[str, Dict]):
         if isinstance(dataset_config, str):

@@ -4,6 +4,7 @@
     "output_format": "json",
     "prefix_prompt": "You are an expert at extracting Person, Organization, and Location entities from text.",
     "compute_confidence": "True",
-    "has_logprob": "True",
-    "empty_response": "{\"answered\":,\"entities\": {\"Location\": [], \"Organization\": [], \"Person\": []}"
+    "has_logprob": "False",
+    "empty_response": "answered:%%entities%Location%Organization%Person",
+    "json_empty_response": "{\"answered\": \"\", \"entities\": {\"Location\": [], \"Organization\": [], \"Person\": []}}"
 }
