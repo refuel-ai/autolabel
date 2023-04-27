@@ -142,6 +142,7 @@ class EntityMatchingTask(BaseTask):
             label=llm_label,
             generation_info=response.generation_info,
             prompt=prompt,
+            raw_text=response.text,
         )
 
     def parse_csv_llm_response(
@@ -157,6 +158,7 @@ class EntityMatchingTask(BaseTask):
                 label=llm_label,
                 generation_info=response.generation_info,
                 prompt=prompt,
+                raw_text=response.text,
             )
 
         successfully_labeled = completion_text[0].strip().lower()
@@ -170,6 +172,8 @@ class EntityMatchingTask(BaseTask):
             successfully_labeled=successfully_labeled,
             label=llm_label,
             generation_info=response.generation_info,
+            raw_text=response.text,
+            prompt=prompt,
         )
 
     def parse_no_llm_response(self, response: Generation, prompt: str) -> LLMAnnotation:

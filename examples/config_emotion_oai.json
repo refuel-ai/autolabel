@@ -8,8 +8,9 @@
     "model_params": {
         "max_tokens": 512
     },
-    "output_format": "csv",
-    "empty_response": ", ",
+    "output_format": "json",
+    "empty_response": "{\"answered\": \"\", \"label\": \"\"}",
+    "csv_empty_response": ", ",
     "prefix_prompt": "You are an expert at understanding emotions of human texts.",
     "labels_list": [
         "sadness",

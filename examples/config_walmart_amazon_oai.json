@@ -3,11 +3,14 @@
     "task_type": "entity_matching",
     "provider_name": "openai",
     "model_name": "text-davinci-003",
-    "has_logprob": "True",
+    "has_logprob": "False",
+    "compute_confidence": "True",
     "model_params": {
         "max_tokens": 512
     },
     "output_format": "json",
+    "csv_empty_response": "yes, ",
+    "empty_response": "{\"answered\": \"\", \"label\": \"not\"}",
     "prefix_prompt": "You are an expert at identifying duplicate products.",
     "dataset_schema": {
         "input_columns": [
@@ -17,7 +20,6 @@
         ],
         "label_column": "label"
     },
-    "empty_response": "{\"answered\": \"\", \"label\": \"\"}",
     "seed_examples": [
         {
             "entity1": "Title: lexmark extra high yield return pgm print cartridge - magenta; Category: printers; Brand: lexmark; ModelNo: c782u1mg; Price: 214.88;",

@@ -4,8 +4,8 @@ from refuel_oracle.oracle import Oracle
 
 curr_directory = os.path.dirname(os.path.abspath(__file__))
 
-config_path = os.path.join(curr_directory, "examples/config_imdb_oai.json")
-data_file_name = "examples/filtered_imdb.csv"
+# config_path = os.path.join(curr_directory, "examples/config_imdb_oai.json")
+# data_file_name = "examples/filtered_imdb.csv"
 
 # config_path = os.path.join(curr_directory, "examples/config_banking_oai.json")
 # data_file_name = "examples/filtered_banking.csv"
@@ -16,9 +16,6 @@ data_file_name = "examples/filtered_imdb.csv"
 # config_path = os.path.join(curr_directory, "examples/config_ledgar_oai.json")
 # data_file_name = "examples/filtered_ledgar.csv"
 
-# config_path = os.path.join(curr_directory, "examples/config_imdb_oai.json")
-# data_file_name = "examples/filtered_imdb.csv"
-
 # config_path = os.path.join(curr_directory, "examples/config_medqa_oai.json")
 # data_file_name = "examples/filtered_medqa.csv"
 
@@ -27,6 +24,12 @@ data_file_name = "examples/filtered_imdb.csv"
 
 # config_path = os.path.join(curr_directory, "examples/config_sciq_oai.json")
 # data_file_name = "examples/filtered_sciq.csv"
+
+# config_path = os.path.join(curr_directory, "examples/config_medqa_oai.json")
+# data_file_name = "examples/filtered_medqa.csv"
+
+config_path = os.path.join(curr_directory, "examples/config_pubmed_qa_oai.json")
+data_file_name = "examples/filtered_pubmed.csv"
 
 # config_path = os.path.join(curr_directory, "examples/config_wikiann.json")
 # data_file_name = "examples/wikiann.csv"

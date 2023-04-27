@@ -7,7 +7,8 @@
     "compute_confidence": "True",
     "output_format": "csv",
     "model_params": {},
-    "empty_response": "{\"answered\": \"\", \"label\": \"\"}",
+    "empty_response": "yes, ",
+    "json_empty_response": "{\"answered\": \"\", \"label\": \"\"}",
     "prefix_prompt": "You are an expert at answer science questions.",
     "dataset_schema": {
         "input_columns": [

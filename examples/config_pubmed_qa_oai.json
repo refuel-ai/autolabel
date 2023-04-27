@@ -3,9 +3,14 @@
     "task_type": "multi_choice_question_answering",
     "provider_name": "openai",
     "model_name": "text-davinci-003",
-    "model_params": {},
-    "empty_response": "{\"answered\": \"\", \"label\": \"\"}",
-    "has_logprob": "True",
+    "has_logprob": "False",
+    "compute_confidence": "True",
+    "model_params": {
+        "max_tokens": 512
+    },
+    "output_format": "csv",
+    "empty_response": "yes, ",
+    "json_empty_response": "{\"answered\": \"\", \"label\": \"\"}",
     "prefix_prompt": "You are an expert at answering medicine questions.",
     "dataset_schema": {
         "input_columns": [

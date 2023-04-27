@@ -37,14 +37,14 @@ class ConfidenceCalculator:
         for token in logprobs:
             token_str = list(token.keys())[0]
             if token_str not in self.tokens_to_ignore:
-                if token_str not in empty_response_template:
+                if token_str.lower() not in empty_response_template:
                     logprob_cumulative += token[token_str]
                     count += 1
                 else:
                     empty_response_template = empty_response_template.replace(
-                        token_str, "", 1
+                        token_str.lower(), "", 1
                     )
-        return math.e ** (logprob_cumulative / count)
+        return math.e ** (logprob_cumulative / count) if count > 0 else 0
 
     def p_true(self, model_generation: LLMAnnotation, prompt: str, **kwargs) -> float:
         p_true_prompt = f"{prompt}{model_generation.raw_text} \n Is the answer to the last example correct? Answer in one word on the same line [Yes/No]: "
@@ -100,7 +100,6 @@ class ConfidenceCalculator:
 
     @classmethod
     def compute_confidence(cls, model_input, model_output):
-        model_output = model_output.replace("Negative", "Neg")
         try:
             prediction_logprob = requests.post(
                 "http://129.146.101.153:3456/get_probs/",
@@ -108,7 +107,7 @@ class ConfidenceCalculator:
             )
             return json.loads(prediction_logprob.content.decode("utf-8"))["probs"]
         except Exception as e:
-            raise AttributeError(f"Unable to compute confidence prediction {e}")
+            raise Exception(f"Unable to compute confidence prediction {e}")
 
     @classmethod
     def compute_completion(cls, confidence: List[float], threshold: float):
