@@ -1,0 +1,5 @@
+{
+    "project_name": "Entity Matching for Walmart-Amazon",
+    "task_type": "entity_matching",
+    "prefix_prompt": "You are an expert at identifying duplicate products."
+}

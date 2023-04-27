@@ -30,7 +30,7 @@ def get_ledgar(output_folder="."):
 
     test_ds = map_label_to_string(test_ds, "label")
 
-    test_ds = test_ds.rename_column("text", "description")
+    test_ds = test_ds.rename_column("text", "example")
     test_ds.to_csv(f"{output_folder}/ledgar_test.csv")
 
 
@@ -40,7 +40,7 @@ def get_banking(output_folder="."):
 
     test_ds = map_label_to_string(test_ds, "label")
 
-    test_ds = test_ds.rename_column("text", "description")
+    test_ds = test_ds.rename_column("text", "example")
     test_ds.to_csv(f"{output_folder}/banking_test.csv")
 
 
@@ -50,7 +50,7 @@ def get_emotion(output_folder="."):
 
     test_ds = map_label_to_string(test_ds, "label")
 
-    test_ds = test_ds.rename_column("text", "description")
+    test_ds = test_ds.rename_column("text", "example")
     test_ds.to_csv(f"{output_folder}/emotion_test.csv")
 
 
@@ -125,6 +125,22 @@ def get_pubmed_qa(output_folder="."):
     test_ds.to_csv(f"{output_folder}/pubmed_qa_test.csv")
 
 
+def get_squad_v2(output_folder="."):
+    dataset = load_dataset("squad_v2", split="validation")
+
+    def process(ex):
+        ex["answer"] = (
+            ex["answers"]["text"][0]
+            if len(ex["answers"]["text"]) > 0
+            else "unanswerable"
+        )
+        return ex
+
+    dataset = dataset.map(process, remove_columns=["answers", "id", "title"])
+    dataset = dataset.shuffle()
+    dataset.to_csv(f"{output_folder}/squad_v2_test.csv")
+
+
 def get_walmart_amazon(output_folder="."):
     urllib.request.urlretrieve(
         "https://pages.cs.wisc.edu/~anhai/data1/deepmatcher_data/Structured/Walmart-Amazon/exp_data/tableA.csv",
@@ -176,9 +192,58 @@ def get_walmart_amazon(output_folder="."):
         dict_writer.writerows(dataset)
 
 
+def get_company(output_folder="."):
+    urllib.request.urlretrieve(
+        "https://pages.cs.wisc.edu/~anhai/data1/deepmatcher_data/Textual/Company/exp_data/tableA.csv",
+        f"{output_folder}/tmp/tableA.csv",
+    )
+    urllib.request.urlretrieve(
+        "https://pages.cs.wisc.edu/~anhai/data1/deepmatcher_data/Textual/Company/exp_data/tableB.csv",
+        f"{output_folder}/tmp/tableB.csv",
+    )
+    urllib.request.urlretrieve(
+        "https://pages.cs.wisc.edu/~anhai/data1/deepmatcher_data/Textual/Company/exp_data/test.csv",
+        f"{output_folder}/tmp/test.csv",
+    )
+
+    test_ds = pd.read_csv(f"{output_folder}/tmp/test.csv")
+    tableA = pd.read_csv(f"{output_folder}/tmp/tableA.csv", index_col=0)
+    tableB = pd.read_csv(f"{output_folder}/tmp/tableB.csv", index_col=0)
+
+    tableA["text"] = tableA.apply(
+        lambda x: str(x["content"])[:1200],
+        axis=1,
+    )
+
+    tableB["text"] = tableB.apply(
+        lambda x: str(x["content"])[:1200],
+        axis=1,
+    )
+
+    test_ds["entity1"] = test_ds.apply(
+        lambda x: tableA.loc[x["ltable_id"]]["text"], axis=1
+    )
+
+    test_ds["entity2"] = test_ds.apply(
+        lambda x: tableB.loc[x["rtable_id"]]["text"], axis=1
+    )
+    test_ds["label"] = test_ds.apply(
+        lambda x: "duplicate" if x["label"] == 1 else "not duplicate", axis=1
+    )
+
+    dataset = test_ds.drop(columns=["ltable_id", "rtable_id"])
+    dataset = dataset.to_dict(orient="records")
+    keys = dataset[0].keys()
+
+    with open(f"{output_folder}/company_test.csv", "w", newline="") as output_file:
+        dict_writer = csv.DictWriter(output_file, keys)
+        dict_writer.writeheader()
+        dict_writer.writerows(dataset)
+
+
 def get_wikiann(output_folder="."):
     dataset_csv = open(f"{output_folder}/wikiann_test.csv", "w")
-    dataset_csv.write("Text%IndividualLabels%CategorizedLabels\n")
+    dataset_csv.write("example%IndividualLabels%CategorizedLabels\n")
     dataset = load_dataset("wikiann", "en")
     entity_category_mapping = {
         "LOC": "Location",
@@ -212,6 +277,34 @@ def get_wikiann(output_folder="."):
     dataset_csv.close()
 
 
+def get_civil_comments(output_folder="."):
+    dataset = load_dataset("civil_comments")
+    cols = [
+        "toxicity",
+        "severe_toxicity",
+        "obscene",
+        "threat",
+        "insult",
+        "identity_attack",
+        "sexual_explicit",
+    ]
+
+    def process(ex):
+        labels = []
+        for col in cols:
+            if ex[col] >= 0.5:
+                labels.append(col)
+        if len(labels) > 0:
+            ex["label"] = "toxic"
+        else:
+            ex["label"] = "not toxic"
+        return ex
+
+    dataset = dataset["test"].map(process, remove_columns=cols)
+    dataset = dataset.rename_column("text", "example")
+    dataset.to_csv(f"{output_folder}/civil_comments_test.csv")
+
+
 SUPPORTED_DATASETS = {
     "ledgar": get_ledgar,
     "banking": get_banking,
@@ -221,6 +314,23 @@ SUPPORTED_DATASETS = {
     "pubmed_qa": get_pubmed_qa,
     "walmart_amazon": get_walmart_amazon,
     "wikiann": get_wikiann,
+    "civil_comments": get_civil_comments,
+    "company": get_company,
+    "squad_v2": get_squad_v2,
+}
+
+DATASET_TASK_PATH = {
+    "ledgar": "ledgar_classification.json",
+    "banking": "banking_classification.json",
+    "emotion": "emotion_classification.json",
+    "sciq": "sciq_qa.json",
+    "medqa": "medqa_qa.json",
+    "pubmed_qa": "pubmed_qa_qa.json",
+    "walmart_amazon": "walmart_amazon_matching.json",
+    "wikiann": "wikiann_ner.json",
+    "civil_comments": "civil_comments_classification.json",
+    "company": "company_matching.json",
+    "squad_v2": "squad_v2_qa.json",
 }
 
 
