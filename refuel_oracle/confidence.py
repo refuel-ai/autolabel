@@ -19,6 +19,10 @@ class ConfidenceCalculator:
         self.score_type = score_type
         self.llm = llm
         self.tokens_to_ignore = {"<unk>"}
+        self.SUPPORTED_CALCULATORS = {
+            "logprob_average": self.logprob_average,
+            "p_true": self.p_true,
+        }
 
     def logprob_average(
         self,
@@ -73,12 +77,7 @@ class ConfidenceCalculator:
     def calculate(
         self, model_generation: LLMAnnotation, logprobs_available: bool, **kwargs
     ) -> LLMAnnotation:
-        SUPPORTED_CALCULATORS = {
-            "logprob_average": self.logprob_average,
-            "p_true": self.p_true,
-        }
-
-        if self.score_type not in SUPPORTED_CALCULATORS:
+        if self.score_type not in self.SUPPORTED_CALCULATORS:
             raise NotImplementedError()
 
         logprobs = None
@@ -89,7 +88,7 @@ class ConfidenceCalculator:
         else:
             logprobs = model_generation.generation_info["logprobs"]["top_logprobs"]
 
-        confidence = SUPPORTED_CALCULATORS[self.score_type](
+        confidence = self.SUPPORTED_CALCULATORS[self.score_type](
             model_generation=model_generation,
             logprobs=logprobs,
             logprobs_available=logprobs_available,
