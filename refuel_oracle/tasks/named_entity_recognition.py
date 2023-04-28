@@ -274,11 +274,11 @@ class NamedEntityRecognitionTask(BaseTask):
         ]
 
         eval_metrics_map = {
-            "support": [Metric.SUPPORT, []],
-            "f1": [Metric.F1, []],
-            "threshold": [Metric.THRESHOLD, []],
-            "accuracy": [Metric.ACCURACY, []],
-            "completion_rate": [Metric.COMPLETION_RATE, []],
+            Metric.F1: [],
+            Metric.SUPPORT: [],
+            Metric.THRESHOLD: [],
+            Metric.ACCURACY: [],
+            Metric.COMPLETION_RATE: [],
         }
         eval_metrics = []
         thresholds = [float("-inf")]
@@ -326,18 +326,18 @@ class NamedEntityRecognitionTask(BaseTask):
             )
 
             for metric in curr_threshold_metrics:
-                eval_metrics_map[metric.name][1].append(metric.value)
+                eval_metrics_map[metric.metric_type].append(metric.value)
 
-            eval_metrics_map["completion_rate"][1].append(
+            eval_metrics_map[Metric.COMPLETION_RATE].append(
                 len(curr_llm_labels) / float(len(gt_labels))
             )
-            eval_metrics_map["threshold"][1].append(threshold)
+            eval_metrics_map[Metric.THRESHOLD].append(threshold)
         eval_metrics.extend(
             [
                 MetricResult(
-                    metric_type=eval_metrics_map[i][0],
-                    name=i,
-                    value=eval_metrics_map[i][1],
+                    metric_type=i,
+                    name=i.value,
+                    value=eval_metrics_map[i],
                 )
                 for i in eval_metrics_map.keys()
             ]

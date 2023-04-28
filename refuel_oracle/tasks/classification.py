@@ -108,10 +108,10 @@ class ClassificationTask(BaseTask):
         """
 
         eval_metrics_map = {
-            "support": [Metric.SUPPORT, []],
-            "threshold": [Metric.THRESHOLD, []],
-            "accuracy": [Metric.ACCURACY, []],
-            "completion_rate": [Metric.COMPLETION_RATE, []],
+            Metric.SUPPORT: [],
+            Metric.THRESHOLD: [],
+            Metric.ACCURACY: [],
+            Metric.COMPLETION_RATE: [],
         }
         eval_metrics = []
         thresholds = [float("-inf")]
@@ -157,21 +157,21 @@ class ClassificationTask(BaseTask):
             ) = self.get_labels_predictions_with_threshold(
                 gt_labels, llm_labels, threshold
             )
-            eval_metrics_map["support"][1].append(len(curr_gt_labels))
-            eval_metrics_map["completion_rate"][1].append(
+            eval_metrics_map[Metric.SUPPORT].append(len(curr_gt_labels))
+            eval_metrics_map[Metric.COMPLETION_RATE].append(
                 len(curr_gt_labels) / float(len(gt_labels))
             )
-            eval_metrics_map["accuracy"][1].append(
+            eval_metrics_map[Metric.ACCURACY].append(
                 accuracy_score(curr_gt_labels, curr_llm_labels)
             )
-            eval_metrics_map["threshold"][1].append(threshold)
+            eval_metrics_map[Metric.THRESHOLD].append(threshold)
 
         eval_metrics.extend(
             [
                 MetricResult(
-                    metric_type=eval_metrics_map[i][0],
-                    name=i,
-                    value=eval_metrics_map[i][1],
+                    metric_type=i,
+                    name=i.value,
+                    value=eval_metrics_map[i],
                 )
                 for i in eval_metrics_map.keys()
             ]

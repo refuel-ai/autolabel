@@ -2,7 +2,7 @@
     "project_name": "ScienceQuestion",
     "task_type": "multi_choice_question_answering",
     "prefix_prompt": "You are an expert at answer science questions.",
-    "compute_confidence": "False",
+    "compute_confidence": "True",
     "has_logprob": "False",
     "output_format": "json",
     "json_empty_response": "{\"answered\": \"\", \"label\": \"\"}"
