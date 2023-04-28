@@ -62,9 +62,6 @@ class DatasetConfig:
         """
         return self.dict[self.DATASET_SCHEMA_KEY].get("delimiter", ",")
 
-    def get_empty_response(self) -> str:
-        return self.config.get(self.EMPTY_RESPONSE_KEY, "")
-
     @classmethod
     def from_json(cls, json_file_path: str, **kwargs):
         """

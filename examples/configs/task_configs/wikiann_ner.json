@@ -1,5 +1,10 @@
 {
     "project_name": "WikiANN",
     "task_type": "named_entity_recognition",
-    "prefix_prompt": ""
+    "output_format": "json",
+    "prefix_prompt": "You are an expert at extracting Person, Organization, and Location entities from text.",
+    "compute_confidence": "True",
+    "has_logprob": "False",
+    "empty_response": "answered:%%entities%Location%Organization%Person",
+    "json_empty_response": "{\"answered\": \"\", \"entities\": {\"Location\": [], \"Organization\": [], \"Person\": []}}"
 }
