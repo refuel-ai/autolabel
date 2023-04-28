@@ -67,11 +67,11 @@ class TaskConfig:
     def get_example_selector(self) -> str:
         return self.config.get(self.EXAMPLE_SELECTOR_KEY, {})
 
-    def get_has_logprob(self) -> str:
+    def get_has_logprob(self) -> bool:
         """
         Returns whether or not current task supports returning LogProb confidence of its response
         """
-        return self.config.get(self.HAS_LOGPROB_KEY, "False")
+        return self.config.get(self.HAS_LOGPROB_KEY, "False") == "True"
 
     def get_compute_confidence(self) -> bool:
         return self.config.get(self.COMPUTE_CONFIDENCE_KEY, "False") == "True"
