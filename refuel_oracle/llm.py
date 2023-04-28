@@ -84,7 +84,7 @@ class LLMConfig:
         """
         Returns whether or not current task supports returning LogProb confidence of its response
         """
-        return self.config.get(self.HAS_LOGPROB_KEY, "False") == "True"
+        return self.dict.get(self.HAS_LOGPROB_KEY, "False") == "True"
 
     @classmethod
     def from_json(cls, json_file_path: str, **kwargs):
