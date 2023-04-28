@@ -28,9 +28,14 @@ model_config_path = "examples/configs/llm_configs/davinci.json"
 # config_path = os.path.join(curr_directory, "examples/config_medqa_oai.json")
 # data_file_name = "examples/filtered_medqa.csv"
 
-task_config_path = "examples/configs/task_configs/wikiann_ner.json"
-data_file_name = "data/wikiann_test.csv"
-data_config_path = "examples/configs/dataset_configs/wikiann.json"
+task_config_path = "examples/configs/task_configs/sciq_qa.json"
+data_file_name = "data/sciq_test.csv"
+data_config_path = "examples/configs/dataset_configs/sciq.json"
+
+
+# task_config_path = "examples/configs/task_configs/wikiann_ner.json"
+# data_file_name = "data/wikiann_test.csv"
+# data_config_path = "examples/configs/dataset_configs/wikiann.json"
 
 
 # config_path = os.path.join(curr_directory, "examples/config_wikiann.json")

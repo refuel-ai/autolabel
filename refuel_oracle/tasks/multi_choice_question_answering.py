@@ -107,11 +107,25 @@ class MultiChoiceQATask(BaseTask):
         labels = []
         confidences = []
         for index, llm_label in enumerate(llm_labels):
-            labels.append(llm_label.label == gt_labels[index])
+            labels.append(
+                normalize_text(llm_label.label.lower())
+                == normalize_text(gt_labels[index].lower())
+            )
             confidences.append(llm_label.confidence_score)
 
         ConfidenceCalculator.plot_data_distribution(labels, confidences)
         return labels, confidences
+
+    def get_labels_predictions_with_threshold(self, gt_labels, llm_labels, threshold):
+        answered_gt_labels, answered_llm_preds = [], []
+        for index, l in enumerate(llm_labels):
+            if l.label != self.NULL_LABEL_TOKEN and (
+                l.confidence_score is None or l.confidence_score >= threshold
+            ):
+                answered_llm_preds.append(normalize_text(l.label.lower()))
+                answered_gt_labels.append(normalize_text(gt_labels[index].lower()))
+
+        return answered_gt_labels, answered_llm_preds
 
     def eval(
         self, llm_labels: List[LLMAnnotation], gt_labels: List[str]
@@ -125,64 +139,63 @@ class MultiChoiceQATask(BaseTask):
         Returns:
             List[MetricResult]: list of metrics and corresponding values
         """
+
+        eval_metrics_map = {
+            "support": [Metric.SUPPORT, []],
+            "f1": [Metric.F1, []],
+            "threshold": [Metric.THRESHOLD, []],
+            "accuracy": [Metric.ACCURACY, []],
+            "completion_rate": [Metric.COMPLETION_RATE, []],
+        }
         eval_metrics = []
-        if llm_labels[0].confidence_score is not None:
-            # Assuming that if the first element has a confidence score
-            # then all following elements have a confidence score too
+        thresholds = [float("-inf")]
+
+        if self.config.get_compute_confidence() == "True":
             labels, confidences = self.auroc_score_labels(gt_labels, llm_labels)
+            value, meaningful_thresholds = ConfidenceCalculator.compute_auroc(
+                labels, confidences
+            )
+            thresholds.extend(meaningful_thresholds)
             eval_metrics.append(
                 MetricResult(
                     metric_type=Metric.AUROC,
                     name="auroc",
-                    value=ConfidenceCalculator.compute_auroc(labels, confidences),
+                    value=value,
                 )
             )
 
-        # support
-        support = len(gt_labels)
-        eval_metrics.append(
-            MetricResult(metric_type=Metric.SUPPORT, name="support", value=support)
-        )
-
-        # completion rate
-        num_labeled = sum([l.successfully_labeled.lower() == "yes" for l in llm_labels])
-        fraction_completed = round(num_labeled * 1.0 / support, 2)
-        eval_metrics.append(
-            MetricResult(
-                metric_type=Metric.COMPLETION_RATE,
-                name="completion_rate",
-                value=fraction_completed,
+        for threshold in thresholds:
+            (
+                curr_gt_labels,
+                curr_llm_labels,
+            ) = self.get_labels_predictions_with_threshold(
+                gt_labels, llm_labels, threshold
             )
+            eval_metrics_map["support"][1].append(len(curr_gt_labels))
+            eval_metrics_map["completion_rate"][1].append(
+                len(curr_gt_labels) / float(len(gt_labels))
+            )
+            eval_metrics_map["accuracy"][1].append(
+                accuracy_score(curr_gt_labels, curr_llm_labels)
+            )
+            eval_metrics_map["threshold"][1].append(threshold)
+
+            f1 = sum(
+                [
+                    compute_f1(curr_llm_labels[index], curr_gt_labels[index])
+                    for index in range(len(curr_llm_labels))
+                ]
+            )
+            eval_metrics_map["f1"][1].append(float(f1) / (len(curr_llm_labels) + 1e-5))
+
+        eval_metrics.extend(
+            [
+                MetricResult(
+                    metric_type=eval_metrics_map[i][0],
+                    name=i,
+                    value=eval_metrics_map[i][1],
+                )
+                for i in eval_metrics_map.keys()
+            ]
         )
-
-        # accuracy
-        pred_labels = [l.label for l in llm_labels]
-        filtered_gt_labels = []
-        filtered_pred_labels = []
-        for ind, label in enumerate(pred_labels):
-            if label != self.NULL_LABEL_TOKEN:
-                filtered_gt_labels.append(normalize_text(gt_labels[ind].lower()))
-                filtered_pred_labels.append(normalize_text(pred_labels[ind].lower()))
-        if len(filtered_gt_labels) == 0:
-            logger.error("No labels were successfully labeled by the LLM")
-            accuracy = 0
-        else:
-            accuracy = accuracy_score(filtered_gt_labels, filtered_pred_labels)
-        eval_metrics.append(
-            MetricResult(metric_type=Metric.ACCURACY, name="accuracy", value=accuracy)
-        )
-
-        f1 = 0
-        cnt_f1 = 0
-        for ind, label in enumerate(pred_labels):
-            if label != self.NULL_LABEL_TOKEN:
-                f1 += compute_f1(pred_labels[ind], gt_labels[ind])
-                cnt_f1 += 1
-        eval_metrics.append(
-            MetricResult(metric_type=Metric.F1, name="f1", value=f1 / cnt_f1)
-        )
-
-        # error examples
-        # TODO, need a way to access input dataset in order to display them here
-
         return eval_metrics

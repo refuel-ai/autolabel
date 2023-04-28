@@ -97,14 +97,14 @@ class BaseTask(ABC):
             return f"yes, {label}"
 
     def parse_llm_response(
-        self, response: Generation, curr_sample: str, prompt: str
+        self, response: Generation, curr_sample: Dict, prompt: str
     ) -> LLMAnnotation:
         if self.output_format == "json":
-            return self.parse_json_llm_response(response, curr_sample, prompt)
+            return self.parse_json_llm_response(response, str(curr_sample), prompt)
         elif self.output_format == "csv":
-            return self.parse_csv_llm_response(response, curr_sample, prompt)
+            return self.parse_csv_llm_response(response, str(curr_sample), prompt)
         elif self.output_format == "no":
-            return self.parse_no_llm_response(response, curr_sample, prompt)
+            return self.parse_no_llm_response(response, str(curr_sample), prompt)
 
     def parse_json_llm_response(
         self, response: Generation, curr_sample: str, prompt: str
