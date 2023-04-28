@@ -249,4 +249,3 @@ class Oracle:
             dataset_config = DatasetConfig(dataset_config)
 
         return dataset_config
-
