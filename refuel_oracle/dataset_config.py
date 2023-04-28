@@ -66,7 +66,7 @@ class DatasetConfig:
         return self.config.get(self.EMPTY_RESPONSE_KEY, "")
 
     @classmethod
-    def from_json(cls, json_file_path: str, **kwargs) -> DatasetConfig:
+    def from_json(cls, json_file_path: str, **kwargs):
         """
         parses a given json file for project settings and returns it in a new Config object
 
