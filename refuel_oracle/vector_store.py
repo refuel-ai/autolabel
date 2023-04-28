@@ -1,10 +1,7 @@
 from __future__ import annotations
 
 import heapq
-import logging
-import uuid
 from typing import (
-    TYPE_CHECKING,
     Any,
     Callable,
     Dict,
@@ -21,12 +18,6 @@ from langchain.docstore.document import Document
 from langchain.embeddings.base import Embeddings
 from langchain.vectorstores.base import VectorStore
 from torch import Tensor
-
-logger = logging.getLogger(__name__)
-
-
-def _results_to_docs(results: Any) -> List[Document]:
-    return [doc for doc, _ in _results_to_docs_and_scores(results)]
 
 
 def _results_to_docs_and_scores(results: Any) -> List[Tuple[Document, float]]:
