@@ -91,10 +91,10 @@ class BaseTask(ABC):
 
     def _to_output_format(self, label: str) -> str:
         if self.output_format == "json":
-            output = {"answered": "yes", "label": label}
+            output = {"label": label}
             return json.dumps(output)
         elif self.output_format == "csv":
-            return f"yes, {label}"
+            return f"{label}"
 
     def parse_llm_response(
         self, response: Generation, curr_sample: Dict, prompt: str
@@ -117,15 +117,12 @@ class BaseTask(ABC):
         try:
             completion_text = extract_valid_json_substring(response.text)
             output = json.loads(completion_text.strip())
+            successfully_labeled = "yes"
+            llm_label = str(output.get("label") or self.NULL_LABEL_TOKEN)
         except Exception as e:
-            logger.info(f"Error parsing LLM response: {response.text}")
-
-        successfully_labeled = output.get("answered", "no")
-        if successfully_labeled.lower() == "yes":
-            llm_label = output.get("label") or self.NULL_LABEL_TOKEN
-            llm_label = str(llm_label)
-        else:
+            successfully_labeled = "no"
             llm_label = self.NULL_LABEL_TOKEN
+            logger.info(f"Error parsing LLM response: {response.text}. {repr(e)}")
 
         # TODO: parse generation info correctly to fetch & transform logprobs -> score
         return LLMAnnotation(

@@ -13,8 +13,10 @@ from sklearn.metrics import ConfusionMatrixDisplay, accuracy_score, confusion_ma
 
 
 class ClassificationTask(BaseTask):
-    JSON_OUTPUT_FORMAT_PROMPT = 'You will return the answer in JSON format with two keys: {"answered": "can you answer this question. say yes or no", "label": "the correct label"}'
-    CSV_OUTPUT_FORMAT_PROMPT = 'You will return the answer in CSV format with two elements: "can you answer this question. say Yes or No", "the correct label"'
+    JSON_OUTPUT_FORMAT_PROMPT = 'You will return the answer in JSON format with one key: {"label": "the correct label"}'
+    CSV_OUTPUT_FORMAT_PROMPT = (
+        'You will return the answer in CSV format with one element: "the correct label"'
+    )
     NO_OUTPUT_FORMAT_PROMPT = 'You will return the answer in plain text format with one element: "the correct label"'
 
     task_prompt = "Your job is to correctly label the provided input example into one of the following {num_labels} categories.\nCategories:\n{labels_list}\n"
