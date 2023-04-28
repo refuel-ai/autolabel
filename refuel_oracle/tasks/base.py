@@ -137,8 +137,8 @@ class BaseTask(ABC):
     def parse_csv_llm_response(
         self, response: Generation, curr_sample: str, prompt: str
     ) -> LLMAnnotation:
-        completion_text = response.text.strip().split(",")
-        if len(completion_text) != 2:
+        completion_text = response.text.strip()
+        if len(completion_text) == 0:
             successfully_labeled = "no"
             llm_label = self.NULL_LABEL_TOKEN
             logger.error(f"Error parsing LLM response: {response.text}")

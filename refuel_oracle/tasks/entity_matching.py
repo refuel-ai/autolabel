@@ -14,8 +14,8 @@ transformers.logging.set_verbosity_error()
 
 
 class EntityMatchingTask(BaseTask):
-    JSON_OUTPUT_FORMAT_PROMPT = 'You will return the answer in JSON format with two keys: {"answered": "can you answer this question. say yes or no", "label": "duplicate or not duplicate"}\n'
-    CSV_OUTPUT_FORMAT_PROMPT = 'You will return the answer in CSV format with two elements: "can you answer this question. say yes or no", "duplicate or not duplicate"\n'
+    JSON_OUTPUT_FORMAT_PROMPT = 'You will return the answer in JSON format with one key: {"label": "duplicate or not duplicate"}\n'
+    CSV_OUTPUT_FORMAT_PROMPT = 'You will return the answer in CSV format with one element: "duplicate or not duplicate"\n'
     NO_OUTPUT_FORMAT_PROMPT = 'You will return the answer in plain text format with one element: "duplicate or not duplicate"\n'
 
     task_prompt = "Your job is to tell if the two given entities are duplicates or not. Say duplicate, if they are duplicate and not duplicate otherwise. Options:\nduplicate\nnot duplicate\n"
