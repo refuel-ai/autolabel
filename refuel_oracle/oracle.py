@@ -114,9 +114,7 @@ class Oracle:
 
             # Get response from LLM
             try:
-                print(final_prompts[0])
                 response = self.llm.generate(final_prompts)
-                print(response.generations[0])
             except Exception as e:
                 # TODO (dhruva): We need to handle this case carefully
                 # When we erorr out, we will have less elements in the llm_labels
