@@ -1,21 +1,19 @@
-import json
 from typing import List, Dict, Tuple
 
 import matplotlib.pyplot as plt
 from langchain.prompts.prompt import PromptTemplate
-from loguru import logger
 from refuel_oracle.confidence import ConfidenceCalculator
 from refuel_oracle.task_config import TaskConfig
 from refuel_oracle.schema import LLMAnnotation, Metric, MetricResult
 from refuel_oracle.tasks import BaseTask
-from refuel_oracle.utils import extract_valid_json_substring
 from sklearn.metrics import ConfusionMatrixDisplay, accuracy_score, confusion_matrix
 
 
 class ClassificationTask(BaseTask):
-    JSON_OUTPUT_FORMAT_PROMPT = 'You will return the answer in JSON format with two keys: {"answered": "can you answer this question. say yes or no", "label": "the correct label"}'
-    CSV_OUTPUT_FORMAT_PROMPT = 'You will return the answer in CSV format with two elements: "can you answer this question. say Yes or No", "the correct label"'
-    NO_OUTPUT_FORMAT_PROMPT = 'You will return the answer in plain text format with one element: "the correct label"'
+    JSON_OUTPUT_FORMAT_PROMPT = 'You will return the answer in JSON format with one key: {"label": "the correct label"}'
+    CSV_OUTPUT_FORMAT_PROMPT = (
+        'You will return the answer in CSV format with one element: "the correct label"'
+    )
 
     task_prompt = "Your job is to correctly label the provided input example into one of the following {num_labels} categories.\nCategories:\n{labels_list}\n"
     example_prompt_template = "Example: {example}\nOutput: {output}\n"
@@ -116,7 +114,7 @@ class ClassificationTask(BaseTask):
         eval_metrics = []
         thresholds = [float("-inf")]
 
-        if self.config.get_compute_confidence() == "True":
+        if self.config.get_compute_confidence():
             labels, confidences = self.auroc_score_labels(gt_labels, llm_labels)
             value, meaningful_thresholds = ConfidenceCalculator.compute_auroc(
                 labels, confidences

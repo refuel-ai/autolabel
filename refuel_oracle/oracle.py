@@ -142,7 +142,7 @@ class Oracle:
                 for i in range(len(response.generations)):
                     response_item = response.generations[i]
                     generation = response_item[0]
-                    if self.task_config.get_compute_confidence() == "True":
+                    if self.task_config.get_compute_confidence():
                         llm_labels.append(
                             self.confidence.calculate(
                                 model_generation=self.task.parse_llm_response(
@@ -150,8 +150,7 @@ class Oracle:
                                 ),
                                 empty_response=self.task_config.get_empty_response(),
                                 prompt=final_prompts[i],
-                                logprobs_available=self.task_config.get_has_logprob()
-                                == "True",
+                                logprobs_available=self.llm_config.get_has_logprob(),
                             )
                         )
                     else:

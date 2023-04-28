@@ -13,8 +13,8 @@ from refuel_oracle.tasks import BaseTask
 
 
 class NamedEntityRecognitionTask(BaseTask):
-    JSON_OUTPUT_FORMAT_PROMPT = 'You will return the answer in JSON format with two keys: {"answered": can you answer this question. say YES or NO, "entities": a JSON list of extracted entities from text}.'
-    CSV_OUTPUT_FORMAT_PROMPT = "You will return the answer in CSV format seperated by % charcter: answered%can you answer this question. say YES or NO%entities%a list of extracted entities from text."
+    JSON_OUTPUT_FORMAT_PROMPT = 'You will return the answer in JSON format with one key: {"entities": a JSON list of extracted entities from text}.'
+    CSV_OUTPUT_FORMAT_PROMPT = "You will return the answer in CSV format seperated by % charcter: entities%a list of extracted entities from text."
     NULL_LABEL = {}
 
     task_prompt = "Your job is to extract named entities mentioned in text, and classify them into one of the following {num_labels} categories.\nCategories:\n{labels_list}\n "
@@ -35,10 +35,10 @@ class NamedEntityRecognitionTask(BaseTask):
 
     def _to_output_format(self, entities: List) -> str:
         if self.output_format == "json":
-            output = {"answered": "yes", "entities": entities}
+            output = {"entities": entities}
             return json.dumps(output)
         elif self.output_format == "csv":
-            output = "answered:%yes%entities"
+            output = "entities"
             for entity_type in entities:
                 output += f"%{entity_type}"
                 for text in entities[entity_type]:
@@ -120,11 +120,10 @@ class NamedEntityRecognitionTask(BaseTask):
     def jsonify_csv_output(self, response: str):
         split_response = response.split("%")
         json_output = {
-            "answered": split_response[1],
             "entities": {i: [] for i in self.dataset_config.get_labels_list()},
         }
         current_entity = None
-        for text_or_type in split_response[3:]:
+        for text_or_type in split_response[1:]:
             if text_or_type in json_output["entities"]:
                 current_entity = text_or_type
             else:
@@ -145,16 +144,14 @@ class NamedEntityRecognitionTask(BaseTask):
             else:
                 output = json.loads(completion_text.strip())
 
-            successfully_labeled = output.get("answered", "no")
-            if successfully_labeled.lower() == "yes":
-                raw_output = output.get("entities") or self.NULL_LABEL
-                llm_label = self.add_text_spans(raw_output, input_str)
-            else:
-                llm_label = self.NULL_LABEL
+            raw_output = output.get("entities") or self.NULL_LABEL
+            llm_label = self.add_text_spans(raw_output, input_str)
+
         except Exception as e:
             logger.info(f"Error parsing LLM response: {response.text}, Error: {e}")
             llm_label = self.NULL_LABEL
-            successfully_labeled = "no"
+
+        successfully_labeled = "no" if llm_label == self.NULL_LABEL else "yes"
 
         # TODO: parse generation info correctly to fetch & transform logprobs -> score
         return LLMAnnotation(
@@ -216,7 +213,6 @@ class NamedEntityRecognitionTask(BaseTask):
         answered_gt_labels,
         answered_llm_preds,
         entity_types_set,
-        confidence_threshold="ALL",
     ) -> List[MetricResult]:
         eval_metrics = []
         evaluator = Evaluator(
@@ -283,7 +279,7 @@ class NamedEntityRecognitionTask(BaseTask):
         eval_metrics = []
         thresholds = [float("-inf")]
 
-        if self.config.get_compute_confidence() == "True":
+        if self.config.get_compute_confidence():
             all_gt_labels, all_llm_preds = self.get_labels_predictions_with_threshold(
                 gt_labels, llm_labels, float("-inf")
             )
@@ -322,7 +318,6 @@ class NamedEntityRecognitionTask(BaseTask):
                 curr_gt_labels,
                 curr_llm_labels,
                 entity_types_set,
-                str(threshold),
             )
 
             for metric in curr_threshold_metrics:
