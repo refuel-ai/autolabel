@@ -119,12 +119,10 @@ class ConfidenceCalculator:
         if len(set(match)) == 1:
             # ROC AUC score is not defined for a label list with
             # just one prediction
-            return 1.0
+            return 1.0, [0]
         area = sklearn.metrics.roc_auc_score(match, confidence)
+        fpr, tpr, thresholds = sklearn.metrics.roc_curve(match, confidence, pos_label=1)
         if plot:
-            fpr, tpr, thresholds = sklearn.metrics.roc_curve(
-                match, confidence, pos_label=1
-            )
             print(f"FPR: {fpr}")
             print(f"TPR: {tpr}")
             print(f"Thresholds: {thresholds}")
@@ -146,7 +144,7 @@ class ConfidenceCalculator:
             plt.legend(loc="lower right")
             plt.savefig("AUROC_CURVE.png")
             plt.close()
-        return area
+        return area, thresholds
 
     @classmethod
     def plot_data_distribution(
