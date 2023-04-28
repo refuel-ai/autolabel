@@ -74,7 +74,7 @@ class TaskConfig:
         return self.config.get(self.HAS_LOGPROB_KEY, "False")
 
     @classmethod
-    def from_json(cls, json_file_path: str, **kwargs) -> TaskConfig:
+    def from_json(cls, json_file_path: str, **kwargs):
         """
         parses a given json file for task settings and returns it in a new Config object
 
