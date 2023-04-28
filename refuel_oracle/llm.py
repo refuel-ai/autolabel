@@ -36,6 +36,7 @@ class LLMConfig:
     LLM_MODEL_KEY = "model_name"
     QUANTIZE_BITS_KEY = "quantize"
     MODEL_PARAMS_KEY = "model_params"
+    HAS_LOGPROB_KEY = "has_logprob"
     DEFAULT_LLM_CONFIG = {
         "model_name": "gpt-3.5-turbo",
         "provider_name": "openai",
@@ -78,6 +79,12 @@ class LLMConfig:
     def get_quantize_bits(self) -> str:
         # Support quantization default value as 16 bits.
         return self.dict.get(self.QUANTIZE_BITS_KEY, "16")
+
+    def get_has_logprob(self) -> bool:
+        """
+        Returns whether or not current task supports returning LogProb confidence of its response
+        """
+        return self.config.get(self.HAS_LOGPROB_KEY, "False") == "True"
 
     @classmethod
     def from_json(cls, json_file_path: str, **kwargs):

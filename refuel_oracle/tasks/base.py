@@ -64,8 +64,6 @@ class BaseTask(ABC):
                 self.output_prompt = self.JSON_OUTPUT_FORMAT_PROMPT
             elif self.output_format == "csv":
                 self.output_prompt = self.CSV_OUTPUT_FORMAT_PROMPT
-            elif self.output_format == "no":
-                self.output_prompt = self.NO_OUTPUT_FORMAT_PROMPT
 
         self.partial_prompt = self.initialize_prompt_template()
 

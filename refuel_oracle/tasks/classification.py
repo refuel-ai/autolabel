@@ -14,7 +14,6 @@ class ClassificationTask(BaseTask):
     CSV_OUTPUT_FORMAT_PROMPT = (
         'You will return the answer in CSV format with one element: "the correct label"'
     )
-    NO_OUTPUT_FORMAT_PROMPT = 'You will return the answer in plain text format with one element: "the correct label"'
 
     task_prompt = "Your job is to correctly label the provided input example into one of the following {num_labels} categories.\nCategories:\n{labels_list}\n"
     example_prompt_template = "Example: {example}\nOutput: {output}\n"

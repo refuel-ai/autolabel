@@ -150,7 +150,7 @@ class Oracle:
                                 ),
                                 empty_response=self.task_config.get_empty_response(),
                                 prompt=final_prompts[i],
-                                logprobs_available=self.task_config.get_has_logprob(),
+                                logprobs_available=self.llm_config.get_has_logprob(),
                             )
                         )
                     else:
