@@ -5,5 +5,5 @@
     "compute_confidence": "True",
     "has_logprob": "False",
     "output_format": "json",
-    "json_empty_response": "{\"answered\": \"\", \"label\": \"\"}"
+    "json_empty_response": "{\"label\": \"\"}"
 }
