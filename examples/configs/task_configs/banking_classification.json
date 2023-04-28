@@ -1,5 +1,9 @@
 {
     "project_name": "BankingClassification",
     "task_type": "classification",
-    "prefix_prompt": "You are an expert at understanding twitter complaints."
+    "prefix_prompt": "You are an expert at understanding twitter complaints.",
+    "compute_confidence": "True",
+    "has_logprob": "True",
+    "output_format": "json",
+    "json_empty_response": "{\"answered\": \"\", \"label\": \"\"}"
 }
