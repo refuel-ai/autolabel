@@ -137,3 +137,10 @@ dataset_processors/*.csv
 # Data directory
 data/
 !data/get_data.py
+
+# Data files
+*.pkl
+*.png
+
+# DB Files
+*.db

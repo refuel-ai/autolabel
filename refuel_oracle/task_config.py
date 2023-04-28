@@ -16,6 +16,7 @@ class TaskConfig:
     OUTPUT_FORMAT_KEY = "output_format"
     EXAMPLE_SELECTOR_KEY = "example_selector"
     HAS_LOGPROB_KEY = "has_logprob"
+    COMPUTE_CONFIDENCE_KEY = "compute_confidence"
     EMPTY_RESPONSE_KEY = "empty_response"
 
     def __init__(self, config_dict: Dict) -> None:
@@ -71,6 +72,12 @@ class TaskConfig:
         Returns whether or not current task supports returning LogProb confidence of its response
         """
         return self.config.get(self.HAS_LOGPROB_KEY, "False")
+
+    def get_compute_confidence(self) -> str:
+        return self.config.get(self.COMPUTE_CONFIDENCE_KEY, "False")
+
+    def get_empty_response(self) -> str:
+        return self.config.get(self.EMPTY_RESPONSE_KEY, "")
 
     @classmethod
     def from_json(cls, json_file_path: str, **kwargs):

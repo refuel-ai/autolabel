@@ -11,6 +11,7 @@ from refuel_oracle.confidence import ConfidenceCalculator
 from refuel_oracle.task_config import TaskConfig
 from refuel_oracle.example_selector import ExampleSelector
 from refuel_oracle.llm import LLMFactory, LLMProvider, LLMConfig
+from refuel_oracle.schema import LLMAnnotation
 from refuel_oracle.tasks import TaskFactory
 from refuel_oracle.utils import calculate_cost, calculate_num_tokens
 from refuel_oracle.dataset_config import DatasetConfig
@@ -114,27 +115,51 @@ class Oracle:
             # Get response from LLM
             try:
                 response = self.llm.generate(final_prompts)
+            except Exception as e:
+                # TODO (dhruva): We need to handle this case carefully
+                # When we erorr out, we will have less elements in the llm_labels
+                # than the gt_labels array, with the 1:1 mapping not being
+                # maintained either. We should either remove the elements we errored
+                # out on from gt_labels or add None labels to the llm_labels.
+                logger.error(
+                    "Error in generating response:" + repr(e), "Prompt: ", chunk[i]
+                )
+                for _ in range(len(chunk)):
+                    llm_labels.append(
+                        LLMAnnotation(
+                            successfully_labeled="No",
+                            label=None,
+                            raw_response="",
+                            curr_sample=chunk[i],
+                            promp=final_prompts[i],
+                            confidence_score=0,
+                        )
+                    )
+                num_failures += len(chunk)
+                response = None
+
+            if response is not None:
                 for i in range(len(response.generations)):
                     response_item = response.generations[i]
-                    input_i = chunk[i]
                     generation = response_item[0]
-                    if self.task_config.get_has_logprob() == "True":
+                    if self.task_config.get_compute_confidence() == "True":
                         llm_labels.append(
                             self.confidence.calculate(
                                 model_generation=self.task.parse_llm_response(
-                                    generation, input_i
+                                    generation, chunk[i], final_prompts[i]
                                 ),
-                                empty_response=dataset_config.get_empty_response(),
+                                empty_response=self.task_config.get_empty_response(),
                                 prompt=final_prompts[i],
+                                logprobs_available=self.task_config.get_has_logprob()
+                                == "True",
                             )
                         )
                     else:
                         llm_labels.append(
-                            self.task.parse_llm_response(generation, input_i)
+                            self.task.parse_llm_response(
+                                generation, chunk[i], final_prompts[i]
+                            )
                         )
-            except Exception as e:
-                logger.error("Error in generating response:" + repr(e))
-                num_failures += 1
 
         eval_result = None
         # if true labels are provided, evaluate accuracy of predictions
@@ -152,6 +177,8 @@ class Oracle:
         output_df[self.task_config.get_task_name() + "_llm_label"] = [
             l.label for l in llm_labels
         ]
+        if self.task_config.get_compute_confidence():
+            output_df["llm_confidence"] = [l.confidence_score for l in llm_labels]
         if output_name:
             csv_file_name = output_name
         else:
@@ -240,7 +267,9 @@ class Oracle:
             self.llm_config = LLMConfig(llm_config)
 
         self.llm = LLMFactory.from_config(self.llm_config)
-        self.confidence = ConfidenceCalculator(score_type="p_true", llm=self.llm)
+        self.confidence = ConfidenceCalculator(
+            score_type="logprob_average", llm=self.llm
+        )
 
     def create_dataset_config(self, dataset_config: Union[str, Dict]):
         if isinstance(dataset_config, str):

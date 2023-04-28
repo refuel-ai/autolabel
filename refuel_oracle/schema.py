@@ -25,7 +25,8 @@ class MetricResult(BaseModel):
 class LLMAnnotation(BaseModel):
     successfully_labeled: str
     label: Any
-    input: Optional[str] = ""
+    curr_sample: Optional[str] = ""
     confidence_score: Optional[float] = None
     generation_info: Optional[Dict[str, Any]] = None
-    raw_text: Optional[str] = ""
+    raw_response: Optional[str] = ""
+    prompt: Optional[str] = ""
