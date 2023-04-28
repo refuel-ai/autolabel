@@ -73,8 +73,8 @@ class TaskConfig:
         """
         return self.config.get(self.HAS_LOGPROB_KEY, "False")
 
-    def get_compute_confidence(self) -> str:
-        return self.config.get(self.COMPUTE_CONFIDENCE_KEY, "False")
+    def get_compute_confidence(self) -> bool:
+        return self.config.get(self.COMPUTE_CONFIDENCE_KEY, "False") == "True"
 
     def get_empty_response(self) -> str:
         return self.config.get(self.EMPTY_RESPONSE_KEY, "")

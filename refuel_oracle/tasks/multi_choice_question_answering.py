@@ -144,7 +144,7 @@ class MultiChoiceQATask(BaseTask):
         eval_metrics = []
         thresholds = [float("-inf")]
 
-        if self.config.get_compute_confidence() == "True":
+        if self.config.get_compute_confidence():
             labels, confidences = self.auroc_score_labels(gt_labels, llm_labels)
             value, meaningful_thresholds = ConfidenceCalculator.compute_auroc(
                 labels, confidences

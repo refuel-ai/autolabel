@@ -279,7 +279,7 @@ class NamedEntityRecognitionTask(BaseTask):
         eval_metrics = []
         thresholds = [float("-inf")]
 
-        if self.config.get_compute_confidence() == "True":
+        if self.config.get_compute_confidence():
             all_gt_labels, all_llm_preds = self.get_labels_predictions_with_threshold(
                 gt_labels, llm_labels, float("-inf")
             )
