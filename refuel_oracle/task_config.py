@@ -1,6 +1,5 @@
-from ast import List
 import json
-from typing import Any, Dict
+from typing import Any, Dict, List
 
 from loguru import logger
 

@@ -250,5 +250,3 @@ class Oracle:
 
         return dataset_config
 
-    def test(self):
-        return
