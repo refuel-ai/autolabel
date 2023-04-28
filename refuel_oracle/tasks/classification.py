@@ -1,9 +1,7 @@
-import json
 from typing import List, Dict, Tuple
 
 import matplotlib.pyplot as plt
 from langchain.prompts.prompt import PromptTemplate
-from loguru import logger
 from refuel_oracle.confidence import ConfidenceCalculator
 from refuel_oracle.task_config import TaskConfig
 from refuel_oracle.schema import LLMAnnotation, Metric, MetricResult

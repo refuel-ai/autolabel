@@ -1,18 +1,12 @@
-import json
 from typing import List, Dict, Tuple
 import ast
 
 from langchain.prompts.prompt import PromptTemplate
-from langchain.schema import Generation
-from loguru import logger
 from refuel_oracle.confidence import ConfidenceCalculator
 from refuel_oracle.task_config import TaskConfig
 from refuel_oracle.schema import LLMAnnotation, Metric, MetricResult
 from refuel_oracle.tasks import BaseTask
-from refuel_oracle.utils import extract_valid_json_substring
 from sklearn.metrics import accuracy_score
-import matplotlib.pyplot as plt
-import transformers
 from refuel_oracle.tasks.utils import normalize_text, compute_f1
 
 
