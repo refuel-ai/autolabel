@@ -1,11 +1,10 @@
 from typing import Tuple, List, Dict, Union, Optional
 
 import langchain
-from langchain.cache import SQLiteCache
 from loguru import logger
 import numpy as np
 import pandas as pd
-from langchain.cache import SQLiteCache
+from refuel_oracle.llm_cache import RefuelSQLLangchainCache
 from tqdm import tqdm
 
 from refuel_oracle.confidence import ConfidenceCalculator
@@ -221,7 +220,7 @@ class Oracle:
 
     def set_cache(self):
         # Set cache for langchain
-        langchain.llm_cache = SQLiteCache(database_path=".langchain.db")
+        langchain.llm_cache = RefuelSQLLangchainCache(database_path=".langchain.db")
 
     def set_task_config(self, task_config: Union[str, Dict], **kwargs):
         if isinstance(task_config, str):
