@@ -56,5 +56,5 @@ o = Oracle(task_config_path, model_config_path, debug=True)
 labels, df, metrics_list = o.annotate(
     data_file_name,
     data_config_path,
-    max_items=50,
+    max_items=5,
 )

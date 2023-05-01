@@ -105,8 +105,6 @@ class BaseTask(ABC):
             return self.parse_csv_llm_response(
                 response, json.dumps(curr_sample), prompt
             )
-        elif self.output_format == "no":
-            return self.parse_no_llm_response(response, json.dumps(curr_sample), prompt)
 
     def parse_json_llm_response(
         self, response: Generation, curr_sample: str, prompt: str
@@ -141,29 +139,13 @@ class BaseTask(ABC):
             llm_label = self.NULL_LABEL_TOKEN
             logger.error(f"Error parsing LLM response: {response.text}")
         else:
-            successfully_labeled = completion_text[0].strip().lower()
-            if successfully_labeled == "yes":
-                llm_label = completion_text[1].strip()
-            else:
-                llm_label = self.NULL_LABEL_TOKEN
+            successfully_labeled = "yes"
+            llm_label = completion_text.strip()
 
         # TODO: parse generation info correctly to fetch & transform logprobs -> score
         return LLMAnnotation(
             successfully_labeled=successfully_labeled,
             label=llm_label,
-            generation_info=response.generation_info,
-            raw_response=response.text,
-            prompt=prompt,
-            curr_sample=curr_sample,
-        )
-
-    def parse_no_llm_response(
-        self, response: Generation, curr_sample: str, prompt: str
-    ) -> LLMAnnotation:
-        completion_text = response.text.strip()
-        return LLMAnnotation(
-            successfully_labeled="yes",
-            label=completion_text,
             generation_info=response.generation_info,
             raw_response=response.text,
             prompt=prompt,
