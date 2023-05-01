@@ -159,7 +159,6 @@ class Oracle:
                                 generation, chunk[i], final_prompts[i]
                             )
                         )
-
         eval_result = None
         # if true labels are provided, evaluate accuracy of predictions
         if gt_labels:
