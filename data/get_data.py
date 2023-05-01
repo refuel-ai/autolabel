@@ -292,7 +292,7 @@ def get_conll2003(output_folder="."):
         8: "Miscellaneous",
     }
     for item in dataset:
-        curr_text = [i.replace("%", " ") for i in item["tokens"]]
+        curr_text = [i.replace("%", " ").replace('"', "") for i in item["tokens"]]
         curr_tags = item["ner_tags"]
         individual_labels = []
         individual_entity_categories = {
