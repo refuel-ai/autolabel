@@ -28,6 +28,11 @@ def calculate_md5(input_data):
         for chunk in iter(lambda: input_data.read(4096), b""):
             md5_hash.update(chunk)
         return md5_hash.hexdigest()
+    elif isinstance(input_data, list):
+        md5_hash = hashlib.md5()
+        for item in input_data:
+            md5_hash.update(calculate_md5(item).encode("utf-8"))
+        return md5_hash.hexdigest()
     else:
         # Convert other input to byte string
         input_str = str(input_data).encode("utf-8")

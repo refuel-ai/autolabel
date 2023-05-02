@@ -4,6 +4,10 @@ from sqlalchemy import Column, String, Text
 from sqlalchemy.orm import relationship
 import json
 
+from refuel_oracle.task_config import TaskConfig
+from refuel_oracle.llm import LLMConfig
+from refuel_oracle.utils import calculate_md5
+
 
 class TaskModel(Base):
     __tablename__ = "tasks"
@@ -17,6 +21,11 @@ class TaskModel(Base):
 
     def __repr__(self):
         return f"<TaskModel(id={self.id}, task_type={self.task_type}, provider={self.provider}, model_name={self.model_name})>"
+
+    @classmethod
+    def create_id(self, task_config: TaskConfig, llm_config: LLMConfig):
+        filehash = calculate_md5([task_config.dict, llm_config.dict])
+        return filehash
 
     @classmethod
     def create(cls, db, task: BaseModel):

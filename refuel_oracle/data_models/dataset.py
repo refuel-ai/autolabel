@@ -3,6 +3,8 @@ from pydantic import BaseModel
 from sqlalchemy import Column, Integer, String
 from sqlalchemy.orm import relationship
 import json
+from refuel_oracle.utils import calculate_md5
+from refuel_oracle.dataset_config import DatasetConfig
 
 
 class DatasetModel(Base):
@@ -16,6 +18,19 @@ class DatasetModel(Base):
 
     def __repr__(self):
         return f"<DatasetModel(id={self.id}, input_file={self.input_file}, start_index={self.start_index}, end_index={self.end_index})>"
+
+    @classmethod
+    def create_id(
+        self,
+        input_file: str,
+        dataset_config: DatasetConfig,
+        start_index: int,
+        max_items: int,
+    ):
+        filehash = calculate_md5(
+            [open(input_file, "rb"), dataset_config.dict, start_index, max_items]
+        )
+        return filehash
 
     @classmethod
     def create(cls, db, dataset: BaseModel):

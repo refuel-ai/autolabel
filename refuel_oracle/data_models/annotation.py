@@ -1,7 +1,8 @@
 from .base import Base
 from loguru import logger
 from pydantic import BaseModel
-from sqlalchemy import Column, Integer, JSON
+from sqlalchemy import Column, Integer, ForeignKey, JSON
+from sqlalchemy.orm import relationship
 import json
 
 
@@ -11,28 +12,12 @@ class AnnotationModel(Base):
     id = Column(Integer, primary_key=True, autoincrement=True)
     index = Column(Integer)
     llm_annotation = Column(JSON)
+    task_result_id = Column(Integer, ForeignKey("task_results.id"))
+    task_results = relationship("TaskResultModel", back_populates="annotations")
     ANNOTATION_MODEL_CLASSES = {}
 
     def __repr__(self):
         return f"<AnnotationModel(id={self.id}, index={self.index}, annotation={self.llm_annotation})"
-
-    # build a model class with a specific table name
-    @classmethod
-    def get_annotation_model(cls, task_result_id: int):
-        tablename = f"annotations_{task_result_id}"  # dynamic table name
-        class_name = f"AnnotationModel{task_result_id}"  # dynamic class name
-        if class_name not in cls.ANNOTATION_MODEL_CLASSES:
-            cls.ANNOTATION_MODEL_CLASSES[class_name] = type(
-                class_name,
-                (AnnotationModel,),
-                {"__tablename__": tablename},
-            )
-
-        return cls.ANNOTATION_MODEL_CLASSES[class_name]
-
-    @classmethod
-    def get_annotation_table_name(cls, task_result_id: int):
-        return f"annotations_{task_result_id}"
 
     @classmethod
     def create(cls, db, annotation: BaseModel):

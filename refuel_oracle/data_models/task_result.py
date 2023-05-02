@@ -19,6 +19,7 @@ class TaskResultModel(Base):
     status = Column(String(50))
     task = relationship("TaskModel", back_populates="task_results")
     dataset = relationship("DatasetModel", back_populates="task_results")
+    annotations = relationship("AnnotationModel", back_populates="task_results")
 
     def __repr__(self):
         return f"<TaskResultModel(id={self.id}, task_id={self.task_id}, dataset_id={self.dataset_id}, output_file={self.output_file}, current_index={self.current_index}, status={self.status}, error={self.error}, metrics={self.metrics})"
@@ -51,6 +52,10 @@ class TaskResultModel(Base):
         db.flush()
         logger.debug(f"task_result updated: {self}")
         return self
+
+    @classmethod
+    def delete_by_id(cls, db, id: int):
+        db.query(cls).filter(cls.id == id).delete()
 
     def delete(self, db):
         db.delete(self)

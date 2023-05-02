@@ -74,7 +74,7 @@ class TaskConfig:
         return self.config.get(self.EMPTY_RESPONSE_KEY, "")
 
     def to_json(self):
-        return json.dumps(self.config)
+        return json.dumps(self.config, sort_keys=True)
 
     @classmethod
     def from_json(cls, json_file_path: str, **kwargs):

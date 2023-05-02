@@ -3,6 +3,8 @@ from typing import Any, Dict, List, Optional
 
 from pydantic import BaseModel
 
+from refuel_oracle.llm import LLMProvider
+
 
 class Metric(str, Enum):
     # Task agnostic
@@ -44,15 +46,6 @@ class Dataset(BaseModel):
         orm_mode = True
 
 
-# All available LLM providers
-class LLMProvider(str, Enum):
-    openai = "openai"
-    openai_chat = "openai_chat"
-    anthropic = "anthropic"
-    cohere = "cohere"
-    huggingface = "huggingface"
-
-
 class TaskType(str, Enum):
     CLASSIFICATION = "classification"
     ENTITY_RECOGNITION = "entity_recognition"
@@ -70,10 +63,7 @@ class Task(BaseModel):
 
 
 class TaskStatus(str, Enum):
-    SUCCESS = "success"
-    FAILURE = "failure"
     ACTIVE = "active"
-    PAUSED = "paused"
 
 
 class TaskResult(BaseModel):

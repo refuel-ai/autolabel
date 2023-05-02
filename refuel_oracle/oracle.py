@@ -18,14 +18,8 @@ from refuel_oracle.task_config import TaskConfig
 from refuel_oracle.tasks import TaskFactory
 from refuel_oracle.dataset_config import DatasetConfig
 from refuel_oracle.database import Database
-from refuel_oracle.utils import calculate_md5
 from refuel_oracle.schema import TaskResult, TaskStatus, Task, Dataset
-from refuel_oracle.data_models import (
-    DatasetModel,
-    TaskModel,
-    TaskResultModel,
-    AnnotationModel,
-)
+from refuel_oracle.data_models import TaskResultModel
 
 
 class Oracle:
@@ -112,12 +106,24 @@ class Oracle:
         dataset_config = self.create_dataset_config(dataset_config)
         self.task.set_dataset_config(dataset_config)
         self.db.initialize()
-        self.dataset = self.initialize_dataset(dataset, max_items, start_index)
-        self.task_object = self.initialize_task()
+        self.dataset = self.db.initialize_dataset(
+            dataset, dataset_config, start_index, max_items
+        )
+        self.task_object = self.db.initialize_task(self.task_config, self.llm_config)
         csv_file_name = (
             output_name if output_name else f"{dataset.replace('.csv','')}_labeled.csv"
         )
-        self.task_result = self.initialize_task_result(csv_file_name)
+
+        # Initialize task result and check if it already exists
+        self.task_result, existing = self.db.initialize_task_result(
+            csv_file_name, self.task_object, self.dataset
+        )
+        # Resume the task if it already exists or create a new task result
+        if existing:
+            logger.info("Task result already exists.")
+            self.task_result = self.handle_existing_task_result(
+                self.task_result, csv_file_name
+            )
 
         if isinstance(dataset, str):
             df, inputs, gt_labels = self._read_csv(
@@ -143,11 +149,11 @@ class Oracle:
             self.example_selector = None
 
         llm_labels = []
-        prompt_list = []
         num_failures = 0
+        current_index = self.task_result.current_index
 
-        num_sections = max(len(df) / self.CHUNK_SIZE, 1)
-        for chunk in tqdm(np.array_split(inputs, num_sections)):
+        for current_index in tqdm(range(current_index, len(inputs), self.CHUNK_SIZE)):
+            chunk = inputs[current_index : current_index + self.CHUNK_SIZE]
             final_prompts = []
             for i, input_i in enumerate(chunk):
                 # Fetch few-shot seed examples
@@ -159,8 +165,6 @@ class Oracle:
                 # Construct Prompt to pass to LLM
                 final_prompt = self.task.construct_prompt(input_i, examples)
                 final_prompts.append(final_prompt)
-
-                prompt_list.append(final_prompt)
 
             # Get response from LLM
             try:
@@ -333,94 +337,21 @@ class Oracle:
             dataset_config = DatasetConfig(dataset_config)
         return dataset_config
 
-    def initialize_dataset(self, input_file, start_index, max_items):
-        dataset_id = calculate_md5(open(input_file, "rb"))
-        dataset_orm = DatasetModel.get_by_id(self.db.session, dataset_id)
-        if dataset_orm:
-            return Dataset.from_orm(dataset_orm)
-
-        dataset = Dataset(
-            id=dataset_id,
-            input_file=input_file,
-            start_index=start_index,
-            end_index=start_index + max_items,
-        )
-        return Dataset.from_orm(DatasetModel.create(self.db.session, dataset))
-
-    def initialize_task(self):
-        task_id = calculate_md5(self.task_config.config)
-        task_orm = TaskModel.get_by_id(self.db.session, task_id)
-        if task_orm:
-            return Task.from_orm(task_orm)
-
-        task = Task(
-            id=task_id,
-            config=self.task_config.to_json(),
-            task_type=self.task_config.get_task_type(),
-            provider=self.llm_config.get_provider(),
-            model_name=self.llm_config.get_model_name(),
-        )
-        return Task.from_orm(TaskModel.create(self.db.session, task))
-
-    def initialize_task_result(self, output_file):
-        task_result_orm = TaskResultModel.get(
-            self.db.session, self.task_object.id, self.dataset.id
-        )
-        task_result = TaskResult.from_orm(task_result_orm) if task_result_orm else None
-        logger.debug(f"existing task_result: {task_result}")
-        new_task_result = TaskResult(
-            task_id=self.task_object.id,
-            dataset_id=self.dataset.id,
-            status=TaskStatus.ACTIVE,
-            current_index=self.dataset.start_index,
-            output_file=output_file,
-        )
-
-        create_new_task_result = False
-        # TODO: handle parallel tasks in ACTIVE state
-        if task_result:
-            print(f"There is an existing task with following details: {task_result}")
-            if task_result.status in [
-                TaskStatus.ACTIVE,
-                TaskStatus.FAILURE,
-            ]:
-                raise Exception("There is an existing task in ACTIVE or FAILURE state")
-            elif task_result.status == TaskStatus.PAUSED:
-                user_input = input("Do you want to resume it? (y/n)")
-                if user_input.lower() in ["y", "yes"]:
-                    task_result.status = TaskStatus.ACTIVE
-                    task_result_orm.update(self.db.session, task_result)
-                else:
-                    task_result_orm.delete(self.db.session)
-                    self.db.delete_annotation_table(task_result.id)
-                    create_new_task_result = True
-            else:
-                user_input = input("Do you want to start a new task? (y/n)")
-                if user_input.lower() in ["y", "yes"]:
-                    task_result_orm.delete(self.db.session)
-                    self.db.delete_annotation_table(task_result.id)
-                    create_new_task_result = True
-                else:
-                    exit(0)
+    def handle_existing_task_result(self, task_result: TaskResult, csv_file_name: str):
+        print(f"There is an existing task with following details: {task_result}")
+        user_input = input("Do you want to resume it? (y/n)")
+        if user_input.lower() in ["y", "yes"]:
+            print("Resuming the task...")
         else:
-            create_new_task_result = True
-
-        if create_new_task_result:
-            task_result_orm = TaskResultModel.create(self.db.session, new_task_result)
-            self.db.create_annotation_table(task_result_orm.id)
-
-        self.annotations_model = AnnotationModel.get_annotation_model(
-            task_result_orm.id
-        )
-        self.task_result_orm = task_result_orm
-        # print(Database.get_annotation_table(task_result_orm.id))
-        return TaskResult.from_orm(task_result_orm)
+            TaskResultModel.delete_by_id(self.db.session, task_result.id)
+            print("Deleted the existing task and starting a new one...")
+            task_result = self.db.initialize_task_result(
+                csv_file_name, self.task_object, self.dataset
+            )
+        return task_result
 
     def save_state(self, error: str = None):
         # Save the current state of the task
         self.task_result.error = error
         self.task_result.status = TaskStatus.PAUSED
         self.task_result_orm.update(self.db.session, self.task_result)
-
-    def test(self):
-        return
