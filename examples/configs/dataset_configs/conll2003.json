@@ -1,0 +1,113 @@
+{
+    "labels_list": [
+        "Location",
+        "Organization",
+        "Person",
+        "Miscellaneous"
+    ],
+    "dataset_schema": {
+        "input_columns": [
+            "example"
+        ],
+        "label_column": "CategorizedLabels",
+        "delimiter": "%"
+    },
+    "seed_examples": [
+        {
+            "example": "Switzerland stands accused by Senator Alfonse D'Amato , chairman of the powerful U.S. Senate Banking Committee , of agreeing to give money to Poland from unclaimed bank accounts of Polish citizens , as part of an accord on compensating Swiss nationals whose assets had been seized in communist Poland .",
+            "output": {
+                "Location": [
+                    "Switzerland",
+                    "Poland",
+                    "Poland"
+                ],
+                "Organization": [
+                    "U.S. Senate Banking Committee"
+                ],
+                "Person": [
+                    "Alfonse D'Amato"
+                ],
+                "Miscellaneous": [
+                    "Polish",
+                    "Swiss"
+                ]
+            }
+        },
+        {
+            "example": "21. Shannon Nobis ( U.S. ) 1:19.08",
+            "output": {
+                "Location": [
+                    "U.S."
+                ],
+                "Organization": [],
+                "Person": [
+                    "Shannon Nobis"
+                ],
+                "Miscellaneous": []
+            }
+        },
+        {
+            "example": " In addition , Statistics Canada indicated the following exports to the U.S. between August and September 1996 , in tonnes :",
+            "output": {
+                "Location": [
+                    "U.S."
+                ],
+                "Organization": [
+                    "Statistics Canada"
+                ],
+                "Person": [],
+                "Miscellaneous": []
+            }
+        },
+        {
+            "example": "Nader Jokhadar had given Syria the lead with a well-struck header in the seventh minute .",
+            "output": {
+                "Location": [
+                    "Syria"
+                ],
+                "Organization": [],
+                "Person": [
+                    "Nader Jokhadar"
+                ],
+                "Miscellaneous": []
+            }
+        },
+        {
+            "example": "CRICKET - PAKISTAN V NEW ZEALAND ONE-DAY SCOREBOARD .",
+            "output": {
+                "Location": [
+                    "PAKISTAN",
+                    "NEW ZEALAND"
+                ],
+                "Organization": [],
+                "Person": [],
+                "Miscellaneous": []
+            }
+        },
+        {
+            "example": "SQUASH - EYLES WITHIN SIGHT OF FIFTH TITLE OF YEAR .",
+            "output": {
+                "Location": [],
+                "Organization": [],
+                "Person": [
+                    "EYLES"
+                ],
+                "Miscellaneous": []
+            }
+        },
+        {
+            "example": "Liverpool suffered an upset first home league defeat of the season , beaten 1-0 by a Guy Whittingham goal for Sheffield Wednesday .",
+            "output": {
+                "Location": [],
+                "Organization": [
+                    "Liverpool",
+                    "Sheffield Wednesday"
+                ],
+                "Person": [
+                    "Guy Whittingham"
+                ],
+                "Miscellaneous": []
+            }
+        }
+    ]
+}

@@ -32,9 +32,13 @@ model_config_path = "examples/configs/llm_configs/davinci.json"
 # data_file_name = "data/banking_test.csv"
 # data_config_path = "examples/configs/dataset_configs/banking.json"
 
-task_config_path = "examples/configs/task_configs/sciq_qa.json"
-data_file_name = "data/sciq_test.csv"
-data_config_path = "examples/configs/dataset_configs/sciq.json"
+# task_config_path = "examples/configs/task_configs/sciq_qa.json"
+# data_file_name = "data/sciq_test.csv"
+# data_config_path = "examples/configs/dataset_configs/sciq.json"
+
+task_config_path = "examples/configs/task_configs/conll2003_ner.json"
+data_file_name = "data/conll2003_test.csv"
+data_config_path = "examples/configs/dataset_configs/conll2003.json"
 
 # task_config_path = "examples/configs/task_configs/walmart_amazon_matching.json"
 # data_file_name = "data/walmart_amazon_test.csv"
@@ -56,5 +60,5 @@ o = Oracle(task_config_path, model_config_path, debug=True)
 labels, df, metrics_list = o.annotate(
     data_file_name,
     data_config_path,
-    max_items=5,
+    max_items=100,
 )

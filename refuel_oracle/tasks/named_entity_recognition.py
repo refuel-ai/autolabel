@@ -262,12 +262,20 @@ class NamedEntityRecognitionTask(BaseTask):
         Returns:
             List[MetricResult]: list of metrics and corresponding values
         """
-        gt_labels = [
-            self.add_text_spans(
-                json.loads(gt_labels[index]), llm_labels[index].curr_sample
+        # gt_labels = [
+        #     self.add_text_spans(
+        #         json.loads(gt_labels[index]), llm_labels[index].curr_sample
+        #     )
+        #     for index in range(len(gt_labels))
+        # ]
+        new_gt_labels = []
+        for index in range(len(gt_labels)):
+            new_gt_labels.append(
+                self.add_text_spans(
+                    json.loads(gt_labels[index]), llm_labels[index].curr_sample
+                )
             )
-            for index in range(len(gt_labels))
-        ]
+        gt_labels = new_gt_labels
 
         eval_metrics_map = {
             Metric.F1: [],
