@@ -4,16 +4,15 @@ import langchain
 from loguru import logger
 import numpy as np
 import pandas as pd
-from refuel_oracle.llm_cache import RefuelSQLLangchainCache
 from tqdm import tqdm
 
 from refuel_oracle.confidence import ConfidenceCalculator
+from refuel_oracle.llm_cache import RefuelSQLLangchainCache
 from refuel_oracle.task_config import TaskConfig
 from refuel_oracle.example_selector import ExampleSelector
-from refuel_oracle.llm import LLMFactory, LLMProvider, LLMConfig
+from refuel_oracle.models import ModelConfig, ModelFactory, BaseModel
 from refuel_oracle.schema import LLMAnnotation
 from refuel_oracle.tasks import TaskFactory
-from refuel_oracle.utils import calculate_cost, calculate_num_tokens
 from refuel_oracle.dataset_config import DatasetConfig
 
 
@@ -114,7 +113,7 @@ class Oracle:
 
             # Get response from LLM
             try:
-                response = self.llm.generate(final_prompts)
+                response = self.llm.label(final_prompts)
             except Exception as e:
                 # TODO (dhruva): We need to handle this case carefully
                 # When we erorr out, we will have less elements in the llm_labels
@@ -211,7 +210,7 @@ class Oracle:
 
         _, inputs, _ = self._read_csv(dataset, dataset_config, max_items, start_index)
         prompt_list = []
-        total_tokens = 0
+        total_cost = 0
 
         # Get the seed examples from the dataset config
         seed_examples = dataset_config.get_seed_examples()
@@ -228,14 +227,10 @@ class Oracle:
                 final_prompt = self.task.construct_prompt(input_i, seed_examples)
                 prompt_list.append(final_prompt)
 
-                if self.llm_config.get_provider() == LLMProvider.huggingface:
-                    # Locally hosted Huggingface models do not have a cost per token
-                    continue
-
                 # Calculate the number of tokens
-                num_tokens = calculate_num_tokens(self.llm_config, final_prompt)
-                total_tokens += num_tokens
-        total_cost = calculate_cost(self.llm_config, total_tokens)
+                curr_cost = self.llm.get_cost(prompt=final_prompt)
+                total_cost += curr_cost
+
         total_cost = total_cost * (len(inputs) / input_limit)
         print(f"Total Estimated Cost: ${round(total_cost, 3)}")
         print(f"Number of examples to label: {len(inputs)}")
@@ -260,11 +255,11 @@ class Oracle:
 
     def set_llm_config(self, llm_config: Union[str, Dict]):
         if isinstance(llm_config, str):
-            self.llm_config = LLMConfig.from_json(llm_config)
+            self.llm_config = ModelConfig.from_json(llm_config)
         else:
-            self.llm_config = LLMConfig(llm_config)
+            self.llm_config = ModelConfig(llm_config)
 
-        self.llm = LLMFactory.from_config(self.llm_config)
+        self.llm: BaseModel = ModelFactory.from_config(self.llm_config)
         self.confidence = ConfidenceCalculator(
             score_type="logprob_average", llm=self.llm
         )
