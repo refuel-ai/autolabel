@@ -24,7 +24,7 @@ class TaskModel(Base):
 
     @classmethod
     def create_id(self, task_config: TaskConfig, llm_config: LLMConfig):
-        filehash = calculate_md5([task_config.dict, llm_config.dict])
+        filehash = calculate_md5([task_config.config, llm_config.dict])
         return filehash
 
     @classmethod

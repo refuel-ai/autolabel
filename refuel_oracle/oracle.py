@@ -19,7 +19,7 @@ from refuel_oracle.tasks import TaskFactory
 from refuel_oracle.dataset_config import DatasetConfig
 from refuel_oracle.database import Database
 from refuel_oracle.schema import TaskResult, TaskStatus, Task, Dataset
-from refuel_oracle.data_models import TaskResultModel
+from refuel_oracle.data_models import TaskResultModel, AnnotationModel
 
 
 class Oracle:
@@ -176,18 +176,20 @@ class Oracle:
                 # maintained either. We should either remove the elements we errored
                 # out on from gt_labels or add None labels to the llm_labels.
                 logger.error(
-                    "Error in generating response:" + repr(e), "Prompt: ", chunk[i]
+                    "Error in generating response:" + repr(e), "Prompt: ", chunk
                 )
-                for _ in range(len(chunk)):
-                    llm_labels.append(
-                        LLMAnnotation(
-                            successfully_labeled="No",
-                            label=None,
-                            raw_response="",
-                            curr_sample=chunk[i],
-                            promp=final_prompts[i],
-                            confidence_score=0,
-                        )
+                for i in range(len(chunk)):
+                    annotation = LLMAnnotation(
+                        successfully_labeled="No",
+                        label=None,
+                        raw_response="",
+                        curr_sample=chunk[i],
+                        promp=final_prompts[i],
+                        confidence_score=0,
+                    )
+                    llm_labels.append(annotation)
+                    AnnotationModel.create_from_llm_annotation(
+                        annotation, current_index + i, self.task_result.id
                     )
                 num_failures += len(chunk)
                 response = None
@@ -197,22 +199,29 @@ class Oracle:
                     response_item = response.generations[i]
                     generation = response_item[0]
                     if self.task_config.get_compute_confidence():
-                        llm_labels.append(
-                            self.confidence.calculate(
-                                model_generation=self.task.parse_llm_response(
-                                    generation, chunk[i], final_prompts[i]
-                                ),
-                                empty_response=self.task_config.get_empty_response(),
-                                prompt=final_prompts[i],
-                                logprobs_available=self.llm_config.get_has_logprob(),
-                            )
+                        annotation = self.confidence.calculate(
+                            model_generation=self.task.parse_llm_response(
+                                generation, chunk[i], final_prompts[i]
+                            ),
+                            empty_response=self.task_config.get_empty_response(),
+                            prompt=final_prompts[i],
+                            logprobs_available=self.task_config.get_has_logprob()
+                            == "True",
                         )
                     else:
-                        llm_labels.append(
-                            self.task.parse_llm_response(
-                                generation, chunk[i], final_prompts[i]
-                            )
+                        annotation = self.task.parse_llm_response(
+                            generation, chunk[i], final_prompts[i]
                         )
+                    llm_labels.append(annotation)
+                    AnnotationModel.create_from_llm_annotation(
+                        annotation, current_index + i, self.task_result.id
+                    )
+
+        db_result = AnnotationModel.get_annotations_for_task_result(self.task_result.id)
+        llm_labels = [a.llm_annotation() for a in db_result]
+        import pdb
+
+        pdb.set_trace()
         eval_result = None
         # if true labels are provided, evaluate accuracy of predictions
         if gt_labels:

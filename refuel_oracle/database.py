@@ -47,15 +47,15 @@ class Database:
 
         task = Task(
             id=task_id,
-            config=self.task_config.to_json(),
-            task_type=self.task_config.get_task_type(),
-            provider=self.llm_config.get_provider(),
-            model_name=self.llm_config.get_model_name(),
+            config=task_config.to_json(),
+            task_type=task_config.get_task_type(),
+            provider=llm_config.get_provider(),
+            model_name=llm_config.get_model_name(),
         )
-        return Task.from_orm(TaskModel.create(self.db.session, task))
+        return Task.from_orm(TaskModel.create(self.session, task))
 
     def initialize_task_result(
-        self, output_file, task_object, dataset
+        self, output_file: str, task_object: Task, dataset: Dataset
     ) -> Tuple[TaskResult, bool]:
         task_result_orm = TaskResultModel.get(self.session, task_object.id, dataset.id)
         task_result = TaskResult.from_orm(task_result_orm) if task_result_orm else None
@@ -71,5 +71,5 @@ class Database:
                 current_index=0,
                 output_file=output_file,
             )
-            task_result_orm = TaskResultModel.create(self.db.session, new_task_result)
+            task_result_orm = TaskResultModel.create(self.session, new_task_result)
             return TaskResult.from_orm(task_result_orm), False
