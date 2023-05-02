@@ -8,7 +8,6 @@ from refuel_oracle.models import ModelConfig, BaseModel
 
 
 class AnthropicLLM(BaseModel):
-
     DEFAULT_MODEL = "claude-v1"
     DEFAULT_PARAMS = {
         "max_tokens_to_sample": 100,
@@ -43,7 +42,7 @@ class AnthropicLLM(BaseModel):
             generations = [[Generation(text="")] for _ in prompts]
             return LLMResult(generations=generations)
 
-    def get_cost(self, prompt: str, label: Optional[str]) -> float:
+    def get_cost(self, prompt: str, label: Optional[str] = "") -> float:
         num_prompt_toks = tokenizer.count_tokens(prompt)
         if label:
             num_label_toks = tokenizer.count_tokens(label)

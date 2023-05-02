@@ -75,7 +75,7 @@ class OpenAILLM(BaseModel):
             generations = [[Generation(text="")] for _ in prompts]
             return LLMResult(generations=generations)
 
-    def get_cost(self, prompt: str, label: Optional[str]) -> float:
+    def get_cost(self, prompt: str, label: Optional[str] = "") -> float:
         encoding = tiktoken.encoding_for_model(self.model_name)
         num_prompt_toks = len(encoding.encode(prompt))
         if label:
