@@ -277,6 +277,74 @@ def get_wikiann(output_folder="."):
     dataset_csv.close()
 
 
+def get_conll2003(output_folder="."):
+    dataset_csv = open(f"{output_folder}/conll2003_test.csv", "w")
+    dataset_csv.write("example%IndividualLabels%CategorizedLabels\n")
+    dataset = load_dataset("conll2003", split="test")
+    entity_category_mapping = {
+        1: "Person",
+        2: "Person",
+        3: "Organization",
+        4: "Organization",
+        5: "Location",
+        6: "Location",
+        7: "Miscellaneous",
+        8: "Miscellaneous",
+    }
+    for item in dataset:
+        curr_text = [i.replace("%", " ").replace('"', "") for i in item["tokens"]]
+        curr_tags = item["ner_tags"]
+        individual_labels = []
+        individual_entity_categories = {
+            "Location": [],
+            "Organization": [],
+            "Person": [],
+            "Miscellaneous": [],
+        }
+
+        running_entity = None
+        tag_name = None
+        print(curr_text, curr_tags)
+        for index, tag in enumerate(curr_tags):
+            if tag in entity_category_mapping:
+                if running_entity is None:
+                    running_entity = curr_text[index]
+                    tag_name = entity_category_mapping[tag]
+                else:
+                    if tag % 2 == 1:  # start of a new tag
+                        individual_entity_categories[tag_name].append(running_entity)
+                        individual_labels.append(
+                            {"Description": tag_name, "Text": running_entity}
+                        )
+                        running_entity = curr_text[index]
+                        tag_name = entity_category_mapping[tag]
+                    else:
+                        running_entity += (
+                            " " + curr_text[index]
+                        )  # must be a continuation of prev tag
+                        if tag_name != entity_category_mapping[tag]:
+                            print(tag_name, entity_category_mapping[tag])
+                            print(running_entity)
+                            assert False
+            else:
+                if running_entity is not None:
+                    individual_entity_categories[tag_name].append(running_entity)
+                    individual_labels.append(
+                        {"Description": tag_name, "Text": running_entity}
+                    )
+                    running_entity = None
+                    tag_name = None
+        if running_entity is not None:
+            individual_entity_categories[tag_name].append(running_entity)
+            individual_labels.append({"Description": tag_name, "Text": running_entity})
+        print(individual_entity_categories)
+        dataset_csv.write(
+            f"{' '.join(curr_text)}%{json.dumps(individual_labels)}%{json.dumps(individual_entity_categories)}\n"
+        )
+
+    dataset_csv.close()
+
+
 def get_civil_comments(output_folder="."):
     dataset = load_dataset("civil_comments")
     cols = [
@@ -317,6 +385,7 @@ SUPPORTED_DATASETS = {
     "civil_comments": get_civil_comments,
     "company": get_company,
     "squad_v2": get_squad_v2,
+    "conll2003": get_conll2003,
 }
 
 DATASET_TASK_PATH = {
@@ -331,6 +400,7 @@ DATASET_TASK_PATH = {
     "civil_comments": "civil_comments_classification.json",
     "company": "company_matching.json",
     "squad_v2": "squad_v2_qa.json",
+    "conll2003": "conll2003_ner.json",
 }
 
 
