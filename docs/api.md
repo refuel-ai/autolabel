@@ -92,3 +92,10 @@ The TaskConfig class is used to parse, validate, and store information about the
         show_root_heading: yes
         show_root_full_path: no
         heading_level: 3
+
+
+::: refuel_oracle.models.config.ModelConfig
+    rendering:
+        show_root_heading: yes
+        show_root_full_path: no
+        heading_level: 2

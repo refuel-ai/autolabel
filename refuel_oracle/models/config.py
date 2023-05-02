@@ -5,6 +5,10 @@ from loguru import logger
 
 
 class ModelConfig:
+    """
+    The ModelConfig class is used to parse, validate, and store information about the LLM being used by the Oracle
+    """
+
     # config keys
     LLM_PROVIDER_KEY = "provider_name"
     LLM_MODEL_KEY = "model_name"
@@ -38,7 +42,7 @@ class ModelConfig:
 
     def get_has_logprob(self) -> bool:
         """
-        Returns whether or not current task supports returning LogProb confidence of its response
+        Returns whether or not current model supports returning LogProb confidence of its response
         """
         return self.dict.get(self.HAS_LOGPROB_KEY, False)
 
