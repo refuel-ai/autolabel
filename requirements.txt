@@ -11,4 +11,4 @@ anthropic
 torch
 transformers
 nervaluate
-datasets
+datasets==2.11.0
