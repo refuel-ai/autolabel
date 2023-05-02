@@ -222,7 +222,7 @@ class Oracle:
 
     def plan(
         self,
-        dataset: str,
+        dataset: Union[str, pd.DataFrame],
         dataset_config: Union[str, Dict],
         max_items: int = None,
         start_index: int = 0,
@@ -235,7 +235,15 @@ class Oracle:
         dataset_config = self.create_dataset_config(dataset_config)
         self.task.set_dataset_config(dataset_config)
 
-        _, inputs, _ = self._read_csv(dataset, dataset_config, max_items, start_index)
+        if isinstance(dataset, str):
+            _, inputs, _ = self._read_csv(
+                dataset, dataset_config, max_items, start_index
+            )
+        elif isinstance(dataset, pd.DataFrame):
+            _, inputs, _ = self._read_dataframe(
+                dataset, dataset_config, max_items, start_index
+            )
+
         prompt_list = []
         total_cost = 0
 
