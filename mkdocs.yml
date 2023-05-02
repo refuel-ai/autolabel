@@ -2,6 +2,7 @@ site_name: Refuel Oracle
 
 nav:
   - Getting Started: index.md
+  - Examples: examples.md
   - API Reference: api.md
 
 theme:
