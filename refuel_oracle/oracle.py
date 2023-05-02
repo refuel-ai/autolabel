@@ -54,9 +54,28 @@ class Oracle:
         gt_labels = None if not label_column else dat[label_column].tolist()
         return (dat, inputs, gt_labels)
 
+    def _read_dataframe(
+        self,
+        df: pd.DataFrame,
+        dataset_config: DatasetConfig,
+        max_items: int = None,
+        start_index: int = 0,
+    ) -> Tuple[pd.DataFrame, List[Dict], List]:
+        input_columns = dataset_config.get_input_columns()
+        label_column = dataset_config.get_label_column()
+
+        dat = df[start_index:]
+        if max_items and max_items > 0:
+            max_items = min(max_items, len(dat))
+            dat = dat[:max_items]
+
+        inputs = dat[input_columns + [label_column]].to_dict(orient="records")
+        gt_labels = None if not label_column else dat[label_column].tolist()
+        return (dat, inputs, gt_labels)
+
     def annotate(
         self,
-        dataset: str,
+        dataset: Union[str, pd.DataFrame],
         dataset_config: Union[str, Dict],
         max_items: int = None,
         output_name: str = None,
@@ -73,9 +92,14 @@ class Oracle:
         dataset_config = self.create_dataset_config(dataset_config)
         self.task.set_dataset_config(dataset_config)
 
-        df, inputs, gt_labels = self._read_csv(
-            dataset, dataset_config, max_items, start_index
-        )
+        if isinstance(dataset, str):
+            df, inputs, gt_labels = self._read_csv(
+                dataset, dataset_config, max_items, start_index
+            )
+        elif isinstance(dataset, pd.DataFrame):
+            df, inputs, gt_labels = self._read_dataframe(
+                dataset, dataset_config, max_items, start_index
+            )
 
         # Get the seed examples from the dataset config
         seed_examples = dataset_config.get_seed_examples()
@@ -176,16 +200,19 @@ class Oracle:
         ]
         if self.task_config.get_compute_confidence():
             output_df["llm_confidence"] = [l.confidence_score for l in llm_labels]
+
+        # Only save to csv if output_name is provided or dataset is a string
         if output_name:
             csv_file_name = output_name
-        else:
+        elif isinstance(dataset, str):
             csv_file_name = f"{dataset.replace('.csv','')}_labeled.csv"
-        output_df.to_csv(
-            csv_file_name,
-            sep=dataset_config.get_delimiter(),
-            header=True,
-            index=False,
-        )
+            output_df.to_csv(
+                csv_file_name,
+                sep=dataset_config.get_delimiter(),
+                header=True,
+                index=False,
+            )
+
         print(f"Total number of failures: {num_failures}")
         return (
             output_df[self.task_config.get_task_name() + "_llm_label"],
