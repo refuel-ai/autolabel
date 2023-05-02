@@ -53,14 +53,14 @@ class OpenAILLM(BaseModel):
         # populate model params and initialize the LLM
         model_params = config.get_model_params()
         if self._engine == "chat":
-            final_model_params = {**self.DEFAULT_PARAMS_CHAT_ENGINE, **model_params}
-            self.llm = ChatOpenAI(model_name=self.model_name, **final_model_params)
+            self.model_params = {**self.DEFAULT_PARAMS_CHAT_ENGINE, **model_params}
+            self.llm = ChatOpenAI(model_name=self.model_name, **self.model_params)
         else:
-            final_model_params = {
+            self.model_params = {
                 **self.DEFAULT_PARAMS_COMPLETION_ENGINE,
                 **model_params,
             }
-            self.llm = OpenAI(model_name=self.model_name, **final_model_params)
+            self.llm = OpenAI(model_name=self.model_name, **self.model_params)
 
     def label(self, prompts: List[str]) -> List[LLMResult]:
         if self._engine == "chat":

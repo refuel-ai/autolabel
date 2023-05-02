@@ -9,12 +9,12 @@ import json
 import scipy.stats as stats
 
 from refuel_oracle.schema import LLMAnnotation
-from refuel_oracle.llm import LLMLabeler
+from refuel_oracle.models import BaseModel
 
 
 class ConfidenceCalculator:
     def __init__(
-        self, score_type: str = "logprob_average", llm: Optional[LLMLabeler] = None
+        self, score_type: str = "logprob_average", llm: Optional[BaseModel] = None
     ):
         self.score_type = score_type
         self.llm = llm
@@ -54,7 +54,7 @@ class ConfidenceCalculator:
         p_true_prompt = f"{prompt}{model_generation.raw_response} \n Is the answer to the last example correct? Answer in one word on the same line [Yes/No]: "
 
         if kwargs.get("logprobs_available", False):
-            response = self.llm.generate([p_true_prompt])
+            response = self.llm.label([p_true_prompt])
             response_logprobs = response.generations[0][0].generation_info["logprobs"][
                 "top_logprobs"
             ]
