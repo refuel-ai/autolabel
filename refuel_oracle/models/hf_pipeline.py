@@ -8,7 +8,6 @@ from langchain.schema import LLMResult, Generation
 
 
 class HFPipelineLLM(BaseModel):
-
     DEFAULT_MODEL = "google/flan-t5-xxl"
     DEFAULT_PARAMS = {"max_tokens": 100, "temperature": 0.0, "quantize": 16}
 
@@ -54,7 +53,7 @@ class HFPipelineLLM(BaseModel):
             generations = [[Generation(text="")] for _ in prompts]
             return LLMResult(generations=generations)
 
-    def get_cost(self, prompt: str, label: Optional[str]) -> float:
+    def get_cost(self, prompt: str, label: Optional[str] = "") -> float:
         # Model inference for this model is being run locally
         # Revisit this in the future when we support HF inference endpoints
         return 0.0
