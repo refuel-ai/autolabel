@@ -19,5 +19,5 @@ class BaseModel(ABC):
         pass
 
     @abstractmethod
-    def get_cost(self, prompt: str, label: Optional[str]) -> float:
+    def get_cost(self, prompt: str, label: Optional[str] = "") -> float:
         pass
