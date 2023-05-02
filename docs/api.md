@@ -92,11 +92,3 @@ The TaskConfig class is used to parse, validate, and store information about the
         show_root_heading: yes
         show_root_full_path: no
         heading_level: 3
-
-::: refuel_oracle.task_config.TaskConfig.get_has_logprob
-    rendering:
-        show_root_heading: yes
-        show_root_full_path: no
-        heading_level: 3
-
-
