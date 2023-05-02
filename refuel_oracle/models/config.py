@@ -9,6 +9,8 @@ class ModelConfig:
     LLM_PROVIDER_KEY = "provider_name"
     LLM_MODEL_KEY = "model_name"
     MODEL_PARAMS_KEY = "model_params"
+    HAS_LOGPROB_KEY = "has_logprob"
+
     # default values
     DEFAULT_LLM_PROVIDER = "openai"
 
@@ -33,6 +35,12 @@ class ModelConfig:
 
     def get_model_params(self) -> Dict:
         return self.dict.get(self.MODEL_PARAMS_KEY, {})
+
+    def get_has_logprob(self) -> bool:
+        """
+        Returns whether or not current task supports returning LogProb confidence of its response
+        """
+        return self.dict.get(self.HAS_LOGPROB_KEY, False)
 
     @classmethod
     def from_json(cls, json_file_path: str):
