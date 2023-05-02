@@ -47,7 +47,9 @@ class ModelConfig:
         try:
             with open(json_file_path, "r") as config_file:
                 config_dict = json.load(config_file)
-        except ValueError:
-            logger.error("JSON file: {} not loaded successfully", json_file_path)
+                return ModelConfig(config_dict)
+        except ValueError as e:
+            logger.error(
+                f"JSON file: {json_file_path} not loaded successfully. Error: {repr(e)}"
+            )
             return {}
-        return ModelConfig(config_dict)
