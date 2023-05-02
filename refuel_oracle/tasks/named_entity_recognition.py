@@ -262,20 +262,12 @@ class NamedEntityRecognitionTask(BaseTask):
         Returns:
             List[MetricResult]: list of metrics and corresponding values
         """
-        # gt_labels = [
-        #     self.add_text_spans(
-        #         json.loads(gt_labels[index]), llm_labels[index].curr_sample
-        #     )
-        #     for index in range(len(gt_labels))
-        # ]
-        new_gt_labels = []
-        for index in range(len(gt_labels)):
-            new_gt_labels.append(
-                self.add_text_spans(
-                    json.loads(gt_labels[index]), llm_labels[index].curr_sample
-                )
+        gt_labels = [
+            self.add_text_spans(
+                json.loads(gt_labels[index]), llm_labels[index].curr_sample
             )
-        gt_labels = new_gt_labels
+            for index in range(len(gt_labels))
+        ]
 
         eval_metrics_map = {
             Metric.F1: [],
@@ -304,7 +296,7 @@ class NamedEntityRecognitionTask(BaseTask):
                 )
             )
 
-        for threshold in thresholds:
+        for index, threshold in enumerate(thresholds):
             (
                 curr_gt_labels,
                 curr_llm_labels,
@@ -329,12 +321,14 @@ class NamedEntityRecognitionTask(BaseTask):
             )
 
             for metric in curr_threshold_metrics:
-                eval_metrics_map[metric.metric_type].append(metric.value)
+                eval_metrics_map[metric.metric_type].append(
+                    (metric.value, f"index={index}")
+                )
 
             eval_metrics_map[Metric.COMPLETION_RATE].append(
-                len(curr_llm_labels) / float(len(gt_labels))
+                (len(curr_llm_labels) / float(len(gt_labels)), f"index={index}")
             )
-            eval_metrics_map[Metric.THRESHOLD].append(threshold)
+            eval_metrics_map[Metric.THRESHOLD].append((threshold, f"index={index}"))
         eval_metrics.extend(
             [
                 MetricResult(
