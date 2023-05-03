@@ -1,7 +1,7 @@
 from typing import Dict
 from loguru import logger
 
-from .config import ModelConfig
+from .config import ModelConfig, LLMProvider
 from .base import BaseModel
 from .anthropic import AnthropicLLM
 from .openai import OpenAILLM
