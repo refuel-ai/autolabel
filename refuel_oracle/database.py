@@ -8,6 +8,7 @@ from refuel_oracle.dataset_config import DatasetConfig
 from refuel_oracle.schema import Dataset, Task, TaskResult, TaskStatus
 from refuel_oracle.task_config import TaskConfig
 from refuel_oracle.models import ModelConfig
+from datetime import datetime
 
 
 class Database:
@@ -70,6 +71,7 @@ class Database:
                 status=TaskStatus.ACTIVE,
                 current_index=0,
                 output_file=output_file,
+                created_at=datetime.now(),
             )
             task_result_orm = TaskResultModel.create(self.session, new_task_result)
             return TaskResult.from_orm(task_result_orm), False

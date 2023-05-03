@@ -113,6 +113,14 @@ class Oracle:
         csv_file_name = (
             output_name if output_name else f"{dataset.replace('.csv','')}_labeled.csv"
         )
+        if isinstance(dataset, str):
+            df, inputs, gt_labels = self._read_csv(
+                dataset, dataset_config, max_items, start_index
+            )
+        elif isinstance(dataset, pd.DataFrame):
+            df, inputs, gt_labels = self._read_dataframe(
+                dataset, dataset_config, max_items, start_index
+            )
 
         # Initialize task result and check if it already exists
         self.task_result, existing = self.db.initialize_task_result(
@@ -122,16 +130,7 @@ class Oracle:
         if existing:
             logger.info("Task result already exists.")
             self.task_result = self.handle_existing_task_result(
-                self.task_result, csv_file_name
-            )
-
-        if isinstance(dataset, str):
-            df, inputs, gt_labels = self._read_csv(
-                dataset, dataset_config, max_items, start_index
-            )
-        elif isinstance(dataset, pd.DataFrame):
-            df, inputs, gt_labels = self._read_dataframe(
-                dataset, dataset_config, max_items, start_index
+                self.task_result, csv_file_name, gt_labels=gt_labels
             )
 
         # Get the seed examples from the dataset config
@@ -184,7 +183,7 @@ class Oracle:
                         label=None,
                         raw_response="",
                         curr_sample=chunk[i],
-                        promp=final_prompts[i],
+                        prompt=final_prompts[i],
                         confidence_score=0,
                     )
                     llm_labels.append(annotation)
@@ -357,9 +356,22 @@ class Oracle:
         return dataset_config
 
     def handle_existing_task_result(
-        self, task_result: TaskResult, csv_file_name: str
+        self, task_result: TaskResult, csv_file_name: str, gt_labels: List[str] = None
     ) -> TaskResult:
         print(f"There is an existing task with following details: {task_result}")
+        db_result = AnnotationModel.get_annotations_by_task_result_id(
+            self.db.session, task_result.id
+        )
+        llm_labels = [LLMAnnotation(**a.llm_annotation) for a in db_result]
+        if gt_labels:
+            print("Evaluating the existing task...")
+            gt_labels = gt_labels[: len(llm_labels)]
+            eval_result = self.task.eval(llm_labels, gt_labels)
+            for m in eval_result:
+                print(f"Metric: {m.name}: {m.value}")
+        print(f"{len(llm_labels)} examples have been labeled so far.")
+        print(f"Last annotated example - Prompt: {llm_labels[-1].prompt}")
+        print(f"Annotation: {llm_labels[-1].label}")
         user_input = input("Do you want to resume it? (y/n)")
         if user_input.lower() in ["y", "yes"]:
             print("Resuming the task...")

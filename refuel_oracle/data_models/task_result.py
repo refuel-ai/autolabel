@@ -35,7 +35,7 @@ class TaskResultModel(Base):
     @classmethod
     def create(cls, db, task_result: BaseModel):
         logger.debug(f"creating new task: {task_result}")
-        db_object = cls(**json.loads(task_result.json()))
+        db_object = cls(**task_result.dict())
         db.add(db_object)
         db_object = db.query(cls).order_by(cls.id.desc()).first()
         logger.debug(f"created new task: {db_object}")
