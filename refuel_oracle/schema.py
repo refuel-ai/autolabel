@@ -1,7 +1,11 @@
 from enum import Enum
 from typing import Any, Dict, List, Optional
 from refuel_oracle.models import LLMProvider
+from refuel_oracle.task_config import TaskConfig
+from refuel_oracle.dataset_config import DatasetConfig
+from refuel_oracle.models import ModelConfig
 from datetime import datetime
+from refuel_oracle.utils import calculate_md5
 
 from pydantic import BaseModel
 
@@ -45,6 +49,19 @@ class Dataset(BaseModel):
     class Config:
         orm_mode = True
 
+    @classmethod
+    def create_id(
+        self,
+        input_file: str,
+        dataset_config: DatasetConfig,
+        start_index: int,
+        max_items: int,
+    ):
+        filehash = calculate_md5(
+            [open(input_file, "rb"), dataset_config.dict, start_index, max_items]
+        )
+        return filehash
+
 
 class TaskType(str, Enum):
     CLASSIFICATION = "classification"
@@ -61,12 +78,17 @@ class Task(BaseModel):
     class Config:
         orm_mode = True
 
+    @classmethod
+    def create_id(self, task_config: TaskConfig, llm_config: ModelConfig):
+        filehash = calculate_md5([task_config.config, llm_config.dict])
+        return filehash
+
 
 class TaskStatus(str, Enum):
     ACTIVE = "active"
 
 
-class TaskResult(BaseModel):
+class TaskRun(BaseModel):
     id: Optional[str] = None
     created_at: datetime
     task_id: str

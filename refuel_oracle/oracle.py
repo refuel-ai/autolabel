@@ -18,8 +18,8 @@ from refuel_oracle.task_config import TaskConfig
 from refuel_oracle.tasks import TaskFactory
 from refuel_oracle.dataset_config import DatasetConfig
 from refuel_oracle.database import Database
-from refuel_oracle.schema import TaskResult, TaskStatus
-from refuel_oracle.data_models import TaskResultModel, AnnotationModel
+from refuel_oracle.schema import TaskRun, TaskStatus
+from refuel_oracle.data_models import TaskRunModel, AnnotationModel
 
 
 class Oracle:
@@ -121,16 +121,17 @@ class Oracle:
             df, inputs, gt_labels = self._read_dataframe(
                 dataset, dataset_config, max_items, start_index
             )
-
-        # Initialize task result and check if it already exists
-        self.task_result, existing = self.db.initialize_task_result(
-            csv_file_name, self.task_object, self.dataset
-        )
-        # Resume the task if it already exists or create a new task result
-        if existing:
-            logger.info("Task result already exists.")
-            self.task_result = self.handle_existing_task_result(
-                self.task_result, csv_file_name, gt_labels=gt_labels
+        # Initialize task run and check if it already exists
+        self.task_run = self.db.get_task_run(self.task_object.id, self.dataset.id)
+        # Resume/Delete the task if it already exists or create a new task run
+        if self.task_run:
+            logger.info("Task run already exists.")
+            self.task_run = self.handle_existing_task_run(
+                self.task_run, csv_file_name, gt_labels=gt_labels
+            )
+        else:
+            self.task_run = self.db.create_task_run(
+                csv_file_name, self.task_object.id, self.dataset.id
             )
 
         # Get the seed examples from the dataset config
@@ -147,9 +148,8 @@ class Oracle:
         else:
             self.example_selector = None
 
-        llm_labels = []
         num_failures = 0
-        current_index = self.task_result.current_index
+        current_index = self.task_run.current_index
 
         for current_index in tqdm(range(current_index, len(inputs), self.CHUNK_SIZE)):
             chunk = inputs[current_index : current_index + self.CHUNK_SIZE]
@@ -186,12 +186,11 @@ class Oracle:
                         prompt=final_prompts[i],
                         confidence_score=0,
                     )
-                    llm_labels.append(annotation)
                     AnnotationModel.create_from_llm_annotation(
                         self.db.session,
                         annotation,
                         current_index + i,
-                        self.task_result.id,
+                        self.task_run.id,
                     )
                 num_failures += len(chunk)
                 response = None
@@ -214,21 +213,20 @@ class Oracle:
                         annotation = self.task.parse_llm_response(
                             generation, chunk[i], final_prompts[i]
                         )
-                    llm_labels.append(annotation)
                     AnnotationModel.create_from_llm_annotation(
                         self.db.session,
                         annotation,
                         current_index + i,
-                        self.task_result.id,
+                        self.task_run.id,
                     )
 
-            # Update task result
-            self.task_result = self.save_task_result_state(
+            # Update task run state
+            self.task_run = self.save_task_run_state(
                 current_index=current_index + len(chunk)
             )
 
-        db_result = AnnotationModel.get_annotations_by_task_result_id(
-            self.db.session, self.task_result.id
+        db_result = AnnotationModel.get_annotations_by_task_run_id(
+            self.db.session, self.task_run.id
         )
         llm_labels = [LLMAnnotation(**a.llm_annotation) for a in db_result]
         eval_result = None
@@ -355,12 +353,12 @@ class Oracle:
             dataset_config = DatasetConfig(dataset_config)
         return dataset_config
 
-    def handle_existing_task_result(
-        self, task_result: TaskResult, csv_file_name: str, gt_labels: List[str] = None
-    ) -> TaskResult:
-        print(f"There is an existing task with following details: {task_result}")
-        db_result = AnnotationModel.get_annotations_by_task_result_id(
-            self.db.session, task_result.id
+    def handle_existing_task_run(
+        self, task_run: TaskRun, csv_file_name: str, gt_labels: List[str] = None
+    ) -> TaskRun:
+        print(f"There is an existing task with following details: {task_run}")
+        db_result = AnnotationModel.get_annotations_by_task_run_id(
+            self.db.session, task_run.id
         )
         llm_labels = [LLMAnnotation(**a.llm_annotation) for a in db_result]
         if gt_labels:
@@ -376,21 +374,21 @@ class Oracle:
         if user_input.lower() in ["y", "yes"]:
             print("Resuming the task...")
         else:
-            TaskResultModel.delete_by_id(self.db.session, task_result.id)
+            TaskRunModel.delete_by_id(self.db.session, task_run.id)
             print("Deleted the existing task and starting a new one...")
-            task_result, _ = self.db.initialize_task_result(
-                csv_file_name, self.task_object, self.dataset
+            task_run = self.db.create_task_run(
+                csv_file_name, self.task_object.id, self.dataset.id
             )
-        return task_result
+        return task_run
 
-    def save_task_result_state(
+    def save_task_run_state(
         self, current_index: int = None, status: TaskStatus = "", error: str = ""
     ):
         # Save the current state of the task
         if error:
-            self.task_result.error = error
+            self.task_run.error = error
         if status:
-            self.task_result.status = status
+            self.task_run.status = status
         if current_index:
-            self.task_result.current_index = current_index
-        return TaskResultModel.update(self.db.session, self.task_result)
+            self.task_run.current_index = current_index
+        return TaskRunModel.update(self.db.session, self.task_run)

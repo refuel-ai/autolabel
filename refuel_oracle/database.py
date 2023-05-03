@@ -3,9 +3,9 @@ from sqlalchemy import create_engine, MetaData
 from sqlalchemy.orm import sessionmaker
 from loguru import logger
 from typing import Tuple
-from refuel_oracle.data_models import DatasetModel, TaskModel, TaskResultModel
+from refuel_oracle.data_models import DatasetModel, TaskModel, TaskRunModel
 from refuel_oracle.dataset_config import DatasetConfig
-from refuel_oracle.schema import Dataset, Task, TaskResult, TaskStatus
+from refuel_oracle.schema import Dataset, Task, TaskRun, TaskStatus
 from refuel_oracle.task_config import TaskConfig
 from refuel_oracle.models import ModelConfig
 from datetime import datetime
@@ -25,7 +25,7 @@ class Database:
         self, input_file: str, dataset_config: DatasetConfig, start_index, max_items
     ):
         # TODO: Check if this works for max_items = None
-        dataset_id = DatasetModel.create_id(
+        dataset_id = Dataset.create_id(
             input_file, dataset_config, start_index, max_items
         )
         dataset_orm = DatasetModel.get_by_id(self.session, dataset_id)
@@ -41,7 +41,7 @@ class Database:
         return Dataset.from_orm(DatasetModel.create(self.session, dataset))
 
     def initialize_task(self, task_config: TaskConfig, llm_config: ModelConfig):
-        task_id = TaskModel.create_id(task_config, llm_config)
+        task_id = Task.create_id(task_config, llm_config)
         task_orm = TaskModel.get_by_id(self.session, task_id)
         if task_orm:
             return Task.from_orm(task_orm)
@@ -55,23 +55,24 @@ class Database:
         )
         return Task.from_orm(TaskModel.create(self.session, task))
 
-    def initialize_task_result(
-        self, output_file: str, task_object: Task, dataset: Dataset
-    ) -> Tuple[TaskResult, bool]:
-        task_result_orm = TaskResultModel.get(self.session, task_object.id, dataset.id)
-        task_result = TaskResult.from_orm(task_result_orm) if task_result_orm else None
-        if task_result:
-            logger.debug(f"existing task_result: {task_result}")
-            return task_result, True
+    def get_task_run(self, task_id: str, dataset_id: str):
+        task_run_orm = TaskRunModel.get(self.session, task_id, dataset_id)
+        if task_run_orm:
+            return TaskRun.from_orm(task_run_orm)
         else:
-            logger.debug(f"creating new task_result")
-            new_task_result = TaskResult(
-                task_id=task_object.id,
-                dataset_id=dataset.id,
-                status=TaskStatus.ACTIVE,
-                current_index=0,
-                output_file=output_file,
-                created_at=datetime.now(),
-            )
-            task_result_orm = TaskResultModel.create(self.session, new_task_result)
-            return TaskResult.from_orm(task_result_orm), False
+            return None
+
+    def create_task_run(
+        self, output_file: str, task_id: str, dataset_id: str
+    ) -> TaskRun:
+        logger.debug(f"creating new task_run")
+        new_task_run = TaskRun(
+            task_id=task_id,
+            dataset_id=dataset_id,
+            status=TaskStatus.ACTIVE,
+            current_index=0,
+            output_file=output_file,
+            created_at=datetime.now(),
+        )
+        task_run_orm = TaskRunModel.create(self.session, new_task_run)
+        return TaskRun.from_orm(task_run_orm)

@@ -17,15 +17,10 @@ class TaskModel(Base):
     provider = Column(String(50))
     model_name = Column(String(50))
     config = Column(Text)
-    task_results = relationship("TaskResultModel", back_populates="task")
+    task_runs = relationship("TaskRunModel", back_populates="task")
 
     def __repr__(self):
         return f"<TaskModel(id={self.id}, task_type={self.task_type}, provider={self.provider}, model_name={self.model_name})>"
-
-    @classmethod
-    def create_id(self, task_config: TaskConfig, llm_config: ModelConfig):
-        filehash = calculate_md5([task_config.config, llm_config.dict])
-        return filehash
 
     @classmethod
     def create(cls, db, task: BaseModel):
