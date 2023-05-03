@@ -18,7 +18,7 @@ from refuel_oracle.task_config import TaskConfig
 from refuel_oracle.tasks import TaskFactory
 from refuel_oracle.dataset_config import DatasetConfig
 from refuel_oracle.database import Database
-from refuel_oracle.schema import TaskResult, TaskStatus, Task, Dataset
+from refuel_oracle.schema import TaskResult, TaskStatus
 from refuel_oracle.data_models import TaskResultModel, AnnotationModel
 
 
@@ -189,7 +189,10 @@ class Oracle:
                     )
                     llm_labels.append(annotation)
                     AnnotationModel.create_from_llm_annotation(
-                        annotation, current_index + i, self.task_result.id
+                        self.db.session,
+                        annotation,
+                        current_index + i,
+                        self.task_result.id,
                     )
                 num_failures += len(chunk)
                 response = None
@@ -214,14 +217,21 @@ class Oracle:
                         )
                     llm_labels.append(annotation)
                     AnnotationModel.create_from_llm_annotation(
-                        annotation, current_index + i, self.task_result.id
+                        self.db.session,
+                        annotation,
+                        current_index + i,
+                        self.task_result.id,
                     )
 
-        db_result = AnnotationModel.get_annotations_for_task_result(self.task_result.id)
-        llm_labels = [a.llm_annotation() for a in db_result]
-        import pdb
+            # Update task result
+            self.task_result = self.save_task_result_state(
+                current_index=current_index + len(chunk)
+            )
 
-        pdb.set_trace()
+        db_result = AnnotationModel.get_annotations_by_task_result_id(
+            self.db.session, self.task_result.id
+        )
+        llm_labels = [LLMAnnotation(**a.llm_annotation) for a in db_result]
         eval_result = None
         # if true labels are provided, evaluate accuracy of predictions
         if gt_labels:
@@ -303,7 +313,7 @@ class Oracle:
                 prompt_list.append(final_prompt)
 
                 # Calculate the number of tokens
-                curr_cost = self.llm.get_cost(prompt=final_prompt)
+                curr_cost = self.llm.get_cost(prompt=final_prompt, label="")
                 total_cost += curr_cost
 
         total_cost = total_cost * (len(inputs) / input_limit)
@@ -346,7 +356,9 @@ class Oracle:
             dataset_config = DatasetConfig(dataset_config)
         return dataset_config
 
-    def handle_existing_task_result(self, task_result: TaskResult, csv_file_name: str):
+    def handle_existing_task_result(
+        self, task_result: TaskResult, csv_file_name: str
+    ) -> TaskResult:
         print(f"There is an existing task with following details: {task_result}")
         user_input = input("Do you want to resume it? (y/n)")
         if user_input.lower() in ["y", "yes"]:
@@ -354,13 +366,19 @@ class Oracle:
         else:
             TaskResultModel.delete_by_id(self.db.session, task_result.id)
             print("Deleted the existing task and starting a new one...")
-            task_result = self.db.initialize_task_result(
+            task_result, _ = self.db.initialize_task_result(
                 csv_file_name, self.task_object, self.dataset
             )
         return task_result
 
-    def save_state(self, error: str = None):
+    def save_task_result_state(
+        self, current_index: int = None, status: TaskStatus = "", error: str = ""
+    ):
         # Save the current state of the task
-        self.task_result.error = error
-        self.task_result.status = TaskStatus.PAUSED
-        self.task_result_orm.update(self.db.session, self.task_result)
+        if error:
+            self.task_result.error = error
+        if status:
+            self.task_result.status = status
+        if current_index:
+            self.task_result.current_index = current_index
+        return TaskResultModel.update(self.db.session, self.task_result)

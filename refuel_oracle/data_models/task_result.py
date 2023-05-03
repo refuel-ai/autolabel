@@ -1,16 +1,24 @@
 from .base import Base
+import uuid
 from loguru import logger
 from pydantic import BaseModel
-from sqlalchemy import Column, Integer, String, ForeignKey, Text
+from sqlalchemy import Column, Integer, String, ForeignKey, Text, DateTime
+from sqlalchemy.sql import func
 from sqlalchemy.orm import relationship
 import json
+from refuel_oracle.schema import TaskResult
 
 
 class TaskResultModel(Base):
     __tablename__ = "task_results"
 
-    id = Column(Integer, primary_key=True, autoincrement=True)
+    id = Column(
+        Integer,
+        default=lambda: uuid.uuid4().int >> (128 - 32),
+        primary_key=True,
+    )
     task_id = Column(String(32), ForeignKey("tasks.id"))
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
     dataset_id = Column(String(32), ForeignKey("datasets.id"))
     current_index = Column(Integer)
     error = Column(String(256))
@@ -22,7 +30,7 @@ class TaskResultModel(Base):
     annotations = relationship("AnnotationModel", back_populates="task_results")
 
     def __repr__(self):
-        return f"<TaskResultModel(id={self.id}, task_id={self.task_id}, dataset_id={self.dataset_id}, output_file={self.output_file}, current_index={self.current_index}, status={self.status}, error={self.error}, metrics={self.metrics})"
+        return f"<TaskResultModel(id={self.id}, created_at={self.created_at}, task_id={self.task_id}, dataset_id={self.dataset_id}, output_file={self.output_file}, current_index={self.current_index}, status={self.status}, error={self.error}, metrics={self.metrics})"
 
     @classmethod
     def create(cls, db, task_result: BaseModel):
@@ -45,13 +53,15 @@ class TaskResultModel(Base):
     def from_pydantic(cls, task_result: BaseModel):
         return cls(**json.loads(task_result.json()))
 
-    def update(self, db, task_result: BaseModel):
+    @classmethod
+    def update(cls, db, task_result: BaseModel):
+        task_result_id = task_result.id
+        task_result_orm = db.query(cls).filter(cls.id == task_result_id).first()
         logger.debug(f"updating task_result: {task_result}")
-        for key, value in json.loads(task_result.json()).items():
-            setattr(self, key, value)
-        db.flush()
-        logger.debug(f"task_result updated: {self}")
-        return self
+        for key, value in task_result.dict().items():
+            setattr(task_result_orm, key, value)
+        logger.debug(f"task_result updated: {task_result}")
+        return TaskResult.from_orm(task_result_orm)
 
     @classmethod
     def delete_by_id(cls, db, id: int):

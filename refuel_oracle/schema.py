@@ -1,9 +1,9 @@
 from enum import Enum
 from typing import Any, Dict, List, Optional
+from refuel_oracle.models import LLMProvider
+from datetime import datetime
 
 from pydantic import BaseModel
-
-from refuel_oracle.llm import LLMProvider
 
 
 class Metric(str, Enum):
@@ -68,6 +68,7 @@ class TaskStatus(str, Enum):
 
 class TaskResult(BaseModel):
     id: Optional[str] = None
+    created_at: datetime
     task_id: str
     dataset_id: str
     current_index: int

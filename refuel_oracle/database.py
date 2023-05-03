@@ -7,7 +7,7 @@ from refuel_oracle.data_models import DatasetModel, TaskModel, TaskResultModel
 from refuel_oracle.dataset_config import DatasetConfig
 from refuel_oracle.schema import Dataset, Task, TaskResult, TaskStatus
 from refuel_oracle.task_config import TaskConfig
-from refuel_oracle.llm import LLMConfig
+from refuel_oracle.models import ModelConfig
 
 
 class Database:
@@ -39,7 +39,7 @@ class Database:
         )
         return Dataset.from_orm(DatasetModel.create(self.session, dataset))
 
-    def initialize_task(self, task_config: TaskConfig, llm_config: LLMConfig):
+    def initialize_task(self, task_config: TaskConfig, llm_config: ModelConfig):
         task_id = TaskModel.create_id(task_config, llm_config)
         task_orm = TaskModel.get_by_id(self.session, task_id)
         if task_orm:

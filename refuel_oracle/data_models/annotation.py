@@ -13,7 +13,7 @@ class AnnotationModel(Base):
     __tablename__ = "annotations"
 
     id = Column(Integer, primary_key=True, autoincrement=True)
-    time_created = Column(DateTime(timezone=True), server_default=func.now())
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
     index = Column(Integer)
     llm_annotation = Column(JSON)
     task_result_id = Column(Integer, ForeignKey("task_results.id"))
@@ -47,14 +47,21 @@ class AnnotationModel(Base):
         return db_object
 
     @classmethod
-    def get_all_annotations_by_task_result_id(cls, db, task_result_id: int):
-        return (
+    def get_annotations_by_task_result_id(cls, db, task_result_id: int):
+        annotations = (
             db.query(cls)
             .filter(cls.task_result_id == task_result_id)
             .order_by(cls.index)
             .distinct(cls.index)
             .all()
         )
+        filtered_annotations = []
+        ids = {}
+        for annotation in annotations:
+            if annotation.index not in ids:
+                ids[annotation.index] = True
+                filtered_annotations.append(annotation)
+        return filtered_annotations
 
     @classmethod
     def from_pydantic(cls, annotation: BaseModel):

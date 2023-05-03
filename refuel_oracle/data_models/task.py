@@ -5,7 +5,7 @@ from sqlalchemy.orm import relationship
 import json
 
 from refuel_oracle.task_config import TaskConfig
-from refuel_oracle.llm import LLMConfig
+from refuel_oracle.models import ModelConfig
 from refuel_oracle.utils import calculate_md5
 
 
@@ -23,7 +23,7 @@ class TaskModel(Base):
         return f"<TaskModel(id={self.id}, task_type={self.task_type}, provider={self.provider}, model_name={self.model_name})>"
 
     @classmethod
-    def create_id(self, task_config: TaskConfig, llm_config: LLMConfig):
+    def create_id(self, task_config: TaskConfig, llm_config: ModelConfig):
         filehash = calculate_md5([task_config.config, llm_config.dict])
         return filehash
 
