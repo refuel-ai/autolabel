@@ -1,12 +1,12 @@
 from typing import List, Dict, Tuple
 
-import matplotlib.pyplot as plt
 from langchain.prompts.prompt import PromptTemplate
+from sklearn.metrics import accuracy_score
+
 from refuel_oracle.confidence import ConfidenceCalculator
 from refuel_oracle.task_config import TaskConfig
 from refuel_oracle.schema import LLMAnnotation, Metric, MetricResult
 from refuel_oracle.tasks import BaseTask
-from sklearn.metrics import ConfusionMatrixDisplay, accuracy_score, confusion_matrix
 
 
 class ClassificationTask(BaseTask):
@@ -127,26 +127,6 @@ class ClassificationTask(BaseTask):
                     value=value,
                 )
             )
-
-        labels_list = self.dataset_config.get_labels_list()
-        labels_list.append(self.NULL_LABEL_TOKEN)
-        confusion = confusion_matrix(
-            gt_labels, [i.label for i in llm_labels], labels=labels_list
-        )
-        eval_metrics.append(
-            MetricResult(
-                metric_type=Metric.CONFUSION_MATRIX,
-                name="confusion_matrix",
-                value={"labels": labels_list, "value": confusion},
-            )
-        )
-        disp = ConfusionMatrixDisplay(
-            confusion_matrix=confusion, display_labels=labels_list
-        )
-        disp.plot(cmap="Purples")
-        plt.xticks(rotation=90)
-        plt.show(block=False)
-        input("Displaying confusion matrix. Press enter to continue..")
 
         for index, threshold in enumerate(thresholds):
             (
