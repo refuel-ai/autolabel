@@ -11,10 +11,9 @@ import sys
 from refuel_oracle.confidence import ConfidenceCalculator
 from refuel_oracle.llm_cache import RefuelSQLLangchainCache
 from refuel_oracle.task_config import TaskConfig
-from refuel_oracle.example_selector import ExampleSelector
+from refuel_oracle.few_shot import ExampleSelectorFactory
 from refuel_oracle.models import ModelConfig, ModelFactory, BaseModel
 from refuel_oracle.schema import LLMAnnotation
-from refuel_oracle.task_config import TaskConfig
 from refuel_oracle.tasks import TaskFactory
 from refuel_oracle.dataset_config import DatasetConfig
 from refuel_oracle.database import Database
@@ -141,12 +140,9 @@ class Oracle:
         if isinstance(seed_examples, str):
             _, seed_examples, _ = self._read_csv(seed_examples, dataset_config)
 
-        if self.task_config.get_example_selector():
-            self.example_selector = ExampleSelector(
-                self.task_config.get_example_selector(), seed_examples
-            )
-        else:
-            self.example_selector = None
+        self.example_selector = ExampleSelectorFactory.initialize_selector(
+            self.task_config, seed_examples
+        )
 
         num_failures = 0
         current_index = self.task_run.current_index
@@ -156,13 +152,10 @@ class Oracle:
             final_prompts = []
             for i, input_i in enumerate(chunk):
                 # Fetch few-shot seed examples
-                if self.example_selector:
-                    examples = self.example_selector.get_examples(input_i)
-                else:
-                    examples = seed_examples
-
+                examples = self.example_selector.select_examples(input_i)
                 # Construct Prompt to pass to LLM
                 final_prompt = self.task.construct_prompt(input_i, examples)
+                logger.info(final_prompt)
                 final_prompts.append(final_prompt)
 
             # Get response from LLM
@@ -206,8 +199,7 @@ class Oracle:
                             ),
                             empty_response=self.task_config.get_empty_response(),
                             prompt=final_prompts[i],
-                            logprobs_available=self.task_config.get_has_logprob()
-                            == "True",
+                            logprobs_available=self.llm_config.get_has_logprob(),
                         )
                     else:
                         annotation = self.task.parse_llm_response(
@@ -329,11 +321,7 @@ class Oracle:
             self.task_config = TaskConfig.from_json(task_config, **kwargs)
         else:
             self.task_config = TaskConfig(task_config)
-
         self.task = TaskFactory.from_config(self.task_config)
-        self.example_selector = None
-        if "example_selector" in self.task_config.keys():
-            self.example_selector = ExampleSelector(self.task_config)
 
     def set_llm_config(self, llm_config: Union[str, Dict]):
         if isinstance(llm_config, str):
