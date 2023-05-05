@@ -66,6 +66,8 @@ class Dataset(BaseModel):
 class TaskType(str, Enum):
     CLASSIFICATION = "classification"
     ENTITY_RECOGNITION = "entity_recognition"
+    MULTI_CHOICE_QUESTION_ANSWERING = "multi_choice_question_answering"
+    ENTITY_MATCHING = "entity_matching"
 
 
 class Task(BaseModel):
