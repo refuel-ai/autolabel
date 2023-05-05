@@ -2,7 +2,7 @@ from refuel_oracle.data_models import Base
 from sqlalchemy import create_engine, MetaData
 from sqlalchemy.orm import sessionmaker
 from loguru import logger
-from typing import Tuple
+from typing import Optional
 from refuel_oracle.data_models import DatasetModel, TaskModel, TaskRunModel
 from refuel_oracle.dataset_config import DatasetConfig
 from refuel_oracle.schema import Dataset, Task, TaskRun, TaskStatus
@@ -22,7 +22,11 @@ class Database:
         self.session = sessionmaker(bind=self.engine, autocommit=True)()
 
     def initialize_dataset(
-        self, input_file: str, dataset_config: DatasetConfig, start_index, max_items
+        self,
+        input_file: str,
+        dataset_config: DatasetConfig,
+        start_index: int,
+        max_items: Optional[int],
     ):
         # TODO: Check if this works for max_items = None
         dataset_id = Dataset.create_id(
@@ -36,7 +40,7 @@ class Database:
             id=dataset_id,
             input_file=input_file,
             start_index=start_index,
-            end_index=start_index + max_items,
+            end_index=start_index + max_items if max_items else -1,
         )
         return Dataset.from_orm(DatasetModel.create(self.session, dataset))
 

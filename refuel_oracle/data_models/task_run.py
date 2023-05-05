@@ -37,7 +37,8 @@ class TaskRunModel(Base):
         logger.debug(f"creating new task: {task_run}")
         db_object = cls(**task_run.dict())
         db.add(db_object)
-        db_object = db.query(cls).order_by(cls.id.desc()).first()
+        db.flush()
+        db.refresh(db_object)
         logger.debug(f"created new task: {db_object}")
         return db_object
 
