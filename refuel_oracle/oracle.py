@@ -90,9 +90,9 @@ class Oracle:
         self,
         dataset: Union[str, pd.DataFrame],
         dataset_config: Union[str, Dict],
-        max_items: int = None,
-        output_name: str = None,
-        start_index: int = 0,
+        max_items: Optional[int] = None,
+        output_name: Optional[str] = None,
+        start_index: Optional[int] = 0,
     ) -> None:
         """Labels data in a given dataset. Output written to new CSV file.
 
@@ -349,15 +349,16 @@ class Oracle:
             self.db.session, task_run.id
         )
         llm_labels = [LLMAnnotation(**a.llm_annotation) for a in db_result]
-        if gt_labels:
+        if gt_labels and len(llm_labels) > 0:
             print("Evaluating the existing task...")
             gt_labels = gt_labels[: len(llm_labels)]
             eval_result = self.task.eval(llm_labels, gt_labels)
             for m in eval_result:
                 print(f"Metric: {m.name}: {m.value}")
         print(f"{len(llm_labels)} examples have been labeled so far.")
-        print(f"Last annotated example - Prompt: {llm_labels[-1].prompt}")
-        print(f"Annotation: {llm_labels[-1].label}")
+        if len(llm_labels) > 0:
+            print(f"Last annotated example - Prompt: {llm_labels[-1].prompt}")
+            print(f"Annotation: {llm_labels[-1].label}")
         user_input = input("Do you want to resume it? (y/n)")
         if user_input.lower() in ["y", "yes"]:
             print("Resuming the task...")
