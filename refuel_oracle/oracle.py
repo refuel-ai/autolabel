@@ -1,19 +1,24 @@
-from typing import Tuple, List, Dict, Union, Optional
-
-import langchain
 from loguru import logger
+from pathlib import Path
+from tqdm import tqdm
+from typing import Tuple, List, Dict, Union, Optional
+import langchain
 import numpy as np
 import pandas as pd
 from tqdm import tqdm
+import sys
 
 from refuel_oracle.confidence import ConfidenceCalculator
 from refuel_oracle.llm_cache import RefuelSQLLangchainCache
 from refuel_oracle.task_config import TaskConfig
-from refuel_oracle.example_selector import ExampleSelector
+from refuel_oracle.few_shot import ExampleSelectorFactory
 from refuel_oracle.models import ModelConfig, ModelFactory, BaseModel
 from refuel_oracle.schema import LLMAnnotation
 from refuel_oracle.tasks import TaskFactory
 from refuel_oracle.dataset_config import DatasetConfig
+from refuel_oracle.database import Database
+from refuel_oracle.schema import TaskRun, TaskStatus
+from refuel_oracle.data_models import TaskRunModel, AnnotationModel
 
 
 class Oracle:
@@ -29,7 +34,14 @@ class Oracle:
         self.set_task_config(task_config, **kwargs)
         self.set_llm_config(llm_config, **kwargs)
         self.debug = debug
-        if not debug:
+        self.dir_path = Path(Path.home() / ".refuel_oracle")
+        if not self.dir_path.exists():
+            self.dir_path.mkdir(parents=True)
+        self.db = Database(f"sqlite:///{self.dir_path}/database.db")
+        log_level = "DEBUG" if self.debug else "INFO"
+        logger.remove()
+        logger.add(sys.stdout, level=log_level)
+        if not self.debug:
             self.set_cache()
 
     # TODO: all this will move to a separate input parser class
@@ -41,6 +53,7 @@ class Oracle:
         max_items: int = None,
         start_index: int = 0,
     ) -> Tuple[pd.DataFrame, List[Dict], List]:
+        logger.debug(f"reading the csv from: {start_index}")
         delimiter = dataset_config.get_delimiter()
         input_columns = dataset_config.get_input_columns()
         label_column = dataset_config.get_label_column()
@@ -91,7 +104,14 @@ class Oracle:
         """
         dataset_config = self.create_dataset_config(dataset_config)
         self.task.set_dataset_config(dataset_config)
-
+        self.db.initialize()
+        self.dataset = self.db.initialize_dataset(
+            dataset, dataset_config, start_index, max_items
+        )
+        self.task_object = self.db.initialize_task(self.task_config, self.llm_config)
+        csv_file_name = (
+            output_name if output_name else f"{dataset.replace('.csv','')}_labeled.csv"
+        )
         if isinstance(dataset, str):
             df, inputs, gt_labels = self._read_csv(
                 dataset, dataset_config, max_items, start_index
@@ -99,6 +119,18 @@ class Oracle:
         elif isinstance(dataset, pd.DataFrame):
             df, inputs, gt_labels = self._read_dataframe(
                 dataset, dataset_config, max_items, start_index
+            )
+        # Initialize task run and check if it already exists
+        self.task_run = self.db.get_task_run(self.task_object.id, self.dataset.id)
+        # Resume/Delete the task if it already exists or create a new task run
+        if self.task_run:
+            logger.info("Task run already exists.")
+            self.task_run = self.handle_existing_task_run(
+                self.task_run, csv_file_name, gt_labels=gt_labels
+            )
+        else:
+            self.task_run = self.db.create_task_run(
+                csv_file_name, self.task_object.id, self.dataset.id
             )
 
         # Get the seed examples from the dataset config
@@ -108,32 +140,23 @@ class Oracle:
         if isinstance(seed_examples, str):
             _, seed_examples, _ = self._read_csv(seed_examples, dataset_config)
 
-        if self.task_config.get_example_selector():
-            self.example_selector = ExampleSelector(
-                self.task_config.get_example_selector(), seed_examples
-            )
-        else:
-            self.example_selector = None
+        self.example_selector = ExampleSelectorFactory.initialize_selector(
+            self.task_config, seed_examples
+        )
 
-        llm_labels = []
-        prompt_list = []
         num_failures = 0
+        current_index = self.task_run.current_index
 
-        num_sections = max(len(df) / self.CHUNK_SIZE, 1)
-        for chunk in tqdm(np.array_split(inputs, num_sections)):
+        for current_index in tqdm(range(current_index, len(inputs), self.CHUNK_SIZE)):
+            chunk = inputs[current_index : current_index + self.CHUNK_SIZE]
             final_prompts = []
             for i, input_i in enumerate(chunk):
                 # Fetch few-shot seed examples
-                if self.example_selector:
-                    examples = self.example_selector.get_examples(input_i)
-                else:
-                    examples = seed_examples
-
+                examples = self.example_selector.select_examples(input_i)
                 # Construct Prompt to pass to LLM
                 final_prompt = self.task.construct_prompt(input_i, examples)
+                logger.info(final_prompt)
                 final_prompts.append(final_prompt)
-
-                prompt_list.append(final_prompt)
 
             # Get response from LLM
             try:
@@ -145,18 +168,22 @@ class Oracle:
                 # maintained either. We should either remove the elements we errored
                 # out on from gt_labels or add None labels to the llm_labels.
                 logger.error(
-                    "Error in generating response:" + repr(e), "Prompt: ", chunk[i]
+                    "Error in generating response:" + repr(e), "Prompt: ", chunk
                 )
-                for _ in range(len(chunk)):
-                    llm_labels.append(
-                        LLMAnnotation(
-                            successfully_labeled="No",
-                            label=None,
-                            raw_response="",
-                            curr_sample=chunk[i],
-                            promp=final_prompts[i],
-                            confidence_score=0,
-                        )
+                for i in range(len(chunk)):
+                    annotation = LLMAnnotation(
+                        successfully_labeled="No",
+                        label=None,
+                        raw_response="",
+                        curr_sample=chunk[i],
+                        prompt=final_prompts[i],
+                        confidence_score=0,
+                    )
+                    AnnotationModel.create_from_llm_annotation(
+                        self.db.session,
+                        annotation,
+                        current_index + i,
+                        self.task_run.id,
                     )
                 num_failures += len(chunk)
                 response = None
@@ -166,22 +193,34 @@ class Oracle:
                     response_item = response.generations[i]
                     generation = response_item[0]
                     if self.task_config.get_compute_confidence():
-                        llm_labels.append(
-                            self.confidence.calculate(
-                                model_generation=self.task.parse_llm_response(
-                                    generation, chunk[i], final_prompts[i]
-                                ),
-                                empty_response=self.task_config.get_empty_response(),
-                                prompt=final_prompts[i],
-                                logprobs_available=self.llm_config.get_has_logprob(),
-                            )
+                        annotation = self.confidence.calculate(
+                            model_generation=self.task.parse_llm_response(
+                                generation, chunk[i], final_prompts[i]
+                            ),
+                            empty_response=self.task_config.get_empty_response(),
+                            prompt=final_prompts[i],
+                            logprobs_available=self.llm_config.get_has_logprob(),
                         )
                     else:
-                        llm_labels.append(
-                            self.task.parse_llm_response(
-                                generation, chunk[i], final_prompts[i]
-                            )
+                        annotation = self.task.parse_llm_response(
+                            generation, chunk[i], final_prompts[i]
                         )
+                    AnnotationModel.create_from_llm_annotation(
+                        self.db.session,
+                        annotation,
+                        current_index + i,
+                        self.task_run.id,
+                    )
+
+            # Update task run state
+            self.task_run = self.save_task_run_state(
+                current_index=current_index + len(chunk)
+            )
+
+        db_result = AnnotationModel.get_annotations_by_task_run_id(
+            self.db.session, self.task_run.id
+        )
+        llm_labels = [LLMAnnotation(**a.llm_annotation) for a in db_result]
         eval_result = None
         # if true labels are provided, evaluate accuracy of predictions
         if gt_labels:
@@ -263,7 +302,7 @@ class Oracle:
                 prompt_list.append(final_prompt)
 
                 # Calculate the number of tokens
-                curr_cost = self.llm.get_cost(prompt=final_prompt)
+                curr_cost = self.llm.get_cost(prompt=final_prompt, label="")
                 total_cost += curr_cost
 
         total_cost = total_cost * (len(inputs) / input_limit)
@@ -282,11 +321,7 @@ class Oracle:
             self.task_config = TaskConfig.from_json(task_config, **kwargs)
         else:
             self.task_config = TaskConfig(task_config)
-
         self.task = TaskFactory.from_config(self.task_config)
-        self.example_selector = None
-        if "example_selector" in self.task_config.keys():
-            self.example_selector = ExampleSelector(self.task_config)
 
     def set_llm_config(self, llm_config: Union[str, Dict]):
         if isinstance(llm_config, str):
@@ -304,5 +339,44 @@ class Oracle:
             dataset_config = DatasetConfig.from_json(dataset_config)
         else:
             dataset_config = DatasetConfig(dataset_config)
-
         return dataset_config
+
+    def handle_existing_task_run(
+        self, task_run: TaskRun, csv_file_name: str, gt_labels: List[str] = None
+    ) -> TaskRun:
+        print(f"There is an existing task with following details: {task_run}")
+        db_result = AnnotationModel.get_annotations_by_task_run_id(
+            self.db.session, task_run.id
+        )
+        llm_labels = [LLMAnnotation(**a.llm_annotation) for a in db_result]
+        if gt_labels:
+            print("Evaluating the existing task...")
+            gt_labels = gt_labels[: len(llm_labels)]
+            eval_result = self.task.eval(llm_labels, gt_labels)
+            for m in eval_result:
+                print(f"Metric: {m.name}: {m.value}")
+        print(f"{len(llm_labels)} examples have been labeled so far.")
+        print(f"Last annotated example - Prompt: {llm_labels[-1].prompt}")
+        print(f"Annotation: {llm_labels[-1].label}")
+        user_input = input("Do you want to resume it? (y/n)")
+        if user_input.lower() in ["y", "yes"]:
+            print("Resuming the task...")
+        else:
+            TaskRunModel.delete_by_id(self.db.session, task_run.id)
+            print("Deleted the existing task and starting a new one...")
+            task_run = self.db.create_task_run(
+                csv_file_name, self.task_object.id, self.dataset.id
+            )
+        return task_run
+
+    def save_task_run_state(
+        self, current_index: int = None, status: TaskStatus = "", error: str = ""
+    ):
+        # Save the current state of the task
+        if error:
+            self.task_run.error = error
+        if status:
+            self.task_run.status = status
+        if current_index:
+            self.task_run.current_index = current_index
+        return TaskRunModel.update(self.db.session, self.task_run)

@@ -1,0 +1,78 @@
+from refuel_oracle.data_models import Base
+from sqlalchemy import create_engine, MetaData
+from sqlalchemy.orm import sessionmaker
+from loguru import logger
+from typing import Tuple
+from refuel_oracle.data_models import DatasetModel, TaskModel, TaskRunModel
+from refuel_oracle.dataset_config import DatasetConfig
+from refuel_oracle.schema import Dataset, Task, TaskRun, TaskStatus
+from refuel_oracle.task_config import TaskConfig
+from refuel_oracle.models import ModelConfig
+from datetime import datetime
+
+
+class Database:
+    def __init__(self, database_url: str):
+        self.engine = create_engine(database_url)
+        self.base = Base
+        self.session = None
+
+    def initialize(self):
+        self.base.metadata.create_all(self.engine)
+        self.session = sessionmaker(bind=self.engine, autocommit=True)()
+
+    def initialize_dataset(
+        self, input_file: str, dataset_config: DatasetConfig, start_index, max_items
+    ):
+        # TODO: Check if this works for max_items = None
+        dataset_id = Dataset.create_id(
+            input_file, dataset_config, start_index, max_items
+        )
+        dataset_orm = DatasetModel.get_by_id(self.session, dataset_id)
+        if dataset_orm:
+            return Dataset.from_orm(dataset_orm)
+
+        dataset = Dataset(
+            id=dataset_id,
+            input_file=input_file,
+            start_index=start_index,
+            end_index=start_index + max_items,
+        )
+        return Dataset.from_orm(DatasetModel.create(self.session, dataset))
+
+    def initialize_task(self, task_config: TaskConfig, llm_config: ModelConfig):
+        task_id = Task.create_id(task_config, llm_config)
+        task_orm = TaskModel.get_by_id(self.session, task_id)
+        if task_orm:
+            return Task.from_orm(task_orm)
+
+        task = Task(
+            id=task_id,
+            config=task_config.to_json(),
+            task_type=task_config.get_task_type(),
+            provider=llm_config.get_provider(),
+            model_name=llm_config.get_model_name(),
+        )
+        return Task.from_orm(TaskModel.create(self.session, task))
+
+    def get_task_run(self, task_id: str, dataset_id: str):
+        task_run_orm = TaskRunModel.get(self.session, task_id, dataset_id)
+        if task_run_orm:
+            return TaskRun.from_orm(task_run_orm)
+        else:
+            return None
+
+    def create_task_run(
+        self, output_file: str, task_id: str, dataset_id: str
+    ) -> TaskRun:
+        logger.debug(f"creating new task_run")
+        new_task_run = TaskRun(
+            task_id=task_id,
+            dataset_id=dataset_id,
+            status=TaskStatus.ACTIVE,
+            current_index=0,
+            output_file=output_file,
+            created_at=datetime.now(),
+        )
+        task_run_orm = TaskRunModel.create(self.session, new_task_run)
+        return TaskRun.from_orm(task_run_orm)

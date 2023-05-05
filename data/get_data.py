@@ -1,13 +1,13 @@
 import os
-from datasets import load_dataset
 import json
 import csv
 import gdown
 import zipfile
 import random
-import pandas as pd
 import urllib.request
-from transformers import AutoTokenizer
+
+from datasets import load_dataset
+import pandas as pd
 
 
 def map_label_to_string(dataset, col):

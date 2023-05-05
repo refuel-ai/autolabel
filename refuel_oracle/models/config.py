@@ -1,7 +1,14 @@
 import json
 from typing import Any, Dict, List
+from enum import Enum
 
 from loguru import logger
+
+
+class LLMProvider(str, Enum):
+    OPENAI = "openai"
+    ANTHROPIC = "anthropic"
+    HUGGINGFACE_PIPELINE = "huggingface_pipeline"
 
 
 class ModelConfig:
