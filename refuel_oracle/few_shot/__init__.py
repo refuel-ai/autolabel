@@ -4,7 +4,7 @@ from loguru import logger
 from langchain.embeddings import OpenAIEmbeddings
 from langchain.prompts.example_selector import (
     MaxMarginalRelevanceExampleSelector,
-    SemanticSimilarityExampleSelector
+    SemanticSimilarityExampleSelector,
 )
 from langchain.prompts.example_selector.base import BaseExampleSelector
 
@@ -25,23 +25,24 @@ class ExampleSelectorFactory:
     DEFAULT_NUM_EXAMPLES = 4
 
     @staticmethod
-    def initialize_selector(config: TaskConfig, examples: List[Dict]) -> BaseExampleSelector:
+    def initialize_selector(
+        config: TaskConfig, examples: List[Dict]
+    ) -> BaseExampleSelector:
         example_selector_config = config.get_example_selector()
         strategy = example_selector_config.get(
-            "strategy", ExampleSelectorFactory.DEFAULT_STRATEGY)
+            "strategy", ExampleSelectorFactory.DEFAULT_STRATEGY
+        )
         num_examples = example_selector_config.get(
-            "num_examples", ExampleSelectorFactory.DEFAULT_NUM_EXAMPLES)
+            "num_examples", ExampleSelectorFactory.DEFAULT_NUM_EXAMPLES
+        )
 
         if strategy not in STRATEGY_TO_IMPLEMENTATION:
             logger.error(
                 f"Example selection: {strategy} is not in the list of supported strategies: {STRATEGY_TO_IMPLEMENTATION.keys()}"
             )
             return None
-        
-        params = {
-            "examples": examples,
-            "k": num_examples
-        }
+
+        params = {"examples": examples, "k": num_examples}
         if strategy in ["semantic_similarity", "maximal_marginal_relevance"]:
             params["embeddings"] = OpenAIEmbeddings()
             params["vectorstore_cls"] = VectorStoreWrapper
