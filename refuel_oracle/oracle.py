@@ -9,14 +9,14 @@ from tqdm import tqdm
 import sys
 
 from refuel_oracle.confidence import ConfidenceCalculator
-from refuel_oracle.llm_cache import RefuelSQLLangchainCache
+from refuel_oracle.cache import LLMCache
 from refuel_oracle.task_config import TaskConfig
 from refuel_oracle.few_shot import ExampleSelectorFactory
 from refuel_oracle.models import ModelConfig, ModelFactory, BaseModel
 from refuel_oracle.schema import LLMAnnotation
 from refuel_oracle.tasks import TaskFactory
 from refuel_oracle.dataset_config import DatasetConfig
-from refuel_oracle.database import Database
+from refuel_oracle.database import StateManager
 from refuel_oracle.schema import TaskRun, TaskStatus
 from refuel_oracle.data_models import TaskRunModel, AnnotationModel
 
@@ -34,10 +34,7 @@ class Oracle:
         self.set_task_config(task_config, **kwargs)
         self.set_llm_config(llm_config, **kwargs)
         self.debug = debug
-        self.dir_path = Path(Path.home() / ".refuel_oracle")
-        if not self.dir_path.exists():
-            self.dir_path.mkdir(parents=True)
-        self.db = Database(f"sqlite:///{self.dir_path}/database.db")
+        self.db = StateManager()
         log_level = "DEBUG" if self.debug else "INFO"
         logger.remove()
         logger.add(sys.stdout, level=log_level)
@@ -314,7 +311,7 @@ class Oracle:
 
     def set_cache(self):
         # Set cache for langchain
-        langchain.llm_cache = RefuelSQLLangchainCache(database_path=".langchain.db")
+        langchain.llm_cache = LLMCache()
 
     def set_task_config(self, task_config: Union[str, Dict], **kwargs):
         if isinstance(task_config, str):
