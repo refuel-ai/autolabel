@@ -1,21 +1,22 @@
-from typing import Optional, Type
-from langchain.cache import (
-    SQLAlchemyCache,
-    RETURN_VAL_TYPE,
-)
-from sqlalchemy.orm import Session
-from sqlalchemy import select, create_engine
+from typing import List, Optional
 import pickle
 
+from langchain.cache import SQLAlchemyCache
+from langchain.schema import Generation
+from sqlalchemy.orm import Session
+from sqlalchemy import select
 
-class RefuelSQLLangchainCache(SQLAlchemyCache):
-    """Cache that extends the SQAlchemy as a backend."""
+from refuel_oracle.database import create_db_engine
 
-    def __init__(self, database_path: str = ".langchain.db"):
-        engine = create_engine(f"sqlite:///{database_path}")
+
+class LLMCache(SQLAlchemyCache):
+    """Cache LLM calls with sqlite as a backend. Caches both generations and metadata (e.g. logprobs)"""
+
+    def __init__(self):
+        engine = create_db_engine()
         super().__init__(engine)
 
-    def lookup(self, prompt: str, llm_string: str) -> Optional[RETURN_VAL_TYPE]:
+    def lookup(self, prompt: str, llm_string: str) -> Optional[List[Generation]]:
         """Look up based on prompt and llm_string."""
         stmt = (
             select(self.cache_schema.response)
@@ -29,7 +30,9 @@ class RefuelSQLLangchainCache(SQLAlchemyCache):
                 return [pickle.loads(row[0]) for row in rows]
         return None
 
-    def update(self, prompt: str, llm_string: str, return_val: RETURN_VAL_TYPE) -> None:
+    def update(
+        self, prompt: str, llm_string: str, return_val: List[Generation]
+    ) -> None:
         """Update based on prompt and llm_string."""
         items = [
             self.cache_schema(
