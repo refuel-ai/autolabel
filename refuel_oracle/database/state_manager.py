@@ -1,5 +1,4 @@
 from refuel_oracle.data_models import Base
-from sqlalchemy import create_engine, MetaData
 from sqlalchemy.orm import sessionmaker
 from loguru import logger
 from typing import Optional
@@ -10,10 +9,12 @@ from refuel_oracle.task_config import TaskConfig
 from refuel_oracle.models import ModelConfig
 from datetime import datetime
 
+from .engine import create_db_engine
 
-class Database:
-    def __init__(self, database_url: str):
-        self.engine = create_engine(database_url)
+
+class StateManager:
+    def __init__(self):
+        self.engine = create_db_engine()
         self.base = Base
         self.session = None
 
