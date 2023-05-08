@@ -38,8 +38,8 @@ class Oracle:
         log_level = "DEBUG" if self.debug else "INFO"
         logger.remove()
         logger.add(sys.stdout, level=log_level)
-        # if not self.debug:
-        #     self.set_cache()
+        if not self.debug:
+            self.set_cache()
 
     # TODO: all this will move to a separate input parser class
     # this is a temporary solution to quickly add this feature and unblock expts
@@ -52,7 +52,6 @@ class Oracle:
     ) -> Tuple[pd.DataFrame, List[Dict], List]:
         logger.debug(f"reading the csv from: {start_index}")
         delimiter = dataset_config.get_delimiter()
-        input_columns = dataset_config.get_input_columns()
         label_column = dataset_config.get_label_column()
 
         dat = pd.read_csv(csv_file, sep=delimiter, dtype="str")[start_index:]
@@ -71,7 +70,6 @@ class Oracle:
         max_items: int = None,
         start_index: int = 0,
     ) -> Tuple[pd.DataFrame, List[Dict], List]:
-        input_columns = dataset_config.get_input_columns()
         label_column = dataset_config.get_label_column()
 
         dat = df[start_index:]
@@ -79,7 +77,7 @@ class Oracle:
             max_items = min(max_items, len(dat))
             dat = dat[:max_items]
 
-        inputs = dat[input_columns + [label_column]].to_dict(orient="records")
+        inputs = dat.to_dict(orient="records")
         gt_labels = None if not label_column else dat[label_column].tolist()
         return (dat, inputs, gt_labels)
 
@@ -160,7 +158,6 @@ class Oracle:
                 examples = self.example_selector.select_examples(input_i)
                 # Construct Prompt to pass to LLM
                 final_prompt = self.task.construct_prompt(input_i, examples)
-                # logger.info(final_prompt)
                 final_prompts.append(final_prompt)
 
             # Get response from LLM
