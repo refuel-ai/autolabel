@@ -1,8 +1,5 @@
 import hashlib
 import json
-from typing import Dict
-
-from loguru import logger
 import regex
 
 
