@@ -3,9 +3,6 @@ from pydantic import BaseModel
 from sqlalchemy import Column, Integer, String
 from sqlalchemy.orm import relationship
 import json
-from refuel_oracle.utils import calculate_md5
-from refuel_oracle.dataset_config import DatasetConfig
-
 
 class DatasetModel(Base):
     __tablename__ = "datasets"

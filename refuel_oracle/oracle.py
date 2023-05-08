@@ -1,5 +1,4 @@
 from loguru import logger
-from pathlib import Path
 from tqdm import tqdm
 from typing import Tuple, List, Dict, Union, Optional
 import langchain
@@ -10,16 +9,14 @@ import sys
 
 from refuel_oracle.confidence import ConfidenceCalculator
 from refuel_oracle.cache import LLMCache
-from refuel_oracle.task_config import TaskConfig
 from refuel_oracle.few_shot import ExampleSelectorFactory
-from refuel_oracle.models import ModelConfig, ModelFactory, BaseModel
+from refuel_oracle.models import ModelFactory, BaseModel
 from refuel_oracle.schema import LLMAnnotation
 from refuel_oracle.tasks import TaskFactory
-from refuel_oracle.dataset_config import DatasetConfig
 from refuel_oracle.database import StateManager
 from refuel_oracle.schema import TaskRun, TaskStatus
 from refuel_oracle.data_models import TaskRunModel, AnnotationModel
-
+from refuel_oracle.configs import ModelConfig, DatasetConfig, TaskConfig
 
 class Oracle:
     CHUNK_SIZE = 5
@@ -28,18 +25,16 @@ class Oracle:
         self,
         task_config: Union[str, Dict],
         llm_config: Optional[Union[str, Dict]] = None,
-        debug: bool = False,
-        **kwargs,
+        log_level: Optional[str] = "INFO",
+        cache: Optional[bool] = False
     ) -> None:
-        self.set_task_config(task_config, **kwargs)
-        self.set_llm_config(llm_config, **kwargs)
-        self.debug = debug
+        self.set_task_config(task_config)
+        self.set_llm_config(llm_config)
+        if cache:
+            langchain.llm_cache = LLMCache()
         self.db = StateManager()
-        log_level = "DEBUG" if self.debug else "INFO"
         logger.remove()
         logger.add(sys.stdout, level=log_level)
-        if not self.debug:
-            self.set_cache()
 
     # TODO: all this will move to a separate input parser class
     # this is a temporary solution to quickly add this feature and unblock expts
@@ -325,33 +320,19 @@ class Oracle:
         print(f"\n\nA prompt example:\n\n{prompt_list[0]}")
         return
 
-    def set_cache(self):
-        # Set cache for langchain
-        langchain.llm_cache = LLMCache()
-
-    def set_task_config(self, task_config: Union[str, Dict], **kwargs):
-        if isinstance(task_config, str):
-            self.task_config = TaskConfig.from_json(task_config, **kwargs)
-        else:
-            self.task_config = TaskConfig(task_config)
+    def set_task_config(self, task_config: Union[str, Dict]):
+        self.task_config = TaskConfig(task_config)
         self.task = TaskFactory.from_config(self.task_config)
 
     def set_llm_config(self, llm_config: Union[str, Dict]):
-        if isinstance(llm_config, str):
-            self.llm_config = ModelConfig.from_json(llm_config)
-        else:
-            self.llm_config = ModelConfig(llm_config)
-
+        self.llm_config = ModelConfig(llm_config)
         self.llm: BaseModel = ModelFactory.from_config(self.llm_config)
         self.confidence = ConfidenceCalculator(
             score_type="logprob_average", llm=self.llm
         )
 
     def create_dataset_config(self, dataset_config: Union[str, Dict]):
-        if isinstance(dataset_config, str):
-            dataset_config = DatasetConfig.from_json(dataset_config)
-        else:
-            dataset_config = DatasetConfig(dataset_config)
+        dataset_config = DatasetConfig(dataset_config)
         return dataset_config
 
     def handle_existing_task_run(

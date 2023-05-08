@@ -2,7 +2,7 @@ from typing import List, Dict, Tuple
 
 from langchain.prompts.prompt import PromptTemplate
 from refuel_oracle.confidence import ConfidenceCalculator
-from refuel_oracle.task_config import TaskConfig
+from refuel_oracle.configs import TaskConfig
 from refuel_oracle.schema import LLMAnnotation, Metric, MetricResult
 from refuel_oracle.tasks import BaseTask
 from sklearn.metrics import accuracy_score
