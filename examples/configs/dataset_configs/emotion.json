@@ -16,23 +16,23 @@
     "seed_examples": [
         {
             "example": "i couldnt help but feel totally distraught and utterly helpless when lorena was kidnapped and tortured almost to death by a band of enemies i was desperate for her freedom",
-            "output": "fear"
+            "label": "fear"
         },
         {
             "example": "i mostly feel this as a cause of hateful memories of that girl who used to run the everchanging sailormoon gateway who i think is still making a name for herself by being stupid and mean",
-            "output": "anger"
+            "label": "anger"
         },
         {
             "example": "i feel about the plight of these dogs so its lovely to find a turkish vet who really cares",
-            "output": "love"
+            "label": "love"
         },
         {
             "example": "i see how strong and bright you are and as you meet your milestones weeks early i feel assured that my gut was always right",
-            "output": "joy"
+            "label": "joy"
         },
         {
             "example": "i am pinned as the culprit of digging out their inferiority and made them feel useless again",
-            "output": "sadness"
+            "label": "sadness"
         }
     ]
 }
