@@ -3,8 +3,8 @@ from typing import Any, Dict, List, Union
 
 from loguru import logger
 
-class BaseConfig:
 
+class BaseConfig:
     def __init__(self, config: Union[str, Dict]) -> None:
         if isinstance(config, str):
             self.config = self._safe_load_json(config)
@@ -20,7 +20,7 @@ class BaseConfig:
                 f"JSON file: {json_file_path} not loaded successfully. Error: {repr(e)}"
             )
             return {}
-    
+
     def get(self, key: str, default_value: Any = None) -> Any:
         return self.config.get(key, default_value)
 
@@ -29,13 +29,6 @@ class BaseConfig:
 
     def __getitem__(self, key):
         return self.config[key]
-    
+
     def to_json(self) -> str:
         return json.dumps(self.config, sort_keys=True)
-
-
-    
-
-
-
-

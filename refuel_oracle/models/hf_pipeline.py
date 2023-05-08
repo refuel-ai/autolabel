@@ -5,7 +5,7 @@ import torch
 
 from langchain.schema import LLMResult, Generation
 
-from refuel_oracle.models import  BaseModel
+from refuel_oracle.models import BaseModel
 from refuel_oracle.configs import ModelConfig
 
 

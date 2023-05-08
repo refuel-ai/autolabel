@@ -7,6 +7,7 @@ from langchain.schema import LLMResult, Generation
 from refuel_oracle.models import BaseModel
 from refuel_oracle.configs import ModelConfig
 
+
 class AnthropicLLM(BaseModel):
     DEFAULT_MODEL = "claude-v1"
     DEFAULT_PARAMS = {

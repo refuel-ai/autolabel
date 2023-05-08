@@ -5,6 +5,7 @@ from typing import Dict
 from loguru import logger
 import regex
 
+
 def extract_valid_json_substring(string):
     pattern = (
         r"{(?:[^{}]|(?R))*}"  # Regular expression pattern to match a valid JSON object

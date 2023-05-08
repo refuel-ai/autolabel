@@ -18,6 +18,7 @@ from refuel_oracle.schema import TaskRun, TaskStatus
 from refuel_oracle.data_models import TaskRunModel, AnnotationModel
 from refuel_oracle.configs import ModelConfig, DatasetConfig, TaskConfig
 
+
 class Oracle:
     CHUNK_SIZE = 5
 
@@ -26,7 +27,7 @@ class Oracle:
         task_config: Union[str, Dict],
         llm_config: Optional[Union[str, Dict]] = None,
         log_level: Optional[str] = "INFO",
-        cache: Optional[bool] = False
+        cache: Optional[bool] = False,
     ) -> None:
         self.set_task_config(task_config)
         self.set_llm_config(llm_config)

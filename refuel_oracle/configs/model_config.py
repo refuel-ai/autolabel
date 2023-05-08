@@ -2,6 +2,7 @@ from typing import Dict, Union
 
 from .base import BaseConfig
 
+
 class ModelConfig(BaseConfig):
     # config keys
     LLM_PROVIDER_KEY = "provider_name"
@@ -17,7 +18,8 @@ class ModelConfig(BaseConfig):
 
     def get_provider(self) -> str:
         provider_name = self.config.get(
-            self.LLM_PROVIDER_KEY, self.DEFAULT_LLM_PROVIDER)
+            self.LLM_PROVIDER_KEY, self.DEFAULT_LLM_PROVIDER
+        )
         return provider_name
 
     def get_model_name(self) -> str:

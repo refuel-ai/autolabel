@@ -9,6 +9,7 @@ import tiktoken
 from refuel_oracle.models import BaseModel
 from refuel_oracle.configs import ModelConfig
 
+
 class OpenAILLM(BaseModel):
     CHAT_ENGINE_MODELS = ["gpt-3.5-turbo", "gpt-4"]
 

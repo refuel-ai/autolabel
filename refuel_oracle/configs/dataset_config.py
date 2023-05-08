@@ -2,6 +2,7 @@ from typing import Dict, List, Union
 
 from .base import BaseConfig
 
+
 class DatasetConfig(BaseConfig):
     INPUT_COLUMNS_KEY = "input_columns"
     LABEL_COLUMN_KEY = "label_column"
@@ -44,4 +45,6 @@ class DatasetConfig(BaseConfig):
         """
         Returns the string used to seperate values in dataset. Defaults to ','
         """
-        return self.config[self.DATASET_SCHEMA_KEY].get(self.DELIMITER_KEY, self.DEFAULT_SEPARATOR)
+        return self.config[self.DATASET_SCHEMA_KEY].get(
+            self.DELIMITER_KEY, self.DEFAULT_SEPARATOR
+        )

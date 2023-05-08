@@ -1,7 +1,7 @@
-
 from typing import Dict, Union
 
 from .base import BaseConfig
+
 
 class TaskConfig(BaseConfig):
     # Standardized (and required) keys in the TaskConfig
@@ -57,4 +57,3 @@ class TaskConfig(BaseConfig):
 
     def get_empty_response(self) -> str:
         return self.config.get(self.EMPTY_RESPONSE_KEY, "")
-
