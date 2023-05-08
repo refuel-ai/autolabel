@@ -21,6 +21,14 @@ class EntityMatchingTask(BaseTask):
     )
     example_prompt_variables = ["entity1", "entity2", "answer"]
 
+    explanation_generation_prompt = "{prefix_prompt}\n You will be given two entities. Your job is to provide an explanation for why the two entities are duplicates or not duplicates. Think step by step and generate an explanation. The last line of the explanation should be - So, the answer is <answer>.\nEntity1: {entity1}\nEntity2: {entity2}\nAnswer: {answer}\nExplanation: "
+    explanation_generation_prompt_variables = [
+        "prefix_prompt",
+        "entity1",
+        "entity2",
+        "answer",
+    ]
+
     def __init__(self, config: TaskConfig) -> None:
         super().__init__(config)
 
@@ -71,6 +79,18 @@ class EntityMatchingTask(BaseTask):
             seed_examples_prompt=seed_examples_prompt,
         )
         return prompt
+
+    def generate_explanation(self, example: Dict) -> str:
+        example_prompt = PromptTemplate(
+            input_variables=self.explanation_generation_prompt_variables,
+            template=self.explanation_generation_prompt,
+        )
+        return example_prompt.format(
+            prefix_prompt=self.prefix_prompt,
+            entity1=example["entity1"],
+            entity2=example["entity2"],
+            answer=example["label"],
+        )
 
     def auroc_score_labels(
         self, gt_labels, llm_labels

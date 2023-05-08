@@ -52,7 +52,6 @@ class Oracle:
     ) -> Tuple[pd.DataFrame, List[Dict], List]:
         logger.debug(f"reading the csv from: {start_index}")
         delimiter = dataset_config.get_delimiter()
-        input_columns = dataset_config.get_input_columns()
         label_column = dataset_config.get_label_column()
 
         dat = pd.read_csv(csv_file, sep=delimiter, dtype="str")[start_index:]
@@ -60,7 +59,7 @@ class Oracle:
             max_items = min(max_items, len(dat))
             dat = dat[:max_items]
 
-        inputs = dat[input_columns + [label_column]].to_dict(orient="records")
+        inputs = dat.to_dict(orient="records")
         gt_labels = None if not label_column else dat[label_column].tolist()
         return (dat, inputs, gt_labels)
 
@@ -71,7 +70,6 @@ class Oracle:
         max_items: int = None,
         start_index: int = 0,
     ) -> Tuple[pd.DataFrame, List[Dict], List]:
-        input_columns = dataset_config.get_input_columns()
         label_column = dataset_config.get_label_column()
 
         dat = df[start_index:]
@@ -79,7 +77,7 @@ class Oracle:
             max_items = min(max_items, len(dat))
             dat = dat[:max_items]
 
-        inputs = dat[input_columns + [label_column]].to_dict(orient="records")
+        inputs = dat.to_dict(orient="records")
         gt_labels = None if not label_column else dat[label_column].tolist()
         return (dat, inputs, gt_labels)
 
@@ -137,6 +135,14 @@ class Oracle:
         if isinstance(seed_examples, str):
             _, seed_examples, _ = self._read_csv(seed_examples, dataset_config)
 
+        if self.task_config.use_chain_of_thought():
+            out_file = None
+            if isinstance(dataset_config.get_seed_examples(), str):
+                out_file = dataset_config.get_seed_examples().replace(
+                    ".csv", "_explanations.csv"
+                )
+            seed_examples = self.generate_explanations(seed_examples, out_file)
+
         self.example_selector = ExampleSelectorFactory.initialize_selector(
             self.task_config, seed_examples
         )
@@ -152,7 +158,6 @@ class Oracle:
                 examples = self.example_selector.select_examples(input_i)
                 # Construct Prompt to pass to LLM
                 final_prompt = self.task.construct_prompt(input_i, examples)
-                logger.info(final_prompt)
                 final_prompts.append(final_prompt)
 
             # Get response from LLM
@@ -188,23 +193,26 @@ class Oracle:
             if response is not None:
                 for i in range(len(response.generations)):
                     response_item = response.generations[i]
-                    generation = response_item[0]
-                    if self.task_config.get_compute_confidence():
-                        annotation = self.confidence.calculate(
-                            model_generation=self.task.parse_llm_response(
+                    annotations = []
+                    for generation in response_item:
+                        if self.task_config.get_compute_confidence():
+                            annotation = self.confidence.calculate(
+                                model_generation=self.task.parse_llm_response(
+                                    generation, chunk[i], final_prompts[i]
+                                ),
+                                empty_response=self.task_config.get_empty_response(),
+                                prompt=final_prompts[i],
+                                logprobs_available=self.llm_config.get_has_logprob(),
+                            )
+                        else:
+                            annotation = self.task.parse_llm_response(
                                 generation, chunk[i], final_prompts[i]
-                            ),
-                            empty_response=self.task_config.get_empty_response(),
-                            prompt=final_prompts[i],
-                            logprobs_available=self.llm_config.get_has_logprob(),
-                        )
-                    else:
-                        annotation = self.task.parse_llm_response(
-                            generation, chunk[i], final_prompts[i]
-                        )
+                            )
+                        annotations.append(annotation)
+                    final_annotation = self.majority_annotation(annotations)
                     AnnotationModel.create_from_llm_annotation(
                         self.db.session,
-                        annotation,
+                        final_annotation,
                         current_index + i,
                         self.task_run.id,
                     )
@@ -289,6 +297,14 @@ class Oracle:
         # If this dataset config is a string, read the corrresponding csv file
         if isinstance(seed_examples, str):
             _, seed_examples, _ = self._read_csv(seed_examples, dataset_config)
+
+        if self.task_config.use_chain_of_thought():
+            out_file = None
+            if isinstance(dataset_config.get_seed_examples(), str):
+                out_file = dataset_config.get_seed_examples().replace(
+                    ".csv", "_explanations.csv"
+                )
+            seed_examples = self.generate_explanations(seed_examples, out_file)
 
         input_limit = min(len(inputs), 100)
         num_sections = max(input_limit / self.CHUNK_SIZE, 1)
@@ -378,3 +394,43 @@ class Oracle:
         if current_index:
             self.task_run.current_index = current_index
         return TaskRunModel.update(self.db.session, self.task_run)
+
+    def majority_annotation(
+        self, annotation_list: List[LLMAnnotation]
+    ) -> LLMAnnotation:
+        labels = [a.label for a in annotation_list]
+        counts = {}
+        for ind, label in enumerate(labels):
+            if label not in counts:
+                counts[label] = (1, ind)
+            else:
+                counts[label] = (counts[label][0] + 1, counts[label][1])
+        max_label = max(counts, key=lambda x: counts[x][0])
+        return annotation_list[counts[max_label][1]]
+
+    def generate_explanations(
+        self, seed_examples: List[Dict], save_file: str
+    ) -> List[Dict]:
+        generate_explanations = False
+        for seed_example in tqdm(seed_examples):
+            if not seed_example.get("explanation", ""):
+                if not generate_explanations:
+                    logger.info(
+                        "Chain of thought requires explanations for seed examples. Generating explanations for seed examples."
+                    )
+                    generate_explanations = True
+
+                explanation_prompt = self.task.generate_explanation(seed_example)
+                explanation = (
+                    self.llm.label([explanation_prompt]).generations[0][0].text
+                )
+                seed_example["explanation"] = explanation
+
+        if generate_explanations and save_file:
+            logger.info(
+                "Generated explanations for seed examples. Saving explanations to the seed file."
+            )
+            df = pd.DataFrame.from_records(seed_examples)
+            df.to_csv(save_file, index=False)
+
+        return seed_examples
