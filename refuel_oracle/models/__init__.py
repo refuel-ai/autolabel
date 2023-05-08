@@ -1,12 +1,12 @@
 from typing import Dict
 from loguru import logger
 
-from .config import ModelConfig, LLMProvider
 from .base import BaseModel
 from .anthropic import AnthropicLLM
 from .openai import OpenAILLM
 from .hf_pipeline import HFPipelineLLM
 
+from refuel_oracle.configs import ModelConfig
 
 MODEL_PROVIDER_TO_IMPLEMENTATION: Dict[str, BaseModel] = {
     "openai": OpenAILLM,

@@ -7,7 +7,7 @@ from langchain.schema import Generation
 from loguru import logger
 from nervaluate import Evaluator
 from refuel_oracle.confidence import ConfidenceCalculator
-from refuel_oracle.task_config import TaskConfig
+from refuel_oracle.configs import TaskConfig
 from refuel_oracle.schema import LLMAnnotation, Metric, MetricResult
 from refuel_oracle.tasks import BaseTask
 

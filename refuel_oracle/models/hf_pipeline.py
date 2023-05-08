@@ -3,8 +3,10 @@ from langchain.llms import HuggingFacePipeline
 from transformers import AutoModelForSeq2SeqLM, AutoTokenizer, pipeline
 import torch
 
-from refuel_oracle.models import ModelConfig, BaseModel
 from langchain.schema import LLMResult, Generation
+
+from refuel_oracle.models import BaseModel
+from refuel_oracle.configs import ModelConfig
 
 
 class HFPipelineLLM(BaseModel):
