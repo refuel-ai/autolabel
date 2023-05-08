@@ -3,10 +3,8 @@ from sqlalchemy.orm import sessionmaker
 from loguru import logger
 from typing import Optional
 from refuel_oracle.data_models import DatasetModel, TaskModel, TaskRunModel
-from refuel_oracle.dataset_config import DatasetConfig
 from refuel_oracle.schema import Dataset, Task, TaskRun, TaskStatus
-from refuel_oracle.task_config import TaskConfig
-from refuel_oracle.models import ModelConfig
+from refuel_oracle.configs import ModelConfig, DatasetConfig, TaskConfig
 from datetime import datetime
 
 from .engine import create_db_engine

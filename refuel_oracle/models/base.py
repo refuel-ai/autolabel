@@ -4,7 +4,7 @@ from abc import ABC, abstractmethod
 from typing import List, Optional
 
 from langchain.schema import LLMResult
-from refuel_oracle.models import ModelConfig
+from refuel_oracle.configs import ModelConfig
 
 
 class BaseModel(ABC):

@@ -5,8 +5,7 @@ from typing import Dict, List
 
 from langchain.prompts.prompt import PromptTemplate
 from langchain.schema import Generation
-from refuel_oracle.task_config import TaskConfig
-from refuel_oracle.dataset_config import DatasetConfig
+from refuel_oracle.configs import DatasetConfig, TaskConfig
 from refuel_oracle.schema import LLMAnnotation, MetricResult
 from refuel_oracle.utils import extract_valid_json_substring
 from loguru import logger
