@@ -16,8 +16,17 @@ class ClassificationTask(BaseTask):
     )
 
     task_prompt = "Your job is to correctly label the provided input example into one of the following {num_labels} categories.\nCategories:\n{labels_list}\n"
-    example_prompt_template = "Example: {example}\nOutput: {output}\n"
-    example_prompt_variables = ["example", "output"]
+    example_prompt_template = "Example: {example}\nOutput: {explanation}\n{output}\n"
+    example_prompt_variables = ["example", "output", "explanation"]
+
+    explanation_generation_prompt = "{prefix_prompt}\n You will be given an input example and the corresponding output. Your job is to provide an explanation for why the output is correct. The label is one of the following {num_labels} categories.\nCategories:\n{labels_list}\n Think step by step and generate an explanation. The last line of the explanation should be - So, the answer is <label>.\n Example: {example}\nOutput: {output}\nExplanation: "
+    explanation_generation_prompt_variables = [
+        "prefix_prompt",
+        "num_labels",
+        "labels_list",
+        "example",
+        "output",
+    ]
 
     def __init__(self, config: TaskConfig) -> None:
         super().__init__(config)
@@ -49,13 +58,19 @@ class ClassificationTask(BaseTask):
         )
         formatted_examples = []
         for eg in examples:
-            expected_output = self._to_output_format(eg["output"])
+            expected_output = self._to_output_format(eg["label"])
             formatted_examples.append(
-                example_prompt.format(example=eg["example"], output=expected_output)
+                example_prompt.format(
+                    example=eg["example"],
+                    output=expected_output,
+                    explanation=self.get_explanation(eg),
+                )
             )
 
         # populate the current example in the prompt
-        current_example = example_prompt.format(example=input["example"], output="")
+        current_example = example_prompt.format(
+            example=input["example"], output="", explanation=""
+        )
 
         if len(examples):
             seed_examples_prompt = self.seed_examples_prompt
@@ -67,6 +82,23 @@ class ClassificationTask(BaseTask):
             seed_examples="\n".join(formatted_examples),
             current_example=current_example,
             task_prompt=task_prompt,
+        )
+
+    def generate_explanation(self, example: Dict) -> str:
+        pt = PromptTemplate(
+            input_variables=self.explanation_generation_prompt_variables,
+            template=self.explanation_generation_prompt,
+        )
+
+        labels_list = self.dataset_config.get_labels_list()
+        num_labels = len(labels_list)
+
+        return pt.format(
+            prefix_prompt=self.prefix_prompt,
+            num_labels=num_labels,
+            labels_list="\n".join(labels_list),
+            example=example["example"],
+            output=example["label"],
         )
 
     def auroc_score_labels(
