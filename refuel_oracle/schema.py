@@ -16,7 +16,7 @@ class LLMProvider(str, Enum):
 
 class TaskType(str, Enum):
     CLASSIFICATION = "classification"
-    ENTITY_RECOGNITION = "entity_recognition"
+    NAMED_ENTITY_RECOGNITION = "named_entity_recognition"
     MULTI_CHOICE_QUESTION_ANSWERING = "multi_choice_question_answering"
     ENTITY_MATCHING = "entity_matching"
 
