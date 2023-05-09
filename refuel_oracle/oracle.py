@@ -302,12 +302,17 @@ class Oracle:
                 )
             seed_examples = self.generate_explanations(seed_examples, out_file)
 
+        self.example_selector = ExampleSelectorFactory.initialize_selector(
+            self.task_config, seed_examples
+        )
+
         input_limit = min(len(inputs), 100)
         num_sections = max(input_limit / self.CHUNK_SIZE, 1)
         for chunk in tqdm(np.array_split(inputs[:input_limit], num_sections)):
             for i, input_i in enumerate(chunk):
                 # TODO: Check if this needs to use the example selector
-                final_prompt = self.task.construct_prompt(input_i, seed_examples)
+                examples = self.example_selector.select_examples(input_i)
+                final_prompt = self.task.construct_prompt(input_i, examples)
                 prompt_list.append(final_prompt)
 
                 # Calculate the number of tokens
