@@ -2,6 +2,7 @@ from typing import List, Optional
 import boto3
 import json
 from langchain.schema import LLMResult, Generation
+from botocore.config import Config
 
 from refuel_oracle.models import BaseModel
 from refuel_oracle.configs import ModelConfig
@@ -15,7 +16,8 @@ class RefuelLLM(BaseModel):
         # populate model name
         self.model_name = config.get_model_name() or self.DEFAULT_MODEL
         # initialize runtime
-        self.RUNTIME = boto3.client("sagemaker-runtime")
+        config = Config(retries={"max_attempts": 10, "mode": "standard"})
+        self.RUNTIME = boto3.client("sagemaker-runtime", config=config)
 
     def label(self, prompts: List[str]) -> LLMResult:
         try:
