@@ -41,6 +41,7 @@ def get_banking(output_folder="."):
     test_ds = map_label_to_string(test_ds, "label")
 
     test_ds = test_ds.rename_column("text", "example")
+    test_ds = test_ds.shuffle()
     test_ds.to_csv(f"{output_folder}/banking_test.csv")
 
 

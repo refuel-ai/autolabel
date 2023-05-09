@@ -121,6 +121,10 @@ class BaseTask(ABC):
         output = {}
         try:
             completion_text = extract_valid_json_substring(response.text)
+            if not completion_text:
+                raise ValueError(
+                    "No valid JSON substring found. Either increase the max_tokens or the model is not able to follow the output format instruction."
+                )
             output = json.loads(completion_text.strip())
             successfully_labeled = "yes"
             llm_label = str(output.get("label") or self.NULL_LABEL_TOKEN)
