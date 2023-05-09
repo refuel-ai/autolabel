@@ -12,6 +12,7 @@ class LLMProvider(str, Enum):
     OPENAI = "openai"
     ANTHROPIC = "anthropic"
     HUGGINGFACE_PIPELINE = "huggingface_pipeline"
+    REFUEL = "refuel"
 
 
 class TaskType(str, Enum):

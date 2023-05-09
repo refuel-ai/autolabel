@@ -1,0 +1,5 @@
+{
+    "provider_name": "refuel",
+    "model_name": "huggingface-pytorch-inference-2023-05-09-21-00-24-326",
+    "has_logprob": false
+}
