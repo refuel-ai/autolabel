@@ -388,6 +388,9 @@ class Oracle:
         labels = [a.label for a in annotation_list]
         counts = {}
         for ind, label in enumerate(labels):
+            # Needed for named entity recognition which outputs lists instead of strings
+            label = str(label)
+
             if label not in counts:
                 counts[label] = (1, ind)
             else:
