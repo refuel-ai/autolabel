@@ -1,6 +1,6 @@
 import time
 from typing import List
-from refuel_oracle.oracle import Oracle
+from autolabel.labeler import Labeler
 from data.get_data import SUPPORTED_DATASETS, DATASET_TASK_PATH
 
 
@@ -32,7 +32,7 @@ class Benchmark:
             )
             # Only load the llm the first time
             if i == 0:
-                annotator = Oracle(task_config_path, model_config_path)
+                annotator = Labeler(task_config_path, model_config_path)
             else:
                 annotator.set_task_config(task_config_path, **kwargs)
             annotator.plan(f"data/{dataset_name}_test.csv", dataset_config_path)
