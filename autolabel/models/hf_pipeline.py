@@ -11,7 +11,7 @@ from autolabel.configs import ModelConfig
 
 class HFPipelineLLM(BaseModel):
     DEFAULT_MODEL = "google/flan-t5-xxl"
-    DEFAULT_PARAMS = {"max_tokens": 100, "temperature": 0.0, "quantize": 16}
+    DEFAULT_PARAMS = {"max_tokens": 1000, "temperature": 0.0, "quantize": 16}
 
     def __init__(self, config: ModelConfig) -> None:
         super().__init__(config)

@@ -11,7 +11,7 @@ from autolabel.configs import ModelConfig
 class AnthropicLLM(BaseModel):
     DEFAULT_MODEL = "claude-v1"
     DEFAULT_PARAMS = {
-        "max_tokens_to_sample": 100,
+        "max_tokens_to_sample": 1000,
         "temperature": 0.0,
     }
 
