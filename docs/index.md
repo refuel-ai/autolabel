@@ -12,8 +12,9 @@ pip install -r requirements.txt
 ## Environment Setup
 Using refuel-oracle will usually require integrations with one or more model providers.
 For this example, we will be using OpenAI’s API, so we will first need to install their SDK.
+``` py
 pip install openai
-
+```
 
 We will need to set the environmental variable in the terminal
 ``` py
