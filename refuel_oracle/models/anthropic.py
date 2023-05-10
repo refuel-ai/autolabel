@@ -38,7 +38,6 @@ class AnthropicLLM(BaseModel):
     def label(self, prompts: List[str]) -> LLMResult:
         try:
             response = self.llm.generate(prompts)
-            print(response)
             return response
         except Exception as e:
             print(f"Error generating from LLM: {e}, returning empty result")
