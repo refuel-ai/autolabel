@@ -29,49 +29,32 @@ Example Output of plan()
 The DatasetConfig class is used to parse, validate, and store information about the dataset being annotated.
 
 
-::: refuel_oracle.dataset_config.DatasetConfig.from_json
+
+::: refuel_oracle.configs.dataset_config.DatasetConfig.get_input_columns
     rendering:
         show_root_heading: yes
         show_root_full_path: no
         heading_level: 3
 
-::: refuel_oracle.dataset_config.DatasetConfig.get
+::: refuel_oracle.configs.dataset_config.DatasetConfig.get_label_column
     rendering:
         show_root_heading: yes
         show_root_full_path: no
         heading_level: 3
 
-::: refuel_oracle.dataset_config.DatasetConfig.get_input_columns
+::: refuel_oracle.configs.dataset_config.DatasetConfig.get_labels_list
     rendering:
         show_root_heading: yes
         show_root_full_path: no
         heading_level: 3
 
-::: refuel_oracle.dataset_config.DatasetConfig.get_label_column
+::: refuel_oracle.configs.dataset_config.DatasetConfig.get_seed_examples
     rendering:
         show_root_heading: yes
         show_root_full_path: no
         heading_level: 3
 
-::: refuel_oracle.dataset_config.DatasetConfig.get_labels_list
-    rendering:
-        show_root_heading: yes
-        show_root_full_path: no
-        heading_level: 3
-
-::: refuel_oracle.dataset_config.DatasetConfig.get_seed_examples
-    rendering:
-        show_root_heading: yes
-        show_root_full_path: no
-        heading_level: 3
-
-::: refuel_oracle.dataset_config.DatasetConfig.get_delimiter
-    rendering:
-        show_root_heading: yes
-        show_root_full_path: no
-        heading_level: 3
-
-::: refuel_oracle.dataset_config.DatasetConfig.keys
+::: refuel_oracle.configs.dataset_config.DatasetConfig.get_delimiter
     rendering:
         show_root_heading: yes
         show_root_full_path: no
@@ -81,20 +64,13 @@ The DatasetConfig class is used to parse, validate, and store information about 
 
 The TaskConfig class is used to parse, validate, and store information about the annotation task being performed (i.e. Classification, Entity Recognition, Question Answering).
 
-::: refuel_oracle.task_config.TaskConfig._validate
+::: refuel_oracle.configs.task_config.TaskConfig.get_task_name
     rendering:
         show_root_heading: yes
         show_root_full_path: no
         heading_level: 3
 
-::: refuel_oracle.task_config.TaskConfig.from_json
-    rendering:
-        show_root_heading: yes
-        show_root_full_path: no
-        heading_level: 3
-
-
-::: refuel_oracle.models.config.ModelConfig
+::: refuel_oracle.configs.model_config.ModelConfig
     rendering:
         show_root_heading: yes
         show_root_full_path: no
