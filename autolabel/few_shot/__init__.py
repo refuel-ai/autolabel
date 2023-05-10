@@ -11,7 +11,7 @@ from langchain.prompts.example_selector.base import BaseExampleSelector
 from .vector_store import VectorStoreWrapper
 from .fixed_example_selector import FixedExampleSelector
 
-from refuel_oracle.configs import TaskConfig
+from autolabel.configs import TaskConfig
 
 
 STRATEGY_TO_IMPLEMENTATION: Dict[str, BaseExampleSelector] = {

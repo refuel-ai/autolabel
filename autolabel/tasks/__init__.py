@@ -6,8 +6,8 @@ from .entity_matching import EntityMatchingTask
 from .multi_choice_question_answering import MultiChoiceQATask
 from .named_entity_recognition import NamedEntityRecognitionTask
 
-from refuel_oracle.configs import TaskConfig
-from refuel_oracle.schema import TaskType
+from autolabel.configs import TaskConfig
+from autolabel.schema import TaskType
 
 TASK_TYPE_TO_IMPLEMENTATION = {
     TaskType.CLASSIFICATION: ClassificationTask,

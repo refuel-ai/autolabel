@@ -7,19 +7,19 @@ import pandas as pd
 from tqdm import tqdm
 import sys
 
-from refuel_oracle.confidence import ConfidenceCalculator
-from refuel_oracle.cache import LLMCache
-from refuel_oracle.few_shot import ExampleSelectorFactory
-from refuel_oracle.models import ModelFactory, BaseModel
-from refuel_oracle.schema import LLMAnnotation
-from refuel_oracle.tasks import TaskFactory
-from refuel_oracle.database import StateManager
-from refuel_oracle.schema import TaskRun, TaskStatus
-from refuel_oracle.data_models import TaskRunModel, AnnotationModel
-from refuel_oracle.configs import ModelConfig, DatasetConfig, TaskConfig
+from autolabel.confidence import ConfidenceCalculator
+from autolabel.cache import LLMCache
+from autolabel.few_shot import ExampleSelectorFactory
+from autolabel.models import ModelFactory, BaseModel
+from autolabel.schema import LLMAnnotation
+from autolabel.tasks import TaskFactory
+from autolabel.database import StateManager
+from autolabel.schema import TaskRun, TaskStatus
+from autolabel.data_models import TaskRunModel, AnnotationModel
+from autolabel.configs import ModelConfig, DatasetConfig, TaskConfig
 
 
-class Oracle:
+class Labeler:
     CHUNK_SIZE = 5
 
     def __init__(
@@ -267,7 +267,7 @@ class Oracle:
         max_items: int = None,
         start_index: int = 0,
     ):
-        """Calculates and prints the cost of calling oracle.annotate() on a given dataset
+        """Calculates and prints the cost of calling autolabel.annotate() on a given dataset
 
         Args:
             dataset: path to a CSV dataset

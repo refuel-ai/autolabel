@@ -4,8 +4,8 @@ from anthropic import tokenizer
 from langchain.llms import Anthropic
 from langchain.schema import LLMResult, Generation
 
-from refuel_oracle.models import BaseModel
-from refuel_oracle.configs import ModelConfig
+from autolabel.models import BaseModel
+from autolabel.configs import ModelConfig
 
 
 class AnthropicLLM(BaseModel):

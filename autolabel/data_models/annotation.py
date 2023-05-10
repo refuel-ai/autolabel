@@ -6,7 +6,7 @@ from sqlalchemy.sql import func
 from sqlalchemy.orm import relationship
 import json
 
-from refuel_oracle.schema import LLMAnnotation
+from autolabel.schema import LLMAnnotation
 
 
 class AnnotationModel(Base):
