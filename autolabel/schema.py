@@ -4,8 +4,8 @@ from typing import Any, Dict, Optional
 
 from pydantic import BaseModel
 
-from refuel_oracle.configs import ModelConfig, DatasetConfig, TaskConfig
-from refuel_oracle.utils import calculate_md5
+from autolabel.configs import ModelConfig, DatasetConfig, TaskConfig
+from autolabel.utils import calculate_md5
 
 
 class LLMProvider(str, Enum):

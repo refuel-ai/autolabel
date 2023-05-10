@@ -6,7 +6,7 @@ from langchain.schema import Generation
 from sqlalchemy.orm import Session
 from sqlalchemy import select
 
-from refuel_oracle.database import create_db_engine
+from autolabel.database import create_db_engine
 
 
 class LLMCache(SQLAlchemyCache):

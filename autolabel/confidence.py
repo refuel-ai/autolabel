@@ -4,13 +4,12 @@ import sklearn
 import matplotlib.pyplot as plt
 import numpy as np
 import pickle as pkl
-import requests
 import json
 import scipy.stats as stats
 import boto3
 
-from refuel_oracle.schema import LLMAnnotation
-from refuel_oracle.models import BaseModel
+from autolabel.schema import LLMAnnotation
+from autolabel.models import BaseModel
 
 
 class ConfidenceCalculator:
