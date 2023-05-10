@@ -1,4 +1,4 @@
-from refuel_oracle.confidence import ConfidenceCalculator
+from autolabel.confidence import ConfidenceCalculator
 import pickle as pkl
 import sklearn
 import random

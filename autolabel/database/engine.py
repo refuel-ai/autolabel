@@ -3,7 +3,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.engine.base import Engine
 
 DB_ENGINE = None
-DB_PATH = ".oracle.db"
+DB_PATH = ".autolabel.db"
 
 
 def create_db_engine(db_path: Optional[str] = DB_PATH) -> Engine:

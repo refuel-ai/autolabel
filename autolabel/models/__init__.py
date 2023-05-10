@@ -7,7 +7,7 @@ from .openai import OpenAILLM
 from .hf_pipeline import HFPipelineLLM
 from .refuel import RefuelLLM
 
-from refuel_oracle.configs import ModelConfig
+from autolabel.configs import ModelConfig
 
 MODEL_PROVIDER_TO_IMPLEMENTATION: Dict[str, BaseModel] = {
     "openai": OpenAILLM,

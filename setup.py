@@ -10,7 +10,7 @@ with open(os.path.join(current_file_path, "README.md"), encoding="utf-8") as rd:
     long_description = "\n" + rd.read()
 
 setup(
-    name="refuel_oracle",
+    name="autolabel",
     version="0.0.0",
     maintainer="Refuel.ai",
     author="Refuel.ai",

@@ -6,7 +6,8 @@ from sqlalchemy import Column, Integer, String, ForeignKey, Text, DateTime
 from sqlalchemy.sql import func
 from sqlalchemy.orm import relationship
 import json
-from refuel_oracle.schema import TaskRun
+
+from autolabel.schema import TaskRun
 
 
 class TaskRunModel(Base):

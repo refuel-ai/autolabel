@@ -1,15 +1,15 @@
-# refuel-oracle: Using LLMs to label data
+# Autolabel: Using LLMs to label data
 
 First, specify a config file with task instructions. Let's say we use the example file located at `examples/config_chatgpt.json`.
 
 Now, let's read this config file and see how much would it cost:
 ```python
 
-from refuel_oracle.oracle import Oracle
+from autolabel import LabelingAngent
 
-o = Oracle('examples/config_chatgpt.json', debug=True)
+l = LabelingAngent('examples/config_chatgpt.json', debug=True)
 
-o.plan('examples/ag_news_filtered_labels_sampled.csv')
+l.plan('examples/ag_news_filtered_labels_sampled.csv')
 ```
 
 This prints:
@@ -56,7 +56,7 @@ Output:
 
 Now, let's run annotation on a subset of the dataset:
 ```python
-o.annotate(
+l.run(
     'examples/ag_news_filtered_labels_sampled.csv',
     max_items=10
 )

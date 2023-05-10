@@ -1,11 +1,12 @@
-from refuel_oracle.data_models import Base
 from sqlalchemy.orm import sessionmaker
 from loguru import logger
 from typing import Optional
-from refuel_oracle.data_models import DatasetModel, TaskModel, TaskRunModel
-from refuel_oracle.schema import Dataset, Task, TaskRun, TaskStatus
-from refuel_oracle.configs import ModelConfig, DatasetConfig, TaskConfig
 from datetime import datetime
+
+from autolabel.data_models import Base
+from autolabel.data_models import DatasetModel, TaskModel, TaskRunModel
+from autolabel.schema import Dataset, Task, TaskRun, TaskStatus
+from autolabel.configs import ModelConfig, DatasetConfig, TaskConfig
 
 from .engine import create_db_engine
 

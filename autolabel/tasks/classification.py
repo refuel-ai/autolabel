@@ -1,38 +1,38 @@
 from typing import List, Dict, Tuple
 
 from langchain.prompts.prompt import PromptTemplate
-from refuel_oracle.confidence import ConfidenceCalculator
-from refuel_oracle.configs import TaskConfig
-from refuel_oracle.schema import LLMAnnotation, Metric, MetricResult
-from refuel_oracle.tasks import BaseTask
 from sklearn.metrics import accuracy_score
-import transformers
 
-transformers.logging.set_verbosity_error()
+from autolabel.confidence import ConfidenceCalculator
+from autolabel.configs import TaskConfig
+from autolabel.schema import LLMAnnotation, Metric, MetricResult
+from autolabel.tasks import BaseTask
 
 
-class EntityMatchingTask(BaseTask):
-    JSON_OUTPUT_FORMAT_PROMPT = 'You will return the answer in JSON format with one key: {"label": "duplicate or not duplicate"}\n'
-    CSV_OUTPUT_FORMAT_PROMPT = 'You will return the answer in CSV format with one element: "duplicate or not duplicate"\n'
-
-    task_prompt = "Your job is to tell if the two given entities are duplicates or not. Say duplicate, if they are duplicate and not duplicate otherwise. Options:\nduplicate\nnot duplicate\n"
-    example_prompt_template = (
-        "Entity1: {entity1}\nEntity2: {entity2}\nAnswer:{answer}\n"
+class ClassificationTask(BaseTask):
+    JSON_OUTPUT_FORMAT_PROMPT = 'You will return the answer in JSON format with one key: {"label": "the correct label"}'
+    CSV_OUTPUT_FORMAT_PROMPT = (
+        'You will return the answer in CSV format with one element: "the correct label"'
     )
-    example_prompt_variables = ["entity1", "entity2", "answer"]
 
-    explanation_generation_prompt = "{prefix_prompt}\n You will be given two entities. Your job is to provide an explanation for why the two entities are duplicates or not duplicates. Think step by step and generate an explanation. The last line of the explanation should be - So, the answer is <answer>.\nEntity1: {entity1}\nEntity2: {entity2}\nAnswer: {answer}\nExplanation: "
+    task_prompt = "Your job is to correctly label the provided input example into one of the following {num_labels} categories.\nCategories:\n{labels_list}\n"
+    example_prompt_template = "Example: {example}\nOutput: {explanation}\n{output}\n"
+    example_prompt_variables = ["example", "output", "explanation"]
+
+    explanation_generation_prompt = "{prefix_prompt}\n You will be given an input example and the corresponding output. Your job is to provide an explanation for why the output is correct. The label is one of the following {num_labels} categories.\nCategories:\n{labels_list}\n Think step by step and generate an explanation. The last line of the explanation should be - So, the answer is <label>.\n Example: {example}\nOutput: {output}\nExplanation: "
     explanation_generation_prompt_variables = [
         "prefix_prompt",
-        "entity1",
-        "entity2",
-        "answer",
+        "num_labels",
+        "labels_list",
+        "example",
+        "output",
     ]
 
     def __init__(self, config: TaskConfig) -> None:
         super().__init__(config)
 
     def initialize_prompt_template(self) -> PromptTemplate:
+        # provide context about the prediction task
         pt = PromptTemplate(
             input_variables=self.prompt_template_variables,
             template=self.prompt_template,
@@ -40,11 +40,17 @@ class EntityMatchingTask(BaseTask):
 
         return pt.partial(
             prefix_prompt=self.prefix_prompt,
-            task_prompt=self.task_prompt,
             output_prompt=self.output_prompt,
         )
 
-    def construct_prompt(self, input: Dict, examples: List[Dict]) -> str:
+    def construct_prompt(self, input: Dict, examples: List) -> str:
+        # Create the task prompt based on the dataset config
+        labels_list = self.dataset_config.get_labels_list()
+        num_labels = len(labels_list)
+        task_prompt = self.task_prompt.format(
+            num_labels=num_labels, labels_list="\n".join(labels_list)
+        )
+
         # populate seed examples in the prompt
         example_prompt = PromptTemplate(
             input_variables=self.example_prompt_variables,
@@ -55,17 +61,15 @@ class EntityMatchingTask(BaseTask):
             expected_output = self._to_output_format(eg["label"])
             formatted_examples.append(
                 example_prompt.format(
-                    entity1=eg["entity1"],
-                    entity2=eg["entity2"],
-                    answer=expected_output,
+                    example=eg["example"],
+                    output=expected_output,
+                    explanation=self.get_explanation(eg),
                 )
             )
 
         # populate the current example in the prompt
         current_example = example_prompt.format(
-            entity1=input["entity1"],
-            entity2=input["entity2"],
-            answer="",  # we don't know the answer yet
+            example=input["example"], output="", explanation=""
         )
 
         if len(examples):
@@ -73,23 +77,28 @@ class EntityMatchingTask(BaseTask):
         else:
             seed_examples_prompt = ""
 
-        prompt = self.partial_prompt.format(
+        return self.partial_prompt.format(
+            seed_examples_prompt=seed_examples_prompt,
             seed_examples="\n".join(formatted_examples),
             current_example=current_example,
-            seed_examples_prompt=seed_examples_prompt,
+            task_prompt=task_prompt,
         )
-        return prompt
 
     def generate_explanation(self, example: Dict) -> str:
-        example_prompt = PromptTemplate(
+        pt = PromptTemplate(
             input_variables=self.explanation_generation_prompt_variables,
             template=self.explanation_generation_prompt,
         )
-        return example_prompt.format(
+
+        labels_list = self.dataset_config.get_labels_list()
+        num_labels = len(labels_list)
+
+        return pt.format(
             prefix_prompt=self.prefix_prompt,
-            entity1=example["entity1"],
-            entity2=example["entity2"],
-            answer=example["label"],
+            num_labels=num_labels,
+            labels_list="\n".join(labels_list),
+            example=example["example"],
+            output=example["label"],
         )
 
     def auroc_score_labels(
