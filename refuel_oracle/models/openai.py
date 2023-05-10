@@ -16,12 +16,12 @@ class OpenAILLM(BaseModel):
     # Default parameters for OpenAILLM
     DEFAULT_MODEL = "gpt-3.5-turbo"
     DEFAULT_PARAMS_COMPLETION_ENGINE = {
-        "max_tokens": 100,
+        "max_tokens": 500,
         "temperature": 0.0,
         "model_kwargs": {"logprobs": 1},
     }
     DEFAULT_PARAMS_CHAT_ENGINE = {
-        "max_tokens": 100,
+        "max_tokens": 500,
         "temperature": 0.0,
     }
 
