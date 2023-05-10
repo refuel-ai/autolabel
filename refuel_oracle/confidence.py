@@ -87,6 +87,8 @@ class ConfidenceCalculator:
 
         logprobs = None
         if not logprobs_available:
+            if model_generation.raw_response == "":
+                return model_generation
             logprobs = self.compute_confidence(
                 model_generation.prompt, model_generation.raw_response
             )

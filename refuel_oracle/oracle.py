@@ -414,7 +414,7 @@ class Oracle:
                 explanation = (
                     self.llm.label([explanation_prompt]).generations[0][0].text
                 )
-                seed_example["explanation"] = explanation
+                seed_example["explanation"] = str(explanation) if explanation else ""
 
         if generate_explanations and save_file:
             logger.info(
