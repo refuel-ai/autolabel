@@ -1,6 +1,6 @@
 import time
 from typing import List
-from autolabel.labeler import Labeler
+from autolabel.labeler import LabelingAgent
 from data.get_data import SUPPORTED_DATASETS, DATASET_TASK_PATH
 
 
@@ -32,12 +32,12 @@ class Benchmark:
             )
             # Only load the llm the first time
             if i == 0:
-                annotator = Labeler(task_config_path, model_config_path)
+                annotator = LabelingAgent(task_config_path, model_config_path)
             else:
                 annotator.set_task_config(task_config_path, **kwargs)
             annotator.plan(f"data/{dataset_name}_test.csv", dataset_config_path)
             start_time = time.time()
-            annotator.annotate(
+            annotator.run(
                 f"data/{dataset_name}_test.csv",
                 dataset_config_path,
                 max_items=max_items,

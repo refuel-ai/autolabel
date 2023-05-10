@@ -5,9 +5,9 @@ First, specify a config file with task instructions. Let's say we use the exampl
 Now, let's read this config file and see how much would it cost:
 ```python
 
-from autolabel import Labeler
+from autolabel import LabelingAngent
 
-l = Labeler('examples/config_chatgpt.json', debug=True)
+l = LabelingAngent('examples/config_chatgpt.json', debug=True)
 
 l.plan('examples/ag_news_filtered_labels_sampled.csv')
 ```
@@ -56,7 +56,7 @@ Output:
 
 Now, let's run annotation on a subset of the dataset:
 ```python
-l.annotate(
+l.run(
     'examples/ag_news_filtered_labels_sampled.csv',
     max_items=10
 )

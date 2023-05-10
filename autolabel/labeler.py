@@ -19,7 +19,7 @@ from autolabel.data_models import TaskRunModel, AnnotationModel
 from autolabel.configs import ModelConfig, DatasetConfig, TaskConfig
 
 
-class Labeler:
+class LabelingAgent:
     CHUNK_SIZE = 5
 
     def __init__(
@@ -77,7 +77,7 @@ class Labeler:
         gt_labels = None if not label_column else dat[label_column].tolist()
         return (dat, inputs, gt_labels)
 
-    def annotate(
+    def run(
         self,
         dataset: Union[str, pd.DataFrame],
         dataset_config: Union[str, Dict],
@@ -267,7 +267,7 @@ class Labeler:
         max_items: int = None,
         start_index: int = 0,
     ):
-        """Calculates and prints the cost of calling autolabel.annotate() on a given dataset
+        """Calculates and prints the cost of calling autolabel.run() on a given dataset
 
         Args:
             dataset: path to a CSV dataset

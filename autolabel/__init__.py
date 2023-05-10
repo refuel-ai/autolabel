@@ -1,1 +1,1 @@
-from .labeler import Labeler
+from .labeler import LabelingAgent
