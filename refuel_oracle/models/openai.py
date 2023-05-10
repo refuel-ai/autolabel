@@ -63,7 +63,7 @@ class OpenAILLM(BaseModel):
             }
             self.llm = OpenAI(model_name=self.model_name, **self.model_params)
 
-    def label(self, prompts: List[str]) -> List[LLMResult]:
+    def label(self, prompts: List[str]) -> LLMResult:
         if self._engine == "chat":
             # Need to convert list[prompts] -> list[messages]
             # Currently the entire prompt is stuck into the "human message"
