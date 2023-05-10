@@ -35,9 +35,10 @@ class AnthropicLLM(BaseModel):
         # initialize LLM
         self.llm = Anthropic(model=self.model_name, **self.model_params)
 
-    def label(self, prompts: List[str]) -> List[LLMResult]:
+    def label(self, prompts: List[str]) -> LLMResult:
         try:
-            return self.llm.generate(prompts)
+            response = self.llm.generate(prompts)
+            return response
         except Exception as e:
             print(f"Error generating from LLM: {e}, returning empty result")
             generations = [[Generation(text="")] for _ in prompts]

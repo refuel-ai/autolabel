@@ -14,7 +14,7 @@ class BaseModel(ABC):
         # E.g. initializing the LLM model with required parameters from ModelConfig
 
     @abstractmethod
-    def label(self, prompts: List[str]) -> List[LLMResult]:
+    def label(self, prompts: List[str]) -> LLMResult:
         # TODO: change return type to do parsing in the Model class
         pass
 

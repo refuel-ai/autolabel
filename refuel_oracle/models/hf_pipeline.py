@@ -47,7 +47,7 @@ class HFPipelineLLM(BaseModel):
         # initialize LLM
         self.llm = HuggingFacePipeline(pipeline=pipe, model_kwargs=self.model_params)
 
-    def label(self, prompts: List[str]) -> List[LLMResult]:
+    def label(self, prompts: List[str]) -> LLMResult:
         try:
             return self.llm.generate(prompts)
         except Exception as e:

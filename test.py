@@ -2,7 +2,7 @@ import os
 
 from refuel_oracle.oracle import Oracle
 
-model_config_path = "examples/configs/llm_configs/davinci.json"
+model_config_path = "examples/configs/llm_configs/flan_t5_xxl.json"
 
 # config_path = os.path.join(curr_directory, "examples/config_imdb_oai.json")
 # data_file_name = "examples/filtered_imdb.csv"
@@ -40,13 +40,13 @@ model_config_path = "examples/configs/llm_configs/davinci.json"
 # data_file_name = "data/conll2003_test.csv"
 # data_config_path = "examples/configs/dataset_configs/conll2003.json"
 
-task_config_path = "examples/configs/task_configs/walmart_amazon_matching.json"
-data_file_name = "data/walmart_amazon_test.csv"
-data_config_path = "examples/configs/dataset_configs/walmart_amazon.json"
+# task_config_path = "examples/configs/task_configs/walmart_amazon_matching.json"
+# data_file_name = "data/walmart_amazon_test.csv"
+# data_config_path = "examples/configs/dataset_configs/walmart_amazon.json"
 
-# task_config_path = "examples/configs/task_configs/wikiann_ner.json"
-# data_file_name = "data/wikiann_test.csv"
-# data_config_path = "examples/configs/dataset_configs/wikiann.json"
+task_config_path = "examples/configs/task_configs/wikiann_ner.json"
+data_file_name = "data/wikiann_test.csv"
+data_config_path = "examples/configs/dataset_configs/wikiann.json"
 
 # task_config_path = "examples/configs/task_configs/wikiann_ner.json"
 # data_file_name = "data/wikiann_test.csv"
@@ -56,9 +56,9 @@ data_config_path = "examples/configs/dataset_configs/walmart_amazon.json"
 # config_path = os.path.join(curr_directory, "examples/config_wikiann.json")
 # data_file_name = "examples/wikiann.csv"
 
-o = Oracle(task_config_path, model_config_path, debug=True)
+o = Oracle(task_config_path, model_config_path)
 labels, df, metrics_list = o.annotate(
     data_file_name,
     data_config_path,
-    max_items=100,
+    max_items=500,
 )
