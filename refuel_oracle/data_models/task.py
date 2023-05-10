@@ -4,10 +4,6 @@ from sqlalchemy import Column, String, Text
 from sqlalchemy.orm import relationship
 import json
 
-from refuel_oracle.task_config import TaskConfig
-from refuel_oracle.models import ModelConfig
-from refuel_oracle.utils import calculate_md5
-
 
 class TaskModel(Base):
     __tablename__ = "tasks"

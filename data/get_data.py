@@ -41,6 +41,7 @@ def get_banking(output_folder="."):
     test_ds = map_label_to_string(test_ds, "label")
 
     test_ds = test_ds.rename_column("text", "example")
+    test_ds = test_ds.shuffle()
     test_ds.to_csv(f"{output_folder}/banking_test.csv")
 
 
@@ -304,7 +305,6 @@ def get_conll2003(output_folder="."):
 
         running_entity = None
         tag_name = None
-        print(curr_text, curr_tags)
         for index, tag in enumerate(curr_tags):
             if tag in entity_category_mapping:
                 if running_entity is None:
@@ -323,8 +323,6 @@ def get_conll2003(output_folder="."):
                             " " + curr_text[index]
                         )  # must be a continuation of prev tag
                         if tag_name != entity_category_mapping[tag]:
-                            print(tag_name, entity_category_mapping[tag])
-                            print(running_entity)
                             assert False
             else:
                 if running_entity is not None:
@@ -337,7 +335,6 @@ def get_conll2003(output_folder="."):
         if running_entity is not None:
             individual_entity_categories[tag_name].append(running_entity)
             individual_labels.append({"Description": tag_name, "Text": running_entity})
-        print(individual_entity_categories)
         dataset_csv.write(
             f"{' '.join(curr_text)}%{json.dumps(individual_labels)}%{json.dumps(individual_entity_categories)}\n"
         )

@@ -7,6 +7,7 @@ import pickle as pkl
 import requests
 import json
 import scipy.stats as stats
+import boto3
 
 from refuel_oracle.schema import LLMAnnotation
 from refuel_oracle.models import BaseModel
@@ -23,6 +24,10 @@ class ConfidenceCalculator:
             "logprob_average": self.logprob_average,
             "p_true": self.p_true,
         }
+        self.CONFIDENCE_ENDPOINT = (
+            "huggingface-pytorch-inference-2023-05-09-21-00-24-326"
+        )
+        self.RUNTIME = boto3.client("sagemaker-runtime")
 
     def logprob_average(
         self,
@@ -59,8 +64,8 @@ class ConfidenceCalculator:
                 "top_logprobs"
             ]
         else:
-            yes_logprob = ConfidenceCalculator.compute_confidence(p_true_prompt, "Yes")
-            no_logprob = ConfidenceCalculator.compute_confidence(p_true_prompt, "No")
+            yes_logprob = self.compute_confidence(p_true_prompt, "Yes")
+            no_logprob = self.compute_confidence(p_true_prompt, "No")
             response_logprobs = (
                 yes_logprob
                 if list(yes_logprob[0].values())[0] > list(no_logprob[0].values())[0]
@@ -82,7 +87,9 @@ class ConfidenceCalculator:
 
         logprobs = None
         if not logprobs_available:
-            logprobs = ConfidenceCalculator.compute_confidence(
+            if model_generation.raw_response == "":
+                return model_generation
+            logprobs = self.compute_confidence(
                 model_generation.prompt, model_generation.raw_response
             )
         else:
@@ -97,14 +104,25 @@ class ConfidenceCalculator:
         model_generation.confidence_score = confidence
         return model_generation
 
-    @classmethod
-    def compute_confidence(cls, model_input, model_output):
+    def compute_confidence(self, model_input, model_output):
         try:
-            prediction_logprob = requests.post(
-                "http://129.146.101.153:3456/get_probs/",
-                json={"model_input": model_input, "model_output": model_output},
+            payload = json.dumps(
+                {
+                    "input_type": "text",
+                    "data": {
+                        "input_text": model_input,
+                        "target_text": model_output,
+                    },
+                }
+            ).encode("utf-8")
+
+            response = self.RUNTIME.invoke_endpoint(
+                EndpointName=self.CONFIDENCE_ENDPOINT,
+                ContentType="text/plain",
+                Body=payload,
             )
-            return json.loads(prediction_logprob.content.decode("utf-8"))["probs"]
+            return json.loads(response["Body"].read().decode("utf-8"))
+
         except Exception as e:
             raise Exception(f"Unable to compute confidence prediction {e}")
 

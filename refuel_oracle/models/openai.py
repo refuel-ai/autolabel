@@ -6,7 +6,8 @@ from langchain.llms import OpenAI
 from langchain.schema import LLMResult, HumanMessage, Generation
 import tiktoken
 
-from refuel_oracle.models import BaseModel, ModelConfig
+from refuel_oracle.models import BaseModel
+from refuel_oracle.configs import ModelConfig
 
 
 class OpenAILLM(BaseModel):
@@ -15,12 +16,12 @@ class OpenAILLM(BaseModel):
     # Default parameters for OpenAILLM
     DEFAULT_MODEL = "gpt-3.5-turbo"
     DEFAULT_PARAMS_COMPLETION_ENGINE = {
-        "max_tokens": 100,
+        "max_tokens": 500,
         "temperature": 0.0,
         "model_kwargs": {"logprobs": 1},
     }
     DEFAULT_PARAMS_CHAT_ENGINE = {
-        "max_tokens": 100,
+        "max_tokens": 500,
         "temperature": 0.0,
     }
 
@@ -62,7 +63,7 @@ class OpenAILLM(BaseModel):
             }
             self.llm = OpenAI(model_name=self.model_name, **self.model_params)
 
-    def label(self, prompts: List[str]) -> List[LLMResult]:
+    def label(self, prompts: List[str]) -> LLMResult:
         if self._engine == "chat":
             # Need to convert list[prompts] -> list[messages]
             # Currently the entire prompt is stuck into the "human message"

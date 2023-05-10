@@ -8,8 +8,7 @@
         "input_columns": [
             "example"
         ],
-        "label_column": "CategorizedLabels",
-        "delimiter": "%"
+        "label_column": "CategorizedLabels"
     },
     "seed_examples": [
         {

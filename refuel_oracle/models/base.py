@@ -4,7 +4,7 @@ from abc import ABC, abstractmethod
 from typing import List, Optional
 
 from langchain.schema import LLMResult
-from refuel_oracle.models import ModelConfig
+from refuel_oracle.configs import ModelConfig
 
 
 class BaseModel(ABC):
@@ -14,7 +14,7 @@ class BaseModel(ABC):
         # E.g. initializing the LLM model with required parameters from ModelConfig
 
     @abstractmethod
-    def label(self, prompts: List[str]) -> List[LLMResult]:
+    def label(self, prompts: List[str]) -> LLMResult:
         # TODO: change return type to do parsing in the Model class
         pass
 

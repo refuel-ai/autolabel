@@ -5,13 +5,15 @@ from .classification import ClassificationTask
 from .entity_matching import EntityMatchingTask
 from .multi_choice_question_answering import MultiChoiceQATask
 from .named_entity_recognition import NamedEntityRecognitionTask
-from refuel_oracle.task_config import TaskConfig
+
+from refuel_oracle.configs import TaskConfig
+from refuel_oracle.schema import TaskType
 
 TASK_TYPE_TO_IMPLEMENTATION = {
-    "classification": ClassificationTask,
-    "named_entity_recognition": NamedEntityRecognitionTask,
-    "multi_choice_question_answering": MultiChoiceQATask,
-    "entity_matching": EntityMatchingTask,
+    TaskType.CLASSIFICATION: ClassificationTask,
+    TaskType.NAMED_ENTITY_RECOGNITION: NamedEntityRecognitionTask,
+    TaskType.MULTI_CHOICE_QUESTION_ANSWERING: MultiChoiceQATask,
+    TaskType.ENTITY_MATCHING: EntityMatchingTask,
 }
 
 

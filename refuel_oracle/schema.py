@@ -1,13 +1,29 @@
-from enum import Enum
-from typing import Any, Dict, List, Optional
-from refuel_oracle.models import LLMProvider
-from refuel_oracle.task_config import TaskConfig
-from refuel_oracle.dataset_config import DatasetConfig
-from refuel_oracle.models import ModelConfig
 from datetime import datetime
-from refuel_oracle.utils import calculate_md5
+from enum import Enum
+from typing import Any, Dict, Optional
 
 from pydantic import BaseModel
+
+from refuel_oracle.configs import ModelConfig, DatasetConfig, TaskConfig
+from refuel_oracle.utils import calculate_md5
+
+
+class LLMProvider(str, Enum):
+    OPENAI = "openai"
+    ANTHROPIC = "anthropic"
+    HUGGINGFACE_PIPELINE = "huggingface_pipeline"
+    REFUEL = "refuel"
+
+
+class TaskType(str, Enum):
+    CLASSIFICATION = "classification"
+    NAMED_ENTITY_RECOGNITION = "named_entity_recognition"
+    MULTI_CHOICE_QUESTION_ANSWERING = "multi_choice_question_answering"
+    ENTITY_MATCHING = "entity_matching"
+
+
+class TaskStatus(str, Enum):
+    ACTIVE = "active"
 
 
 class Metric(str, Enum):
@@ -58,14 +74,9 @@ class Dataset(BaseModel):
         max_items: int,
     ):
         filehash = calculate_md5(
-            [open(input_file, "rb"), dataset_config.dict, start_index, max_items]
+            [open(input_file, "rb"), dataset_config.config, start_index, max_items]
         )
         return filehash
-
-
-class TaskType(str, Enum):
-    CLASSIFICATION = "classification"
-    ENTITY_RECOGNITION = "entity_recognition"
 
 
 class Task(BaseModel):
@@ -80,12 +91,8 @@ class Task(BaseModel):
 
     @classmethod
     def create_id(self, task_config: TaskConfig, llm_config: ModelConfig):
-        filehash = calculate_md5([task_config.config, llm_config.dict])
+        filehash = calculate_md5([task_config.config, llm_config.config])
         return filehash
-
-
-class TaskStatus(str, Enum):
-    ACTIVE = "active"
 
 
 class TaskRun(BaseModel):

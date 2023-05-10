@@ -5,8 +5,7 @@ from typing import Dict, List
 
 from langchain.prompts.prompt import PromptTemplate
 from langchain.schema import Generation
-from refuel_oracle.task_config import TaskConfig
-from refuel_oracle.dataset_config import DatasetConfig
+from refuel_oracle.configs import DatasetConfig, TaskConfig
 from refuel_oracle.schema import LLMAnnotation, MetricResult
 from refuel_oracle.utils import extract_valid_json_substring
 from loguru import logger
@@ -83,6 +82,10 @@ class BaseTask(ABC):
     def eval(self, llm_labels: List, gt_labels: List) -> List[MetricResult]:
         pass
 
+    @abstractmethod
+    def generate_explanation(self, example: Dict) -> str:
+        return ""
+
     # Should be called before the construct prompt for a specific input is called
     def set_dataset_config(self, dataset_config: DatasetConfig) -> None:
         self.dataset_config = dataset_config
@@ -93,6 +96,12 @@ class BaseTask(ABC):
             return json.dumps(output)
         elif self.output_format == "csv":
             return f"{label}"
+
+    def get_explanation(self, example: Dict) -> str:
+        if example.get("explanation", ""):
+            return f"Let's think step by step.\n{example['explanation']}"
+        else:
+            return ""
 
     def parse_llm_response(
         self, response: Generation, curr_sample: Dict, prompt: str
@@ -112,6 +121,10 @@ class BaseTask(ABC):
         output = {}
         try:
             completion_text = extract_valid_json_substring(response.text)
+            if not completion_text:
+                raise ValueError(
+                    "No valid JSON substring found. Either increase the max_tokens or the model is not able to follow the output format instruction."
+                )
             output = json.loads(completion_text.strip())
             successfully_labeled = "yes"
             llm_label = str(output.get("label") or self.NULL_LABEL_TOKEN)

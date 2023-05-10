@@ -3,6 +3,7 @@
     "task_type": "entity_matching",
     "prefix_prompt": "You are an expert at identifying duplicate products.",
     "compute_confidence": "True",
-    "output_format": "json",
-    "json_empty_response": "{\"label\": \"\"}"
+    "output_format": "csv",
+    "json_empty_response": "{\"label\": \"\"}",
+    "empty_response": ""
 }

@@ -87,23 +87,23 @@
     "seed_examples": [
         {
             "example": "Is it free to transfer money or is there a fee?",
-            "output": "transfer_fee_charged"
+            "label": "transfer_fee_charged"
         },
         {
             "example": "I need my PIN, where is it?",
-            "output": "get_physical_card"
+            "label": "get_physical_card"
         },
         {
             "example": "Can my salary be received and transferred to my current currency in my country?",
-            "output": "receiving_money"
+            "label": "receiving_money"
         },
         {
             "example": "Why isn't my purchase exchange rate correct?",
-            "output": "card_payment_wrong_exchange_rate"
+            "label": "card_payment_wrong_exchange_rate"
         },
         {
             "example": "Why was I charged a fee on a cash withdrawal?",
-            "output": "cash_withdrawal_charge"
+            "label": "cash_withdrawal_charge"
         }
     ]
 }

@@ -1,10 +1,9 @@
-import json
-from typing import Any, Dict, List
+from typing import Dict, Union
 
-from loguru import logger
+from .base import BaseConfig
 
 
-class TaskConfig:
+class TaskConfig(BaseConfig):
     # Standardized (and required) keys in the TaskConfig
     TASK_NAME_KEY = "task_name"
     TASK_TYPE_KEY = "task_type"
@@ -17,28 +16,11 @@ class TaskConfig:
     EXAMPLE_SELECTOR_KEY = "example_selector"
     HAS_LOGPROB_KEY = "has_logprob"
     COMPUTE_CONFIDENCE_KEY = "compute_confidence"
+    CHAIN_OF_THOUGHT_KEY = "chain_of_thought"
     EMPTY_RESPONSE_KEY = "empty_response"
 
-    def __init__(self, config_dict: Dict) -> None:
-        self._validate()
-        self.config = config_dict
-
-    def _validate(self) -> bool:
-        """
-        Returns:
-            True if valid TaskConfig settings, False otherwise
-        """
-        # TODO: validate provider and model names, task, prompt and seed sets, etc
-        return True
-
-    def get(self, key: str, default_value: Any = None) -> Any:
-        return self.config.get(key, default_value)
-
-    def keys(self) -> List:
-        return list(self.config.keys())
-
-    def __getitem__(self, key):
-        return self.config[key]
+    def __init__(self, config: Union[str, Dict]) -> None:
+        super().__init__(config)
 
     def get_task_name(self) -> str:
         return self.config.get(self.TASK_NAME_KEY, "new_task")
@@ -70,30 +52,8 @@ class TaskConfig:
     def get_compute_confidence(self) -> bool:
         return self.config.get(self.COMPUTE_CONFIDENCE_KEY, "False") == "True"
 
+    def use_chain_of_thought(self) -> bool:
+        return self.config.get(self.CHAIN_OF_THOUGHT_KEY, "False") == "True"
+
     def get_empty_response(self) -> str:
         return self.config.get(self.EMPTY_RESPONSE_KEY, "")
-
-    def to_json(self):
-        return json.dumps(self.config, sort_keys=True)
-
-    @classmethod
-    def from_json(cls, json_file_path: str, **kwargs):
-        """
-        parses a given json file for task settings and returns it in a new Config object
-
-        Args:
-            json_file_path: path to json configuration file
-            **kwargs: additional settings not found in json file can be passed from here
-
-        Returns:
-            Config object containing project settings found in json_file_path
-        """
-        try:
-            config_dict = json.load(open(json_file_path))
-        except ValueError:
-            logger.error("JSON file: {} not loaded successfully", json_file_path)
-            return None
-
-        config_dict.update(kwargs)
-
-        return TaskConfig(config_dict)

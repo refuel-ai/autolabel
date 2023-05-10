@@ -3,8 +3,10 @@ from langchain.llms import HuggingFacePipeline
 from transformers import AutoModelForSeq2SeqLM, AutoTokenizer, pipeline
 import torch
 
-from refuel_oracle.models import ModelConfig, BaseModel
 from langchain.schema import LLMResult, Generation
+
+from refuel_oracle.models import BaseModel
+from refuel_oracle.configs import ModelConfig
 
 
 class HFPipelineLLM(BaseModel):
@@ -45,7 +47,7 @@ class HFPipelineLLM(BaseModel):
         # initialize LLM
         self.llm = HuggingFacePipeline(pipeline=pipe, model_kwargs=self.model_params)
 
-    def label(self, prompts: List[str]) -> List[LLMResult]:
+    def label(self, prompts: List[str]) -> LLMResult:
         try:
             return self.llm.generate(prompts)
         except Exception as e:
