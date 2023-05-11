@@ -1,17 +1,17 @@
-# Refuel Oracle API
+# AutoLabel API
 
 
 
 
-## __The Oracle Class__
+## __The LabelingAgent Class__
 
-::: refuel_oracle.oracle.Oracle.annotate
+::: autolabel.labeler.LabelingAgent.run
     rendering:
         show_root_heading: yes
         show_root_full_path: 
         heading_level: 3
 
-::: refuel_oracle.oracle.Oracle.plan
+::: autolabel.labeler.LabelingAgent.plan
     rendering:
         show_root_heading: yes
         show_root_full_path: no
@@ -30,31 +30,31 @@ The DatasetConfig class is used to parse, validate, and store information about 
 
 
 
-::: refuel_oracle.configs.dataset_config.DatasetConfig.get_input_columns
+::: autolabel.configs.dataset_config.DatasetConfig.get_input_columns
     rendering:
         show_root_heading: yes
         show_root_full_path: no
         heading_level: 3
 
-::: refuel_oracle.configs.dataset_config.DatasetConfig.get_label_column
+::: autolabel.configs.dataset_config.DatasetConfig.get_label_column
     rendering:
         show_root_heading: yes
         show_root_full_path: no
         heading_level: 3
 
-::: refuel_oracle.configs.dataset_config.DatasetConfig.get_labels_list
+::: autolabel.configs.dataset_config.DatasetConfig.get_labels_list
     rendering:
         show_root_heading: yes
         show_root_full_path: no
         heading_level: 3
 
-::: refuel_oracle.configs.dataset_config.DatasetConfig.get_seed_examples
+::: autolabel.configs.dataset_config.DatasetConfig.get_seed_examples
     rendering:
         show_root_heading: yes
         show_root_full_path: no
         heading_level: 3
 
-::: refuel_oracle.configs.dataset_config.DatasetConfig.get_delimiter
+::: autolabel.configs.dataset_config.DatasetConfig.get_delimiter
     rendering:
         show_root_heading: yes
         show_root_full_path: no
@@ -64,13 +64,13 @@ The DatasetConfig class is used to parse, validate, and store information about 
 
 The TaskConfig class is used to parse, validate, and store information about the annotation task being performed (i.e. Classification, Entity Recognition, Question Answering).
 
-::: refuel_oracle.configs.task_config.TaskConfig.get_task_name
+::: autolabel.configs.task_config.TaskConfig.get_task_name
     rendering:
         show_root_heading: yes
         show_root_full_path: no
         heading_level: 3
 
-::: refuel_oracle.configs.model_config.ModelConfig
+::: autolabel.configs.model_config.ModelConfig
     rendering:
         show_root_heading: yes
         show_root_full_path: no
