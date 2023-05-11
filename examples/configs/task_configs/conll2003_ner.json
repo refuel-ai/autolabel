@@ -1,9 +1,13 @@
 {
     "project_name": "CONLL2003",
     "task_type": "named_entity_recognition",
-    "output_format": "json",
+    "output_format": "csv",
     "prefix_prompt": "You are an expert at extracting Person, Organization, Location, and Miscellaneous entities from text.",
     "compute_confidence": "True",
-    "csv_empty_response": "entities%Location%Organization%Person%Miscellaneous",
-    "empty_response": "{\"entities\": {\"Location\": [], \"Organization\": [], \"Person\": [], \"Miscellaneous\": []}}"
+    "empty_response": "entities%Location%Organization%Person%Miscellaneous",
+    "example_selector": {
+        "strategy": "semantic_similarity",
+        "num_examples": 5
+    },
+    "json_empty_response": "{\"entities\": {\"Location\": [], \"Organization\": [], \"Person\": [], \"Miscellaneous\": []}}"
 }
