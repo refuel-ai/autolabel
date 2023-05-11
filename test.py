@@ -32,9 +32,9 @@ model_config_path = "examples/configs/llm_configs/flan_t5_xxl.json"
 # data_file_name = "data/banking_test.csv"
 # data_config_path = "examples/configs/dataset_configs/banking.json"
 
-# task_config_path = "examples/configs/task_configs/sciq_qa.json"
-# data_file_name = "data/sciq_test.csv"
-# data_config_path = "examples/configs/dataset_configs/sciq.json"
+task_config_path = "examples/configs/task_configs/sciq_qa.json"
+data_file_name = "data/sciq_test.csv"
+data_config_path = "examples/configs/dataset_configs/sciq.json"
 
 # task_config_path = "examples/configs/task_configs/conll2003_ner.json"
 # data_file_name = "data/conll2003_test.csv"
@@ -44,9 +44,9 @@ model_config_path = "examples/configs/llm_configs/flan_t5_xxl.json"
 # data_file_name = "data/walmart_amazon_test.csv"
 # data_config_path = "examples/configs/dataset_configs/walmart_amazon.json"
 
-task_config_path = "examples/configs/task_configs/wikiann_ner.json"
-data_file_name = "data/wikiann_test.csv"
-data_config_path = "examples/configs/dataset_configs/wikiann.json"
+# task_config_path = "examples/configs/task_configs/wikiann_ner.json"
+# data_file_name = "data/wikiann_test.csv"
+# data_config_path = "examples/configs/dataset_configs/wikiann.json"
 
 # task_config_path = "examples/configs/task_configs/wikiann_ner.json"
 # data_file_name = "data/wikiann_test.csv"
@@ -60,5 +60,5 @@ l = LabelingAgent(task_config_path, model_config_path)
 labels, df, metrics_list = l.run(
     data_file_name,
     data_config_path,
-    max_items=500,
+    max_items=5,
 )

@@ -1,5 +1,5 @@
 from typing import List, Optional
-import boto3
+import requests
 import json
 from langchain.schema import LLMResult, Generation
 from botocore.config import Config
@@ -9,15 +9,16 @@ from autolabel.configs import ModelConfig
 
 
 class RefuelLLM(BaseModel):
-    DEFAULT_MODEL = "huggingface-pytorch-inference-2023-05-09-21-00-24-326"
-
     def __init__(self, config: ModelConfig) -> None:
         super().__init__(config)
         # populate model name
-        self.model_name = config.get_model_name() or self.DEFAULT_MODEL
+        # This is unused today, but in the future could
+        # be used to decide which refuel model is queried
+        self.model_name = config.get_model_name()
+        
         # initialize runtime
         config = Config(retries={"max_attempts": 10, "mode": "standard"})
-        self.RUNTIME = boto3.client("sagemaker-runtime", config=config)
+        self.BASE_API = "https://api.refuel.ai/llm"
 
     def label(self, prompts: List[str]) -> LLMResult:
         try:
@@ -25,21 +26,15 @@ class RefuelLLM(BaseModel):
             for prompt in prompts:
                 payload = json.dumps(
                     {
-                        "input_type": "text",
-                        "data": {
-                            "input_text": prompt,
-                        },
+                        "model_input": prompt,
+                        "task": "generate"
                     }
                 ).encode("utf-8")
-                response = self.RUNTIME.invoke_endpoint(
-                    EndpointName=self.model_name,
-                    ContentType="text/plain",
-                    Body=payload,
-                )
+                response = requests.post(self.BASE_API, data=payload)
                 generations.append(
                     [
                         Generation(
-                            text=response["Body"].read().decode("utf-8").strip('"')
+                            text=response.text.strip('"')
                         )
                     ]
                 )
