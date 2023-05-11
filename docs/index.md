@@ -1,4 +1,4 @@
-# Getting started with Refuel Oracle
+# Getting started with Refuel AutoLabel
 
 For full documentation visit [refuel.ai](https://www.refuel.ai).
 
@@ -10,7 +10,7 @@ pip install -r requirements.txt
 ```
 
 ## Environment Setup
-Using refuel-oracle will usually require integrations with one or more model providers.
+Using AutoLabel will usually require integrations with one or more model providers.
 For this example, we will be using OpenAI’s API, so we will first need to install their SDK.
 ``` py
 pip install openai
@@ -37,18 +37,18 @@ And export the API Key in the environment variables
 export ANTHROPIC_API_KEY="..."
 ```
 
-## Using Oracle for classifying unlabeled data with ChatGPT
+## Using AutoLabel for classifying unlabeled data with ChatGPT
 
-The Oracle class is initialized with a configuration file, which defines the task you would like the LLM to perform on your data (i.e. classification, entity recognition, etc.)
+The AutoLabel class is initialized with a configuration file, which defines the task you would like the LLM to perform on your data (i.e. classification, entity recognition, etc.)
 ``` py
-annotator = Oracle('examples/config_chatgpt.json')
+annotator = LabelingAgent('examples/config_chatgpt.json')
 ```
 
 Many sample configuration files can be found in the examples directory of the repository. These can act as a good starting template for other projects.
 
 In this example, we are using ChatGPT to classify news articles into the appropriate category.
 ``` py
-annotator.annotate(
+annotator.run(
 dataset='examples/ag_news_filtered_labels_sampled.csv',
 max_items=100,
 )
