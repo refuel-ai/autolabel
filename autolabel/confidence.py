@@ -6,7 +6,7 @@ import numpy as np
 import pickle as pkl
 import json
 import scipy.stats as stats
-import boto3
+import requests
 
 from autolabel.schema import LLMAnnotation
 from autolabel.models import BaseModel
@@ -23,10 +23,7 @@ class ConfidenceCalculator:
             "logprob_average": self.logprob_average,
             "p_true": self.p_true,
         }
-        self.CONFIDENCE_ENDPOINT = (
-            "huggingface-pytorch-inference-2023-05-09-21-00-24-326"
-        )
-        self.RUNTIME = boto3.client("sagemaker-runtime")
+        self.BASE_API = "https://api.refuel.ai/llm"
 
     def logprob_average(
         self,
@@ -108,20 +105,14 @@ class ConfidenceCalculator:
         try:
             payload = json.dumps(
                 {
-                    "input_type": "text",
-                    "data": {
-                        "input_text": model_input,
-                        "target_text": model_output,
-                    },
+                    "model_input": model_input,
+                    "model_output": model_output,
+                    "task": "confidence",
                 }
             ).encode("utf-8")
 
-            response = self.RUNTIME.invoke_endpoint(
-                EndpointName=self.CONFIDENCE_ENDPOINT,
-                ContentType="text/plain",
-                Body=payload,
-            )
-            return json.loads(response["Body"].read().decode("utf-8"))
+            response = requests.post(self.BASE_API, data=payload)
+            return json.loads(response.text)
 
         except Exception as e:
             raise Exception(f"Unable to compute confidence prediction {e}")
