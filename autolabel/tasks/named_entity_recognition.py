@@ -71,7 +71,9 @@ class NamedEntityRecognitionTask(BaseTask):
         )
         formatted_examples = []
         for eg in examples:
-            expected_output = self._to_output_format(json.loads(eg["CategorizedLabels"]))
+            expected_output = self._to_output_format(
+                json.loads(eg["CategorizedLabels"])
+            )
             formatted_examples.append(
                 example_prompt.format(example=eg["example"], output=expected_output)
             )
