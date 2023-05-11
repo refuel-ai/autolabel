@@ -15,7 +15,7 @@ class RefuelLLM(BaseModel):
         # This is unused today, but in the future could
         # be used to decide which refuel model is queried
         self.model_name = config.get_model_name()
-        
+
         # initialize runtime
         config = Config(retries={"max_attempts": 10, "mode": "standard"})
         self.BASE_API = "https://api.refuel.ai/llm"
@@ -25,19 +25,10 @@ class RefuelLLM(BaseModel):
             generations = []
             for prompt in prompts:
                 payload = json.dumps(
-                    {
-                        "model_input": prompt,
-                        "task": "generate"
-                    }
+                    {"model_input": prompt, "task": "generate"}
                 ).encode("utf-8")
                 response = requests.post(self.BASE_API, data=payload)
-                generations.append(
-                    [
-                        Generation(
-                            text=response.text.strip('"')
-                        )
-                    ]
-                )
+                generations.append([Generation(text=response.text.strip('"'))])
             return LLMResult(generations=generations)
         except Exception as e:
             print(f"Error generating from LLM: {e}, returning empty result")

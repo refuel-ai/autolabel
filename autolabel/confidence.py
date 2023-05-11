@@ -107,7 +107,7 @@ class ConfidenceCalculator:
                 {
                     "model_input": model_input,
                     "model_output": model_output,
-                    "task": "confidence"
+                    "task": "confidence",
                 }
             ).encode("utf-8")
 
