@@ -49,8 +49,8 @@ Many sample configuration files can be found in the examples directory of the re
 In this example, we are using ChatGPT to classify news articles into the appropriate category.
 ``` py
 annotator.run(
-dataset='examples/ag_news_filtered_labels_sampled.csv',
-max_items=100,
+    dataset='examples/ag_news_filtered_labels_sampled.csv',
+    max_items=100,
 )
 ```
 
