@@ -4,9 +4,9 @@
             "question",
             "options"
         ],
-        "label_column": "answer",
-        "example_template": "Question: {question}\n{options}\nAnswer:{explanation}\n{answer}\n"
+        "label_column": "answer"
     },
+    "example_template": "Question: {question}\n{options}\nAnswer:{explanation}\n{answer}\n",
     "seed_examples": [
         {
             "question": "A 55-year-old man presents to his primary care physician for diarrhea. He states that he has experienced roughly 10 episodes of non-bloody and watery diarrhea every day for the past 3 days. The patient has a past medical history of IV drug abuse and recently completed treatment for an abscess with cellulitis. His vitals are notable for a pulse of 105/min. Physical exam reveals diffuse abdominal discomfort with palpation but no focal tenderness. A rectal exam is within normal limits and is Guaiac negative. Which of the following is the best initial treatment for this patient?",

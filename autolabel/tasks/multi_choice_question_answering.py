@@ -15,16 +15,6 @@ class MultiChoiceQATask(BaseTask):
     CSV_OUTPUT_FORMAT_PROMPT = 'You will return the answer in CSV format with one element: "the correct label"\n'
 
     task_prompt = "Your job is to answer the following questions using the options provided for each question. Choose the best answer for the question.\n"
-    example_prompt_template = (
-        "{context}\nQuestion: {question}\n{options}\nAnswer:{explanation}\n{answer}\n"
-    )
-    example_prompt_variables = [
-        "context",
-        "question",
-        "options",
-        "answer",
-        "explanation",
-    ]
     NULL_LABEL_TOKEN = "NO_LABEL"
 
     explanation_generation_prompt = "{prefix_prompt}\n You will be given a question and an answer. Your job is to provide an explanation for why the answer is correct. Think step by step and generate an explanation. The last line of the explanation should be - So, the answer is <answer>.\n{context}Question: {question}\n{options}\nAnswer: {answer}\nExplanation: "

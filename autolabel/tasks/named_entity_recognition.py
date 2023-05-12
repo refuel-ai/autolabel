@@ -27,8 +27,6 @@ class NamedEntityRecognitionTask(BaseTask):
         "seed_examples",
         "current_example",
     ]
-    example_prompt_template = "Example: {example}\nOutput: {output}\n"
-    example_prompt_variables = ["example", "output"]
 
     def __init__(self, config: TaskConfig) -> None:
         super().__init__(config)

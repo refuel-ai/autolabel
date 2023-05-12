@@ -28,7 +28,7 @@ class DatasetConfig(BaseConfig):
         """
         Returns a list of column names that will be used as input for annotation
         """
-        return self.config[self.DATASET_SCHEMA_KEY].get(self.EXAMPLE_TEMPLATE_KEY, None)
+        return self.config.get(self.EXAMPLE_TEMPLATE_KEY, None)
 
     def get_label_column(self) -> str:
         """

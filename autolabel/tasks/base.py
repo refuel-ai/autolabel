@@ -14,11 +14,10 @@ import json
 
 
 class BaseTask(ABC):
-    prompt_template = "{prefix_prompt}\n{task_prompt}\n\n{output_prompt}\n\n{seed_examples_prompt}\n{seed_examples}\nNow I want you to label the following example: {current_example}"
+    prompt_template = "{prefix_prompt}\n{task_prompt}\n\n{output_prompt}\n\n{seed_examples_prompt}\n{seed_examples}\nNow I want you to label the following example:\n{current_example}"
     prefix_prompt = ""
     task_prompt = ""
     seed_examples_prompt = "Some examples with their output answers are provided below:"
-    example_prompt_template = ""
     output_prompt = ""
 
     output_format = ""
@@ -31,7 +30,6 @@ class BaseTask(ABC):
         "seed_examples",
         "current_example",
     ]
-    example_prompt_variables = []
 
     NULL_LABEL_TOKEN = "NO_LABEL"
 
@@ -50,9 +48,6 @@ class BaseTask(ABC):
 
         if self.config.get_output_prompt():
             self.output_prompt = self.config.get_output_prompt()
-
-        if self.config.get_example_prompt_template():
-            self.example_prompt_template = self.config.get_example_prompt_template()
 
         if self.config.get_output_format():
             self.output_format = self.config.get_output_format()

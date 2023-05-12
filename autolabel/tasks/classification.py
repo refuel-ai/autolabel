@@ -16,9 +16,6 @@ class ClassificationTask(BaseTask):
     )
 
     task_prompt = "Your job is to correctly label the provided input example into one of the following {num_labels} categories.\nCategories:\n{labels_list}\n"
-    example_prompt_template = "Example: {example}\nOutput: {explanation}\n{output}\n"
-    example_prompt_variables = ["example", "output", "explanation"]
-
     explanation_generation_prompt = "{prefix_prompt}\n You will be given an input example and the corresponding output. Your job is to provide an explanation for why the output is correct. The label is one of the following {num_labels} categories.\nCategories:\n{labels_list}\n Think step by step and generate an explanation. The last line of the explanation should be - So, the answer is <label>.\n Example: {example}\nOutput: {output}\nExplanation: "
     explanation_generation_prompt_variables = [
         "prefix_prompt",
