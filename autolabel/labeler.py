@@ -152,7 +152,7 @@ class LabelingAgent:
                 # Fetch few-shot seed examples
                 examples = self.example_selector.select_examples(input_i)
                 # Construct Prompt to pass to LLM
-                final_prompt = self.task.construct_prompt(input_i, examples, dataset_config)
+                final_prompt = self.task.construct_prompt(input_i, examples)
                 final_prompts.append(final_prompt)
 
             # Get response from LLM
@@ -311,9 +311,7 @@ class LabelingAgent:
             for i, input_i in enumerate(chunk):
                 # TODO: Check if this needs to use the example selector
                 examples = self.example_selector.select_examples(input_i)
-                final_prompt = self.task.construct_prompt(
-                    input_i, examples, dataset_config
-                )
+                final_prompt = self.task.construct_prompt(input_i, examples)
                 prompt_list.append(final_prompt)
 
                 # Calculate the number of tokens

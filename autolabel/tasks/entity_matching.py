@@ -2,7 +2,7 @@ from typing import Dict, List, Tuple
 
 import transformers
 from autolabel.confidence import ConfidenceCalculator
-from autolabel.configs import DatasetConfig, TaskConfig
+from autolabel.configs import TaskConfig
 from autolabel.schema import LLMAnnotation, Metric, MetricResult
 from autolabel.tasks import BaseTask
 from langchain.prompts.prompt import PromptTemplate
@@ -40,11 +40,9 @@ class EntityMatchingTask(BaseTask):
             output_prompt=self.output_prompt,
         )
 
-    def construct_prompt(
-        self, input: Dict, examples: List[Dict], dataset_config: DatasetConfig
-    ) -> str:
-        example_template = dataset_config.get_example_template()
-        label_column = dataset_config.get_label_column()
+    def construct_prompt(self, input: Dict, examples: List[Dict]) -> str:
+        example_template = self.dataset_config.get_example_template()
+        label_column = self.dataset_config.get_label_column()
 
         formatted_examples = list(
             map(lambda example: example_template.format(**example), examples)
