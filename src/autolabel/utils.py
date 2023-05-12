@@ -1,9 +1,10 @@
 import hashlib
 import json
+from typing import Any
 import regex
 
 
-def extract_valid_json_substring(string):
+def extract_valid_json_substring(string: str) -> str:
     pattern = (
         r"{(?:[^{}]|(?R))*}"  # Regular expression pattern to match a valid JSON object
     )
@@ -15,10 +16,10 @@ def extract_valid_json_substring(string):
             return json_string
         except ValueError:
             pass
-    return None
+    return ""
 
 
-def calculate_md5(input_data):
+def calculate_md5(input_data: Any) -> str:
     if isinstance(input_data, dict):
         # Convert dictionary to a JSON-formatted string
         input_str = json.dumps(input_data, sort_keys=True).encode("utf-8")
