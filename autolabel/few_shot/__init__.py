@@ -1,23 +1,21 @@
 from typing import Dict, List
-from loguru import logger
 
+from autolabel.configs import TaskConfig
 from langchain.embeddings import OpenAIEmbeddings
 from langchain.prompts.example_selector import (
     MaxMarginalRelevanceExampleSelector,
     SemanticSimilarityExampleSelector,
 )
 from langchain.prompts.example_selector.base import BaseExampleSelector
+from loguru import logger
 
-from .vector_store import VectorStoreWrapper
 from .fixed_example_selector import FixedExampleSelector
-
-from autolabel.configs import TaskConfig
-
+from .vector_store import VectorStoreWrapper
 
 STRATEGY_TO_IMPLEMENTATION: Dict[str, BaseExampleSelector] = {
     "fixed_few_shot": FixedExampleSelector,
     "semantic_similarity": SemanticSimilarityExampleSelector,
-    "maximal_marginal_relevance": MaxMarginalRelevanceExampleSelector,
+    "max_marginal_relevance": MaxMarginalRelevanceExampleSelector,
 }
 
 
@@ -44,7 +42,7 @@ class ExampleSelectorFactory:
             return None
 
         params = {"examples": examples, "k": num_examples}
-        if strategy in ["semantic_similarity", "maximal_marginal_relevance"]:
+        if strategy in ["semantic_similarity", "max_marginal_relevance"]:
             params["embeddings"] = OpenAIEmbeddings()
             params["vectorstore_cls"] = VectorStoreWrapper
 
