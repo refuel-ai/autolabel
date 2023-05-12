@@ -16,10 +16,6 @@ class EntityMatchingTask(BaseTask):
     CSV_OUTPUT_FORMAT_PROMPT = 'You will return the answer in CSV format with one element: "duplicate or not duplicate"\n'
 
     task_prompt = "Your job is to tell if the two given entities are duplicates or not. Say duplicate, if they are duplicate and not duplicate otherwise. Options:\nduplicate\nnot duplicate\n"
-    # example_prompt_template = (
-    #     "Entity1: {entity1}\nEntity2: {entity2}\nAnswer:{answer}\n"
-    # )
-    # example_prompt_variables = ["entity1", "entity2", "answer"]
 
     explanation_generation_prompt = "{prefix_prompt}\n You will be given two entities. Your job is to provide an explanation for why the two entities are duplicates or not duplicates. Think step by step and generate an explanation. The last line of the explanation should be - So, the answer is <answer>.\nEntity1: {entity1}\nEntity2: {entity2}\nAnswer: {answer}\nExplanation: "
     explanation_generation_prompt_variables = [
