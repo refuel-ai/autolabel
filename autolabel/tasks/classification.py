@@ -50,27 +50,16 @@ class ClassificationTask(BaseTask):
         task_prompt = self.task_prompt.format(
             num_labels=num_labels, labels_list="\n".join(labels_list)
         )
+        example_template = self.dataset_config.get_example_template()
+        label_column = self.dataset_config.get_label_column()
 
-        # populate seed examples in the prompt
-        example_prompt = PromptTemplate(
-            input_variables=self.example_prompt_variables,
-            template=self.example_prompt_template,
+        formatted_examples = list(
+            map(lambda example: example_template.format(**example), examples)
         )
-        formatted_examples = []
-        for eg in examples:
-            expected_output = self._to_output_format(eg["label"])
-            formatted_examples.append(
-                example_prompt.format(
-                    example=eg["example"],
-                    output=expected_output,
-                    explanation=self.get_explanation(eg),
-                )
-            )
 
-        # populate the current example in the prompt
-        current_example = example_prompt.format(
-            example=input["example"], output="", explanation=""
-        )
+        # Remove label column from formatted input if it exists
+        input[label_column] = ""
+        current_example = example_template.format(**input)
 
         if len(examples):
             seed_examples_prompt = self.seed_examples_prompt

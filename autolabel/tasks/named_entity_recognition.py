@@ -2,14 +2,14 @@ import json
 import re
 from typing import Dict, List, Tuple
 
-from langchain.prompts.prompt import PromptTemplate
-from langchain.schema import Generation
-from loguru import logger
-from nervaluate import Evaluator
 from autolabel.confidence import ConfidenceCalculator
 from autolabel.configs import TaskConfig
 from autolabel.schema import LLMAnnotation, Metric, MetricResult
 from autolabel.tasks import BaseTask
+from langchain.prompts.prompt import PromptTemplate
+from langchain.schema import Generation
+from loguru import logger
+from nervaluate import Evaluator
 
 
 class NamedEntityRecognitionTask(BaseTask):
@@ -64,21 +64,16 @@ class NamedEntityRecognitionTask(BaseTask):
             num_labels=num_labels, labels_list="\n".join(labels_list)
         )
 
-        # populate seed examples in the prompt
-        example_prompt = PromptTemplate(
-            input_variables=self.example_prompt_variables,
-            template=self.example_prompt_template,
-        )
-        formatted_examples = []
-        for eg in examples:
-            expected_output = self._to_output_format(
-                json.loads(eg["CategorizedLabels"])
-            )
-            formatted_examples.append(
-                example_prompt.format(example=eg["example"], output=expected_output)
-            )
+        example_template = self.dataset_config.get_example_template()
+        label_column = self.dataset_config.get_label_column()
 
-        current_example = example_prompt.format(example=input["example"], output="")
+        formatted_examples = list(
+            map(lambda example: example_template.format(**example), examples)
+        )
+
+        # Remove label column from formatted input if it exists
+        input[label_column] = ""
+        current_example = example_template.format(**input)
 
         if len(examples):
             seed_examples_prompt = self.seed_examples_prompt

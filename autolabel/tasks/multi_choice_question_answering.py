@@ -1,14 +1,13 @@
-from typing import List, Dict, Tuple
 import ast
-
-from langchain.prompts.prompt import PromptTemplate
-from sklearn.metrics import accuracy_score
+from typing import Dict, List, Tuple
 
 from autolabel.confidence import ConfidenceCalculator
 from autolabel.configs import TaskConfig
 from autolabel.schema import LLMAnnotation, Metric, MetricResult
 from autolabel.tasks import BaseTask
-from autolabel.tasks.utils import normalize_text, compute_f1
+from autolabel.tasks.utils import compute_f1, normalize_text
+from langchain.prompts.prompt import PromptTemplate
+from sklearn.metrics import accuracy_score
 
 
 class MultiChoiceQATask(BaseTask):
@@ -73,33 +72,15 @@ class MultiChoiceQATask(BaseTask):
         return options
 
     def construct_prompt(self, input: Dict, examples: List[Dict]) -> str:
-        # populate seed examples in the prompt
-        example_prompt = PromptTemplate(
-            input_variables=self.example_prompt_variables,
-            template=self.example_prompt_template,
-        )
+        example_template = self.dataset_config.get_example_template()
+        label_column = self.dataset_config.get_label_column()
 
-        formatted_examples = []
-        for eg in examples:
-            expected_output = self._to_output_format(eg["answer"])
-            formatted_examples.append(
-                example_prompt.format(
-                    context=self.get_context(eg),
-                    question=eg["question"],
-                    options=self.get_options(eg),
-                    explanation=self.get_explanation(eg),
-                    answer=expected_output,
-                )
-            )
-
-        # populate the current example in the prompt
-        current_example = example_prompt.format(
-            context=self.get_context(input),
-            question=input["question"],
-            options=self.get_options(input),
-            explanation="",  # we don't know the answer yet so cant provide explanation
-            answer="",  # we don't know the answer yet
+        formatted_examples = list(
+            map(lambda example: example_template.format(**example), examples)
         )
+        # Remove label column from formatted input if it exists
+        input[label_column] = ""
+        current_example = example_template.format(**input)
 
         if len(examples):
             seed_examples_prompt = self.seed_examples_prompt

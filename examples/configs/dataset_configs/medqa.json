@@ -4,7 +4,8 @@
             "question",
             "options"
         ],
-        "label_column": "answer"
+        "label_column": "answer",
+        "example_template": "Question: {question}\n{options}\nAnswer:{explanation}\n{answer}\n"
     },
     "seed_examples": [
         {

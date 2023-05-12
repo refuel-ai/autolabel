@@ -47,7 +47,6 @@ class EntityMatchingTask(BaseTask):
         formatted_examples = list(
             map(lambda example: example_template.format(**example), examples)
         )
-
         # Remove label column from formatted input if it exists
         input[label_column] = ""
         current_example = example_template.format(**input)
