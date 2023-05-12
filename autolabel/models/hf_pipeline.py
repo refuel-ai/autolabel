@@ -11,7 +11,7 @@ from autolabel.configs import ModelConfig
 
 class HFPipelineLLM(BaseModel):
     DEFAULT_MODEL = "google/flan-t5-xxl"
-    DEFAULT_PARAMS = {"max_tokens": 1000, "temperature": 0.0, "quantize": 16}
+    DEFAULT_PARAMS = {"max_new_tokens": 1000, "temperature": 0.0, "quantize": 8}
 
     def __init__(self, config: ModelConfig) -> None:
         super().__init__(config)
@@ -37,15 +37,18 @@ class HFPipelineLLM(BaseModel):
             model = AutoModelForSeq2SeqLM.from_pretrained(
                 self.model_name, device_map="auto"
             )
+
+        model_kwargs = dict(self.model_params)  # make a copy of the model params
+        model_kwargs.pop("quantize", None)  # remove quantize from the model params
         pipe = pipeline(
             "text2text-generation",
             model=model,
             tokenizer=tokenizer,
-            **self.model_params,
+            **model_kwargs,
         )
 
         # initialize LLM
-        self.llm = HuggingFacePipeline(pipeline=pipe, model_kwargs=self.model_params)
+        self.llm = HuggingFacePipeline(pipeline=pipe, model_kwargs=model_kwargs)
 
     def label(self, prompts: List[str]) -> LLMResult:
         try:

@@ -146,7 +146,9 @@ class BaseTask(ABC):
     def parse_csv_llm_response(
         self, response: Generation, curr_sample: str, prompt: str
     ) -> LLMAnnotation:
-        completion_text = response.text.strip()
+        # The last line of the response is the label
+        # This is done to handle the case where the model generates an explanation before generating the label
+        completion_text = response.text.strip().split("\n")[-1].strip()
         if len(completion_text) == 0:
             successfully_labeled = "no"
             llm_label = self.NULL_LABEL_TOKEN
