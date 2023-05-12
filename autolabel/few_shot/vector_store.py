@@ -230,7 +230,7 @@ class VectorStoreWrapper(VectorStore):
 
         fetched_embeddings = torch.index_select(
             input=self._corpus_embeddings, dim=0, index=torch.tensor(result_ids)
-        )
+        ).tolist()
         mmr_selected = maximal_marginal_relevance(
             np.array([query_embedding], dtype=np.float32),
             fetched_embeddings,
