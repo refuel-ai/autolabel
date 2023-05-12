@@ -2,7 +2,7 @@ import os
 
 from autolabel.labeler import LabelingAgent
 
-model_config_path = "examples/configs/llm_configs/gpt_3.5_turbo.json"
+model_config_path = "examples/configs/llm_configs/anthropic.json"
 
 # config_path = os.path.join(curr_directory, "examples/config_imdb_oai.json")
 # data_file_name = "examples/filtered_imdb.csv"
@@ -36,9 +36,13 @@ model_config_path = "examples/configs/llm_configs/gpt_3.5_turbo.json"
 # data_file_name = "data/sciq_test.csv"
 # data_config_path = "examples/configs/dataset_configs/sciq.json"
 
-task_config_path = "examples/configs/task_configs/conll2003_ner.json"
-data_file_name = "data/conll2003_test.csv"
-data_config_path = "examples/configs/dataset_configs/conll2003.json"
+# task_config_path = "examples/configs/task_configs/conll2003_ner.json"
+# data_file_name = "data/conll2003_test.csv"
+# data_config_path = "examples/configs/dataset_configs/conll2003.json"
+
+task_config_path = "examples/configs/task_configs/squad_v2_qa.json"
+data_file_name = "data/squad_v2_test.csv"
+data_config_path = "examples/configs/dataset_configs/squad_v2.json"
 
 # task_config_path = "examples/configs/task_configs/walmart_amazon_matching.json"
 # data_file_name = "data/walmart_amazon_test.csv"
