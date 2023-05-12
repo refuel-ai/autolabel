@@ -22,6 +22,8 @@ STRATEGY_TO_IMPLEMENTATION: Dict[str, BaseExampleSelector] = {
 class ExampleSelectorFactory:
     DEFAULT_STRATEGY = "fixed_few_shot"
     DEFAULT_NUM_EXAMPLES = 4
+    CANDIDATE_EXAMPLES_FACTOR = 5
+    MAX_CANDIDATE_EXAMPLES = 100
 
     @staticmethod
     def initialize_selector(
@@ -37,7 +39,7 @@ class ExampleSelectorFactory:
 
         if strategy not in STRATEGY_TO_IMPLEMENTATION:
             logger.error(
-                f"Example selection: {strategy} is not in the list of supported strategies: {STRATEGY_TO_IMPLEMENTATION.keys()}"
+                f"Example selection: {strategy} is not in the list of supported strategies: {list(STRATEGY_TO_IMPLEMENTATION.keys())}"
             )
             return None
 
@@ -45,6 +47,11 @@ class ExampleSelectorFactory:
         if strategy in ["semantic_similarity", "max_marginal_relevance"]:
             params["embeddings"] = OpenAIEmbeddings()
             params["vectorstore_cls"] = VectorStoreWrapper
+            if strategy == "max_marginal_relevance":
+                params["fetch_k"] = min(
+                    ExampleSelectorFactory.MAX_CANDIDATE_EXAMPLES,
+                    ExampleSelectorFactory.CANDIDATE_EXAMPLES_FACTOR * params["k"],
+                )
 
         example_cls = STRATEGY_TO_IMPLEMENTATION[strategy]
         return example_cls.from_examples(**params)
