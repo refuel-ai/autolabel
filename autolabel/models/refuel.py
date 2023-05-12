@@ -35,7 +35,11 @@ class RefuelLLM(BaseModel):
                     generations.append([Generation(text=response.text.strip('"'))])
                 else:
                     # This signifies an error in generating the response using RefuelLLm
-                    logger.error("Unable to generate prediction: ", response.text, response.status_code)
+                    logger.error(
+                        "Unable to generate prediction: ",
+                        response.text,
+                        response.status_code,
+                    )
                     generations.append([Generation(text="")])
             return LLMResult(generations=generations)
         except Exception as e:

@@ -120,7 +120,11 @@ class ConfidenceCalculator:
                 # This signifies an error in computing confidence score
                 # using the API. We give it a score of 0.5 and go ahead
                 # for now.
-                logger.error("Unable to compute confidence score: ", response.text, response.status_code)
+                logger.error(
+                    "Unable to compute confidence score: ",
+                    response.text,
+                    response.status_code,
+                )
                 return [{"": 0.5}]
 
         except Exception as e:
