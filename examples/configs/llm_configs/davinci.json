@@ -4,5 +4,5 @@
     "model_params": {
         "max_tokens": 512
     },
-    "has_logprob": true
+    "has_logprob": false
 }

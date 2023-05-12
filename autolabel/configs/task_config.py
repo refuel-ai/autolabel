@@ -50,7 +50,7 @@ class TaskConfig(BaseConfig):
         return self.config.get(self.EXAMPLE_SELECTOR_KEY, {})
 
     def get_compute_confidence(self) -> bool:
-        return self.config.get(self.COMPUTE_CONFIDENCE_KEY, "False") == "True"
+        return self.config.get(self.COMPUTE_CONFIDENCE_KEY, False)
 
     def use_chain_of_thought(self) -> bool:
         return self.config.get(self.CHAIN_OF_THOUGHT_KEY, "False") == "True"
