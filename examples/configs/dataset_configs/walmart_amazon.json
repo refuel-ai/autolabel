@@ -4,6 +4,7 @@
             "entity1",
             "entity2"
         ],
+        "example_template": "Entity1: {entity1}\nEntity2: {entity2}\nAnswer:{label}\n",
         "label_column": "label"
     },
     "seed_examples": [

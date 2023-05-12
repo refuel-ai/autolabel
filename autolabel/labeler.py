@@ -1,22 +1,21 @@
-from loguru import logger
-from tqdm import tqdm
-from typing import Tuple, List, Dict, Union, Optional
+import sys
+from typing import Dict, List, Optional, Tuple, Union
+
 import langchain
 import numpy as np
 import pandas as pd
+from loguru import logger
 from tqdm import tqdm
-import sys
 
-from autolabel.confidence import ConfidenceCalculator
 from autolabel.cache import LLMCache
-from autolabel.few_shot import ExampleSelectorFactory
-from autolabel.models import ModelFactory, BaseModel
-from autolabel.schema import LLMAnnotation
-from autolabel.tasks import TaskFactory
+from autolabel.confidence import ConfidenceCalculator
+from autolabel.configs import DatasetConfig, ModelConfig, TaskConfig
+from autolabel.data_models import AnnotationModel, TaskRunModel
 from autolabel.database import StateManager
-from autolabel.schema import TaskRun, TaskStatus
-from autolabel.data_models import TaskRunModel, AnnotationModel
-from autolabel.configs import ModelConfig, DatasetConfig, TaskConfig
+from autolabel.few_shot import ExampleSelectorFactory
+from autolabel.models import BaseModel, ModelFactory
+from autolabel.schema import LLMAnnotation, TaskRun, TaskStatus
+from autolabel.tasks import TaskFactory
 
 
 class LabelingAgent:
@@ -153,7 +152,7 @@ class LabelingAgent:
                 # Fetch few-shot seed examples
                 examples = self.example_selector.select_examples(input_i)
                 # Construct Prompt to pass to LLM
-                final_prompt = self.task.construct_prompt(input_i, examples)
+                final_prompt = self.task.construct_prompt(input_i, examples, dataset_config)
                 final_prompts.append(final_prompt)
 
             # Get response from LLM
@@ -312,7 +311,9 @@ class LabelingAgent:
             for i, input_i in enumerate(chunk):
                 # TODO: Check if this needs to use the example selector
                 examples = self.example_selector.select_examples(input_i)
-                final_prompt = self.task.construct_prompt(input_i, examples)
+                final_prompt = self.task.construct_prompt(
+                    input_i, examples, dataset_config
+                )
                 prompt_list.append(final_prompt)
 
                 # Calculate the number of tokens

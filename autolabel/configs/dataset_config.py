@@ -5,6 +5,7 @@ from .base import BaseConfig
 
 class DatasetConfig(BaseConfig):
     INPUT_COLUMNS_KEY = "input_columns"
+    EXAMPLE_TEMPLATE_KEY = "example_template"
     LABEL_COLUMN_KEY = "label_column"
     SEED_EXAMPLES_KEY = "seed_examples"
     DATASET_SCHEMA_KEY = "dataset_schema"
@@ -23,11 +24,17 @@ class DatasetConfig(BaseConfig):
         """
         return self.config[self.DATASET_SCHEMA_KEY][self.INPUT_COLUMNS_KEY]
 
+    def get_example_template(self) -> str:
+        """
+        Returns a list of column names that will be used as input for annotation
+        """
+        return self.config[self.DATASET_SCHEMA_KEY].get(self.EXAMPLE_TEMPLATE_KEY, None)
+
     def get_label_column(self) -> str:
         """
         Returns the name of the column containing labels for dataset
         """
-        return self.config[self.DATASET_SCHEMA_KEY][self.LABEL_COLUMN_KEY]
+        return self.config[self.DATASET_SCHEMA_KEY].get(self.LABEL_COLUMN_KEY, None)
 
     def get_labels_list(self) -> str:
         """
