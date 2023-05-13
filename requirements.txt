@@ -9,6 +9,7 @@ numpy
 openai
 pandas
 scikit-learn
+SQLAlchemy==1.4.47
 tenacity
 tiktoken
 torch
