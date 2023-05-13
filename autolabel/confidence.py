@@ -1,7 +1,5 @@
 from typing import List, Optional
 import math
-import sklearn
-import matplotlib.pyplot as plt
 import numpy as np
 import pickle as pkl
 import json
@@ -142,6 +140,14 @@ class ConfidenceCalculator:
     def compute_auroc(
         cls, match: List[int], confidence: List[float], plot: bool = False
     ):
+        try:
+            import sklearn
+        except ImportError:
+            raise ValueError(
+                "Could not import sklearn python package. "
+                "Please it install it with `pip install scikit-learn`."
+            )
+
         if len(set(match)) == 1:
             # ROC AUC score is not defined for a label list with
             # just one prediction
@@ -149,6 +155,13 @@ class ConfidenceCalculator:
         area = sklearn.metrics.roc_auc_score(match, confidence)
         fpr, tpr, thresholds = sklearn.metrics.roc_curve(match, confidence, pos_label=1)
         if plot:
+            try:
+                import matplotlib.pyplot as plt
+            except ImportError:
+                raise ValueError(
+                    "Could not import matplotlib python package. "
+                    "Please it install it with `pip install matplotlib`."
+                )
             print(f"FPR: {fpr}")
             print(f"TPR: {tpr}")
             print(f"Thresholds: {thresholds}")
@@ -180,6 +193,14 @@ class ConfidenceCalculator:
         plot_name: str = "temp.png",
         save_data: bool = True,
     ):
+        try:
+            import matplotlib.pyplot as plt
+        except ImportError:
+            raise ValueError(
+                "Could not import matplotlib python package. "
+                "Please it install it with `pip install matplotlib`."
+            )
+
         if save_data:
             pkl.dump(match, open("matches.pkl", "wb"))
             pkl.dump(confidence, open("confidences.pkl", "wb"))

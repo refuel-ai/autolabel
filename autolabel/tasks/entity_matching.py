@@ -6,9 +6,6 @@ from autolabel.configs import TaskConfig
 from autolabel.schema import LLMAnnotation, Metric, MetricResult
 from autolabel.tasks import BaseTask
 from sklearn.metrics import accuracy_score
-import transformers
-
-transformers.logging.set_verbosity_error()
 
 
 class EntityMatchingTask(BaseTask):
