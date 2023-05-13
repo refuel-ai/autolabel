@@ -9,6 +9,7 @@ from autolabel.configs import ModelConfig
 
 
 class AnthropicLLM(BaseModel):
+    MODELS = ["claude-v1", "claude-instant-v1"]
     DEFAULT_MODEL = "claude-v1"
     DEFAULT_PARAMS = {
         "max_tokens_to_sample": 1000,
@@ -18,11 +19,15 @@ class AnthropicLLM(BaseModel):
     # Reference: https://cdn2.assets-servd.host/anthropic-website/production/images/apr-pricing-tokens.pdf
     COST_PER_PROMPT_TOKEN = {
         # $11.02 per million tokens
-        "claude-v1": (11.02 / 1000000)
+        "claude-v1": (11.02 / 1000000),
+        # $1.63 per million tokens
+        "claude-instant-v1": (1.63 / 1000000),
     }
     COST_PER_COMPLETION_TOKEN = {
         # $32.68 per million tokens
-        "claude-v1": (32.68 / 1000000)
+        "claude-v1": (32.68 / 1000000),
+        # $5.51 per million tokens
+        "claude-instant-v1": (5.51 / 1000000),
     }
 
     def __init__(self, config: ModelConfig) -> None:
