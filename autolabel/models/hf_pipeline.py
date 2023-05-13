@@ -1,8 +1,5 @@
 from typing import List, Optional
 from langchain.llms import HuggingFacePipeline
-from transformers import AutoModelForSeq2SeqLM, AutoTokenizer, pipeline
-import torch
-
 from langchain.schema import LLMResult, Generation
 
 from autolabel.models import BaseModel
@@ -14,6 +11,25 @@ class HFPipelineLLM(BaseModel):
     DEFAULT_PARAMS = {"max_new_tokens": 1000, "temperature": 0.0, "quantize": 8}
 
     def __init__(self, config: ModelConfig) -> None:
+        try:
+            from transformers import (
+                AutoModelForSeq2SeqLM,
+                AutoTokenizer,
+                pipeline
+            )
+        except ImportError:
+            raise ValueError(
+                "Could not import transformers python package. "
+                "Please it install it with `pip install transformers`."
+            )
+        
+        try:
+            import torch
+        except ImportError:
+            raise ValueError(
+                "Could not import torch package. "
+                "Please it install it with `pip install torch`."
+            )
         super().__init__(config)
         # populate model name
         self.model_name = config.get_model_name() or self.DEFAULT_MODEL
