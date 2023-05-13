@@ -147,7 +147,7 @@ class ConfidenceCalculator:
                 "Could not import sklearn python package. "
                 "Please it install it with `pip install scikit-learn`."
             )
-        
+
         if len(set(match)) == 1:
             # ROC AUC score is not defined for a label list with
             # just one prediction

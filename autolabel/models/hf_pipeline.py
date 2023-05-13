@@ -12,17 +12,13 @@ class HFPipelineLLM(BaseModel):
 
     def __init__(self, config: ModelConfig) -> None:
         try:
-            from transformers import (
-                AutoModelForSeq2SeqLM,
-                AutoTokenizer,
-                pipeline
-            )
+            from transformers import AutoModelForSeq2SeqLM, AutoTokenizer, pipeline
         except ImportError:
             raise ValueError(
                 "Could not import transformers python package. "
                 "Please it install it with `pip install transformers`."
             )
-        
+
         try:
             import torch
         except ImportError:
