@@ -1,7 +1,6 @@
 from typing import List, Optional
 import json
 from langchain.schema import LLMResult, Generation
-from botocore.config import Config
 from loguru import logger
 
 from autolabel.models import BaseModel
@@ -18,7 +17,6 @@ class RefuelLLM(BaseModel):
         self.model_name = config.get_model_name()
 
         # initialize runtime
-        config = Config(retries={"max_attempts": 10, "mode": "standard"})
         self.BASE_API = "https://api.refuel.ai/llm"
         self.RETRY_LIMIT = 5
         self.SESSION = retry_session(self.RETRY_LIMIT)
