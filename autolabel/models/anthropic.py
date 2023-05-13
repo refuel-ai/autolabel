@@ -1,15 +1,14 @@
 from typing import List, Optional
 
 from anthropic import tokenizer
-from langchain.llms import Anthropic
-from langchain.schema import LLMResult, Generation
-
-from autolabel.models import BaseModel
 from autolabel.configs import ModelConfig
+from autolabel.models import BaseModel
+from langchain.llms import Anthropic
+from langchain.schema import Generation, LLMResult
 
 
 class AnthropicLLM(BaseModel):
-    DEFAULT_MODEL = "claude-v1"
+    DEFAULT_MODEL = "claude-instant-v1"
     DEFAULT_PARAMS = {
         "max_tokens_to_sample": 1000,
         "temperature": 0.0,
@@ -18,11 +17,13 @@ class AnthropicLLM(BaseModel):
     # Reference: https://cdn2.assets-servd.host/anthropic-website/production/images/apr-pricing-tokens.pdf
     COST_PER_PROMPT_TOKEN = {
         # $11.02 per million tokens
-        "claude-v1": (11.02 / 1000000)
+        "claude-v1": (11.02 / 1000000),
+        "claude-instant-v1": (1.63 / 1000000),
     }
     COST_PER_COMPLETION_TOKEN = {
         # $32.68 per million tokens
-        "claude-v1": (32.68 / 1000000)
+        "claude-v1": (32.68 / 1000000),
+        "claude-instant-v1": (5.51 / 1000000),
     }
 
     def __init__(self, config: ModelConfig) -> None:
