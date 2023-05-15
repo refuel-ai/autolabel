@@ -10,23 +10,6 @@
         "label_column": "label"
     },
     "example_prompt_template": "Example: {example}",
-    "example_label_template": "Output: {label}",
-    "seed_examples": [
-        {
-            "example": "It's ridiculous that these guys are being called 'protesters'. Being armed is a threat of violence, which makes them terrorists.",
-            "label": "toxic"
-        },
-        {
-            "example": "This is so cool. It's like, 'would you want your mother to read this??' Really great idea, well done!",
-            "label": "not toxic"
-        },
-        {
-            "example": "This bitch is nuts. Who would read a book by a woman",
-            "label": "toxic"
-        },
-        {
-            "example": "It was a great show. Not a combo I'd of expected to be good together but it was.",
-            "label": "not toxic"
-        }
-    ]
+    "example_label_template": "{{\"Output\": \"{label}\"}}",
+    "seed_examples": "data/civil_comments_seed.csv"
 }

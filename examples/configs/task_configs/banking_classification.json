@@ -4,6 +4,7 @@
     "prefix_prompt": "You are an expert at understanding twitter complaints.",
     "compute_confidence": true,
     "output_format": "json",
+    "output_prompt": "You will return the answer in JSON format with one key: {\"Output\": \"the correct label\"}",
     "json_empty_response": "{\"label\": \"\"}",
     "csv_empty_response": ""
 }

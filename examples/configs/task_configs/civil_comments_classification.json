@@ -2,6 +2,7 @@
     "project_name": "ToxicCommentClassification",
     "task_type": "classification",
     "output_format": "json",
+    "output_prompt": "You will return the answer in JSON format with one key: {\"Output\": \"the correct output\"}",
     "prefix_prompt": "You are an expert at identifying toxic comments and understanding if a comment is sexually explicit, obscene, toxic, insults a person, demographic or race.",
     "example_selector": {
         "strategy": "fixed_few_shot",
