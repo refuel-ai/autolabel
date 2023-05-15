@@ -3,6 +3,7 @@ from typing import List, Optional
 from anthropic import tokenizer
 from autolabel.configs import ModelConfig
 from autolabel.models import BaseModel
+from autolabel.cache import BaseCache
 from langchain.llms import Anthropic
 from langchain.schema import Generation, LLMResult
 
@@ -26,8 +27,8 @@ class AnthropicLLM(BaseModel):
         "claude-instant-v1": (5.51 / 1000000),
     }
 
-    def __init__(self, config: ModelConfig) -> None:
-        super().__init__(config)
+    def __init__(self, config: ModelConfig, cache: BaseCache = None) -> None:
+        super().__init__(config, cache)
         # populate model name
         self.model_name = config.get_model_name() or self.DEFAULT_MODEL
         # populate model params
@@ -36,7 +37,7 @@ class AnthropicLLM(BaseModel):
         # initialize LLM
         self.llm = Anthropic(model=self.model_name, **self.model_params)
 
-    def label(self, prompts: List[str]) -> LLMResult:
+    def _label(self, prompts: List[str]) -> LLMResult:
         try:
             response = self.llm.generate(prompts)
             return response

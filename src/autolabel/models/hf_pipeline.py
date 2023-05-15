@@ -4,13 +4,14 @@ from langchain.schema import LLMResult, Generation
 
 from autolabel.models import BaseModel
 from autolabel.configs import ModelConfig
+from autolabel.cache import BaseCache
 
 
 class HFPipelineLLM(BaseModel):
     DEFAULT_MODEL = "google/flan-t5-xxl"
     DEFAULT_PARAMS = {"max_new_tokens": 1000, "temperature": 0.0, "quantize": 8}
 
-    def __init__(self, config: ModelConfig) -> None:
+    def __init__(self, config: ModelConfig, cache: BaseCache = None) -> None:
         try:
             from transformers import AutoModelForSeq2SeqLM, AutoTokenizer, pipeline
         except ImportError:
@@ -26,7 +27,7 @@ class HFPipelineLLM(BaseModel):
                 "Could not import torch package. "
                 "Please it install it with `pip install torch`."
             )
-        super().__init__(config)
+        super().__init__(config, cache)
         # populate model name
         self.model_name = config.get_model_name() or self.DEFAULT_MODEL
 
@@ -62,7 +63,7 @@ class HFPipelineLLM(BaseModel):
         # initialize LLM
         self.llm = HuggingFacePipeline(pipeline=pipe, model_kwargs=model_kwargs)
 
-    def label(self, prompts: List[str]) -> LLMResult:
+    def _label(self, prompts: List[str]) -> LLMResult:
         try:
             return self.llm.generate(prompts)
         except Exception as e:

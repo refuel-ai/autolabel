@@ -1,11 +1,12 @@
 from datetime import datetime
 from enum import Enum
-from typing import Any, Dict, Optional
+from typing import Any, Dict, Optional, List
 
 from pydantic import BaseModel
 
 from autolabel.configs import ModelConfig, DatasetConfig, TaskConfig
 from autolabel.utils import calculate_md5
+from langchain.schema import Generation
 
 
 class LLMProvider(str, Enum):
@@ -114,6 +115,16 @@ class Annotation(BaseModel):
     id: Optional[str] = None
     index: int
     llm_annotation: Optional[LLMAnnotation] = None
+
+    class Config:
+        orm_mode = True
+
+
+class CacheEntry(BaseModel):
+    model_name: str
+    prompt: str
+    model_params: str
+    generations: Optional[List[Generation]] = None
 
     class Config:
         orm_mode = True

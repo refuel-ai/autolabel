@@ -8,6 +8,7 @@ import tiktoken
 
 from autolabel.models import BaseModel
 from autolabel.configs import ModelConfig
+from autolabel.cache import BaseCache
 
 
 class OpenAILLM(BaseModel):
@@ -46,8 +47,8 @@ class OpenAILLM(BaseModel):
         else:
             return "completion"
 
-    def __init__(self, config: ModelConfig) -> None:
-        super().__init__(config)
+    def __init__(self, config: ModelConfig, cache: BaseCache = None) -> None:
+        super().__init__(config, cache)
         # populate model name
         self.model_name = config.get_model_name() or self.DEFAULT_MODEL
 
@@ -63,7 +64,7 @@ class OpenAILLM(BaseModel):
             }
             self.llm = OpenAI(model_name=self.model_name, **self.model_params)
 
-    def label(self, prompts: List[str]) -> LLMResult:
+    def _label(self, prompts: List[str]) -> LLMResult:
         if self._engine == "chat":
             # Need to convert list[prompts] -> list[messages]
             # Currently the entire prompt is stuck into the "human message"
