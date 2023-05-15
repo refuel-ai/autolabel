@@ -1,20 +1,19 @@
 """Base interface that all prediction tasks will implement."""
 
+import json
 from abc import ABC, abstractmethod
 from typing import Dict, List
 
-from langchain.prompts.prompt import PromptTemplate
-from langchain.schema import Generation
 from autolabel.configs import DatasetConfig, TaskConfig
 from autolabel.schema import LLMAnnotation, MetricResult
 from autolabel.utils import extract_valid_json_substring
+from langchain.prompts.prompt import PromptTemplate
+from langchain.schema import Generation
 from loguru import logger
-
-import json
 
 
 class BaseTask(ABC):
-    prompt_template = "{prefix_prompt}\n{task_prompt}\n\n{output_prompt}\n\n{seed_examples_prompt}\n{seed_examples}\nNow I want you to label the following example:\n{current_example}"
+    prompt_template = "{prefix_prompt}\n{task_prompt}\n\n{output_prompt}\n\n{seed_examples_prompt}\n{seed_examples}\nNow I want you to label the following example: {current_example}"
     prefix_prompt = ""
     task_prompt = ""
     seed_examples_prompt = "Some examples with their output answers are provided below:"
