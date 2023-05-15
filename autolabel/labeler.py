@@ -130,14 +130,6 @@ class LabelingAgent:
         if isinstance(seed_examples, str):
             _, seed_examples, _ = self._read_csv(seed_examples, dataset_config)
 
-        if self.task_config.use_chain_of_thought():
-            out_file = None
-            if isinstance(dataset_config.get_seed_examples(), str):
-                out_file = dataset_config.get_seed_examples().replace(
-                    ".csv", "_explanations.csv"
-                )
-            seed_examples = self.generate_explanations(seed_examples, out_file)
-
         self.example_selector = ExampleSelectorFactory.initialize_selector(
             self.task_config, seed_examples
         )
@@ -293,14 +285,6 @@ class LabelingAgent:
         if isinstance(seed_examples, str):
             _, seed_examples, _ = self._read_csv(seed_examples, dataset_config)
 
-        if self.task_config.use_chain_of_thought():
-            out_file = None
-            if isinstance(dataset_config.get_seed_examples(), str):
-                out_file = dataset_config.get_seed_examples().replace(
-                    ".csv", "_explanations.csv"
-                )
-            seed_examples = self.generate_explanations(seed_examples, out_file)
-
         self.example_selector = ExampleSelectorFactory.initialize_selector(
             self.task_config, seed_examples
         )
@@ -396,30 +380,3 @@ class LabelingAgent:
                 counts[label] = (counts[label][0] + 1, counts[label][1])
         max_label = max(counts, key=lambda x: counts[x][0])
         return annotation_list[counts[max_label][1]]
-
-    def generate_explanations(
-        self, seed_examples: List[Dict], save_file: str
-    ) -> List[Dict]:
-        generate_explanations = False
-        for seed_example in tqdm(seed_examples):
-            if not seed_example.get("explanation", ""):
-                if not generate_explanations:
-                    logger.info(
-                        "Chain of thought requires explanations for seed examples. Generating explanations for seed examples."
-                    )
-                    generate_explanations = True
-
-                explanation_prompt = self.task.generate_explanation(seed_example)
-                explanation = (
-                    self.llm.label([explanation_prompt]).generations[0][0].text
-                )
-                seed_example["explanation"] = str(explanation) if explanation else ""
-
-        if generate_explanations and save_file:
-            logger.info(
-                "Generated explanations for seed examples. Saving explanations to the seed file."
-            )
-            df = pd.DataFrame.from_records(seed_examples)
-            df.to_csv(save_file, index=False)
-
-        return seed_examples

@@ -7,6 +7,7 @@
         ],
         "label_column": "answer"
     },
+    "example_template": "Question: {question}\n{options}\nAnswer:{explanation}\n{answer}\n",
     "seed_examples": [
         {
             "question": "Do approved doctors and medical referees in the UK agree when assessing a seafarer's fitness?",

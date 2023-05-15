@@ -7,6 +7,7 @@ class DatasetConfig(BaseConfig):
     INPUT_COLUMNS_KEY = "input_columns"
     EXAMPLE_TEMPLATE_KEY = "example_template"
     LABEL_COLUMN_KEY = "label_column"
+    EXPLANATION_COLUMN_KEY = "explanation_column"
     SEED_EXAMPLES_KEY = "seed_examples"
     DATASET_SCHEMA_KEY = "dataset_schema"
     DELIMITER_KEY = "delimiter"
@@ -35,6 +36,12 @@ class DatasetConfig(BaseConfig):
         Returns the name of the column containing labels for dataset
         """
         return self.config[self.DATASET_SCHEMA_KEY].get(self.LABEL_COLUMN_KEY, None)
+    
+    def get_explanation_column(self) -> str:
+        """
+        Returns the name of the column containing explanations for dataset
+        """
+        return self.config[self.DATASET_SCHEMA_KEY].get(self.EXPLANATION_COLUMN_KEY, None)
 
     def get_labels_list(self) -> str:
         """

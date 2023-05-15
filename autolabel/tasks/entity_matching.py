@@ -63,18 +63,6 @@ class EntityMatchingTask(BaseTask):
         )
         return prompt
 
-    def generate_explanation(self, example: Dict) -> str:
-        example_prompt = PromptTemplate(
-            input_variables=self.explanation_generation_prompt_variables,
-            template=self.explanation_generation_prompt,
-        )
-        return example_prompt.format(
-            prefix_prompt=self.prefix_prompt,
-            entity1=example["entity1"],
-            entity2=example["entity2"],
-            answer=example["label"],
-        )
-
     def auroc_score_labels(
         self, gt_labels, llm_labels
     ) -> Tuple[List[int], List[float]]:

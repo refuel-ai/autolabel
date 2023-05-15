@@ -1,12 +1,11 @@
-from typing import List, Dict, Tuple
-
-from langchain.prompts.prompt import PromptTemplate
-from sklearn.metrics import accuracy_score
+from typing import Dict, List, Tuple
 
 from autolabel.confidence import ConfidenceCalculator
 from autolabel.configs import TaskConfig
 from autolabel.schema import LLMAnnotation, Metric, MetricResult
 from autolabel.tasks import BaseTask
+from langchain.prompts.prompt import PromptTemplate
+from sklearn.metrics import accuracy_score
 
 
 class ClassificationTask(BaseTask):
@@ -68,23 +67,6 @@ class ClassificationTask(BaseTask):
             seed_examples="\n".join(formatted_examples),
             current_example=current_example,
             task_prompt=task_prompt,
-        )
-
-    def generate_explanation(self, example: Dict) -> str:
-        pt = PromptTemplate(
-            input_variables=self.explanation_generation_prompt_variables,
-            template=self.explanation_generation_prompt,
-        )
-
-        labels_list = self.dataset_config.get_labels_list()
-        num_labels = len(labels_list)
-
-        return pt.format(
-            prefix_prompt=self.prefix_prompt,
-            num_labels=num_labels,
-            labels_list="\n".join(labels_list),
-            example=example["example"],
-            output=example["label"],
         )
 
     def auroc_score_labels(

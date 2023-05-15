@@ -245,11 +245,6 @@ class NamedEntityRecognitionTask(BaseTask):
         )
         return eval_metrics
 
-    def generate_explanation(self, example: Dict) -> str:
-        raise NotImplementedError(
-            "Automatic explanation generation not supported for NER task"
-        )
-
     def eval(
         self, llm_labels: List[LLMAnnotation], gt_labels: List[str]
     ) -> List[MetricResult]:
