@@ -64,6 +64,8 @@ class ConfidenceCalculator:
                 and "top_logprobs" in generation_info["logprobs"]
             ):
                 response_logprobs = generation_info["logprobs"]["top_logprobs"]
+            else:
+                return 0
         else:
             yes_logprob = self.compute_confidence(p_true_prompt, "Yes")
             no_logprob = self.compute_confidence(p_true_prompt, "No")
