@@ -145,7 +145,6 @@ class LabelingAgent:
                 examples = self.example_selector.select_examples(input_i)
                 # Construct Prompt to pass to LLM
                 final_prompt = self.task.construct_prompt(input_i, examples)
-                print(f"final_prompt: {final_prompt}")
                 final_prompts.append(final_prompt)
 
             # Get response from LLM
