@@ -8,6 +8,7 @@ from .hf_pipeline import HFPipelineLLM
 from .refuel import RefuelLLM
 
 from autolabel.configs import ModelConfig
+from autolabel.cache import BaseCache
 
 MODEL_PROVIDER_TO_IMPLEMENTATION: Dict[str, BaseModel] = {
     "openai": OpenAILLM,
@@ -20,7 +21,7 @@ MODEL_PROVIDER_TO_IMPLEMENTATION: Dict[str, BaseModel] = {
 
 class ModelFactory:
     @staticmethod
-    def from_config(config: ModelConfig) -> BaseModel:
+    def from_config(config: ModelConfig, cache: BaseCache = None) -> BaseModel:
         model_provider = config.get_provider()
         if model_provider not in MODEL_PROVIDER_TO_IMPLEMENTATION:
             logger.error(
@@ -28,4 +29,4 @@ class ModelFactory:
             )
             return None
         model_cls = MODEL_PROVIDER_TO_IMPLEMENTATION[model_provider]
-        return model_cls(config)
+        return model_cls(config, cache)

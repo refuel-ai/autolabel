@@ -8,7 +8,7 @@ from tqdm import tqdm
 import sys
 
 from autolabel.confidence import ConfidenceCalculator
-from autolabel.cache import LLMCache
+from autolabel.cache import SQLAlchemyCache
 from autolabel.few_shot import ExampleSelectorFactory
 from autolabel.models import ModelFactory, BaseModel
 from autolabel.schema import LLMAnnotation
@@ -27,15 +27,16 @@ class LabelingAgent:
         task_config: Union[str, Dict],
         llm_config: Optional[Union[str, Dict]] = None,
         log_level: Optional[str] = "INFO",
-        cache: Optional[bool] = False,
+        cache: Optional[bool] = True,
     ) -> None:
-        self.set_task_config(task_config)
-        self.set_llm_config(llm_config)
-        if cache:
-            langchain.llm_cache = LLMCache()
         self.db = StateManager()
         logger.remove()
         logger.add(sys.stdout, level=log_level)
+
+        self.cache = SQLAlchemyCache() if cache else None
+
+        self.set_task_config(task_config)
+        self.set_llm_config(llm_config)
 
     # TODO: all this will move to a separate input parser class
     # this is a temporary solution to quickly add this feature and unblock expts
@@ -332,7 +333,9 @@ class LabelingAgent:
 
     def set_llm_config(self, llm_config: Union[str, Dict]):
         self.llm_config = ModelConfig(llm_config)
-        self.llm: BaseModel = ModelFactory.from_config(self.llm_config)
+        self.llm: BaseModel = ModelFactory.from_config(
+            self.llm_config, cache=self.cache
+        )
         self.confidence = ConfidenceCalculator(
             score_type="logprob_average", llm=self.llm
         )

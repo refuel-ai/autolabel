@@ -6,11 +6,12 @@ from loguru import logger
 from autolabel.models import BaseModel
 from autolabel.configs import ModelConfig
 from autolabel.utils import retry_session
+from autolabel.cache import BaseCache
 
 
 class RefuelLLM(BaseModel):
-    def __init__(self, config: ModelConfig) -> None:
-        super().__init__(config)
+    def __init__(self, config: ModelConfig, cache: BaseCache = None) -> None:
+        super().__init__(config, cache)
         # populate model name
         # This is unused today, but in the future could
         # be used to decide which refuel model is queried
@@ -21,7 +22,7 @@ class RefuelLLM(BaseModel):
         self.RETRY_LIMIT = 5
         self.SESSION = retry_session(self.RETRY_LIMIT)
 
-    def label(self, prompts: List[str]) -> LLMResult:
+    def _label(self, prompts: List[str]) -> LLMResult:
         try:
             generations = []
             for prompt in prompts:
@@ -38,6 +39,7 @@ class RefuelLLM(BaseModel):
                         response.text,
                         response.status_code,
                     )
+                    logger.error(prompt)
                     generations.append([Generation(text="")])
             return LLMResult(generations=generations)
         except Exception as e:
