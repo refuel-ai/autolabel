@@ -7,6 +7,7 @@ from autolabel.cache import BaseCache
 from typing import List
 from langchain.schema import Generation
 from autolabel.data_models import CacheEntryModel
+from loguru import logger
 
 
 class SQLAlchemyCache(BaseCache):
@@ -23,7 +24,10 @@ class SQLAlchemyCache(BaseCache):
     def lookup(self, entry: CacheEntry) -> List[Generation]:
         cache_entry = CacheEntryModel.get(self.session, entry)
         if cache_entry is None:
+            logger.debug("Cache miss")
             return []
+
+        logger.debug("Cache hit")
         return cache_entry.generations
 
     def update(self, entry: CacheEntry):
