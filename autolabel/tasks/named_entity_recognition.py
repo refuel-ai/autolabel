@@ -62,16 +62,15 @@ class NamedEntityRecognitionTask(BaseTask):
             num_labels=num_labels, labels_list="\n".join(labels_list)
         )
 
-        example_template = self.dataset_config.get_example_template()
-        label_column = self.dataset_config.get_label_column()
+        example_prompt_template = self.dataset_config.get_example_prompt_template()
+        example_label_template = self.dataset_config.get_example_label_template()
+        example_template = example_prompt_template + "\n" + example_label_template
 
         formatted_examples = list(
             map(lambda example: example_template.format(**example), examples)
         )
 
-        # Remove label column from formatted input if it exists
-        input[label_column] = ""
-        current_example = example_template.format(**input)
+        current_example = example_prompt_template.format(**input)
 
         if len(examples):
             seed_examples_prompt = self.seed_examples_prompt

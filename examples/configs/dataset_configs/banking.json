@@ -84,6 +84,8 @@
         ],
         "label_column": "label"
     },
+    "example_prompt_template": "Example: {example}",
+    "example_label_template": "Output: {label}",
     "seed_examples": [
         {
             "example": "Is it free to transfer money or is there a fee?",

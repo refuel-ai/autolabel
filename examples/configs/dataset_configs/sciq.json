@@ -6,6 +6,8 @@
         ],
         "label_column": "answer"
     },
+    "example_prompt_template": "Question: {question}\n{options}",
+    "example_label_template": "Answer: {{\"label\": \"{answer}\"}}",
     "seed_examples": [
         {
             "question": "Neurons are classified based on the direction in which they carry what?",

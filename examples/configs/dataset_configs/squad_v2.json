@@ -4,8 +4,7 @@
             "question",
             "context"
         ],
-        "label_column": "answer",
-        "explanation_column": "explanation"
+        "label_column": "answer"
     },
     "example_prompt_template": "Context: {context}\nQuestion: {question}",
     "example_label_template": "Answer: Let's think step by step. {explanation}\n{{\"label\": \"{answer}\"}}",
