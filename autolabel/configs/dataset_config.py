@@ -5,9 +5,9 @@ from .base import BaseConfig
 
 class DatasetConfig(BaseConfig):
     INPUT_COLUMNS_KEY = "input_columns"
-    EXAMPLE_TEMPLATE_KEY = "example_template"
+    EXAMPLE_PROMPT_TEMPLATE_KEY = "example_prompt_template"
+    EXAMPLE_LABEL_TEMPLATE_KEY = "example_label_template"
     LABEL_COLUMN_KEY = "label_column"
-    EXPLANATION_COLUMN_KEY = "explanation_column"
     SEED_EXAMPLES_KEY = "seed_examples"
     DATASET_SCHEMA_KEY = "dataset_schema"
     DELIMITER_KEY = "delimiter"
@@ -25,23 +25,23 @@ class DatasetConfig(BaseConfig):
         """
         return self.config[self.DATASET_SCHEMA_KEY][self.INPUT_COLUMNS_KEY]
 
-    def get_example_template(self) -> str:
+    def get_example_prompt_template(self) -> str:
         """
-        Returns a list of column names that will be used as input for annotation
+        Returns a string to format an example prompt
         """
-        return self.config.get(self.EXAMPLE_TEMPLATE_KEY, None)
+        return self.config.get(self.EXAMPLE_PROMPT_TEMPLATE_KEY, None)
+
+    def get_example_label_template(self) -> str:
+        """
+        Returns a string to format an example label
+        """
+        return self.config.get(self.EXAMPLE_LABEL_TEMPLATE_KEY, None)
 
     def get_label_column(self) -> str:
         """
         Returns the name of the column containing labels for dataset
         """
         return self.config[self.DATASET_SCHEMA_KEY].get(self.LABEL_COLUMN_KEY, None)
-    
-    def get_explanation_column(self) -> str:
-        """
-        Returns the name of the column containing explanations for dataset
-        """
-        return self.config[self.DATASET_SCHEMA_KEY].get(self.EXPLANATION_COLUMN_KEY, None)
 
     def get_labels_list(self) -> str:
         """
