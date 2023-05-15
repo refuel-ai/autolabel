@@ -8,6 +8,7 @@ import tiktoken
 
 from autolabel.models import BaseModel
 from autolabel.configs import ModelConfig
+from autolabel.cache import BaseCache
 
 
 class OpenAILLM(BaseModel):
@@ -46,8 +47,8 @@ class OpenAILLM(BaseModel):
         else:
             return "completion"
 
-    def __init__(self, config: ModelConfig) -> None:
-        super().__init__(config)
+    def __init__(self, config: ModelConfig, cache: BaseCache = None) -> None:
+        super().__init__(config, cache)
         # populate model name
         self.model_name = config.get_model_name() or self.DEFAULT_MODEL
 

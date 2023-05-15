@@ -6,11 +6,12 @@ from loguru import logger
 from autolabel.models import BaseModel
 from autolabel.configs import ModelConfig
 from autolabel.utils import retry_session
+from autolabel.cache import BaseCache
 
 
 class RefuelLLM(BaseModel):
-    def __init__(self, config: ModelConfig) -> None:
-        super().__init__(config)
+    def __init__(self, config: ModelConfig, cache: BaseCache = None) -> None:
+        super().__init__(config, cache)
         # populate model name
         # This is unused today, but in the future could
         # be used to decide which refuel model is queried

@@ -6,7 +6,6 @@ from typing import List, Optional, Dict
 from langchain.schema import LLMResult
 
 from autolabel.configs import ModelConfig
-from autolabel.data_models import CacheEntryModel
 from autolabel.schema import CacheEntry
 from autolabel.cache import BaseCache
 

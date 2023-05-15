@@ -8,7 +8,7 @@ from tqdm import tqdm
 import sys
 
 from autolabel.confidence import ConfidenceCalculator
-from autolabel.cache import LLMCache
+from autolabel.cache import SQLAlchemyCache
 from autolabel.few_shot import ExampleSelectorFactory
 from autolabel.models import ModelFactory, BaseModel
 from autolabel.schema import LLMAnnotation
@@ -27,12 +27,12 @@ class LabelingAgent:
         task_config: Union[str, Dict],
         llm_config: Optional[Union[str, Dict]] = None,
         log_level: Optional[str] = "INFO",
-        cache: Optional[bool] = False,
+        cache: Optional[bool] = True,
     ) -> None:
         self.set_task_config(task_config)
         self.set_llm_config(llm_config)
         if cache:
-            langchain.llm_cache = LLMCache()
+            self.cache = SQLAlchemyCache()
         self.db = StateManager()
         logger.remove()
         logger.add(sys.stdout, level=log_level)
