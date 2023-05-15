@@ -18,15 +18,6 @@ class NamedEntityRecognitionTask(BaseTask):
     NULL_LABEL = {}
 
     task_prompt = "Your job is to extract named entities mentioned in text, and classify them into one of the following {num_labels} categories.\nCategories:\n{labels_list}\n "
-    prompt_template = "{prefix_prompt}\n{task_prompt}\n{output_prompt}\n\n{seed_examples_prompt}\n{seed_examples}\nBegin:{current_example}"
-    prompt_template_variables = [
-        "prefix_prompt",
-        "task_prompt",
-        "output_prompt",
-        "seed_examples_prompt",
-        "seed_examples",
-        "current_example",
-    ]
 
     def __init__(self, config: TaskConfig) -> None:
         super().__init__(config)
