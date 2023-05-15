@@ -36,7 +36,7 @@ class AnthropicLLM(BaseModel):
         # initialize LLM
         self.llm = Anthropic(model=self.model_name, **self.model_params)
 
-    def label(self, prompts: List[str]) -> LLMResult:
+    def _label(self, prompts: List[str]) -> LLMResult:
         try:
             response = self.llm.generate(prompts)
             return response

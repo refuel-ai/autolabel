@@ -21,7 +21,7 @@ class RefuelLLM(BaseModel):
         self.RETRY_LIMIT = 5
         self.SESSION = retry_session(self.RETRY_LIMIT)
 
-    def label(self, prompts: List[str]) -> LLMResult:
+    def _label(self, prompts: List[str]) -> LLMResult:
         try:
             generations = []
             for prompt in prompts:
@@ -38,6 +38,7 @@ class RefuelLLM(BaseModel):
                         response.text,
                         response.status_code,
                     )
+                    logger.error(prompt)
                     generations.append([Generation(text="")])
             return LLMResult(generations=generations)
         except Exception as e:
