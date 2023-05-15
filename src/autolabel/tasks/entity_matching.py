@@ -7,8 +7,11 @@ from autolabel.schema import LLMAnnotation, Metric, MetricResult
 from autolabel.tasks import BaseTask
 from langchain.prompts.prompt import PromptTemplate
 from sklearn.metrics import accuracy_score
+<<<<<<< HEAD:autolabel/tasks/entity_matching.py
 
 transformers.logging.set_verbosity_error()
+=======
+>>>>>>> main:src/autolabel/tasks/entity_matching.py
 
 
 class EntityMatchingTask(BaseTask):

@@ -1,29 +1,29 @@
 from typing import Dict, List
-from loguru import logger
 
+from autolabel.configs import TaskConfig
 from langchain.embeddings import OpenAIEmbeddings
 from langchain.prompts.example_selector import (
     MaxMarginalRelevanceExampleSelector,
     SemanticSimilarityExampleSelector,
 )
 from langchain.prompts.example_selector.base import BaseExampleSelector
+from loguru import logger
 
-from .vector_store import VectorStoreWrapper
 from .fixed_example_selector import FixedExampleSelector
-
-from autolabel.configs import TaskConfig
-
+from .vector_store import VectorStoreWrapper
 
 STRATEGY_TO_IMPLEMENTATION: Dict[str, BaseExampleSelector] = {
     "fixed_few_shot": FixedExampleSelector,
     "semantic_similarity": SemanticSimilarityExampleSelector,
-    "maximal_marginal_relevance": MaxMarginalRelevanceExampleSelector,
+    "max_marginal_relevance": MaxMarginalRelevanceExampleSelector,
 }
 
 
 class ExampleSelectorFactory:
     DEFAULT_STRATEGY = "fixed_few_shot"
     DEFAULT_NUM_EXAMPLES = 4
+    CANDIDATE_EXAMPLES_FACTOR = 5
+    MAX_CANDIDATE_EXAMPLES = 100
 
     @staticmethod
     def initialize_selector(
@@ -39,14 +39,19 @@ class ExampleSelectorFactory:
 
         if strategy not in STRATEGY_TO_IMPLEMENTATION:
             logger.error(
-                f"Example selection: {strategy} is not in the list of supported strategies: {STRATEGY_TO_IMPLEMENTATION.keys()}"
+                f"Example selection: {strategy} is not in the list of supported strategies: {list(STRATEGY_TO_IMPLEMENTATION.keys())}"
             )
             return None
 
         params = {"examples": examples, "k": num_examples}
-        if strategy in ["semantic_similarity", "maximal_marginal_relevance"]:
+        if strategy in ["semantic_similarity", "max_marginal_relevance"]:
             params["embeddings"] = OpenAIEmbeddings()
             params["vectorstore_cls"] = VectorStoreWrapper
+            if strategy == "max_marginal_relevance":
+                params["fetch_k"] = min(
+                    ExampleSelectorFactory.MAX_CANDIDATE_EXAMPLES,
+                    ExampleSelectorFactory.CANDIDATE_EXAMPLES_FACTOR * params["k"],
+                )
 
         example_cls = STRATEGY_TO_IMPLEMENTATION[strategy]
         return example_cls.from_examples(**params)

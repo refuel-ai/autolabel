@@ -1,8 +1,5 @@
 from typing import List, Optional
 from langchain.llms import HuggingFacePipeline
-from transformers import AutoModelForSeq2SeqLM, AutoTokenizer, pipeline
-import torch
-
 from langchain.schema import LLMResult, Generation
 
 from autolabel.models import BaseModel
@@ -11,9 +8,24 @@ from autolabel.configs import ModelConfig
 
 class HFPipelineLLM(BaseModel):
     DEFAULT_MODEL = "google/flan-t5-xxl"
-    DEFAULT_PARAMS = {"max_tokens": 1000, "temperature": 0.0, "quantize": 16}
+    DEFAULT_PARAMS = {"max_new_tokens": 1000, "temperature": 0.0, "quantize": 8}
 
     def __init__(self, config: ModelConfig) -> None:
+        try:
+            from transformers import AutoModelForSeq2SeqLM, AutoTokenizer, pipeline
+        except ImportError:
+            raise ValueError(
+                "Could not import transformers python package. "
+                "Please it install it with `pip install transformers`."
+            )
+
+        try:
+            import torch
+        except ImportError:
+            raise ValueError(
+                "Could not import torch package. "
+                "Please it install it with `pip install torch`."
+            )
         super().__init__(config)
         # populate model name
         self.model_name = config.get_model_name() or self.DEFAULT_MODEL
@@ -37,15 +49,18 @@ class HFPipelineLLM(BaseModel):
             model = AutoModelForSeq2SeqLM.from_pretrained(
                 self.model_name, device_map="auto"
             )
+
+        model_kwargs = dict(self.model_params)  # make a copy of the model params
+        model_kwargs.pop("quantize", None)  # remove quantize from the model params
         pipe = pipeline(
             "text2text-generation",
             model=model,
             tokenizer=tokenizer,
-            **self.model_params,
+            **model_kwargs,
         )
 
         # initialize LLM
-        self.llm = HuggingFacePipeline(pipeline=pipe, model_kwargs=self.model_params)
+        self.llm = HuggingFacePipeline(pipeline=pipe, model_kwargs=model_kwargs)
 
     def label(self, prompts: List[str]) -> LLMResult:
         try:

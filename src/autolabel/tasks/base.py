@@ -13,7 +13,7 @@ from loguru import logger
 
 
 class BaseTask(ABC):
-    prompt_template = "{prefix_prompt}\n{task_prompt}\n\n{output_prompt}\n\n{seed_examples_prompt}\n{seed_examples}\nNow I want you to label the following example: {current_example}"
+    prompt_template = "{prefix_prompt}\n{task_prompt}\n\n{output_prompt}\n\n{seed_examples_prompt}\n{seed_examples}\nNow I want you to label the following example:\n{current_example}"
     prefix_prompt = ""
     task_prompt = ""
     seed_examples_prompt = "Some examples with their output answers are provided below:"
@@ -136,7 +136,9 @@ class BaseTask(ABC):
     def parse_csv_llm_response(
         self, response: Generation, curr_sample: str, prompt: str
     ) -> LLMAnnotation:
-        completion_text = response.text.strip()
+        # The last line of the response is the label
+        # This is done to handle the case where the model generates an explanation before generating the label
+        completion_text = response.text.strip().split("\n")[-1].strip()
         if len(completion_text) == 0:
             successfully_labeled = "no"
             llm_label = self.NULL_LABEL_TOKEN

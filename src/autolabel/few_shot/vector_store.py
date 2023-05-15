@@ -1,22 +1,14 @@
 from __future__ import annotations
 
 import heapq
-from typing import (
-    Any,
-    Callable,
-    Dict,
-    Iterable,
-    List,
-    Optional,
-    Tuple,
-    Type,
-)
+from typing import Any, Callable, Dict, Iterable, List, Optional, Tuple, Type
 
 import numpy as np
 import torch
 from langchain.docstore.document import Document
 from langchain.embeddings.base import Embeddings
 from langchain.vectorstores.base import VectorStore
+from langchain.vectorstores.utils import maximal_marginal_relevance
 from torch import Tensor
 
 
@@ -217,6 +209,58 @@ class VectorStoreWrapper(VectorStore):
         results["metadatas"] = [[self._metadatas[index] for index in result_ids]]
 
         return _results_to_docs_and_scores(results)
+
+    def max_marginal_relevance_search_by_vector(
+        self,
+        query: str,
+        k: int = 4,
+        fetch_k: int = 20,
+        lambda_mult: float = 0.5,
+        **kwargs: Any,
+    ) -> List[Document]:
+        query_embedding = self._embedding_function.embed_query(query)
+        query_embeddings = torch.tensor([query_embedding])
+        result_ids_and_scores = semantic_search(
+            corpus_embeddings=self._corpus_embeddings,
+            query_embeddings=query_embeddings,
+            top_k=fetch_k,
+        )
+        result_ids = [result["corpus_id"] for result in result_ids_and_scores[0]]
+        scores = [result["score"] for result in result_ids_and_scores[0]]
+
+        fetched_embeddings = torch.index_select(
+            input=self._corpus_embeddings, dim=0, index=torch.tensor(result_ids)
+        ).tolist()
+        mmr_selected = maximal_marginal_relevance(
+            np.array([query_embedding], dtype=np.float32),
+            fetched_embeddings,
+            k=k,
+            lambda_mult=lambda_mult,
+        )
+        selected_result_ids = [result_ids[i] for i in mmr_selected]
+        selected_scores = [scores[i] for i in mmr_selected]
+        results = {}
+        results["documents"] = [[self._texts[index] for index in selected_result_ids]]
+        results["distances"] = [selected_scores]
+        results["metadatas"] = [
+            [self._metadatas[index] for index in selected_result_ids]
+        ]
+
+        return _results_to_docs_and_scores(results)
+
+    def max_marginal_relevance_search(
+        self,
+        query: str,
+        k: int = 4,
+        fetch_k: int = 20,
+        lambda_mult: float = 0.5,
+        **kwargs: Any,
+    ) -> List[Document]:
+
+        docs_and_scores = self.max_marginal_relevance_search_by_vector(
+            query, k, fetch_k, lambda_mult=lambda_mult
+        )
+        return [doc for doc, _ in docs_and_scores]
 
     @classmethod
     def from_texts(
