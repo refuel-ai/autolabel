@@ -5,13 +5,13 @@
 
 ## __The LabelingAgent Class__
 
-::: autolabel.labeler.LabelingAgent.run
+::: src.autolabel.labeler.LabelingAgent.run
     rendering:
         show_root_heading: yes
         show_root_full_path: 
         heading_level: 3
 
-::: autolabel.labeler.LabelingAgent.plan
+::: src.autolabel.labeler.LabelingAgent.plan
     rendering:
         show_root_heading: yes
         show_root_full_path: no
@@ -30,31 +30,31 @@ The DatasetConfig class is used to parse, validate, and store information about 
 
 
 
-::: autolabel.configs.dataset_config.DatasetConfig.get_input_columns
+::: src.autolabel.configs.dataset_config.DatasetConfig.get_input_columns
     rendering:
         show_root_heading: yes
         show_root_full_path: no
         heading_level: 3
 
-::: autolabel.configs.dataset_config.DatasetConfig.get_label_column
+::: src.autolabel.configs.dataset_config.DatasetConfig.get_label_column
     rendering:
         show_root_heading: yes
         show_root_full_path: no
         heading_level: 3
 
-::: autolabel.configs.dataset_config.DatasetConfig.get_labels_list
+::: src.autolabel.configs.dataset_config.DatasetConfig.get_labels_list
     rendering:
         show_root_heading: yes
         show_root_full_path: no
         heading_level: 3
 
-::: autolabel.configs.dataset_config.DatasetConfig.get_seed_examples
+::: src.autolabel.configs.dataset_config.DatasetConfig.get_seed_examples
     rendering:
         show_root_heading: yes
         show_root_full_path: no
         heading_level: 3
 
-::: autolabel.configs.dataset_config.DatasetConfig.get_delimiter
+::: src.autolabel.configs.dataset_config.DatasetConfig.get_delimiter
     rendering:
         show_root_heading: yes
         show_root_full_path: no
@@ -64,13 +64,13 @@ The DatasetConfig class is used to parse, validate, and store information about 
 
 The TaskConfig class is used to parse, validate, and store information about the annotation task being performed (i.e. Classification, Entity Recognition, Question Answering).
 
-::: autolabel.configs.task_config.TaskConfig.get_task_name
+::: src.autolabel.configs.task_config.TaskConfig.get_task_name
     rendering:
         show_root_heading: yes
         show_root_full_path: no
         heading_level: 3
 
-::: autolabel.configs.model_config.ModelConfig
+::: src.autolabel.configs.model_config.ModelConfig
     rendering:
         show_root_heading: yes
         show_root_full_path: no
