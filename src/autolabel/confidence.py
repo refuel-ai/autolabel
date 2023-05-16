@@ -1,13 +1,17 @@
-from typing import List, Optional
-import math
-import numpy as np
-import pickle as pkl
 import json
+import math
+import pickle as pkl
+from typing import List, Optional
+
+import matplotlib.pyplot as plt
+import numpy as np
+import requests
 import scipy.stats as stats
+import sklearn
 from loguru import logger
 
-from autolabel.schema import LLMAnnotation
 from autolabel.models import BaseModel
+from autolabel.schema import LLMAnnotation
 from autolabel.utils import retry_session
 
 
@@ -57,9 +61,15 @@ class ConfidenceCalculator:
 
         if kwargs.get("logprobs_available", False):
             response = self.llm.label([p_true_prompt])
-            response_logprobs = response.generations[0][0].generation_info["logprobs"][
-                "top_logprobs"
-            ]
+            generation_info = response.generations[0][0].generation_info
+            if (
+                generation_info is not None
+                and "logprobs" in generation_info
+                and "top_logprobs" in generation_info["logprobs"]
+            ):
+                response_logprobs = generation_info["logprobs"]["top_logprobs"]
+            else:
+                return 0
         else:
             yes_logprob = self.compute_confidence(p_true_prompt, "Yes")
             no_logprob = self.compute_confidence(p_true_prompt, "No")
@@ -91,19 +101,23 @@ class ConfidenceCalculator:
                 model_generation.prompt, model_generation.raw_response
             )
         else:
-            if model_generation.generation_info is None:
-                logger.debug("No generation info found")
-                model_generation.confidence_score = 0
-                return model_generation
-            logprobs = model_generation.generation_info["logprobs"]["top_logprobs"]
+            generation_info = model_generation.generation_info
+            if (
+                generation_info is not None
+                and "logprobs" in generation_info
+                and "top_logprobs" in generation_info["logprobs"]
+            ):
+                logprobs = generation_info["logprobs"]["top_logprobs"]
+                confidence = self.SUPPORTED_CALCULATORS[self.score_type](
+                    model_generation=model_generation,
+                    logprobs=logprobs,
+                    logprobs_available=logprobs_available,
+                    **kwargs,
+                )
 
-        confidence = self.SUPPORTED_CALCULATORS[self.score_type](
-            model_generation=model_generation,
-            logprobs=logprobs,
-            logprobs_available=logprobs_available,
-            **kwargs,
-        )
-        model_generation.confidence_score = confidence
+            else:
+                confidence = 0
+            model_generation.confidence_score = confidence
         return model_generation
 
     def compute_confidence(self, model_input, model_output):
