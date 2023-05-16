@@ -362,10 +362,17 @@ class LabelingAgent:
         if len(llm_labels) > 0:
             print(f"Last annotated example - Prompt: {llm_labels[-1].prompt}")
             print(f"Annotation: {llm_labels[-1].label}")
-        user_input = input("Do you want to resume it? (y/n)")
-        if user_input.lower() in ["y", "yes"]:
-            print("Resuming the task...")
-        else:
+
+        resume = None
+        while resume is None:
+            user_input = input("Do you want to resume the task? (y/n)")
+            if user_input.lower() in ["y", "yes"]:
+                print("Resuming the task...")
+                resume = True
+            elif user_input.lower() in ["n", "no"]:
+                resume = False
+
+        if not resume:
             TaskRunModel.delete_by_id(self.db.session, task_run.id)
             print("Deleted the existing task and starting a new one...")
             task_run = self.db.create_task_run(
