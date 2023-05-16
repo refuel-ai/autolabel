@@ -1,22 +1,21 @@
-from loguru import logger
-from tqdm import tqdm
-from typing import Tuple, List, Dict, Union, Optional
+import sys
+from typing import Dict, List, Optional, Tuple, Union
+
 import langchain
 import numpy as np
 import pandas as pd
+from loguru import logger
 from tqdm import tqdm
-import sys
 
+from autolabel.cache import LLMCache
 from autolabel.confidence import ConfidenceCalculator
-from autolabel.cache import SQLAlchemyCache
-from autolabel.few_shot import ExampleSelectorFactory
-from autolabel.models import ModelFactory, BaseModel
-from autolabel.schema import LLMAnnotation
-from autolabel.tasks import TaskFactory
+from autolabel.configs import DatasetConfig, ModelConfig, TaskConfig
+from autolabel.data_models import AnnotationModel, TaskRunModel
 from autolabel.database import StateManager
-from autolabel.schema import TaskRun, TaskStatus
-from autolabel.data_models import TaskRunModel, AnnotationModel
-from autolabel.configs import ModelConfig, DatasetConfig, TaskConfig
+from autolabel.few_shot import ExampleSelectorFactory
+from autolabel.models import BaseModel, ModelFactory
+from autolabel.schema import LLMAnnotation, TaskRun, TaskStatus
+from autolabel.tasks import TaskFactory
 
 
 class LabelingAgent:
@@ -27,16 +26,15 @@ class LabelingAgent:
         task_config: Union[str, Dict],
         llm_config: Optional[Union[str, Dict]] = None,
         log_level: Optional[str] = "INFO",
-        cache: Optional[bool] = True,
+        cache: Optional[bool] = False,
     ) -> None:
+        self.set_task_config(task_config)
+        self.set_llm_config(llm_config)
+        if cache:
+            langchain.llm_cache = LLMCache()
         self.db = StateManager()
         logger.remove()
         logger.add(sys.stdout, level=log_level)
-
-        self.cache = SQLAlchemyCache() if cache else None
-
-        self.set_task_config(task_config)
-        self.set_llm_config(llm_config)
 
     # TODO: all this will move to a separate input parser class
     # this is a temporary solution to quickly add this feature and unblock expts
@@ -132,14 +130,6 @@ class LabelingAgent:
         if isinstance(seed_examples, str):
             _, seed_examples, _ = self._read_csv(seed_examples, dataset_config)
 
-        if self.task_config.use_chain_of_thought():
-            out_file = None
-            if isinstance(dataset_config.get_seed_examples(), str):
-                out_file = dataset_config.get_seed_examples().replace(
-                    ".csv", "_explanations.csv"
-                )
-            seed_examples = self.generate_explanations(seed_examples, out_file)
-
         self.example_selector = ExampleSelectorFactory.initialize_selector(
             self.task_config, seed_examples
         )
@@ -155,6 +145,7 @@ class LabelingAgent:
                 examples = self.example_selector.select_examples(input_i)
                 # Construct Prompt to pass to LLM
                 final_prompt = self.task.construct_prompt(input_i, examples)
+                print(f"final prompt: {final_prompt}")
                 final_prompts.append(final_prompt)
 
             # Get response from LLM
@@ -295,14 +286,6 @@ class LabelingAgent:
         if isinstance(seed_examples, str):
             _, seed_examples, _ = self._read_csv(seed_examples, dataset_config)
 
-        if self.task_config.use_chain_of_thought():
-            out_file = None
-            if isinstance(dataset_config.get_seed_examples(), str):
-                out_file = dataset_config.get_seed_examples().replace(
-                    ".csv", "_explanations.csv"
-                )
-            seed_examples = self.generate_explanations(seed_examples, out_file)
-
         self.example_selector = ExampleSelectorFactory.initialize_selector(
             self.task_config, seed_examples
         )
@@ -333,9 +316,7 @@ class LabelingAgent:
 
     def set_llm_config(self, llm_config: Union[str, Dict]):
         self.llm_config = ModelConfig(llm_config)
-        self.llm: BaseModel = ModelFactory.from_config(
-            self.llm_config, cache=self.cache
-        )
+        self.llm: BaseModel = ModelFactory.from_config(self.llm_config)
         self.confidence = ConfidenceCalculator(
             score_type="logprob_average", llm=self.llm
         )
@@ -400,30 +381,3 @@ class LabelingAgent:
                 counts[label] = (counts[label][0] + 1, counts[label][1])
         max_label = max(counts, key=lambda x: counts[x][0])
         return annotation_list[counts[max_label][1]]
-
-    def generate_explanations(
-        self, seed_examples: List[Dict], save_file: str
-    ) -> List[Dict]:
-        generate_explanations = False
-        for seed_example in tqdm(seed_examples):
-            if not seed_example.get("explanation", ""):
-                if not generate_explanations:
-                    logger.info(
-                        "Chain of thought requires explanations for seed examples. Generating explanations for seed examples."
-                    )
-                    generate_explanations = True
-
-                explanation_prompt = self.task.generate_explanation(seed_example)
-                explanation = (
-                    self.llm.label([explanation_prompt]).generations[0][0].text
-                )
-                seed_example["explanation"] = str(explanation) if explanation else ""
-
-        if generate_explanations and save_file:
-            logger.info(
-                "Generated explanations for seed examples. Saving explanations to the seed file."
-            )
-            df = pd.DataFrame.from_records(seed_examples)
-            df.to_csv(save_file, index=False)
-
-        return seed_examples
