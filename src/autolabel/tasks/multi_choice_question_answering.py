@@ -1,14 +1,13 @@
-from typing import List, Dict, Tuple
 import ast
-
-from langchain.prompts.prompt import PromptTemplate
-from sklearn.metrics import accuracy_score
+from typing import Dict, List, Tuple
 
 from autolabel.confidence import ConfidenceCalculator
 from autolabel.configs import TaskConfig
 from autolabel.schema import LLMAnnotation, Metric, MetricResult
 from autolabel.tasks import BaseTask
-from autolabel.tasks.utils import normalize_text, compute_f1
+from autolabel.tasks.utils import compute_f1, normalize_text
+from langchain.prompts.prompt import PromptTemplate
+from sklearn.metrics import accuracy_score
 
 
 class MultiChoiceQATask(BaseTask):
@@ -16,26 +15,7 @@ class MultiChoiceQATask(BaseTask):
     CSV_OUTPUT_FORMAT_PROMPT = 'You will return the answer in CSV format with one element: "the correct label"\n'
 
     task_prompt = "Your job is to answer the following questions using the options provided for each question. Choose the best answer for the question.\n"
-    example_prompt_template = (
-        "{context}\nQuestion: {question}\n{options}\nAnswer:{explanation}\n{answer}\n"
-    )
-    example_prompt_variables = [
-        "context",
-        "question",
-        "options",
-        "answer",
-        "explanation",
-    ]
     NULL_LABEL_TOKEN = "NO_LABEL"
-
-    explanation_generation_prompt = "{prefix_prompt}\n You will be given a question and an answer. Your job is to provide an explanation for why the answer is correct. Think step by step and generate an explanation. The last line of the explanation should be - So, the answer is <answer>.\n{context}Question: {question}\n{options}\nAnswer: {answer}\nExplanation: "
-    explanation_generation_prompt_variables = [
-        "prefix_prompt",
-        "context",
-        "question",
-        "options",
-        "answer",
-    ]
 
     def __init__(self, config: TaskConfig) -> None:
         super().__init__(config)
@@ -73,33 +53,17 @@ class MultiChoiceQATask(BaseTask):
         return options
 
     def construct_prompt(self, input: Dict, examples: List[Dict]) -> str:
-        # populate seed examples in the prompt
-        example_prompt = PromptTemplate(
-            input_variables=self.example_prompt_variables,
-            template=self.example_prompt_template,
-        )
+        example_prompt_template = self.dataset_config.get_example_prompt_template()
+        example_label_template = self.dataset_config.get_example_label_template()
+        example_template = example_prompt_template + "\n" + example_label_template
 
-        formatted_examples = []
-        for eg in examples:
-            expected_output = self._to_output_format(eg["answer"])
-            formatted_examples.append(
-                example_prompt.format(
-                    context=self.get_context(eg),
-                    question=eg["question"],
-                    options=self.get_options(eg),
-                    explanation=self.get_explanation(eg),
-                    answer=expected_output,
-                )
+        formatted_examples = list(
+            map(
+                lambda example: example_template.format(**example),
+                examples,
             )
-
-        # populate the current example in the prompt
-        current_example = example_prompt.format(
-            context=self.get_context(input),
-            question=input["question"],
-            options=self.get_options(input),
-            explanation="",  # we don't know the answer yet so cant provide explanation
-            answer="",  # we don't know the answer yet
         )
+        current_example = example_prompt_template.format(**input)
 
         if len(examples):
             seed_examples_prompt = self.seed_examples_prompt
@@ -137,19 +101,6 @@ class MultiChoiceQATask(BaseTask):
                 answered_gt_labels.append(normalize_text(gt_labels[index].lower()))
 
         return answered_gt_labels, answered_llm_preds
-
-    def generate_explanation(self, example: Dict) -> str:
-        explanation_generation_prompt = PromptTemplate(
-            input_variables=self.explanation_generation_prompt_variables,
-            template=self.explanation_generation_prompt,
-        )
-        return explanation_generation_prompt.format(
-            prefix_prompt=self.prefix_prompt,
-            context=self.get_context(example),
-            question=example["question"],
-            options=self.get_options(example),
-            answer=example["answer"],
-        )
 
     def eval(
         self, llm_labels: List[LLMAnnotation], gt_labels: List[str]
