@@ -181,6 +181,8 @@ class LabelingAgent:
             if response is not None:
                 for i in range(len(response.generations)):
                     response_item = response.generations[i]
+                    print(f"final prompt: {final_prompts[i]}")
+                    print(f"response item: {response_item}")
                     annotations = []
                     for generation in response_item:
                         if self.task_config.get_compute_confidence():
@@ -193,9 +195,11 @@ class LabelingAgent:
                                 logprobs_available=self.llm_config.get_has_logprob(),
                             )
                         else:
+
                             annotation = self.task.parse_llm_response(
                                 generation, chunk[i], final_prompts[i]
                             )
+
                         annotations.append(annotation)
                     final_annotation = self.majority_annotation(annotations)
                     AnnotationModel.create_from_llm_annotation(

@@ -7,6 +7,8 @@
         ],
         "label_column": "answer"
     },
+    "example_prompt_template": "Context: {context}\nQuestion: {question}\n{options}",
+    "example_label_template": "Answer: Let's think step by step. {explanation}\n{{\"label\": \"{answer}\"}}",
     "seed_examples": [
         {
             "question": "Do approved doctors and medical referees in the UK agree when assessing a seafarer's fitness?",

@@ -84,26 +84,7 @@
         ],
         "label_column": "label"
     },
-    "seed_examples": [
-        {
-            "example": "Is it free to transfer money or is there a fee?",
-            "label": "transfer_fee_charged"
-        },
-        {
-            "example": "I need my PIN, where is it?",
-            "label": "get_physical_card"
-        },
-        {
-            "example": "Can my salary be received and transferred to my current currency in my country?",
-            "label": "receiving_money"
-        },
-        {
-            "example": "Why isn't my purchase exchange rate correct?",
-            "label": "card_payment_wrong_exchange_rate"
-        },
-        {
-            "example": "Why was I charged a fee on a cash withdrawal?",
-            "label": "cash_withdrawal_charge"
-        }
-    ]
+    "example_prompt_template": "Example: {example}",
+    "example_label_template": "{{\"Output\": \"{label}\"}}",
+    "seed_examples": "data/banking_seed.csv"
 }

@@ -6,6 +6,8 @@
         ],
         "label_column": "label"
     },
+    "example_prompt_template": "Entity1: {entity1}\nEntity2: {entity2}",
+    "example_label_template": "Answer: {label}\n",
     "seed_examples": [
         {
             "entity1": "Title: lexmark extra high yield return pgm print cartridge - magenta; Category: printers; Brand: lexmark; ModelNo: c782u1mg; Price: 214.88;",

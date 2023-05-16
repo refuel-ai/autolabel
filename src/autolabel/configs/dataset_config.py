@@ -5,6 +5,8 @@ from .base import BaseConfig
 
 class DatasetConfig(BaseConfig):
     INPUT_COLUMNS_KEY = "input_columns"
+    EXAMPLE_PROMPT_TEMPLATE_KEY = "example_prompt_template"
+    EXAMPLE_LABEL_TEMPLATE_KEY = "example_label_template"
     LABEL_COLUMN_KEY = "label_column"
     SEED_EXAMPLES_KEY = "seed_examples"
     DATASET_SCHEMA_KEY = "dataset_schema"
