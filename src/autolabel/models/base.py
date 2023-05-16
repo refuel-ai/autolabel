@@ -14,6 +14,7 @@ class BaseModel(ABC):
     def __init__(self, config: ModelConfig, cache: BaseCache) -> None:
         self.config = config
         self.cache = cache
+        self.model_params = config.get_model_params()
         # Specific classes that implement this interface should run initialization steps here
         # E.g. initializing the LLM model with required parameters from ModelConfig
 
