@@ -1,7 +1,7 @@
 """Base interface that all model providers will implement."""
 
 from abc import ABC, abstractmethod
-from typing import List, Optional, Dict
+from typing import List, Optional, Dict, Tuple
 
 from langchain.schema import LLMResult
 
@@ -17,12 +17,13 @@ class BaseModel(ABC):
         # Specific classes that implement this interface should run initialization steps here
         # E.g. initializing the LLM model with required parameters from ModelConfig
 
-    def label(self, prompts: List[str]) -> LLMResult:
+    def label(self, prompts: List[str]) -> Tuple[LLMResult, float]:
         """Label a list of prompts."""
         existing_prompts = {}
         missing_prompt_idxs = list(range(len(prompts)))
         missing_prompts = prompts
         llm_output = {}
+        cost = 0.0
         if self.cache:
             (
                 existing_prompts,
@@ -33,6 +34,10 @@ class BaseModel(ABC):
         # label missing prompts
         if len(missing_prompts) > 0:
             new_results = self._label(missing_prompts)
+            for ind, prompt in enumerate(missing_prompts):
+                cost += self.get_cost(
+                    prompt, label=new_results.generations[ind][0].text
+                )
 
             # Set the existing prompts to the new results
             for i, result in zip(missing_prompt_idxs, new_results.generations):
@@ -44,7 +49,7 @@ class BaseModel(ABC):
             llm_output = new_results.llm_output
 
         generations = [existing_prompts[i] for i in range(len(prompts))]
-        return LLMResult(generations=generations, llm_output=llm_output)
+        return LLMResult(generations=generations, llm_output=llm_output), cost
 
     @abstractmethod
     def _label(self, prompts: List[str]) -> LLMResult:

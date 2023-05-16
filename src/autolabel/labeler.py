@@ -146,8 +146,10 @@ class LabelingAgent:
 
         num_failures = 0
         current_index = self.task_run.current_index
+        cost = 0.0
 
-        for current_index in tqdm(range(current_index, len(inputs), self.CHUNK_SIZE)):
+        index_tqdm = tqdm(range(current_index, len(inputs), self.CHUNK_SIZE))
+        for current_index in index_tqdm:
             chunk = inputs[current_index : current_index + self.CHUNK_SIZE]
             final_prompts = []
             for i, input_i in enumerate(chunk):
@@ -159,7 +161,7 @@ class LabelingAgent:
 
             # Get response from LLM
             try:
-                response = self.llm.label(final_prompts)
+                response, curr_cost = self.llm.label(final_prompts)
             except Exception as e:
                 # TODO (dhruva): We need to handle this case carefully
                 # When we erorr out, we will have less elements in the llm_labels
@@ -213,6 +215,8 @@ class LabelingAgent:
                         current_index + i,
                         self.task_run.id,
                     )
+            cost += curr_cost
+            index_tqdm.set_postfix({"Cost in $": f"{cost:.2f}"})
 
             # Update task run state
             self.task_run = self.save_task_run_state(
@@ -421,7 +425,7 @@ class LabelingAgent:
                     generate_explanations = True
 
                 explanation_prompt = self.task.generate_explanation(seed_example)
-                explanation = (
+                explanation, _ = (
                     self.llm.label([explanation_prompt]).generations[0][0].text
                 )
                 seed_example["explanation"] = str(explanation) if explanation else ""
