@@ -181,8 +181,6 @@ class LabelingAgent:
             if response is not None:
                 for i in range(len(response.generations)):
                     response_item = response.generations[i]
-                    print(f"final prompt: {final_prompts[i]}")
-                    print(f"response item: {response_item}")
                     annotations = []
                     for generation in response_item:
                         if self.task_config.get_compute_confidence():

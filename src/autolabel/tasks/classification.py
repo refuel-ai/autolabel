@@ -1,3 +1,4 @@
+import json
 from typing import Dict, List, Tuple
 
 from autolabel.confidence import ConfidenceCalculator
@@ -40,7 +41,12 @@ class ClassificationTask(BaseTask):
         )
         example_prompt_template = self.dataset_config.get_example_prompt_template()
         example_label_template = self.dataset_config.get_example_label_template()
-        example_template = example_prompt_template + "\n" + example_label_template
+        example_label = (
+            example_label_template
+            if self.output_format == "csv"
+            else "{" + json.dumps({"label": example_label_template}) + "}"
+        )
+        example_template = example_prompt_template + "\n" + example_label
 
         formatted_examples = list(
             map(lambda example: example_template.format(**example), examples)
