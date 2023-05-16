@@ -1,27 +1,11 @@
 import hashlib
 import json
 import regex
-import requests
-from urllib3.util.retry import Retry
-from requests.adapters import HTTPAdapter
+
+from typing import Any
 
 
-def retry_session(retries, session=None, backoff_factor=0.3):
-    session = session or requests.Session()
-    retry = Retry(
-        total=retries,
-        read=retries,
-        connect=retries,
-        backoff_factor=backoff_factor,
-        method_whitelist=False,
-    )
-    adapter = HTTPAdapter(max_retries=retry)
-    session.mount("http://", adapter)
-    session.mount("https://", adapter)
-    return session
-
-
-def extract_valid_json_substring(string):
+def extract_valid_json_substring(string: str) -> str:
     pattern = (
         r"{(?:[^{}]|(?R))*}"  # Regular expression pattern to match a valid JSON object
     )
@@ -36,7 +20,7 @@ def extract_valid_json_substring(string):
     return None
 
 
-def calculate_md5(input_data):
+def calculate_md5(input_data: Any) -> str:
     if isinstance(input_data, dict):
         # Convert dictionary to a JSON-formatted string
         input_str = json.dumps(input_data, sort_keys=True).encode("utf-8")
