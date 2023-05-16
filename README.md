@@ -19,6 +19,13 @@ Before the package is published to PyPI:
 2. cd refuel-oracle
 3. `pip install .`
 
+To download benchmark datasets:
+
+1. Either you can run the `get_data.py` script in `data/` directory: 
+`python get_data.py` 
+
+2. Or you can download a single zip file with all CSV files from here: https://drive.google.com/file/d/157z6pz7IgOsk9x9ObwcvpZgeBOapEV9C/view?usp=sharing and unzip it inside the `data/` directory 
+
 ## What is Autolabel?
 
 Large language models have been trained on internet-scale data and are extremely good at content understanding, especially in a few-shot capacity (also called in-context learning). This means that an LLM can perform many tasks with just a few examples provided. This can be especially useful for auto-labeling data for many diverse tasks with just a few examples.
