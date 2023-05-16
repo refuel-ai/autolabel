@@ -23,11 +23,23 @@ class DatasetConfig(BaseConfig):
         """
         return self.config[self.DATASET_SCHEMA_KEY][self.INPUT_COLUMNS_KEY]
 
+    def get_example_prompt_template(self) -> str:
+        """
+        Returns a string to format an example prompt
+        """
+        return self.config.get(self.EXAMPLE_PROMPT_TEMPLATE_KEY, None)
+
+    def get_example_label_template(self) -> str:
+        """
+        Returns a string to format an example label
+        """
+        return self.config.get(self.EXAMPLE_LABEL_TEMPLATE_KEY, None)
+
     def get_label_column(self) -> str:
         """
         Returns the name of the column containing labels for dataset
         """
-        return self.config[self.DATASET_SCHEMA_KEY][self.LABEL_COLUMN_KEY]
+        return self.config[self.DATASET_SCHEMA_KEY].get(self.LABEL_COLUMN_KEY, None)
 
     def get_labels_list(self) -> str:
         """
