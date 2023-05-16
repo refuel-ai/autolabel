@@ -3,12 +3,19 @@ import math
 import numpy as np
 import pickle as pkl
 import json
+import requests
 import scipy.stats as stats
 from loguru import logger
 
 from autolabel.schema import LLMAnnotation
 from autolabel.models import BaseModel
-from autolabel.utils import retry_session
+
+from tenacity import (
+    before_sleep_log,
+    retry,
+    stop_after_attempt,
+    wait_exponential,
+)
 
 
 class ConfidenceCalculator:
@@ -23,8 +30,6 @@ class ConfidenceCalculator:
             "p_true": self.p_true,
         }
         self.BASE_API = "https://api.refuel.ai/llm"
-        self.RETRY_LIMIT = 5
-        self.SESSION = retry_session(self.RETRY_LIMIT)
 
     def logprob_average(
         self,
@@ -106,31 +111,37 @@ class ConfidenceCalculator:
         model_generation.confidence_score = confidence
         return model_generation
 
+    @retry(
+        reraise=True,
+        stop=stop_after_attempt(5),
+        wait=wait_exponential(multiplier=1, min=2, max=10),
+        before_sleep=before_sleep_log(logger, "WARNING"),
+    )
+    def _call_with_retry(self, model_input, model_output) -> requests.Response:
+        payload = json.dumps(
+            {
+                "model_input": model_input,
+                "model_output": model_output,
+                "task": "confidence",
+            }
+        ).encode("utf-8")
+        response = requests.post(self.BASE_API, data=payload)
+        # raise Exception if status != 200
+        response.raise_for_status()
+        return response
+
     def compute_confidence(self, model_input, model_output):
         try:
-            payload = json.dumps(
-                {
-                    "model_input": model_input,
-                    "model_output": model_output,
-                    "task": "confidence",
-                }
-            ).encode("utf-8")
-            response = self.SESSION.post(self.BASE_API, data=payload)
-            if response.status_code == 200:
-                return json.loads(response.text)
-            else:
-                # This signifies an error in computing confidence score
-                # using the API. We give it a score of 0.5 and go ahead
-                # for now.
-                logger.error(
-                    "Unable to compute confidence score: ",
-                    response.text,
-                    response.status_code,
-                )
-                return [{"": 0.5}]
-
+            response = self._call_with_retry(model_input, model_output)
+            return json.loads(response.text)
         except Exception as e:
-            raise Exception(f"Unable to compute confidence prediction {e}")
+            # This signifies an error in computing confidence score
+            # using the API. We give it a score of 0.5 and go ahead
+            # for now.
+            logger.error(
+                f"Unable to compute confidence score: {e}",
+            )
+            return [{"": 0.5}]
 
     @classmethod
     def compute_completion(cls, confidence: List[float], threshold: float):
