@@ -56,11 +56,11 @@ class MultiChoiceQATask(BaseTask):
     def construct_prompt(self, input: Dict, examples: List[Dict]) -> str:
         example_prompt_template = self.dataset_config.get_example_prompt_template()
         example_label_template = self.dataset_config.get_example_label_template()
-        if self.output_format == "json":
-            example_label_template = (
-                "{" + json.dumps({"label": example_label_template}) + "}"
-            )
         example_template = example_prompt_template + "\n" + example_label_template
+        label_column = self.dataset_config.get_label_column()
+        if self.output_format == "json":
+            for example in examples:
+                example[label_column] = json.dumps({"label": example[label_column]})
 
         formatted_examples = list(
             map(

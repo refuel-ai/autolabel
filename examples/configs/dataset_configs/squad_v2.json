@@ -7,6 +7,6 @@
         "label_column": "answer"
     },
     "example_prompt_template": "Context: {context}\nQuestion: {question}",
-    "example_label_template": "Answer: Let's think step by step. {explanation}\n{{\"label\": \"{answer}\"}}",
+    "example_label_template": "Answer: Let's think step by step. {explanation}\n{answer}",
     "seed_examples": "data/squad_seed.csv"
 }

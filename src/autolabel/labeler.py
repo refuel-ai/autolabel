@@ -112,17 +112,17 @@ class LabelingAgent:
                 dataset, dataset_config, max_items, start_index
             )
         # Initialize task run and check if it already exists
-        self.task_run = self.db.get_task_run(self.task_object.id, self.dataset.id)
-        # Resume/Delete the task if it already exists or create a new task run
-        if self.task_run:
-            logger.info("Task run already exists.")
-            self.task_run = self.handle_existing_task_run(
-                self.task_run, csv_file_name, gt_labels=gt_labels
-            )
-        else:
-            self.task_run = self.db.create_task_run(
-                csv_file_name, self.task_object.id, self.dataset.id
-            )
+        # self.task_run = self.db.get_task_run(self.task_object.id, self.dataset.id)
+        # # Resume/Delete the task if it already exists or create a new task run
+        # if self.task_run:
+        #     logger.info("Task run already exists.")
+        #     self.task_run = self.handle_existing_task_run(
+        #         self.task_run, csv_file_name, gt_labels=gt_labels
+        #     )
+        # else:
+        self.task_run = self.db.create_task_run(
+            csv_file_name, self.task_object.id, self.dataset.id
+        )
 
         # Get the seed examples from the dataset config
         seed_examples = dataset_config.get_seed_examples()
@@ -146,6 +146,7 @@ class LabelingAgent:
                 examples = self.example_selector.select_examples(input_i)
                 # Construct Prompt to pass to LLM
                 final_prompt = self.task.construct_prompt(input_i, examples)
+                print(f"PROMPT: {final_prompt}")
                 final_prompts.append(final_prompt)
 
             # Get response from LLM
