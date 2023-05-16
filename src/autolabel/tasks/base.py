@@ -1,16 +1,15 @@
 """Base interface that all prediction tasks will implement."""
 
+import json
 from abc import ABC, abstractmethod
 from typing import Dict, List
 
-from langchain.prompts.prompt import PromptTemplate
-from langchain.schema import Generation
 from autolabel.configs import DatasetConfig, TaskConfig
 from autolabel.schema import LLMAnnotation, MetricResult
 from autolabel.utils import extract_valid_json_substring
+from langchain.prompts.prompt import PromptTemplate
+from langchain.schema import Generation
 from loguru import logger
-
-import json
 
 
 class BaseTask(ABC):
@@ -18,7 +17,6 @@ class BaseTask(ABC):
     prefix_prompt = ""
     task_prompt = ""
     seed_examples_prompt = "Some examples with their output answers are provided below:"
-    example_prompt_template = ""
     output_prompt = ""
 
     output_format = ""
@@ -31,7 +29,6 @@ class BaseTask(ABC):
         "seed_examples",
         "current_example",
     ]
-    example_prompt_variables = []
 
     NULL_LABEL_TOKEN = "NO_LABEL"
 
@@ -50,9 +47,6 @@ class BaseTask(ABC):
 
         if self.config.get_output_prompt():
             self.output_prompt = self.config.get_output_prompt()
-
-        if self.config.get_example_prompt_template():
-            self.example_prompt_template = self.config.get_example_prompt_template()
 
         if self.config.get_output_format():
             self.output_format = self.config.get_output_format()
@@ -81,10 +75,6 @@ class BaseTask(ABC):
     @abstractmethod
     def eval(self, llm_labels: List, gt_labels: List) -> List[MetricResult]:
         pass
-
-    @abstractmethod
-    def generate_explanation(self, example: Dict) -> str:
-        return ""
 
     # Should be called before the construct prompt for a specific input is called
     def set_dataset_config(self, dataset_config: DatasetConfig) -> None:
