@@ -2,14 +2,14 @@ import json
 import re
 from typing import Dict, List, Tuple
 
-from langchain.prompts.prompt import PromptTemplate
-from langchain.schema import Generation
-from loguru import logger
-from nervaluate import Evaluator
 from autolabel.confidence import ConfidenceCalculator
 from autolabel.configs import TaskConfig
 from autolabel.schema import LLMAnnotation, Metric, MetricResult
 from autolabel.tasks import BaseTask
+from langchain.prompts.prompt import PromptTemplate
+from langchain.schema import Generation
+from loguru import logger
+from nervaluate import Evaluator
 
 
 class NamedEntityRecognitionTask(BaseTask):
@@ -18,17 +18,6 @@ class NamedEntityRecognitionTask(BaseTask):
     NULL_LABEL = {}
 
     task_prompt = "Your job is to extract named entities mentioned in text, and classify them into one of the following {num_labels} categories.\nCategories:\n{labels_list}\n "
-    prompt_template = "{prefix_prompt}\n{task_prompt}\n{output_prompt}\n\n{seed_examples_prompt}\n{seed_examples}\nBegin:{current_example}"
-    prompt_template_variables = [
-        "prefix_prompt",
-        "task_prompt",
-        "output_prompt",
-        "seed_examples_prompt",
-        "seed_examples",
-        "current_example",
-    ]
-    example_prompt_template = "Example: {example}\nOutput: {output}\n"
-    example_prompt_variables = ["example", "output"]
 
     def __init__(self, config: TaskConfig) -> None:
         super().__init__(config)
@@ -64,21 +53,15 @@ class NamedEntityRecognitionTask(BaseTask):
             num_labels=num_labels, labels_list="\n".join(labels_list)
         )
 
-        # populate seed examples in the prompt
-        example_prompt = PromptTemplate(
-            input_variables=self.example_prompt_variables,
-            template=self.example_prompt_template,
-        )
-        formatted_examples = []
-        for eg in examples:
-            expected_output = self._to_output_format(
-                json.loads(eg["CategorizedLabels"])
-            )
-            formatted_examples.append(
-                example_prompt.format(example=eg["example"], output=expected_output)
-            )
+        example_prompt_template = self.dataset_config.get_example_prompt_template()
+        example_label_template = self.dataset_config.get_example_label_template()
+        example_template = example_prompt_template + "\n" + example_label_template
 
-        current_example = example_prompt.format(example=input["example"], output="")
+        formatted_examples = list(
+            map(lambda example: example_template.format(**example), examples)
+        )
+
+        current_example = example_prompt_template.format(**input)
 
         if len(examples):
             seed_examples_prompt = self.seed_examples_prompt
@@ -251,11 +234,6 @@ class NamedEntityRecognitionTask(BaseTask):
             )
         )
         return eval_metrics
-
-    def generate_explanation(self, example: Dict) -> str:
-        raise NotImplementedError(
-            "Automatic explanation generation not supported for NER task"
-        )
 
     def eval(
         self, llm_labels: List[LLMAnnotation], gt_labels: List[str]
