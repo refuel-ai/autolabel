@@ -86,7 +86,7 @@ class LabelingAgent:
         max_items: Optional[int] = None,
         output_name: Optional[str] = None,
         start_index: Optional[int] = 0,
-        eval_every: Optional[int] = 10,
+        eval_every: Optional[int] = 50,
     ) -> None:
         """Labels data in a given dataset. Output written to new CSV file.
 
@@ -222,7 +222,7 @@ class LabelingAgent:
             postfix_dict[self.COST_KEY] = f"{cost:.2f}"
 
             # Evaluate the task every eval_every examples
-            if current_index > 0 and current_index % eval_every == 0:
+            if (current_index + self.CHUNK_SIZE) % eval_every == 0:
                 db_result = AnnotationModel.get_annotations_by_task_run_id(
                     self.db.session, self.task_run.id
                 )
