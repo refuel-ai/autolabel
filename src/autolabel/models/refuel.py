@@ -27,7 +27,7 @@ class RefuelLLM(BaseModel):
         self.model_params = {}
 
         # initialize runtime
-        self.BASE_API = "https://api.refuel.ai/llm"
+        self.BASE_API = "https://llm.refuel.ai/"
 
     @retry(
         reraise=True,
@@ -36,10 +36,8 @@ class RefuelLLM(BaseModel):
         before_sleep=before_sleep_log(logger, "WARNING"),
     )
     def _label_with_retry(self, prompt: str) -> requests.Response:
-        payload = json.dumps({"model_input": prompt, "task": "generate"}).encode(
-            "utf-8"
-        )
-        response = requests.post(self.BASE_API, data=payload)
+        payload = {"model_input": prompt, "task": "generate"}
+        response = requests.post(self.BASE_API, json=payload)
         # raise Exception if status != 200
         response.raise_for_status()
         return response

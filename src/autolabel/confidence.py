@@ -29,7 +29,7 @@ class ConfidenceCalculator:
             "logprob_average": self.logprob_average,
             "p_true": self.p_true,
         }
-        self.BASE_API = "https://api.refuel.ai/llm"
+        self.BASE_API = "https://llm.refuel.ai/"
 
     def logprob_average(
         self,
@@ -118,14 +118,12 @@ class ConfidenceCalculator:
         before_sleep=before_sleep_log(logger, "WARNING"),
     )
     def _call_with_retry(self, model_input, model_output) -> requests.Response:
-        payload = json.dumps(
-            {
-                "model_input": model_input,
-                "model_output": model_output,
-                "task": "confidence",
-            }
-        ).encode("utf-8")
-        response = requests.post(self.BASE_API, data=payload)
+        payload = {
+            "model_input": model_input,
+            "model_output": model_output,
+            "task": "confidence",
+        }
+        response = requests.post(self.BASE_API, json=payload)
         # raise Exception if status != 200
         response.raise_for_status()
         return response
