@@ -4,8 +4,8 @@ from anthropic import tokenizer
 from autolabel.configs import ModelConfig
 from autolabel.models import BaseModel
 from autolabel.cache import BaseCache
-from langchain.llms import Anthropic
-from langchain.schema import Generation, LLMResult
+from langchain.chat_models import ChatAnthropic
+from langchain.schema import Generation, LLMResult, HumanMessage
 
 
 class AnthropicLLM(BaseModel):
@@ -35,9 +35,10 @@ class AnthropicLLM(BaseModel):
         model_params = config.get_model_params()
         self.model_params = {**self.DEFAULT_PARAMS, **model_params}
         # initialize LLM
-        self.llm = Anthropic(model=self.model_name, **self.model_params)
+        self.llm = ChatAnthropic(model=self.model_name, **self.model_params)
 
     def _label(self, prompts: List[str]) -> LLMResult:
+        prompts = [[HumanMessage(content=prompt)] for prompt in prompts]
         try:
             response = self.llm.generate(prompts)
             return response
