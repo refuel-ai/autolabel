@@ -23,7 +23,7 @@ dependencies = [
     "requests >= 2.27.0",
     "anthropic >= 0.2.6",
     "datasets >= 2.7.0",
-    "langchain",
+    "langchain >= 0.0.170",
     "matplotlib >= 3.5.0",
     "nervaluate >= 0.1.8",
     "openai >= 0.27.4",
