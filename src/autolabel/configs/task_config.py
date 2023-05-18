@@ -53,7 +53,7 @@ class TaskConfig(BaseConfig):
         return self.config.get(self.COMPUTE_CONFIDENCE_KEY, False)
 
     def use_chain_of_thought(self) -> bool:
-        return self.config.get(self.CHAIN_OF_THOUGHT_KEY, "False") == "True"
+        return self.config.get(self.CHAIN_OF_THOUGHT_KEY)
 
     def get_empty_response(self) -> str:
         return self.config.get(self.EMPTY_RESPONSE_KEY, "")

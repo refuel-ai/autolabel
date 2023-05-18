@@ -231,12 +231,12 @@ class LabelingAgent:
                     eval_result = self.task.eval(llm_labels, gt_labels)
 
                     for m in eval_result:
-                        if len(m.value) < 1:
+                        if not isinstance(m.value, list) or len(m.value) < 1:
                             continue
                         elif isinstance(m.value[0], float):
-                            postfix_dict[m.name] = f"{m.value[0]:.2f}"
+                            postfix_dict[m.name] = f"{m.value[0]:.4f}"
                         elif len(m.value[0]) > 0:
-                            postfix_dict[m.name] = f"{m.value[0][0]:.2f}"
+                            postfix_dict[m.name] = f"{m.value[0][0]:.4f}"
 
             index_tqdm.set_postfix(postfix_dict)
             # Update task run state
@@ -447,9 +447,8 @@ class LabelingAgent:
                     generate_explanations = True
 
                 explanation_prompt = self.task.generate_explanation(seed_example)
-                explanation, _ = (
-                    self.llm.label([explanation_prompt]).generations[0][0].text
-                )
+                explanation, _ = self.llm.label([explanation_prompt])
+                explanation = explanation.generations[0][0].text
                 seed_example["explanation"] = str(explanation) if explanation else ""
 
         if generate_explanations and save_file:
