@@ -1,6 +1,7 @@
 from datetime import datetime
 from enum import Enum
-from typing import Any, Dict, Optional, List
+from typing import Any, Dict, Optional, List, Union
+import pandas as pd
 
 from pydantic import BaseModel
 
@@ -69,14 +70,19 @@ class Dataset(BaseModel):
     @classmethod
     def create_id(
         self,
-        input_file: str,
+        dataset: Union[str, pd.DataFrame],
         dataset_config: DatasetConfig,
         start_index: int,
         max_items: int,
     ):
-        filehash = calculate_md5(
-            [open(input_file, "rb"), dataset_config.config, start_index, max_items]
-        )
+        if isinstance(dataset, str):
+            filehash = calculate_md5(
+                [open(dataset, "rb"), dataset_config.config, start_index, max_items]
+            )
+        else:
+            filehash = calculate_md5(
+                [dataset.to_csv(), dataset_config.config, start_index, max_items]
+            )
         return filehash
 
 
