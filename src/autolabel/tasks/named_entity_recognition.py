@@ -65,28 +65,26 @@ class NamedEntityRecognitionTask(BaseTask):
         )
 
         # populate seed examples in the prompt
-        example_prompt = PromptTemplate(
-            input_variables=self.example_prompt_variables,
-            template=self.example_prompt_template,
-        )
+        example_template = self.dataset_config.get_example_template()
+        label_column = self.dataset_config.get_label_column()
+
+        # populate seed examples in the prompt
         formatted_examples = []
         for eg in examples:
-            expected_output = self._to_output_format(
-                json.loads(eg["CategorizedLabels"])
-            )
-            formatted_examples.append(
-                example_prompt.format(example=eg["example"], output=expected_output)
-            )
-
-        current_example = example_prompt.format(example=input["example"], output="")
+            fmt_example = example_template.format(**eg)
+            formatted_examples.append(fmt_example)
 
         if len(examples):
             seed_examples_prompt = self.seed_examples_prompt
         else:
             seed_examples_prompt = ""
 
+        # populate the current example in the prompt
+        input[label_column] = ""
+        current_example = example_template.format(**input)
+
         return self.partial_prompt.format(
-            seed_examples="\n".join(formatted_examples),
+            seed_examples="\n\n".join(formatted_examples),
             current_example=current_example,
             seed_examples_prompt=seed_examples_prompt,
             task_prompt=task_prompt,

@@ -20,6 +20,7 @@ class DatasetConfig(BaseConfig):
     DELIMITER_KEY = "delimiter"
     LABELS_LIST_KEY = "labels_list"
     EMPTY_RESPONSE_KEY = "empty_response"
+    EXAMPLE_TEMPLATE_KEY = "example_template"
 
     DEFAULT_SEPARATOR = ","
 
@@ -30,7 +31,10 @@ class DatasetConfig(BaseConfig):
         return self.config[self.DATASET_SCHEMA_KEY][self.INPUT_COLUMNS_KEY]
 
     def get_label_column(self) -> str:
-        return self.config[self.DATASET_SCHEMA_KEY][self.LABEL_COLUMN_KEY]
+        """
+        Returns the name of the column containing labels for dataset
+        """
+        return self.config.get(self.LABEL_COLUMN_KEY, None)
 
     def get_labels_list(self) -> str:
         return self.config[self.LABELS_LIST_KEY]
@@ -42,3 +46,9 @@ class DatasetConfig(BaseConfig):
         return self.config[self.DATASET_SCHEMA_KEY].get(
             self.DELIMITER_KEY, self.DEFAULT_SEPARATOR
         )
+
+    def get_example_template(self) -> str:
+        """
+        Returns a string to format an example input
+        """
+        return self.config.get(self.EXAMPLE_TEMPLATE_KEY, None)

@@ -84,6 +84,7 @@
         ],
         "label_column": "label"
     },
+    "example_template": "Example: {example}\nOutput: {label}",
     "seed_examples": [
         {
             "example": "Is it free to transfer money or is there a fee?",

@@ -12,5 +12,6 @@
         "label_column": "CategorizedLabels",
         "delimiter": "%"
     },
+    "example_template": "Example: {example}\nOutput: {CategorizedLabels}",
     "seed_examples": "data/conll2003_seed.csv"
 }

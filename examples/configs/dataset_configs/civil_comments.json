@@ -9,6 +9,7 @@
         ],
         "label_column": "label"
     },
+    "example_template": "Example: {example}\nOutput: {label}",
     "seed_examples": [
         {
             "example": "It's ridiculous that these guys are being called 'protesters'. Being armed is a threat of violence, which makes them terrorists.",
