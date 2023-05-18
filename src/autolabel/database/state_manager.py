@@ -1,7 +1,8 @@
 from sqlalchemy.orm import sessionmaker
 from loguru import logger
-from typing import Optional
+from typing import Optional, Union
 from datetime import datetime
+import pandas as pd
 
 from autolabel.data_models import Base
 from autolabel.data_models import DatasetModel, TaskModel, TaskRunModel
@@ -23,22 +24,20 @@ class StateManager:
 
     def initialize_dataset(
         self,
-        input_file: str,
+        dataset: Union[str, pd.DataFrame],
         dataset_config: DatasetConfig,
         start_index: int,
         max_items: Optional[int],
     ):
         # TODO: Check if this works for max_items = None
-        dataset_id = Dataset.create_id(
-            input_file, dataset_config, start_index, max_items
-        )
+        dataset_id = Dataset.create_id(dataset, dataset_config, start_index, max_items)
         dataset_orm = DatasetModel.get_by_id(self.session, dataset_id)
         if dataset_orm:
             return Dataset.from_orm(dataset_orm)
 
         dataset = Dataset(
             id=dataset_id,
-            input_file=input_file,
+            input_file=dataset if isinstance(dataset, str) else "",
             start_index=start_index,
             end_index=start_index + max_items if max_items else -1,
         )
