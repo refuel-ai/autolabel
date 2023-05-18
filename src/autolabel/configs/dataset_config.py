@@ -39,7 +39,7 @@ class DatasetConfig(BaseConfig):
         """
         Returns a list of example datapoints with labels, used to prompt the LLM
         """
-        return self.config[self.SEED_EXAMPLES_KEY]
+        return self.config.get(self.SEED_EXAMPLES_KEY, [])
 
     def get_delimiter(self) -> str:
         """
