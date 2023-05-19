@@ -19,6 +19,7 @@ class TaskConfig(BaseConfig):
         compute_confidence (bool): Whether or not to compute confidence score for the task.
         chain_of_thought (bool): Whether or not to use chain of thought for the task.
     """
+
     # Standardized (and required) keys in the TaskConfig
     TASK_NAME_KEY = "task_name"
     TASK_TYPE_KEY = "task_type"
