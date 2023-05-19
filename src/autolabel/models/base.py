@@ -94,6 +94,11 @@ class BaseModel(ABC):
         )
 
         for i, result in zip(missing_prompt_idxs, new_results.generations):
+            # If the result is empty, don't cache it
+            # This result was likely produced due to an error
+            if result[0].text == "":
+                continue
+
             cache_entry = CacheEntry(
                 prompt=prompts[i],
                 model_name=self.model_name,
