@@ -78,9 +78,7 @@
         "wrong_amount_of_cash_received",
         "wrong_exchange_rate_for_cash_withdrawal"
     ],
-    "dataset_schema": {
-        "label_column": "label"
-    },
+    "label_column": "label",
     "example_template": "Example: {example}\nOutput: {label}",
     "seed_examples": [
         {
