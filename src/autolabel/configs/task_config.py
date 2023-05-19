@@ -4,6 +4,21 @@ from .base import BaseConfig
 
 
 class TaskConfig(BaseConfig):
+    """Sets the task configuration of Autolabel.
+
+    Attributes:
+        task_name (str): Name of the task.
+        task_type (str): Type of the task.
+        prefix_prompt (str): Prefix prompt for the task.
+        task_prompt (str): Task prompt for the task.
+        output_prompt (str): Output prompt for the task.
+        example_prompt (str): Example prompt for the task.
+        prompt_template (str): Prompt template for the task.
+        output_format (str): Output format for the task.
+        example_selector (Dict): Example selector for the task. Consists of two keys: "strategy" - one of fixed_few_shot, semantic_similarity, max_marginal_relevance; "num_examples" - number of examples to be selected.
+        compute_confidence (bool): Whether or not to compute confidence score for the task.
+        chain_of_thought (bool): Whether or not to use chain of thought for the task.
+    """
     # Standardized (and required) keys in the TaskConfig
     TASK_NAME_KEY = "task_name"
     TASK_TYPE_KEY = "task_type"
