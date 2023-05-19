@@ -2,6 +2,7 @@ site_name: Refuel AutoLabel
 
 nav:
   - Getting Started: index.md
+  - Modules: modules.md
   - API Reference: api.md
   - Examples: example_usage.ipynb
 
