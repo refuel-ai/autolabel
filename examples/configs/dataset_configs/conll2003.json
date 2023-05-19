@@ -10,7 +10,7 @@
             "example"
         ],
         "label_column": "CategorizedLabels",
-        "delimiter": "%"
+        "delimiter": ","
     },
     "example_template": "Example: {example}\nOutput: {CategorizedLabels}",
     "seed_examples": "data/conll2003_seed.csv"

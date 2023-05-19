@@ -16,16 +16,6 @@ class MultiChoiceQATask(BaseTask):
     CSV_OUTPUT_FORMAT_PROMPT = 'You will return the answer in CSV format with one element: "the correct label"\n'
 
     task_prompt = "Your job is to answer the following questions using the options provided for each question. Choose the best answer for the question.\n"
-    example_prompt_template = (
-        "{context}\nQuestion: {question}\n{options}\nAnswer:{explanation}\n{answer}\n"
-    )
-    example_prompt_variables = [
-        "context",
-        "question",
-        "options",
-        "answer",
-        "explanation",
-    ]
     NULL_LABEL_TOKEN = "NO_LABEL"
 
     explanation_generation_prompt = "{prefix_prompt}\n You will be given a question and an answer. Your job is to provide an explanation for why the answer is correct. Think step by step and generate an explanation. The last line of the explanation should be - So, the answer is <answer>.\n{context}Question: {question}\n{options}\nAnswer: {answer}\nExplanation: "
@@ -52,59 +42,23 @@ class MultiChoiceQATask(BaseTask):
             output_prompt=self.output_prompt,
         )
 
-    def get_context(self, input: Dict) -> str:
-        context = input.get("context", "")
-        if context:
-            context = f"Context: {context}"
-        return context
-
-    def get_options(self, input: Dict) -> str:
-        options = input.get("options", "")
-        # if options is empty, return empty string
-        if not options:
-            return ""
-
-        if isinstance(options, str):
-            options = "\n".join(ast.literal_eval(input["options"]))
-            options = f"Options:\n{options}"
-        elif isinstance(options, list):
-            options = "\n".join(options)
-            options = f"Options:\n{options}"
-        return options
-
     def construct_prompt(self, input: Dict, examples: List[Dict]) -> str:
-        # populate seed examples in the prompt
-        example_prompt = PromptTemplate(
-            input_variables=self.example_prompt_variables,
-            template=self.example_prompt_template,
-        )
+        example_template = self.dataset_config.get_example_template()
+        label_column = self.dataset_config.get_label_column()
 
         formatted_examples = []
         for eg in examples:
-            expected_output = self._to_output_format(eg["answer"])
-            formatted_examples.append(
-                example_prompt.format(
-                    context=self.get_context(eg),
-                    question=eg["question"],
-                    options=self.get_options(eg),
-                    explanation=self.get_explanation(eg),
-                    answer=expected_output,
-                )
-            )
-
-        # populate the current example in the prompt
-        current_example = example_prompt.format(
-            context=self.get_context(input),
-            question=input["question"],
-            options=self.get_options(input),
-            explanation="",  # we don't know the answer yet so cant provide explanation
-            answer="",  # we don't know the answer yet
-        )
+            fmt_example = example_template.format(**eg)
+            formatted_examples.append(fmt_example)
 
         if len(examples):
             seed_examples_prompt = self.seed_examples_prompt
         else:
             seed_examples_prompt = ""
+
+        # populate the current example in the prompt
+        input[label_column] = ""
+        current_example = example_template.format(**input)
 
         return self.partial_prompt.format(
             seed_examples_prompt=seed_examples_prompt,
@@ -143,11 +97,23 @@ class MultiChoiceQATask(BaseTask):
             input_variables=self.explanation_generation_prompt_variables,
             template=self.explanation_generation_prompt,
         )
+        context = example.get("context", "")
+        if context:
+            context = f"Context: {context}"
+
+        options = example.get("options", "")
+        if isinstance(options, str) and len(options) > 0:
+            options = "\n".join(ast.literal_eval(options))
+            options = f"Options:\n{options}"
+        elif isinstance(options, list):
+            options = "\n".join(options)
+            options = f"Options:\n{options}"
+
         return explanation_generation_prompt.format(
             prefix_prompt=self.prefix_prompt,
-            context=self.get_context(example),
+            context=context,
             question=example["question"],
-            options=self.get_options(example),
+            options=options,
             answer=example["answer"],
         )
 
