@@ -1,19 +1,5 @@
 {
-    "dataset_schema": {
-        "input_columns": [
-            "Title_entity1",
-            "Category_entity1",
-            "Brand_entity1",
-            "ModelNo_entity1",
-            "Price_entity1",
-            "Title_entity2",
-            "Category_entity2",
-            "Brand_entity2",
-            "ModelNo_entity2",
-            "Price_entity2"
-        ],
-        "label_column": "label"
-    },
+    "label_column": "label",
     "example_template": "Entity1: title: {Title_entity1}; category: {Category_entity1}; brand: {Brand_entity1}; model no: {ModelNo_entity1}; price: {Price_entity1}\nEntity2: title: {Title_entity2}; category: {Category_entity2}; brand: {Brand_entity2}; model no: {ModelNo_entity2}; price: {Price_entity2}\nOutput: {label}",
     "seed_examples": [
         {

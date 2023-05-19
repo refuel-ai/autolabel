@@ -79,9 +79,6 @@
         "wrong_exchange_rate_for_cash_withdrawal"
     ],
     "dataset_schema": {
-        "input_columns": [
-            "example"
-        ],
         "label_column": "label"
     },
     "example_template": "Example: {example}\nOutput: {label}",

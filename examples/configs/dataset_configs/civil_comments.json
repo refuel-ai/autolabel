@@ -3,12 +3,7 @@
         "toxic",
         "not toxic"
     ],
-    "dataset_schema": {
-        "input_columns": [
-            "example"
-        ],
-        "label_column": "label"
-    },
+    "label_column": "label",
     "example_template": "Example: {example}\nOutput: {label}",
     "seed_examples": [
         {

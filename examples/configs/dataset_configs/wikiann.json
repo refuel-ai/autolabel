@@ -4,12 +4,7 @@
         "Organization",
         "Person"
     ],
-    "dataset_schema": {
-        "input_columns": [
-            "example"
-        ],
-        "label_column": "CategorizedLabels"
-    },
+    "label_column": "CategorizedLabels",
     "seed_examples": [
         {
             "example": "Shortly afterward , an encouraging response influenced him to go to India ; he arrived at Adyar in 1884 .",

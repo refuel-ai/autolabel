@@ -1,11 +1,5 @@
 {
-    "dataset_schema": {
-        "input_columns": [
-            "entity1",
-            "entity2"
-        ],
-        "label_column": "label"
-    },
+    "label_column": "label",
     "example_template": "Entity1: {entity1}\nEntity2: {entity2}\nOutput: {label}",
     "seed_examples": [
         {
