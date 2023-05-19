@@ -21,6 +21,7 @@ from autolabel.configs import ModelConfig, DatasetConfig, TaskConfig
 
 class LabelingAgent:
     CHUNK_SIZE = 5
+    COST_KEY = "Cost in $"
 
     def __init__(
         self,
@@ -85,6 +86,7 @@ class LabelingAgent:
         max_items: Optional[int] = None,
         output_name: Optional[str] = None,
         start_index: Optional[int] = 0,
+        eval_every: Optional[int] = 50,
     ) -> None:
         """Labels data in a given dataset. Output written to new CSV file.
 
@@ -147,6 +149,7 @@ class LabelingAgent:
         num_failures = 0
         current_index = self.task_run.current_index
         cost = 0.0
+        postfix_dict = {}
 
         index_tqdm = tqdm(range(current_index, len(inputs), self.CHUNK_SIZE))
         for current_index in index_tqdm:
@@ -216,12 +219,31 @@ class LabelingAgent:
                         self.task_run.id,
                     )
             cost += curr_cost
-            index_tqdm.set_postfix({"Cost in $": f"{cost:.2f}"})
+            postfix_dict[self.COST_KEY] = f"{cost:.2f}"
 
+            # Evaluate the task every eval_every examples
+            if (current_index + self.CHUNK_SIZE) % eval_every == 0:
+                db_result = AnnotationModel.get_annotations_by_task_run_id(
+                    self.db.session, self.task_run.id
+                )
+                llm_labels = [LLMAnnotation(**a.llm_annotation) for a in db_result]
+                if gt_labels:
+                    eval_result = self.task.eval(llm_labels, gt_labels)
+
+                    for m in eval_result:
+                        if not isinstance(m.value, list) or len(m.value) < 1:
+                            continue
+                        elif isinstance(m.value[0], float):
+                            postfix_dict[m.name] = f"{m.value[0]:.4f}"
+                        elif len(m.value[0]) > 0:
+                            postfix_dict[m.name] = f"{m.value[0][0]:.4f}"
+
+            index_tqdm.set_postfix(postfix_dict)
             # Update task run state
             self.task_run = self.save_task_run_state(
                 current_index=current_index + len(chunk)
             )
+            index_tqdm.refresh()
 
         db_result = AnnotationModel.get_annotations_by_task_run_id(
             self.db.session, self.task_run.id
@@ -425,9 +447,8 @@ class LabelingAgent:
                     generate_explanations = True
 
                 explanation_prompt = self.task.generate_explanation(seed_example)
-                explanation, _ = (
-                    self.llm.label([explanation_prompt]).generations[0][0].text
-                )
+                explanation, _ = self.llm.label([explanation_prompt])
+                explanation = explanation.generations[0][0].text
                 seed_example["explanation"] = str(explanation) if explanation else ""
 
         if generate_explanations and save_file:
