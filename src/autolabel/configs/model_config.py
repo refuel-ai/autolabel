@@ -4,6 +4,15 @@ from .base import BaseConfig
 
 
 class ModelConfig(BaseConfig):
+    """Sets the model configuration of Autolabel.
+
+    Attributes:
+        provider_name (str): Name of the model provider. One of "openai", "anthropic", "huggingface_pipeline", "refuel".
+        model_name (str): Name of the model. For eg:- "text-davinci-003" for OpenAI's davinci model.
+        model_params (Dict): Model parameters. For eg:- {"max_tokens": 1000, "temperature": 0.0, "model_kwargs": {"logprobs": 1}} for OpenAI's davinci model.
+        has_logprob (bool): Whether or not the model has logprob. For eg:- True for OpenAI's davinci model.
+    """
+
     # config keys
     LLM_PROVIDER_KEY = "provider_name"
     LLM_MODEL_KEY = "model_name"
@@ -29,7 +38,4 @@ class ModelConfig(BaseConfig):
         return self.config.get(self.MODEL_PARAMS_KEY, {})
 
     def get_has_logprob(self) -> bool:
-        """
-        Returns whether or not current task supports returning LogProb confidence of its response
-        """
         return self.config.get(self.HAS_LOGPROB_KEY, False)

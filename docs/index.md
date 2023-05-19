@@ -1,15 +1,16 @@
-# Getting started with Refuel AutoLabel
+# Refuel AutoLabel
 
 For full documentation visit [refuel.ai](https://www.refuel.ai).
 
-## Installation
+## Quickstart
+### Installation
 ``` bash
 git clone git@github.com:refuel-ai/refuel-oracle.git
 cd refuel-oracle
 pip install -r requirements.txt
 ```
 
-## Environment Setup
+### Environment Setup
 Using AutoLabel will usually require integrations with one or more model providers.
 For this example, we will be using OpenAI’s API, so we will first need to install their SDK.
 ``` py
@@ -37,7 +38,7 @@ And export the API Key in the environment variables
 export ANTHROPIC_API_KEY="..."
 ```
 
-## Using AutoLabel for classifying unlabeled data with ChatGPT
+### Using AutoLabel for classifying unlabeled data with ChatGPT
 
 The AutoLabel class is initialized with a configuration file, which defines the task you would like the LLM to perform on your data (i.e. classification, entity recognition, etc.)
 ``` py
@@ -54,3 +55,20 @@ annotator.run(
 )
 ```
 
+## Concepts
+
+### Chain of Thought
+Explain what chain of thought means along with references
+
+### Self Consistency
+Explain self consistency. Explain how this is calculated
+
+### Confidence Score
+Explain confidence score. Explain how it is calculated.
+
+### Example Selection
+Explain what example selection means along with the different techniques.
+
+## Tutorial
+
+Put a video or a blog here explaining how to use the library.
