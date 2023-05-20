@@ -1,5 +1,5 @@
+from collections import defaultdict
 from typing import List, Dict, Tuple
-import ast
 
 from langchain.prompts.prompt import PromptTemplate
 from sklearn.metrics import accuracy_score
@@ -18,13 +18,10 @@ class MultiChoiceQATask(BaseTask):
     task_prompt = "Your job is to answer the following questions using the options provided for each question. Choose the best answer for the question.\n"
     NULL_LABEL_TOKEN = "NO_LABEL"
 
-    explanation_generation_prompt = "{prefix_prompt}\n You will be given a question and an answer. Your job is to provide an explanation for why the answer is correct. Think step by step and generate an explanation. The last line of the explanation should be - So, the answer is <answer>.\n{context}Question: {question}\n{options}\nAnswer: {answer}\nExplanation: "
+    explanation_generation_prompt = "{prefix_prompt}\n You will be given a question and an answer. Your job is to provide an explanation for why the answer is correct. Think step by step and generate an explanation. The last line of the explanation should be - So, the answer is <answer>.\n{labeled_example}\nExplanation: "
     explanation_generation_prompt_variables = [
         "prefix_prompt",
-        "context",
-        "question",
-        "options",
-        "answer",
+        "labeled_example"
     ]
 
     def __init__(self, config: TaskConfig) -> None:
@@ -44,11 +41,10 @@ class MultiChoiceQATask(BaseTask):
 
     def construct_prompt(self, input: Dict, examples: List[Dict]) -> str:
         example_template = self.dataset_config.get_example_template()
-        label_column = self.dataset_config.get_label_column()
 
         formatted_examples = []
         for eg in examples:
-            fmt_example = example_template.format(**eg)
+            fmt_example = example_template.format_map(defaultdict(str, eg))
             formatted_examples.append(fmt_example)
 
         if len(examples):
@@ -57,8 +53,7 @@ class MultiChoiceQATask(BaseTask):
             seed_examples_prompt = ""
 
         # populate the current example in the prompt
-        input[label_column] = ""
-        current_example = example_template.format(**input)
+        current_example = example_template.format_map(defaultdict(str, input))
 
         return self.partial_prompt.format(
             seed_examples_prompt=seed_examples_prompt,
@@ -97,24 +92,12 @@ class MultiChoiceQATask(BaseTask):
             input_variables=self.explanation_generation_prompt_variables,
             template=self.explanation_generation_prompt,
         )
-        context = example.get("context", "")
-        if context:
-            context = f"Context: {context}"
-
-        options = example.get("options", "")
-        if isinstance(options, str) and len(options) > 0:
-            options = "\n".join(ast.literal_eval(options))
-            options = f"Options:\n{options}"
-        elif isinstance(options, list):
-            options = "\n".join(options)
-            options = f"Options:\n{options}"
+        example_template = self.dataset_config.get_example_template()
+        fmt_example = example_template.format_map(defaultdict(str, example))
 
         return explanation_generation_prompt.format(
             prefix_prompt=self.prefix_prompt,
-            context=context,
-            question=example["question"],
-            options=options,
-            answer=example["answer"],
+            labeled_example=fmt_example
         )
 
     def eval(

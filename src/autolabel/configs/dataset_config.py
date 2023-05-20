@@ -7,13 +7,11 @@ class DatasetConfig(BaseConfig):
     """Sets the dataset configuration of Autolabel.
 
     Attributes:
-        input_columns (List): List of input columns.
         label_column (str): Label column.
         seed_examples (Optional[str, List[Dict]]): Pass in the list of seed examples as the path to a csv or pass in the list of seed examples directly as a list of dictionaries.
         delimiter (str): Delimiter for the dataset.
     """
 
-    INPUT_COLUMNS_KEY = "input_columns"
     LABEL_COLUMN_KEY = "label_column"
     SEED_EXAMPLES_KEY = "seed_examples"
     DELIMITER_KEY = "delimiter"

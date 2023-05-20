@@ -1,5 +1,6 @@
 import json
 import re
+from collections import defaultdict
 from typing import Dict, List, Tuple
 
 from langchain.prompts.prompt import PromptTemplate
@@ -43,12 +44,12 @@ class NamedEntityRecognitionTask(BaseTask):
 
         # populate seed examples in the prompt
         example_template = self.dataset_config.get_example_template()
-        label_column = self.dataset_config.get_label_column()
 
         # populate seed examples in the prompt
         formatted_examples = []
         for eg in examples:
-            fmt_example = example_template.format(**eg)
+            fmt_example = example_template.format_map(
+                defaultdict(str, eg))
             formatted_examples.append(fmt_example)
 
         if len(examples):
@@ -57,8 +58,7 @@ class NamedEntityRecognitionTask(BaseTask):
             seed_examples_prompt = ""
 
         # populate the current example in the prompt
-        input[label_column] = ""
-        current_example = example_template.format(**input)
+        current_example = example_template.format_map(defaultdict(str, input))
 
         return self.partial_prompt.format(
             seed_examples="\n\n".join(formatted_examples),

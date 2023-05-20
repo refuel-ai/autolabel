@@ -1,3 +1,4 @@
+from collections import defaultdict
 from typing import List, Dict, Tuple
 
 from langchain.prompts.prompt import PromptTemplate
@@ -17,13 +18,12 @@ class ClassificationTask(BaseTask):
 
     task_prompt = "Your job is to correctly label the provided input example into one of the following {num_labels} categories.\nCategories:\n{labels_list}\n"
 
-    explanation_generation_prompt = "{prefix_prompt}\n You will be given an input example and the corresponding output. Your job is to provide an explanation for why the output is correct. The label is one of the following {num_labels} categories.\nCategories:\n{labels_list}\n Think step by step and generate an explanation. The last line of the explanation should be - So, the answer is <label>.\n Example: {example}\nOutput: {output}\nExplanation: "
+    explanation_generation_prompt = "{prefix_prompt}\n You will be given an input example and the corresponding output. Your job is to provide an explanation for why the output is correct. The label is one of the following {num_labels} categories.\nCategories:\n{labels_list}\n Think step by step and generate an explanation. The last line of the explanation should be - So, the answer is <label>.\n{labeled_example}\nExplanation: "
     explanation_generation_prompt_variables = [
         "prefix_prompt",
         "num_labels",
         "labels_list",
-        "example",
-        "output",
+        "labeled_example"
     ]
 
     def __init__(self, config: TaskConfig) -> None:
@@ -51,12 +51,12 @@ class ClassificationTask(BaseTask):
 
         # populate seed examples in the prompt
         example_template = self.dataset_config.get_example_template()
-        label_column = self.dataset_config.get_label_column()
 
         # populate seed examples in the prompt
         formatted_examples = []
         for eg in examples:
-            fmt_example = example_template.format(**eg)
+            fmt_example = example_template.format_map(
+                defaultdict(str, eg))
             formatted_examples.append(fmt_example)
 
         if len(examples):
@@ -65,8 +65,7 @@ class ClassificationTask(BaseTask):
             seed_examples_prompt = ""
 
         # populate the current example in the prompt
-        input[label_column] = ""
-        current_example = example_template.format(**input)
+        current_example = example_template.format_map(defaultdict(str, input))
 
         return self.partial_prompt.format(
             seed_examples_prompt=seed_examples_prompt,
@@ -84,12 +83,14 @@ class ClassificationTask(BaseTask):
         labels_list = self.dataset_config.get_labels_list()
         num_labels = len(labels_list)
 
+        example_template = self.dataset_config.get_example_template()
+        fmt_example = example_template.format_map(defaultdict(str, example))
+
         return pt.format(
             prefix_prompt=self.prefix_prompt,
             num_labels=num_labels,
             labels_list="\n".join(labels_list),
-            example=example["example"],
-            output=example["label"],
+            labeled_example=fmt_example
         )
 
     def auroc_score_labels(
