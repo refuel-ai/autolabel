@@ -15,10 +15,7 @@ class EntityMatchingTask(BaseTask):
 
     task_prompt = "Your job is to tell if the two given entities are duplicates or not. Say duplicate, if they are duplicate and not duplicate otherwise. Options:\nduplicate\nnot duplicate\n"
     explanation_generation_prompt = "{prefix_prompt}\n You will be given two entities. Your job is to provide an explanation for why the two entities are duplicates or not duplicates. Think step by step and generate an explanation. The last line of the explanation should be - So, the answer is <answer>.\n{labeled_example}\nExplanation: "
-    explanation_generation_prompt_variables = [
-        "prefix_prompt",
-        "labeled_example"
-    ]
+    explanation_generation_prompt_variables = ["prefix_prompt", "labeled_example"]
 
     def __init__(self, config: TaskConfig) -> None:
         super().__init__(config)
@@ -41,8 +38,7 @@ class EntityMatchingTask(BaseTask):
         # populate seed examples in the prompt
         formatted_examples = []
         for eg in examples:
-            fmt_example = example_template.format_map(
-                defaultdict(str, eg))
+            fmt_example = example_template.format_map(defaultdict(str, eg))
             formatted_examples.append(fmt_example)
 
         if len(examples):
@@ -69,8 +65,7 @@ class EntityMatchingTask(BaseTask):
         fmt_example = example_template.format(**example)
 
         return example_prompt.format(
-            prefix_prompt=self.prefix_prompt,
-            labeled_example=fmt_example
+            prefix_prompt=self.prefix_prompt, labeled_example=fmt_example
         )
 
     def auroc_score_labels(

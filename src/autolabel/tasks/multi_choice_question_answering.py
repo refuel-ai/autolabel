@@ -19,10 +19,7 @@ class MultiChoiceQATask(BaseTask):
     NULL_LABEL_TOKEN = "NO_LABEL"
 
     explanation_generation_prompt = "{prefix_prompt}\n You will be given a question and an answer. Your job is to provide an explanation for why the answer is correct. Think step by step and generate an explanation. The last line of the explanation should be - So, the answer is <answer>.\n{labeled_example}\nExplanation: "
-    explanation_generation_prompt_variables = [
-        "prefix_prompt",
-        "labeled_example"
-    ]
+    explanation_generation_prompt_variables = ["prefix_prompt", "labeled_example"]
 
     def __init__(self, config: TaskConfig) -> None:
         super().__init__(config)
@@ -96,8 +93,7 @@ class MultiChoiceQATask(BaseTask):
         fmt_example = example_template.format_map(defaultdict(str, example))
 
         return explanation_generation_prompt.format(
-            prefix_prompt=self.prefix_prompt,
-            labeled_example=fmt_example
+            prefix_prompt=self.prefix_prompt, labeled_example=fmt_example
         )
 
     def eval(

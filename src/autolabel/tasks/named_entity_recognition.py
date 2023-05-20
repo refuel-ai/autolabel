@@ -48,8 +48,7 @@ class NamedEntityRecognitionTask(BaseTask):
         # populate seed examples in the prompt
         formatted_examples = []
         for eg in examples:
-            fmt_example = example_template.format_map(
-                defaultdict(str, eg))
+            fmt_example = example_template.format_map(defaultdict(str, eg))
             formatted_examples.append(fmt_example)
 
         if len(examples):
