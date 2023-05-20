@@ -1,5 +1,6 @@
 import json
 import re
+from collections import defaultdict
 from typing import Dict, List, Tuple
 
 from langchain.prompts.prompt import PromptTemplate
@@ -13,37 +14,14 @@ from autolabel.tasks import BaseTask
 
 
 class NamedEntityRecognitionTask(BaseTask):
-    JSON_OUTPUT_FORMAT_PROMPT = 'You will return the answer in JSON format with one key: {"entities": a JSON list of extracted entities from text}.'
-    CSV_OUTPUT_FORMAT_PROMPT = "You will return the answer in CSV format seperated by % charcter: entities%a list of extracted entities from text."
+    JSON_OUTPUT_FORMAT_PROMPT = "You will return the answer in JSON format. Each key in the JSON dictionary is an entity category, and value is a list of entities of this category detected in the text."
+    CSV_OUTPUT_FORMAT_PROMPT = "You will return the answer in CSV format, with two columns seperated by the % character. First column is the extracted entity and second column is the category. Rows in the CSV are separated by new line character."
     NULL_LABEL = {}
 
     task_prompt = "Your job is to extract named entities mentioned in text, and classify them into one of the following {num_labels} categories.\nCategories:\n{labels_list}\n "
-    prompt_template = "{prefix_prompt}\n{task_prompt}\n{output_prompt}\n\n{seed_examples_prompt}\n{seed_examples}\nBegin:{current_example}"
-    prompt_template_variables = [
-        "prefix_prompt",
-        "task_prompt",
-        "output_prompt",
-        "seed_examples_prompt",
-        "seed_examples",
-        "current_example",
-    ]
-    example_prompt_template = "Example: {example}\nOutput: {output}\n"
-    example_prompt_variables = ["example", "output"]
 
     def __init__(self, config: TaskConfig) -> None:
         super().__init__(config)
-
-    def _to_output_format(self, entities: List) -> str:
-        if self.output_format == "json":
-            output = {"entities": entities}
-            return json.dumps(output)
-        elif self.output_format == "csv":
-            output = "entities"
-            for entity_type in entities:
-                output += f"%{entity_type}"
-                for text in entities[entity_type]:
-                    output += f"%{text}"
-            return output
 
     def initialize_prompt_template(self) -> PromptTemplate:
         # provide context about the prediction task
@@ -65,28 +43,24 @@ class NamedEntityRecognitionTask(BaseTask):
         )
 
         # populate seed examples in the prompt
-        example_prompt = PromptTemplate(
-            input_variables=self.example_prompt_variables,
-            template=self.example_prompt_template,
-        )
+        example_template = self.dataset_config.get_example_template()
+
+        # populate seed examples in the prompt
         formatted_examples = []
         for eg in examples:
-            expected_output = self._to_output_format(
-                json.loads(eg["CategorizedLabels"])
-            )
-            formatted_examples.append(
-                example_prompt.format(example=eg["example"], output=expected_output)
-            )
-
-        current_example = example_prompt.format(example=input["example"], output="")
+            fmt_example = example_template.format_map(defaultdict(str, eg))
+            formatted_examples.append(fmt_example)
 
         if len(examples):
             seed_examples_prompt = self.seed_examples_prompt
         else:
             seed_examples_prompt = ""
 
+        # populate the current example in the prompt
+        current_example = example_template.format_map(defaultdict(str, input))
+
         return self.partial_prompt.format(
-            seed_examples="\n".join(formatted_examples),
+            seed_examples="\n\n".join(formatted_examples),
             current_example=current_example,
             seed_examples_prompt=seed_examples_prompt,
             task_prompt=task_prompt,
@@ -120,17 +94,17 @@ class NamedEntityRecognitionTask(BaseTask):
         return processed_output
 
     def jsonify_csv_output(self, response: str):
-        split_response = response.split("%")
-        json_output = {
-            "entities": {i: [] for i in self.dataset_config.get_labels_list()},
-        }
-        current_entity = None
-        for text_or_type in split_response[1:]:
-            if text_or_type in json_output["entities"]:
-                current_entity = text_or_type
-            else:
-                if current_entity is not None:
-                    json_output["entities"][current_entity].append(text_or_type)
+        split_response = response.split("\n")
+        json_output = {i: [] for i in self.dataset_config.get_labels_list()}
+
+        for row in split_response:
+            parts = row.split("%")
+            if len(parts) != 2 or parts[1] not in json_output.keys():
+                logger.debug(f"Malformed LLM response: {row}")
+                continue
+            named_entity = parts[0]
+            category = parts[1]
+            json_output[category].append(named_entity)
         return json_output
 
     def parse_llm_response(
@@ -146,7 +120,7 @@ class NamedEntityRecognitionTask(BaseTask):
             else:
                 output = json.loads(completion_text.strip())
 
-            raw_output = output.get("entities") or self.NULL_LABEL
+            raw_output = output or self.NULL_LABEL
             llm_label = self.add_text_spans(raw_output, input_str)
 
         except Exception as e:

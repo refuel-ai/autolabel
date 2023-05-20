@@ -100,12 +100,8 @@
         "Warranties",
         "Withholdings"
     ],
-    "dataset_schema": {
-        "input_columns": [
-            "example"
-        ],
-        "label_column": "label"
-    },
+    "label_column": "label",
+    "example_template": "Example: {example}\nOutput: {label}",
     "seed_examples": [
         {
             "example": "The Executive will fully indemnify the Released Parties against and will hold the Released Parties harmless from any and all claims, costs, damages, demands, expenses (including without limitation attorneys’ fees), judgments, losses or other liabilities of any kind or nature whatsoever arising from or directly or indirectly related to any or all of this Release and the conduct of the Executive hereunder, including without limitation any material breach or failure to comply with any or all of the provisions of this Release.",
