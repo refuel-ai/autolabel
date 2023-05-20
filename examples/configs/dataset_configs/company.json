@@ -1,11 +1,6 @@
 {
-    "dataset_schema": {
-        "input_columns": [
-            "entity1",
-            "entity2"
-        ],
-        "label_column": "label"
-    },
+    "label_column": "label",
+    "example_template": "Entity1: {entity1}\nEntity2: {entity2}\nOutput: {label}",
     "seed_examples": [
         {
             "entity1": "lac wisconsin branding 95 1 & 96 1 the rock frequency 96.1 mhz translator s 95.1 w236ag fond du lac first air date 1965 as wcwc fm at 95.9 format mainstream rock erp 4 000 watts haat 123 meters 404 ft class a facility id 54510 transmitter coordinates 43 49 10.00 n 88 43 20.00 w 43.8194444 n 88.7222222 w 43.8194444 ; 88.7222222 coordinates 43 49 10.00 n 88 43 20.00 w 43.8194444 n 88.7222222 w 43.8194444 ; 88.7222222 former callsigns wcwc fm 1965 1980 wyur 1980 1994 former frequencies 95.9 mhz 1965 affiliations cbs radio network westwood one premiere radio networks owner radio plus inc. sister stations wfdl wfdl fm wmdc webcast listen live website 961tcx . com studios in fond du lac wtcx 96.1 fm 95 1 & 96 1 the rock is a radio station broadcasting a mainstream rock music format . 1 licensed to ripon wisconsin usa the station is currently owned by radio plus inc. and features programing from cbs radio network dial global and premiere radio networks . 2 wtcx was originally on 95.9 mhz . be",

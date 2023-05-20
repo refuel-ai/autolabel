@@ -1,11 +1,6 @@
 {
-    "dataset_schema": {
-        "input_columns": [
-            "question",
-            "options"
-        ],
-        "label_column": "answer"
-    },
+    "label_column": "answer",
+    "example_template": "Question: {question}\nOptions: {options}\nAnswer:{answer}\n",
     "seed_examples": [
         {
             "question": "Neurons are classified based on the direction in which they carry what?",

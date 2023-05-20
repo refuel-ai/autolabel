@@ -1,11 +1,6 @@
 {
-    "dataset_schema": {
-        "input_columns": [
-            "question",
-            "context"
-        ],
-        "label_column": "answer"
-    },
+    "label_column": "answer",
+    "example_template": "Context: {context}\nQuestion: {question}\nAnswer:{answer}\n",
     "seed_examples": [
         {
             "question": "What was created by the modern Conservative Party in 1859 to define basic Conservative principles?",

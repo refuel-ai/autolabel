@@ -1,0 +1,7 @@
+{
+    "project_name": "Squad V2 Question Answering",
+    "task_type": "multi_choice_question_answering",
+    "prefix_prompt": "You are an expert at answering questions based on wikipedia articles.",
+    "task_prompt": "Your job is to answer the following questions using the context provided with the question. The answer is a continuous span of words from the context. Use the context to answer the question. If the question cannot be answered using the context, answer the question as unanswerable.",
+    "chain_of_thought": true
+}
