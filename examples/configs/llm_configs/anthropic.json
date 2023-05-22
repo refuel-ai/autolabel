@@ -1,5 +1,4 @@
 {
     "provider_name": "anthropic",
-    "model_name": "claude-instant-v1",
-    "has_logprob": false
+    "model_name": "claude-instant-v1"
 }

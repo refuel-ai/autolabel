@@ -4,6 +4,5 @@
     "model_params": {
         "max_tokens": 100,
         "quantize": 16
-    },
-    "has_logprob": false
+    }
 }

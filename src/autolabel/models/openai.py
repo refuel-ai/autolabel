@@ -13,6 +13,7 @@ from autolabel.cache import BaseCache
 
 class OpenAILLM(BaseModel):
     CHAT_ENGINE_MODELS = ["gpt-3.5-turbo", "gpt-4"]
+    MODELS_WITH_TOKEN_PROBS = ["text-curie-001", "text-davinci-003"]
 
     # Default parameters for OpenAILLM
     DEFAULT_MODEL = "gpt-3.5-turbo"
@@ -90,4 +91,10 @@ class OpenAILLM(BaseModel):
         cost_per_completion_token = self.COST_PER_COMPLETION_TOKEN[self.model_name]
         return (num_prompt_toks * cost_per_prompt_token) + (
             num_label_toks * cost_per_completion_token
+        )
+
+    def returns_token_probs(self) -> bool:
+        return (
+            self.model_name is not None
+            and self.model_name in self.MODELS_WITH_TOKEN_PROBS
         )
