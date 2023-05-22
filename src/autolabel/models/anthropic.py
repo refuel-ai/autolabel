@@ -60,3 +60,6 @@ class AnthropicLLM(BaseModel):
         return (num_prompt_toks * cost_per_prompt_token) + (
             num_label_toks * cost_per_completion_token
         )
+
+    def returns_token_probs(self) -> bool:
+        return False

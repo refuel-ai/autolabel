@@ -106,3 +106,12 @@ class BaseModel(ABC):
                 generations=result,
             )
             self.cache.update(cache_entry)
+
+    @abstractmethod
+    def returns_token_probs(self) -> bool:
+        """Whether the LLM supports returning logprobs of generated tokens
+
+        Returns:
+            bool: whether the LLM returns supports returning logprobs of generated tokens
+        """
+        pass

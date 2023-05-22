@@ -60,7 +60,7 @@ class ConfidenceCalculator:
     def p_true(self, model_generation: LLMAnnotation, prompt: str, **kwargs) -> float:
         p_true_prompt = f"{prompt}{model_generation.raw_response} \n Is the answer to the last example correct? Answer in one word on the same line [Yes/No]: "
 
-        if kwargs.get("logprobs_available", False):
+        if self.llm.returns_token_probs():
             response = self.llm.label([p_true_prompt])
             response_logprobs = response.generations[0][0].generation_info["logprobs"][
                 "top_logprobs"
@@ -81,14 +81,12 @@ class ConfidenceCalculator:
                 return -math.e ** token[token_str]
         return 0
 
-    def calculate(
-        self, model_generation: LLMAnnotation, logprobs_available: bool, **kwargs
-    ) -> LLMAnnotation:
+    def calculate(self, model_generation: LLMAnnotation, **kwargs) -> LLMAnnotation:
         if self.score_type not in self.SUPPORTED_CALCULATORS:
             raise NotImplementedError()
 
         logprobs = None
-        if not logprobs_available:
+        if not self.llm.returns_token_probs():
             if model_generation.raw_response == "":
                 model_generation.confidence_score = 0
                 return model_generation
@@ -105,7 +103,6 @@ class ConfidenceCalculator:
         confidence = self.SUPPORTED_CALCULATORS[self.score_type](
             model_generation=model_generation,
             logprobs=logprobs,
-            logprobs_available=logprobs_available,
             **kwargs,
         )
         model_generation.confidence_score = confidence

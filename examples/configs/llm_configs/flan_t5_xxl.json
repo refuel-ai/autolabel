@@ -1,5 +1,4 @@
 {
     "provider_name": "refuel",
-    "model_name": "flan-t5-xxl",
-    "has_logprob": false
+    "model_name": "flan-t5-xxl"
 }
