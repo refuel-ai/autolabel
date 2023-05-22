@@ -30,7 +30,6 @@ class TaskConfig(BaseConfig):
     PROMPT_TEMPLATE_KEY = "prompt_template"
     OUTPUT_FORMAT_KEY = "output_format"
     EXAMPLE_SELECTOR_KEY = "example_selector"
-    HAS_LOGPROB_KEY = "has_logprob"
     COMPUTE_CONFIDENCE_KEY = "compute_confidence"
     CHAIN_OF_THOUGHT_KEY = "chain_of_thought"
     EMPTY_RESPONSE_KEY = "empty_response"

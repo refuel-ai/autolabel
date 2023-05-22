@@ -75,3 +75,6 @@ class HFPipelineLLM(BaseModel):
         # Model inference for this model is being run locally
         # Revisit this in the future when we support HF inference endpoints
         return 0.0
+
+    def returns_token_probs(self) -> bool:
+        return False

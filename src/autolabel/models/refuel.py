@@ -58,3 +58,6 @@ class RefuelLLM(BaseModel):
 
     def get_cost(self, prompt: str, label: Optional[str] = "") -> float:
         return 0
+
+    def returns_token_probs(self) -> bool:
+        return False
