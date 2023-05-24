@@ -47,6 +47,9 @@ class EntityMatchingTask(BaseTask):
             seed_examples_prompt = ""
 
         # populate the current example in the prompt
+        label_column = self.dataset_config.get_label_column()
+        if label_column:
+            input[label_column] = ""
         current_example = example_template.format_map(defaultdict(str, input))
 
         prompt = self.partial_prompt.format(
