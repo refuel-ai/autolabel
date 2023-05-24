@@ -1,10 +1,9 @@
 from loguru import logger
-from tqdm import tqdm
+from rich.progress import Progress, track, TextColumn
 from typing import Tuple, List, Dict, Union, Optional
 import langchain
 import numpy as np
 import pandas as pd
-from tqdm import tqdm
 import sys
 
 from autolabel.confidence import ConfidenceCalculator
@@ -151,98 +150,105 @@ class LabelingAgent:
         cost = 0.0
         postfix_dict = {}
 
-        index_tqdm = tqdm(range(current_index, len(inputs), self.CHUNK_SIZE))
-        for current_index in index_tqdm:
-            chunk = inputs[current_index : current_index + self.CHUNK_SIZE]
-            final_prompts = []
-            for i, input_i in enumerate(chunk):
-                # Fetch few-shot seed examples
-                examples = self.example_selector.select_examples(input_i)
-                # Construct Prompt to pass to LLM
-                final_prompt = self.task.construct_prompt(input_i, examples)
-                final_prompts.append(final_prompt)
+        with Progress(
+            *Progress.get_default_columns(), TextColumn("{task.fields[postfix]}")
+        ) as progress:
+            indices = range(current_index, len(inputs), self.CHUNK_SIZE)
+            index_track = progress.add_task("", total=len(inputs), postfix="")
+            for current_index in indices:
+                chunk = inputs[current_index : current_index + self.CHUNK_SIZE]
+                final_prompts = []
+                for i, input_i in enumerate(chunk):
+                    # Fetch few-shot seed examples
+                    examples = self.example_selector.select_examples(input_i)
+                    # Construct Prompt to pass to LLM
+                    final_prompt = self.task.construct_prompt(input_i, examples)
+                    final_prompts.append(final_prompt)
 
-            # Get response from LLM
-            try:
-                response, curr_cost = self.llm.label(final_prompts)
-            except Exception as e:
-                # TODO (dhruva): We need to handle this case carefully
-                # When we erorr out, we will have less elements in the llm_labels
-                # than the gt_labels array, with the 1:1 mapping not being
-                # maintained either. We should either remove the elements we errored
-                # out on from gt_labels or add None labels to the llm_labels.
-                logger.error(
-                    "Error in generating response:" + repr(e), "Prompt: ", chunk
-                )
-                for i in range(len(chunk)):
-                    annotation = LLMAnnotation(
-                        successfully_labeled="No",
-                        label=self.task.NULL_LABEL_TOKEN,
-                        raw_response="",
-                        curr_sample=chunk[i],
-                        prompt=final_prompts[i],
-                        confidence_score=0,
+                # Get response from LLM
+                try:
+                    response, curr_cost = self.llm.label(final_prompts)
+                except Exception as e:
+                    # TODO (dhruva): We need to handle this case carefully
+                    # When we erorr out, we will have less elements in the llm_labels
+                    # than the gt_labels array, with the 1:1 mapping not being
+                    # maintained either. We should either remove the elements we errored
+                    # out on from gt_labels or add None labels to the llm_labels.
+                    logger.error(
+                        "Error in generating response:" + repr(e), "Prompt: ", chunk
                     )
-                    AnnotationModel.create_from_llm_annotation(
-                        self.db.session,
-                        annotation,
-                        current_index + i,
-                        self.task_run.id,
-                    )
-                num_failures += len(chunk)
-                response = None
+                    for i in range(len(chunk)):
+                        annotation = LLMAnnotation(
+                            successfully_labeled="No",
+                            label=self.task.NULL_LABEL_TOKEN,
+                            raw_response="",
+                            curr_sample=chunk[i],
+                            prompt=final_prompts[i],
+                            confidence_score=0,
+                        )
+                        AnnotationModel.create_from_llm_annotation(
+                            self.db.session,
+                            annotation,
+                            current_index + i,
+                            self.task_run.id,
+                        )
+                    num_failures += len(chunk)
+                    response = None
 
-            if response is not None:
-                for i in range(len(response.generations)):
-                    response_item = response.generations[i]
-                    annotations = []
-                    for generation in response_item:
-                        if self.task_config.get_compute_confidence():
-                            annotation = self.confidence.calculate(
-                                model_generation=self.task.parse_llm_response(
+                if response is not None:
+                    for i in range(len(response.generations)):
+                        response_item = response.generations[i]
+                        annotations = []
+                        for generation in response_item:
+                            if self.task_config.get_compute_confidence():
+                                annotation = self.confidence.calculate(
+                                    model_generation=self.task.parse_llm_response(
+                                        generation, chunk[i], final_prompts[i]
+                                    ),
+                                    empty_response=self.task_config.get_empty_response(),
+                                    prompt=final_prompts[i],
+                                )
+                            else:
+                                annotation = self.task.parse_llm_response(
                                     generation, chunk[i], final_prompts[i]
-                                ),
-                                empty_response=self.task_config.get_empty_response(),
-                                prompt=final_prompts[i],
-                            )
-                        else:
-                            annotation = self.task.parse_llm_response(
-                                generation, chunk[i], final_prompts[i]
-                            )
-                        annotations.append(annotation)
-                    final_annotation = self.majority_annotation(annotations)
-                    AnnotationModel.create_from_llm_annotation(
-                        self.db.session,
-                        final_annotation,
-                        current_index + i,
-                        self.task_run.id,
+                                )
+                            annotations.append(annotation)
+                        final_annotation = self.majority_annotation(annotations)
+                        AnnotationModel.create_from_llm_annotation(
+                            self.db.session,
+                            final_annotation,
+                            current_index + i,
+                            self.task_run.id,
+                        )
+                cost += curr_cost
+                postfix_dict[self.COST_KEY] = f"{cost:.2f}"
+
+                # Evaluate the task every eval_every examples
+                if (current_index + self.CHUNK_SIZE) % eval_every == 0:
+                    db_result = AnnotationModel.get_annotations_by_task_run_id(
+                        self.db.session, self.task_run.id
                     )
-            cost += curr_cost
-            postfix_dict[self.COST_KEY] = f"{cost:.2f}"
+                    llm_labels = [LLMAnnotation(**a.llm_annotation) for a in db_result]
+                    if gt_labels:
+                        eval_result = self.task.eval(llm_labels, gt_labels)
 
-            # Evaluate the task every eval_every examples
-            if (current_index + self.CHUNK_SIZE) % eval_every == 0:
-                db_result = AnnotationModel.get_annotations_by_task_run_id(
-                    self.db.session, self.task_run.id
+                        for m in eval_result:
+                            if not isinstance(m.value, list) or len(m.value) < 1:
+                                continue
+                            elif isinstance(m.value[0], float):
+                                postfix_dict[m.name] = f"{m.value[0]:.4f}"
+                            elif len(m.value[0]) > 0:
+                                postfix_dict[m.name] = f"{m.value[0][0]:.4f}"
+
+                progress.update(
+                    index_track,
+                    completed=current_index + self.CHUNK_SIZE,
+                    postfix=", ".join([f"{k}={v}" for k, v in postfix_dict.items()]),
                 )
-                llm_labels = [LLMAnnotation(**a.llm_annotation) for a in db_result]
-                if gt_labels:
-                    eval_result = self.task.eval(llm_labels, gt_labels)
-
-                    for m in eval_result:
-                        if not isinstance(m.value, list) or len(m.value) < 1:
-                            continue
-                        elif isinstance(m.value[0], float):
-                            postfix_dict[m.name] = f"{m.value[0]:.4f}"
-                        elif len(m.value[0]) > 0:
-                            postfix_dict[m.name] = f"{m.value[0][0]:.4f}"
-
-            index_tqdm.set_postfix(postfix_dict)
-            # Update task run state
-            self.task_run = self.save_task_run_state(
-                current_index=current_index + len(chunk)
-            )
-            index_tqdm.refresh()
+                # Update task run state
+                self.task_run = self.save_task_run_state(
+                    current_index=current_index + len(chunk)
+                )
 
         db_result = AnnotationModel.get_annotations_by_task_run_id(
             self.db.session, self.task_run.id
@@ -334,7 +340,9 @@ class LabelingAgent:
 
         input_limit = min(len(inputs), 100)
         num_sections = max(input_limit / self.CHUNK_SIZE, 1)
-        for chunk in tqdm(np.array_split(inputs[:input_limit], num_sections)):
+        for chunk in track(
+            np.array_split(inputs[:input_limit], num_sections), description=""
+        ):
             for i, input_i in enumerate(chunk):
                 # TODO: Check if this needs to use the example selector
                 examples = self.example_selector.select_examples(input_i)
@@ -437,7 +445,7 @@ class LabelingAgent:
         self, seed_examples: List[Dict], save_file: str
     ) -> List[Dict]:
         generate_explanations = False
-        for seed_example in tqdm(seed_examples):
+        for seed_example in track(seed_examples, description=""):
             if not seed_example.get("explanation", ""):
                 if not generate_explanations:
                     logger.info(
