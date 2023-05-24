@@ -1,12 +1,6 @@
 {
-    "dataset_schema": {
-        "input_columns": [
-            "question",
-            "options",
-            "context"
-        ],
-        "label_column": "answer"
-    },
+    "label_column": "answer",
+    "example_template": "Context: {context}\nQuestion: {question}\nOptions: {options}\nAnswer: {answer}\n",
     "seed_examples": [
         {
             "question": "Do approved doctors and medical referees in the UK agree when assessing a seafarer's fitness?",
