@@ -6,6 +6,7 @@ from .anthropic import AnthropicLLM
 from .openai import OpenAILLM
 from .hf_pipeline import HFPipelineLLM
 from .refuel import RefuelLLM
+from .palm import PaLMLLM
 
 from autolabel.configs import ModelConfig
 from autolabel.cache import BaseCache
@@ -14,7 +15,8 @@ MODEL_PROVIDER_TO_IMPLEMENTATION: Dict[str, BaseModel] = {
     "openai": OpenAILLM,
     "anthropic": AnthropicLLM,
     "huggingface_pipeline": HFPipelineLLM,
-    "refuel": RefuelLLM
+    "refuel": RefuelLLM,
+    "google": PaLMLLM
     # We will add more providers here in the future. See roadmap at [TODO]
 }
 
