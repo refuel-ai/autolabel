@@ -33,7 +33,8 @@ dependencies = [
     "tiktoken >= 0.3.3",
     "torch >= 1.10.0",
     "transformers >= 4.25.0",
-    "SQLAlchemy == 1.4.47"
+    "SQLAlchemy == 1.4.47",
+    "rich >= 13.3.5"
 ]
 requires-python = ">=3.6"
 
