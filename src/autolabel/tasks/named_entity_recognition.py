@@ -56,10 +56,17 @@ class NamedEntityRecognitionTask(BaseTask):
         else:
             seed_examples_prompt = ""
 
-        # populate the current example in the prompt
+        # populate the label column with empty string for current example
         label_column = self.dataset_config.get_label_column()
         if label_column:
             input[label_column] = ""
+
+        # populate the explanation column with empty string for current example
+        explanation_column = self.dataset_config.get_explanation_column()
+        if explanation_column:
+            input[explanation_column] = ""
+
+        # populate the current example in the prompt
         current_example = example_template.format_map(defaultdict(str, input))
 
         return self.partial_prompt.format(
@@ -228,11 +235,6 @@ class NamedEntityRecognitionTask(BaseTask):
             )
         )
         return eval_metrics
-
-    def generate_explanation(self, example: Dict) -> str:
-        raise NotImplementedError(
-            "Automatic explanation generation not supported for NER task"
-        )
 
     def eval(
         self, llm_labels: List[LLMAnnotation], gt_labels: List[str]

@@ -63,10 +63,17 @@ class ClassificationTask(BaseTask):
         else:
             seed_examples_prompt = ""
 
-        # populate the current example in the prompt
+        # populate the label column with empty string for current example
         label_column = self.dataset_config.get_label_column()
         if label_column:
             input[label_column] = ""
+
+        # populate the explanation column with empty string for current example
+        explanation_column = self.dataset_config.get_explanation_column()
+        if explanation_column:
+            input[explanation_column] = ""
+
+        # populate the current example in the prompt
         current_example = example_template.format_map(defaultdict(str, input))
 
         return self.partial_prompt.format(
@@ -76,7 +83,7 @@ class ClassificationTask(BaseTask):
             task_prompt=task_prompt,
         )
 
-    def generate_explanation(self, example: Dict) -> str:
+    def get_explanation_prompt(self, example: Dict) -> str:
         pt = PromptTemplate(
             input_variables=self.explanation_generation_prompt_variables,
             template=self.explanation_generation_prompt,

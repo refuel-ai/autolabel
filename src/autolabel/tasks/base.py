@@ -83,8 +83,10 @@ class BaseTask(ABC):
         pass
 
     @abstractmethod
-    def generate_explanation(self, example: Dict) -> str:
-        return ""
+    def get_explanation_prompt(self, example: Dict) -> str:
+        raise NotImplementedError(
+            "Explanation generation not implemented for this task"
+        )
 
     # Should be called before the construct prompt for a specific input is called
     def set_dataset_config(self, dataset_config: DatasetConfig) -> None:
