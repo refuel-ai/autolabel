@@ -120,6 +120,14 @@ class LabelingAgent:
             df, inputs, gt_labels = self._read_dataframe(
                 dataset, dataset_config, max_items, start_index
             )
+
+        # Check explanations are present in data if explanation_column is passed in
+        if dataset_config.get_explanation_column():
+            if dataset_config.get_explanation_column() not in inputs.keys():
+                raise ValueError(
+                    f"Explanation column {dataset_config.get_explanation_column()} not found in dataset.\nMake sure that explanations were generated using labeler.generate_explanations(seed_file)."
+                )
+
         # Initialize task run and check if it already exists
         self.task_run = self.db.get_task_run(self.task_object.id, self.dataset.id)
         # Resume/Delete the task if it already exists or create a new task run
@@ -139,14 +147,6 @@ class LabelingAgent:
         # If this dataset config is a string, read the corrresponding csv file
         if isinstance(seed_examples, str):
             _, seed_examples, _ = self._read_csv(seed_examples, dataset_config)
-
-        if self.task_config.use_chain_of_thought():
-            out_file = None
-            if isinstance(dataset_config.get_seed_examples(), str):
-                out_file = dataset_config.get_seed_examples().replace(
-                    ".csv", "_explanations.csv"
-                )
-            seed_examples = self.generate_explanations(seed_examples, out_file)
 
         self.example_selector = ExampleSelectorFactory.initialize_selector(
             self.task_config, seed_examples
@@ -331,6 +331,13 @@ class LabelingAgent:
                 dataset, dataset_config, max_items, start_index
             )
 
+        # Check explanations are present in data if explanation_column is passed in
+        if dataset_config.get_explanation_column():
+            if dataset_config.get_explanation_column() not in inputs.keys():
+                raise ValueError(
+                    f"Explanation column {dataset_config.get_explanation_column()} not found in dataset.\nMake sure that explanations were generated using labeler.generate_explanations(seed_file)."
+                )
+
         prompt_list = []
         total_cost = 0
 
@@ -340,14 +347,6 @@ class LabelingAgent:
         # If this dataset config is a string, read the corrresponding csv file
         if isinstance(seed_examples, str):
             _, seed_examples, _ = self._read_csv(seed_examples, dataset_config)
-
-        if self.task_config.use_chain_of_thought():
-            out_file = None
-            if isinstance(dataset_config.get_seed_examples(), str):
-                out_file = dataset_config.get_seed_examples().replace(
-                    ".csv", "_explanations.csv"
-                )
-            seed_examples = self.generate_explanations(seed_examples, out_file)
 
         self.example_selector = ExampleSelectorFactory.initialize_selector(
             self.task_config, seed_examples
@@ -465,9 +464,18 @@ class LabelingAgent:
         return annotation_list[counts[max_label][1]]
 
     def generate_explanations(
-        self, seed_examples: List[Dict], save_file: str
+        self,
+        seed_examples: Union[str, List[Dict]],
+        dataset_config: Union[str, Dict],
     ) -> List[Dict]:
-        generate_explanations = False
+        dataset_config = DatasetConfig(dataset_config)
+        self.task.set_dataset_config(dataset_config)
+
+        out_file = None
+        if isinstance(seed_examples, str):
+            out_file = seed_examples
+            _, seed_examples, _ = self._read_csv(seed_examples, dataset_config)
+
         with Progress(
             TextColumn("[progress.description]{task.description}"),
             BarColumn(),
@@ -479,26 +487,20 @@ class LabelingAgent:
                 "Generating explanations...", total=len(seed_examples)
             )
             for seed_example in seed_examples:
-                if not seed_example.get("explanation", ""):
-                    if not generate_explanations:
-                        logger.info(
-                            "Chain of thought requires explanations for seed examples. Generating explanations for seed examples."
-                        )
-                        generate_explanations = True
-
-                    explanation_prompt = self.task.generate_explanation(seed_example)
-                    explanation, _ = self.llm.label([explanation_prompt])
-                    explanation = explanation.generations[0][0].text
-                    seed_example["explanation"] = (
-                        str(explanation) if explanation else ""
-                    )
+                explanation_prompt = self.task.get_explanation_prompt(seed_example)
+                explanation, _ = self.llm.label([explanation_prompt])
+                explanation = explanation.generations[0][0].text
+                seed_example["explanation"] = str(explanation) if explanation else ""
                 progress.advance(task)
 
-        if generate_explanations and save_file:
-            logger.info(
-                "Generated explanations for seed examples. Saving explanations to the seed file."
+        explanation_column = dataset_config.get_explanation_column()
+        if not explanation_column:
+            raise ValueError(
+                "The explanation column needs to be specified in the dataset config."
             )
+
+        if out_file:
             df = pd.DataFrame.from_records(seed_examples)
-            df.to_csv(save_file, index=False)
+            df.to_csv(out_file, index=False)
 
         return seed_examples
