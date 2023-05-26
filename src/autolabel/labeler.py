@@ -1,5 +1,12 @@
 from loguru import logger
-from rich.progress import Progress, track, TextColumn
+from rich.progress import (
+    Progress,
+    BarColumn,
+    MofNCompleteColumn,
+    TimeElapsedColumn,
+    TimeRemainingColumn,
+    TextColumn,
+)
 from typing import Tuple, List, Dict, Union, Optional
 import langchain
 import numpy as np
@@ -151,10 +158,16 @@ class LabelingAgent:
         postfix_dict = {}
 
         with Progress(
-            *Progress.get_default_columns(), TextColumn("{task.fields[postfix]}")
+            BarColumn(),
+            MofNCompleteColumn(),
+            TimeElapsedColumn(),
+            TimeRemainingColumn(),
+            TextColumn("{task.fields[postfix]}"),
         ) as progress:
             indices = range(current_index, len(inputs), self.CHUNK_SIZE)
-            index_track = progress.add_task("", total=len(inputs), postfix="")
+            index_track = progress.add_task(
+                "Generating Responses...", total=len(inputs), postfix=""
+            )
             for current_index in indices:
                 chunk = inputs[current_index : current_index + self.CHUNK_SIZE]
                 final_prompts = []
@@ -242,7 +255,7 @@ class LabelingAgent:
 
                 progress.update(
                     index_track,
-                    completed=current_index + self.CHUNK_SIZE,
+                    advance=self.CHUNK_SIZE,
                     postfix=", ".join([f"{k}={v}" for k, v in postfix_dict.items()]),
                 )
                 # Update task run state
@@ -340,18 +353,26 @@ class LabelingAgent:
 
         input_limit = min(len(inputs), 100)
         num_sections = max(input_limit / self.CHUNK_SIZE, 1)
-        for chunk in track(
-            np.array_split(inputs[:input_limit], num_sections), description=""
-        ):
-            for i, input_i in enumerate(chunk):
-                # TODO: Check if this needs to use the example selector
-                examples = self.example_selector.select_examples(input_i)
-                final_prompt = self.task.construct_prompt(input_i, examples)
-                prompt_list.append(final_prompt)
+        with Progress(
+            TextColumn("[progress.description]{task.description}"),
+            BarColumn(),
+            MofNCompleteColumn(),
+            TimeElapsedColumn(),
+            TimeRemainingColumn(),
+        ) as progress:
+            task = progress.add_task("Calculating cost...", total=input_limit)
+            for chunk in np.array_split(inputs[:input_limit], num_sections):
+                for i, input_i in enumerate(chunk):
+                    # TODO: Check if this needs to use the example selector
+                    examples = self.example_selector.select_examples(input_i)
+                    final_prompt = self.task.construct_prompt(input_i, examples)
+                    prompt_list.append(final_prompt)
 
-                # Calculate the number of tokens
-                curr_cost = self.llm.get_cost(prompt=final_prompt, label="")
-                total_cost += curr_cost
+                    # Calculate the number of tokens
+                    curr_cost = self.llm.get_cost(prompt=final_prompt, label="")
+                    total_cost += curr_cost
+
+                    progress.advance(task)
 
         total_cost = total_cost * (len(inputs) / input_limit)
         print(f"Total Estimated Cost: ${round(total_cost, 3)}")
@@ -445,18 +466,31 @@ class LabelingAgent:
         self, seed_examples: List[Dict], save_file: str
     ) -> List[Dict]:
         generate_explanations = False
-        for seed_example in track(seed_examples, description=""):
-            if not seed_example.get("explanation", ""):
-                if not generate_explanations:
-                    logger.info(
-                        "Chain of thought requires explanations for seed examples. Generating explanations for seed examples."
-                    )
-                    generate_explanations = True
+        with Progress(
+            TextColumn("[progress.description]{task.description}"),
+            BarColumn(),
+            MofNCompleteColumn(),
+            TimeElapsedColumn(),
+            TimeRemainingColumn(),
+        ) as progress:
+            task = progress.add_task(
+                "Generating explanations...", total=len(seed_examples)
+            )
+            for seed_example in seed_examples:
+                if not seed_example.get("explanation", ""):
+                    if not generate_explanations:
+                        logger.info(
+                            "Chain of thought requires explanations for seed examples. Generating explanations for seed examples."
+                        )
+                        generate_explanations = True
 
-                explanation_prompt = self.task.generate_explanation(seed_example)
-                explanation, _ = self.llm.label([explanation_prompt])
-                explanation = explanation.generations[0][0].text
-                seed_example["explanation"] = str(explanation) if explanation else ""
+                    explanation_prompt = self.task.generate_explanation(seed_example)
+                    explanation, _ = self.llm.label([explanation_prompt])
+                    explanation = explanation.generations[0][0].text
+                    seed_example["explanation"] = (
+                        str(explanation) if explanation else ""
+                    )
+                progress.advance(task)
 
         if generate_explanations and save_file:
             logger.info(
