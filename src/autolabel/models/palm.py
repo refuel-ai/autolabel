@@ -12,6 +12,7 @@ from autolabel.cache import BaseCache
 
 class PaLMLLM(BaseModel):
     CHAT_ENGINE_MODELS = ["chat-bison@001"]
+    NUM_TRIES = 5
 
     DEFAULT_MODEL = "text-bison@001"
     DEFAULT_PARAMS = {
@@ -38,6 +39,7 @@ class PaLMLLM(BaseModel):
         super().__init__(config, cache)
         # populate model name
         self.model_name = config.get_model_name() or self.DEFAULT_MODEL
+        print(f"PaLM model name: {self.model_name}")
 
         # populate model params and initialize the LLM
         model_params = config.get_model_params()
@@ -57,21 +59,22 @@ class PaLMLLM(BaseModel):
             # Currently the entire prompt is stuck into the "human message"
             # We might consider breaking this up into human vs system message in future
             prompts = [[HumanMessage(content=prompt)] for prompt in prompts]
-        try:
-            generations = self.llm.generate(prompts)
-            print(f"LLM generations: {generations}")
-            return generations
-        except Exception as e:
-            print(f"Error generating from LLM: {e}, returning empty result")
-            generations = [[Generation(text="")] for _ in prompts]
-            return LLMResult(generations=generations)
+
+        for _ in range(self.NUM_TRIES):
+            try:
+                return self.llm.generate(prompts)
+            except Exception as e:
+                print(f"Error generating from LLM: {e}, retrying...")
+
+        generations = [[Generation(text="")] for _ in prompts]
+        return LLMResult(generations=generations)
 
     def get_cost(self, prompt: str, label: Optional[str] = "") -> float:
         if self.model_name is None:
             return 0.0
         cost_per_char = self.COST_PER_CHARACTER.get(self.model_name, 0.0)
         return cost_per_char * len(prompt)
-        
+
     def returns_token_probs(self) -> bool:
         return (
             self.model_name is not None
