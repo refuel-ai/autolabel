@@ -76,6 +76,11 @@ class NamedEntityRecognitionTask(BaseTask):
             task_prompt=task_prompt,
         )
 
+    def get_explanation_prompt(self, example: Dict) -> str:
+        raise NotImplementedError(
+            "Explanation generation not implemented for this task"
+        )
+
     def add_text_spans(self, raw_output: dict, input: str) -> list:
         processed_output = []
         for entity_type in raw_output:
