@@ -246,8 +246,6 @@ class NamedEntityRecognitionTask(BaseTask):
         Returns:
             List[MetricResult]: list of metrics and corresponding values
         """
-        # Taking only as many ground truth as the number of LLM labels
-        gt_labels = gt_labels[: len(llm_labels)]
 
         gt_labels = [
             self.add_text_spans(
