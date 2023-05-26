@@ -83,8 +83,10 @@ class BaseTask(ABC):
         pass
 
     @abstractmethod
-    def generate_explanation(self, example: Dict) -> str:
-        return ""
+    def get_explanation_prompt(self, example: Dict) -> str:
+        raise NotImplementedError(
+            "Explanation generation not implemented for this task"
+        )
 
     # Should be called before the construct prompt for a specific input is called
     def set_dataset_config(self, dataset_config: DatasetConfig) -> None:
@@ -96,12 +98,6 @@ class BaseTask(ABC):
             return json.dumps(output)
         elif self.output_format == "csv":
             return f"{label}"
-
-    def get_explanation(self, example: Dict) -> str:
-        if example.get("explanation", ""):
-            return f"Let's think step by step.\n{example['explanation']}"
-        else:
-            return ""
 
     def parse_llm_response(
         self, response: Generation, curr_sample: Dict, prompt: str
