@@ -99,12 +99,6 @@ class BaseTask(ABC):
         elif self.output_format == "csv":
             return f"{label}"
 
-    def get_explanation(self, example: Dict) -> str:
-        if example.get("explanation", ""):
-            return f"Let's think step by step.\n{example['explanation']}"
-        else:
-            return ""
-
     def parse_llm_response(
         self, response: Generation, curr_sample: Dict, prompt: str
     ) -> LLMAnnotation:
