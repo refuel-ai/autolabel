@@ -230,7 +230,9 @@ class LabelingAgent:
                     )
                     llm_labels = [LLMAnnotation(**a.llm_annotation) for a in db_result]
                     if gt_labels:
-                        eval_result = self.task.eval(llm_labels, gt_labels)
+                        eval_result = self.task.eval(
+                            llm_labels, gt_labels[: len(llm_labels)]
+                        )
 
                         for m in eval_result:
                             if not isinstance(m.value, list) or len(m.value) < 1:
@@ -257,7 +259,7 @@ class LabelingAgent:
         eval_result = None
         # if true labels are provided, evaluate accuracy of predictions
         if gt_labels:
-            eval_result = self.task.eval(llm_labels, gt_labels)
+            eval_result = self.task.eval(llm_labels, gt_labels[: len(llm_labels)])
             # TODO: serialize and write to file
             for m in eval_result:
                 print(f"Metric: {m.name}: {m.value}")
