@@ -258,9 +258,17 @@ class LabelingAgent:
         # if true labels are provided, evaluate accuracy of predictions
         if gt_labels:
             eval_result = self.task.eval(llm_labels, gt_labels)
+            combined_metrics = {}
             # TODO: serialize and write to file
             for m in eval_result:
-                print(f"Metric: {m.name}: {m.value}")
+                if isinstance(m.value, list):
+                    combined_metrics[m.name] = m.value
+                else:
+                    print(f"Metric: {m.name}: {m.value}")
+            with pd.option_context(
+                "display.max_rows", None, "display.max_columns", None
+            ):  # more options can be specified also
+                print(pd.DataFrame(combined_metrics))
 
         # Write output to CSV
         output_df = df.copy()

@@ -305,14 +305,12 @@ class NamedEntityRecognitionTask(BaseTask):
             )
 
             for metric in curr_threshold_metrics:
-                eval_metrics_map[metric.metric_type].append(
-                    (metric.value, f"index={index}")
-                )
+                eval_metrics_map[metric.metric_type].append(metric.value)
 
             eval_metrics_map[Metric.COMPLETION_RATE].append(
-                (len(curr_llm_labels) / float(len(gt_labels)), f"index={index}")
+                len(curr_llm_labels) / float(len(gt_labels))
             )
-            eval_metrics_map[Metric.THRESHOLD].append((threshold, f"index={index}"))
+            eval_metrics_map[Metric.THRESHOLD].append(threshold)
         eval_metrics.extend(
             [
                 MetricResult(
