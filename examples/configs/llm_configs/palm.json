@@ -1,4 +1,4 @@
 {
     "provider_name": "google",
-    "model_name": "text-bison@001"
+    "model_name": "chat-bison@001"
 }

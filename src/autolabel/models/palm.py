@@ -14,7 +14,7 @@ class PaLMLLM(BaseModel):
     CHAT_ENGINE_MODELS = ["chat-bison@001"]
     NUM_TRIES = 5
 
-    DEFAULT_MODEL = "text-bison@001"
+    DEFAULT_MODEL = "chat-bison@001"
     DEFAULT_PARAMS = {
         "temperature": 0.2,
         "top_p": 0.8,
@@ -43,17 +43,17 @@ class PaLMLLM(BaseModel):
 
         # populate model params and initialize the LLM
         model_params = config.get_model_params()
+        self.model_params = {
+            **self.DEFAULT_PARAMS,
+            **model_params,
+        }
         if self._engine == "chat":
-            # Doesn't take in any params
-            self.llm = ChatVertexAI(model_name=self.model_name)
+            self.llm = ChatVertexAI(model_name=self.model_name, **self.model_params)
         else:
-            self.model_params = {
-                **self.DEFAULT_PARAMS,
-                **model_params,
-            }
-            self.llm = VertexAI(model_name=self.model_name)
+            self.llm = VertexAI(model_name=self.model_name, **self.model_params)
 
     def _label(self, prompts: List[str]) -> LLMResult:
+        print(prompts)
         if self._engine == "chat":
             # Need to convert list[prompts] -> list[messages]
             # Currently the entire prompt is stuck into the "human message"
