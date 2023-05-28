@@ -5,12 +5,12 @@ import pandas as pd
 
 from pydantic import BaseModel
 
-from autolabel.configs import ModelConfig, DatasetConfig, TaskConfig
+from autolabel.configs import AutolabelConfig
 from autolabel.utils import calculate_md5
 from langchain.schema import Generation
 
 
-class LLMProvider(str, Enum):
+class ModelProvider(str, Enum):
     OPENAI = "openai"
     ANTHROPIC = "anthropic"
     HUGGINGFACE_PIPELINE = "huggingface_pipeline"
@@ -22,6 +22,12 @@ class TaskType(str, Enum):
     NAMED_ENTITY_RECOGNITION = "named_entity_recognition"
     MULTI_CHOICE_QUESTION_ANSWERING = "multi_choice_question_answering"
     ENTITY_MATCHING = "entity_matching"
+
+
+class FewShotAlgorithm(str, Enum):
+    FIXED = "fixed"
+    SEMANTIC_SIMILARITY = "semantic_similarity"
+    MAX_MARGINAL_RELEVANCE = "max_marginal_relevance"
 
 
 class TaskStatus(str, Enum):
@@ -71,17 +77,17 @@ class Dataset(BaseModel):
     def create_id(
         self,
         dataset: Union[str, pd.DataFrame],
-        dataset_config: DatasetConfig,
+        config: AutolabelConfig,
         start_index: int,
         max_items: int,
     ):
         if isinstance(dataset, str):
             filehash = calculate_md5(
-                [open(dataset, "rb"), dataset_config.config, start_index, max_items]
+                [open(dataset, "rb"), config._dataset_config, start_index, max_items]
             )
         else:
             filehash = calculate_md5(
-                [dataset.to_csv(), dataset_config.config, start_index, max_items]
+                [dataset.to_csv(), config._dataset_config, start_index, max_items]
             )
         return filehash
 
@@ -89,7 +95,6 @@ class Dataset(BaseModel):
 class Task(BaseModel):
     id: str
     task_type: TaskType
-    provider: LLMProvider
     model_name: str
     config: str
 
@@ -97,8 +102,8 @@ class Task(BaseModel):
         orm_mode = True
 
     @classmethod
-    def create_id(self, task_config: TaskConfig, llm_config: ModelConfig):
-        filehash = calculate_md5([task_config.config, llm_config.config])
+    def create_id(self, config: AutolabelConfig):
+        filehash = calculate_md5(config.config)
         return filehash
 
 

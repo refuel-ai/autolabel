@@ -1,8 +1,9 @@
 import hashlib
 import json
 import regex
+from string import Formatter
 
-from typing import Any
+from typing import Any, List
 
 
 def extract_valid_json_substring(string: str) -> str:
@@ -42,3 +43,7 @@ def calculate_md5(input_data: Any) -> str:
     # Calculate MD5 hash of byte string
     md5_hash = hashlib.md5(input_str)
     return md5_hash.hexdigest()
+
+
+def get_format_variables(fmt_string: str) -> List:
+    return [i[1] for i in Formatter().parse(fmt_string) if i[1] is not None]

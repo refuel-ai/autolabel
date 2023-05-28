@@ -10,6 +10,7 @@ class BaseConfig:
             self.config = self._safe_load_json(config)
         else:
             self.config = config
+        self._validate()
 
     def _safe_load_json(self, json_file_path: str) -> Dict:
         try:
@@ -20,6 +21,9 @@ class BaseConfig:
                 f"JSON file: {json_file_path} not loaded successfully. Error: {repr(e)}"
             )
             return {}
+
+    def _validate(self) -> bool:
+        return True
 
     def get(self, key: str, default_value: Any = None) -> Any:
         return self.config.get(key, default_value)
@@ -32,3 +36,6 @@ class BaseConfig:
 
     def to_json(self) -> str:
         return json.dumps(self.config, sort_keys=True)
+
+    def __str__(self):
+        return self.to_json()

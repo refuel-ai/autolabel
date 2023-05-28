@@ -1,7 +1,7 @@
 from typing import List, Optional
 
 from anthropic import tokenizer
-from autolabel.configs import ModelConfig
+from autolabel.configs import AutolabelConfig
 from autolabel.models import BaseModel
 from autolabel.cache import BaseCache
 from langchain.chat_models import ChatAnthropic
@@ -27,12 +27,12 @@ class AnthropicLLM(BaseModel):
         "claude-instant-v1": (5.51 / 1000000),
     }
 
-    def __init__(self, config: ModelConfig, cache: BaseCache = None) -> None:
+    def __init__(self, config: AutolabelConfig, cache: BaseCache = None) -> None:
         super().__init__(config, cache)
         # populate model name
-        self.model_name = config.get_model_name() or self.DEFAULT_MODEL
+        self.model_name = config.model_name() or self.DEFAULT_MODEL
         # populate model params
-        model_params = config.get_model_params()
+        model_params = config.model_params()
         self.model_params = {**self.DEFAULT_PARAMS, **model_params}
         # initialize LLM
         self.llm = ChatAnthropic(model=self.model_name, **self.model_params)
