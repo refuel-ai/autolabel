@@ -122,7 +122,10 @@ class LabelingAgent:
             )
 
         # Check explanations are present in data if explanation_column is passed in
-        if self.config.explanation_column() and self.config.explanation_column() not in inputs.keys():
+        if (
+            self.config.explanation_column()
+            and self.config.explanation_column() not in inputs.keys()
+        ):
             raise ValueError(
                 f"Explanation column {self.config.explanation_column()} not found in dataset.\nMake sure that explanations were generated using labeler.generate_explanations(seed_file)."
             )
@@ -328,7 +331,10 @@ class LabelingAgent:
             )
 
         # Check explanations are present in data if explanation_column is passed in
-        if self.config.explanation_column() and self.config.explanation_column() not in inputs.keys():
+        if (
+            self.config.explanation_column()
+            and self.config.explanation_column() not in inputs.keys()
+        ):
             raise ValueError(
                 f"Explanation column {self.config.explanation_column()} not found in dataset.\nMake sure that explanations were generated using labeler.generate_explanations(seed_file)."
             )
