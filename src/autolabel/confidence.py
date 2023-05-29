@@ -33,7 +33,6 @@ class ConfidenceCalculator:
 
     def logprob_average(
         self,
-        empty_response: str,
         logprobs: list,
         **kwargs,
     ) -> float:
@@ -43,18 +42,12 @@ class ConfidenceCalculator:
         called "logprobs". This dictionary further must contain "top_logprobs"
         that is a list of JSONs mapping tokens to their logprobs
         """
-        empty_response_template = empty_response
         logprob_cumulative, count = 0, 0
         for token in logprobs:
             token_str = list(token.keys())[0]
             if token_str not in self.tokens_to_ignore:
-                if token_str.lower() not in empty_response_template:
-                    logprob_cumulative += token[token_str]
-                    count += 1
-                else:
-                    empty_response_template = empty_response_template.replace(
-                        token_str.lower(), "", 1
-                    )
+                logprob_cumulative += token[token_str]
+                count += 1
         return math.e ** (logprob_cumulative / count) if count > 0 else 0
 
     def p_true(self, model_generation: LLMAnnotation, prompt: str, **kwargs) -> float:

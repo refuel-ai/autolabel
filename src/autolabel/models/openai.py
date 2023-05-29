@@ -7,7 +7,7 @@ from langchain.schema import LLMResult, HumanMessage, Generation
 import tiktoken
 
 from autolabel.models import BaseModel
-from autolabel.configs import ModelConfig
+from autolabel.configs import AutolabelConfig
 from autolabel.cache import BaseCache
 
 
@@ -48,13 +48,13 @@ class OpenAILLM(BaseModel):
         else:
             return "completion"
 
-    def __init__(self, config: ModelConfig, cache: BaseCache = None) -> None:
+    def __init__(self, config: AutolabelConfig, cache: BaseCache = None) -> None:
         super().__init__(config, cache)
         # populate model name
-        self.model_name = config.get_model_name() or self.DEFAULT_MODEL
+        self.model_name = config.model_name() or self.DEFAULT_MODEL
 
         # populate model params and initialize the LLM
-        model_params = config.get_model_params()
+        model_params = config.model_params()
         if self._engine == "chat":
             self.model_params = {**self.DEFAULT_PARAMS_CHAT_ENGINE, **model_params}
             self.llm = ChatOpenAI(model_name=self.model_name, **self.model_params)

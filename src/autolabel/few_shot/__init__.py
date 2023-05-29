@@ -1,57 +1,59 @@
 from typing import Dict, List
 
-from autolabel.configs import TaskConfig
+from loguru import logger
+
 from langchain.embeddings import OpenAIEmbeddings
 from langchain.prompts.example_selector import (
     MaxMarginalRelevanceExampleSelector,
     SemanticSimilarityExampleSelector,
 )
 from langchain.prompts.example_selector.base import BaseExampleSelector
-from loguru import logger
 
 from .fixed_example_selector import FixedExampleSelector
 from .vector_store import VectorStoreWrapper
+from autolabel.configs import AutolabelConfig
+from autolabel.schema import FewShotAlgorithm
 
-STRATEGY_TO_IMPLEMENTATION: Dict[str, BaseExampleSelector] = {
-    "fixed_few_shot": FixedExampleSelector,
-    "semantic_similarity": SemanticSimilarityExampleSelector,
-    "max_marginal_relevance": MaxMarginalRelevanceExampleSelector,
+ALGORITHM_TO_IMPLEMENTATION: Dict[FewShotAlgorithm, BaseExampleSelector] = {
+    FewShotAlgorithm.FIXED: FixedExampleSelector,
+    FewShotAlgorithm.SEMANTIC_SIMILARITY: SemanticSimilarityExampleSelector,
+    FewShotAlgorithm.MAX_MARGINAL_RELEVANCE: MaxMarginalRelevanceExampleSelector,
 }
 
 
 class ExampleSelectorFactory:
-    DEFAULT_STRATEGY = "fixed_few_shot"
-    DEFAULT_NUM_EXAMPLES = 4
     CANDIDATE_EXAMPLES_FACTOR = 5
     MAX_CANDIDATE_EXAMPLES = 100
 
     @staticmethod
     def initialize_selector(
-        config: TaskConfig, examples: List[Dict]
+        config: AutolabelConfig, examples: List[Dict]
     ) -> BaseExampleSelector:
-        example_selector_config = config.get_example_selector()
-        strategy = example_selector_config.get(
-            "strategy", ExampleSelectorFactory.DEFAULT_STRATEGY
-        )
-        num_examples = example_selector_config.get(
-            "num_examples", ExampleSelectorFactory.DEFAULT_NUM_EXAMPLES
-        )
-
-        if strategy not in STRATEGY_TO_IMPLEMENTATION:
+        algorithm = config.few_shot_algorithm()
+        if not algorithm:
+            return None
+        try:
+            algorithm = FewShotAlgorithm(algorithm)
+        except ValueError as e:
             logger.error(
-                f"Example selection: {strategy} is not in the list of supported strategies: {list(STRATEGY_TO_IMPLEMENTATION.keys())}"
+                f"{algorithm} is not in the list of supported few-shot algorithms: \
+                {ALGORITHM_TO_IMPLEMENTATION.keys()}"
             )
             return None
 
+        num_examples = config.few_shot_num_examples()
         params = {"examples": examples, "k": num_examples}
-        if strategy in ["semantic_similarity", "max_marginal_relevance"]:
+        if algorithm in [
+            FewShotAlgorithm.SEMANTIC_SIMILARITY,
+            FewShotAlgorithm.MAX_MARGINAL_RELEVANCE,
+        ]:
             params["embeddings"] = OpenAIEmbeddings()
             params["vectorstore_cls"] = VectorStoreWrapper
-            if strategy == "max_marginal_relevance":
-                params["fetch_k"] = min(
-                    ExampleSelectorFactory.MAX_CANDIDATE_EXAMPLES,
-                    ExampleSelectorFactory.CANDIDATE_EXAMPLES_FACTOR * params["k"],
-                )
+        if algorithm == FewShotAlgorithm.MAX_MARGINAL_RELEVANCE:
+            params["fetch_k"] = min(
+                ExampleSelectorFactory.MAX_CANDIDATE_EXAMPLES,
+                ExampleSelectorFactory.CANDIDATE_EXAMPLES_FACTOR * params["k"],
+            )
 
-        example_cls = STRATEGY_TO_IMPLEMENTATION[strategy]
+        example_cls = ALGORITHM_TO_IMPLEMENTATION[algorithm]
         return example_cls.from_examples(**params)
