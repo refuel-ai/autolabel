@@ -5,68 +5,58 @@ from langchain.prompts.prompt import PromptTemplate
 from sklearn.metrics import accuracy_score
 
 from autolabel.confidence import ConfidenceCalculator
-from autolabel.configs import TaskConfig
+from autolabel.configs import AutolabelConfig
 from autolabel.schema import LLMAnnotation, Metric, MetricResult
 from autolabel.tasks import BaseTask
 from autolabel.tasks.utils import normalize_text, compute_f1
+from autolabel.utils import get_format_variables
 
 
 class MultiChoiceQATask(BaseTask):
-    JSON_OUTPUT_FORMAT_PROMPT = 'You will return the answer in JSON format with one key: {"label": "the correct label"}\n'
-    CSV_OUTPUT_FORMAT_PROMPT = 'You will return the answer in CSV format with one element: "the correct label"\n'
-
-    task_prompt = "Your job is to answer the following questions using the options provided for each question. Choose the best answer for the question.\n"
+    DEFAULT_OUTPUT_GUIDELINES = (
+        'You will return the answer one element: "the correct label"\n'
+    )
+    DEFAULT_TASK_GUIDELINES = "Your job is to answer the following questions using the options provided for each question. Choose the best answer for the question.\n"
     NULL_LABEL_TOKEN = "NO_LABEL"
 
-    explanation_generation_prompt = "{prefix_prompt}\n You will be given a question and an answer. Your job is to provide an explanation for why the answer is correct. Think step by step and generate an explanation. The last line of the explanation should be - So, the answer is <answer>.\n{labeled_example}\nExplanation: "
-    explanation_generation_prompt_variables = ["prefix_prompt", "labeled_example"]
+    GENERATE_EXPLANATION_PROMPT = "You are an expert at providing a well reasoned explanation for the output of a given task. \n\nBEGIN TASK DESCRIPTION\n{task_guidelines}\nEND TASK DESCRIPTION\nYou will be given an input example and the corresponding output. You will be given a question and an answer. Your job is to provide an explanation for why the answer is correct for the task above.\nThink step by step and generate an explanation. The last line of the explanation should be - So, the answer is <label>.\n{labeled_example}\nExplanation: "
 
-    def __init__(self, config: TaskConfig) -> None:
+    def __init__(self, config: AutolabelConfig) -> None:
         super().__init__(config)
 
-    def initialize_prompt_template(self) -> PromptTemplate:
-        pt = PromptTemplate(
-            input_variables=self.prompt_template_variables,
-            template=self.prompt_template,
-        )
-
-        return pt.partial(
-            prefix_prompt=self.prefix_prompt,
-            task_prompt=self.task_prompt,
-            output_prompt=self.output_prompt,
-        )
-
     def construct_prompt(self, input: Dict, examples: List[Dict]) -> str:
-        example_template = self.dataset_config.get_example_template()
-
-        formatted_examples = []
+        # prepare seed examples
+        example_template = self.config.example_template()
+        fmt_examples = []
         for eg in examples:
-            fmt_example = example_template.format_map(defaultdict(str, eg))
-            formatted_examples.append(fmt_example)
+            fmt_examples.append(example_template.format_map(defaultdict(str, eg)))
 
-        if len(examples):
-            seed_examples_prompt = self.seed_examples_prompt
-        else:
-            seed_examples_prompt = ""
-
-        # populate the label column with empty string for current example
-        label_column = self.dataset_config.get_label_column()
+        # populate the current example in the prompt
+        label_column = self.config.label_column()
         if label_column:
             input[label_column] = ""
 
         # populate the explanation column with empty string for current example
-        explanation_column = self.dataset_config.get_explanation_column()
+        explanation_column = self.config.explanation_column()
         if explanation_column:
             input[explanation_column] = ""
 
         # populate the current example in the prompt
         current_example = example_template.format_map(defaultdict(str, input))
 
-        return self.partial_prompt.format(
-            seed_examples_prompt=seed_examples_prompt,
-            seed_examples="\n".join(formatted_examples),
-            current_example=current_example,
-        )
+        if self._is_few_shot_mode():
+            return self.prompt_template.format(
+                task_guidelines=self.task_guidelines,
+                output_guidelines=self.output_guidelines,
+                seed_examples="\n\n".join(fmt_examples),
+                current_example=current_example,
+            )
+        else:
+            return self.prompt_template.format(
+                task_guidelines=self.task_guidelines,
+                output_guidelines=self.output_guidelines,
+                current_example=current_example,
+            )
 
     def auroc_score_labels(
         self, gt_labels, llm_labels
@@ -95,15 +85,16 @@ class MultiChoiceQATask(BaseTask):
         return answered_gt_labels, answered_llm_preds
 
     def get_explanation_prompt(self, example: Dict) -> str:
-        explanation_generation_prompt = PromptTemplate(
-            input_variables=self.explanation_generation_prompt_variables,
-            template=self.explanation_generation_prompt,
+        pt = PromptTemplate(
+            input_variables=get_format_variables(self.GENERATE_EXPLANATION_PROMPT),
+            template=self.GENERATE_EXPLANATION_PROMPT,
         )
-        example_template = self.dataset_config.get_example_template()
+        example_template = self.config.example_template()
         fmt_example = example_template.format_map(defaultdict(str, example))
 
-        return explanation_generation_prompt.format(
-            prefix_prompt=self.prefix_prompt, labeled_example=fmt_example
+        return pt.format(
+            task_guidelines=self.task_guidelines,
+            labeled_example=fmt_example,
         )
 
     def eval(
@@ -129,7 +120,7 @@ class MultiChoiceQATask(BaseTask):
         eval_metrics = []
         thresholds = [float("-inf")]
 
-        if self.config.get_compute_confidence():
+        if self.config.confidence():
             labels, confidences = self.auroc_score_labels(gt_labels, llm_labels)
             value, meaningful_thresholds = ConfidenceCalculator.compute_auroc(
                 labels, confidences

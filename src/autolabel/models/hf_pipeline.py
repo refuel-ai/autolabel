@@ -3,7 +3,7 @@ from langchain.llms import HuggingFacePipeline
 from langchain.schema import LLMResult, Generation
 
 from autolabel.models import BaseModel
-from autolabel.configs import ModelConfig
+from autolabel.configs import AutolabelConfig
 from autolabel.cache import BaseCache
 
 
@@ -11,7 +11,7 @@ class HFPipelineLLM(BaseModel):
     DEFAULT_MODEL = "google/flan-t5-xxl"
     DEFAULT_PARAMS = {"max_new_tokens": 1000, "temperature": 0.0, "quantize": 8}
 
-    def __init__(self, config: ModelConfig, cache: BaseCache = None) -> None:
+    def __init__(self, config: AutolabelConfig, cache: BaseCache = None) -> None:
         try:
             from transformers import AutoModelForSeq2SeqLM, AutoTokenizer, pipeline
         except ImportError:
@@ -29,10 +29,10 @@ class HFPipelineLLM(BaseModel):
             )
         super().__init__(config, cache)
         # populate model name
-        self.model_name = config.get_model_name() or self.DEFAULT_MODEL
+        self.model_name = config.model_name() or self.DEFAULT_MODEL
 
         # populate model params
-        model_params = config.get_model_params()
+        model_params = config.model_params()
         self.model_params = {**self.DEFAULT_PARAMS, **model_params}
 
         # initialize HF pipeline

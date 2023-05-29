@@ -5,100 +5,84 @@ from langchain.prompts.prompt import PromptTemplate
 from sklearn.metrics import accuracy_score
 
 from autolabel.confidence import ConfidenceCalculator
-from autolabel.configs import TaskConfig
+from autolabel.configs import AutolabelConfig
 from autolabel.schema import LLMAnnotation, Metric, MetricResult
 from autolabel.tasks import BaseTask
+from autolabel.utils import get_format_variables
 
 
 class ClassificationTask(BaseTask):
-    JSON_OUTPUT_FORMAT_PROMPT = 'You will return the answer in JSON format with one key: {"label": "the correct label"}'
-    CSV_OUTPUT_FORMAT_PROMPT = (
-        'You will return the answer in CSV format with one element: "the correct label"'
+
+    DEFAULT_OUTPUT_GUIDELINES = (
+        'You will return the answer with just one element: "the correct label"'
     )
+    DEFAULT_TASK_GUIDELINES = "Your job is to correctly label the provided input example into one of the following {num_labels} categories.\nCategories:\n{labels}\n"
 
-    task_prompt = "Your job is to correctly label the provided input example into one of the following {num_labels} categories.\nCategories:\n{labels_list}\n"
+    GENERATE_EXPLANATION_PROMPT = "You are an expert at providing a well reasoned explanation for the output of a given task. \n\nBEGIN TASK DESCRIPTION\n{task_guidelines}\nEND TASK DESCRIPTION\nYou will be given an input example and the corresponding output. Your job is to provide an explanation for why the output is correct for the task above.\nThink step by step and generate an explanation. The last line of the explanation should be - So, the answer is <label>.\n{labeled_example}\nExplanation: "
 
-    explanation_generation_prompt = "{prefix_prompt}\n You will be given an input example and the corresponding output. Your job is to provide an explanation for why the output is correct. The label is one of the following {num_labels} categories.\nCategories:\n{labels_list}\n Think step by step and generate an explanation. The last line of the explanation should be - So, the answer is <label>.\n{labeled_example}\nExplanation: "
-    explanation_generation_prompt_variables = [
-        "prefix_prompt",
-        "num_labels",
-        "labels_list",
-        "labeled_example",
-    ]
-
-    def __init__(self, config: TaskConfig) -> None:
+    def __init__(self, config: AutolabelConfig) -> None:
         super().__init__(config)
 
-    def initialize_prompt_template(self) -> PromptTemplate:
-        # provide context about the prediction task
-        pt = PromptTemplate(
-            input_variables=self.prompt_template_variables,
-            template=self.prompt_template,
-        )
-
-        return pt.partial(
-            prefix_prompt=self.prefix_prompt,
-            output_prompt=self.output_prompt,
-        )
-
     def construct_prompt(self, input: Dict, examples: List) -> str:
-        # Create the task prompt based on the dataset config
-        labels_list = self.dataset_config.get_labels_list()
+        # prepare task guideline
+        labels_list = self.config.labels_list()
         num_labels = len(labels_list)
-        task_prompt = self.task_prompt.format(
-            num_labels=num_labels, labels_list="\n".join(labels_list)
+        fmt_task_guidelines = self.task_guidelines.format(
+            num_labels=num_labels, labels="\n".join(labels_list)
         )
 
-        # populate seed examples in the prompt
-        example_template = self.dataset_config.get_example_template()
-
-        # populate seed examples in the prompt
-        formatted_examples = []
+        # prepare seed examples
+        example_template = self.config.example_template()
+        fmt_examples = []
         for eg in examples:
-            fmt_example = example_template.format_map(defaultdict(str, eg))
-            formatted_examples.append(fmt_example)
+            fmt_examples.append(example_template.format_map(defaultdict(str, eg)))
 
-        if len(examples):
-            seed_examples_prompt = self.seed_examples_prompt
-        else:
-            seed_examples_prompt = ""
-
-        # populate the label column with empty string for current example
-        label_column = self.dataset_config.get_label_column()
+        # populate the current example in the prompt
+        label_column = self.config.label_column()
         if label_column:
             input[label_column] = ""
 
         # populate the explanation column with empty string for current example
-        explanation_column = self.dataset_config.get_explanation_column()
+        explanation_column = self.config.explanation_column()
         if explanation_column:
             input[explanation_column] = ""
 
         # populate the current example in the prompt
         current_example = example_template.format_map(defaultdict(str, input))
 
-        return self.partial_prompt.format(
-            seed_examples_prompt=seed_examples_prompt,
-            seed_examples="\n\n".join(formatted_examples),
-            current_example=current_example,
-            task_prompt=task_prompt,
-        )
+        if self._is_few_shot_mode():
+            return self.prompt_template.format(
+                task_guidelines=fmt_task_guidelines,
+                output_guidelines=self.output_guidelines,
+                seed_examples="\n\n".join(fmt_examples),
+                current_example=current_example,
+            )
+        else:
+            return self.prompt_template.format(
+                task_guidelines=fmt_task_guidelines,
+                output_guidelines=self.output_guidelines,
+                current_example=current_example,
+            )
 
     def get_explanation_prompt(self, example: Dict) -> str:
         pt = PromptTemplate(
-            input_variables=self.explanation_generation_prompt_variables,
-            template=self.explanation_generation_prompt,
+            input_variables=get_format_variables(self.GENERATE_EXPLANATION_PROMPT),
+            template=self.GENERATE_EXPLANATION_PROMPT,
         )
 
-        labels_list = self.dataset_config.get_labels_list()
+        # prepare task guideline
+        labels_list = self.config.labels_list()
         num_labels = len(labels_list)
+        fmt_task_guidelines = self.task_guidelines.format(
+            num_labels=num_labels, labels="\n".join(labels_list)
+        )
 
-        example_template = self.dataset_config.get_example_template()
+        # prepare labeled example
+        example_template = self.config.example_template()
         fmt_example = example_template.format_map(defaultdict(str, example))
 
         return pt.format(
-            prefix_prompt=self.prefix_prompt,
-            num_labels=num_labels,
-            labels_list="\n".join(labels_list),
+            task_guidelines=fmt_task_guidelines,
             labeled_example=fmt_example,
         )
 
@@ -147,7 +131,7 @@ class ClassificationTask(BaseTask):
         eval_metrics = []
         thresholds = [float("-inf")]
 
-        if self.config.get_compute_confidence():
+        if self.config.confidence():
             labels, confidences = self.auroc_score_labels(gt_labels, llm_labels)
             value, meaningful_thresholds = ConfidenceCalculator.compute_auroc(
                 labels, confidences

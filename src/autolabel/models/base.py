@@ -5,16 +5,16 @@ from typing import List, Optional, Dict, Tuple
 
 from langchain.schema import LLMResult
 
-from autolabel.configs import ModelConfig
+from autolabel.configs import AutolabelConfig
 from autolabel.schema import CacheEntry
 from autolabel.cache import BaseCache
 
 
 class BaseModel(ABC):
-    def __init__(self, config: ModelConfig, cache: BaseCache) -> None:
+    def __init__(self, config: AutolabelConfig, cache: BaseCache) -> None:
         self.config = config
         self.cache = cache
-        self.model_params = config.get_model_params()
+        self.model_params = config.model_params()
         # Specific classes that implement this interface should run initialization steps here
         # E.g. initializing the LLM model with required parameters from ModelConfig
 
