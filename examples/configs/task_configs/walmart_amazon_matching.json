@@ -1,9 +1,0 @@
-{
-    "project_name": "Entity Matching for Walmart-Amazon",
-    "task_type": "entity_matching",
-    "prefix_prompt": "You are an expert at identifying duplicate products.",
-    "compute_confidence": true,
-    "output_format": "csv",
-    "json_empty_response": "{\"label\": \"\"}",
-    "empty_response": ""
-}

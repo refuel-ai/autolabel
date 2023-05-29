@@ -1,9 +1,0 @@
-{
-    "project_name": "BankingClassification",
-    "task_type": "classification",
-    "prefix_prompt": "You are an expert at understanding twitter complaints.",
-    "compute_confidence": true,
-    "output_format": "csv",
-    "json_empty_response": "{\"label\": \"\"}",
-    "csv_empty_response": ""
-}
