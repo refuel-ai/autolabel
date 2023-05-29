@@ -4,7 +4,7 @@ _Notes: (1) Autolabel is in under active development. Expect some sharp edges an
 
 <div align="center" style="width:800px">
 
-[![lint](https://github.com/refuel-ai/refuel-oracle/actions/workflows/black.yaml/badge.svg)](https://github.com/refuel-ai/refuel-oracle/actions/workflows/black.yaml/badge.svg) &nbsp;&nbsp; [![docs](https://github.com/refuel-ai/refuel-oracle/actions/workflows/docs.yaml/badge.svg)](https://docs.refuel.ai/) &nbsp;&nbsp; [![Discord](https://badgen.net/badge/icon/discord?icon=discord&label)](https://discord.gg/BDwamgzFxm) &nbsp;&nbsp; [![Twitter](https://badgen.net/badge/icon/twitter?icon=twitter&label)](https://twitter.com/RefuelAI) &nbsp;&nbsp; [![License: MIT](https://badgen.net/badge/license/MIT/blue)](https://opensource.org/licenses/MIT)
+[![lint](https://github.com/refuel-ai/refuel-oracle/actions/workflows/black.yaml/badge.svg)](https://github.com/refuel-ai/refuel-oracle/actions/workflows/black.yaml/badge.svg) [![docs](https://github.com/refuel-ai/refuel-oracle/actions/workflows/docs.yaml/badge.svg)](https://docs.refuel.ai/) [![Discord](https://badgen.net/badge/icon/discord?icon=discord&label)](https://discord.gg/BDwamgzFxm) [![Twitter](https://badgen.net/badge/icon/twitter?icon=twitter&label)](https://twitter.com/RefuelAI) [![License: MIT](https://badgen.net/badge/license/MIT/blue)](https://opensource.org/licenses/MIT)
 </div>
 
 
@@ -34,17 +34,61 @@ Autolabel is a Python package that lets users leverage Large Language Models (LL
 
 ## 🚀 Getting started
 
-Conceptually, a labeling task has three components:
-1. Labeling task guidelines
+A labeling task has three components:
+1. Task guidelines
 2. LLM that we will use for labeling
 3. Dataset that we want to get labeled
 
-Each of these components is specified in the library with a config. Example configs for each of these components are shared in `examples/configs` directory. 
+These components are supplied to the library via configs. Example configs for each of these components are shared in `examples/configs` directory. 
 
 Let's imagine we are building an ML model to flag toxic comments on an online social media platform. We have a dataset of comments that we'd like to get labeled first in order to train our downstream model. For this case, here's what the example dataset and configs will look like:
-1. Labeling task config: `examples/configs/task_configs/civil_comments_classification.json`
-2. LLM config: `examples/configs/llm_configs/anthropic.json`
-3. Dataset config: `examples/configs/dataset_configs/civil_comments.json` (corresponding dataset CSV file is in `data/civil_comments_test.csv`)
+
+Dataset is a CSV file with two columns: 
+1. example (this is the input text)
+2. label (this is the ground truth label - it is an optional column and if available the library will evaluate the LLM labels' agreement with the ground truth labels)
+
+Config:
+
+```python
+{
+    "task_name": "ToxicCommentClassification",
+    "task_type": "classification",
+    "dataset": {
+        "label_column": "label",
+        "delimiter": ","
+    },
+    "model": {
+        "provider": "openai",
+        "name": "gpt-3.5-turbo",
+    },
+    "prompt": {
+        "task_guidelines": "You are an expert at identifying toxic comments and understanding if a comment is sexually explicit, obscene, toxic, insults a person, demographic or race.\nYour job is to correctly label the provided input example into one of the following categories.\nCategories:\n{labels}",
+        "labels": [
+            "toxic",
+            "not toxic"
+        ],
+        "output_guidelines": "You will return the answer in a format that contains just the label and nothing else.",
+        "few_shot_examples": [
+            {
+                "example": "It's ridiculous that these guys are being called 'protesters'. Being armed is a threat of violence, which makes them terrorists.",
+                "label": "toxic"
+            },
+            {
+                "example": "This is so cool. It's like, 'would you want your mother to read this??' Really great idea, well done!",
+                "label": "not toxic"
+            },
+            {
+                "example": "This bitch is nuts. Who would read a book by a woman",
+                "label": "toxic"
+            }
+        ],
+        "few_shot_selection": "fixed",
+        "few_shot_num": 3,
+        "example_template": "Input: {example}\nOutput: {label}"
+    }
+}
+```
+
 
 First let's initialize the labeling agent and pass it the task and llm config:
 
@@ -52,19 +96,14 @@ First let's initialize the labeling agent and pass it the task and llm config:
 
 from autolabel import LabelingAgent
 
-agent = LabelingAgent(
-    'examples/configs/task_configs/civil_comments_classification.json',
-    'examples/configs/llm_configs/anthropic.json'
-)
+agent = LabelingAgent(config='examples/configs/civil_comments.json')
 ```
 
 Now, let's pass the dataset that we'd like to label, and see an example prompt that will be sent to the LLM: 
+
 ```python
 
-agent.plan(
-    'data/civil_comments_test.csv',
-    'examples/configs/dataset_configs/civil_comments.json'
-)
+agent.plan(dataset='../data/civil_comments_test.csv')
 ```
 
 This prints:
@@ -104,20 +143,14 @@ Output:
 Finally, we can run the labeling on a subset or entirety of the dataset:
 
 ```python
-labels, output_df, metrics = agent.run(
-    'data/civil_comments_test.csv',
-    'examples/configs/dataset_configs/civil_comments.json',
-    max_items=100
-)
+labels, output_df, metrics = agent.run('../data/civil_comments_test.csv', max_items=100)
 ```
 
 In addition to the dataframe, this will also output a file with the labels per row in `data/civil_comments_test_labeled.csv`
 
 ## End-to-end Examples
 
-See:
-1. `examples/example_banking.ipynb` 
-2. `examples/example_run.ipynb` 
+See: `examples/example_run.ipynb` 
 
 ## 🛠️ Contributing
 
