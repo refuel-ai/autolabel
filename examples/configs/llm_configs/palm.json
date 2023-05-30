@@ -1,4 +1,7 @@
 {
     "provider_name": "google",
-    "model_name": "chat-bison@001"
+    "model_name": "text-bison@001",
+    "model_params": {
+        "max_output_tokens": 256
+    }
 }
