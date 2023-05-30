@@ -140,7 +140,6 @@ data/
 
 # Data files
 *.pkl
-*.png
 
 # DB Files
 *.db
