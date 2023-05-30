@@ -50,29 +50,11 @@ There are 3 modules required by every labeling run -
 
 All 3 of these modules can be instantiated with configs. A config can be passed in as a dictionary or as the path to a json file. The config consists of different keys and the following section will list out each key along with the property of the module that it affects.
 
-### TaskConfig
+### Config
 
-The TaskConfig class is used to parse, validate, and store information about the annotation task being performed (i.e. Classification, Entity Recognition, Question Answering).
+The Config class is used to parse, validate, and store information about the labeling task being performed.
 
-::: src.autolabel.configs.task_config.TaskConfig
-    rendering:
-        show_root_full_path: no
-        heading_level: 4
-
-### ModelConfig
-
-The LLMConfig is used to load the dataset and the seed examples correctly. It defines the strategy for reading the input and passing to different modules.
-
-::: src.autolabel.configs.model_config.ModelConfig
-    rendering:
-        show_root_full_path: no
-        heading_level: 4
-
-### DatasetConfig
-
-The DatasetConfig is used to load the dataset and the seed examples correctly. It defines the strategy for reading the input and passing to different modules.
-
-::: src.autolabel.configs.dataset_config.DatasetConfig
+::: src.autolabel.configs.config.AutolabelConfig
     rendering:
         show_root_full_path: no
         heading_level: 4
