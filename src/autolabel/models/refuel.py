@@ -4,7 +4,7 @@ from langchain.schema import LLMResult, Generation
 from loguru import logger
 
 from autolabel.models import BaseModel
-from autolabel.configs import ModelConfig
+from autolabel.configs import AutolabelConfig
 from autolabel.cache import BaseCache
 
 import requests
@@ -18,12 +18,12 @@ from tenacity import (
 
 
 class RefuelLLM(BaseModel):
-    def __init__(self, config: ModelConfig, cache: BaseCache = None) -> None:
+    def __init__(self, config: AutolabelConfig, cache: BaseCache = None) -> None:
         super().__init__(config, cache)
         # populate model name
         # This is unused today, but in the future could
         # be used to decide which refuel model is queried
-        self.model_name = config.get_model_name()
+        self.model_name = config.model_name()
         self.model_params = {}
 
         # initialize runtime

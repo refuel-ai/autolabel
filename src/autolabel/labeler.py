@@ -1,7 +1,14 @@
 from loguru import logger
-from rich.progress import Progress, track, TextColumn
+from rich.progress import (
+    track,
+    Progress,
+    BarColumn,
+    MofNCompleteColumn,
+    TimeElapsedColumn,
+    TimeRemainingColumn,
+    TextColumn,
+)
 from typing import Tuple, List, Dict, Union, Optional
-import langchain
 import numpy as np
 import pandas as pd
 import sys
@@ -15,7 +22,7 @@ from autolabel.tasks import TaskFactory
 from autolabel.database import StateManager
 from autolabel.schema import TaskRun, TaskStatus
 from autolabel.data_models import TaskRunModel, AnnotationModel
-from autolabel.configs import ModelConfig, DatasetConfig, TaskConfig
+from autolabel.configs import AutolabelConfig
 
 
 class LabelingAgent:
@@ -24,32 +31,34 @@ class LabelingAgent:
 
     def __init__(
         self,
-        task_config: Union[str, Dict],
-        llm_config: Optional[Union[str, Dict]] = None,
+        config: Union[str, Dict],
         log_level: Optional[str] = "INFO",
         cache: Optional[bool] = True,
     ) -> None:
         self.db = StateManager()
         logger.remove()
         logger.add(sys.stdout, level=log_level)
-
         self.cache = SQLAlchemyCache() if cache else None
 
-        self.set_task_config(task_config)
-        self.set_llm_config(llm_config)
+        self.config = AutolabelConfig(config)
+        self.task = TaskFactory.from_config(self.config)
+        self.llm: BaseModel = ModelFactory.from_config(self.config, cache=self.cache)
+        self.confidence = ConfidenceCalculator(
+            score_type="logprob_average", llm=self.llm
+        )
 
     # TODO: all this will move to a separate input parser class
     # this is a temporary solution to quickly add this feature and unblock expts
     def _read_csv(
         self,
         csv_file: str,
-        dataset_config: DatasetConfig,
+        config: AutolabelConfig,
         max_items: int = None,
         start_index: int = 0,
     ) -> Tuple[pd.DataFrame, List[Dict], List]:
         logger.debug(f"reading the csv from: {start_index}")
-        delimiter = dataset_config.get_delimiter()
-        label_column = dataset_config.get_label_column()
+        delimiter = config.delimiter()
+        label_column = config.label_column()
 
         dat = pd.read_csv(csv_file, sep=delimiter, dtype="str")[start_index:]
         if max_items and max_items > 0:
@@ -63,11 +72,11 @@ class LabelingAgent:
     def _read_dataframe(
         self,
         df: pd.DataFrame,
-        dataset_config: DatasetConfig,
+        config: AutolabelConfig,
         max_items: int = None,
         start_index: int = 0,
     ) -> Tuple[pd.DataFrame, List[Dict], List]:
-        label_column = dataset_config.get_label_column()
+        label_column = config.label_column()
 
         dat = df[start_index:]
         if max_items and max_items > 0:
@@ -81,7 +90,6 @@ class LabelingAgent:
     def run(
         self,
         dataset: Union[str, pd.DataFrame],
-        dataset_config: Union[str, Dict],
         max_items: Optional[int] = None,
         output_name: Optional[str] = None,
         start_index: Optional[int] = 0,
@@ -95,24 +103,33 @@ class LabelingAgent:
             output_name: custom name of output CSV file
             start_index: skips annotating [0, start_index)
         """
-        dataset_config = self.create_dataset_config(dataset_config)
-        self.task.set_dataset_config(dataset_config)
+
         self.db.initialize()
         self.dataset = self.db.initialize_dataset(
-            dataset, dataset_config, start_index, max_items
+            dataset, self.config, start_index, max_items
         )
-        self.task_object = self.db.initialize_task(self.task_config, self.llm_config)
+        self.task_object = self.db.initialize_task(self.config)
         csv_file_name = (
             output_name if output_name else f"{dataset.replace('.csv','')}_labeled.csv"
         )
         if isinstance(dataset, str):
             df, inputs, gt_labels = self._read_csv(
-                dataset, dataset_config, max_items, start_index
+                dataset, self.config, max_items, start_index
             )
         elif isinstance(dataset, pd.DataFrame):
             df, inputs, gt_labels = self._read_dataframe(
-                dataset, dataset_config, max_items, start_index
+                dataset, self.config, max_items, start_index
             )
+
+        # Check explanations are present in data if explanation_column is passed in
+        if (
+            self.config.explanation_column()
+            and self.config.explanation_column() not in inputs.keys()
+        ):
+            raise ValueError(
+                f"Explanation column {self.config.explanation_column()} not found in dataset.\nMake sure that explanations were generated using labeler.generate_explanations(seed_file)."
+            )
+
         # Initialize task run and check if it already exists
         self.task_run = self.db.get_task_run(self.task_object.id, self.dataset.id)
         # Resume/Delete the task if it already exists or create a new task run
@@ -127,22 +144,14 @@ class LabelingAgent:
             )
 
         # Get the seed examples from the dataset config
-        seed_examples = dataset_config.get_seed_examples()
+        seed_examples = self.config.few_shot_example_set()
 
         # If this dataset config is a string, read the corrresponding csv file
         if isinstance(seed_examples, str):
-            _, seed_examples, _ = self._read_csv(seed_examples, dataset_config)
-
-        if self.task_config.use_chain_of_thought():
-            out_file = None
-            if isinstance(dataset_config.get_seed_examples(), str):
-                out_file = dataset_config.get_seed_examples().replace(
-                    ".csv", "_explanations.csv"
-                )
-            seed_examples = self.generate_explanations(seed_examples, out_file)
+            _, seed_examples, _ = self._read_csv(seed_examples, self.config)
 
         self.example_selector = ExampleSelectorFactory.initialize_selector(
-            self.task_config, seed_examples
+            self.config, seed_examples
         )
 
         num_failures = 0
@@ -151,16 +160,25 @@ class LabelingAgent:
         postfix_dict = {}
 
         with Progress(
-            *Progress.get_default_columns(), TextColumn("{task.fields[postfix]}")
+            BarColumn(),
+            MofNCompleteColumn(),
+            TimeElapsedColumn(),
+            TimeRemainingColumn(),
+            TextColumn("{task.fields[postfix]}"),
         ) as progress:
             indices = range(current_index, len(inputs), self.CHUNK_SIZE)
-            index_track = progress.add_task("", total=len(inputs), postfix="")
+            index_track = progress.add_task(
+                "Generating Responses...", total=len(inputs), postfix=""
+            )
             for current_index in indices:
                 chunk = inputs[current_index : current_index + self.CHUNK_SIZE]
                 final_prompts = []
                 for i, input_i in enumerate(chunk):
                     # Fetch few-shot seed examples
-                    examples = self.example_selector.select_examples(input_i)
+                    if self.example_selector:
+                        examples = self.example_selector.select_examples(input_i)
+                    else:
+                        examples = []
                     # Construct Prompt to pass to LLM
                     final_prompt = self.task.construct_prompt(input_i, examples)
                     final_prompts.append(final_prompt)
@@ -200,12 +218,11 @@ class LabelingAgent:
                         response_item = response.generations[i]
                         annotations = []
                         for generation in response_item:
-                            if self.task_config.get_compute_confidence():
+                            if self.config.confidence():
                                 annotation = self.confidence.calculate(
                                     model_generation=self.task.parse_llm_response(
                                         generation, chunk[i], final_prompts[i]
                                     ),
-                                    empty_response=self.task_config.get_empty_response(),
                                     prompt=final_prompts[i],
                                 )
                             else:
@@ -230,7 +247,9 @@ class LabelingAgent:
                     )
                     llm_labels = [LLMAnnotation(**a.llm_annotation) for a in db_result]
                     if gt_labels:
-                        eval_result = self.task.eval(llm_labels, gt_labels)
+                        eval_result = self.task.eval(
+                            llm_labels, gt_labels[: len(llm_labels)]
+                        )
 
                         for m in eval_result:
                             if not isinstance(m.value, list) or len(m.value) < 1:
@@ -242,7 +261,7 @@ class LabelingAgent:
 
                 progress.update(
                     index_track,
-                    completed=current_index + self.CHUNK_SIZE,
+                    advance=self.CHUNK_SIZE,
                     postfix=", ".join([f"{k}={v}" for k, v in postfix_dict.items()]),
                 )
                 # Update task run state
@@ -257,20 +276,20 @@ class LabelingAgent:
         eval_result = None
         # if true labels are provided, evaluate accuracy of predictions
         if gt_labels:
-            eval_result = self.task.eval(llm_labels, gt_labels)
+            eval_result = self.task.eval(llm_labels, gt_labels[: len(llm_labels)])
             # TODO: serialize and write to file
             for m in eval_result:
                 print(f"Metric: {m.name}: {m.value}")
 
         # Write output to CSV
         output_df = df.copy()
-        output_df[self.task_config.get_task_name() + "_llm_labeled_successfully"] = [
+        output_df[self.config.task_name() + "_llm_labeled_successfully"] = [
             l.successfully_labeled for l in llm_labels
         ]
-        output_df[self.task_config.get_task_name() + "_llm_label"] = [
+        output_df[self.config.task_name() + "_llm_label"] = [
             l.label for l in llm_labels
         ]
-        if self.task_config.get_compute_confidence():
+        if self.config.confidence():
             output_df["llm_confidence"] = [l.confidence_score for l in llm_labels]
 
         # Only save to csv if output_name is provided or dataset is a string
@@ -280,14 +299,14 @@ class LabelingAgent:
             csv_file_name = f"{dataset.replace('.csv','')}_labeled.csv"
             output_df.to_csv(
                 csv_file_name,
-                sep=dataset_config.get_delimiter(),
+                sep=self.config.delimiter(),
                 header=True,
                 index=False,
             )
 
         print(f"Total number of failures: {num_failures}")
         return (
-            output_df[self.task_config.get_task_name() + "_llm_label"],
+            output_df[self.config.task_name() + "_llm_label"],
             output_df,
             eval_result,
         )
@@ -295,7 +314,6 @@ class LabelingAgent:
     def plan(
         self,
         dataset: Union[str, pd.DataFrame],
-        dataset_config: Union[str, Dict],
         max_items: int = None,
         start_index: int = 0,
     ):
@@ -304,38 +322,35 @@ class LabelingAgent:
         Args:
             dataset: path to a CSV dataset
         """
-        dataset_config = self.create_dataset_config(dataset_config)
-        self.task.set_dataset_config(dataset_config)
 
         if isinstance(dataset, str):
-            _, inputs, _ = self._read_csv(
-                dataset, dataset_config, max_items, start_index
-            )
+            _, inputs, _ = self._read_csv(dataset, self.config, max_items, start_index)
         elif isinstance(dataset, pd.DataFrame):
             _, inputs, _ = self._read_dataframe(
-                dataset, dataset_config, max_items, start_index
+                dataset, self.config, max_items, start_index
+            )
+
+        # Check explanations are present in data if explanation_column is passed in
+        if (
+            self.config.explanation_column()
+            and self.config.explanation_column() not in inputs.keys()
+        ):
+            raise ValueError(
+                f"Explanation column {self.config.explanation_column()} not found in dataset.\nMake sure that explanations were generated using labeler.generate_explanations(seed_file)."
             )
 
         prompt_list = []
         total_cost = 0
 
         # Get the seed examples from the dataset config
-        seed_examples = dataset_config.get_seed_examples()
+        seed_examples = self.config.few_shot_example_set()
 
         # If this dataset config is a string, read the corrresponding csv file
         if isinstance(seed_examples, str):
-            _, seed_examples, _ = self._read_csv(seed_examples, dataset_config)
-
-        if self.task_config.use_chain_of_thought():
-            out_file = None
-            if isinstance(dataset_config.get_seed_examples(), str):
-                out_file = dataset_config.get_seed_examples().replace(
-                    ".csv", "_explanations.csv"
-                )
-            seed_examples = self.generate_explanations(seed_examples, out_file)
+            _, seed_examples, _ = self._read_csv(seed_examples, self.config)
 
         self.example_selector = ExampleSelectorFactory.initialize_selector(
-            self.task_config, seed_examples
+            self.config, seed_examples
         )
 
         input_limit = min(len(inputs), 100)
@@ -345,7 +360,10 @@ class LabelingAgent:
         ):
             for i, input_i in enumerate(chunk):
                 # TODO: Check if this needs to use the example selector
-                examples = self.example_selector.select_examples(input_i)
+                if self.example_selector:
+                    examples = self.example_selector.select_examples(input_i)
+                else:
+                    examples = []
                 final_prompt = self.task.construct_prompt(input_i, examples)
                 prompt_list.append(final_prompt)
 
@@ -359,23 +377,6 @@ class LabelingAgent:
         print(f"Average cost per example: ${round(total_cost/len(inputs), 5)}")
         print(f"\n\nA prompt example:\n\n{prompt_list[0]}")
         return
-
-    def set_task_config(self, task_config: Union[str, Dict]):
-        self.task_config = TaskConfig(task_config)
-        self.task = TaskFactory.from_config(self.task_config)
-
-    def set_llm_config(self, llm_config: Union[str, Dict]):
-        self.llm_config = ModelConfig(llm_config)
-        self.llm: BaseModel = ModelFactory.from_config(
-            self.llm_config, cache=self.cache
-        )
-        self.confidence = ConfidenceCalculator(
-            score_type="logprob_average", llm=self.llm
-        )
-
-    def create_dataset_config(self, dataset_config: Union[str, Dict]):
-        dataset_config = DatasetConfig(dataset_config)
-        return dataset_config
 
     def handle_existing_task_run(
         self, task_run: TaskRun, csv_file_name: str, gt_labels: List[str] = None
@@ -442,27 +443,40 @@ class LabelingAgent:
         return annotation_list[counts[max_label][1]]
 
     def generate_explanations(
-        self, seed_examples: List[Dict], save_file: str
+        self,
+        seed_examples: Union[str, List[Dict]],
     ) -> List[Dict]:
-        generate_explanations = False
-        for seed_example in track(seed_examples, description=""):
-            if not seed_example.get("explanation", ""):
-                if not generate_explanations:
-                    logger.info(
-                        "Chain of thought requires explanations for seed examples. Generating explanations for seed examples."
-                    )
-                    generate_explanations = True
 
-                explanation_prompt = self.task.generate_explanation(seed_example)
+        out_file = None
+        if isinstance(seed_examples, str):
+            out_file = seed_examples
+            _, seed_examples, _ = self._read_csv(seed_examples, self.config)
+
+        explanation_column = self.config.explanation_column()
+        if not explanation_column:
+            raise ValueError(
+                "The explanation column needs to be specified in the dataset config."
+            )
+
+        with Progress(
+            TextColumn("[progress.description]{task.description}"),
+            BarColumn(),
+            MofNCompleteColumn(),
+            TimeElapsedColumn(),
+            TimeRemainingColumn(),
+        ) as progress:
+            task = progress.add_task(
+                "Generating explanations...", total=len(seed_examples)
+            )
+            for seed_example in seed_examples:
+                explanation_prompt = self.task.get_explanation_prompt(seed_example)
                 explanation, _ = self.llm.label([explanation_prompt])
                 explanation = explanation.generations[0][0].text
                 seed_example["explanation"] = str(explanation) if explanation else ""
+                progress.advance(task)
 
-        if generate_explanations and save_file:
-            logger.info(
-                "Generated explanations for seed examples. Saving explanations to the seed file."
-            )
+        if out_file:
             df = pd.DataFrame.from_records(seed_examples)
-            df.to_csv(save_file, index=False)
+            df.to_csv(out_file, index=False)
 
         return seed_examples

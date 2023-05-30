@@ -7,7 +7,7 @@ import pandas as pd
 from autolabel.data_models import Base
 from autolabel.data_models import DatasetModel, TaskModel, TaskRunModel
 from autolabel.schema import Dataset, Task, TaskRun, TaskStatus
-from autolabel.configs import ModelConfig, DatasetConfig, TaskConfig
+from autolabel.configs import AutolabelConfig
 
 from .engine import create_db_engine
 
@@ -25,12 +25,13 @@ class StateManager:
     def initialize_dataset(
         self,
         dataset: Union[str, pd.DataFrame],
-        dataset_config: DatasetConfig,
+        config: AutolabelConfig,
         start_index: int,
         max_items: Optional[int],
     ):
         # TODO: Check if this works for max_items = None
-        dataset_id = Dataset.create_id(dataset, dataset_config, start_index, max_items)
+
+        dataset_id = Dataset.create_id(dataset, config, start_index, max_items)
         dataset_orm = DatasetModel.get_by_id(self.session, dataset_id)
         if dataset_orm:
             return Dataset.from_orm(dataset_orm)
@@ -43,18 +44,18 @@ class StateManager:
         )
         return Dataset.from_orm(DatasetModel.create(self.session, dataset))
 
-    def initialize_task(self, task_config: TaskConfig, llm_config: ModelConfig):
-        task_id = Task.create_id(task_config, llm_config)
+    def initialize_task(self, config: AutolabelConfig):
+        task_id = Task.create_id(config)
         task_orm = TaskModel.get_by_id(self.session, task_id)
         if task_orm:
             return Task.from_orm(task_orm)
 
         task = Task(
             id=task_id,
-            config=task_config.to_json(),
-            task_type=task_config.get_task_type(),
-            provider=llm_config.get_provider(),
-            model_name=llm_config.get_model_name(),
+            config=config.to_json(),
+            task_type=config.task_type(),
+            provider=config.provider(),
+            model_name=config.model_name(),
         )
         return Task.from_orm(TaskModel.create(self.session, task))
 

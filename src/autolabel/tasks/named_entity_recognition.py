@@ -2,71 +2,103 @@ import json
 import re
 from collections import defaultdict
 from typing import Dict, List, Tuple
+from copy import deepcopy
 
-from langchain.prompts.prompt import PromptTemplate
 from langchain.schema import Generation
 from loguru import logger
 from nervaluate import Evaluator
 from autolabel.confidence import ConfidenceCalculator
-from autolabel.configs import TaskConfig
+from autolabel.configs import AutolabelConfig
 from autolabel.schema import LLMAnnotation, Metric, MetricResult
 from autolabel.tasks import BaseTask
 
 
 class NamedEntityRecognitionTask(BaseTask):
-    JSON_OUTPUT_FORMAT_PROMPT = "You will return the answer in JSON format. Each key in the JSON dictionary is an entity category, and value is a list of entities of this category detected in the text."
-    CSV_OUTPUT_FORMAT_PROMPT = "You will return the answer in CSV format, with two columns seperated by the % character. First column is the extracted entity and second column is the category. Rows in the CSV are separated by new line character."
+    DEFAULT_OUTPUT_GUIDELINES = "You will return the answer in CSV format, with two columns seperated by the % character. First column is the extracted entity and second column is the category. Rows in the CSV are separated by new line character."
+    DEFAULT_TASK_GUIDELINES = "Your job is to extract named entities mentioned in text, and classify them into one of the following {num_labels} categories.\nCategories:\n{labels}\n "
     NULL_LABEL = {}
 
-    task_prompt = "Your job is to extract named entities mentioned in text, and classify them into one of the following {num_labels} categories.\nCategories:\n{labels_list}\n "
-
-    def __init__(self, config: TaskConfig) -> None:
+    def __init__(self, config: AutolabelConfig) -> None:
         super().__init__(config)
 
-    def initialize_prompt_template(self) -> PromptTemplate:
-        # provide context about the prediction task
-        pt = PromptTemplate(
-            input_variables=self.prompt_template_variables,
-            template=self.prompt_template,
-        )
-        return pt.partial(
-            prefix_prompt=self.prefix_prompt,
-            output_prompt=self.output_prompt,
-        )
+    def _json_to_llm_format(self, input_label: str) -> str:
+        # `label` format: {"entity type": [list of entities of this type]}
+        try:
+            labels = json.loads(input_label)
+            rows = []
+            for entity_type, detected_entites in labels.items():
+                for e in detected_entites:
+                    row = "%".join([e, entity_type])
+                    rows.append(row)
+            llm_formatted_label = "\n".join(rows)
+            return llm_formatted_label
+        except json.JSONDecodeError as e:
+            logger.error(
+                f"Could not parse label: {input_label}. Few-shot examples might be formatted incorrectly"
+            )
+            return input_label
+
+    def _llm_to_json_format(self, response: str):
+        split_response = response.split("\n")
+        json_output = {i: [] for i in self.config.labels_list()}
+
+        for row in split_response:
+            parts = row.split("%")
+            if len(parts) != 2 or parts[1] not in json_output.keys():
+                logger.debug(f"Malformed LLM response: {row}")
+                continue
+            named_entity = parts[0]
+            category = parts[1]
+            json_output[category].append(named_entity)
+        return json_output
 
     def construct_prompt(self, input: Dict, examples: List) -> str:
-        # Create the task prompt based on the dataset config
-        labels_list = self.dataset_config.get_labels_list()
+        # prepare task guideline
+        labels_list = self.config.labels_list()
         num_labels = len(labels_list)
-        task_prompt = self.task_prompt.format(
-            num_labels=num_labels, labels_list="\n".join(labels_list)
+        fmt_task_guidelines = self.task_guidelines.format(
+            num_labels=num_labels, labels="\n".join(labels_list)
         )
 
-        # populate seed examples in the prompt
-        example_template = self.dataset_config.get_example_template()
-
-        # populate seed examples in the prompt
-        formatted_examples = []
+        # prepare seed examples
+        label_column = self.config.label_column()
+        example_template = self.config.example_template()
+        fmt_examples = []
         for eg in examples:
-            fmt_example = example_template.format_map(defaultdict(str, eg))
-            formatted_examples.append(fmt_example)
-
-        if len(examples):
-            seed_examples_prompt = self.seed_examples_prompt
-        else:
-            seed_examples_prompt = ""
+            eg_copy = deepcopy(eg)
+            if label_column:
+                eg_copy[label_column] = self._json_to_llm_format(eg_copy[label_column])
+            fmt_examples.append(example_template.format_map(defaultdict(str, eg_copy)))
 
         # populate the current example in the prompt
-        label_column = self.dataset_config.get_label_column()
         if label_column:
             input[label_column] = ""
+
+        # populate the explanation column with empty string for current example
+        explanation_column = self.config.explanation_column()
+        if explanation_column:
+            input[explanation_column] = ""
+
+        # populate the current example in the prompt
         current_example = example_template.format_map(defaultdict(str, input))
 
-        return self.partial_prompt.format(
-            seed_examples="\n\n".join(formatted_examples),
-            current_example=current_example,
-            seed_examples_prompt=seed_examples_prompt,
-            task_prompt=task_prompt,
+        if self._is_few_shot_mode():
+            return self.prompt_template.format(
+                task_guidelines=fmt_task_guidelines,
+                output_guidelines=self.output_guidelines,
+                seed_examples="\n\n".join(fmt_examples),
+                current_example=current_example,
+            )
+        else:
+            return self.prompt_template.format(
+                task_guidelines=fmt_task_guidelines,
+                output_guidelines=self.output_guidelines,
+                current_example=current_example,
+            )
+
+    def get_explanation_prompt(self, example: Dict) -> str:
+        raise NotImplementedError(
+            "Explanation generation not implemented for this task"
         )
 
     def add_text_spans(self, raw_output: dict, input: str) -> list:
@@ -96,36 +128,17 @@ class NamedEntityRecognitionTask(BaseTask):
             frequency_count[text] += 1
         return processed_output
 
-    def jsonify_csv_output(self, response: str):
-        split_response = response.split("\n")
-        json_output = {i: [] for i in self.dataset_config.get_labels_list()}
-
-        for row in split_response:
-            parts = row.split("%")
-            if len(parts) != 2 or parts[1] not in json_output.keys():
-                logger.debug(f"Malformed LLM response: {row}")
-                continue
-            named_entity = parts[0]
-            category = parts[1]
-            json_output[category].append(named_entity)
-        return json_output
-
     def parse_llm_response(
         self, response: Generation, curr_sample: Dict, prompt: str
     ) -> LLMAnnotation:
         output = {}
         successfully_labeled = "no"
-        input_str = curr_sample["example"]
+        text_column = self.config.text_column()
+        input_str = curr_sample[text_column]
         try:
             completion_text = response.text
-            if self.output_format == "csv":
-                output = self.jsonify_csv_output(completion_text.strip())
-            else:
-                output = json.loads(completion_text.strip())
-
-            raw_output = output or self.NULL_LABEL
-            llm_label = self.add_text_spans(raw_output, input_str)
-
+            output = self._llm_to_json_format(completion_text.strip())
+            llm_label = self.add_text_spans(output, input_str)
         except Exception as e:
             logger.info(f"Error parsing LLM response: {response.text}, Error: {e}")
             llm_label = self.NULL_LABEL
@@ -229,11 +242,6 @@ class NamedEntityRecognitionTask(BaseTask):
         )
         return eval_metrics
 
-    def generate_explanation(self, example: Dict) -> str:
-        raise NotImplementedError(
-            "Automatic explanation generation not supported for NER task"
-        )
-
     def eval(
         self, llm_labels: List[LLMAnnotation], gt_labels: List[str]
     ) -> List[MetricResult]:
@@ -246,6 +254,7 @@ class NamedEntityRecognitionTask(BaseTask):
         Returns:
             List[MetricResult]: list of metrics and corresponding values
         """
+
         gt_labels = [
             self.add_text_spans(
                 json.loads(gt_labels[index]), llm_labels[index].curr_sample
@@ -263,7 +272,7 @@ class NamedEntityRecognitionTask(BaseTask):
         eval_metrics = []
         thresholds = [float("-inf")]
 
-        if self.config.get_compute_confidence():
+        if self.config.confidence():
             all_gt_labels, all_llm_preds = self.get_labels_predictions_with_threshold(
                 gt_labels, llm_labels, float("-inf")
             )
