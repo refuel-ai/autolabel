@@ -75,7 +75,4 @@ class PaLMLLM(BaseModel):
         return cost_per_char * len(prompt)
 
     def returns_token_probs(self) -> bool:
-        return (
-            self.model_name is not None
-            and self.model_name in self.MODELS_WITH_TOKEN_PROBS
-        )
+        return False
