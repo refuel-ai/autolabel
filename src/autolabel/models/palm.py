@@ -6,7 +6,7 @@ from langchain.llms import VertexAI
 from langchain.schema import LLMResult, HumanMessage, Generation
 
 from autolabel.models import BaseModel
-from autolabel.configs import ModelConfig
+from autolabel.configs import AutolabelConfig
 from autolabel.cache import BaseCache
 
 
@@ -35,14 +35,14 @@ class PaLMLLM(BaseModel):
         else:
             return "completion"
 
-    def __init__(self, config: ModelConfig, cache: BaseCache = None) -> None:
+    def __init__(self, config: AutolabelConfig, cache: BaseCache = None) -> None:
         super().__init__(config, cache)
         # populate model name
-        self.model_name = config.get_model_name() or self.DEFAULT_MODEL
+        self.model_name = config.model_name() or self.DEFAULT_MODEL
         print(f"PaLM model name: {self.model_name}")
 
         # populate model params and initialize the LLM
-        model_params = config.get_model_params()
+        model_params = config.model_params()
         self.model_params = {
             **self.DEFAULT_PARAMS,
             **model_params,

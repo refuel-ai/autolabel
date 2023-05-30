@@ -16,7 +16,8 @@ MODEL_PROVIDER_TO_IMPLEMENTATION: Dict[ModelProvider, BaseModel] = {
     ModelProvider.OPENAI: OpenAILLM,
     ModelProvider.ANTHROPIC: AnthropicLLM,
     ModelProvider.HUGGINGFACE_PIPELINE: HFPipelineLLM,
-    ModelProvider.REFUEL: RefuelLLM
+    ModelProvider.REFUEL: RefuelLLM,
+    ModelProvider.GOOGLE: PaLMLLM,
     # We will add more providers here in the future. See roadmap at [TODO]
 }
 
