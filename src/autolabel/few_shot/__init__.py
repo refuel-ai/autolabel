@@ -27,7 +27,7 @@ class ExampleSelectorFactory:
 
     @staticmethod
     def initialize_selector(
-        config: AutolabelConfig, examples: List[Dict]
+        config: AutolabelConfig, examples: List[Dict], columns: List[str]
     ) -> BaseExampleSelector:
         algorithm = config.few_shot_algorithm()
         if not algorithm:
@@ -49,6 +49,9 @@ class ExampleSelectorFactory:
         ]:
             params["embeddings"] = OpenAIEmbeddings()
             params["vectorstore_cls"] = VectorStoreWrapper
+            input_keys = [x for x in columns if x not in [
+                config.label_column(), config.explanation_column()]]
+            params["input_keys"] = input_keys
         if algorithm == FewShotAlgorithm.MAX_MARGINAL_RELEVANCE:
             params["fetch_k"] = min(
                 ExampleSelectorFactory.MAX_CANDIDATE_EXAMPLES,
