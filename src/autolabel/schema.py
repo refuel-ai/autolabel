@@ -15,6 +15,7 @@ class ModelProvider(str, Enum):
     ANTHROPIC = "anthropic"
     HUGGINGFACE_PIPELINE = "huggingface_pipeline"
     REFUEL = "refuel"
+    GOOGLE = "google"
 
 
 class TaskType(str, Enum):
