@@ -1,14 +1,20 @@
-site_name: Refuel AutoLabel
+site_name: AutoLabel
+site_url: https://refuel.ai
+repo_url: https://github.com/refuel-ai/refuel-oracle
+repo_name: refuel-ai/refuel-oracle
 
 nav:
   - Getting Started: index.md
   - Modules: modules.md
-  - API Reference: api.md
+  - Reference: api.md
   - Examples: example_banking.ipynb
 
 theme:
   name: material
+  favicon: assets/favicon.ico
+  logo: assets/logo.png
   features:
+    - navigation.instant
     - navigation.tabs
     - navigation.sections
     - toc.integrate
@@ -24,14 +30,12 @@ theme:
       toggle:
         icon: material/toggle-switch-off-outline 
         name: Switch to dark mode
-      primary: teal
-      accent: purple 
+      primary: indigo
     - scheme: slate 
       toggle:
         icon: material/toggle-switch
         name: Switch to light mode    
-      primary: teal
-      accent: lime
+      primary: indigo
 
 plugins:
   - mkdocstrings
