@@ -49,8 +49,11 @@ class ExampleSelectorFactory:
         ]:
             params["embeddings"] = OpenAIEmbeddings()
             params["vectorstore_cls"] = VectorStoreWrapper
-            input_keys = [x for x in columns if x not in [
-                config.label_column(), config.explanation_column()]]
+            input_keys = [
+                x
+                for x in columns
+                if x not in [config.label_column(), config.explanation_column()]
+            ]
             params["input_keys"] = input_keys
         if algorithm == FewShotAlgorithm.MAX_MARGINAL_RELEVANCE:
             params["fetch_k"] = min(
