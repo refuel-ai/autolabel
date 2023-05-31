@@ -8,6 +8,8 @@ from rich.progress import (
     TimeRemainingColumn,
     TextColumn,
 )
+from rich.console import Group
+from rich.live import Live
 from typing import Tuple, List, Dict, Union, Optional
 import numpy as np
 import pandas as pd
@@ -159,17 +161,26 @@ class LabelingAgent:
         cost = 0.0
         postfix_dict = {}
 
-        with Progress(
+        progress = Progress(
             BarColumn(),
             MofNCompleteColumn(),
             TimeElapsedColumn(),
             TimeRemainingColumn(),
+        )
+
+        postfix = Progress(
             TextColumn("{task.fields[postfix]}"),
-        ) as progress:
+        )
+
+        group = Group(progress, postfix)
+        live = Live(group)
+
+        with live:
             indices = range(current_index, len(inputs), self.CHUNK_SIZE)
-            index_track = progress.add_task(
-                "Generating Responses...", total=len(inputs), postfix=""
+            progress_display = progress.add_task(
+                "Generating Responses...", total=len(inputs)
             )
+            postfix_display = postfix.add_task("Postfix", postfix="")
             for current_index in indices:
                 chunk = inputs[current_index : current_index + self.CHUNK_SIZE]
                 final_prompts = []
@@ -260,10 +271,14 @@ class LabelingAgent:
                                 postfix_dict[m.name] = f"{m.value[0][0]:.4f}"
 
                 progress.update(
-                    index_track,
+                    progress_display,
                     advance=self.CHUNK_SIZE,
+                )
+                postfix.update(
+                    postfix_display,
                     postfix=", ".join([f"{k}={v}" for k, v in postfix_dict.items()]),
                 )
+
                 # Update task run state
                 self.task_run = self.save_task_run_state(
                     current_index=current_index + len(chunk)
@@ -446,7 +461,6 @@ class LabelingAgent:
         self,
         seed_examples: Union[str, List[Dict]],
     ) -> List[Dict]:
-
         out_file = None
         if isinstance(seed_examples, str):
             out_file = seed_examples
