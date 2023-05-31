@@ -18,7 +18,7 @@ from autolabel.confidence import ConfidenceCalculator
 from autolabel.cache import SQLAlchemyCache
 from autolabel.few_shot import ExampleSelectorFactory
 from autolabel.models import ModelFactory, BaseModel
-from autolabel.schema import LLMAnnotation
+from autolabel.schema import LLMAnnotation, MetricResult
 from autolabel.tasks import TaskFactory
 from autolabel.database import StateManager
 from autolabel.schema import TaskRun, TaskStatus
@@ -95,7 +95,7 @@ class LabelingAgent:
         output_name: Optional[str] = None,
         start_index: Optional[int] = 0,
         eval_every: Optional[int] = 50,
-    ) -> None:
+    ) -> Tuple[pd.Series, pd.DataFrame, List[MetricResult]]:
         """Labels data in a given dataset. Output written to new CSV file.
 
         Args:
@@ -333,7 +333,7 @@ class LabelingAgent:
         dataset: Union[str, pd.DataFrame],
         max_items: int = None,
         start_index: int = 0,
-    ):
+    ) -> None:
         """Calculates and prints the cost of calling autolabel.run() on a given dataset
 
         Args:
@@ -446,7 +446,7 @@ class LabelingAgent:
 
     def save_task_run_state(
         self, current_index: int = None, status: TaskStatus = "", error: str = ""
-    ):
+    ) -> TaskRun:
         # Save the current state of the task
         if error:
             self.task_run.error = error

@@ -81,7 +81,7 @@ class Dataset(BaseModel):
         config: AutolabelConfig,
         start_index: int,
         max_items: int,
-    ):
+    ) -> str:
         if isinstance(dataset, str):
             filehash = calculate_md5(
                 [open(dataset, "rb"), config._dataset_config, start_index, max_items]
@@ -103,7 +103,7 @@ class Task(BaseModel):
         orm_mode = True
 
     @classmethod
-    def create_id(self, config: AutolabelConfig):
+    def create_id(self, config: AutolabelConfig) -> str:
         filehash = calculate_md5(config.config)
         return filehash
 
