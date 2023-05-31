@@ -1,6 +1,5 @@
 from loguru import logger
 from rich.progress import (
-    track,
     Progress,
     BarColumn,
     MofNCompleteColumn,
@@ -284,6 +283,9 @@ class LabelingAgent:
                     current_index=current_index + len(chunk)
                 )
 
+            progress.refresh()
+            postfix.refresh()
+
         db_result = AnnotationModel.get_annotations_by_task_run_id(
             self.db.session, self.task_run.id
         )
@@ -370,21 +372,34 @@ class LabelingAgent:
 
         input_limit = min(len(inputs), 100)
         num_sections = max(input_limit / self.CHUNK_SIZE, 1)
-        for chunk in track(
-            np.array_split(inputs[:input_limit], num_sections), description=""
-        ):
-            for i, input_i in enumerate(chunk):
-                # TODO: Check if this needs to use the example selector
-                if self.example_selector:
-                    examples = self.example_selector.select_examples(input_i)
-                else:
-                    examples = []
-                final_prompt = self.task.construct_prompt(input_i, examples)
-                prompt_list.append(final_prompt)
+        with Progress(
+            TextColumn("[progress.description]{task.description}"),
+            BarColumn(),
+            MofNCompleteColumn(),
+            TimeElapsedColumn(),
+            TimeRemainingColumn(),
+        ) as progress:
+            progress_display = progress.add_task(
+                "Computing embeddings...", total=input_limit
+            )
+            for chunk in np.array_split(inputs[:input_limit], num_sections):
+                for i, input_i in enumerate(chunk):
+                    # TODO: Check if this needs to use the example selector
+                    if self.example_selector:
+                        examples = self.example_selector.select_examples(input_i)
+                    else:
+                        examples = []
+                    final_prompt = self.task.construct_prompt(input_i, examples)
+                    prompt_list.append(final_prompt)
 
-                # Calculate the number of tokens
-                curr_cost = self.llm.get_cost(prompt=final_prompt, label="")
-                total_cost += curr_cost
+                    # Calculate the number of tokens
+                    curr_cost = self.llm.get_cost(prompt=final_prompt, label="")
+                    total_cost += curr_cost
+
+                    # Update progress bar
+                    progress.advance(progress_display)
+
+            progress.refresh()
 
         total_cost = total_cost * (len(inputs) / input_limit)
         print(f"Total Estimated Cost: ${round(total_cost, 3)}")
@@ -488,6 +503,8 @@ class LabelingAgent:
                 explanation = explanation.generations[0][0].text
                 seed_example["explanation"] = str(explanation) if explanation else ""
                 progress.advance(task)
+
+            progress.refresh()
 
         if out_file:
             df = pd.DataFrame.from_records(seed_examples)
