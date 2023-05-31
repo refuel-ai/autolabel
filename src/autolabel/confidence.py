@@ -1,4 +1,4 @@
-from typing import List, Optional, Tuple
+from typing import List, Optional, Tuple, Union
 import math
 import numpy as np
 import pickle as pkl
@@ -118,7 +118,7 @@ class ConfidenceCalculator:
         response.raise_for_status()
         return response
 
-    def compute_confidence(self, model_input, model_output) -> any:
+    def compute_confidence(self, model_input, model_output) -> Union[dict, List[dict]]:
         try:
             response = self._call_with_retry(model_input, model_output)
             return json.loads(response.text)
