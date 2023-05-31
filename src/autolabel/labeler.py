@@ -126,7 +126,7 @@ class LabelingAgent:
         # Check explanations are present in data if explanation_column is passed in
         if (
             self.config.explanation_column()
-            and self.config.explanation_column() not in inputs.keys()
+            and self.config.explanation_column() not in df.keys().tolist()
         ):
             raise ValueError(
                 f"Explanation column {self.config.explanation_column()} not found in dataset.\nMake sure that explanations were generated using labeler.generate_explanations(seed_file)."
@@ -153,7 +153,7 @@ class LabelingAgent:
             _, seed_examples, _ = self._read_csv(seed_examples, self.config)
 
         self.example_selector = ExampleSelectorFactory.initialize_selector(
-            self.config, seed_examples
+            self.config, seed_examples, df.keys().tolist()
         )
 
         num_failures = 0
@@ -339,16 +339,16 @@ class LabelingAgent:
         """
 
         if isinstance(dataset, str):
-            _, inputs, _ = self._read_csv(dataset, self.config, max_items, start_index)
+            df, inputs, _ = self._read_csv(dataset, self.config, max_items, start_index)
         elif isinstance(dataset, pd.DataFrame):
-            _, inputs, _ = self._read_dataframe(
+            df, inputs, _ = self._read_dataframe(
                 dataset, self.config, max_items, start_index
             )
 
         # Check explanations are present in data if explanation_column is passed in
         if (
             self.config.explanation_column()
-            and self.config.explanation_column() not in inputs.keys()
+            and self.config.explanation_column() not in df.keys().tolist()
         ):
             raise ValueError(
                 f"Explanation column {self.config.explanation_column()} not found in dataset.\nMake sure that explanations were generated using labeler.generate_explanations(seed_file)."
@@ -365,7 +365,7 @@ class LabelingAgent:
             _, seed_examples, _ = self._read_csv(seed_examples, self.config)
 
         self.example_selector = ExampleSelectorFactory.initialize_selector(
-            self.config, seed_examples
+            self.config, seed_examples, df.keys().tolist()
         )
 
         input_limit = min(len(inputs), 100)
