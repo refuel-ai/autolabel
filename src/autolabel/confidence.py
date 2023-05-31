@@ -1,4 +1,4 @@
-from typing import List, Optional
+from typing import List, Optional, Tuple
 import math
 import numpy as np
 import pickle as pkl
@@ -21,7 +21,7 @@ from tenacity import (
 class ConfidenceCalculator:
     def __init__(
         self, score_type: str = "logprob_average", llm: Optional[BaseModel] = None
-    ):
+    ) -> None:
         self.score_type = score_type
         self.llm = llm
         self.tokens_to_ignore = {"<unk>"}
@@ -118,7 +118,7 @@ class ConfidenceCalculator:
         response.raise_for_status()
         return response
 
-    def compute_confidence(self, model_input, model_output):
+    def compute_confidence(self, model_input, model_output) -> any:
         try:
             response = self._call_with_retry(model_input, model_output)
             return json.loads(response.text)
@@ -132,13 +132,13 @@ class ConfidenceCalculator:
             return [{"": 0.5}]
 
     @classmethod
-    def compute_completion(cls, confidence: List[float], threshold: float):
+    def compute_completion(cls, confidence: List[float], threshold: float) -> float:
         return sum([i > threshold for i in confidence]) / float(len(confidence))
 
     @classmethod
     def compute_auroc(
         cls, match: List[int], confidence: List[float], plot: bool = False
-    ):
+    ) -> Tuple[float, List[float]]:
         try:
             import sklearn
         except ImportError:
@@ -191,7 +191,7 @@ class ConfidenceCalculator:
         confidence: List[float],
         plot_name: str = "temp.png",
         save_data: bool = True,
-    ):
+    ) -> None:
         try:
             import matplotlib.pyplot as plt
         except ImportError:
