@@ -141,15 +141,18 @@ class MultiChoiceQATask(BaseTask):
             ) = self.get_labels_predictions_with_threshold(
                 gt_labels, llm_labels, threshold
             )
-            eval_metrics_map[Metric.SUPPORT].append(
-                (len(curr_gt_labels), f"index={index}")
-            )
-            eval_metrics_map[Metric.COMPLETION_RATE].append(
-                (len(curr_gt_labels) / float(len(gt_labels)), f"index={index}")
-            )
-            eval_metrics_map[Metric.ACCURACY].append(
-                (accuracy_score(curr_gt_labels, curr_llm_labels), f"index={index}")
-            )
+            if len(gt_labels) > 0:
+                eval_metrics_map[Metric.COMPLETION_RATE].append(
+                    len(curr_gt_labels) / float(len(gt_labels))
+                )
+
+            eval_metrics_map[Metric.SUPPORT].append(len(curr_gt_labels))
+            if len(curr_gt_labels) > 0:
+                eval_metrics_map[Metric.ACCURACY].append(
+                    accuracy_score(curr_gt_labels, curr_llm_labels)
+                )
+            else:
+                eval_metrics_map[Metric.ACCURACY].append(0.0)
             eval_metrics_map[Metric.THRESHOLD].append(threshold)
 
             f1 = sum(
@@ -159,7 +162,7 @@ class MultiChoiceQATask(BaseTask):
                 ]
             )
             eval_metrics_map[Metric.F1].append(
-                (float(f1) / (len(curr_llm_labels) + 1e-5), f"index={index}")
+                float(f1) / (len(curr_llm_labels) + 1e-5)
             )
 
         eval_metrics.extend(
