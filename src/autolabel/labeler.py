@@ -1,4 +1,5 @@
 from loguru import logger
+from rich import print as pprint
 from rich.progress import (
     Progress,
     BarColumn,
@@ -7,8 +8,10 @@ from rich.progress import (
     TimeRemainingColumn,
     TextColumn,
 )
-from rich.console import Group
+from rich.console import Console, Group
 from rich.live import Live
+from rich.table import Table
+from rich.prompt import Confirm
 from typing import Tuple, List, Dict, Union, Optional
 import numpy as np
 import pandas as pd
@@ -24,6 +27,9 @@ from autolabel.database import StateManager
 from autolabel.schema import TaskRun, TaskStatus
 from autolabel.data_models import TaskRunModel, AnnotationModel
 from autolabel.configs import AutolabelConfig
+
+
+console = Console()
 
 
 class LabelingAgent:
@@ -269,9 +275,9 @@ class LabelingAgent:
                             elif len(m.value[0]) > 0:
                                 postfix_dict[m.name] = f"{m.value[0][0]:.4f}"
 
-                progress.update(
+                progress.advance(
                     progress_display,
-                    advance=self.CHUNK_SIZE,
+                    advance=min(self.CHUNK_SIZE, len(inputs) - current_index),
                 )
                 postfix.update(
                     postfix_display,
@@ -293,18 +299,17 @@ class LabelingAgent:
         eval_result = None
         # if true labels are provided, evaluate accuracy of predictions
         if gt_labels:
+            table = Table()
+            table.add_column("Metric", style="bold cyan")
+            table.add_column("Value", justify="right", style="bold magenta")
             eval_result = self.task.eval(llm_labels, gt_labels[: len(llm_labels)])
-            combined_metrics = {}
             # TODO: serialize and write to file
             for m in eval_result:
-                if isinstance(m.value, list):
-                    combined_metrics[m.name] = m.value
+                if isinstance(m.value, list) and len(m.value) > 0:
+                    table.add_row(m.name, str(m.value[0]))
                 else:
                     print(f"Metric: {m.name}: {m.value}")
-            with pd.option_context(
-                "display.max_rows", None, "display.max_columns", None
-            ):  # more options can be specified also
-                print(pd.DataFrame(combined_metrics))
+            console.print(table)
 
         # Write output to CSV
         output_df = df.copy()
@@ -329,7 +334,7 @@ class LabelingAgent:
                 index=False,
             )
 
-        print(f"Total number of failures: {num_failures}")
+        pprint(f"Total number of failures: {num_failures}")
         return (
             output_df[self.config.task_name() + "_llm_label"],
             output_df,
@@ -410,43 +415,54 @@ class LabelingAgent:
             progress.refresh()
 
         total_cost = total_cost * (len(inputs) / input_limit)
-        print(f"Total Estimated Cost: ${round(total_cost, 3)}")
-        print(f"Number of examples to label: {len(inputs)}")
-        print(f"Average cost per example: ${round(total_cost/len(inputs), 5)}")
-        print(f"\n\nA prompt example:\n\n{prompt_list[0]}")
+        table = Table(show_header=False)
+        table.add_column("Parameter", style="bold green")
+        table.add_column("Value", style="bold magenta")
+        table.add_row("Total Estimated Cost", f"${round(total_cost, 3)}")
+        table.add_row("Number of Examples", f"{len(inputs)}")
+        table.add_row(
+            "Average cost per example", f"{round(total_cost / len(inputs), 5)}"
+        )
+        console.print(table)
+
+        console.rule("Prompt Example")
+        print(f"{prompt_list[0]}")
+        console.rule()
         return
 
     def handle_existing_task_run(
         self, task_run: TaskRun, csv_file_name: str, gt_labels: List[str] = None
     ) -> TaskRun:
-        print(f"There is an existing task with following details: {task_run}")
+        pprint(f"There is an existing task with following details: {task_run}")
         db_result = AnnotationModel.get_annotations_by_task_run_id(
             self.db.session, task_run.id
         )
         llm_labels = [LLMAnnotation(**a.llm_annotation) for a in db_result]
         if gt_labels and len(llm_labels) > 0:
-            print("Evaluating the existing task...")
+            pprint("Evaluating the existing task...")
+            table = Table()
+            table.add_column("Metric", style="bold cyan")
+            table.add_column("Value", justify="right", style="bold magenta")
             gt_labels = gt_labels[: len(llm_labels)]
             eval_result = self.task.eval(llm_labels, gt_labels)
             for m in eval_result:
-                print(f"Metric: {m.name}: {m.value}")
-        print(f"{len(llm_labels)} examples have been labeled so far.")
+                if isinstance(m.value, list) and len(m.value) > 0:
+                    table.add_row(m.name, str(m.value[0]))
+                else:
+                    print(f"Metric: {m.name}: {m.value}")
+            console.print(table)
+        pprint(f"{len(llm_labels)} examples have been labeled so far.")
         if len(llm_labels) > 0:
-            print(f"Last annotated example - Prompt: {llm_labels[-1].prompt}")
-            print(f"Annotation: {llm_labels[-1].label}")
+            console.rule("Last Annotated Example")
+            pprint("[bold blue]Prompt[/bold blue]: ", end="")
+            print(llm_labels[-1].prompt)
+            pprint("[bold blue]Annotation[/bold blue]: ", end="")
+            print(llm_labels[-1].label)
+            console.rule()
 
-        resume = None
-        while resume is None:
-            user_input = input("Do you want to resume the task? (y/n)")
-            if user_input.lower() in ["y", "yes"]:
-                print("Resuming the task...")
-                resume = True
-            elif user_input.lower() in ["n", "no"]:
-                resume = False
-
-        if not resume:
+        if not Confirm.ask("Do you want to resume the task?"):
             TaskRunModel.delete_by_id(self.db.session, task_run.id)
-            print("Deleted the existing task and starting a new one...")
+            pprint("Deleted the existing task and starting a new one...")
             task_run = self.db.create_task_run(
                 csv_file_name, self.task_object.id, self.dataset.id
             )
