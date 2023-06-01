@@ -4,11 +4,11 @@
     "dataset": {
         "label_column": "CategorizedLabels",
         "text_column": "example",
-        "delimiter": ","
+        "delimiter": "%"
     },
     "model": {
-        "provider": "openai",
-        "name": "gpt-3.5-turbo"
+        "provider": "anthropic",
+        "name": "claude-v1"
     },
     "prompt": {
         "task_guidelines": "You are an expert at extracting Person, Organization, Location, and Miscellaneous entities from text. Your job is to extract named entities mentioned in text, and classify them into one of the following categories.\nCategories:\n{labels}\n ",
@@ -18,6 +18,9 @@
             "Person",
             "Miscellaneous"
         ],
-        "example_template": "Example: {example}\nOutput: {CategorizedLabels}"
+        "example_template": "Example: {example}\nOutput: {CategorizedLabels}",
+        "few_shot_examples": "data/conll2003_seed.csv",
+        "few_shot_selection": "semantic_similarity",
+        "few_shot_num": 5
     }
 }
