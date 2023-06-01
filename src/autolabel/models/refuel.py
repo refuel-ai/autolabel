@@ -27,7 +27,7 @@ class RefuelLLM(BaseModel):
         self.model_params = {}
 
         # initialize runtime
-        self.BASE_API = "https://llm.refuel.ai/"
+        self.BASE_API = "https://refuel-llm.refuel.ai/"
 
     @retry(
         reraise=True,
@@ -36,7 +36,10 @@ class RefuelLLM(BaseModel):
         before_sleep=before_sleep_log(logger, "WARNING"),
     )
     def _label_with_retry(self, prompt: str) -> requests.Response:
-        payload = {"model_input": prompt, "task": "generate"}
+        payload = {
+            "data": {"model_input": [prompt]},
+            "task": "generate",
+        }
         response = requests.post(self.BASE_API, json=payload)
         # raise Exception if status != 200
         response.raise_for_status()
@@ -47,7 +50,8 @@ class RefuelLLM(BaseModel):
         for prompt in prompts:
             try:
                 response = self._label_with_retry(prompt)
-                generations.append([Generation(text=response.text.strip('"'))])
+                response = json.loads(response.json()["body"])[0]
+                generations.append([Generation(text=response)])
             except Exception as e:
                 # This signifies an error in generating the response using RefuelLLm
                 logger.error(
