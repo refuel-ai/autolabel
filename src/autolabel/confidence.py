@@ -29,7 +29,7 @@ class ConfidenceCalculator:
             "logprob_average": self.logprob_average,
             "p_true": self.p_true,
         }
-        self.BASE_API = "https://llm.refuel.ai/"
+        self.BASE_API = "https://refuel-llm.refuel.ai/"
 
     def logprob_average(
         self,
@@ -95,7 +95,7 @@ class ConfidenceCalculator:
 
         confidence = self.SUPPORTED_CALCULATORS[self.score_type](
             model_generation=model_generation,
-            logprobs=logprobs,
+            logprobs=logprobs[0],
             **kwargs,
         )
         model_generation.confidence_score = confidence
@@ -109,8 +109,7 @@ class ConfidenceCalculator:
     )
     def _call_with_retry(self, model_input, model_output) -> requests.Response:
         payload = {
-            "model_input": model_input,
-            "model_output": model_output,
+            "data": {"model_input": [model_input], "model_output": [model_output]},
             "task": "confidence",
         }
         response = requests.post(self.BASE_API, json=payload)
@@ -121,7 +120,7 @@ class ConfidenceCalculator:
     def compute_confidence(self, model_input, model_output) -> Union[dict, List[dict]]:
         try:
             response = self._call_with_retry(model_input, model_output)
-            return json.loads(response.text)
+            return json.loads(response.json()["body"])
         except Exception as e:
             # This signifies an error in computing confidence score
             # using the API. We give it a score of 0.5 and go ahead
