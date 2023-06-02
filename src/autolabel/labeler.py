@@ -272,6 +272,8 @@ class LabelingAgent:
                                 continue
                             elif isinstance(m.value[0], float):
                                 postfix_dict[m.name] = f"{m.value[0]:.4f}"
+                            elif isinstance(m.value[0], int):
+                                postfix_dict[m.name] = f"{m.value[0]}"
                             elif len(m.value[0]) > 0:
                                 postfix_dict[m.name] = f"{m.value[0][0]:.4f}"
 
@@ -299,16 +301,24 @@ class LabelingAgent:
         eval_result = None
         # if true labels are provided, evaluate accuracy of predictions
         if gt_labels:
-            table = Table()
-            table.add_column("Metric", style="bold cyan")
-            table.add_column("Value", justify="right", style="bold magenta")
             eval_result = self.task.eval(llm_labels, gt_labels[: len(llm_labels)])
+            table_columns, table_column_names = [], []
             # TODO: serialize and write to file
             for m in eval_result:
                 if isinstance(m.value, list) and len(m.value) > 0:
-                    table.add_row(m.name, str(m.value[0]))
+                    table_columns.append(m.value)
+                    table_column_names.append(m.name)
                 else:
                     print(f"Metric: {m.name}: {m.value}")
+            table = Table()
+            for col_name in table_column_names:
+                table.add_column(col_name, style="bold cyan")
+            num_rows = 0 if len(table_columns) == 0 else len(table_columns[0])
+            for curr_row in range(num_rows):
+                row_values = [
+                    str(table_columns[i][curr_row]) for i in range(len(table_columns))
+                ]
+                table.add_row(*row_values)
             console.print(table)
 
         # Write output to CSV
