@@ -68,6 +68,7 @@ class LabelingAgent:
         label_column = config.label_column()
 
         dat = pd.read_csv(csv_file, sep=delimiter, dtype="str")[start_index:]
+        dat = dat.astype(str)
         if max_items and max_items > 0:
             max_items = min(max_items, len(dat))
             dat = dat[:max_items]
@@ -85,7 +86,7 @@ class LabelingAgent:
     ) -> Tuple[pd.DataFrame, List[Dict], List]:
         label_column = config.label_column()
 
-        dat = df[start_index:]
+        dat = df[start_index:].astype(str)
         if max_items and max_items > 0:
             max_items = min(max_items, len(dat))
             dat = dat[:max_items]
@@ -310,6 +311,8 @@ class LabelingAgent:
                     table_column_names.append(m.name)
                 else:
                     print(f"Metric: {m.name}: {m.value}")
+            table_columns.append(cost)
+            table_column_names.append("Actual Cost")
             table = Table()
             for col_name in table_column_names:
                 table.add_column(col_name, style="bold cyan")
