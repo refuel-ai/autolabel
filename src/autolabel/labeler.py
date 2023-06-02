@@ -311,8 +311,7 @@ class LabelingAgent:
                     table_column_names.append(m.name)
                 else:
                     print(f"Metric: {m.name}: {m.value}")
-            table_columns.append(cost)
-            table_column_names.append("Actual Cost")
+            print(f"Actual Cost: {cost}")
             table = Table()
             for col_name in table_column_names:
                 table.add_column(col_name, style="bold cyan")
