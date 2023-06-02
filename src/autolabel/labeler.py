@@ -301,7 +301,6 @@ class LabelingAgent:
         llm_labels = [LLMAnnotation(**a.llm_annotation) for a in db_result]
         eval_result = None
         # if true labels are provided, evaluate accuracy of predictions
-        print(f"Metric: Actual Cost: {cost}")
         if gt_labels:
             eval_result = self.task.eval(llm_labels, gt_labels[: len(llm_labels)])
             table_columns, table_column_names = [], []
@@ -312,6 +311,8 @@ class LabelingAgent:
                     table_column_names.append(m.name)
                 else:
                     print(f"Metric: {m.name}: {m.value}")
+            table_columns.append(cost)
+            table_column_names.append("Actual Cost")
             table = Table()
             for col_name in table_column_names:
                 table.add_column(col_name, style="bold cyan")
