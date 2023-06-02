@@ -18,6 +18,7 @@ class AutolabelConfig(BaseConfig):
     LABEL_COLUMN_KEY = "label_column"
     EXPLANATION_COLUMN_KEY = "explanation_column"
     TEXT_COLUMN_KEY = "text_column"
+    INPUT_COLUMNS_KEY = "input_columns"
     DELIMITER_KEY = "delimiter"
 
     # Model config keys (config["model"][<key>])
@@ -68,6 +69,9 @@ class AutolabelConfig(BaseConfig):
 
     def explanation_column(self) -> str:
         return self._dataset_config.get(self.EXPLANATION_COLUMN_KEY, None)
+    
+    def input_columns(self) -> List[str]:
+        return self._dataset_config.get(self.INPUT_COLUMNS_KEY, [])
 
     def delimiter(self) -> str:
         return self._dataset_config.get(self.DELIMITER_KEY, ",")
