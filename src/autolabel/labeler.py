@@ -68,6 +68,7 @@ class LabelingAgent:
         label_column = config.label_column()
 
         dat = pd.read_csv(csv_file, sep=delimiter, dtype="str")[start_index:]
+        dat = dat.astype(str)
         if max_items and max_items > 0:
             max_items = min(max_items, len(dat))
             dat = dat[:max_items]
@@ -85,7 +86,7 @@ class LabelingAgent:
     ) -> Tuple[pd.DataFrame, List[Dict], List]:
         label_column = config.label_column()
 
-        dat = df[start_index:]
+        dat = df[start_index:].astype(str)
         if max_items and max_items > 0:
             max_items = min(max_items, len(dat))
             dat = dat[:max_items]
@@ -300,6 +301,7 @@ class LabelingAgent:
         llm_labels = [LLMAnnotation(**a.llm_annotation) for a in db_result]
         eval_result = None
         # if true labels are provided, evaluate accuracy of predictions
+        print(f"Metric: Actual Cost: {cost}")
         if gt_labels:
             eval_result = self.task.eval(llm_labels, gt_labels[: len(llm_labels)])
             table_columns, table_column_names = [], []
