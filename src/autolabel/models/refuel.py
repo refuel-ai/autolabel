@@ -28,6 +28,7 @@ class RefuelLLM(BaseModel):
 
         # initialize runtime
         self.BASE_API = "https://refuel-llm.refuel.ai/"
+        self.SEP_REPLACEMENT_TOKEN = "@@"
 
     @retry(
         reraise=True,
@@ -49,8 +50,19 @@ class RefuelLLM(BaseModel):
         generations = []
         for prompt in prompts:
             try:
-                response = self._label_with_retry(prompt)
-                response = json.loads(response.json()["body"])[0]
+                if self.SEP_REPLACEMENT_TOKEN in prompt:
+                    logger.warning(
+                        f"""Current prompt contains {self.SEP_REPLACEMENT_TOKEN} 
+                            which is currently used as a separator token by refuel
+                            llm. It is highly recommended to avoid having any
+                            occurences of this substring in the prompt.
+                        """
+                    )
+                separated_prompt = prompt.replace("\n", self.SEP_REPLACEMENT_TOKEN)
+                response = self._label_with_retry(separated_prompt)
+                response = json.loads(response.json()["body"])[0].replace(
+                    self.SEP_REPLACEMENT_TOKEN, "\n"
+                )
                 generations.append([Generation(text=response)])
             except Exception as e:
                 # This signifies an error in generating the response using RefuelLLm
