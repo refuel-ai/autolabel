@@ -69,7 +69,7 @@ class AutolabelConfig(BaseConfig):
 
     def explanation_column(self) -> str:
         return self._dataset_config.get(self.EXPLANATION_COLUMN_KEY, None)
-    
+
     def input_columns(self) -> List[str]:
         return self._dataset_config.get(self.INPUT_COLUMNS_KEY, [])
 
