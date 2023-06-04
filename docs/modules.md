@@ -1,6 +1,6 @@
 # Modules
 
-On this page, we will talk about the different pages that exist in AutoLabel. We will first discuss the overview of a module and then go into the different subheadings, expanding and giving some examples for each.
+On this page, we will talk about the different pages that exist in Autolabel. We will first discuss the overview of a module and then go into the different subheadings, expanding and giving some examples for each.
 
 ## Prompts
 
@@ -68,7 +68,7 @@ The Config class is used to parse, validate, and store information about the lab
 
 ## LLMs
 
-There are a few LLMs that are available for labeling through the AutoLabel library. Some of these are supported behind an API (OpenAI, Anthropic, Refuel) and some run locally (Huggingface pipeline).  
+There are a few LLMs that are available for labeling through the Autolabel library. Some of these are supported behind an API (OpenAI, Anthropic, Refuel) and some run locally (Huggingface pipeline).  
   
 These LLMs are classified by the LLM providers, these are the organizations which provide access to the LLMs. The second parameter, is the model_name. The same provider can have multiple models exposed, for eg. OpenAI exposes text-davinci-003 and gpt-3.5-turbo.
 

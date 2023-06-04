@@ -1,4 +1,4 @@
-# Refuel AutoLabel
+# Refuel Autolabel
 
 For full documentation visit [refuel.ai](https://www.refuel.ai).
 
@@ -11,7 +11,7 @@ pip install -r requirements.txt
 ```
 
 ### Environment Setup
-Using AutoLabel will usually require integrations with one or more model providers.
+Using Autolabel will usually require integrations with one or more model providers.
 For this example, we will be using OpenAI’s API, so we will first need to install their SDK.
 ``` py
 pip install openai
@@ -38,9 +38,9 @@ And export the API Key in the environment variables
 export ANTHROPIC_API_KEY="..."
 ```
 
-### Using AutoLabel for classifying unlabeled data with ChatGPT
+### Using Autolabel for classifying unlabeled data with ChatGPT
 
-The AutoLabel class is initialized with a configuration file, which defines the task you would like the LLM to perform on your data (i.e. classification, entity recognition, etc.)
+The LabelingAgent class is initialized with a configuration file, which defines the task you would like the LLM to perform on your data (i.e. classification, entity recognition, etc.)
 ``` py
 annotator = LabelingAgent('examples/config_chatgpt.json')
 ```
