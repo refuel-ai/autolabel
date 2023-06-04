@@ -1,0 +1,345 @@
+Institution,Count,City,State,District,Representative,Notes,llm_state_labeled_successfully,llm_state,llm_labeled_successfully,llm_city
+"Lawrence Berkeley National Laboratory (LBNL, LBL)",1214,Berkeley,CA,CA-12,Barbara Lee,,yes,CA,yes,Berkeley
+University of California Berkeley (UCB),1168,Berkeley,CA,CA-12,Barbara Lee,,yes,CA,yes,Berkeley
+Stanford University,136,Stanford,CA,CA-16,Anna Eshoo,,yes,CA,yes,Stanford
+Lawrence Livermore National Laboratory (LLNL),86,Livermore,CA,CA-14,Eric Swalwell,,yes,CA,yes,Livermore
+University of California Santa Cruz (UCSC),75,Santa Cruz,CA,CA-19,Jimmy Panetta,,yes,CA,yes,Santa Cruz
+University of California San Francisco (UCSF),67,San Francisco,CA,CA-11,Nancy Pelosi,,yes,CA,yes,San Francisco
+University of California Davis (UCD),63,Davis,CA,CA-08,John Garamendi,,yes,CA,yes,Davis
+University of California Merced (UCM),59,Merced,CA,CA-13,John Duarte,,yes,CA,yes,Merced
+University of California Los Angeles (UCLA),51,Los Angeles,CA,CA-36,Ted Lieu,,yes,CA,yes,Los Angeles
+University of California Santa Barbara (UCSB),42,Santa Barbara,CA,CA-24,Salud Carbajal,,yes,CA,yes,Santa Barbara
+Columbia University,33,New York,NY,NY-12,Jerrold Nadler,,yes,NY,yes,New York City
+Sandia National Laboratories,25,Albuquerque,NM,NM-1,Melanie Stansbury,,yes,NM,yes,Albuquerque
+California Institute of Technology (Caltech),24,Pasadena,CA,CA-28,Judy Chu,,yes,CA,yes,Pasadena
+University of Washington,22,Seattle,WA,WA-07,Pramila Jayapal,,yes,WA,yes,Seattle
+University of Southern California (USC),19,Los Angeles,CA,CA-37,Sydney Kamlager-Dove,,yes,CA,yes,Los Angeles
+Los Alamos National Laboratory (LANL),17,Los Alamos,NM,NM-3,Teresa Leger Fernandez,,yes,NM,yes,Los Alamos
+Pacific Northwest National Laboratory (PNNL),17,Richland,WA,WA-04,Dan Newhouse,,yes,WA,yes,Richland
+Massachusetts Institute of Technology - MIT,16,Cambridge,MA,MA-07,Ayanna Pressley,,yes,MA,yes,Cambridge
+Pennsylvania State University,16,State College,PA,PA-15,Glenn Thompson,,yes,PA,yes,State College
+University of Oregon,16,Eugene,OR,OR-04,Val Hoyle,,yes,OR,yes,Eugene
+"aBeam Technologies, Inc.",15,Hayward,CA,CA-14,Eric Swalwell,,yes,CA,yes,Hayward
+Northwestern University,15,Evanston,IL,IL-09,Jan Schakowsky,,yes,IL,yes,Evanston
+"Porifera, Inc.",15,San Leandro,CA,CA-12,Barbara Lee,,yes,CA,yes,Hayward
+University of California Irvine (UCI),16,Irvine,CA,CA-47,Katie Porter,,yes,CA,yes,Irvine
+University of California San Diego (UCSD),14,La Jolla,CA,CA-50,Scott Peters,,yes,CA,yes,San Diego
+"Heliotrope Technologies, Inc.",13,Alameda,CA,CA-12,Barbara Lee,,yes,MA,yes,Boston
+Sepion Technologies Inc.,13,Emeryville,CA,CA-12,Barbara Lee,,yes,CA,yes,Emeryville
+"Sylvatex, Inc.",13,Alameda,CA,CA-12,Barbara Lee,,yes,CA,yes,San Francisco
+Texas A&M University,13,College Station,TX,TX-10,Michael McCaul,,yes,TX,yes,College Station
+University of Illinois-Urbana-Champaign (UIUC),12,Champaign,IL,IL-13,Nikki Budzinski ,,yes,IL,yes,Urbana
+"University of Massachusetts, Amherst",12,Amherst,MA,MA-02,Jim McGovern,,yes,MA,yes,Amherst
+Cornell University,11,Ithaca,NY,NY-19,Marcus Molinaro,,yes,NY,yes,Ithaca
+Purdue University,11,West Lafayette,IN,IN-04,Jim Baird,,yes,IN,yes,West Lafayette
+Harvard University,10,Cambridge,MA,MA-05,Katherine Clark,,yes,MA,yes,Cambridge
+"Matrix Sensors, Inc.",10,San Diego,CA,CA-51,Sara Jacobs,,yes,TX,yes,Austin
+"Ohio State University, The",10,Columbus,OH,OH-03,Joyce Beatty,,yes,OH,yes,Columbus
+University of Hawai'i at Manoa,10,Honolulu,HI,HI-1,Ed Case,,yes,HI,yes,Honolulu
+University of Michigan,10,Ann Arbor,MI,MI-06,Debbie Dingell ,,yes,MI,yes,Ann Arbor
+University of Texas at Austin,10,Austin,TX,TX-37,Lloyd Doggett,,yes,TX,yes,Austin
+"Coreshell Technologies, Inc.",9,,,,,,yes,MA,yes,Cambridge
+"Spark Thermionics, Inc.",9,,,,,,yes,MD,yes,College Park
+University of Colorado Boulder,9,,CO,,,,yes,CO,yes,Boulder
+"University of Nevada, Reno",9,,NV,,,,yes,NV,yes,Reno
+Virginia Tech,9,,VA,,,,yes,VA,yes,Blacksburg
+New York University,8,,NY,,,,yes,NY,yes,New York City
+San Jose State University,8,San Jose,CA,,,,yes,CA,yes,San Jose
+Scripps Research Institute,8,,CA,,,,yes,CA,yes,La Jolla
+X-Therma Inc.,8,,,,,,yes,CA,yes,Richmond
+Brookhaven National Laboratory (BNL),7,,NY,,,,yes,NY,yes,Upton
+Georgia Institute of Technology (Georgia Tech),7,,GA,,,,yes,GA,yes,Atlanta
+Intel Corporation,7,,CA,,,,yes,CA,yes,Santa Clara
+Kansas State University,7,,KS,,,,yes,KS,yes,Manhattan
+Mosaic Materials,7,,,,,,yes,CA,yes,Redwood City
+Saratoga Energy Corporation /  Saratoga Energy Research Partners,7,Berkeley,CA,CA-12,Barbara Lee,,yes,CA,yes,Santa Clara
+SLAC National Accelerator Laboratory,7,,CA,,,,yes,CA,yes,Menlo Park
+University of Chicago,7,,IL,,,,yes,IL,yes,Chicago
+University of Connecticut,7,,CT,,,,yes,CT,yes,Storrs
+University of Nevada Las Vegas,7,,NV,,,,yes,NV,yes,Las Vegas
+University of Pittsburgh,7,,PA,,,,yes,PA,yes,Pittsburgh
+University of Southern Mississippi,7,,MS,,,,yes,MS,yes,Hattiesburg
+VIDA Products Inc.,7,,,,,,yes,CA,yes,San Diego
+"HighRI Optics, Inc.",6,,,,,,yes,RI,yes,Providence
+Medical College of Wisconsin,6,,WI,,,,yes,WI,yes,Milwaukee
+"Mekonos, Inc.",6,,,,,,yes,CA,yes,San Jose
+National Institute of Standards and Technology,6,,,,,,yes,MD,yes,Gaithersburg
+Nutcracker Therapeutics,6,,,,,,yes,CA,yes,South San Francisco
+Oregon State University,6,,OR,,,,yes,OR,yes,Corvallis
+Rigetti Inc.,6,,,,,,yes,CA,yes,Berkeley
+San Francisco State University,6,San Francisco,CA,,,,yes,CA,yes,San Francisco
+Stony Brook University,6,Stony Brook,NY,,,,yes,NY,yes,Stony Brook
+University of the Pacific,6,,,,,,yes,CA,yes,Stockton
+Vanderbilt University,6,,,,,,yes,TN,yes,Nashville
+Washington State University,6,,WA,,,,yes,WA,yes,Pullman
+Alveo Energy,5,,,,,,yes,CA,yes,San Francisco
+Argonne National Laboratory (ANL),5,,IL,,,,yes,IL,yes,Lemont
+Boston University,5,Boston,MA,,,,yes,MA,yes,Boston
+"Magic Leap, Inc.",5,,,,,,yes,FL,yes,Plantation
+"NanoCore Technologies, Inc.",5,,,,,,yes,TX,yes,Austin
+Princeton University,5,Princeton,NJ,,,,yes,NJ,yes,Princeton
+"Rutgers, The State University of New Jersey",5,New Brunswick,NJ,,,,yes,NJ,yes,New Brunswick
+Touro University,5,New York,NY,,,,yes,NV,yes,Henderson
+"UES, Inc.",5,,,,,,yes,OH,yes,Dayton
+University of Illinois-Chicago,5,Chicago,IL,,,,yes,IL,yes,Chicago
+University of Nebraska-Lincoln,5,Lincoln,NE,,,,yes,NE,yes,Lincoln
+University of Utah,5,,UT,,,,yes,UT,yes,Salt Lake City
+Ansa Biotechnologies,4,,,,,,yes,CA,yes,Berkeley
+Barry University,4,,,,,,yes,FL,yes,Miami Shores
+Bikanta Corporation,4,Berkeley,CA,CA-12,Barbara Lee,,yes,CA,yes,Emeryville
+"Cypris Materials, Inc.",4,,,,,,yes,MA,yes,Cambridge
+Dow Chemical Company,4,,,,,,yes,MI,yes,Midland
+Florida State University,4,,FL,,,,yes,FL,yes,Tallahassee
+HGST,4,San Jose,CA,,,,yes,CA,yes,San Jose
+Indiana University,4,,IN,,,,yes,IN,yes,Bloomington
+Marquette University,4,Milwaukee,WI,,,,yes,WI,yes,Milwaukee
+Naval Research Laboratory,4,,,,,,yes,DC,yes,Washington
+Novartis Vaccines and Diagnostics,4,Cambridge,MA,,,,yes,MA,yes,Cambridge
+"polySpectra, Inc.",4,,,,,,yes,CA,yes,Berkeley
+Rice University,4,,TX,,,,yes,TX,yes,Houston
+University of Central Florida,4,,FL,,,,yes,FL,yes,Orlando
+University of Kentucky,4,,KY,,,,yes,KY,yes,Lexington
+University of Minnesota,4,,MN,,,,yes,MN,yes,Minneapolis
+"Air Force Research Laboratory (AFRL), Rocket Propulsion Division (Edwards AFB)",3,Edwards,CA,,,,yes,CA,yes,Edwards
+Albert Einstein College of Medicine,3,New York,NY,,,,yes,NY,yes,Bronx
+Astrileux Corporation,3,,,,,,yes,CA,yes,San Diego
+Cal Poly State University,3,,CA,,,,yes,CA,yes,San Luis Obispo
+Dartmouth College,3,Hanover,NH,,,,yes,NH,yes,Hanover
+"EpiBiome, Inc.",3,,,,,,yes,CA,yes,South San Francisco
+IBM Almaden Research Center,3,,,,,,yes,CA,yes,San Jose
+Johns Hopkins University,3,,,,,,yes,MD,yes,Baltimore
+Louisiana State University,3,,,,,,yes,LA,yes,Baton Rouge
+Macalester College,3,,,,,,yes,MN,yes,Saint Paul
+Missouri University of Science & Technology,3,,,,,,yes,MO,yes,Rolla
+National Renewable Energy Laboratory (NREL),3,Golden,CO,,,,yes,CO,yes,Golden
+"Newomics, Inc.",3,,,,,,yes,CA,yes,Berkeley
+NJIT,3,,NJ,,,,yes,NJ,yes,Newark
+Pacific Light Technologies,3,,,,,,yes,WA,yes,Seattle
+Perfect Day Inc.,3,,,,,,yes,CA,yes,Berkeley
+State University of New York at Binghamton University (SUNY Binghamton),6,Binghamton,NY,,,,yes,NY,yes,Binghamton
+State University of New York at Buffalo,3,Buffalo,NY,,,,yes,NY,yes,Buffalo
+Toyota Research Institute of North America,3,,,,,,yes,MI,yes,Ann Arbor
+University of Delaware,3,,DE,,,,yes,DE,yes,Newark
+"University of Maryland, College Park",3,College Park,MD,,,,yes,MD,yes,College Park
+University of Pennsylvania,3,,PA,,,,yes,PA,yes,Philadelphia
+University of Rochester,3,,NY,,,,yes,NY,yes,Rochester
+University of Texas at San Antonio,3,,,,,,yes,TX,yes,San Antonio
+University of Texas Southwestern Medical Center at Dallas,3,Dallas,TX,,,,yes,TX,yes,Dallas
+University of Wisconsin - Madison,3,Madison,WI,,,,yes,WI,yes,Madison
+Univesity of Pennsylvania,3,,,,,,yes,PA,yes,Philadelphia
+Western Digital,3,,,,,,yes,CA,yes,San Jose
+Yale University,3,,,,,,yes,CT,yes,New Haven
+Air Force Research Laboratory,2,,,,,,yes,OH,yes,Dayton
+"Alion, Inc (SunPrint, Inc)",2,,,,,,yes,VA,yes,McLean
+Arizona State University,2,,,,,,yes,AZ,yes,Tempe
+Bechtel Nevada,2,,,,,,yes,NV,yes,North Las Vegas
+Biodesy LLC,2,,,,,,yes,CA,yes,South San Francisco
+Boise State University,2,,,,,,yes,ID,yes,Boise
+Boston College,2,,,,,,yes,MA,yes,Chestnut Hill
+"Brewer Science, Inc.",2,,,,,,yes,MO,yes,Rolla
+"California State University, East Bay",2,,,,,,yes,CA,yes,Hayward
+Case Western Reserve University,2,,,,,,yes,OH,yes,Cleveland
+Clark Atlanta University,2,,,,,,yes,GA,yes,Atlanta
+Clemson University,2,,,,,,yes,SC,yes,Clemson
+"Colorado School of Mines, The",2,,,,,,yes,CO,yes,Golden
+Colorado State University,2,,,,,,yes,CO,yes,Fort Collins
+Fairfield University,2,,,,,,yes,CT,yes,Fairfield
+"FLO Materials, Inc.",2,,,,,,yes,MA,yes,Somerville
+"Fluigence, LLC",2,,,,,,yes,MA,yes,Cambridge
+Gaea Nanolabs LLC,2,,,,,,yes,CA,yes,San Diego
+Harvard Medical School,2,,,,,,yes,MA,yes,Boston
+Hewlett-Packard Laboratories,2,,,,,,yes,CA,yes,Palo Alto
+IBM T. J. Watson Research Center,2,,,,,,yes,NY,yes,Yorktown Heights
+Idaho National Laboratory (INL),2,,,,,,yes,ID,yes,Idaho Falls
+Inpria Corporation,2,,,,,,yes,OR,yes,Corvallis
+Kent State University,2,,,,,,yes,OH,yes,Kent
+Laney College,2,,,,,,yes,CA,yes,Oakland
+Medical University of South Carolina,2,,,,,,yes,SC,yes,Charleston
+Michigan State University,2,,,,,,yes,MI,yes,East Lansing
+"NanoElectronic Imaging, Inc.",2,,,,,,yes,CA,yes,Fremont
+National Center for Electron Microscopy,2,,,,,,yes,CA,yes,Berkeley
+National Research Council,2,,,,,,yes,DC,yes,Washington
+NC State,2,,,,,,yes,NC,yes,Raleigh
+"Nelumbo, Inc.",2,,,,,,yes,MA,yes,Boston
+Neuralink Corp,2,,,,,,yes,CA,yes,Fremont
+New England Biolabs,2,,,,,,yes,MA,yes,Ipswich
+Oak Ridge National Laboratory (ORNL),2,,,,,,yes,TN,yes,Oak Ridge
+PepsiCo Inc.,2,,,,,,yes,NY,yes,Purchase
+"SBA Materials, Inc.",2,,,,,,yes,CA,yes,Santa Barbara
+"Sila Nanotechnologies, Inc.",2,,,,,,yes,GA,yes,Atlanta
+The Rockefeller University,2,,,,,,yes,NY,yes,New York
+"Ubiquitous Energy, Inc.",2,,,,,,yes,CA,yes,Redwood City
+Union College,2,,,,,,yes,NY,yes,Schenectady
+University of Alabama,2,,,,,,yes,AL,yes,Tuscaloosa
+University of California Riverside (UCR),2,,,,,,yes,CA,yes,Riverside
+University of Florida,2,,,,,,yes,FL,yes,Gainesville
+University of Missouri-Columbia,2,,,,,,yes,MO,yes,Columbia
+University of New Mexico,2,,,,,,yes,NM,yes,Albuquerque
+University of North Carolina at Chapel Hill,2,,,,,,yes,NC,yes,Chapel Hill
+University of Oklahoma,2,,,,,,yes,OK,yes,Norman
+University of South Florida,2,,,,,,yes,FL,yes,Tampa
+University of Wisconsin - Milwaukee,2,,,,,,yes,WI,yes,Milwaukee
+Utah State University,2,,,,,,yes,UT,yes,Logan
+Visolis Inc.,2,,,,,,yes,CA,yes,Berkeley
+Washington University in St. Louis,2,,,,,,yes,MO,yes,St. Louis
+Wayne State University,2,,,,,,yes,MI,yes,Detroit
+Western Regional Research Center (USDA ARS),2,,,,,,yes,CA,yes,Albany
+3DIcon Corporation,1,,,,,,yes,OK,yes,Tulsa
+Adolphe Merkle Institute,1,,,,,,yes,CH,yes,Fribourg
+"Aerospace Corporation, The",1,,,,,,yes,CA,yes,El Segundo
+AesculaTech,1,,,,,,yes,CA,yes,San Francisco
+AmberGen Inc.,1,,,,,,yes,NJ,yes,Bedminster
+Amgen Inc,1,,,,,,yes,CA,yes,Thousand Oaks
+Applied Materials,1,,,,,,yes,CA,yes,Santa Clara
+Array Bridge Inc.,1,,,,,,yes,MA,yes,Cambridge
+"Automat Solutions, Inc",1,,,,,,yes,PA,yes,Pittsburgh
+Baylor College of Medicine,1,,,,,,yes,TX,yes,Houston
+"BixbyBio, Inc.",1,,,,,,yes,CA,yes,San Francisco
+"BlueDot Photonics, Inc.",1,,,,,,yes,WA,yes,Seattle
+Brown University,1,,,,,,yes,RI,yes,Providence
+California State University Maritime Academy,1,,,,,,yes,CA,yes,Vallejo
+"California State University, Fresno",1,,,,,,yes,CA,yes,Fresno
+CalMed,1,,,,,,yes,CA,yes,San Bernardino
+Carbonitum Energy Corporation,1,,,,,,yes,TX,yes,Houston
+"Carestream Health, Inc.",1,,,,,,yes,NY,yes,Rochester
+Carnegie Mellon University,1,,,,,,yes,PA,yes,Pittsburgh
+Catamaran Labs LLC,1,,,,,,yes,CA,yes,San Diego
+CEA,1,,,,,,yes,VA,yes,Arlington
+Center for Physical Sciences and Technology,1,,,,,,yes,IL,yes,Vilnius
+Chembirly Analytical Sciences,1,,,,,,yes,MA,yes,Northborough
+Chevron,1,,,,,,yes,CA,yes,San Ramon
+Chiron,1,,,,,,yes,CA,yes,Emeryville
+City College of New York,1,,,,,,yes,NY,yes,New York
+Clairity Technology Inc.,1,,,,,,yes,CA,yes,San Francisco
+Claremont Graduate University,1,,,,,,yes,CA,yes,Claremont
+Claremont McKenna College,1,,,,,,yes,CA,yes,Claremont
+Corning Inc. (Retiree),1,,,,,,yes,NY,yes,Corning
+CSUEB,1,,,,,,yes,CA,yes,Hayward
+"Cuberg, Inc.",1,,,,,,yes,CA,yes,Berkeley
+Cumulus Energy Storage,1,,,,,,yes,NY,yes,New York City
+Drexel University,1,,,,,,yes,PA,yes,Philadelphia
+Duke University,1,,,,,,yes,NC,yes,Durham
+Duke University Medical Center,1,,,,,,yes,NC,yes,Durham
+DuPont,1,,,,,,yes,DE,yes,Wilmington
+Dupont Company,1,,,,,,yes,DE,yes,Wilmington
+E. I. du Pont de Nemours & Co.,1,,,,,,yes,DE,yes,Wilmington
+Emory University,1,,,,,,yes,GA,yes,Atlanta
+"Evolutionary Solutions, Inc.",1,,,,,,yes,OH,yes,Cincinnati
+"Exponent, Inc.",1,,,,,,yes,CA,yes,Menlo Park
+ExxonMobil Research and Engineering Company,1,,,,,,yes,NJ,yes,Clinton
+FivePrime Therapeutics,1,,,,,,yes,CA,yes,South San Francisco
+Gallop Semiconductor Inc.,1,,,,,,yes,AZ,yes,Chandler
+Georgetown University,1,,,,,,yes,DC,yes,Washington
+Gladstone Institutes/UCSF,1,,,,,,yes,CA,yes,San Francisco
+Haverford College,1,,,,,,yes,PA,yes,Haverford
+Hewlett-Packard Co.,1,,,,,,yes,CA,yes,Palo Alto
+Hewlett-Packard Company,1,,,,,,yes,CA,yes,Palo Alto
+Hitachi Global Storage Technologies,1,,,,,,yes,CA,yes,San Jose
+Hummingbird Scientific,1,,,,,,yes,WA,yes,Lacey
+"Hysitron, Inc.",1,,,,,,yes,MN,yes,Eden Prairie
+IBM Almaden research,1,,,,,,yes,CA,yes,San Jose
+Icahn School of Medicine at Mount Sinai,1,,,,,,yes,NY,yes,New York City
+Illinois Institute of Technology,1,,,,,,yes,IL,yes,Chicago
+Indiana University Purdue University Indianapolis,1,,,,,,yes,IN,yes,Indianapolis
+Industrial Technology Research Institute,1,,,,,,yes,CA,yes,San Jose
+InterMune,1,,,,,,yes,CA,yes,Brisbane
+Iowa State University,1,,,,,,yes,IA,yes,Ames
+"Iris Photovoltaics, Inc.",1,,,,,,yes,CA,yes,Pasadena
+Kalamazoo College,1,,,,,,yes,MI,yes,Kalamazoo
+Kinestral Research,1,,,,,,yes,CA,yes,Hayward
+"Kitware, Inc.",1,,,,,,yes,NY,yes,Clifton Park
+"Kiverdi, Inc.",1,,,,,,yes,CA,yes,Hayward
+KLA-Tencor,1,,,,,,yes,CA,yes,Milpitas
+La Jolla Bioengineering Institute,1,,,,,,yes,CA,yes,La Jolla
+Li Clean Energy Technologies,1,,,,,,yes,CA,yes,Berkeley
+Loyola University Maryland,1,,,,,,yes,MD,yes,Baltimore
+LSU Health Science Center,1,,,,,,yes,LA,yes,New Orleans
+"Matrix Industries, Inc.",1,,,,,,yes,CA,yes,Fremont
+"Maxwell Biosciences, Inc.",1,,,,,,yes,MA,yes,Cambridge
+Mayo Clinic,1,,,,,,yes,MN,yes,Rochester
+Mercer University,1,,,,,,yes,GA,yes,Macon
+Merritt College,1,,,,,,yes,CA,yes,Oakland
+Microfab Technologies,1,,,,,,yes,TX,yes,Plano
+Molecular Biology Consortium,1,,,,,,yes,IL,yes,Evanston
+"Molecular Imprints, Inc.",1,,,,,,yes,TX,yes,Austin
+Montana State University,1,,,,,,yes,MT,yes,Bozeman
+Nanoasis Inc.,1,,,,,,yes,CA,yes,San Diego
+nanoPrecision Products Inc.,1,,,,,,yes,CA,yes,Carlsbad
+Nanosolar,1,,,,,,yes,CA,yes,San Jose
+"Nanospan, Inc",1,,,,,,yes,MA,yes,Waltham
+"NanoVasc, inc",1,,,,,,yes,MA,yes,Woburn
+NASA,1,,,,,,yes,DC,yes,Washington
+NASA Ames Research Center,1,,,,,,yes,CA,yes,Mountain View
+National Institutes of Health,1,,,,,,yes,MD,yes,Bethesda
+Naval PostGraduate School,1,,,,,,yes,CA,yes,Monterey
+"NexTint, Inc.",1,,,,,,yes,TX,yes,Austin
+North Dakota State University,1,,,,,,yes,ND,yes,Fargo
+North Dakota State University - Surface Chemistry,1,,,,,,yes,ND,yes,Fargo
+Northwestern Polytechnic University,1,,,,,,yes,CA,yes,Fremont
+Novartis Institutes for Biomedical Research,1,,,,,,yes,MA,yes,Cambridge
+NY University,1,,,,,,yes,NY,yes,New York City
+"ONE Nanotechnologies, LLC",1,,,,,,yes,TX,yes,Austin
+Pacific Biosciences,1,,,,,,yes,CA,yes,Menlo Park
+Palo Alto Research Center,1,,,,,,yes,CA,yes,Palo Alto
+Panazee Inc.,1,,,,,,yes,CA,yes,San Francisco
+Pfizer Inc.,1,,,,,,yes,NY,yes,New York City
+Prolynx LLC,1,,,,,,yes,CA,yes,San Francisco
+Protea Biosciences Inc.,1,,,,,,yes,TN,yes,Morgantown
+PsiQuantum Corp,1,,,,,,yes,CA,yes,Palo Alto
+Radiation Monitoring Devices,1,,,,,,yes,MA,yes,Watertown
+Retired from Corning Inc.,1,,,,,,yes,NY,yes,Corning
+"Rivian Automotive, LLC",1,,,,,,yes,MI,yes,Plymouth
+Robert Bosch LLC (North America),1,,,,,,yes,MI,yes,Farmington Hills
+Rong Li lab,1,,,,,,yes,MA,yes,Boston
+San Diego State University,1,,,,,,yes,CA,yes,San Diego
+Santa Clara University,1,,,,,,yes,CA,yes,Santa Clara
+Sarnoff Corporation,1,,,,,,yes,NJ,yes,Princeton
+SEMATECH,1,,,,,,yes,TX,yes,Austin
+Sencera LLC,1,,,,,,yes,AZ,yes,Tucson
+Sp2 Carbon,1,,,,,,yes,OH,yes,Cincinnati
+SpectraWatt Inc.,1,,,,,,yes,NY,yes,Hopewell Junction
+SRI International,1,,,,,,yes,CA,yes,Menlo Park
+Stanford School of Medicine,1,,,,,,yes,CA,yes,Stanford
+"State University of New York (SUNY), Stony Brook",1,,,,,,yes,NY,yes,Stony Brook
+State University of New York at Buffalo (SUNY Buffalo),1,,,,,,yes,NY,yes,Buffalo
+SUNY Downstate Medical Center,1,,,,,,yes,NY,yes,Brooklyn
+SUNY Stony Brook,1,,,,,,yes,NY,yes,Stony Brook
+Swift Solar Inc.,1,,,,,,yes,CO,yes,Boulder
+"Synvitrobio, Inc.",1,,,,,,yes,CA,yes,San Francisco
+Temple University,1,,,,,,yes,PA,yes,Philadelphia
+Temple University of the Commonwealth System of Higher Education,1,,,,,,yes,PA,yes,Philadelphia
+The Abdus Salam International Center for Theoretical Physics (ICTP),1,,,,,,yes,IT,yes,Trieste
+The Long Now Foundation,1,,,,,,yes,CA,yes,San Francisco
+The University of Iowa,1,,,,,,yes,IA,yes,Iowa City
+The University of Oklahoma,1,,,,,,yes,OK,yes,Norman
+The University of Washington,1,,,,,,yes,WA,yes,Seattle
+Tulane University,1,,,,,,yes,LA,yes,New Orleans
+Ultragenyx Pharmaceutical Inc.,1,,,,,,yes,CA,yes,Novato
+UMASS Medical School,1,,,,,,yes,MA,yes,Worcester
+"Uniformity Labs, Inc.",1,,,,,,yes,CA,yes,Los Angeles
+University Affiliated Research Center (UC Santa Cruz) at NASA Ames,1,,,,,,yes,CA,yes,Mountain View
+"University of Akron, The",1,,,,,,yes,OH,yes,Akron
+University of Alabama at Birmingham,1,,,,,,yes,AL,yes,Birmingham
+University of Arizona,1,,,,,,yes,AZ,yes,Tucson
+University of Arkansas,1,,,,,,yes,AR,yes,Fayetteville
+University of California at Los Angeles (UCLA),1,,,,,,yes,CA,yes,Los Angeles
+"University of California, Riverside",1,,,,,,yes,CA,yes,Riverside
+University of Dayton Research Institute,1,,,,,,yes,OH,yes,Dayton
+University of Georgia,1,,,,,,yes,GA,yes,Athens
+University of Houston,1,,,,,,yes,TX,yes,Houston
+University of Idaho,1,,,,,,yes,ID,yes,Moscow
+University of Maine,1,,,,,,yes,ME,yes,Orono
+University of Massachusetts Medical School,1,,,,,,yes,MA,yes,Worcester
+"University of Massachusetts, Worcester",1,,,,,,yes,MA,yes,Worcester
+University of Missouri,1,,,,,,yes,MO,yes,Columbia
+University of Nebraska Medical Center,1,,,,,,yes,NE,yes,Omaha
+University of North Texas,1,,,,,,yes,TX,yes,Denton
+University of Notre Dame,1,,,,,,yes,IN,yes,South Bend
+University of Scranton,1,,,,,,yes,PA,yes,Scranton
+University of South Carolina,1,,,,,,yes,SC,yes,Columbia
+University of Vermont,1,,,,,,yes,VT,yes,Burlington
+US DOE Ames Laboratory,1,,,,,,yes,IA,yes,Ames
+USAFA,1,,,,,,yes,CO,yes,Colorado Springs
+USDA/ARS/WRRC,1,,,,,,yes,AZ,yes,Tucson
+"Viking Cold Solutions, Inc.",1,,,,,,yes,TX,yes,Houston
+Zyvex Labs,1,,,,,,yes,TX,yes,Richardson

@@ -1,4 +1,4 @@
-# AutoLabel API
+# Autolabel API
 
 
 ## __The LabelingAgent Class__
