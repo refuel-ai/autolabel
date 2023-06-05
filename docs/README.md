@@ -2,7 +2,7 @@
 
 
 # install
-pip install mkdocs-material mkdocstrings mkdocstrings-python mkdocs-jupyter
+pip install mkdocs-material mkdocstrings mkdocstrings-python mkdocs-jupyter mkdocs-table-reader-plugin
 
 # To build documentation
 mkdocs build
