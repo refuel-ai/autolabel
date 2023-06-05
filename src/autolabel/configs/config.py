@@ -42,7 +42,7 @@ class AutolabelConfig(BaseConfig):
 
     @cached_property
     def _dataset_config(self) -> Dict:
-        return self.config[self.DATASET_CONFIG_KEY]
+        return self.config.get(self.DATASET_CONFIG_KEY, {})
 
     @cached_property
     def _model_config(self) -> Dict:
