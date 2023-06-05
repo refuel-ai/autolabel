@@ -1,42 +1,7 @@
 # Refuel Autolabel
 
-Refuel helps you label and create data at human-level accuracy using LLMs. 
+Refuel helps you label datasets at the speed of thought and at human-level accuracy using LLMs. 
 
-## Quickstart
-### Installation
-``` bash
-git clone git@github.com:refuel-ai/refuel-oracle.git
-cd refuel-oracle
-pip install -r requirements.txt
-```
-
-### Environment Setup
-Using Autolabel will usually require integrations with one or more model providers.
-For this example, we will be using OpenAI’s API, so we will first need to install their SDK.
-``` py
-pip install openai
-```
-
-We will need to set the environmental variable in the terminal
-``` py
-export OPENAI_API_KEY="..."
-```
-
-Alternatively, you could do this from within a Jupyter notebook or python instance:
-``` py
-import os
-os.environ["OPENAI_API_KEY"] = "..."
-```
-
-If using Anthropic Models, we need to install the anthropic library
-``` py
-pip install anthropic
-```
-
-And export the API Key in the environment variables
-``` py
-export ANTHROPIC_API_KEY="..."
-```
 
 ### Using Autolabel for classifying unlabeled data with ChatGPT
 

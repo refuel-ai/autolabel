@@ -58,6 +58,7 @@ plugins:
   - mkdocstrings
   - search
   - mkdocs-jupyter
+  - table-reader
 
 markdown_extensions:
   - pymdownx.highlight:
@@ -72,6 +73,7 @@ markdown_extensions:
   - pymdownx.superfences
   - pymdownx.mark
   - attr_list
+  - tables
   - pymdownx.emoji:
       emoji_index: !!python/name:materialx.emoji.twemoji
       emoji_generator: !!python/name:materialx.emoji.to_svg
