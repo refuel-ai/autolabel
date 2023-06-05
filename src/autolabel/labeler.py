@@ -454,15 +454,24 @@ class LabelingAgent:
         if gt_labels and len(llm_labels) > 0:
             pprint("Evaluating the existing task...")
             table = Table()
-            table.add_column("Metric", style="bold cyan")
-            table.add_column("Value", justify="right", style="bold magenta")
             gt_labels = gt_labels[: len(llm_labels)]
             eval_result = self.task.eval(llm_labels, gt_labels)
+            table_columns, table_column_names = [], []
             for m in eval_result:
                 if isinstance(m.value, list) and len(m.value) > 0:
-                    table.add_row(m.name, str(m.value[0]))
+                    table_columns.append(m.value)
+                    table_column_names.append(m.name)
                 else:
                     print(f"Metric: {m.name}: {m.value}")
+            table = Table()
+            for col_name in table_column_names:
+                table.add_column(col_name, style="bold cyan")
+            num_rows = 0 if len(table_columns) == 0 else len(table_columns[0])
+            for curr_row in range(num_rows):
+                row_values = [
+                    str(table_columns[i][curr_row]) for i in range(len(table_columns))
+                ]
+                table.add_row(*row_values)
             console.print(table)
         pprint(f"{len(llm_labels)} examples have been labeled so far.")
         if len(llm_labels) > 0:
