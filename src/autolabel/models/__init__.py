@@ -25,13 +25,13 @@ MODEL_PROVIDER_TO_IMPLEMENTATION: Dict[ModelProvider, BaseModel] = {
 class ModelFactory:
     @staticmethod
     def from_config(config: AutolabelConfig, cache: BaseCache = None) -> BaseModel:
+        model_provider = ModelProvider(config.provider())
         try:
-            model_provider = ModelProvider(config.provider())
             model_cls = MODEL_PROVIDER_TO_IMPLEMENTATION[model_provider]
-            return model_cls(config, cache)
         except ValueError as e:
             logger.error(
                 f"{config.provider()} is not in the list of supported providers: \
                 {MODEL_PROVIDER_TO_IMPLEMENTATION.keys()}"
             )
             return None
+        return model_cls(config, cache)
