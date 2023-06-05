@@ -4,10 +4,27 @@ repo_url: https://github.com/refuel-ai/refuel-oracle
 repo_name: refuel-ai/refuel-oracle
 
 nav:
-  - Getting Started: index.md
-  - Modules: modules.md
-  - Reference: api.md
-  - Examples: example_banking.ipynb
+  - Guide:
+    - Overview:
+      - Introduction: guide/overview/introduction.md
+      - Getting Started: guide/overview/getting-started.md
+      - Tutorial - Toxic comment classification: guide/overview/tutorial-classification.md
+    - Models:
+      - LLMs: guide/llms/llms.md
+    - Labeling Tasks:
+      - Tasks: guide/tasks/tasks.md
+    - Improving Labeling Accuracy:
+      - Prompting Better: guide/accuracy/prompting-better.md
+      - Example Selection: guide/accuracy/example-selection.md
+      - Confidence: guide/accuracy/confidence.md
+      - Chain of Thought: guide/accuracy/chain-of-thought.md
+    - Reliability and Robustness:
+      - LLM Output Caching: guide/reliability/llm-output-caching.md
+      - State Management: guide/reliability/state-management.md
+    - Working with Autolabel configs:
+      - Overview: guide/configs/overview.md
+  - Concepts: concepts/concepts.md
+  - Reference: reference/api.md
 
 theme:
   name: material

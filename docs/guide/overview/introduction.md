@@ -1,6 +1,6 @@
 # Refuel Autolabel
 
-For full documentation visit [refuel.ai](https://www.refuel.ai).
+Refuel helps you label and create data at human-level accuracy using LLMs. 
 
 ## Quickstart
 ### Installation
