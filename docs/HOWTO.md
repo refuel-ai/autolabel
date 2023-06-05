@@ -35,4 +35,4 @@ You can also specify which features, themes, and plugins to include in this yaml
 # How to use automated code documentation
 The mkdocstrings plugin allows for procedurally generating documentation, example below:
 
-::: autolabel.labeler.LabelingAgent.run
+::: src.autolabel.labeler.LabelingAgent.run
