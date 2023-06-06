@@ -65,33 +65,3 @@ The Config class is used to parse, validate, and store information about the lab
 ### Question Answering
 ### Entity matching
 ### Named Entity Recognition
-
-## LLMs
-
-There are a few LLMs that are available for labeling through the Autolabel library. Some of these are supported behind an API (OpenAI, Anthropic, Refuel) and some run locally (Huggingface pipeline).  
-  
-These LLMs are classified by the LLM providers, these are the organizations which provide access to the LLMs. The second parameter, is the model_name. The same provider can have multiple models exposed, for eg. OpenAI exposes text-davinci-003 and gpt-3.5-turbo.
-
-### Openai
-The provider_name here is 'openai'. The models supported by openai are text-davinci-003, gpt-3.5-turbo and gpt4. Every model has a different pricing strategy and could be useful while choosing the best model for your use case.  
-
-A few parameters that can be passed in for openai models:
-max_tokens (int) - The maximum tokens to sample from the model
-temperature (float) - A float b/w 0 and 1 which indicates the diversity you want in the output. 0 uses greedy sampling.
-
-### Anthropic
-The provider_name here is 'anthropic'. The models supported are claude-v1, claude-instant-v1.  
-
-A few parameters that can be passed in for anthopic models:
-max_tokens_to_sample (int) - The maximum tokens to sample from the model
-temperature (float) - A float b/w 0 and 1 which indicates the diversity you want in the output. 0 uses greedy sampling.
-
-### Huggingface Pipeline
-The provider_name here is huggingface_pipeline. Any model available on the huggingface hub can be passed in as the model name. This runs the model locally on a GPU if that is available. Some models may be too big to fit on a GPU available locally to users, and so you can specify quantization strategy which makes the model smaller in terms of memory.
-
-A few parameters that can be passed in for huggingface_pipeline models:
-max_new_tokens (int) - The maximum tokens to sample from the model
-temperature (float) - A float b/w 0 and 1 which indicates the diversity you want in the output. 0 uses greedy sampling.
-quantize (int) - The model quantization to use. 32 bit by default, but we also support 16 bit and 8 bit support for models which have been hosted on huggingface.
-
-### Refuel model
