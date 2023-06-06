@@ -129,15 +129,6 @@ class LabelingAgent:
                 dataset, self.config, max_items, start_index
             )
 
-        # Check explanations are present in data if explanation_column is passed in
-        if (
-            self.config.explanation_column()
-            and self.config.explanation_column() not in df.keys().tolist()
-        ):
-            raise ValueError(
-                f"Explanation column {self.config.explanation_column()} not found in dataset.\nMake sure that explanations were generated using labeler.generate_explanations(seed_file)."
-            )
-
         # Initialize task run and check if it already exists
         self.task_run = self.db.get_task_run(self.task_object.id, self.dataset.id)
         # Resume/Delete the task if it already exists or create a new task run
@@ -157,6 +148,16 @@ class LabelingAgent:
         # If this dataset config is a string, read the corrresponding csv file
         if isinstance(seed_examples, str):
             _, seed_examples, _ = self._read_csv(seed_examples, self.config)
+
+        # Check explanations are present in data if explanation_column is passed in
+        if (
+            self.config.explanation_column()
+            and len(seed_examples) > 0
+            and self.config.explanation_column() not in list(seed_examples[0].keys())
+        ):
+            raise ValueError(
+                f"Explanation column {self.config.explanation_column()} not found in dataset.\nMake sure that explanations were generated using labeler.generate_explanations(seed_file)."
+            )
 
         self.example_selector = ExampleSelectorFactory.initialize_selector(
             self.config, seed_examples, df.keys().tolist()
@@ -372,15 +373,6 @@ class LabelingAgent:
                 dataset, self.config, max_items, start_index
             )
 
-        # Check explanations are present in data if explanation_column is passed in
-        if (
-            self.config.explanation_column()
-            and self.config.explanation_column() not in df.keys().tolist()
-        ):
-            raise ValueError(
-                f"Explanation column {self.config.explanation_column()} not found in dataset.\nMake sure that explanations were generated using labeler.generate_explanations(seed_file)."
-            )
-
         prompt_list = []
         total_cost = 0
 
@@ -390,6 +382,16 @@ class LabelingAgent:
         # If this dataset config is a string, read the corrresponding csv file
         if isinstance(seed_examples, str):
             _, seed_examples, _ = self._read_csv(seed_examples, self.config)
+
+        # Check explanations are present in data if explanation_column is passed in
+        if (
+            self.config.explanation_column()
+            and len(seed_examples) > 0
+            and self.config.explanation_column() not in list(seed_examples[0].keys())
+        ):
+            raise ValueError(
+                f"Explanation column {self.config.explanation_column()} not found in dataset.\nMake sure that explanations were generated using labeler.generate_explanations(seed_file)."
+            )
 
         self.example_selector = ExampleSelectorFactory.initialize_selector(
             self.config, seed_examples, df.keys().tolist()
