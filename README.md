@@ -4,7 +4,7 @@ _Notes: (1) Autolabel is in under active development. Expect some sharp edges an
 
 <div align="center" style="width:800px">
 
-[![lint](https://github.com/refuel-ai/refuel-oracle/actions/workflows/black.yaml/badge.svg)](https://github.com/refuel-ai/refuel-oracle/actions/workflows/black.yaml/badge.svg) [![docs](https://github.com/refuel-ai/refuel-oracle/actions/workflows/docs.yaml/badge.svg)](https://docs.refuel.ai/) [![Discord](https://badgen.net/badge/icon/discord?icon=discord&label)](https://discord.gg/BDwamgzFxm) [![Twitter](https://badgen.net/badge/icon/twitter?icon=twitter&label)](https://twitter.com/RefuelAI) [![License: MIT](https://badgen.net/badge/license/MIT/blue)](https://opensource.org/licenses/MIT)
+[![lint](https://github.com/refuel-ai/refuel-oracle/actions/workflows/black.yaml/badge.svg)](https://github.com/refuel-ai/refuel-oracle/actions/workflows/black.yaml/badge.svg) [![docs](https://github.com/refuel-ai/refuel-oracle/actions/workflows/docs.yaml/badge.svg)](https://docs.refuel.ai/) [![Discord](https://img.shields.io/discord/1098746693152931901)](https://discord.gg/fweVnRx6CU) [![Twitter](https://badgen.net/badge/icon/twitter?icon=twitter&label)](https://twitter.com/RefuelAI) [![License: MIT](https://badgen.net/badge/license/MIT/blue)](https://opensource.org/licenses/MIT)
 </div>
 
 
@@ -152,6 +152,10 @@ In addition to the dataframe, this will also output a file with the labels per r
 
 See: `examples/example_run.ipynb` 
 
-## 🛠️ Contributing
+## Contributing
+Autolabel is a rapidly developing project. We welcome contributions in all forms - bug reports, pull requests and ideas for improving the library.
 
-As an open-source project, we are extremely open to contributions, whether in the form of a new feature, bug fixes, better documentation or flagging issues.
+Join the conversation on Discord - #contributing channel
+Review the 🛣️ Roadmap and contribute your ideas
+Grab an issue and open a PR - Good first issue tag
+Release Cadence We currently release new tagged versions of the pypi and npm packages on Mondays. Hotfixes go out at any time during the week.
