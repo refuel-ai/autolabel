@@ -126,7 +126,7 @@ These parameters can be passed in via the `params` dictionary under `model`. Her
 }
 ```
 
-## Huggingface [TODO]
+## Huggingface
 To use models from [Huggingface](https://huggingface.co/), you can set `provider` to `huggingface_pipeline` when creating a labeling configuration. The specific model that will be queried can be specified using the `name` key. Autolabel currently supports all Sequence2Sequence Language Models on Huggingface. All models available on Huggingface can be found [here](https://huggingface.co/docs/transformers/model_doc/openai-gpt#:~:text=TEXT-,MODELS,-ALBERT). Ensure that the model you choose can be loaded using `AutoModelForSeq2SeqLM`. Here are a few examples:
 
 * `google/flan-t5-small` (all flan-t5-* models)
@@ -184,6 +184,49 @@ These parameters can be passed in via the `params` dictionary under `model`. Her
 },
 ```
 
+## Refuel
+To use models hosted by [Refuel](https://refuel.ai/), you can set `provider` to `refuel` when creating a labeling configuration. The specific model that will be queried can be specified using the `name` key. Autolabel currently supports only one model: 
+
+* `flan-t5-xxl`
+
+This is a 13 billion parameter model, which is also available on Huggingface [here](https://huggingface.co/google/flan-t5-xxl). However, running such a huge model locally is a challenge, which is why we are currently hosting the model on our servers.
+
+### Setup
+To use Huggingface models with Autolabel, make sure to first install the relevant packages by running:
+```bash
+pip install refuel-autolabel[refuel]
+```
+and also setting the following environment variable:
+```
+export REFUEL_API_KEY=<your-refuel-key>
+```
+replacing `<your-refuel-key>` with your API key, which you can get from [here](TBD). [TODO] INSTRUCTIONS FOR GETTING THE API KEY
+
+### Example usage
+Here is an example of setting config to a dictionary that will use Refuel's `flan-t5-xxl` model. Specifically, note that in the dictionary proivded by the `model` tag, `provider` is set to `refuel` and `name` is set to be `flan-t5-xxl`.
+
+```python
+config = {
+    "task_name": "OpenbookQAWikipedia",
+    "task_type": "multi_choice_question_answering",
+    "dataset": {
+        "label_column": "answer",
+        "delimiter": ","
+    },
+    "model": {
+        "provider": "refuel",
+        "name": "flan-t5-xxl",
+        "params": {}
+    },
+    "prompt": {
+        "task_guidelines": "You are an expert at answering questions."
+        "example_template": "Question: {question}\nAnswer: {answer}"
+    }
+}
+```
+
+### Additional parameters
+Refuel currently doesn't support any custom parameters, but this is a feature that will be added soon.
 
 ## Google PaLM [TODO]
 
