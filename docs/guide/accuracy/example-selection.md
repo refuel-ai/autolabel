@@ -1,0 +1,11 @@
+While not necessary, it is often helpful to select examples and append them to the prompt. Depending on the task, the chosen example selection strategy, and the quality/quantity of labelled exampels, this could lead to considerable increase in labeling accuracy. 
+
+Consider the following labeling runs for a classification task on the banking dataset. There are a total of 1998 items to be labeled and we assume a starting labeled seedset of 200 examples.
+
+As a baseline, we assess zero-shot performance, where no examples are appended to the prompt. This attains an accuracy of 66.15%. 
+
+Iterating on this, we compare a fixed few-shot example selection strategy, which randomly chooses k examples from the labeled seedset and appends these same k examples to each prompt for the 1998 items to be labeled. In this case, we use k=10. This leads to an accuracy of 74.17%, a considerable improvement of ~8% over the zero-shot baseline.
+
+Finally, we compare a semantic similarity example selection strategy, which computes a text embedding for each of the 200 labeled seedset examples. Then, for each of the 1998 items to be labeled, we compute a text embedding and find the k most similar examples from the labeled seedset and append those k examples to the prompt for the current example. This leads to custom examples used for each item to be labeled, with the idea being that more similar examples and their corresponding labels may assist the LLM in labeling. Again, we use k = 10 and obtain a 78.61% accuracy, a reasonable ~4.5% improvement over the fixed few-shot strategy.
+
+It is almost always advisable to use an example selection strategy over a zero-shot approach in your autolabeling workflows, but the choice of which example selection strategy to use is dependent upon the specific labeling task and dataset. In some cases, there may not be sufficient labeled data to use as a seedset for semantic similarity and so fixed few-shot may be ideal as it requires a small fixed number of labeled examples. In other cases, a semantic similarity example selection strategy may be necessary for labeling tasks that are more complex and require more similar labeled references for the LLM.
