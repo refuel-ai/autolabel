@@ -37,6 +37,9 @@ class AutolabelConfig(BaseConfig):
     OUTPUT_FORMAT_KEY = "output_format"
     CHAIN_OF_THOUGHT_KEY = "chain_of_thought"
 
+    # Defaults
+    EXAMPLE_TEMPLATE_DEFAULT = "Example: {example}\nOutput: {label}"
+
     def __init__(self, config: Union[str, Dict]) -> None:
         super().__init__(config)
 
@@ -102,7 +105,9 @@ class AutolabelConfig(BaseConfig):
         return self._prompt_config.get(self.FEW_SHOT_NUM_KEY, 0)
 
     def example_template(self) -> str:
-        return self._prompt_config.get(self.EXAMPLE_TEMPLATE_KEY, None)
+        return self._prompt_config.get(
+            self.EXAMPLE_TEMPLATE_KEY, self.EXAMPLE_TEMPLATE_DEFAULT
+        )
 
     def output_format(self) -> str:
         return self._prompt_config.get(self.OUTPUT_FORMAT_KEY, None)
