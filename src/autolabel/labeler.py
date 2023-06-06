@@ -74,7 +74,11 @@ class LabelingAgent:
             dat = dat[:max_items]
 
         inputs = dat.to_dict(orient="records")
-        gt_labels = None if not label_column else dat[label_column].tolist()
+        gt_labels = (
+            None
+            if not label_column or not len(dat) or label_column not in dat[0]
+            else dat[label_column].tolist()
+        )
         return (dat, inputs, gt_labels)
 
     def _read_dataframe(
@@ -92,7 +96,11 @@ class LabelingAgent:
             dat = dat[:max_items]
 
         inputs = dat.to_dict(orient="records")
-        gt_labels = None if not label_column else dat[label_column].tolist()
+        gt_labels = (
+            None
+            if not label_column or not len(dat) or label_column not in dat[0]
+            else dat[label_column].tolist()
+        )
         return (dat, inputs, gt_labels)
 
     def run(
