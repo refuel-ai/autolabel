@@ -33,8 +33,8 @@ theme:
     - navigation.instant
     - navigation.tabs
     - navigation.sections
-    - toc.integrate
     - navigation.top
+    - toc.follow
     - search.suggest
     - search.highlight
     - content.tabs.link
