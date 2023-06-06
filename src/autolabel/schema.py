@@ -12,6 +12,7 @@ from langchain.schema import Generation
 
 class ModelProvider(str, Enum):
     """An Enum Class containing all LLM providers currently supported by autolabeler"""
+
     OPENAI = "openai"
     ANTHROPIC = "anthropic"
     HUGGINGFACE_PIPELINE = "huggingface_pipeline"
@@ -21,6 +22,7 @@ class ModelProvider(str, Enum):
 
 class TaskType(str, Enum):
     """An Enum Class containing all the types of tasks that autolabeler currently supports"""
+
     CLASSIFICATION = "classification"
     NAMED_ENTITY_RECOGNITION = "named_entity_recognition"
     MULTI_CHOICE_QUESTION_ANSWERING = "multi_choice_question_answering"
@@ -29,6 +31,7 @@ class TaskType(str, Enum):
 
 class FewShotAlgorithm(str, Enum):
     """An Enum Class containing the algorithms currently supported for choosing which examples to provide the LLM in its instruction prompt"""
+
     FIXED = "fixed"
     SEMANTIC_SIMILARITY = "semantic_similarity"
     MAX_MARGINAL_RELEVANCE = "max_marginal_relevance"
@@ -40,6 +43,7 @@ class TaskStatus(str, Enum):
 
 class Metric(str, Enum):
     """An Enum Class containing all possible ways of measuring autolabeler performance. Some metrics are always available (task agnostic), while others are only supported by certain types of Tasks"""
+
     # Task agnostic
     SUPPORT = "support"
     COMPLETION_RATE = "completion_rate"
@@ -55,6 +59,7 @@ class Metric(str, Enum):
 
 class MetricResult(BaseModel):
     """An Object for storing performance metrics gathered from autolabeler runs"""
+
     metric_type: Metric
     name: str
     value: Any
@@ -62,6 +67,7 @@ class MetricResult(BaseModel):
 
 class LLMAnnotation(BaseModel):
     """An Object for storing the generated label information and metadata for a given data point. Contains useful debugging information including the prompt used to generate this label and the model's confidence in its answer (for models that support confidence)"""
+
     successfully_labeled: str
     label: Any
     curr_sample: Optional[str] = ""

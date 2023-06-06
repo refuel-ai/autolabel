@@ -6,6 +6,7 @@ from loguru import logger
 
 class BaseConfig:
     """Used for parsing, validating, and storing information about the labeling task passed to the agent. Additional config classes should extend from this base class."""
+
     def __init__(self, config: Union[str, Dict]) -> None:
         if isinstance(config, str):
             self.config = self._safe_load_json(config)
