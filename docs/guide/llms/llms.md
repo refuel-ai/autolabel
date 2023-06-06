@@ -192,7 +192,7 @@ To use models hosted by [Refuel](https://refuel.ai/), you can set `provider` to 
 This is a 13 billion parameter model, which is also available on Huggingface [here](https://huggingface.co/google/flan-t5-xxl). However, running such a huge model locally is a challenge, which is why we are currently hosting the model on our servers.
 
 ### Setup
-To use Huggingface models with Autolabel, make sure to first install the relevant packages by running:
+To use Refuel models with Autolabel, make sure to first install the relevant packages by running:
 ```bash
 pip install refuel-autolabel[refuel]
 ```
