@@ -5,6 +5,7 @@ from loguru import logger
 
 
 class BaseConfig:
+    """Used for parsing, validating, and storing information about the labeling task passed to the agent. Additional config classes should extend from this base class."""
     def __init__(self, config: Union[str, Dict]) -> None:
         if isinstance(config, str):
             self.config = self._safe_load_json(config)
@@ -13,6 +14,7 @@ class BaseConfig:
         self._validate()
 
     def _safe_load_json(self, json_file_path: str) -> Dict:
+        """Loads config settings from a provided json file"""
         try:
             with open(json_file_path, "r") as config_file:
                 return json.load(config_file)
@@ -23,6 +25,7 @@ class BaseConfig:
             return {}
 
     def _validate(self) -> bool:
+        """Returns true if the config settings are valid"""
         return True
 
     def get(self, key: str, default_value: Any = None) -> Any:
@@ -35,6 +38,7 @@ class BaseConfig:
         return self.config[key]
 
     def to_json(self) -> str:
+        """Returns the BaseConfig object in JSON format"""
         return json.dumps(self.config, sort_keys=True)
 
     def __str__(self):

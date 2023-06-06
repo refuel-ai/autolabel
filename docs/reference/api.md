@@ -6,7 +6,7 @@
 ::: src.autolabel.labeler.LabelingAgent.run
     rendering:
         show_root_heading: yes
-        show_root_full_path:
+        show_root_full_path: no
         heading_level: 3
 
 ::: src.autolabel.labeler.LabelingAgent.plan
@@ -18,4 +18,14 @@
 
 ## __Config__
 
-The Config class is used to parse, validate, and store information about the labeling task passed to the agent.
+::: src.autolabel.configs.base
+    rendering:
+        show_root_heading: yes
+        show_root_full_path: no
+        heading_level: 3
+
+::: src.autolabel.configs.config
+    rendering:
+        show_root_heading: yes
+        show_root_full_path: no
+        heading_level: 3
