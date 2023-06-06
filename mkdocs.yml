@@ -6,9 +6,8 @@ repo_name: refuel-ai/refuel-oracle
 nav:
   - Guide:
     - Introduction: index.md
-    - Overview:
-      - Getting Started: guide/overview/getting-started.md
-      - Tutorial - Toxic comment classification: guide/overview/tutorial-classification.md
+    - Getting Started: guide/overview/getting-started.md
+    - Tutorial - Toxic comment classification: guide/overview/tutorial-classification.md
     - Models:
       - LLMs: guide/llms/llms.md
     - Labeling Tasks:
