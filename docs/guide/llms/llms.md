@@ -56,7 +56,63 @@ temperature (float) - A float b/w 0 and 1 which indicates the diversity you want
 quantize (int) - The model quantization to use. 32 bit by default, but we also support 16 bit and 8 bit support for models which have been hosted on huggingface.
 
 ## Google PaLM
-To use models from [Google](https://developers.generativeai.google/products/palm), set the `provider` to `google` in the configuration and sign in to [Google Cloud](https://cloud.google.com/docs/authentication/application-default-credentials) locally. Autolabel supports both `text-bison@001` and `chat-bison@001` from PaLM. `text-bison@001` is often more suitable for labeling tasks due to its single-prompt nature and more steerable responses. `chat-bison@001` tends to respond in a "chatty" manner (example below), returning much more than just the requested label. This results in useless labels much of the time. Pricing for these models is located [here](https://cloud.google.com/vertex-ai/pricing#generative_ai_models).
+To use models from [Google](https://developers.generativeai.google/products/palm), you can set the `provider` to `google` when creating a labeling configuration. The specific model that will be queried can be specified using the `name` key. Autolabel currently supports the following models from Google:
+
+* `text-bison@001`
+* `chat-bison@001`
+
+`text-bison@001` is often more suitable for labeling tasks due to its ability to follow natural language instructions. `chat-bison@001` is fine-tuned for multi-turn conversations. `text-bison@001` costs $0.001/1K characters and `chat-bison@001` costs half that at $0.0005/1K characters. Detailed pricing for these models is available [here](https://cloud.google.com/vertex-ai/pricing#generative_ai_models)
+
+### Setup
+To use Google models with Autolabel, make sure to first install the relevant packages by running:
+```bash
+pip install refuel-autolabel[google]
+```
+and also setting up [Google authentication](https://cloud.google.com/docs/authentication/application-default-credentials) locally.
+
+### Example usage
+Here is an example of setting config to a dictionary that will use google's `text-bison@001` model for labeling. Specifically, note that in the dictionary provided by the `model` tag, `provider` is set to `google` and `name` is set to be `text-bison@001`. `name` can be switched to use any of the two models mentioned above.
+
+```python
+config = {
+    "task_name": "OpenbookQAWikipedia",
+    "task_type": "multi_choice_question_answering",
+    "dataset": {
+        "label_column": "answer",
+        "delimiter": ","
+    },
+    "model": {
+        "provider": "google",
+        "name": "text-bison@001",
+        "params": {}
+    },
+    "prompt": {
+        "task_guidelines": "You are an expert at answering questions."
+        "example_template": "Question: {question}\nAnswer: {answer}"
+    }
+}
+```
+
+### Additional parameters
+A few parameters can be passed in alongside `google` models to tweak their behavior:
+
+* `max_output_tokens` (int): Maximum number of tokens that can be generated in the response.
+* `temperature` (float): A float between 0 and 1 which indicates the diversity you want in the output. 0 uses greedy sampling (picks the most likely outcome).
+
+These parameters can be passed in via the `params` dictionary under `model`. Here is an example:
+```python
+"model": {
+    "provider": "google",
+    "name": "text-bison@001",
+    "params": {
+        "max_output_tokens": 512,
+        "temperature": 0.1
+    }
+}
+```
+
+### Model behavior
+`chat-bison@001` always responds in a "chatty" manner (example below), often returning much more than just the requested label. This can cause problems on certain labeling tasks.
 
 Prompt
 ```
@@ -91,13 +147,5 @@ Reponse from `chat-bison@001`
 The speaker's lack of ambition is likely a result of their sadness and low energy. They may not feel like they have the motivation to do anything
 ```
 
-A few parameters that can be used for both models are the following:
-
-* `temperature` (0.0 - 1.0): Temperature controls the degree of randomness in token selection. Lower temperatures are good for prompts that require a more deterministic and less open-ended or creative response, while higher temperatures can lead to more diverse or creative results. A temperature of 0 is deterministic.
-* `maxOutputTokens` (1 - 1024): Maximum number of tokens that can be generated in the response.
-* `topK` (1 - 40): Specify a lower value for less random responses and a higher value for more random responses.
-* `topP` (0.0 - 1.0): Specify a lower value for less random responses and a higher value for more random responses.
-
-[*More Info in Vertex AI API Docs*](https://cloud.google.com/vertex-ai/docs/generative-ai/start/quickstarts/api-quickstart)
-
-Google models seem to have much stricter content moderation rules than the other supported models. The affects of this could range from returning `NO_LABEL` for a handful of data points to failing on every point in the dataset (see PaLM's performance on Civil Comments) and nullifying the entire labeling job. Consider a different model if your dataset has content that is likely to trigger Google's built-in content moderation.
+### Content moderation
+Both Google LLMs seem to have much stricter content moderation rules than the other supported models. Consider a different model if your dataset has content that is likely to trigger Google's built-in content moderation.
