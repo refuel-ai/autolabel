@@ -4,11 +4,11 @@
 
 ## Features
 
-* Support for NLP [tasks](/guide/tasks/tasks) such as classification, entity matching, question-answering and named entity-recognition. 
-* Use any [LLM provider](/guide/llms/llms) such as OpenAI, Anthropic, HuggingFace and more. 
-* Support for research-proven LLM techniques such as [few-shot sampling](/guide/accuracy/example-selection) and prompting, [chain-of-thought](/guide/accuracy/chain-of-thought), etc.
-* [Confidence](/guide/accuracy/confidence) scores and explanations for every single output label
-* Minimize costs and experimentation time through [smart caching](/guide/reliability/llm-output-caching) and intelligent workflows
+* Autolabel data for [NLP tasks](https://docs.refuel.ai/guide/tasks/classification_task/) such as classification, question-answering and named entity-recognition, entity matching and more.
+* Seamlessly use commercial and open source [LLMs](https://docs.refuel.ai/guide/llms/llms/) from providers such as OpenAI, Anthropic, HuggingFace, Google and more.
+* Leverage research-proven LLM techniques to boost label quality, such as few-shot learning and chain-of-thought prompting.
+* [Confidence estimation](https://docs.refuel.ai/guide/accuracy/confidence/) and explanations out of the box for every single output label
+* [Caching and state management](https://docs.refuel.ai/guide/reliability/state-management/) to minimize costs and experimentation time
 
 ## Getting Started
 
