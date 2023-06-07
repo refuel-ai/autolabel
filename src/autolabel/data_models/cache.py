@@ -9,6 +9,8 @@ from autolabel.schema import CacheEntry
 
 
 class CacheEntryModel(Base):
+    """an SQLAlchemy based Cache system for storing and retriving CacheEntries"""
+
     __tablename__ = "generation_cache"
 
     id = Column(Integer, primary_key=True)

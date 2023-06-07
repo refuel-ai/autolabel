@@ -26,10 +26,12 @@ nav:
   - Reference:
       - AutoLabeler: reference/labeler.md
       - Config: reference/configs.md
-      - Data: reference/data.md
       - Models: reference/models.md
-      - Schema: reference/schema.md
       - Tasks: reference/tasks.md
+      - Schema: reference/schema.md
+      - Cache: reference/cache.md
+      - Example Selector: reference/example_select.md
+      - Data Models: reference/data_models.md
 
 theme:
   name: material
