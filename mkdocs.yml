@@ -60,6 +60,7 @@ plugins:
   - table-reader
 
 markdown_extensions:
+  - md_in_html
   - pymdownx.highlight:
       anchor_linenums: true
   - pymdownx.inlinehilite
