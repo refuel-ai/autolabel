@@ -363,12 +363,10 @@ class LabelingAgent:
         )
 
         input_limit = min(len(inputs), 100)
-        for i, input_i in enumerate(
-            track(
-                inputs[:input_limit],
-                description="Generating Prompts...",
-                console=console,
-            )
+        for input_i in track(
+            inputs[:input_limit],
+            description="Generating Prompts...",
+            console=console,
         ):
             # TODO: Check if this needs to use the example selector
             if self.example_selector:
