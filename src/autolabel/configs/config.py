@@ -118,7 +118,7 @@ class AutolabelConfig(BaseConfig):
         return self._prompt_config.get(self.FEW_SHOT_NUM_KEY, 0)
 
     def example_template(self) -> str:
-        """Returns a string containing a template for how examples will be passed to the model"""
+        """Returns a string containing a template for how examples will be formatted in the prompt"""
         return self._prompt_config.get(self.EXAMPLE_TEMPLATE_KEY, None)
 
     def output_format(self) -> str:
@@ -128,5 +128,5 @@ class AutolabelConfig(BaseConfig):
         return self._prompt_config.get(self.OUTPUT_GUIDELINE_KEY, None)
 
     def chain_of_thought(self) -> bool:
-        """Returns true if the model is able to perform 'chain of thought reasoning."""
+        """Returns true if the model is able to perform chain of thought reasoning."""
         return self._prompt_config.get(self.CHAIN_OF_THOUGHT_KEY, False)

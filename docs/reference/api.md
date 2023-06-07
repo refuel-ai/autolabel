@@ -20,12 +20,17 @@
 
 ::: src.autolabel.configs.base
     rendering:
-        show_root_heading: yes
         show_root_full_path: no
+        show_root_toc_entry: no
         heading_level: 3
 
 ::: src.autolabel.configs.config
     rendering:
-        show_root_heading: yes
         show_root_full_path: no
+        show_root_toc_entry: no
         heading_level: 3
+
+::: src.autolabel.schema
+    rendering:
+        show_root_full_path: no
+        show_root_toc_entry: no

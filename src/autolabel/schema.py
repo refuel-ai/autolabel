@@ -11,7 +11,7 @@ from langchain.schema import Generation
 
 
 class ModelProvider(str, Enum):
-    """An Enum Class containing all LLM providers currently supported by autolabeler"""
+    """Enum containing all LLM providers currently supported by autolabeler"""
 
     OPENAI = "openai"
     ANTHROPIC = "anthropic"
@@ -21,7 +21,7 @@ class ModelProvider(str, Enum):
 
 
 class TaskType(str, Enum):
-    """An Enum Class containing all the types of tasks that autolabeler currently supports"""
+    """Enum containing all the types of tasks that autolabeler currently supports"""
 
     CLASSIFICATION = "classification"
     NAMED_ENTITY_RECOGNITION = "named_entity_recognition"
@@ -30,7 +30,7 @@ class TaskType(str, Enum):
 
 
 class FewShotAlgorithm(str, Enum):
-    """An Enum Class containing the algorithms currently supported for choosing which examples to provide the LLM in its instruction prompt"""
+    """Enum of supported algorithms for choosing which examples to provide the LLM in its instruction prompt"""
 
     FIXED = "fixed"
     SEMANTIC_SIMILARITY = "semantic_similarity"
@@ -42,7 +42,7 @@ class TaskStatus(str, Enum):
 
 
 class Metric(str, Enum):
-    """An Enum Class containing all possible ways of measuring autolabeler performance. Some metrics are always available (task agnostic), while others are only supported by certain types of Tasks"""
+    """Enum of supported performance metrics. Some metrics are always available (task agnostic), while others are only supported by certain types of tasks"""
 
     # Task agnostic
     SUPPORT = "support"
@@ -58,7 +58,7 @@ class Metric(str, Enum):
 
 
 class MetricResult(BaseModel):
-    """An Object for storing performance metrics gathered from autolabeler runs"""
+    """Contains performance metrics gathered from autolabeler runs"""
 
     metric_type: Metric
     name: str
@@ -66,7 +66,7 @@ class MetricResult(BaseModel):
 
 
 class LLMAnnotation(BaseModel):
-    """An Object for storing the generated label information and metadata for a given data point. Contains useful debugging information including the prompt used to generate this label and the model's confidence in its answer (for models that support confidence)"""
+    """Contains label information of a given data point, including the generated label, the prompt given to the LLM, and the LLMs response. Optionally includes a confidence_score if supported by the model"""
 
     successfully_labeled: str
     label: Any
@@ -78,6 +78,8 @@ class LLMAnnotation(BaseModel):
 
 
 class Dataset(BaseModel):
+    """Contains Dataset parameters, including input file path, indexes for state management (e.g. job batching and retries), and a unique ID"""
+
     id: str
     input_file: str
     start_index: int
@@ -94,6 +96,17 @@ class Dataset(BaseModel):
         start_index: int,
         max_items: int,
     ) -> str:
+        """
+        Generates a unique ID for the given Dataset configuration
+        Args:
+            dataset: either 1.) input file name or 2.) pandas Dataframe
+            config:  autolabeler settings
+            start_index: index to begin labeling job at (used for job batching, retries, state management)
+            max_items: number of data points to label, beginning at start_index
+
+        Returns:
+            filehash: a unique ID generated from an MD5 hash of the functions parameters
+        """
         if isinstance(dataset, str):
             filehash = calculate_md5(
                 [open(dataset, "rb"), config._dataset_config, start_index, max_items]
