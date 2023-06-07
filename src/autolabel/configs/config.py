@@ -86,7 +86,7 @@ class AutolabelConfig(BaseConfig):
         return self._model_config[self.PROVIDER_KEY]
 
     def model_name(self) -> str:
-        """Returns the name of the model being used for labeling (e.g. GPT-4, Claude-v1)"""
+        """Returns the name of the model being used for labeling (e.g. gpt-4, claude-v1)"""
         return self._model_config[self.MODEL_NAME_KEY]
 
     def model_params(self) -> Dict:
