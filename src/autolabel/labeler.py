@@ -76,7 +76,7 @@ class LabelingAgent:
         inputs = dat.to_dict(orient="records")
         gt_labels = (
             None
-            if not label_column or not len(dat) or label_column not in dat[0]
+            if not label_column or not len(inputs) or label_column not in inputs[0]
             else dat[label_column].tolist()
         )
         return (dat, inputs, gt_labels)
@@ -98,7 +98,7 @@ class LabelingAgent:
         inputs = dat.to_dict(orient="records")
         gt_labels = (
             None
-            if not label_column or not len(dat) or label_column not in dat[0]
+            if not label_column or not len(inputs) or label_column not in inputs[0]
             else dat[label_column].tolist()
         )
         return (dat, inputs, gt_labels)
