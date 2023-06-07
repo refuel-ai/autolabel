@@ -42,9 +42,6 @@ config = {
             "apple_pay_or_google_pay",
             ...
         ],
-        "few_shot_examples": "../data/banking_seed.csv",
-        "few_shot_selection": "semantic_similarity",
-        "few_shot_num": 5,
         "example_template": "Example: {example}\nOutput: {label}"
     }
 }
@@ -102,9 +99,9 @@ For the banking dataset, we found `semantic_similarity` search to work really we
 
 ```py
 from autolabel import LabelingAgent
-o = LabelingAgent(config)
-o.plan('data/banking77.csv')
-o.run('data/banking77.csv', max_items = 100)
+agent = LabelingAgent(config)
+agent.plan('data/banking77.csv')
+agent.run('data/banking77.csv', max_items = 100)
 ```
 
 ### Evaluation metrics
