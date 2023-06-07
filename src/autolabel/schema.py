@@ -99,7 +99,7 @@ class Dataset(BaseModel):
         """
         Generates a unique ID for the given Dataset configuration
         Args:
-            dataset: either 1.) input file name or 2.) pandas Dataframe
+            dataset: either 1) input file name or 2) pandas Dataframe
             config:  autolabeler settings
             start_index: index to begin labeling job at (used for job batching, retries, state management)
             max_items: number of data points to label, beginning at start_index
