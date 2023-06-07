@@ -1,6 +1,5 @@
 <img src="/assets/autolabel.png" alt="isolated" width="100%"/>
 
-# Introduction to Refuel Autolabel
 **Autolabel** helps you label datasets at the speed of thought and at human-level accuracy using LLMs. 
 
 ## Features
