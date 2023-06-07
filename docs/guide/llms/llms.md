@@ -112,40 +112,7 @@ These parameters can be passed in via the `params` dictionary under `model`. Her
 ```
 
 ### Model behavior
-`chat-bison@001` always responds in a "chatty" manner (example below), often returning much more than just the requested label. This can cause problems on certain labeling tasks.
-
-Prompt
-```
-You are an expert at understanding emotions of human texts.
-Your job is to correctly label the provided input example into one of the following categories:
-sadness
-joy
-love
-anger
-fear
-surprise
-
-You will return the answer with just one element: "the correct label"
-
-Some examples with their output answers are provided below:
-
-Example: i am pinned as the culprit of digging out their inferiority and made them feel useless again
-Output: sadness
-
-Example: i feel about the plight of these dogs so its lovely to find a turkish vet who really cares
-Output: love
-
-Example: i see how strong and bright you are and as you meet your milestones weeks early i feel assured that my gut was always right
-Output: joy
-
-Now I want you to label the following example:
-Example: im feeling rather rotten so im not very ambitious right now
-Output:
-```
-Reponse from `chat-bison@001`
-```
-The speaker's lack of ambition is likely a result of their sadness and low energy. They may not feel like they have the motivation to do anything
-```
+`chat-bison@001` always responds in a "chatty" manner (example below), often returning more than just the requested label. This can cause problems on certain labeling tasks.
 
 ### Content moderation
-Both Google LLMs seem to have much stricter content moderation rules than the other supported models. Consider a different model if your dataset has content that is likely to trigger Google's built-in content moderation.
+Both Google LLMs seem to have much stricter content moderation rules than the other supported models. This can cause certain labeling jobs to completely fail as shown in our [technical report](). Consider a different model if your dataset has content that is likely to trigger Google's built-in content moderation.
