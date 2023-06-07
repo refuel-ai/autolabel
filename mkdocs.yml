@@ -1,7 +1,7 @@
 site_name: Autolabel
 site_url: https://refuel.ai
-repo_url: https://github.com/refuel-ai/refuel-oracle
-repo_name: refuel-ai/refuel-oracle
+repo_url: https://github.com/refuel-ai/autolabel
+repo_name: refuel-ai/autolabel
 
 nav:
   - Guide:
