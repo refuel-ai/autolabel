@@ -13,7 +13,6 @@ from autolabel.utils import get_format_variables
 
 
 class BaseTask(ABC):
-
     ZERO_SHOT_TEMPLATE = "{task_guidelines}\n\n{output_guidelines}\n\nNow I want you to label the following example:\n{current_example}"
     FEW_SHOT_TEMPLATE = "{task_guidelines}\n\n{output_guidelines}\n\nSome examples with their output answers are provided below:\n\n{seed_examples}\n\nNow I want you to label the following example:\n{current_example}"
 
@@ -67,7 +66,11 @@ class BaseTask(ABC):
         # The last line of the response is the label
         # This is done to handle the case where the model generates an explanation before generating the label
         completion_text = response.text.strip().split("\n")[-1].strip()
-        if len(completion_text) == 0:
+        if len(response.text.strip()) == 0:
+            successfully_labeled = "no"
+            llm_label = self.NULL_LABEL_TOKEN
+            logger.warning(f"LLM response is empty")
+        elif len(completion_text) == 0:
             successfully_labeled = "no"
             llm_label = self.NULL_LABEL_TOKEN
             logger.error(f"Error parsing LLM response: {response.text}")
