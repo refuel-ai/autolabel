@@ -3,7 +3,21 @@ import json
 import regex
 from string import Formatter
 
-from typing import Any, List
+from typing import Any, List, Dict, Optional, Sequence, Union, Iterable
+
+from rich.console import Console, Group
+from rich.live import Live
+from rich.progress import (
+    Progress,
+    BarColumn,
+    MofNCompleteColumn,
+    ProgressColumn,
+    TextColumn,
+    TimeElapsedColumn,
+    TimeRemainingColumn,
+    ProgressType,
+)
+from rich.table import Table
 
 
 def extract_valid_json_substring(string: str) -> str:
@@ -47,3 +61,152 @@ def calculate_md5(input_data: Any) -> str:
 
 def get_format_variables(fmt_string: str) -> List:
     return [i[1] for i in Formatter().parse(fmt_string) if i[1] is not None]
+
+
+def _autolabel_progress(
+    description: str = None,
+    console: Optional[Console] = None,
+    transient: bool = False,
+    disable: bool = False,
+) -> Progress:
+    """Create a progress bar for autolabel."""
+    columns: List[ProgressColumn] = (
+        [TextColumn("[progress.description]{task.description}")] if description else []
+    )
+    columns.extend(
+        (
+            BarColumn(),
+            MofNCompleteColumn(),
+            TimeElapsedColumn(),
+            TimeRemainingColumn(),
+        )
+    )
+    return Progress(
+        *columns,
+        console=console,
+        transient=transient,
+        disable=disable,
+    )
+
+
+def track(
+    sequence: Union[Sequence[ProgressType], Iterable[ProgressType]],
+    description: str = None,
+    total: Optional[int] = None,
+    advance: int = 1,
+    transient: bool = False,
+    console: Optional[Console] = None,
+    disable: bool = False,
+) -> Iterable[ProgressType]:
+    """Track progress by iterating over a sequence.
+
+    Args:
+        sequence (Iterable[ProgressType]): A sequence (must support "len") you wish to iterate over.
+        description (str, optional): Description of task show next to progress bar. Defaults to `None`.
+        total (int, optional): Total number of steps. Default is len(sequence).
+        advance (int, optional): Number of steps to advance progress by. Defaults to 1. Total / advance must less than or equal to len(sequence) for progress to reach finished state.
+        transient (bool, optional): Clear the progress on exit. Defaults to False.
+        console (Console, optional): Console to write to. Default creates internal Console instance.
+        disable (bool, optional): Disable display of progress.
+    Returns:
+        Iterable[ProgressType]: An iterable of the values in the sequence.
+    """
+    progress = _autolabel_progress(
+        description=description,
+        transient=transient,
+        console=console,
+        disable=disable,
+    )
+
+    if total is None:
+        total = len(sequence)
+
+    with progress:
+        progress_task = progress.add_task(description, total=total)
+        for value in sequence:
+            yield value
+            progress.advance(
+                progress_task,
+                advance=min(advance, total - progress.tasks[progress_task].completed),
+            )
+            progress.refresh()
+
+
+def track_with_stats(
+    sequence: Union[Sequence[ProgressType], Iterable[ProgressType]],
+    stats: Dict[str, str],
+    description: str = None,
+    total: Optional[float] = None,
+    advance: int = 1,
+    transient: bool = False,
+    console: Optional[Console] = None,
+    disable: bool = False,
+) -> Iterable[ProgressType]:
+    """Track progress and displays stats by iterating over a sequence.
+
+    Args:
+        sequence (Iterable[ProgressType]): A sequence (must support "len") you wish to iterate over.
+        stats (Dict[str, str]): A dictionary of stats to display.
+        description (str, optional): Description of task show next to progress bar. Defaults to `None`.
+        total (float, optional): Total number of steps. Default is len(sequence).
+        advance (int, optional): Number of steps to advance progress by. Defaults to 1. Total / advance must less than or equal to len(sequence) for progress to reach finished state.
+        transient (bool, optional): Clear the progress on exit. Defaults to False.
+        console (Console, optional): Console to write to. Default creates internal Console instance.
+        disable (bool, optional): Disable display of progress.
+    Returns:
+        Iterable[ProgressType]: An iterable of the values in the sequence.
+    """
+    progress = _autolabel_progress(
+        description=description,
+        transient=transient,
+        console=console,
+        disable=disable,
+    )
+    stats_progress = Progress(
+        TextColumn("{task.fields[stats]}"),
+    )
+
+    group = Group(progress, stats_progress)
+    live = Live(group)
+
+    if total is None:
+        total = len(sequence)
+
+    with live:
+        progress_task = progress.add_task(description=description, total=total)
+        stats_task = stats_progress.add_task(
+            "Stats", stats=", ".join(f"{k}={v}" for k, v in stats.items())
+        )
+        for value in sequence:
+            yield value
+            progress.advance(
+                progress_task,
+                advance=min(advance, total - progress.tasks[progress_task].completed),
+            )
+            stats_progress.update(
+                stats_task, stats=", ".join(f"{k}={v}" for k, v in stats.items())
+            )
+            live.refresh()
+
+
+def print_table(
+    data: Dict, show_header: bool = True, console: Optional[Console] = None
+) -> None:
+    """Print a table of data.
+
+    Args:
+        data (Dict[str, List]): A dictionary of data to print.
+        show_header (bool, optional): Show the header row. Defaults to True.
+    """
+    # Convert all values to strings
+    data = {
+        str(key): [str(v) for v in value] if isinstance(value, List) else [str(value)]
+        for key, value in data.items()
+    }
+    table = Table(show_header=show_header)
+    for key in data:
+        table.add_column(key)
+    for i, row in enumerate(zip(*data.values())):
+        table.add_row(*row, style="grey100" if i % 2 == 0 else "grey70")
+    console = console or Console()
+    console.print(table)
