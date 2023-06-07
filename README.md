@@ -123,10 +123,6 @@ Example: This movie will be played next week at the Chinese theater.
 Output:
 neutral
 
-Now I want you to label the following example: 
-Example: Integrity means that you pay your debts. Does this apply to President Trump too?
-Output:
-
 Now I want you to label the following example:
 Input: A rare exception to the rule that great literature makes disappointing films.
 Output:
