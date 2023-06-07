@@ -11,7 +11,7 @@ nav:
     - Models:
       - LLMs: guide/llms/llms.md
     - Labeling Tasks:
-      - Tasks: guide/tasks/tasks.md
+      - Classification Task: guide/tasks/classification_task.md
     - Improving Labeling Accuracy:
       - Prompting Better: guide/accuracy/prompting-better.md
       - Example Selection: guide/accuracy/example-selection.md
