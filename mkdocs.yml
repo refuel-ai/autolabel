@@ -23,7 +23,13 @@ nav:
     - Working with Autolabel configs:
       - Overview: guide/configs/overview.md
   - Concepts: concepts/concepts.md
-  - Reference: reference/api.md
+  - Reference:
+      - AutoLabeler: reference/labeler.md
+      - Config: reference/configs.md
+      - Data: reference/data.md
+      - Models: reference/models.md
+      - Schema: reference/schema.md
+      - Tasks: reference/tasks.md
 
 theme:
   name: material
