@@ -46,9 +46,24 @@ dev = [
     "bumpver",
     "pip-tools",
     "pytest",
-    "gdown",
     "pre-commit"
 ]
 
 [project.urls]
 Homepage = "https://github.com/refuel-ai/autolabel"
+
+[tool.black]
+include = '\.pyi?$'
+exclude = '''
+/(
+    \.git
+  | \.hg
+  | \.mypy_cache
+  | \.tox
+  | \.venv
+  | _build
+  | buck-out
+  | build
+  | dist
+)/
+'''
