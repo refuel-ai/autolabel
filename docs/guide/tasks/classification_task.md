@@ -105,4 +105,18 @@ agent.run('data/banking77.csv', max_items = 100)
 ```
 
 ### Evaluation metrics
-We use the accuracy metric while evaluating classification tasks. This consists of taking an exact match of the output of the LLM with the provided label and checking the fraction of the llm_labels which are correct.
+
+On running the above config, this is an example output expected for labeling 100 items.
+```
+Cost in $=0.00, support=50, threshold=-inf, accuracy=0.6600, completion_rate=1.0000
+Actual Cost: 0.0058579999999999995
+┏━━━━━━━━━┳━━━━━━━━━━━┳━━━━━━━━━━┳━━━━━━━━━━━━━━━━━┓
+┃ support ┃ threshold ┃ accuracy ┃ completion_rate ┃
+┡━━━━━━━━━╇━━━━━━━━━━━╇━━━━━━━━━━╇━━━━━━━━━━━━━━━━━┩
+│ 100     │ -inf      │ 0.76     │ 1.0             │
+└─────────┴───────────┴──────────┴─────────────────┘
+```
+
+**Accuracy** - We use accuracy as the main metric for evaluating classification tasks. This is done by checking the fraction of examples which are given the correct label in the training dataset.
+
+**Completion Rate** - There can be errors while running the LLM related to labeling for eg. the LLM may give a label which is not in the label list or provide an answer which is not parsable by the library. In this cases, we mark the example as not labeled successfully. The completion rate refers to the proportion of examples that were labeled successfully.

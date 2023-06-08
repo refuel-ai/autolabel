@@ -23,8 +23,18 @@ MODEL_PROVIDER_TO_IMPLEMENTATION: Dict[ModelProvider, BaseModel] = {
 
 
 class ModelFactory:
+    """The ModelFactory class is used to create a BaseModel object from the given AutoLabelConfig configuration."""
+
     @staticmethod
     def from_config(config: AutolabelConfig, cache: BaseCache = None) -> BaseModel:
+        """
+        Returns a BaseModel object configured with the settings found in the provided AutolabelConfig.
+        Args:
+            config: AutolabelConfig object containing project settings
+            cache: cache allows for saving results in between labeling runs for future use
+        Returns:
+            model: a fully configured BaseModel object
+        """
         model_provider = ModelProvider(config.provider())
         try:
             model_cls = MODEL_PROVIDER_TO_IMPLEMENTATION[model_provider]

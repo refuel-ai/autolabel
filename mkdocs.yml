@@ -12,6 +12,8 @@ nav:
       - LLMs: guide/llms/llms.md
     - Labeling Tasks:
       - Classification Task: guide/tasks/classification_task.md
+      - Question Answering Task: guide/tasks/question_answering_task.md
+      - Entity Matching Task: guide/tasks/entity_matching_task.md
     - Improving Labeling Accuracy:
       - Prompting Better: guide/accuracy/prompting-better.md
       - Example Selection: guide/accuracy/example-selection.md
@@ -23,7 +25,15 @@ nav:
     - Working with Autolabel configs:
       - Overview: guide/configs/overview.md
   - Concepts: concepts/concepts.md
-  - Reference: reference/api.md
+  - Reference:
+      - AutoLabeler: reference/labeler.md
+      - Config: reference/configs.md
+      - Models: reference/models.md
+      - Tasks: reference/tasks.md
+      - Schema: reference/schema.md
+      - Cache: reference/cache.md
+      - Example Selector: reference/example_select.md
+      - Data Models: reference/data_models.md
 
 theme:
   name: material

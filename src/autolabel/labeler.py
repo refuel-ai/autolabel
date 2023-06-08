@@ -1,23 +1,24 @@
+import sys
+from typing import Dict, List, Optional, Tuple, Union
+
+import numpy as np
+import pandas as pd
 from loguru import logger
 from rich import print as pprint
 from rich.console import Console
 from rich.prompt import Confirm
-from typing import Tuple, List, Dict, Union, Optional
 import pandas as pd
-import sys
 
-from autolabel.confidence import ConfidenceCalculator
 from autolabel.cache import SQLAlchemyCache
-from autolabel.few_shot import ExampleSelectorFactory
-from autolabel.models import ModelFactory, BaseModel
-from autolabel.schema import LLMAnnotation, MetricResult
-from autolabel.tasks import TaskFactory
-from autolabel.database import StateManager
-from autolabel.schema import TaskRun, TaskStatus
-from autolabel.data_models import TaskRunModel, AnnotationModel
+from autolabel.confidence import ConfidenceCalculator
 from autolabel.configs import AutolabelConfig
+from autolabel.data_models import AnnotationModel, TaskRunModel
+from autolabel.database import StateManager
+from autolabel.few_shot import ExampleSelectorFactory
+from autolabel.models import BaseModel, ModelFactory
+from autolabel.schema import LLMAnnotation, MetricResult, TaskRun, TaskStatus
+from autolabel.tasks import TaskFactory
 from autolabel.utils import track, track_with_stats, print_table
-
 
 console = Console()
 
@@ -284,7 +285,7 @@ class LabelingAgent:
                     table[m.name] = m.value
                 else:
                     print(f"Metric: {m.name}: {m.value}")
-            print(f"Actual Cost: {cost}")
+            print(f"Actual Cost: {round(cost, 4)}")
             print_table(table, console=console)
 
         # Write output to CSV
@@ -394,6 +395,13 @@ class LabelingAgent:
     def handle_existing_task_run(
         self, task_run: TaskRun, csv_file_name: str, gt_labels: List[str] = None
     ) -> TaskRun:
+        """
+        Allows for continuing an existing labeling task. The user will be asked whether they wish to continue from where the run previously left off, or restart from the beginning.
+        Args:
+            task_run: TaskRun to retry
+            csv_file_name: path to the dataset we wish to label (only used if user chooses to restart the task)
+            gt_labels: If ground truth labels are provided, performance metrics will be displayed, such as label accuracy
+        """
         pprint(f"There is an existing task with following details: {task_run}")
         db_result = AnnotationModel.get_annotations_by_task_run_id(
             self.db.session, task_run.id
@@ -430,6 +438,7 @@ class LabelingAgent:
     def save_task_run_state(
         self, current_index: int = None, status: TaskStatus = "", error: str = ""
     ) -> TaskRun:
+        """Saves the current state of the Task being performed"""
         # Save the current state of the task
         if error:
             self.task_run.error = error
@@ -459,6 +468,7 @@ class LabelingAgent:
         self,
         seed_examples: Union[str, List[Dict]],
     ) -> List[Dict]:
+        """Use LLM to generate explanations for why examples are labeled the way that they are."""
         out_file = None
         if isinstance(seed_examples, str):
             out_file = seed_examples
