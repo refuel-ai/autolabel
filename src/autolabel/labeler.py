@@ -1,33 +1,32 @@
-from loguru import logger
-from rich import print as pprint
-from rich.progress import (
-    Progress,
-    BarColumn,
-    MofNCompleteColumn,
-    TimeElapsedColumn,
-    TimeRemainingColumn,
-    TextColumn,
-)
-from rich.console import Console, Group
-from rich.live import Live
-from rich.table import Table
-from rich.prompt import Confirm
-from typing import Tuple, List, Dict, Union, Optional
+import sys
+from typing import Dict, List, Optional, Tuple, Union
+
 import numpy as np
 import pandas as pd
-import sys
+from loguru import logger
+from rich import print as pprint
+from rich.console import Console, Group
+from rich.live import Live
+from rich.progress import (
+    BarColumn,
+    MofNCompleteColumn,
+    Progress,
+    TextColumn,
+    TimeElapsedColumn,
+    TimeRemainingColumn,
+)
+from rich.prompt import Confirm
+from rich.table import Table
 
-from autolabel.confidence import ConfidenceCalculator
 from autolabel.cache import SQLAlchemyCache
-from autolabel.few_shot import ExampleSelectorFactory
-from autolabel.models import ModelFactory, BaseModel
-from autolabel.schema import LLMAnnotation, MetricResult
-from autolabel.tasks import TaskFactory
-from autolabel.database import StateManager
-from autolabel.schema import TaskRun, TaskStatus
-from autolabel.data_models import TaskRunModel, AnnotationModel
+from autolabel.confidence import ConfidenceCalculator
 from autolabel.configs import AutolabelConfig
-
+from autolabel.data_models import AnnotationModel, TaskRunModel
+from autolabel.database import StateManager
+from autolabel.few_shot import ExampleSelectorFactory
+from autolabel.models import BaseModel, ModelFactory
+from autolabel.schema import LLMAnnotation, MetricResult, TaskRun, TaskStatus
+from autolabel.tasks import TaskFactory
 
 console = Console()
 
@@ -320,7 +319,7 @@ class LabelingAgent:
                     table_column_names.append(m.name)
                 else:
                     print(f"Metric: {m.name}: {m.value}")
-            print(f"Actual Cost: {cost}")
+            print(f"Actual Cost: {round(cost, 4)}")
             table = Table()
             for col_name in table_column_names:
                 table.add_column(col_name, style="bold cyan")
