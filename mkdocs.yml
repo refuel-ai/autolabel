@@ -1,7 +1,7 @@
 site_name: Autolabel
 site_url: https://refuel.ai
-repo_url: https://github.com/refuel-ai/refuel-oracle
-repo_name: refuel-ai/refuel-oracle
+repo_url: https://github.com/refuel-ai/autolabel
+repo_name: refuel-ai/autolabel
 
 nav:
   - Guide:
@@ -11,7 +11,9 @@ nav:
     - Models:
       - LLMs: guide/llms/llms.md
     - Labeling Tasks:
-      - Tasks: guide/tasks/tasks.md
+      - Classification Task: guide/tasks/classification_task.md
+      - Question Answering Task: guide/tasks/question_answering_task.md
+      - Entity Matching Task: guide/tasks/entity_matching_task.md
     - Improving Labeling Accuracy:
       - Prompting Better: guide/accuracy/prompting-better.md
       - Example Selection: guide/accuracy/example-selection.md

@@ -15,11 +15,7 @@ class PaLMLLM(BaseModel):
     NUM_TRIES = 5
 
     DEFAULT_MODEL = "text-bison@001"
-    DEFAULT_PARAMS = {
-        "temperature": 0,
-        "top_p": 0.8,
-        "top_k": 40,
-    }
+    DEFAULT_PARAMS = {"temperature": 0}
 
     # Reference: https://cloud.google.com/vertex-ai/pricing
     COST_PER_CHARACTER = {

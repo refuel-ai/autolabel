@@ -1,33 +1,32 @@
-from loguru import logger
-from rich import print as pprint
-from rich.progress import (
-    Progress,
-    BarColumn,
-    MofNCompleteColumn,
-    TimeElapsedColumn,
-    TimeRemainingColumn,
-    TextColumn,
-)
-from rich.console import Console, Group
-from rich.live import Live
-from rich.table import Table
-from rich.prompt import Confirm
-from typing import Tuple, List, Dict, Union, Optional
+import sys
+from typing import Dict, List, Optional, Tuple, Union
+
 import numpy as np
 import pandas as pd
-import sys
+from loguru import logger
+from rich import print as pprint
+from rich.console import Console, Group
+from rich.live import Live
+from rich.progress import (
+    BarColumn,
+    MofNCompleteColumn,
+    Progress,
+    TextColumn,
+    TimeElapsedColumn,
+    TimeRemainingColumn,
+)
+from rich.prompt import Confirm
+from rich.table import Table
 
-from autolabel.confidence import ConfidenceCalculator
 from autolabel.cache import SQLAlchemyCache
-from autolabel.few_shot import ExampleSelectorFactory
-from autolabel.models import ModelFactory, BaseModel
-from autolabel.schema import LLMAnnotation, MetricResult
-from autolabel.tasks import TaskFactory
-from autolabel.database import StateManager
-from autolabel.schema import TaskRun, TaskStatus
-from autolabel.data_models import TaskRunModel, AnnotationModel
+from autolabel.confidence import ConfidenceCalculator
 from autolabel.configs import AutolabelConfig
-
+from autolabel.data_models import AnnotationModel, TaskRunModel
+from autolabel.database import StateManager
+from autolabel.few_shot import ExampleSelectorFactory
+from autolabel.models import BaseModel, ModelFactory
+from autolabel.schema import LLMAnnotation, MetricResult, TaskRun, TaskStatus
+from autolabel.tasks import TaskFactory
 
 console = Console()
 
@@ -74,7 +73,11 @@ class LabelingAgent:
             dat = dat[:max_items]
 
         inputs = dat.to_dict(orient="records")
-        gt_labels = None if not label_column else dat[label_column].tolist()
+        gt_labels = (
+            None
+            if not label_column or not len(inputs) or label_column not in inputs[0]
+            else dat[label_column].tolist()
+        )
         return (dat, inputs, gt_labels)
 
     def _read_dataframe(
@@ -92,7 +95,11 @@ class LabelingAgent:
             dat = dat[:max_items]
 
         inputs = dat.to_dict(orient="records")
-        gt_labels = None if not label_column else dat[label_column].tolist()
+        gt_labels = (
+            None
+            if not label_column or not len(inputs) or label_column not in inputs[0]
+            else dat[label_column].tolist()
+        )
         return (dat, inputs, gt_labels)
 
     def run(
@@ -129,15 +136,6 @@ class LabelingAgent:
                 dataset, self.config, max_items, start_index
             )
 
-        # Check explanations are present in data if explanation_column is passed in
-        if (
-            self.config.explanation_column()
-            and self.config.explanation_column() not in df.keys().tolist()
-        ):
-            raise ValueError(
-                f"Explanation column {self.config.explanation_column()} not found in dataset.\nMake sure that explanations were generated using labeler.generate_explanations(seed_file)."
-            )
-
         # Initialize task run and check if it already exists
         self.task_run = self.db.get_task_run(self.task_object.id, self.dataset.id)
         # Resume/Delete the task if it already exists or create a new task run
@@ -157,6 +155,16 @@ class LabelingAgent:
         # If this dataset config is a string, read the corrresponding csv file
         if isinstance(seed_examples, str):
             _, seed_examples, _ = self._read_csv(seed_examples, self.config)
+
+        # Check explanations are present in data if explanation_column is passed in
+        if (
+            self.config.explanation_column()
+            and len(seed_examples) > 0
+            and self.config.explanation_column() not in list(seed_examples[0].keys())
+        ):
+            raise ValueError(
+                f"Explanation column {self.config.explanation_column()} not found in dataset.\nMake sure that explanations were generated using labeler.generate_explanations(seed_file)."
+            )
 
         self.example_selector = ExampleSelectorFactory.initialize_selector(
             self.config, seed_examples, df.keys().tolist()
@@ -311,7 +319,7 @@ class LabelingAgent:
                     table_column_names.append(m.name)
                 else:
                     print(f"Metric: {m.name}: {m.value}")
-            print(f"Actual Cost: {cost}")
+            print(f"Actual Cost: {round(cost, 4)}")
             table = Table()
             for col_name in table_column_names:
                 table.add_column(col_name, style="bold cyan")
@@ -372,15 +380,6 @@ class LabelingAgent:
                 dataset, self.config, max_items, start_index
             )
 
-        # Check explanations are present in data if explanation_column is passed in
-        if (
-            self.config.explanation_column()
-            and self.config.explanation_column() not in df.keys().tolist()
-        ):
-            raise ValueError(
-                f"Explanation column {self.config.explanation_column()} not found in dataset.\nMake sure that explanations were generated using labeler.generate_explanations(seed_file)."
-            )
-
         prompt_list = []
         total_cost = 0
 
@@ -390,6 +389,16 @@ class LabelingAgent:
         # If this dataset config is a string, read the corrresponding csv file
         if isinstance(seed_examples, str):
             _, seed_examples, _ = self._read_csv(seed_examples, self.config)
+
+        # Check explanations are present in data if explanation_column is passed in
+        if (
+            self.config.explanation_column()
+            and len(seed_examples) > 0
+            and self.config.explanation_column() not in list(seed_examples[0].keys())
+        ):
+            raise ValueError(
+                f"Explanation column {self.config.explanation_column()} not found in dataset.\nMake sure that explanations were generated using labeler.generate_explanations(seed_file)."
+            )
 
         self.example_selector = ExampleSelectorFactory.initialize_selector(
             self.config, seed_examples, df.keys().tolist()

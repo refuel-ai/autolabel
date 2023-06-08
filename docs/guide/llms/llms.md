@@ -228,7 +228,67 @@ config = {
 ### Additional parameters
 Refuel currently doesn't support any custom parameters, but this is a feature that will be added soon.
 
-## Google PaLM [TODO]
+## Google PaLM
+To use models from [Google](https://developers.generativeai.google/products/palm), you can set the `provider` to `google` when creating a labeling configuration. The specific model that will be queried can be specified using the `name` key. Autolabel currently supports the following models from Google:
+
+* `text-bison@001`
+* `chat-bison@001`
+
+`text-bison@001` is often more suitable for labeling tasks due to its ability to follow natural language instructions. `chat-bison@001` is fine-tuned for multi-turn conversations. `text-bison@001` costs $0.001/1K characters and `chat-bison@001` costs half that at $0.0005/1K characters. Detailed pricing for these models is available [here](https://cloud.google.com/vertex-ai/pricing#generative_ai_models)
+
+### Setup
+To use Google models with Autolabel, make sure to first install the relevant packages by running:
+```bash
+pip install refuel-autolabel[google]
+```
+and also setting up [Google authentication](https://cloud.google.com/docs/authentication/application-default-credentials) locally.
+
+### Example usage
+Here is an example of setting config to a dictionary that will use google's `text-bison@001` model for labeling. Specifically, note that in the dictionary provided by the `model` tag, `provider` is set to `google` and `name` is set to be `text-bison@001`. `name` can be switched to use any of the two models mentioned above.
+
+```python
+config = {
+    "task_name": "OpenbookQAWikipedia",
+    "task_type": "multi_choice_question_answering",
+    "dataset": {
+        "label_column": "answer",
+        "delimiter": ","
+    },
+    "model": {
+        "provider": "google",
+        "name": "text-bison@001",
+        "params": {}
+    },
+    "prompt": {
+        "task_guidelines": "You are an expert at answering questions."
+        "example_template": "Question: {question}\nAnswer: {answer}"
+    }
+}
+```
+
+### Additional parameters
+A few parameters can be passed in alongside `google` models to tweak their behavior:
+
+* `max_output_tokens` (int): Maximum number of tokens that can be generated in the response.
+* `temperature` (float): A float between 0 and 1 which indicates the diversity you want in the output. 0 uses greedy sampling (picks the most likely outcome).
+
+These parameters can be passed in via the `params` dictionary under `model`. Here is an example:
+```python
+"model": {
+    "provider": "google",
+    "name": "text-bison@001",
+    "params": {
+        "max_output_tokens": 512,
+        "temperature": 0.1
+    }
+}
+```
+
+### Model behavior
+`chat-bison@001` always responds in a "chatty" manner (example below), often returning more than just the requested label. This can cause problems on certain labeling tasks.
+
+### Content moderation
+Both Google LLMs seem to have much stricter content moderation rules than the other supported models. This can cause certain labeling jobs to completely fail as shown in our [technical report](). Consider a different model if your dataset has content that is likely to trigger Google's built-in content moderation.
 
 ## Provider List
 The table lists out all the provider, model combinations that Autolabel supports today:
@@ -242,3 +302,5 @@ The table lists out all the provider, model combinations that Autolabel supports
 | anthropic    | claude-instant-v1 |
 | huggingface_pipeline    | [seq2seq models](https://huggingface.co/learn/nlp-course/chapter1/7?fw=pt#sequencetosequence-modelssequencetosequencemodels) |
 | refuel    | flan-t5-xxl |
+| google       | text-bison@001    |
+| google       | chat-bison@001    |

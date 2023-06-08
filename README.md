@@ -1,161 +1,155 @@
-# 🏷 Autolabel
-
-_Notes: (1) Autolabel is in under active development. Expect some sharp edges and bugs. (2) This README and the docs website are under construction._
+<p align="center">
+  <a href="https://refuel.ai"><img src="docs/assets/autolabel.png" alt="Refuel logo"></a>
+</p>
+<p align="center">
+    <b>Clean, labeled data at the speed of thought</b>. <br />
+    Autolabel is a Python library to label, clean and enrich datasets with Large Language Models (LLMs).
+</p>
 
 <div align="center" style="width:800px">
 
 [![lint](https://github.com/refuel-ai/refuel-oracle/actions/workflows/black.yaml/badge.svg)](https://github.com/refuel-ai/refuel-oracle/actions/workflows/black.yaml/badge.svg) [![docs](https://github.com/refuel-ai/refuel-oracle/actions/workflows/docs.yaml/badge.svg)](https://docs.refuel.ai/) [![Discord](https://img.shields.io/discord/1098746693152931901)](https://discord.gg/fweVnRx6CU) [![Twitter](https://badgen.net/badge/icon/twitter?icon=twitter&label)](https://twitter.com/RefuelAI) [![License: MIT](https://badgen.net/badge/license/MIT/blue)](https://opensource.org/licenses/MIT)
 </div>
 
-
 ## Quick Install
 
-Once the package is published to PyPI:
-
+To install from PyPI:
 `pip install refuel-autolabel`
 
-Before the package is published to PyPI:
-1. git clone https://github.com/refuel-ai/refuel-oracle.git
-2. cd refuel-oracle
-3. `pip install .`
+To install from source:
+```
+1. git clone https://github.com/refuel-ai/autolabel.git
+2. cd autolabel/
+3. pip install .
+```
 
-To download benchmark datasets:
+## What is Autolabel
 
-1. Either you can run the `get_data.py` script in `data/` directory: 
-`python get_data.py` 
+Autolabel is a Python library to label, clean and enrich text datasets with Large Language Models (LLMs).
 
-2. Or you can download a single zip file with all CSV files from here: https://drive.google.com/file/d/157z6pz7IgOsk9x9ObwcvpZgeBOapEV9C/view?usp=sharing and unzip it inside the `data/` directory 
+Access to [large, clean and diverse](https://twitter.com/karpathy/status/1528443124577513472?lang=en) labeled datasets is a critical component for any machine learning effort to be successful. But data labeling is a manual and time-consuming process. With in-context learning, LLMs have the ability to learn to solve new tasks simply by understanding guidelines and looking at a few example input-output pairs. State-of-the-art LLMs like GPT-4 are able to [automatically label data](https://arxiv.org/abs/2303.15056) with [high accuracy](https://arxiv.org/abs/2303.16854), and at a fraction of the cost and time.
 
-## What is Autolabel?
+A few key features that `autolabel` offers:
 
-Large language models have been trained on internet-scale data and are extremely good at content understanding, especially in a few-shot capacity (also called in-context learning). This means that an LLM can perform many tasks with just a few examples provided. This can be especially useful for auto-labeling data for many diverse tasks with just a few examples.
-
-Autolabel is a Python package that lets users leverage Large Language Models (LLMs) for creating large, clean and diverse labeled datasets, a critical first step to building new AI applications.
+1. Autolabel data for [NLP tasks](https://docs.refuel.ai/guide/tasks/classification_task/) such as classification, question-answering and named entity-recognition, entity matching and more.
+2. Use commercial and open source [LLMs](https://docs.refuel.ai/guide/llms/llms/) from providers such as OpenAI, Anthropic, HuggingFace, Google and more.
+3. Support for research-proven LLM techniques to boost label quality, such as few-shot learning and chain-of-thought prompting.
+4. [Confidence estimation](https://docs.refuel.ai/guide/accuracy/confidence/) and explanations out of the box for every single output label
+5. [Caching and state management](https://docs.refuel.ai/guide/reliability/state-management/) to minimize costs and experimentation time
 
 ## 🚀 Getting started
 
-A labeling task has three components:
-1. Task guidelines
-2. LLM that we will use for labeling
-3. Dataset that we want to get labeled
+Autolabel provides a simple 3-step process for labeling data:
 
-These components are supplied to the library via configs. Example configs for each of these components are shared in `examples/configs` directory. 
+1. Specify the configuration of your labeling task as a JSON
+2. Preview the LLM labels for your dataseet
+3. Label your data!
 
-Let's imagine we are building an ML model to flag toxic comments on an online social media platform. We have a dataset of comments that we'd like to get labeled first in order to train our downstream model. For this case, here's what the example dataset and configs will look like:
 
-Dataset is a CSV file with two columns: 
-1. example (this is the input text)
-2. label (this is the ground truth label - it is an optional column and if available the library will evaluate the LLM labels' agreement with the ground truth labels)
-
-Config:
+Let's imagine we are building an ML model to analyze sentiment analysis of movie review. We have a dataset of moview reviews that we'd like to get labeled first in order to train our downstream model. For this case, here's what the example dataset and configs will look like:
 
 ```python
 {
-    "task_name": "ToxicCommentClassification",
+    "task_name": "MovieSentimentReview",
     "task_type": "classification",
+    "model": {
+        "provider": "openai",
+        "name": "gpt-3.5-turbo"
+    },
     "dataset": {
         "label_column": "label",
         "delimiter": ","
     },
-    "model": {
-        "provider": "openai",
-        "name": "gpt-3.5-turbo",
-    },
     "prompt": {
-        "task_guidelines": "You are an expert at identifying toxic comments and understanding if a comment is sexually explicit, obscene, toxic, insults a person, demographic or race.\nYour job is to correctly label the provided input example into one of the following categories.\nCategories:\n{labels}",
+        "task_guidelines": "You are an expert at analyzing the sentiment of moview reviews. Your job is to classify the provided movie review into one of the following labels: {labels}",
         "labels": [
-            "toxic",
-            "not toxic"
+            "positive",
+            "negative",
+            "neutral",
         ],
-        "output_guidelines": "You will return the answer in a format that contains just the label and nothing else.",
         "few_shot_examples": [
             {
-                "example": "It's ridiculous that these guys are being called 'protesters'. Being armed is a threat of violence, which makes them terrorists.",
-                "label": "toxic"
+                "example": "I got a fairly uninspired stupid film about how human industry is bad for nature.",
+                "label": "negative"
             },
             {
-                "example": "This is so cool. It's like, 'would you want your mother to read this??' Really great idea, well done!",
-                "label": "not toxic"
+                "example": "I loved this movie. I found it very heart warming to see Adam West, Burt Ward, Frank Gorshin, and Julie Newmar together again.",
+                "label": "positive"
             },
             {
-                "example": "This bitch is nuts. Who would read a book by a woman",
-                "label": "toxic"
+                "example": "This movie will be played next week at the Chinese theater.",
+                "label": "neutral"
             }
         ],
-        "few_shot_selection": "fixed",
-        "few_shot_num": 3,
         "example_template": "Input: {example}\nOutput: {label}"
     }
 }
 ```
 
-
-First let's initialize the labeling agent and pass it the task and llm config:
+Initialize the labeling agent and pass it the config:
 
 ```python
 
 from autolabel import LabelingAgent
 
-agent = LabelingAgent(config='examples/configs/civil_comments.json')
+agent = LabelingAgent(config='config.json')
+# config can be a json file or a python dict
 ```
 
-Now, let's pass the dataset that we'd like to label, and see an example prompt that will be sent to the LLM: 
+Preview an example prompt that will be sent to the LLM:
 
 ```python
 
-agent.plan(dataset='../data/civil_comments_test.csv')
+agent.plan('docs/assets/movie_reviews.csv')
 ```
 
 This prints:
 
 ```
-100%|██████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 20/20 [00:00<00:00, 175.31it/s]
-Total Estimated Cost: $11.866
-Number of examples to label: 2000
-Average cost per example: $0.00593
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100/100 0:00:00 0:00:00
+┌──────────────────────────┬─────────┐
+│ Total Estimated Cost     │ $0.538  │
+│ Number of Examples       │ 200     │
+│ Average cost per example │ 0.00269 │
+└──────────────────────────┴─────────┘
+─────────────────────────────────────────
 
+Prompt Example:
+You are an expert at analyzing the sentiment of moview reviews. Your job is to classify the provided movie review into one of the following labels: [positive, negative, neutral]
 
-A prompt example:
-
-You are an expert at identifying toxic comments and understanding if a comment is sexually explicit, obscene, toxic, insults a person, demographic or race.
-Your job is to correctly label the provided input example into one of the following 2 categories.
-Categories:
-toxic
-not toxic
-
-
-You will return the answer in JSON format with one key: {"label": "the correct label"}
+You will return the answer with just one element: "the correct label"
 
 Some examples with their output answers are provided below:
-Example: It's ridiculous that these guys are being called 'protesters'. Being armed is a threat of violence, which makes them terrorists.
-Output:
-{"label": "toxic"}
 
-Example: This is so cool. It's like, 'would you want your mother to read this??' Really great idea, well done!
+Example: I got a fairly uninspired stupid film about how human industry is bad for nature.
 Output:
-{"label": "not toxic"}
+negative
 
-Now I want you to label the following example: 
-Example: Integrity means that you pay your debts. Does this apply to President Trump too?
+Example: I loved this movie. I found it very heart warming to see Adam West, Burt Ward, Frank Gorshin, and Julie Newmar together again.
 Output:
+positive
+
+Example: This movie will be played next week at the Chinese theater.
+Output:
+neutral
+
+Now I want you to label the following example:
+Input: A rare exception to the rule that great literature makes disappointing films.
+Output:
+
+─────────────────────────────────────────────────────────────────────────────────────────
+
 ```
 
 Finally, we can run the labeling on a subset or entirety of the dataset:
 
 ```python
-labels, output_df, metrics = agent.run('../data/civil_comments_test.csv', max_items=100)
+labels, output_df, metrics = agent.run('dataset.csv', max_items=100)
 ```
-
-In addition to the dataframe, this will also output a file with the labels per row in `data/civil_comments_test_labeled.csv`
-
-## End-to-end Examples
-
-See: `examples/example_run.ipynb` 
 
 ## Contributing
 Autolabel is a rapidly developing project. We welcome contributions in all forms - bug reports, pull requests and ideas for improving the library.
 
-Join the conversation on Discord - #contributing channel
-Review the 🛣️ Roadmap and contribute your ideas
-Grab an issue and open a PR - Good first issue tag
-Release Cadence We currently release new tagged versions of the pypi and npm packages on Mondays. Hotfixes go out at any time during the week.
+1. Join the conversation on [Discord](https://discord.gg/fweVnRx6CU)
+2. Review the 🛣️ [Roadmap]() and contribute your ideas.
+3. Grab an open issue on Github, and submit a [pull request](https://github.com/refuel-ai/autolabel/blob/main/CONTRIBUTING.md).
