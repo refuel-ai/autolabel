@@ -1,10 +1,8 @@
 from loguru import logger
 from rich import print as pprint
 from rich.console import Console
-from rich.table import Table
 from rich.prompt import Confirm
 from typing import Tuple, List, Dict, Union, Optional
-import numpy as np
 import pandas as pd
 import sys
 
