@@ -2,7 +2,7 @@ import string
 import re
 
 
-def normalize_text(s):
+def normalize_text(s: str) -> str:
     """Removing articles and punctuation, and standardizing whitespace are all typical text processing steps."""
 
     def remove_articles(text):
@@ -22,7 +22,15 @@ def normalize_text(s):
     return white_space_fix(remove_articles(remove_punc(lower(s))))
 
 
-def compute_f1(prediction, truth):
+def compute_f1(prediction: str, truth: str) -> float:
+    """
+    Compute models prediction accuracy based on given ground truth labels
+    Args:
+        prediction: model generated prediction
+        truth: ground truth label to compare against
+    Returns:
+        f1_score: values range from [0,1], with 1 indicating perfect accuracy
+    """
     pred_tokens = normalize_text(prediction).split()
     truth_tokens = normalize_text(truth).split()
 
