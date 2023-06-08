@@ -2,8 +2,7 @@
   <a href="https://refuel.ai"><img src="docs/assets/autolabel.png" alt="Refuel logo"></a>
 </p>
 <p align="center">
-    <b>Clean, labeled data at the speed of thought</b>. <br />
-    Autolabel is a Python library to label, clean and enrich datasets with Large Language Models (LLMs).
+    <b>Clean, labeled data at the speed of thought</b>.
 </p>
 
 <div align="center" style="width:800px">
@@ -13,26 +12,16 @@
 
 ## Quick Install
 
-To install from PyPI:
 `pip install refuel-autolabel`
 
-To install from source:
-```
-1. git clone https://github.com/refuel-ai/autolabel.git
-2. cd autolabel/
-3. pip install .
-```
+## 🏷 What is Autolabel
 
-## What is Autolabel
+Access to [large, clean and diverse](https://twitter.com/karpathy/status/1528443124577513472?lang=en) labeled datasets is a critical component for any machine learning effort to be successful. But data labeling is a manual and time-consuming process. State-of-the-art LLMs like GPT-4 are able to [automatically label data](https://arxiv.org/abs/2303.15056) with [high accuracy](https://arxiv.org/abs/2303.16854), and at a fraction of the cost and time.
 
-Autolabel is a Python library to label, clean and enrich text datasets with Large Language Models (LLMs).
+Autolabel is a Python library to label, clean and enrich text datasets with any Large Language Models (LLM) of your choice. A few key features:
 
-Access to [large, clean and diverse](https://twitter.com/karpathy/status/1528443124577513472?lang=en) labeled datasets is a critical component for any machine learning effort to be successful. But data labeling is a manual and time-consuming process. With in-context learning, LLMs have the ability to learn to solve new tasks simply by understanding guidelines and looking at a few example input-output pairs. State-of-the-art LLMs like GPT-4 are able to [automatically label data](https://arxiv.org/abs/2303.15056) with [high accuracy](https://arxiv.org/abs/2303.16854), and at a fraction of the cost and time.
-
-A few key features that `autolabel` offers:
-
-1. Autolabel data for [NLP tasks](https://docs.refuel.ai/guide/tasks/classification_task/) such as classification, question-answering and named entity-recognition, entity matching and more.
-2. Use commercial and open source [LLMs](https://docs.refuel.ai/guide/llms/llms/) from providers such as OpenAI, Anthropic, HuggingFace, Google and more.
+1. Label data for [NLP tasks](https://docs.refuel.ai/guide/tasks/classification_task/) such as classification, question-answering and named entity-recognition, entity matching and more.
+2. Use commercial or open source [LLMs](https://docs.refuel.ai/guide/llms/llms/) from providers such as OpenAI, Anthropic, HuggingFace, Google and more.
 3. Support for research-proven LLM techniques to boost label quality, such as few-shot learning and chain-of-thought prompting.
 4. [Confidence estimation](https://docs.refuel.ai/guide/accuracy/confidence/) and explanations out of the box for every single output label
 5. [Caching and state management](https://docs.refuel.ai/guide/reliability/state-management/) to minimize costs and experimentation time
@@ -41,12 +30,11 @@ A few key features that `autolabel` offers:
 
 Autolabel provides a simple 3-step process for labeling data:
 
-1. Specify the configuration of your labeling task as a JSON
-2. Preview the LLM labels for your dataseet
-3. Label your data!
+1. Specify the labeling guidelines and LLM model to use in a JSON config.
+2. Dry-run to make sure the final prompt looks good.
+3. Kick off a labeling run for your dataset!
 
-
-Let's imagine we are building an ML model to analyze sentiment analysis of movie review. We have a dataset of moview reviews that we'd like to get labeled first in order to train our downstream model. For this case, here's what the example dataset and configs will look like:
+Let's imagine we are building an ML model to analyze sentiment analysis of movie review. We have a dataset of moview reviews that we'd like to get labeled first. For this case, here's what the example dataset and configs will look like:
 
 ```python
 {
@@ -93,14 +81,12 @@ Initialize the labeling agent and pass it the config:
 from autolabel import LabelingAgent
 
 agent = LabelingAgent(config='config.json')
-# config can be a json file or a python dict
 ```
 
 Preview an example prompt that will be sent to the LLM:
 
 ```python
-
-agent.plan('docs/assets/movie_reviews.csv')
+agent.plan('examples/movie_reviews/dataset.csv')
 ```
 
 This prints:
@@ -144,12 +130,13 @@ Output:
 Finally, we can run the labeling on a subset or entirety of the dataset:
 
 ```python
-labels, output_df, metrics = agent.run('dataset.csv', max_items=100)
+labels, output_df, metrics = agent.run('examples/movie_reviews/dataset.csv')
 ```
 
-## Contributing
+## 🙌 Contributing
+
 Autolabel is a rapidly developing project. We welcome contributions in all forms - bug reports, pull requests and ideas for improving the library.
 
 1. Join the conversation on [Discord](https://discord.gg/fweVnRx6CU)
 2. Review the 🛣️ [Roadmap]() and contribute your ideas.
-3. Grab an open issue on Github, and submit a [pull request](https://github.com/refuel-ai/autolabel/blob/main/CONTRIBUTING.md).
+3. Grab an [open issue](https://github.com/refuel-ai/autolabel/issues) on Github, and submit a [pull request](https://github.com/refuel-ai/autolabel/blob/main/CONTRIBUTING.md).
