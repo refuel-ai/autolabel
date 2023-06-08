@@ -384,7 +384,8 @@ class LabelingAgent:
             "Number of Examples": len(inputs),
             "Average cost per example": f"${total_cost / len(inputs):.5f}",
         }
-        print_table(table, console=console)
+        table = {"parameter": list(table.keys()), "value": list(table.values())}
+        print_table(table, show_header=False, console=console)
 
         console.rule("Prompt Example")
         print(f"{prompt_list[0]}")

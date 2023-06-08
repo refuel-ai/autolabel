@@ -207,6 +207,6 @@ def print_table(
     for key in data:
         table.add_column(key)
     for i, row in enumerate(zip(*data.values())):
-        table.add_row(*row, style="grey100" if i % 2 == 0 else "grey70")
+        table.add_row(*row, style="grey100 bold" if i % 2 == 0 else "grey70 bold")
     console = console or Console()
     console.print(table)
