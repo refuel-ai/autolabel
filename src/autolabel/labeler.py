@@ -15,6 +15,7 @@ from autolabel.confidence import ConfidenceCalculator
 from autolabel.configs import AutolabelConfig
 from autolabel.data_models import AnnotationModel, TaskRunModel
 from autolabel.database import StateManager
+from autolabel.dataset_loader import DatasetLoader
 from autolabel.few_shot import ExampleSelectorFactory
 from autolabel.models import BaseModel, ModelFactory
 from autolabel.schema import LLMAnnotation, MetricResult, TaskRun, TaskStatus
@@ -67,55 +68,6 @@ class LabelingAgent:
             score_type="logprob_average", llm=self.llm
         )
 
-    # TODO: all this will move to a separate input parser class
-    # this is a temporary solution to quickly add this feature and unblock expts
-    def _read_csv(
-        self,
-        csv_file: str,
-        config: AutolabelConfig,
-        max_items: int = None,
-        start_index: int = 0,
-    ) -> Tuple[pd.DataFrame, List[Dict], List]:
-        logger.debug(f"reading the csv from: {start_index}")
-        delimiter = config.delimiter()
-        label_column = config.label_column()
-
-        dat = pd.read_csv(csv_file, sep=delimiter, dtype="str")[start_index:]
-        dat = dat.astype(str)
-        if max_items and max_items > 0:
-            max_items = min(max_items, len(dat))
-            dat = dat[:max_items]
-
-        inputs = dat.to_dict(orient="records")
-        gt_labels = (
-            None
-            if not label_column or not len(inputs) or label_column not in inputs[0]
-            else dat[label_column].tolist()
-        )
-        return (dat, inputs, gt_labels)
-
-    def _read_dataframe(
-        self,
-        df: pd.DataFrame,
-        config: AutolabelConfig,
-        max_items: int = None,
-        start_index: int = 0,
-    ) -> Tuple[pd.DataFrame, List[Dict], List]:
-        label_column = config.label_column()
-
-        dat = df[start_index:].astype(str)
-        if max_items and max_items > 0:
-            max_items = min(max_items, len(dat))
-            dat = dat[:max_items]
-
-        inputs = dat.to_dict(orient="records")
-        gt_labels = (
-            None
-            if not label_column or not len(inputs) or label_column not in inputs[0]
-            else dat[label_column].tolist()
-        )
-        return (dat, inputs, gt_labels)
-
     def run(
         self,
         dataset: Union[str, pd.DataFrame],
@@ -142,11 +94,11 @@ class LabelingAgent:
             output_name if output_name else f"{dataset.replace('.csv','')}_labeled.csv"
         )
         if isinstance(dataset, str):
-            df, inputs, gt_labels = self._read_csv(
+            df, inputs, gt_labels = DatasetLoader.read_file(
                 dataset, self.config, max_items, start_index
             )
         elif isinstance(dataset, pd.DataFrame):
-            df, inputs, gt_labels = self._read_dataframe(
+            df, inputs, gt_labels = DatasetLoader.read_dataframe(
                 dataset, self.config, max_items, start_index
             )
 
@@ -168,7 +120,7 @@ class LabelingAgent:
 
         # If this dataset config is a string, read the corrresponding csv file
         if isinstance(seed_examples, str):
-            _, seed_examples, _ = self._read_csv(seed_examples, self.config)
+            _, seed_examples, _ = DatasetLoader.read_csv(seed_examples, self.config)
 
         # Check explanations are present in data if explanation_column is passed in
         if (
@@ -322,16 +274,28 @@ class LabelingAgent:
             output_df["llm_confidence"] = [l.confidence_score for l in llm_labels]
 
         # Only save to csv if output_name is provided or dataset is a string
-        if output_name:
-            csv_file_name = output_name
-        elif isinstance(dataset, str):
-            csv_file_name = f"{dataset.replace('.csv','')}_labeled.csv"
-            output_df.to_csv(
-                csv_file_name,
-                sep=self.config.delimiter(),
-                header=True,
-                index=False,
+        if not output_name and isinstance(dataset, str):
+            output_name = (
+                dataset.rsplit(".", 1)[0] + "_labeled." + dataset.rsplit(".", 1)[1]
             )
+
+        if output_name:
+            if output_name.suffix == ".csv":
+                output_df.to_csv(
+                    str(output_name),
+                    sep=self.config.delimiter(),
+                    header=True,
+                    index=False,
+                )
+            elif output_name.suffix == ".jsonl":
+                output_df.to_json(
+                    str(output_name),
+                    orient="records",
+                    lines=True,
+                    force_ascii=False,
+                )
+            else:
+                raise ValueError(f"Unsupported output file format: {output_name}")
 
         pprint(f"Total number of failures: {num_failures}")
         return (
@@ -353,9 +317,11 @@ class LabelingAgent:
         """
 
         if isinstance(dataset, str):
-            df, inputs, _ = self._read_csv(dataset, self.config, max_items, start_index)
+            df, inputs, _ = DatasetLoader.read_file(
+                dataset, self.config, max_items, start_index
+            )
         elif isinstance(dataset, pd.DataFrame):
-            df, inputs, _ = self._read_dataframe(
+            df, inputs, _ = DatasetLoader.read_dataframe(
                 dataset, self.config, max_items, start_index
             )
 
@@ -367,7 +333,7 @@ class LabelingAgent:
 
         # If this dataset config is a string, read the corrresponding csv file
         if isinstance(seed_examples, str):
-            _, seed_examples, _ = self._read_csv(seed_examples, self.config)
+            _, seed_examples, _ = DatasetLoader.read_file(seed_examples, self.config)
 
         # Check explanations are present in data if explanation_column is passed in
         if (
@@ -494,7 +460,7 @@ class LabelingAgent:
         out_file = None
         if isinstance(seed_examples, str):
             out_file = seed_examples
-            _, seed_examples, _ = self._read_csv(seed_examples, self.config)
+            _, seed_examples, _ = DatasetLoader.read_file(seed_examples, self.config)
 
         explanation_column = self.config.explanation_column()
         if not explanation_column:
