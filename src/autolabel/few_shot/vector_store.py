@@ -23,10 +23,11 @@ def _results_to_docs_and_scores(results: Any) -> List[Tuple[Document, float]]:
     ]
 
 
-def cos_sim(a: Tensor, b: Tensor):
+def cos_sim(a: Tensor, b: Tensor) -> Tensor:
     """
     Computes the cosine similarity cos_sim(a[i], b[j]) for all i and j.
-    :return: Matrix with res[i][j]  = cos_sim(a[i], b[j])
+    Returns:
+        cos_sim: Matrix with res(i)(j) = cos_sim(a[i], b[j])
     """
     if not isinstance(a, torch.Tensor):
         a = torch.tensor(a)
@@ -149,7 +150,6 @@ class VectorStoreWrapper(VectorStore):
         Args:
             texts (Iterable[str]): Texts to add to the vectorstore.
             metadatas (Optional[List[dict]], optional): Optional list of metadatas.
-            ids (Optional[List[str]], optional): Optional list of IDs.
         Returns:
             List[str]: List of IDs of the added texts.
         """
@@ -256,7 +256,6 @@ class VectorStoreWrapper(VectorStore):
         lambda_mult: float = 0.5,
         **kwargs: Any,
     ) -> List[Document]:
-
         docs_and_scores = self.max_marginal_relevance_search_by_vector(
             query, k, fetch_k, lambda_mult=lambda_mult
         )
