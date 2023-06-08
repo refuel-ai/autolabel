@@ -25,7 +25,17 @@ To install from source:
 
 ## What is Autolabel
 
-TODO
+Autolabel is a Python library to label, clean and enrich text datasets with Large Language Models (LLMs).
+
+Access to [large, clean and diverse](https://twitter.com/karpathy/status/1528443124577513472?lang=en) labeled datasets is a critical component for any machine learning effort to be successful. But data labeling is a manual and time-consuming process. With in-context learning, LLMs have the ability to learn to solve new tasks simply by understanding guidelines and looking at a few example input-output pairs. State-of-the-art LLMs like GPT-4 are able to [automatically label data](https://arxiv.org/abs/2303.15056) with [high accuracy](https://arxiv.org/abs/2303.16854), and at a fraction of the cost and time.
+
+A few key features that `autolabel` offers:
+
+1. Autolabel data for [NLP tasks](https://docs.refuel.ai/guide/tasks/classification_task/) such as classification, question-answering and named entity-recognition, entity matching and more.
+2. Use commercial and open source [LLMs](https://docs.refuel.ai/guide/llms/llms/) from providers such as OpenAI, Anthropic, HuggingFace, Google and more.
+3. Support for research-proven LLM techniques to boost label quality, such as few-shot learning and chain-of-thought prompting.
+4. [Confidence estimation](https://docs.refuel.ai/guide/accuracy/confidence/) and explanations out of the box for every single output label
+5. [Caching and state management](https://docs.refuel.ai/guide/reliability/state-management/) to minimize costs and experimentation time
 
 ## 🚀 Getting started
 
@@ -136,14 +146,6 @@ Finally, we can run the labeling on a subset or entirety of the dataset:
 ```python
 labels, output_df, metrics = agent.run('dataset.csv', max_items=100)
 ```
-
-## Features
-
-1. Autolabel data for [NLP tasks](https://docs.refuel.ai/guide/tasks/classification_task/) such as classification, question-answering and named entity-recognition, entity matching and more.
-2. Seamlessly use commercial and open source [LLMs](https://docs.refuel.ai/guide/llms/llms/) from providers such as OpenAI, Anthropic, HuggingFace, Google and more.
-3. Leverage research-proven LLM techniques to boost label quality, such as few-shot learning and chain-of-thought prompting.
-4. [Confidence estimation](https://docs.refuel.ai/guide/accuracy/confidence/) and explanations out of the box for every single output label
-5. [Caching and state management](https://docs.refuel.ai/guide/reliability/state-management/) to minimize costs and experimentation time
 
 ## Contributing
 Autolabel is a rapidly developing project. We welcome contributions in all forms - bug reports, pull requests and ideas for improving the library.

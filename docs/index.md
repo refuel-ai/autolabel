@@ -1,6 +1,6 @@
 <img src="/assets/autolabel.png" alt="isolated" width="100%"/>
 
-**Autolabel** helps you label datasets at the speed of thought and at human-level accuracy using LLMs. 
+**Autolabel** is a Python library to label, clean and enrich datasets with Large Language Models (LLMs).
 
 ## Features
 
