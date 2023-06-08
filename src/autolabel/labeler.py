@@ -280,14 +280,14 @@ class LabelingAgent:
             )
 
         if output_name:
-            if output_name.suffix == ".csv":
+            if output_name.endswith(".csv"):
                 output_df.to_csv(
                     str(output_name),
                     sep=self.config.delimiter(),
                     header=True,
                     index=False,
                 )
-            elif output_name.suffix == ".jsonl":
+            elif output_name.endswith(".jsonl"):
                 output_df.to_json(
                     str(output_name),
                     orient="records",
