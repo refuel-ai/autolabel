@@ -11,6 +11,8 @@ from langchain.schema import Generation
 
 
 class ModelProvider(str, Enum):
+    """Enum containing all LLM providers currently supported by autolabeler"""
+
     OPENAI = "openai"
     ANTHROPIC = "anthropic"
     HUGGINGFACE_PIPELINE = "huggingface_pipeline"
@@ -19,6 +21,8 @@ class ModelProvider(str, Enum):
 
 
 class TaskType(str, Enum):
+    """Enum containing all the types of tasks that autolabeler currently supports"""
+
     CLASSIFICATION = "classification"
     NAMED_ENTITY_RECOGNITION = "named_entity_recognition"
     MULTI_CHOICE_QUESTION_ANSWERING = "multi_choice_question_answering"
@@ -26,6 +30,8 @@ class TaskType(str, Enum):
 
 
 class FewShotAlgorithm(str, Enum):
+    """Enum of supported algorithms for choosing which examples to provide the LLM in its instruction prompt"""
+
     FIXED = "fixed"
     SEMANTIC_SIMILARITY = "semantic_similarity"
     MAX_MARGINAL_RELEVANCE = "max_marginal_relevance"
@@ -36,6 +42,8 @@ class TaskStatus(str, Enum):
 
 
 class Metric(str, Enum):
+    """Enum of supported performance metrics. Some metrics are always available (task agnostic), while others are only supported by certain types of tasks"""
+
     # Task agnostic
     SUPPORT = "support"
     COMPLETION_RATE = "completion_rate"
@@ -50,12 +58,16 @@ class Metric(str, Enum):
 
 
 class MetricResult(BaseModel):
+    """Contains performance metrics gathered from autolabeler runs"""
+
     metric_type: Metric
     name: str
     value: Any
 
 
 class LLMAnnotation(BaseModel):
+    """Contains label information of a given data point, including the generated label, the prompt given to the LLM, and the LLMs response. Optionally includes a confidence_score if supported by the model"""
+
     successfully_labeled: str
     label: Any
     curr_sample: Optional[str] = ""
@@ -66,6 +78,8 @@ class LLMAnnotation(BaseModel):
 
 
 class Dataset(BaseModel):
+    """Contains Dataset parameters, including input file path, indexes for state management (e.g. job batching and retries), and a unique ID"""
+
     id: str
     input_file: str
     start_index: int
@@ -82,6 +96,17 @@ class Dataset(BaseModel):
         start_index: int,
         max_items: int,
     ) -> str:
+        """
+        Generates a unique ID for the given Dataset configuration
+        Args:
+            dataset: either 1) input file name or 2) pandas Dataframe
+            config:  AutolabelConfig object containing project settings
+            start_index: index to begin labeling job at (used for job batching, retries, state management)
+            max_items: number of data points to label, beginning at start_index
+
+        Returns:
+            filehash: a unique ID generated from an MD5 hash of the functions parameters
+        """
         if isinstance(dataset, str):
             filehash = calculate_md5(
                 [open(dataset, "rb"), config._dataset_config, start_index, max_items]

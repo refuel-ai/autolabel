@@ -454,6 +454,13 @@ class LabelingAgent:
     def handle_existing_task_run(
         self, task_run: TaskRun, csv_file_name: str, gt_labels: List[str] = None
     ) -> TaskRun:
+        """
+        Allows for continuing an existing labeling task. The user will be asked whether they wish to continue from where the run previously left off, or restart from the beginning.
+        Args:
+            task_run: TaskRun to retry
+            csv_file_name: path to the dataset we wish to label (only used if user chooses to restart the task)
+            gt_labels: If ground truth labels are provided, performance metrics will be displayed, such as label accuracy
+        """
         pprint(f"There is an existing task with following details: {task_run}")
         db_result = AnnotationModel.get_annotations_by_task_run_id(
             self.db.session, task_run.id
@@ -501,6 +508,7 @@ class LabelingAgent:
     def save_task_run_state(
         self, current_index: int = None, status: TaskStatus = "", error: str = ""
     ) -> TaskRun:
+        """Saves the current state of the Task being performed"""
         # Save the current state of the task
         if error:
             self.task_run.error = error
@@ -530,6 +538,7 @@ class LabelingAgent:
         self,
         seed_examples: Union[str, List[Dict]],
     ) -> List[Dict]:
+        """Use LLM to generate explanations for why examples are labeled the way that they are."""
         out_file = None
         if isinstance(seed_examples, str):
             out_file = seed_examples
