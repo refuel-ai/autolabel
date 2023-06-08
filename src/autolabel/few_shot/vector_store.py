@@ -23,10 +23,11 @@ def _results_to_docs_and_scores(results: Any) -> List[Tuple[Document, float]]:
     ]
 
 
-def cos_sim(a: Tensor, b: Tensor):
+def cos_sim(a: Tensor, b: Tensor) -> Tensor:
     """
     Computes the cosine similarity cos_sim(a[i], b[j]) for all i and j.
-    :return: Matrix with res[i][j]  = cos_sim(a[i], b[j])
+    Returns:
+        cos_sim: Matrix with res(i)(j) = cos_sim(a[i], b[j])
     """
     if not isinstance(a, torch.Tensor):
         a = torch.tensor(a)
