@@ -149,7 +149,6 @@ class VectorStoreWrapper(VectorStore):
         Args:
             texts (Iterable[str]): Texts to add to the vectorstore.
             metadatas (Optional[List[dict]], optional): Optional list of metadatas.
-            ids (Optional[List[str]], optional): Optional list of IDs.
         Returns:
             List[str]: List of IDs of the added texts.
         """
@@ -256,7 +255,6 @@ class VectorStoreWrapper(VectorStore):
         lambda_mult: float = 0.5,
         **kwargs: Any,
     ) -> List[Document]:
-
         docs_and_scores = self.max_marginal_relevance_search_by_vector(
             query, k, fetch_k, lambda_mult=lambda_mult
         )
