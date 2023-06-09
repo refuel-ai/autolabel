@@ -162,7 +162,7 @@ class MultiChoiceQATask(BaseTask):
                 ]
             )
             eval_metrics_map[Metric.F1].append(
-                float(f1) / (len(curr_llm_labels) + 1e-5)
+                (float(f1) / len(curr_llm_labels)) if len(curr_llm_labels) > 0 else 0.0
             )
 
         eval_metrics.extend(
