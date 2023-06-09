@@ -5,18 +5,9 @@ import numpy as np
 import pandas as pd
 from loguru import logger
 from rich import print as pprint
-from rich.console import Console, Group
-from rich.live import Live
-from rich.progress import (
-    BarColumn,
-    MofNCompleteColumn,
-    Progress,
-    TextColumn,
-    TimeElapsedColumn,
-    TimeRemainingColumn,
-)
+from rich.console import Console
 from rich.prompt import Confirm
-from rich.table import Table
+import pandas as pd
 
 from autolabel.cache import SQLAlchemyCache
 from autolabel.confidence import ConfidenceCalculator
@@ -27,6 +18,7 @@ from autolabel.few_shot import ExampleSelectorFactory
 from autolabel.models import BaseModel, ModelFactory
 from autolabel.schema import LLMAnnotation, MetricResult, TaskRun, TaskStatus
 from autolabel.tasks import TaskFactory
+from autolabel.utils import track, track_with_stats, print_table
 
 console = Console()
 
@@ -175,133 +167,108 @@ class LabelingAgent:
         cost = 0.0
         postfix_dict = {}
 
-        progress = Progress(
-            BarColumn(),
-            MofNCompleteColumn(),
-            TimeElapsedColumn(),
-            TimeRemainingColumn(),
-        )
+        indices = range(current_index, len(inputs), self.CHUNK_SIZE)
+        for current_index in track_with_stats(
+            indices,
+            postfix_dict,
+            total=len(inputs),
+            advance=self.CHUNK_SIZE,
+            console=console,
+        ):
+            chunk = inputs[current_index : current_index + self.CHUNK_SIZE]
+            final_prompts = []
+            for i, input_i in enumerate(chunk):
+                # Fetch few-shot seed examples
+                if self.example_selector:
+                    examples = self.example_selector.select_examples(input_i)
+                else:
+                    examples = []
+                # Construct Prompt to pass to LLM
+                final_prompt = self.task.construct_prompt(input_i, examples)
+                final_prompts.append(final_prompt)
 
-        postfix = Progress(
-            TextColumn("{task.fields[postfix]}"),
-        )
-
-        group = Group(progress, postfix)
-        live = Live(group)
-
-        with live:
-            indices = range(current_index, len(inputs), self.CHUNK_SIZE)
-            progress_display = progress.add_task(
-                "Generating Responses...", total=len(inputs)
-            )
-            postfix_display = postfix.add_task("Postfix", postfix="")
-            for current_index in indices:
-                chunk = inputs[current_index : current_index + self.CHUNK_SIZE]
-                final_prompts = []
-                for i, input_i in enumerate(chunk):
-                    # Fetch few-shot seed examples
-                    if self.example_selector:
-                        examples = self.example_selector.select_examples(input_i)
-                    else:
-                        examples = []
-                    # Construct Prompt to pass to LLM
-                    final_prompt = self.task.construct_prompt(input_i, examples)
-                    final_prompts.append(final_prompt)
-
-                # Get response from LLM
-                try:
-                    response, curr_cost = self.llm.label(final_prompts)
-                except Exception as e:
-                    # TODO (dhruva): We need to handle this case carefully
-                    # When we erorr out, we will have less elements in the llm_labels
-                    # than the gt_labels array, with the 1:1 mapping not being
-                    # maintained either. We should either remove the elements we errored
-                    # out on from gt_labels or add None labels to the llm_labels.
-                    logger.error(
-                        "Error in generating response:" + repr(e), "Prompt: ", chunk
+            # Get response from LLM
+            try:
+                response, curr_cost = self.llm.label(final_prompts)
+            except Exception as e:
+                # TODO (dhruva): We need to handle this case carefully
+                # When we erorr out, we will have less elements in the llm_labels
+                # than the gt_labels array, with the 1:1 mapping not being
+                # maintained either. We should either remove the elements we errored
+                # out on from gt_labels or add None labels to the llm_labels.
+                logger.error(
+                    "Error in generating response:" + repr(e), "Prompt: ", chunk
+                )
+                for i in range(len(chunk)):
+                    annotation = LLMAnnotation(
+                        successfully_labeled="No",
+                        label=self.task.NULL_LABEL_TOKEN,
+                        raw_response="",
+                        curr_sample=chunk[i],
+                        prompt=final_prompts[i],
+                        confidence_score=0,
                     )
-                    for i in range(len(chunk)):
-                        annotation = LLMAnnotation(
-                            successfully_labeled="No",
-                            label=self.task.NULL_LABEL_TOKEN,
-                            raw_response="",
-                            curr_sample=chunk[i],
-                            prompt=final_prompts[i],
-                            confidence_score=0,
-                        )
-                        AnnotationModel.create_from_llm_annotation(
-                            self.db.session,
-                            annotation,
-                            current_index + i,
-                            self.task_run.id,
-                        )
-                    num_failures += len(chunk)
-                    response = None
+                    AnnotationModel.create_from_llm_annotation(
+                        self.db.session,
+                        annotation,
+                        current_index + i,
+                        self.task_run.id,
+                    )
+                num_failures += len(chunk)
+                response = None
 
-                if response is not None:
-                    for i in range(len(response.generations)):
-                        response_item = response.generations[i]
-                        annotations = []
-                        for generation in response_item:
-                            if self.config.confidence():
-                                annotation = self.confidence.calculate(
-                                    model_generation=self.task.parse_llm_response(
-                                        generation, chunk[i], final_prompts[i]
-                                    ),
-                                    prompt=final_prompts[i],
-                                )
-                            else:
-                                annotation = self.task.parse_llm_response(
+            if response is not None:
+                for i in range(len(response.generations)):
+                    response_item = response.generations[i]
+                    annotations = []
+                    for generation in response_item:
+                        if self.config.confidence():
+                            annotation = self.confidence.calculate(
+                                model_generation=self.task.parse_llm_response(
                                     generation, chunk[i], final_prompts[i]
-                                )
-                            annotations.append(annotation)
-                        final_annotation = self.majority_annotation(annotations)
-                        AnnotationModel.create_from_llm_annotation(
-                            self.db.session,
-                            final_annotation,
-                            current_index + i,
-                            self.task_run.id,
-                        )
-                cost += curr_cost
-                postfix_dict[self.COST_KEY] = f"{cost:.2f}"
-
-                # Evaluate the task every eval_every examples
-                if (current_index + self.CHUNK_SIZE) % eval_every == 0:
-                    db_result = AnnotationModel.get_annotations_by_task_run_id(
-                        self.db.session, self.task_run.id
+                                ),
+                                prompt=final_prompts[i],
+                            )
+                        else:
+                            annotation = self.task.parse_llm_response(
+                                generation, chunk[i], final_prompts[i]
+                            )
+                        annotations.append(annotation)
+                    final_annotation = self.majority_annotation(annotations)
+                    AnnotationModel.create_from_llm_annotation(
+                        self.db.session,
+                        final_annotation,
+                        current_index + i,
+                        self.task_run.id,
                     )
-                    llm_labels = [LLMAnnotation(**a.llm_annotation) for a in db_result]
-                    if gt_labels:
-                        eval_result = self.task.eval(
-                            llm_labels, gt_labels[: len(llm_labels)]
-                        )
+            cost += curr_cost
+            postfix_dict[self.COST_KEY] = f"{cost:.2f}"
 
-                        for m in eval_result:
-                            if not isinstance(m.value, list) or len(m.value) < 1:
-                                continue
-                            elif isinstance(m.value[0], float):
-                                postfix_dict[m.name] = f"{m.value[0]:.4f}"
-                            elif isinstance(m.value[0], int):
-                                postfix_dict[m.name] = f"{m.value[0]}"
-                            elif len(m.value[0]) > 0:
-                                postfix_dict[m.name] = f"{m.value[0][0]:.4f}"
-
-                progress.advance(
-                    progress_display,
-                    advance=min(self.CHUNK_SIZE, len(inputs) - current_index),
+            # Evaluate the task every eval_every examples
+            if (current_index + self.CHUNK_SIZE) % eval_every == 0:
+                db_result = AnnotationModel.get_annotations_by_task_run_id(
+                    self.db.session, self.task_run.id
                 )
-                postfix.update(
-                    postfix_display,
-                    postfix=", ".join([f"{k}={v}" for k, v in postfix_dict.items()]),
-                )
+                llm_labels = [LLMAnnotation(**a.llm_annotation) for a in db_result]
+                if gt_labels:
+                    eval_result = self.task.eval(
+                        llm_labels, gt_labels[: len(llm_labels)]
+                    )
 
-                # Update task run state
-                self.task_run = self.save_task_run_state(
-                    current_index=current_index + len(chunk)
-                )
+                    for m in eval_result:
+                        if not isinstance(m.value, list) or len(m.value) < 1:
+                            continue
+                        elif isinstance(m.value[0], float):
+                            postfix_dict[m.name] = f"{m.value[0]:.4f}"
+                        elif isinstance(m.value[0], int):
+                            postfix_dict[m.name] = f"{m.value[0]}"
+                        elif len(m.value[0]) > 0:
+                            postfix_dict[m.name] = f"{m.value[0][0]:.4f}"
 
-            progress.refresh()
-            postfix.refresh()
+            # Update task run state
+            self.task_run = self.save_task_run_state(
+                current_index=current_index + len(chunk)
+            )
 
         db_result = AnnotationModel.get_annotations_by_task_run_id(
             self.db.session, self.task_run.id
@@ -311,25 +278,15 @@ class LabelingAgent:
         # if true labels are provided, evaluate accuracy of predictions
         if gt_labels:
             eval_result = self.task.eval(llm_labels, gt_labels[: len(llm_labels)])
-            table_columns, table_column_names = [], []
+            table = {}
             # TODO: serialize and write to file
             for m in eval_result:
                 if isinstance(m.value, list) and len(m.value) > 0:
-                    table_columns.append(m.value)
-                    table_column_names.append(m.name)
+                    table[m.name] = m.value
                 else:
                     print(f"Metric: {m.name}: {m.value}")
             print(f"Actual Cost: {round(cost, 4)}")
-            table = Table()
-            for col_name in table_column_names:
-                table.add_column(col_name, style="bold cyan")
-            num_rows = 0 if len(table_columns) == 0 else len(table_columns[0])
-            for curr_row in range(num_rows):
-                row_values = [
-                    str(table_columns[i][curr_row]) for i in range(len(table_columns))
-                ]
-                table.add_row(*row_values)
-            console.print(table)
+            print_table(table, console=console)
 
         # Write output to CSV
         output_df = df.copy()
@@ -405,51 +362,35 @@ class LabelingAgent:
         )
 
         input_limit = min(len(inputs), 100)
-        num_sections = max(input_limit / self.CHUNK_SIZE, 1)
-        with Progress(
-            TextColumn("[progress.description]{task.description}"),
-            BarColumn(),
-            MofNCompleteColumn(),
-            TimeElapsedColumn(),
-            TimeRemainingColumn(),
-        ) as progress:
-            progress_display = progress.add_task(
-                "Computing embeddings...", total=input_limit
-            )
-            for chunk in np.array_split(inputs[:input_limit], num_sections):
-                for i, input_i in enumerate(chunk):
-                    # TODO: Check if this needs to use the example selector
-                    if self.example_selector:
-                        examples = self.example_selector.select_examples(input_i)
-                    else:
-                        examples = []
-                    final_prompt = self.task.construct_prompt(input_i, examples)
-                    prompt_list.append(final_prompt)
+        for input_i in track(
+            inputs[:input_limit],
+            description="Generating Prompts...",
+            console=console,
+        ):
+            # TODO: Check if this needs to use the example selector
+            if self.example_selector:
+                examples = self.example_selector.select_examples(input_i)
+            else:
+                examples = []
+            final_prompt = self.task.construct_prompt(input_i, examples)
+            prompt_list.append(final_prompt)
 
-                    # Calculate the number of tokens
-                    curr_cost = self.llm.get_cost(prompt=final_prompt, label="")
-                    total_cost += curr_cost
-
-                    # Update progress bar
-                    progress.advance(progress_display)
-
-            progress.refresh()
+            # Calculate the number of tokens
+            curr_cost = self.llm.get_cost(prompt=final_prompt, label="")
+            total_cost += curr_cost
 
         total_cost = total_cost * (len(inputs) / input_limit)
-        table = Table(show_header=False)
-        table.add_column("Parameter", style="bold green")
-        table.add_column("Value", style="bold magenta")
-        table.add_row("Total Estimated Cost", f"${round(total_cost, 3)}")
-        table.add_row("Number of Examples", f"{len(inputs)}")
-        table.add_row(
-            "Average cost per example", f"{round(total_cost / len(inputs), 5)}"
-        )
-        console.print(table)
+        table = {
+            "Total Estimated Cost": f"${total_cost:.3f}",
+            "Number of Examples": len(inputs),
+            "Average cost per example": f"${total_cost / len(inputs):.5f}",
+        }
+        table = {"parameter": list(table.keys()), "value": list(table.values())}
+        print_table(table, show_header=False, console=console)
 
         console.rule("Prompt Example")
         print(f"{prompt_list[0]}")
         console.rule()
-        return
 
     def handle_existing_task_run(
         self, task_run: TaskRun, csv_file_name: str, gt_labels: List[str] = None
@@ -468,26 +409,15 @@ class LabelingAgent:
         llm_labels = [LLMAnnotation(**a.llm_annotation) for a in db_result]
         if gt_labels and len(llm_labels) > 0:
             pprint("Evaluating the existing task...")
-            table = Table()
             gt_labels = gt_labels[: len(llm_labels)]
             eval_result = self.task.eval(llm_labels, gt_labels)
-            table_columns, table_column_names = [], []
+            table = {}
             for m in eval_result:
                 if isinstance(m.value, list) and len(m.value) > 0:
-                    table_columns.append(m.value)
-                    table_column_names.append(m.name)
+                    table[m.name] = m.value
                 else:
                     print(f"Metric: {m.name}: {m.value}")
-            table = Table()
-            for col_name in table_column_names:
-                table.add_column(col_name, style="bold cyan")
-            num_rows = 0 if len(table_columns) == 0 else len(table_columns[0])
-            for curr_row in range(num_rows):
-                row_values = [
-                    str(table_columns[i][curr_row]) for i in range(len(table_columns))
-                ]
-                table.add_row(*row_values)
-            console.print(table)
+            print_table(table, console=console)
         pprint(f"{len(llm_labels)} examples have been labeled so far.")
         if len(llm_labels) > 0:
             console.rule("Last Annotated Example")
@@ -550,24 +480,13 @@ class LabelingAgent:
                 "The explanation column needs to be specified in the dataset config."
             )
 
-        with Progress(
-            TextColumn("[progress.description]{task.description}"),
-            BarColumn(),
-            MofNCompleteColumn(),
-            TimeElapsedColumn(),
-            TimeRemainingColumn(),
-        ) as progress:
-            task = progress.add_task(
-                "Generating explanations...", total=len(seed_examples)
-            )
-            for seed_example in seed_examples:
-                explanation_prompt = self.task.get_explanation_prompt(seed_example)
-                explanation, _ = self.llm.label([explanation_prompt])
-                explanation = explanation.generations[0][0].text
-                seed_example["explanation"] = str(explanation) if explanation else ""
-                progress.advance(task)
-
-            progress.refresh()
+        for seed_example in track(
+            seed_examples, description="Generating explanations", console=console
+        ):
+            explanation_prompt = self.task.get_explanation_prompt(seed_example)
+            explanation, _ = self.llm.label([explanation_prompt])
+            explanation = explanation.generations[0][0].text
+            seed_example["explanation"] = str(explanation) if explanation else ""
 
         if out_file:
             df = pd.DataFrame.from_records(seed_examples)
