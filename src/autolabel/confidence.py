@@ -85,7 +85,7 @@ class ConfidenceCalculator:
                 return model_generation
             logprobs = self.compute_confidence(
                 model_generation.prompt, model_generation.raw_response
-            )[0]
+            )
         else:
             if model_generation.generation_info is None:
                 logger.debug("No generation info found")
