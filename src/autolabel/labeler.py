@@ -22,6 +22,12 @@ from autolabel.utils import track, track_with_stats, print_table
 
 console = Console()
 
+COST_TABLE_STYLES = {
+    "parameter": "magenta bold",
+    "value": "green bold",
+}
+METRIC_TABLE_STYLE = "cyan bold"
+
 
 class LabelingAgent:
     CHUNK_SIZE = 5
@@ -286,7 +292,7 @@ class LabelingAgent:
                 else:
                     print(f"Metric: {m.name}: {m.value}")
             print(f"Actual Cost: {round(cost, 4)}")
-            print_table(table, console=console)
+            print_table(table, console=console, default_style=METRIC_TABLE_STYLE)
 
         # Write output to CSV
         output_df = df.copy()
@@ -386,7 +392,7 @@ class LabelingAgent:
             "Average cost per example": f"${total_cost / len(inputs):.5f}",
         }
         table = {"parameter": list(table.keys()), "value": list(table.values())}
-        print_table(table, show_header=False, console=console)
+        print_table(table, show_header=False, console=console, styles=COST_TABLE_STYLES)
 
         console.rule("Prompt Example")
         print(f"{prompt_list[0]}")
@@ -417,7 +423,7 @@ class LabelingAgent:
                     table[m.name] = m.value
                 else:
                     print(f"Metric: {m.name}: {m.value}")
-            print_table(table, console=console)
+            print_table(table, console=console, default_style=METRIC_TABLE_STYLE)
         pprint(f"{len(llm_labels)} examples have been labeled so far.")
         if len(llm_labels) > 0:
             console.rule("Last Annotated Example")

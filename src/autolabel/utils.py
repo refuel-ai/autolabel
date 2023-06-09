@@ -190,13 +190,20 @@ def track_with_stats(
 
 
 def print_table(
-    data: Dict, show_header: bool = True, console: Optional[Console] = None
+    data: Dict,
+    show_header: bool = True,
+    console: Optional[Console] = None,
+    default_style: str = "bold",
+    styles: Dict = {},
 ) -> None:
     """Print a table of data.
 
     Args:
         data (Dict[str, List]): A dictionary of data to print.
         show_header (bool, optional): Show the header row. Defaults to True.
+        console (Console, optional): Console to write to. Default creates internal Console instance.
+        default_style (str, optional): Default style to apply to the table. Defaults to "bold".
+        styles (Dict, optional): A dictionary of styles to apply to the table.
     """
     # Convert all values to strings
     data = {
@@ -205,8 +212,8 @@ def print_table(
     }
     table = Table(show_header=show_header)
     for key in data:
-        table.add_column(key)
+        table.add_column(key, style=styles.get(key, default_style))
     for i, row in enumerate(zip(*data.values())):
-        table.add_row(*row, style="grey100 bold" if i % 2 == 0 else "grey70 bold")
+        table.add_row(*row)
     console = console or Console()
     console.print(table)
