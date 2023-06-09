@@ -4,7 +4,7 @@ from loguru import logger
 from .base import BaseTask
 from .classification import ClassificationTask
 from .entity_matching import EntityMatchingTask
-from .multi_choice_question_answering import MultiChoiceQATask
+from .question_answering import QuestionAnsweringTask
 from .named_entity_recognition import NamedEntityRecognitionTask
 
 from autolabel.configs import AutolabelConfig
@@ -13,7 +13,7 @@ from autolabel.schema import TaskType
 TASK_TYPE_TO_IMPLEMENTATION: Dict[TaskType, BaseTask] = {
     TaskType.CLASSIFICATION: ClassificationTask,
     TaskType.NAMED_ENTITY_RECOGNITION: NamedEntityRecognitionTask,
-    TaskType.MULTI_CHOICE_QUESTION_ANSWERING: MultiChoiceQATask,
+    TaskType.QUESTION_ANSWERING: QuestionAnsweringTask,
     TaskType.ENTITY_MATCHING: EntityMatchingTask,
 }
 
