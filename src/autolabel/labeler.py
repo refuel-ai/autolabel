@@ -498,4 +498,4 @@ class LabelingAgent:
         if self.cache:
             self.cache.clear()
         else:
-            return ValueError("No cache to clear")
+            logger.error("No cache to clear")
