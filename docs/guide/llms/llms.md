@@ -32,7 +32,7 @@ Here is an example of setting config to a dictionary that will use openai's `gpt
 ```python
 config = {
     "task_name": "OpenbookQAWikipedia",
-    "task_type": "multi_choice_question_answering",
+    "task_type": "question_answering",
     "dataset": {
         "label_column": "answer",
         "delimiter": ","
@@ -92,7 +92,7 @@ Here is an example of setting config to a dictionary that will use anthropic's `
 ```python
 config = {
     "task_name": "OpenbookQAWikipedia",
-    "task_type": "multi_choice_question_answering",
+    "task_type": "question_answering",
     "dataset": {
         "label_column": "answer",
         "delimiter": ","
@@ -147,7 +147,7 @@ Here is an example of setting config to a dictionary that will use `google/flan-
 ```python
 config = {
     "task_name": "OpenbookQAWikipedia",
-    "task_type": "multi_choice_question_answering",
+    "task_type": "question_answering",
     "dataset": {
         "label_column": "answer",
         "delimiter": ","
@@ -208,7 +208,7 @@ Here is an example of setting config to a dictionary that will use Refuel's `fla
 ```python
 config = {
     "task_name": "OpenbookQAWikipedia",
-    "task_type": "multi_choice_question_answering",
+    "task_type": "question_answering",
     "dataset": {
         "label_column": "answer",
         "delimiter": ","
@@ -249,7 +249,7 @@ Here is an example of setting config to a dictionary that will use google's `tex
 ```python
 config = {
     "task_name": "OpenbookQAWikipedia",
-    "task_type": "multi_choice_question_answering",
+    "task_type": "question_answering",
     "dataset": {
         "label_column": "answer",
         "delimiter": ","

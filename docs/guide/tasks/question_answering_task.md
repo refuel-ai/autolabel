@@ -31,7 +31,7 @@ In order to run Autolabel, we need a config defining the 3 important things - ta
 ```json
 config = {
     "task_name": "OpenbookQAWikipedia",
-    "task_type": "multi_choice_question_answering",
+    "task_type": "question_answering",
     "dataset": {
         "label_column": "answer",
         "delimiter": ","
@@ -66,7 +66,7 @@ config = {
     }
 }
 ```
-The `task_type` sets up the config for a specific task, multi_choice_question_answering in this case.
+The `task_type` sets up the config for a specific task, question_answering in this case.
 
 Take a look at the prompt section of the config. This defines the settings related to defining the task and the machinery around it.  
 
@@ -87,7 +87,7 @@ Let's consider a dataset like sciq which is a closed book QA with multiple choic
 ```json
 config = {
     "task_name": "ClosedBookQAScienceQuestions",
-    "task_type": "multi_choice_question_answering",
+    "task_type": "question_answering",
     "dataset": {
         "label_column": "answer",
         "delimiter": ","
