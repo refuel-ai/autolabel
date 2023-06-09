@@ -38,7 +38,7 @@ class RefuelLLM(BaseModel):
     )
     def _label_with_retry(self, prompt: str) -> requests.Response:
         payload = {
-            "data": {"model_input": [prompt]},
+            "data": {"model_input": prompt},
             "task": "generate",
         }
         response = requests.post(self.BASE_API, json=payload)
