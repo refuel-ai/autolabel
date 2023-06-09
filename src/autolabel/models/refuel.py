@@ -60,7 +60,7 @@ class RefuelLLM(BaseModel):
                     )
                 separated_prompt = prompt.replace("\n", self.SEP_REPLACEMENT_TOKEN)
                 response = self._label_with_retry(separated_prompt)
-                response = json.loads(response.json()["body"])[0].replace(
+                response = json.loads(response.json()["body"]).replace(
                     self.SEP_REPLACEMENT_TOKEN, "\n"
                 )
                 generations.append([Generation(text=response)])
