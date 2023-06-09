@@ -109,7 +109,7 @@ class ConfidenceCalculator:
     )
     def _call_with_retry(self, model_input, model_output) -> requests.Response:
         payload = {
-            "data": {"model_input": [model_input], "model_output": [model_output]},
+            "data": {"model_input": model_input, "model_output": model_outputg},
             "task": "confidence",
         }
         response = requests.post(self.BASE_API, json=payload)
