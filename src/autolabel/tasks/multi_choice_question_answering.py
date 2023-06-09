@@ -70,7 +70,6 @@ class MultiChoiceQATask(BaseTask):
             )
             confidences.append(llm_label.confidence_score)
 
-        ConfidenceCalculator.plot_data_distribution(labels, confidences)
         return labels, confidences
 
     def get_labels_predictions_with_threshold(self, gt_labels, llm_labels, threshold):
