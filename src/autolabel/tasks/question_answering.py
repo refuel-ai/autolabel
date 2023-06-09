@@ -12,7 +12,7 @@ from autolabel.tasks.utils import normalize_text, compute_f1
 from autolabel.utils import get_format_variables
 
 
-class MultiChoiceQATask(BaseTask):
+class QuestionAnsweringTask(BaseTask):
     DEFAULT_OUTPUT_GUIDELINES = (
         'You will return the answer one element: "the correct label"\n'
     )

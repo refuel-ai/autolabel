@@ -1,6 +1,6 @@
 {
     "task_name": "OpenbookQAWikipedia",
-    "task_type": "multi_choice_question_answering",
+    "task_type": "question_answering",
     "dataset": {
         "label_column": "answer",
         "delimiter": ","
