@@ -13,7 +13,7 @@
         show_root_heading: yes
         show_root_full_path: no
 
-::: src.autolabel.tasks.question_answering.MultiChoiceQATask
+::: src.autolabel.tasks.question_answering.QuestionAnsweringTask
     rendering:
         show_root_heading: yes
         show_root_full_path: no
