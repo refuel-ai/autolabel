@@ -59,3 +59,7 @@ class CacheEntryModel(Base):
         )
         db.add(db_object)
         return cache_entry
+
+    @classmethod
+    def clear(cls, db):
+        db.query(cls).delete()

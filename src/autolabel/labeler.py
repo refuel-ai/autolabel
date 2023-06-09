@@ -574,3 +574,9 @@ class LabelingAgent:
             df.to_csv(out_file, index=False)
 
         return seed_examples
+
+    def clear_cache(self):
+        if self.cache:
+            self.cache.clear()
+        else:
+            logger.error("No cache to clear")
