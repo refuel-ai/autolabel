@@ -44,3 +44,7 @@ class SQLAlchemyCache(BaseCache):
             entry: CacheEntry we wish to put into the Cache
         """
         CacheEntryModel.insert(self.session, entry)
+
+    def clear(self) -> None:
+        """Clears the entire Cache"""
+        CacheEntryModel.clear(self.session)
