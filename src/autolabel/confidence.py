@@ -6,6 +6,7 @@ import json
 import requests
 import scipy.stats as stats
 from loguru import logger
+import os
 
 from autolabel.schema import LLMAnnotation
 from autolabel.models import BaseModel
@@ -30,6 +31,11 @@ class ConfidenceCalculator:
             "p_true": self.p_true,
         }
         self.BASE_API = "https://refuel-llm.refuel.ai/"
+        self.REFUEL_API_ENV = "REFUEL_API_KEY"
+        if self.REFUEL_API_ENV in os.environ and os.environ[self.REFUEL_API_ENV]:
+            self.REFUEL_API_KEY = os.environ[self.REFUEL_API_ENV]
+        else:
+            self.REFUEL_API_KEY = None
 
     def logprob_average(
         self,
@@ -112,15 +118,23 @@ class ConfidenceCalculator:
             "data": {"model_input": model_input, "model_output": model_output},
             "task": "confidence",
         }
-        response = requests.post(self.BASE_API, json=payload)
+        headers = {"refuel_api_key": self.REFUEL_API_KEY}
+        response = requests.post(self.BASE_API, json=payload, headers=headers)
         # raise Exception if status != 200
         response.raise_for_status()
         return response
 
     def compute_confidence(self, model_input, model_output) -> Union[dict, List[dict]]:
         try:
-            response = self._call_with_retry(model_input, model_output)
-            return json.loads(response.json()["body"])
+            if self.REFUEL_API_KEY is None:
+                logger.error(
+                    f"Did not find {self.REFUEL_API_ENV}, please add an environment variable"
+                    f" `{self.REFUEL_API_ENV}` which contains it"
+                )
+                return [{"": 0.5}]
+            else:
+                response = self._call_with_retry(model_input, model_output)
+                return json.loads(response.json()["body"])
         except Exception as e:
             # This signifies an error in computing confidence score
             # using the API. We give it a score of 0.5 and go ahead
