@@ -107,8 +107,6 @@ config_zero_shot = {
 ```
 
 ```py
-from autolabel import LabelingAgent
-
 agent = LabelingAgent(config=config_zero_shot)
 labels, df, metrics_list = agent.run('../data/banking_test.csv')
 ```
@@ -140,8 +138,6 @@ config_fixed_few_shot = {
 ```
 
 ```py
-from autolabel import LabelingAgent
-
 agent = LabelingAgent(config=config_fixed_few_shot)
 labels, df, metrics_list = agent.run('../data/banking_test.csv')
 ```
