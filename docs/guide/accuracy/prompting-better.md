@@ -34,7 +34,7 @@ config = {
 from autolabel import LabelingAgent
 
 agent = LabelingAgent(config=config)
-labels, df, metrics_list = agent.run('../data/civil_comments_test.csv', max_items = 500)
+labels, df, metrics_list = agent.run('../data/civil_comments_test.csv', max_items = 100)
 ```
 
 Accuracy: 68%
@@ -56,10 +56,15 @@ The presence of generally negative words such as "malfeasance" and "wasting" may
 
 Adding nuance to the prompt:
 
-We can replace the prompt in the above config with the following updated task guidelines.
+We can replace the prompt in the above config with the following updated guidelines and re-run the labeling task.
 
 ```json
 "task_guidelines": "You are an expert at identifying toxic comments. You aim to act in a fair and balanced manner, where comments that provide fair criticism of something or someone are labelled 'not toxic'. Similarly, criticisms of policy and politicians are marked 'not toxic', unless the comment includes obscenities, racial slurs or sexually explicit material. Any comments that are sexually explicit, obscene, or insults a person, demographic or race are not allowed and labeled 'toxic'.\nYour job is to correctly label the provided input example into one of the following categories:\n{labels}",
+```
+
+```py
+agent = LabelingAgent(config=config)
+labels, df, metrics_list = agent.run('../data/civil_comments_test.csv', max_items = 100)
 ```
 
 Accuracy: 74%
