@@ -41,7 +41,7 @@ config = {
     "prompt": {
         "task_guidelines": "You are an expert at answering questions based on wikipedia articles. Your job is to answer the following questions using the context provided with the question. Use the context to answer the question - the answer is a continuous span of words from the context.\n",
         "output_guidelines": "Your answer will consist of an explanation, followed by the correct answer. The last line of the response should always be is JSON format with one key: {\"label\": \"the correct answer\"}.\n If the question cannot be answered using the context and the context alone without any outside knowledge, the question is unanswerable. If the question is unanswerable, return the answer as {\"label\": \"unanswerable\"}\n",
-        "few_shot_examples": "../data/squad_v2_seed.csv",
+        "few_shot_examples": "../examples/squad_v2/seed.csv",
         "few_shot_selection": "semantic_similarity",
         "few_shot_num": 3,
         "example_template": "Context: {context}\nQuestion: {question}\nAnswer: Let's think step by step.\n{explanation}\n{answer}"

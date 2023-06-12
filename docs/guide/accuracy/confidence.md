@@ -36,7 +36,7 @@ Generating confidence scores is simple - setting the key `compute_confidence` to
             "Miscellaneous"
         ],
         "example_template": "Example: {example}\nOutput: {CategorizedLabels}",
-        "few_shot_examples": "data/conll2003_seed.csv",
+        "few_shot_examples": "../examples/conll2003/seed.csv",
         "few_shot_selection": "semantic_similarity",
         "few_shot_num": 5
     }
