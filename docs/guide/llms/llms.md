@@ -18,7 +18,7 @@ To use models from [OpenAI](https://platform.openai.com/docs/models), you can se
 ### Setup
 To use OpenAI models with Autolabel, make sure to first install the relevant packages by running:
 ```bash
-pip install refuel-autolabel[openai]
+pip install 'refuel-autolabel[openai]'
 ```
 and also setting the following environment variable:
 ```
@@ -78,7 +78,7 @@ To use models from [Anthropic](https://www.anthropic.com/index/introducing-claud
 ### Setup
 To use Anthropic models with Autolabel, make sure to first install the relevant packages by running:
 ```bash
-pip install refuel-autolabel[anthropic]
+pip install 'refuel-autolabel[anthropic]'
 ```
 and also setting the following environment variable:
 ```
@@ -138,7 +138,7 @@ This will run the model locally on a GPU (if available). You can also specify  q
 ### Setup
 To use Huggingface models with Autolabel, make sure to first install the relevant packages by running:
 ```bash
-pip install refuel-autolabel[huggingface]
+pip install 'refuel-autolabel[huggingface]'
 ```
 
 ### Example usage
@@ -194,7 +194,7 @@ This is a 13 billion parameter model, which is also available on Huggingface [he
 ### Setup
 To use Refuel models with Autolabel, make sure to first install the relevant packages by running:
 ```bash
-pip install refuel-autolabel[refuel]
+pip install 'refuel-autolabel[refuel]'
 ```
 and also setting the following environment variable:
 ```
@@ -239,7 +239,7 @@ To use models from [Google](https://developers.generativeai.google/products/palm
 ### Setup
 To use Google models with Autolabel, make sure to first install the relevant packages by running:
 ```bash
-pip install refuel-autolabel[google]
+pip install 'refuel-autolabel[google]'
 ```
 and also setting up [Google authentication](https://cloud.google.com/docs/authentication/application-default-credentials) locally.
 
