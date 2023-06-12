@@ -25,7 +25,7 @@ Let's say we wanted to run sentiment analysis on a dataset of movie reviews. We 
 
 Now, we could label a few hundred examples by hand which would take us a few hours. Instead, let's use Autolabel to get a clean, labeled dataset in a few minutes. 
 
-A dataset[^1] containing 200 unlabeled movie reviews is available here [link needed], and a couple of examples (with labels) are shown below:
+A dataset[^1] containing 200 unlabeled movie reviews is available [here](https://github.com/refuel-ai/autolabel/blob/main/docs/assets/movie_reviews_preview.csv), and a couple of examples (with labels) are shown below:
 
 {{ read_csv('docs/assets/movie_reviews_preview.csv') }}
 
@@ -69,7 +69,7 @@ config = {
 
 ### Preview the labeling against your dataset
 
-First import `autolabel`, create a `LabelingAgent` object and then run the `plan` command against the dataset (available here [link to dataset]):
+First import `autolabel`, create a `LabelingAgent` object and then run the `plan` command against the dataset (available [here](https://github.com/refuel-ai/autolabel/blob/main/docs/assets/movie_reviews.csv)):
 
 ```python
 from autolabel import LabelingAgent
