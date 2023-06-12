@@ -46,9 +46,13 @@ class ConfidenceCalculator:
         for token in logprobs:
             token_str = list(token.keys())[0]
             if token_str not in self.tokens_to_ignore:
-                logprob_cumulative += token[token_str]
+                logprob_cumulative += (
+                    token[token_str]
+                    if token[token_str] >= 0
+                    else math.e ** (token[token_str])
+                )
                 count += 1
-        return math.e ** (logprob_cumulative / count) if count > 0 else 0
+        return logprob_cumulative / count if count > 0 else 0
 
     def p_true(self, model_generation: LLMAnnotation, prompt: str, **kwargs) -> float:
         p_true_prompt = f"{prompt}{model_generation.raw_response} \n Is the answer to the last example correct? Answer in one word on the same line [Yes/No]: "
@@ -152,6 +156,11 @@ class ConfidenceCalculator:
             return 1.0, [0]
         area = sklearn.metrics.roc_auc_score(match, confidence)
         fpr, tpr, thresholds = sklearn.metrics.roc_curve(match, confidence, pos_label=1)
+        fpr, tpr, thresholds = (
+            fpr[1:],
+            tpr[1:],
+            thresholds[1:],
+        )  # first element is always support = 0. Can safely ignore.
         if plot:
             try:
                 import matplotlib.pyplot as plt

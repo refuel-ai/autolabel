@@ -189,6 +189,14 @@ def track_with_stats(
             live.refresh()
 
 
+def maybe_round(value: Any) -> Any:
+    """Round's value only if it has a round function"""
+    if hasattr(value, "__round__"):
+        return round(value, 4)
+    else:
+        return value
+
+
 def print_table(
     data: Dict,
     show_header: bool = True,
@@ -207,7 +215,9 @@ def print_table(
     """
     # Convert all values to strings
     data = {
-        str(key): [str(v) for v in value] if isinstance(value, List) else [str(value)]
+        str(key): [str(maybe_round(v)) for v in value]
+        if isinstance(value, List)
+        else [str(maybe_round(value))]
         for key, value in data.items()
     }
     table = Table(show_header=show_header)
