@@ -81,7 +81,7 @@ config = {
             "apple_pay_or_google_pay",
             ...
         ],
-        "few_shot_examples": "data/banking_seed.csv",
+        "few_shot_examples": "../examples/banking/seed.csv",
         "few_shot_selection": "semantic_similarity",
         "few_shot_num": 5,
         "example_template": "Example: {example}\nOutput: {label}"

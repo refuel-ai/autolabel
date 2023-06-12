@@ -1,6 +1,0 @@
-example,label,BankingComplaintsClassification_llm_labeled_successfully,BankingComplaintsClassification_llm_label,llm_confidence
-I want to close my account,terminate_account,yes,terminate_account,2.705875571295233
-It seems I was overcharged when I used an ATM while on vacation. If I knew about your fees in advance I sure would have gone somewhere else.,wrong_exchange_rate_for_cash_withdrawal,yes,cash_withdrawal_charge,2.3766050567851615
-"I have a direct debit transaction I have not set up, but would like to .",direct_debit_payment_not_recognised,yes,direct_debit_payment_not_recognised,2.6973048594667963
-How much does it cost in fees to use your card?,order_physical_card,yes,card_payment_fee_charged,2.431463009738015
-There is an extra $1 charge,extra_charge_on_statement,yes,extra_charge_on_statement,2.715415506885223
