@@ -8,7 +8,7 @@ Example:
 Consider the following labeling runs for a classification task on the banking dataset. There are a total of 1998 items to be labeled and we assume a starting labeled seedset of 200 examples. Here is the config to label this dataset in zero-shot fashion:
 
 ```json
-zero_shot_config = {
+config_zero_shot = {
     "task_name": "BankingComplaintsClassification",
     "task_type": "classification",
     "dataset": {
@@ -106,6 +106,13 @@ zero_shot_config = {
 }
 ```
 
+```py
+from autolabel import LabelingAgent
+
+agent = LabelingAgent(config=config_zero_shot)
+labels, df, metrics_list = agent.run('../data/banking_test.csv')
+```
+
 This zero-shot task execution results in an accuracy of 70.19%. 
 
 Iterating on this, we compare a fixed few-shot example selection strategy, which randomly chooses k examples from the labeled seedset and appends these same k examples to each prompt for the 1998 items to be labeled. In this case, we use k=10 seed examples per prompt. To use this selection strategy, we need to modify the config:
@@ -132,6 +139,13 @@ config_fixed_few_shot = {
 }
 ```
 
+```py
+from autolabel import LabelingAgent
+
+agent = LabelingAgent(config=config_fixed_few_shot)
+labels, df, metrics_list = agent.run('../data/banking_test.csv')
+```
+
 This leads to an accuracy of 73.16%, an improvement of ~3% over the zero-shot baseline.
 
 Finally, we compare a semantic similarity example selection strategy, which computes a text embedding for each of the 200 labeled seedset examples. Then, for each of the 1998 items to be labeled, we compute a text embedding and find the k most similar examples from the labeled seedset and append those k examples to the prompt for the current example. This leads to custom examples used for each item to be labeled, with the idea being that more similar examples and their corresponding labels may assist the LLM in labeling. Here is the config change to use semantic similarity as the example selection strategy:
@@ -156,6 +170,13 @@ config_semantic_similarity = {
         "example_template": "Input: {example}\nOutput: {label}"
     }
 }
+```
+
+```py
+from autolabel import LabelingAgent
+
+agent = LabelingAgent(config=config_semantic_similarity)
+labels, df, metrics_list = agent.run('../data/banking_test.csv')
 ```
 
 With semantic similarity example selectiom, we obtain a 79.02% accuracy, a significant increase of ~6% over the fixed-shot strategy.
