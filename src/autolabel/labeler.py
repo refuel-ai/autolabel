@@ -1,5 +1,6 @@
 import sys
 from typing import Dict, List, Optional, Tuple, Union
+import logging
 
 import numpy as np
 import pandas as pd
@@ -22,6 +23,14 @@ from autolabel.utils import track, track_with_stats, print_table
 
 console = Console()
 
+LOG_LEVEL_TO_INT = {
+    "DEBUG": logging.DEBUG,
+    "INFO": logging.INFO,
+    "WARNING": logging.WARNING,
+    "ERROR": logging.ERROR,
+    "CRITICAL": logging.CRITICAL,
+}
+
 COST_TABLE_STYLES = {
     "parameter": "magenta bold",
     "value": "green bold",
@@ -39,6 +48,13 @@ class LabelingAgent:
         log_level: Optional[str] = "INFO",
         cache: Optional[bool] = True,
     ) -> None:
+        # Set global log level for python logger
+        try:
+            logging.basicConfig(level=LOG_LEVEL_TO_INT[log_level.upper()], force=True)
+        except KeyError as e:
+            raise ValueError(
+                f"Invalid log level: {log_level}. Must be one of {list(LOG_LEVEL_TO_INT.keys())}"
+            )
         self.db = StateManager()
         logger.remove()
         logger.add(sys.stdout, level=log_level)
