@@ -4,7 +4,11 @@ It has been shown that the specific seed examples used while constructing the pr
 2. Semantic_similarity - Language embeddings are computed for all the examples in the seed set and a vector similarity search finds the few shot examples which are closest to the input datapoint. The hope is that closer datapoints from the seed set will give the model more context on how similar examples have been labeled, helping it improve performance.
 3. Max_marginal_relevance - Semantic similarity search is used to retrieve a set of candidate examples. Then, a diversity-driven selection strategy is used amongst these candidates to select a final subset of examples that have the most coverage of the initial pool of candidate examples.
 
-Example:
+
+Example: 
+
+[![open in colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/1qgfy7odvkCNKrB58ozAF4qXzu10rRGKx#scrollTo=x0js54dB0D7J)
+
 Consider the following labeling runs for a classification task on the banking dataset. There are a total of 1998 items to be labeled and we assume a starting labeled seedset of 200 examples. Here is the config to label this dataset in zero-shot fashion:
 
 ```py
