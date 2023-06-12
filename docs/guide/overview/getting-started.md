@@ -25,11 +25,13 @@ Let's say we wanted to run sentiment analysis on a dataset of movie reviews. We 
 
 Now, we could label a few hundred examples by hand which would take us a few hours. Instead, let's use Autolabel to get a clean, labeled dataset in a few minutes. 
 
-A dataset [footnote needed] containing 200 unlabeled movie reviews is available here [link needed], and a couple of examples (with labels) are shown below:
+A dataset[^1] containing 200 unlabeled movie reviews is available [here](https://github.com/refuel-ai/autolabel/blob/main/docs/assets/movie_reviews_preview.csv), and a couple of examples (with labels) are shown below:
 
 {{ read_csv('docs/assets/movie_reviews_preview.csv') }}
 
 Our goal is to label the full 200 examples using Autolabel. 
+
+[^1]: Andrew L. Maas, Raymond E. Daly, Peter T. Pham, Dan Huang, Andrew Y. Ng, and Christopher Potts. (2011). [Learning Word Vectors for Sentiment Analysis](https://ai.stanford.edu/~amaas/papers/wvSent_acl2011.pdf). The 49th Annual Meeting of the Association for Computational Linguistics (ACL 2011).
 
 ## Labeling with AutoLabel
 
@@ -67,7 +69,7 @@ config = {
 
 ### Preview the labeling against your dataset
 
-First import `autolabel`, create a `LabelingAgent` object and then run the `plan` command against the dataset (available here [link to dataset]):
+First import `autolabel`, create a `LabelingAgent` object and then run the `plan` command against the dataset (available [here](https://github.com/refuel-ai/autolabel/blob/main/docs/assets/movie_reviews.csv)):
 
 ```python
 from autolabel import LabelingAgent
@@ -134,4 +136,4 @@ At this point, we have a labeled dataset ready, and we can begin training our ML
 
 In this simple walkthrough, we have installed `autolabel`, gone over an example dataset to label (sentiment analysis for moview reviews) and used `autolabel` to label this dataset in just a few minutes. 
 
-We hope that this gives you a glimpse of what you can do with Refuel. There are many other [labeling tasks](/guide/tasks/tasks) available within Autolabel, and if you have any questions, join our community [here] (link to community) or open an [issue on Github] (link to Github). 
+We hope that this gives you a glimpse of what you can do with Refuel. There are many other [labeling tasks](/guide/tasks/tasks) available within Autolabel, and if you have any questions, join our community <a href="https://discord.gg/uEdr8nrMGm" target="_blank">here</a> or [open an issue](https://github.com/refuel-ai/autolabel/issues/new/choose) on [Github](https://github.com/refuel-ai/autolabel). 
