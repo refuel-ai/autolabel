@@ -1,25 +1,9 @@
-from typing import Dict
 from loguru import logger
 
 from .base import BaseModel
-from .anthropic import AnthropicLLM
-from .openai import OpenAILLM
-from .hf_pipeline import HFPipelineLLM
-from .refuel import RefuelLLM
-from .palm import PaLMLLM
-
 from autolabel.configs import AutolabelConfig
 from autolabel.schema import ModelProvider
 from autolabel.cache import BaseCache
-
-MODEL_PROVIDER_TO_IMPLEMENTATION: Dict[ModelProvider, BaseModel] = {
-    ModelProvider.OPENAI: OpenAILLM,
-    ModelProvider.ANTHROPIC: AnthropicLLM,
-    ModelProvider.HUGGINGFACE_PIPELINE: HFPipelineLLM,
-    ModelProvider.REFUEL: RefuelLLM,
-    ModelProvider.GOOGLE: PaLMLLM,
-    # We will add more providers here in the future. See roadmap at [TODO]
-}
 
 
 class ModelFactory:
@@ -37,11 +21,32 @@ class ModelFactory:
         """
         model_provider = ModelProvider(config.provider())
         try:
-            model_cls = MODEL_PROVIDER_TO_IMPLEMENTATION[model_provider]
+            if model_provider == ModelProvider.OPENAI:
+                from .openai import OpenAILLM
+
+                model_cls = OpenAILLM
+            elif model_provider == ModelProvider.ANTHROPIC:
+                from .anthropic import AnthropicLLM
+
+                model_cls = AnthropicLLM
+            elif model_provider == ModelProvider.HUGGINGFACE_PIPELINE:
+                from .hf_pipeline import HFPipelineLLM
+
+                model_cls = HFPipelineLLM
+            elif model_provider == ModelProvider.REFUEL:
+                from .refuel import RefuelLLM
+
+                model_cls = RefuelLLM
+            elif model_provider == ModelProvider.GOOGLE:
+                from .palm import PaLMLLM
+
+                model_cls = PaLMLLM
+            else:
+                raise ValueError
         except ValueError as e:
             logger.error(
                 f"{config.provider()} is not in the list of supported providers: \
-                {MODEL_PROVIDER_TO_IMPLEMENTATION.keys()}"
+                {list(ModelProvider.__members__.keys())}"
             )
             return None
         return model_cls(config, cache)
