@@ -15,7 +15,7 @@ config_fixed_few_shot = {
         "compute_confidence": True
     },
     "prompt": {
-        "task_guidelines": "You are an expert at identifying toxic comments. You aim to act in a fair and balanced manner, where comments that provide fair criticism of something or someone are labelled 'not toxic'. Similarly, criticisms of policy and politicians are marked 'not toxic', unless the comment includes obscenities, racial slurs or sexually explicit material. Any comments that are sexually explicit, obscene, or insults a person, demographic or race are not allowed and labeled 'toxic'. \nYour job is to correctly label the provided input example into one of the following categories:\n{labels}",
+        "task_guidelines": "You are an expert at identifying toxic comments and understanding if a comment is sexually explicit, obscene, toxic, insults a person, demographic or race. \nYour job is to correctly label the provided input example into one of the following categories:\n{labels}",
         "labels": [
             "toxic",
             "not toxic"
@@ -44,7 +44,6 @@ config_fixed_few_shot = {
     }
 }
 ```
-Prompt: You are an expert at identifying toxic comments and understanding if a comment is sexually explicit, obscene, toxic, insults a person, demographic or race.
 
 Accuracy: 68%
 
