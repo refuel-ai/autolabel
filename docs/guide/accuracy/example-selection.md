@@ -107,6 +107,8 @@ config_zero_shot = {
 ```
 
 ```py
+from autolabel import LabelingAgent
+
 agent = LabelingAgent(config=config_zero_shot)
 labels, df, metrics_list = agent.run('../data/banking_test.csv')
 ```
@@ -169,8 +171,6 @@ config_semantic_similarity = {
 ```
 
 ```py
-from autolabel import LabelingAgent
-
 agent = LabelingAgent(config=config_semantic_similarity)
 labels, df, metrics_list = agent.run('../data/banking_test.csv')
 ```
