@@ -21,7 +21,7 @@ Thus the dataset consists of the `example` and `CategorizedLabels` columns. Here
 
 In order to run Autolabel, we need a config defining the 3 important things - task, llm and dataset. Let's assume gpt-3.5-turbo as the LLM for this section.
 
-```json
+```py
 config = {
     "task_name": "PersonLocationOrgMiscNER",
     "task_type": "named_entity_recognition",
