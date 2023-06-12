@@ -1,0 +1,26 @@
+{
+    "task_name": "PersonLocationOrgMiscNER",
+    "task_type": "named_entity_recognition",
+    "dataset": {
+        "label_column": "CategorizedLabels",
+        "text_column": "example",
+        "delimiter": ","
+    },
+    "model": {
+        "provider": "openai",
+        "name": "gpt-3.5-turbo",
+    },
+    "prompt": {
+        "task_guidelines": "You are an expert at extracting Person, Organization, Location, and Miscellaneous entities from text. Your job is to extract named entities mentioned in text, and classify them into one of the following categories.\nCategories:\n{labels}\n ",
+        "labels": [
+            "Location",
+            "Organization",
+            "Person",
+            "Miscellaneous"
+        ],
+        "example_template": "Example: {example}\nOutput:\n{CategorizedLabels}",
+        "few_shot_examples": "seed.csv",
+        "few_shot_selection": "semantic_similarity",
+        "few_shot_num": 5,
+    }
+}
