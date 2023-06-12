@@ -1,5 +1,5 @@
 <figure markdown>
-  ![Chain of Thought prompting](https://learnprompting.org/assets/images/chain_of_thought_example-37c925a2720c9c4bb4c823d237bc72c8.png){ width="600" }
+  ![Chain-of-Thought prompting](/assets/standardvscotprompt.png){ width="600" }
   <figcaption>Chain of Thought Prompting (Wei et al)</figcaption>
 </figure>
 
@@ -9,7 +9,7 @@ Chain of thought makes LLMs more effective at reasoning tasks like mathematical 
 
 ## Using Chain Of Thought in Autolabel
 
-Enabling chain of thought for your task is pretty easy. It works best when provided with a few seed examples with explanations. Thus enabling chain of thought requires a few things -  
+Enabling chain-of-thought prompting for your task is straightforward with Autolabel. It works best when provided with a few seed examples with explanations. Thus enabling chain of thought requires a few things -  
 
 1. Writing up explanations or generating explanations for your seed examples automatically by using an LLM
 2. Specifying the `explanation_column` in the dataset part of the config.
@@ -20,17 +20,12 @@ We will go through using chain of thought on a dataset where it shows improvemen
 
 Let's see a datapoint before there is any explanation added to it.
 
-```json
-{
-    "context": "Private schools generally prefer to be called independent schools, because of their freedom to operate outside of government and local government control. Some of these are also known as public schools. Preparatory schools in the UK prepare pupils aged up to 13 years old to enter public schools. The name 'public school' is based on the fact that the schools were open to pupils from anywhere, and not merely to those from a certain locality, and of any religion or occupation. According to The Good Schools Guide approximately 9 per cent of children being educated in the UK are doing so at fee-paying schools at GSCE level and 13 per cent at A-level.[citation needed] Many independent schools are single-sex (though this is becoming less common). Fees range from under £3,000 to £21,000 and above per year for day pupils, rising to £27,000+ per year for boarders. For details in Scotland, see 'Meeting the Cost'.",
-    "question": "At A-level, what percentage of British students attend fee-paying schools?",
-    "answer": "13"
-}
-```
+{{ read_csv('docs/assets/squad_preview.csv') }}
+
 
 Now we can manually write the explanation for this or a couple of seed examples easily. But this will be tiresome for > 10 examples. LLMs come to the rescue yet again! We can just define the config and ask the agent to generate explanations as well!
 
-```json
+```python
 config = {
     "task_name": "OpenbookQAWikipedia",
     "task_type": "multi_choice_question_answering",
@@ -54,7 +49,12 @@ config = {
 }
 ```
 
-Notice the changes that we have made to the config structure. First, we have defined the `explanation_column`. This is the column where the explanation for the seed examples will reside. Next, notice that the `example_template` key contains the explanation column as well. This tells the config where the explanation should be put when using the seed examples. We use the Let's think step by step prompt to initiate the chain of thought in the model. We pass the answer in the json format so that it is easier for the model to parse the input and understand how the answer needs to be parsed by the library.
+Notice the changes that we have made to the config compared to the config without Chain-of-Thought [here](/guide/tasks/question_answering_task). We have added two new fields to the config
+
+* `explanation_column`
+* `example_template`
+
+`explanation_column` is the column where the explanation for the seed examples will reside. Next, notice that the `example_template` key contains the explanation column as well. This tells the config where the explanation should be put when using the seed examples. We use the `Let's think step by step` prompt to initiate the chain of thought in the model.
 
 Now, in order to generate explanations for the seed examples, in case they were not manually generated is,
 ```py
@@ -65,14 +65,7 @@ agent.generate_explanations("path_to_seed_examples.csv")
 
 Once these explanations are generated, the dataset looks like
 
-```json
-{
-    "context": "Private schools generally prefer to be called independent schools, because of their freedom to operate outside of government and local government control. Some of these are also known as public schools. Preparatory schools in the UK prepare pupils aged up to 13 years old to enter public schools. The name 'public school' is based on the fact that the schools were open to pupils from anywhere, and not merely to those from a certain locality, and of any religion or occupation. According to The Good Schools Guide approximately 9 per cent of children being educated in the UK are doing so at fee-paying schools at GSCE level and 13 per cent at A-level.[citation needed] Many independent schools are single-sex (though this is becoming less common). Fees range from under £3,000 to £21,000 and above per year for day pupils, rising to £27,000+ per year for boarders. For details in Scotland, see 'Meeting the Cost'.",
-    "question": "At A-level, what percentage of British students attend fee-paying schools?",
-    "answer": "13",
-    "explanation": "Independent schools in the UK are private schools that charge fees. \nThese schools are also known as public schools.\nAccording to The Good Schools Guide, about 9% of children in the UK attend fee-paying schools at the GSCE level.\nAt the A-level, which is a higher level of education, a higher percentage of students, 13%, attend fee-paying independent schools.\nSince 13% of students attend fee-paying schools at the A-level, and the question asks what percentage attend at the A-level specifically,\nSo, the answer is 13."
-}
-```
+{{ read_csv('docs/assets/squad_with_explanation_preview.csv') }}
 
 Now to generate labels for this dataset, all we have to do is,
 ```py
