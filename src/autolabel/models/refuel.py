@@ -1,13 +1,15 @@
-from typing import List, Optional
 import json
+import os
+import requests
 from langchain.schema import LLMResult, Generation
 from loguru import logger
+from typing import List, Optional
+
 
 from autolabel.models import BaseModel
 from autolabel.configs import AutolabelConfig
 from autolabel.cache import BaseCache
 
-import requests
 
 from tenacity import (
     before_sleep_log,
@@ -29,6 +31,14 @@ class RefuelLLM(BaseModel):
         # initialize runtime
         self.BASE_API = "https://refuel-llm.refuel.ai/"
         self.SEP_REPLACEMENT_TOKEN = "@@"
+        self.REFUEL_API_ENV = "REFUEL_API_KEY"
+        if self.REFUEL_API_ENV in os.environ and os.environ[self.REFUEL_API_ENV]:
+            self.REFUEL_API_KEY = os.environ[self.REFUEL_API_ENV]
+        else:
+            raise ValueError(
+                f"Did not find {self.REFUEL_API_ENV}, please add an environment variable"
+                f" `{self.REFUEL_API_ENV}` which contains it"
+            )
 
     @retry(
         reraise=True,
@@ -41,7 +51,8 @@ class RefuelLLM(BaseModel):
             "data": {"model_input": prompt},
             "task": "generate",
         }
-        response = requests.post(self.BASE_API, json=payload)
+        headers = {"refuel_api_key": self.REFUEL_API_KEY}
+        response = requests.post(self.BASE_API, json=payload, headers=headers)
         # raise Exception if status != 200
         response.raise_for_status()
         return response
