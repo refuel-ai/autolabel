@@ -12,8 +12,25 @@ class DatasetLoader:
     # TODO: add support for reading from SQL databases
     # TODO: add support for reading and loading datasets in chunks
 
-    @staticmethod
+    def __init__(
+        self,
+        dataset: Union[str, pd.DataFrame],
+        config: AutolabelConfig,
+        max_items: int = 0,
+        start_index: int = 0,
+    ) -> None:
+        self.dataset = dataset
+        self.config = config
+        self.max_items = max_items
+        self.start_index = start_index
+
+        if isinstance(dataset, str):
+            self.read_file(dataset, config, max_items, start_index)
+        elif isinstance(dataset, pd.DataFrame):
+            self.read_dataframe(dataset, config, start_index, max_items)
+
     def read_csv(
+        self,
         csv_file: str,
         config: AutolabelConfig,
         max_items: int = None,
@@ -34,22 +51,23 @@ class DatasetLoader:
         delimiter = config.delimiter()
         label_column = config.label_column()
 
-        dat = pd.read_csv(csv_file, sep=delimiter, dtype="str")[start_index:]
-        dat = dat.astype(str)
+        self.dat = pd.read_csv(csv_file, sep=delimiter, dtype="str")[start_index:]
+        self.dat = self.dat.astype(str)
         if max_items and max_items > 0:
-            max_items = min(max_items, len(dat))
-            dat = dat[:max_items]
+            max_items = min(max_items, len(self.dat))
+            self.dat = self.dat[:max_items]
 
-        inputs = dat.to_dict(orient="records")
-        gt_labels = (
+        self.inputs = self.dat.to_dict(orient="records")
+        self.gt_labels = (
             None
-            if not label_column or not len(inputs) or label_column not in inputs[0]
-            else dat[label_column].tolist()
+            if not label_column
+            or not len(self.inputs)
+            or label_column not in self.inputs[0]
+            else self.dat[label_column].tolist()
         )
-        return (dat, inputs, gt_labels)
 
-    @staticmethod
     def read_dataframe(
+        self,
         df: pd.DataFrame,
         config: AutolabelConfig,
         max_items: int = None,
@@ -68,21 +86,22 @@ class DatasetLoader:
         """
         label_column = config.label_column()
 
-        dat = df[start_index:].astype(str)
+        self.dat = df[start_index:].astype(str)
         if max_items and max_items > 0:
-            max_items = min(max_items, len(dat))
-            dat = dat[:max_items]
+            max_items = min(max_items, len(self.dat))
+            self.dat = self.dat[:max_items]
 
-        inputs = dat.to_dict(orient="records")
-        gt_labels = (
+        self.inputs = self.dat.to_dict(orient="records")
+        self.gt_labels = (
             None
-            if not label_column or not len(inputs) or label_column not in inputs[0]
-            else dat[label_column].tolist()
+            if not label_column
+            or not len(self.inputs)
+            or label_column not in self.inputs[0]
+            else self.dat[label_column].tolist()
         )
-        return (dat, inputs, gt_labels)
 
-    @staticmethod
     def read_jsonl(
+        self,
         jsonl_file: str,
         config: AutolabelConfig,
         max_items: int = None,
@@ -102,21 +121,21 @@ class DatasetLoader:
         logger.debug(f"reading the jsonl from: {start_index}")
         label_column = config.label_column()
 
-        dat = pd.read_json(jsonl_file, lines=True, dtype="str")[start_index:]
-        dat = dat.astype(str)
+        self.dat = pd.read_json(jsonl_file, lines=True, dtype="str")[start_index:]
+        self.dat = self.dat.astype(str)
         if max_items and max_items > 0:
-            max_items = min(max_items, len(dat))
-            dat = dat[:max_items]
+            max_items = min(max_items, len(self.dat))
+            self.dat = self.dat[:max_items]
 
-        inputs = dat.to_dict(orient="records")
-        gt_labels = (
+        self.inputs = self.dat.to_dict(orient="records")
+        self.gt_labels = (
             None
-            if not label_column or not len(inputs) or label_column not in inputs[0]
-            else dat[label_column].tolist()
+            if not label_column
+            or not len(self.inputs)
+            or label_column not in self.inputs[0]
+            else self.dat[label_column].tolist()
         )
-        return (dat, inputs, gt_labels)
 
-    @staticmethod
     def read_sql(
         self,
         sql: Union[str, Selectable],
@@ -139,22 +158,23 @@ class DatasetLoader:
         logger.debug(f"reading the sql from: {start_index}")
         label_column = config.label_column()
 
-        dat = pd.read_sql(sql, connection)[start_index:]
-        dat = dat.astype(str)
+        self.dat = pd.read_sql(sql, connection)[start_index:]
+        self.dat = self.dat.astype(str)
         if max_items and max_items > 0:
-            max_items = min(max_items, len(dat))
-            dat = dat[:max_items]
+            max_items = min(max_items, len(self.dat))
+            self.dat = self.dat[:max_items]
 
-        inputs = dat.to_dict(orient="records")
-        gt_labels = (
+        self.inputs = self.dat.to_dict(orient="records")
+        self.gt_labels = (
             None
-            if not label_column or not len(inputs) or label_column not in inputs[0]
-            else dat[label_column].tolist()
+            if not label_column
+            or not len(self.inputs)
+            or label_column not in self.inputs[0]
+            else self.dat[label_column].tolist()
         )
-        return (dat, inputs, gt_labels)
 
-    @staticmethod
     def read_file(
+        self,
         file: str,
         config: AutolabelConfig,
         max_items: int = None,
@@ -175,11 +195,11 @@ class DatasetLoader:
             Tuple[pd.DataFrame, List[Dict], List]: dataframe, inputs and gt_labels
         """
         if file.endswith(".csv"):
-            return DatasetLoader.read_csv(
+            return self.read_csv(
                 file, config, max_items=max_items, start_index=start_index
             )
         elif file.endswith(".jsonl"):
-            return DatasetLoader.read_jsonl(
+            return self.read_jsonl(
                 file, config, max_items=max_items, start_index=start_index
             )
         else:
