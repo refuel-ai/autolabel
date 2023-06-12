@@ -14,7 +14,7 @@ nav:
       - Tasks: guide/tasks/tasks.md
     - Improving Labeling Accuracy:
       - Prompting Better: guide/accuracy/prompting-better.md
-      - Example Selection: guide/accuracy/example-selection.md
+      - Few-shot Prompting: guide/accuracy/few-shot.md
       - Confidence: guide/accuracy/confidence.md
       - Chain of Thought: guide/accuracy/chain-of-thought.md
     - Reliability and Robustness:
