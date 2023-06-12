@@ -99,7 +99,7 @@ config = {
     },
     "prompt": {
         "task_guidelines": "You are an expert at answering science questions. Choose an answer from the given options. Use your knowledge of science and common sense to best answer the question.",
-        "few_shot_examples": "../data/squad_v2_seed.csv",
+        "few_shot_examples": "../examples/squad_v2/seed.csv",
         "few_shot_selection": "fixed",
         "few_shot_num": 3,
         "example_template": "Question: {question}\nOptions: {options}\nAnswer: {answer}"

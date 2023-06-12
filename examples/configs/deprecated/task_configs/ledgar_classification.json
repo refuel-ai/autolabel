@@ -1,6 +1,0 @@
-{
-    "task_name": "LedgarClassification",
-    "task_type": "classification",
-    "output_format": "csv",
-    "prefix_prompt": "You are an expert at understanding contracts."
-}

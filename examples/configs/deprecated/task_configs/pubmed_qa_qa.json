@@ -1,9 +1,0 @@
-{
-    "project_name": "MedicineQuestion",
-    "task_type": "multi_choice_question_answering",
-    "output_format": "json",
-    "compute_confidence": "True",
-    "chain_of_thought": "True",
-    "prefix_prompt": "You are an expert at answering medicine questions.",
-    "output_prompt": "Think about the answer step by step. First you will give the explanation of the answer. Then you will give the answer in JSON format with one key: <Explanation of the answer> {\"label\": \"the correct label\"}\n'"
-}

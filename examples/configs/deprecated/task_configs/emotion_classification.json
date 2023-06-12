@@ -1,5 +1,0 @@
-{
-    "project_name": "EmotionClassification",
-    "task_type": "classification",
-    "prefix_prompt": "You are an expert at understanding emotions of human texts."
-}
