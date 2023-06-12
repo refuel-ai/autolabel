@@ -19,7 +19,7 @@ from autolabel.few_shot import ExampleSelectorFactory
 from autolabel.models import BaseModel, ModelFactory
 from autolabel.schema import LLMAnnotation, MetricResult, TaskRun, TaskStatus
 from autolabel.tasks import TaskFactory
-from autolabel.utils import track, track_with_stats, print_table
+from autolabel.utils import track, track_with_stats, print_table, maybe_round
 
 console = Console()
 
@@ -306,8 +306,8 @@ class LabelingAgent:
                 if isinstance(m.value, list) and len(m.value) > 0:
                     table[m.name] = m.value
                 else:
-                    print(f"Metric: {m.name}: {m.value}")
-            print(f"Actual Cost: {round(cost, 4)}")
+                    print(f"Metric: {m.name}: {maybe_round(m.value)}")
+            print(f"Actual Cost: {maybe_round(cost)}")
             print_table(table, console=console, default_style=METRIC_TABLE_STYLE)
 
         # Write output to CSV
@@ -403,9 +403,9 @@ class LabelingAgent:
 
         total_cost = total_cost * (len(inputs) / input_limit)
         table = {
-            "Total Estimated Cost": f"${total_cost:.3f}",
+            "Total Estimated Cost": f"${maybe_round(total_cost)}",
             "Number of Examples": len(inputs),
-            "Average cost per example": f"${total_cost / len(inputs):.5f}",
+            "Average cost per example": f"${maybe_round(total_cost / len(inputs))}",
         }
         table = {"parameter": list(table.keys()), "value": list(table.values())}
         print_table(table, show_header=False, console=console, styles=COST_TABLE_STYLES)

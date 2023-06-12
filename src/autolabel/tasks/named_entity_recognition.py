@@ -222,8 +222,11 @@ class NamedEntityRecognitionTask(BaseTask):
         )
 
         # accuracy
-        accuracy = results.get("strict").get("correct") / (
-            results.get("strict").get("possible") + 1e-5
+        accuracy = (
+            results.get("strict").get("correct")
+            / (results.get("strict").get("possible"))
+            if results.get("strict").get("possible") > 0
+            else 0.0
         )
         eval_metrics.append(
             MetricResult(

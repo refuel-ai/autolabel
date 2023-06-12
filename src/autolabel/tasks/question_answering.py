@@ -70,7 +70,6 @@ class QuestionAnsweringTask(BaseTask):
             )
             confidences.append(llm_label.confidence_score)
 
-        ConfidenceCalculator.plot_data_distribution(labels, confidences)
         return labels, confidences
 
     def get_labels_predictions_with_threshold(self, gt_labels, llm_labels, threshold):
@@ -162,7 +161,7 @@ class QuestionAnsweringTask(BaseTask):
                 ]
             )
             eval_metrics_map[Metric.F1].append(
-                float(f1) / (len(curr_llm_labels) + 1e-5)
+                (float(f1) / len(curr_llm_labels)) if len(curr_llm_labels) > 0 else 0.0
             )
 
         eval_metrics.extend(
