@@ -56,12 +56,16 @@ The presence of generally negative words such as "malfeasance" and "wasting" may
 
 Adding nuance to the prompt:
 
+We can replace the prompt in the above config with the following updated task guidelines.
+
 ```json
 "task_guidelines": "You are an expert at identifying toxic comments. You aim to act in a fair and balanced manner, where comments that provide fair criticism of something or someone are labelled 'not toxic'. Similarly, criticisms of policy and politicians are marked 'not toxic', unless the comment includes obscenities, racial slurs or sexually explicit material. Any comments that are sexually explicit, obscene, or insults a person, demographic or race are not allowed and labeled 'toxic'.\nYour job is to correctly label the provided input example into one of the following categories:\n{labels}",
 ```
 
 Accuracy: 74%
 
-In this second iteration, we added more detail to the prompt such as addressing the nuances between "fair criticisms" vs. toxic comments. These additional details lead to better performance, reaching 74% accuracy. From a similar analysis of the LLM errors, we see that the previous misclassification example has now been correctly labeled.
+In this second iteration, we added more detail to the prompt such as addressing the nuances between "fair criticisms" vs. toxic comments. These additional details lead to better performance, reaching 74% accuracy. From a similar analysis of the LLM errors, we see that the previous misclassification example, along with several other similar ones, has now been correctly labeled.
+
+Further improvements:
 
 After subsequently experimenting with a few different variations to this prompt, we do not see significant improvements in performance for this task. As a result, after sufficient iteration of the prompt, it is better to look for performance gains through other modifications to the task configuration. For example, comparing different LLM's can often lead to significant improvements. With the same final prompt above, the text-davinci-003 model achieved 88% accuracy, a 14% increase compared to gpt-turbo-3.5.
