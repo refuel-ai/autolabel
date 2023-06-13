@@ -26,7 +26,7 @@ class RefuelLLM(BaseModel):
         # This is unused today, but in the future could
         # be used to decide which refuel model is queried
         self.model_name = config.model_name()
-        self.model_params = {}
+        self.model_params = config.model_params()
 
         # initialize runtime
         self.BASE_API = "https://refuel-llm.refuel.ai/"
@@ -48,7 +48,7 @@ class RefuelLLM(BaseModel):
     )
     def _label_with_retry(self, prompt: str) -> requests.Response:
         payload = {
-            "data": {"model_input": prompt},
+            "data": {"model_input": prompt, "model_params": {**self.model_params}},
             "task": "generate",
         }
         headers = {"refuel_api_key": self.REFUEL_API_KEY}
