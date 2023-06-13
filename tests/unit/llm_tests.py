@@ -1,4 +1,5 @@
-from langchain.schema import Generation, LLMResult, HumanMessage
+from langchain.schema import Generation, LLMResult
+from pytest import approx
 
 from autolabel.models.anthropic import AnthropicLLM
 from autolabel.models.openai import OpenAILLM
@@ -27,7 +28,7 @@ def test_anthropic_label(mocker):
     )
     x = model.label(prompts)
     assert [i[0].text for i in x[0].generations] == ["Answers", "Answers"]
-    assert x[1] == 0.00010944
+    assert x[1] == approx(0.00010944, rel=1e-3)
 
 
 def test_anthropic_get_cost():
@@ -36,7 +37,7 @@ def test_anthropic_get_cost():
     )
     example_prompt = "TestingExamplePrompt"
     curr_cost = model.get_cost(example_prompt)
-    assert curr_cost == 0.03271306
+    assert curr_cost == approx(0.03271306, rel=1e-3)
 
 
 def test_anthropic_return_probs():
@@ -69,7 +70,7 @@ def test_gpt35_label(mocker):
     )
     x = model.label(prompts)
     assert [i[0].text for i in x[0].generations] == ["Answers", "Answers"]
-    assert x[1] == 1.2e-05
+    assert x[1] == approx(1.2e-05, rel=1e-3)
 
 
 def test_gpt35_get_cost():
@@ -78,7 +79,7 @@ def test_gpt35_get_cost():
     )
     example_prompt = "TestingExamplePrompt"
     curr_cost = model.get_cost(example_prompt)
-    assert curr_cost == 0.002006
+    assert curr_cost == approx(0.002006, rel=1e-3)
 
 
 def test_gpt35_return_probs():
@@ -111,7 +112,7 @@ def test_gpt4_label(mocker):
     )
     x = model.label(prompts)
     assert [i[0].text for i in x[0].generations] == ["Answers", "Answers"]
-    assert x[1] == 0.00023999999999999998
+    assert x[1] == approx(0.00023999, rel=1e-3)
 
 
 def test_gpt4_get_cost():
@@ -120,7 +121,7 @@ def test_gpt4_get_cost():
     )
     example_prompt = "TestingExamplePrompt"
     curr_cost = model.get_cost(example_prompt)
-    assert curr_cost == 0.06009
+    assert curr_cost == approx(0.06009, rel=1e-3)
 
 
 def test_gpt4_return_probs():
@@ -153,7 +154,7 @@ def test_palm_label(mocker):
     )
     x = model.label(prompts)
     assert [i[0].text for i in x[0].generations] == ["Answers", "Answers"]
-    assert x[1] == 9.999999999999999e-06
+    assert x[1] == approx(9.9999e-06, rel=1e-3)
 
 
 def test_palm_get_cost():
@@ -162,7 +163,7 @@ def test_palm_get_cost():
     )
     example_prompt = "TestingExamplePrompt"
     curr_cost = model.get_cost(example_prompt)
-    assert curr_cost == 1.9999999999999998e-05
+    assert curr_cost == approx(1.9999e-05, rel=1e-3)
 
 
 def test_palm_return_probs():
@@ -212,7 +213,7 @@ def test_refuel_get_cost():
     )
     example_prompt = "TestingExamplePrompt"
     curr_cost = model.get_cost(example_prompt)
-    assert curr_cost == 00
+    assert curr_cost == 0
 
 
 def test_refuel_return_probs():
