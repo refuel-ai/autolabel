@@ -7,7 +7,7 @@
 
 <div align="center" style="width:800px">
 
-[![lint](https://github.com/refuel-ai/autolabel/actions/workflows/black.yaml/badge.svg)](https://github.com/refuel-ai/autolabel/actions/workflows/black.yaml/badge.svg) [![docs](https://github.com/refuel-ai/autolabel/actions/workflows/docs.yaml/badge.svg)](https://docs.refuel.ai/) [Tests](https://github.com/refuel-ai/autolabel/actions/workflows/test.yaml/badge.svg) [![Discord](https://img.shields.io/discord/1098746693152931901)](https://discord.gg/fweVnRx6CU) [![Twitter](https://badgen.net/badge/icon/twitter?icon=twitter&label)](https://twitter.com/RefuelAI) [![License: MIT](https://badgen.net/badge/license/MIT/blue)](https://opensource.org/licenses/MIT)
+[![lint](https://github.com/refuel-ai/autolabel/actions/workflows/black.yaml/badge.svg)](https://github.com/refuel-ai/autolabel/actions/workflows/black.yaml/badge.svg) [![docs](https://github.com/refuel-ai/autolabel/actions/workflows/docs.yaml/badge.svg)](https://docs.refuel.ai/) ![Tests](https://github.com/refuel-ai/autolabel/actions/workflows/test.yaml/badge.svg) [![Discord](https://img.shields.io/discord/1098746693152931901)](https://discord.gg/fweVnRx6CU) [![Twitter](https://badgen.net/badge/icon/twitter?icon=twitter&label)](https://twitter.com/RefuelAI) [![License: MIT](https://badgen.net/badge/license/MIT/blue)](https://opensource.org/licenses/MIT)
 </div>
 
 ## Quick Install
