@@ -1,9 +1,11 @@
-from loguru import logger
+import logging
 
 from .base import BaseModel
 from autolabel.configs import AutolabelConfig
 from autolabel.schema import ModelProvider
 from autolabel.cache import BaseCache
+
+logger = logging.getLogger(__name__)
 
 
 class ModelFactory:

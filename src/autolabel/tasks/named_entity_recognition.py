@@ -5,12 +5,14 @@ from typing import Dict, List, Tuple
 from copy import deepcopy
 
 from langchain.schema import Generation
-from loguru import logger
+import logging
 from nervaluate import Evaluator
 from autolabel.confidence import ConfidenceCalculator
 from autolabel.configs import AutolabelConfig
 from autolabel.schema import LLMAnnotation, Metric, MetricResult
 from autolabel.tasks import BaseTask
+
+logger = logging.getLogger(__name__)
 
 
 class NamedEntityRecognitionTask(BaseTask):
@@ -140,7 +142,7 @@ class NamedEntityRecognitionTask(BaseTask):
             output = self._llm_to_json_format(completion_text.strip())
             llm_label = self.add_text_spans(output, input_str)
         except Exception as e:
-            logger.info(f"Error parsing LLM response: {response.text}, Error: {e}")
+            logger.error(f"Error parsing LLM response: {response.text}, Error: {e}")
             llm_label = self.NULL_LABEL
 
         successfully_labeled = "no" if llm_label == self.NULL_LABEL else "yes"

@@ -1,6 +1,6 @@
 from functools import cached_property
 from typing import List, Optional
-from loguru import logger
+import logging
 
 from langchain.chat_models import ChatVertexAI
 from langchain.llms import VertexAI
@@ -9,6 +9,8 @@ from langchain.schema import LLMResult, HumanMessage, Generation
 from autolabel.models import BaseModel
 from autolabel.configs import AutolabelConfig
 from autolabel.cache import BaseCache
+
+logger = logging.getLogger(__name__)
 
 
 class PaLMLLM(BaseModel):

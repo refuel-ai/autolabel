@@ -2,7 +2,7 @@ import json
 import os
 import requests
 from langchain.schema import LLMResult, Generation
-from loguru import logger
+import logging
 from typing import List, Optional
 
 
@@ -17,6 +17,8 @@ from tenacity import (
     stop_after_attempt,
     wait_exponential,
 )
+
+logger = logging.getLogger(__name__)
 
 
 class RefuelLLM(BaseModel):
