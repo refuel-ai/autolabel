@@ -24,14 +24,6 @@ from autolabel.utils import track, track_with_stats, print_table, maybe_round
 console = Console()
 logger = logging.getLogger(__name__)
 
-LOG_LEVEL_TO_INT = {
-    "DEBUG": logging.DEBUG,
-    "INFO": logging.INFO,
-    "WARNING": logging.WARNING,
-    "ERROR": logging.ERROR,
-    "CRITICAL": logging.CRITICAL,
-}
-
 COST_TABLE_STYLES = {
     "parameter": "magenta bold",
     "value": "green bold",
@@ -46,7 +38,6 @@ class LabelingAgent:
     def __init__(
         self,
         config: Union[str, Dict],
-        log_level: Optional[str] = "INFO",
         cache: Optional[bool] = True,
     ) -> None:
         self.db = StateManager()
