@@ -1,0 +1,24 @@
+name: Testing on push
+
+on:
+  - push
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+    - name: Install Python3.8
+      uses: actions/setup-python@v1
+      with:
+        python-version: 3.8
+        architecture: x64
+    - name: refuel-core Python build
+      run: |
+          pip install .
+    - name: Test with pytest
+      run: |
+        make setup
+        make check
