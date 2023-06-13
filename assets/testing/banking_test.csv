@@ -1,0 +1,11 @@
+example,label
+I want to close my account,terminate_account
+It seems I was overcharged when I used an ATM while on vacation. If I knew about your fees in advance I sure would have gone somewhere else.,wrong_exchange_rate_for_cash_withdrawal
+"I have a direct debit transaction I have not set up, but would like to .",direct_debit_payment_not_recognised
+How much does it cost in fees to use your card?,order_physical_card
+There is an extra $1 charge,extra_charge_on_statement
+What does it mean by pending payment?,pending_card_payment
+My address has changed. How do I report it?,edit_personal_details
+"How can I fix my card, it got declined twice.",declined_transfer
+How do I go forth verifying my top-up card?,verify_top_up
+I'm trying to transfer money into my account.,transfer_into_account
