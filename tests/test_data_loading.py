@@ -2,9 +2,11 @@ from autolabel import LabelingAgent
 from autolabel.dataset_loader import DatasetLoader
 from pandas import DataFrame
 
+csv_path = "assets/banking/test.csv"
+jsonl_path = "assets/banking/test.jsonl"
+
 
 def test_read_csv():
-    csv_path = "assets/banking/test.csv"
     agent = LabelingAgent(config="assets/banking/config_banking.json")
     data = DatasetLoader.read_csv(csv_path, agent.config)
     # test return types
@@ -22,8 +24,8 @@ def test_read_csv():
     assert len(data_max_5_index_5[2]) == 5
     return True
 
+
 def test_read_dataframe():
-    csv_path = "assets/banking/test.csv"
     agent = LabelingAgent(config="assets/banking/config_banking.json")
     df, _, _ = DatasetLoader.read_csv(csv_path, agent.config)
     data = DatasetLoader.read_dataframe(df, agent.config)
@@ -44,8 +46,8 @@ def test_read_dataframe():
     assert len(data_max_5_index_5[2]) == 5
     return True
 
+
 def test_read_jsonl():
-    jsonl_path = "assets/banking/test.jsonl"
     agent = LabelingAgent(config="assets/banking/config_banking.json")
     data = DatasetLoader.read_jsonl(jsonl_path, agent.config)
     # test return types
@@ -63,6 +65,20 @@ def test_read_jsonl():
     assert len(data_max_5_index_5[2]) == 5
     return True
 
-print(f'test_read_csv        :: {test_read_csv()}')
-print(f'test_read_dataframe  :: {test_read_dataframe()}')
-print(f'test_read_jsonl      :: {test_read_jsonl()}')
+
+def test_read_file():
+    agent = LabelingAgent(config="assets/banking/config_banking.json")
+    csv_data, _, _ = DatasetLoader.read_csv(csv_path, agent.config)
+    jsonl_data, _, _ = DatasetLoader.read_jsonl(jsonl_path, agent.config)
+    # try to load an unsupported file type (.txt), expecting a ValueError
+    try:
+        _, _, _ = DatasetLoader.read_file("assets/banking/test.txt", agent.config)
+    except ValueError as ve:
+        return True
+    return False
+
+
+print(f"test_read_csv        :: {test_read_csv()}")
+print(f"test_read_dataframe  :: {test_read_dataframe()}")
+print(f"test_read_jsonl      :: {test_read_jsonl()}")
+print(f"test_read_file       :: {test_read_file()}")
