@@ -1,11 +1,13 @@
 from typing import Dict, List, Tuple, Union
 
-from loguru import logger
+import logging
 import pandas as pd
 from sqlalchemy.sql.selectable import Selectable
 
 
 from autolabel.configs import AutolabelConfig
+
+logger = logging.getLogger(__name__)
 
 
 class DatasetLoader:

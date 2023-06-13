@@ -2,7 +2,7 @@
 
 from abc import ABC, abstractmethod
 from typing import Dict, List
-from loguru import logger
+import logging
 import json
 
 from langchain.prompts.prompt import PromptTemplate
@@ -10,6 +10,8 @@ from langchain.schema import Generation
 from autolabel.configs import AutolabelConfig
 from autolabel.schema import LLMAnnotation, MetricResult, FewShotAlgorithm
 from autolabel.utils import get_format_variables
+
+logger = logging.getLogger(__name__)
 
 
 class BaseTask(ABC):

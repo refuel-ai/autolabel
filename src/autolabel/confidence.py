@@ -5,8 +5,8 @@ import pickle as pkl
 import json
 import requests
 import scipy.stats as stats
-from loguru import logger
 import os
+import logging
 
 from autolabel.schema import LLMAnnotation
 from autolabel.models import BaseModel
@@ -17,6 +17,8 @@ from tenacity import (
     stop_after_attempt,
     wait_exponential,
 )
+
+logger = logging.getLogger(__name__)
 
 
 class ConfidenceCalculator:

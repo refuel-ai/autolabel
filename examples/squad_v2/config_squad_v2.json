@@ -8,7 +8,7 @@
     },
     "model": {
         "provider": "openai",
-        "name": "gpt-3.5-turbo",
+        "name": "gpt-3.5-turbo"
     },
     "prompt": {
         "task_guidelines": "You are an expert at answering questions based on wikipedia articles. Your job is to answer the following questions using the context provided with the question. Use the context to answer the question - the answer is a continuous span of words from the context.\n",
@@ -16,6 +16,6 @@
         "few_shot_examples": "seed.csv",
         "few_shot_selection": "semantic_similarity",
         "few_shot_num": 3,
-        "example_template": "Context: {context}\nQuestion: {question}\nAnswer: Let's think step by step.\n{explanation}\n{answer}",
+        "example_template": "Context: {context}\nQuestion: {question}\nAnswer: Let's think step by step.\n{explanation}\n{answer}"
     }
 }

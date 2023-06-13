@@ -1,5 +1,5 @@
 from sqlalchemy.orm import sessionmaker
-from loguru import logger
+import logging
 from typing import Optional, Union
 from datetime import datetime
 import pandas as pd
@@ -10,6 +10,8 @@ from autolabel.schema import Dataset, Task, TaskRun, TaskStatus
 from autolabel.configs import AutolabelConfig
 
 from .engine import create_db_engine
+
+logger = logging.getLogger(__name__)
 
 
 class StateManager:

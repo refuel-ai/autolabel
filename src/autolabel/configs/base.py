@@ -1,7 +1,9 @@
 import json
 from typing import Any, Dict, List, Union
 
-from loguru import logger
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 class BaseConfig:
