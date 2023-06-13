@@ -149,15 +149,15 @@ python get_data.py [--dataset DATASET_NAME]
 Not specifying the dataset name downloads all benchmark datasets. In order to select a specific dataset, specify it with the dataset flag.
 We support the following datasets (separated by tasks) -
 
-1. Classification
+1. **Classification**
     1. Banking
     2. Civil Comments
     3. Ledgar
-2. Entity Matching
+2. **Entity Matching**
     1. Walmart Amazon
     2. Company
-3. Question Answering
+3. **Question Answering**
     1. Sciq
     2. Squad V2
-4. Named Entity Recognition
+4. **Named Entity Recognition**
     1. CONLL 2003
