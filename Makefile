@@ -30,7 +30,7 @@ clean-test:
 clean: clean-pyc clean-test
 
 test: clean
-	pytest --ignore=autolabel/tests
+	pytest
 
 check: test
 
