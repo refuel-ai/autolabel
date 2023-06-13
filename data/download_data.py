@@ -1,13 +1,14 @@
-import os
-import json
 import csv
-import gdown
-import zipfile
+import json
+import os
 import random
+import shutil
 import urllib.request
+import zipfile
 
-from datasets import load_dataset
+import gdown
 import pandas as pd
+from datasets import load_dataset
 
 
 def map_label_to_string(dataset, col):
@@ -409,11 +410,15 @@ def get_dataset(dataset, output_folder="."):
 
 if __name__ == "__main__":
     file_dir = os.path.dirname(os.path.realpath(__file__))
-    if not os.path.isdir(f"{file_dir}/tmp"):
-        os.mkdir(f"{file_dir}/tmp")
+    tmp_dir = f"{file_dir}/tmp"
+    if not os.path.isdir(tmp_dir):
+        os.mkdir(tmp_dir)
 
     datasets = os.listdir(file_dir)
     for dataset in SUPPORTED_DATASETS:
         if f"{dataset}_test.csv" not in datasets:
             print(f"Downloading {dataset} dataset")
             get_dataset(dataset, output_folder=file_dir)
+
+    # delete `/tmp` folder
+    shutil.rmtree(tmp_dir)
