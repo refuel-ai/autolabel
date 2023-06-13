@@ -12,8 +12,9 @@ nav:
       - LLMs: guide/llms/llms.md
     - Labeling Tasks:
       - Classification Task: guide/tasks/classification_task.md
-      - Question Answering Task: guide/tasks/question_answering_task.md
       - Entity Matching Task: guide/tasks/entity_matching_task.md
+      - Named Entity Recognition Task: guide/tasks/named_entity_recognition_task.md
+      - Question Answering Task: guide/tasks/question_answering_task.md
     - Improving Labeling Accuracy:
       - Prompting Better: guide/accuracy/prompting-better.md
       - Few-shot Prompting: guide/accuracy/few-shot.md
