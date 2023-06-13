@@ -55,6 +55,7 @@ anthropic = [
 huggingface = [
     "transformers >= 4.25.0"
 ]
+all = dev + openai + anthropic + huggingface
 
 [project.urls]
 Homepage = "https://github.com/refuel-ai/autolabel"
