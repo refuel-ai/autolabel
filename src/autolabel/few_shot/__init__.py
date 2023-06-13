@@ -1,6 +1,6 @@
 from typing import Dict, List
 
-from loguru import logger
+import logging
 
 from langchain.embeddings import OpenAIEmbeddings
 from langchain.prompts.example_selector import (
@@ -19,6 +19,8 @@ ALGORITHM_TO_IMPLEMENTATION: Dict[FewShotAlgorithm, BaseExampleSelector] = {
     FewShotAlgorithm.SEMANTIC_SIMILARITY: SemanticSimilarityExampleSelector,
     FewShotAlgorithm.MAX_MARGINAL_RELEVANCE: MaxMarginalRelevanceExampleSelector,
 }
+
+logger = logging.getLogger(__name__)
 
 
 class ExampleSelectorFactory:
