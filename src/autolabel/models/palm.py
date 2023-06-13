@@ -1,5 +1,6 @@
 from functools import cached_property
 from typing import List, Optional
+from loguru import logger
 
 from langchain.chat_models import ChatVertexAI
 from langchain.llms import VertexAI
@@ -35,7 +36,6 @@ class PaLMLLM(BaseModel):
         super().__init__(config, cache)
         # populate model name
         self.model_name = config.model_name() or self.DEFAULT_MODEL
-        print(f"PaLM model name: {self.model_name}")
 
         # populate model params and initialize the LLM
         model_params = config.model_params()
@@ -59,8 +59,7 @@ class PaLMLLM(BaseModel):
             try:
                 return self.llm.generate(prompts)
             except Exception as e:
-                print(f"Error generating from LLM: {e}, retrying...")
-
+                logger.error(f"Error generating from LLM: {e}.")
         generations = [[Generation(text="")] for _ in prompts]
         return LLMResult(generations=generations)
 
