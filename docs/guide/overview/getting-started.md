@@ -137,3 +137,27 @@ At this point, we have a labeled dataset ready, and we can begin training our ML
 In this simple walkthrough, we have installed `autolabel`, gone over an example dataset to label (sentiment analysis for moview reviews) and used `autolabel` to label this dataset in just a few minutes. 
 
 We hope that this gives you a glimpse of what you can do with Refuel. There are many other [labeling tasks](/guide/tasks/tasks) available within Autolabel, and if you have any questions, join our community <a href="https://discord.gg/uEdr8nrMGm" target="_blank">here</a> or [open an issue](https://github.com/refuel-ai/autolabel/issues/new/choose) on [Github](https://github.com/refuel-ai/autolabel). 
+
+## [Optional] Downloading example datasets
+
+All the datasets used for benchmarking autolabel (covering a variety of tasks) can be downloaded using the library.  
+
+```py
+python get_data.py [--dataset DATASET_NAME]
+```
+
+Not specifying the dataset name downloads all benchmark datasets. In order to select a specific dataset, specify it with the dataset flag.
+We support the following datasets (separated by tasks) -
+
+1. Classification
+    1. Banking
+    2. Civil Comments
+    3. Ledgar
+2. Entity Matching
+    1. Walmart Amazon
+    2. Company
+3. Question Answering
+    1. Sciq
+    2. Squad V2
+4. Named Entity Recognition
+    1. CONLL 2003
