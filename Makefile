@@ -1,6 +1,6 @@
 setup:
 	pip install --upgrade pip
-	pip install '.[all]'
+	pip install '.[dev]'
 
 format:
 	black src/
