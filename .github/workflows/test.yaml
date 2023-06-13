@@ -15,7 +15,7 @@ jobs:
       with:
         python-version: 3.8
         architecture: x64
-    - name: refuel-core Python build
+    - name: Install autolabel
       run: |
           pip install .
     - name: Test with pytest
