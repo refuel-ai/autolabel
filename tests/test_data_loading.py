@@ -2,12 +2,13 @@ from autolabel import LabelingAgent
 from autolabel.dataset_loader import DatasetLoader
 from pandas import DataFrame
 
-csv_path = "assets/banking/test.csv"
-jsonl_path = "assets/banking/test.jsonl"
+csv_path = "tests/assets/banking/test.csv"
+jsonl_path = "tests/assets/banking/test.jsonl"
+config_path = "tests/assets/banking/config_banking.json"
 
 
 def test_read_csv():
-    agent = LabelingAgent(config="assets/banking/config_banking.json")
+    agent = LabelingAgent(config=config_path)
     data = DatasetLoader.read_csv(csv_path, agent.config)
     # test return types
     assert isinstance(data, tuple)
@@ -26,7 +27,7 @@ def test_read_csv():
 
 
 def test_read_dataframe():
-    agent = LabelingAgent(config="assets/banking/config_banking.json")
+    agent = LabelingAgent(config=config_path)
     df, _, _ = DatasetLoader.read_csv(csv_path, agent.config)
     data = DatasetLoader.read_dataframe(df, agent.config)
     # test return types
@@ -48,7 +49,7 @@ def test_read_dataframe():
 
 
 def test_read_jsonl():
-    agent = LabelingAgent(config="assets/banking/config_banking.json")
+    agent = LabelingAgent(config=config_path)
     data = DatasetLoader.read_jsonl(jsonl_path, agent.config)
     # test return types
     assert isinstance(data, tuple)
@@ -67,12 +68,12 @@ def test_read_jsonl():
 
 
 def test_read_file():
-    agent = LabelingAgent(config="assets/banking/config_banking.json")
+    agent = LabelingAgent(config=config_path)
     csv_data, _, _ = DatasetLoader.read_file(csv_path, agent.config)
     jsonl_data, _, _ = DatasetLoader.read_file(jsonl_path, agent.config)
     # try to load an unsupported file type (.txt), expecting a ValueError
     try:
-        _, _, _ = DatasetLoader.read_file("assets/banking/test.txt", agent.config)
+        _, _, _ = DatasetLoader.read_file("tests/assets/banking/test.txt", agent.config)
     except ValueError as ve:
         return True
     return False
