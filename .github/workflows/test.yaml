@@ -22,3 +22,5 @@ jobs:
       run: |
         make setup
         make check
+      env:
+        OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
