@@ -1,5 +1,4 @@
 from autolabel import LabelingAgent
-from langchain.llms.fake import FakeListLLM
 
 
 def test_labeling_agent_config():
