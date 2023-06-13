@@ -1,6 +1,6 @@
 setup:
 	pip install --upgrade pip
-	pip install '.[dev]'
+	pip install '.[openai]'
 
 format:
 	black src/
