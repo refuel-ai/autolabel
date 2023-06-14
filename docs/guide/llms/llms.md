@@ -192,11 +192,7 @@ To use models hosted by [Refuel](https://refuel.ai/), you can set `provider` to 
 This is a 13 billion parameter model, which is also available on Huggingface [here](https://huggingface.co/google/flan-t5-xxl). However, running such a huge model locally is a challenge, which is why we are currently hosting the model on our servers.
 
 ### Setup
-To use Refuel models with Autolabel, make sure to first install the relevant packages by running:
-```bash
-pip install refuel-autolabel[refuel]
-```
-and also setting the following environment variable:
+To use Refuel models with Autolabel, make sure set the following environment variable:
 ```
 export REFUEL_API_KEY=<your-refuel-key>
 ```
@@ -230,7 +226,23 @@ config = {
 ```
 
 ### Additional parameters
-Refuel currently doesn't support any custom parameters, but this is a feature that will be added soon.
+A few parameters that can be passed in for `refuel` models to control the model behavior. For example:
+
+* `max_new_tokens` (int) - The maximum tokens to sample from the model
+* `temperature` (float) - A float b/w 0 and 1 which indicates the diversity you want in the output. 0 uses greedy sampling.
+
+These parameters can be passed in via the `params` dictionary under `model`. Here is an example:
+```python
+"model": {
+    "provider": "refuel",
+    "name": "flan-t5-xxl",
+    "params": {
+        "max_new_tokens": 512,
+        "temperature": 0.1,
+    }
+}
+```
+`refuel` hosted LLMs support all the parameters that can be passed as a part of [GenerationConfig](https://huggingface.co/docs/transformers/main_classes/text_generation#transformers.GenerationConfig) while calling generate functions of Huggingface LLMs. 
 
 ## Google PaLM
 To use models from [Google](https://developers.generativeai.google/products/palm), you can set the `provider` to `google` when creating a labeling configuration. The specific model that will be queried can be specified using the `name` key. Autolabel currently supports the following models from Google:
