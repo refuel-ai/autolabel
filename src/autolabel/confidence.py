@@ -117,7 +117,7 @@ class ConfidenceCalculator:
         reraise=True,
         stop=stop_after_attempt(5),
         wait=wait_exponential(multiplier=1, min=2, max=10),
-        before_sleep=before_sleep_log(logger, "WARNING"),
+        before_sleep=before_sleep_log(logger, logging.WARNING),
     )
     def _call_with_retry(self, model_input, model_output) -> requests.Response:
         payload = {
