@@ -1,11 +1,8 @@
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="docs/assets/Autolabel_wt.png">
-  <source media="(prefers-color-scheme: light)" srcset="docs/assets/Autolabel_blk.png">
-  <img alt="Refuel logo." src="docs/assets/Autolabel_blk.png">
-</picture>
 
+  <img alt="Refuel logo" src="docs/assets/Autolabel_blk.png">
 </picture>
-
 <p align="center">
     <b>Clean, labeled data at the speed of thought</b>.
 </p>
