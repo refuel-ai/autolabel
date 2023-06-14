@@ -2,7 +2,11 @@
   <a href="https://refuel.ai"><img src="docs/assets/autolabel.png" alt="Refuel logo"></a>
 </p>
 
-![GitHub-Mark-Light](docs/assets/Autolabel_blk.png)![GitHub-Mark-Dark](docs/assets/Autolabel_wt.png)
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/assets/Autolabel_wt.png">
+  <source media="(prefers-color-scheme: light)" srcset="docs/assets/Autolabel_blk.png">
+  <img alt="Shows an illustrated sun in light mode and a moon with stars in dark mode." src="https://user-images.githubusercontent.com/25423296/163456779-a8556205-d0a5-45e2-ac17-42d089e3c3f8.png">
+</picture>
 
 <p align="center">
     <b>Clean, labeled data at the speed of thought</b>.
