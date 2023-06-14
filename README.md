@@ -1,7 +1,7 @@
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="docs/assets/Autolabel_wt.png">
   <source media="(prefers-color-scheme: light)" srcset="docs/assets/Autolabel_blk.png">
-  <img alt="Shows an illustrated sun in light mode and a moon with stars in dark mode." src="docs/assets/Autolabel_blk.png">
+  <img alt="Refuel logo." src="docs/assets/Autolabel_blk.png">
 </picture>
 
 </picture>
