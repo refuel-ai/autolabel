@@ -1,5 +1,6 @@
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="docs/assets/Autolabel_wt.png">
+
   <img alt="Refuel logo" src="docs/assets/Autolabel_blk.png">
 </picture>
 <p align="center">
