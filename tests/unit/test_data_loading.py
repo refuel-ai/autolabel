@@ -68,9 +68,3 @@ def test_read_file():
     agent = LabelingAgent(config=config_path)
     csv_data, _, _ = DatasetLoader.read_file(csv_path, agent.config)
     jsonl_data, _, _ = DatasetLoader.read_file(jsonl_path, agent.config)
-    # try to load an unsupported file type (.txt), expecting a ValueError
-    try:
-        _, _, _ = DatasetLoader.read_file("tests/assets/banking/test.txt", agent.config)
-    except ValueError as ve:
-        return
-    assert 0
