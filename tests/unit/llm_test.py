@@ -134,48 +134,6 @@ def test_gpt4_return_probs():
 ################### OPENAI GPT 4 TESTS #######################
 
 
-################### PALM TESTS #######################
-def test_palm_initialization():
-    model = PaLMLLM(
-        config=AutolabelConfig(config="assets/testing/config_banking_palm.json")
-    )
-
-
-def test_palm_label(mocker):
-    model = PaLMLLM(
-        config=AutolabelConfig(config="assets/testing/config_banking_palm.json")
-    )
-    prompts = ["test1", "test2"]
-    mocker.patch(
-        "langchain.llms.VertexAI.generate",
-        return_value=LLMResult(
-            generations=[[Generation(text="Answers")] for _ in prompts]
-        ),
-    )
-    x = model.label(prompts)
-    assert [i[0].text for i in x[0].generations] == ["Answers", "Answers"]
-    assert x[1] == approx(9.9999e-06, rel=1e-3)
-
-
-def test_palm_get_cost():
-    model = PaLMLLM(
-        config=AutolabelConfig(config="assets/testing/config_banking_palm.json")
-    )
-    example_prompt = "TestingExamplePrompt"
-    curr_cost = model.get_cost(example_prompt)
-    assert curr_cost == approx(1.9999e-05, rel=1e-3)
-
-
-def test_palm_return_probs():
-    model = PaLMLLM(
-        config=AutolabelConfig(config="assets/testing/config_banking_palm.json")
-    )
-    assert model.returns_token_probs() is False
-
-
-################### PALM TESTS #######################
-
-
 ################### REFUEL TESTS #######################
 def test_refuel_initialization():
     model = RefuelLLM(
