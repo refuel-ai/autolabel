@@ -1,5 +1,6 @@
 import hashlib
 import json
+import logging
 from string import Formatter
 from typing import Any, Dict, Iterable, List, Optional, Sequence, Union
 
@@ -18,6 +19,8 @@ from rich.progress import (
     TimeRemainingColumn,
 )
 from rich.table import Table
+
+logger = logging.getLogger(__name__)
 
 EXAMPLE_DATASETS = [
     "banking",
@@ -244,9 +247,10 @@ def print_table(
 
 def get_data(dataset_name: str):
     if dataset_name not in EXAMPLE_DATASETS:
-        print(
+        logger.error(
             f"{dataset_name} not in list of available datasets: {str(EXAMPLE_DATASETS)}. Exiting..."
         )
+        return
     seed_url = DATASET_URL.format(dataset=dataset_name, partition="seed")
     test_url = DATASET_URL.format(dataset=dataset_name, partition="test")
 
@@ -257,4 +261,4 @@ def get_data(dataset_name: str):
         print('Downloading test dataset to "test.csv"...')
         wget.download(test_url)
     except Exception as e:
-        print(f"Error downloading dataset: {e}")
+        logger.error(f"Error downloading dataset: {e}")
