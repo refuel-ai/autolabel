@@ -25,3 +25,4 @@ jobs:
       env:
         OPENAI_API_KEY: 'dummy_key'
         ANTHROPIC_API_KEY: 'dummy_key'
+        REFUEL_API_KEY: 'dummy_key'
