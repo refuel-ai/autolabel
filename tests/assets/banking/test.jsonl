@@ -1,0 +1,15 @@
+{"example":"I want to close my account","label":"terminate_account"}
+{"example":"It seems I was overcharged when I used an ATM while on vacation. If I knew about your fees in advance I sure would have gone somewhere else.","label":"wrong_exchange_rate_for_cash_withdrawal"}
+{"example":"I have a direct debit transaction I have not set up, but would like to .","label":"direct_debit_payment_not_recognised"}
+{"example":"How much does it cost in fees to use your card?","label":"order_physical_card"}
+{"example":"There is an extra $1 charge","label":"extra_charge_on_statement"}
+{"example":"What does it mean by pending payment?","label":"pending_card_payment"}
+{"example":"My address has changed. How do I report it?","label":"edit_personal_details"}
+{"example":"How can I fix my card, it got declined twice.","label":"declined_transfer"}
+{"example":"How do I go forth verifying my top-up card?","label":"verify_top_up"}
+{"example":"I'm trying to transfer money into my account.","label":"transfer_into_account"}
+{"example":"What all is needed to verify the top-up card?","label":"verify_top_up"}
+{"example":"Do transfers from Europe take longer?","label":"transfer_timing"}
+{"example":"I do not remember purchasing anything for 1\u00a3, and it is on my statement. Can you please tell me what that is about?","label":"extra_charge_on_statement"}
+{"example":"Will I be charged if I use European bank card for top up?","label":"top_up_by_card_charge"}
+{"example":"Are there any extra fees for adding money into the international card?","label":"top_up_by_card_charge"}
