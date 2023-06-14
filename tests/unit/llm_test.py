@@ -135,13 +135,21 @@ def test_gpt4_return_probs():
 
 
 ################### PALM TESTS #######################
-def test_palm_initialization():
+def test_palm_initialization(mocker):
+    mocker.patch(
+        "google.auth.default",
+        return_value=("temp", "temp"),
+    )
     model = PaLMLLM(
         config=AutolabelConfig(config="assets/testing/config_banking_palm.json")
     )
 
 
 def test_palm_label(mocker):
+    mocker.patch(
+        "google.auth.default",
+        return_value=("temp", "temp"),
+    )
     model = PaLMLLM(
         config=AutolabelConfig(config="assets/testing/config_banking_palm.json")
     )
@@ -157,7 +165,11 @@ def test_palm_label(mocker):
     assert x[1] == approx(9.9999e-06, rel=1e-3)
 
 
-def test_palm_get_cost():
+def test_palm_get_cost(mocker):
+    mocker.patch(
+        "google.auth.default",
+        return_value=("temp", "temp"),
+    )
     model = PaLMLLM(
         config=AutolabelConfig(config="assets/testing/config_banking_palm.json")
     )
@@ -166,7 +178,11 @@ def test_palm_get_cost():
     assert curr_cost == approx(1.9999e-05, rel=1e-3)
 
 
-def test_palm_return_probs():
+def test_palm_return_probs(mocker):
+    mocker.patch(
+        "google.auth.default",
+        return_value=("temp", "temp"),
+    )
     model = PaLMLLM(
         config=AutolabelConfig(config="assets/testing/config_banking_palm.json")
     )
