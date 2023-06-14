@@ -10,7 +10,7 @@
 [![lint](https://github.com/refuel-ai/autolabel/actions/workflows/black.yaml/badge.svg)](https://github.com/refuel-ai/autolabel/actions/workflows/black.yaml/badge.svg) [![docs](https://github.com/refuel-ai/autolabel/actions/workflows/docs.yaml/badge.svg)](https://docs.refuel.ai/) ![Tests](https://github.com/refuel-ai/autolabel/actions/workflows/test.yaml/badge.svg) [![Discord](https://img.shields.io/discord/1098746693152931901)](https://discord.gg/fweVnRx6CU) [![Twitter](https://badgen.net/badge/icon/twitter?icon=twitter&label)](https://twitter.com/RefuelAI) [![License: MIT](https://badgen.net/badge/license/MIT/blue)](https://opensource.org/licenses/MIT)
 </div>
 
-## Quick Install
+## ⚡ Quick Install
 
 `pip install refuel-autolabel`
 
@@ -34,7 +34,7 @@ Autolabel provides a simple 3-step process for labeling data:
 2. Dry-run to make sure the final prompt looks good.
 3. Kick off a labeling run for your dataset!
 
-Let's imagine we are building an ML model to analyze sentiment analysis of movie review. We have a dataset of moview reviews that we'd like to get labeled first. For this case, here's what the example dataset and configs will look like:
+Let's imagine we are building an ML model to analyze sentiment analysis of movie review. We have a dataset of movie reviews that we'd like to get labeled first. For this case, here's what the example dataset and configs will look like:
 
 ```python
 {
@@ -49,7 +49,7 @@ Let's imagine we are building an ML model to analyze sentiment analysis of movie
         "delimiter": ","
     },
     "prompt": {
-        "task_guidelines": "You are an expert at analyzing the sentiment of moview reviews. Your job is to classify the provided movie review into one of the following labels: {labels}",
+        "task_guidelines": "You are an expert at analyzing the sentiment of movie reviews. Your job is to classify the provided movie review into one of the following labels: {labels}",
         "labels": [
             "positive",
             "negative",
@@ -101,7 +101,7 @@ This prints:
 ─────────────────────────────────────────
 
 Prompt Example:
-You are an expert at analyzing the sentiment of moview reviews. Your job is to classify the provided movie review into one of the following labels: [positive, negative, neutral]
+You are an expert at analyzing the sentiment of movie reviews. Your job is to classify the provided movie review into one of the following labels: [positive, negative, neutral]
 
 You will return the answer with just one element: "the correct label"
 
@@ -132,6 +132,10 @@ Finally, we can run the labeling on a subset or entirety of the dataset:
 ```python
 labels, output_df, metrics = agent.run('examples/movie_reviews/dataset.csv')
 ```
+
+## 🛠️ Roadmap
+
+
 
 ## 🙌 Contributing
 
