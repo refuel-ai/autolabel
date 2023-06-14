@@ -30,10 +30,7 @@ clean-test:
 clean: clean-pyc clean-test
 
 test: clean
-	export OPENAI_API_KEY='test_key'
-	export ANTHROPIC_API_KEY='test_key'
-	export REFUEL_API_KEY='test_key'
-	pytest
+	OPENAI_API_KEY=test_key ANTHROPIC_API_KEY=test_key REFUEL_API_KEY=test_key pytest
 
 check: test
 
