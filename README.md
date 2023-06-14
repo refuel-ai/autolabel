@@ -1,6 +1,9 @@
 <p align="center">
   <a href="https://refuel.ai"><img src="docs/assets/autolabel.png" alt="Refuel logo"></a>
 </p>
+![GitHub-Mark-Light](docs/assets/Autolabel_blk.png)
+![GitHub-Mark-Dark](docs/assets/Autolabel_wt.png)
+
 <p align="center">
     <b>Clean, labeled data at the speed of thought</b>.
 </p>
