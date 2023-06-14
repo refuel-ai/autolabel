@@ -23,6 +23,9 @@ class EntityMatchingTask(BaseTask):
         super().__init__(config)
 
     def construct_prompt(self, input: Dict, examples: List[Dict]) -> str:
+        # Copy over the input so that we can modify it
+        input = input.copy()
+
         # prepare task guideline
         labels_list = self.config.labels_list()
         num_labels = len(labels_list)
