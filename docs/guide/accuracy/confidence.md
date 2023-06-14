@@ -45,11 +45,7 @@ Generating confidence scores is simple - setting the key `compute_confidence` to
 
 In the above example, by setting `compute_confidence` to True, `autolabel` will start calling Refuel's api to generate token level probabilities and compute confidence scores for each prediction. In order for this to run successfully, ensure that the following setup has been completed:
 
-Install the relevant packages by running:
-```bash
-pip install refuel-autolabel[refuel]
-```
-and also set the following environment variable:
+Set the following environment variable:
 ```
 export REFUEL_API_KEY=<your-refuel-key>
 ```
