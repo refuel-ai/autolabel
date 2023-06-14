@@ -23,6 +23,6 @@ jobs:
         make setup
         make check
       env:
-        OPENAI_API_KEY: 'dummy_key'
-        ANTHROPIC_API_KEY: 'dummy_key'
-        REFUEL_API_KEY: 'dummy_key'
+        OPENAI_API_KEY: 'test_key'
+        ANTHROPIC_API_KEY: 'test_key'
+        REFUEL_API_KEY: 'test_key'
