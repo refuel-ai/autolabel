@@ -73,7 +73,7 @@ config = {
 
 ### Preview the labeling against your dataset
 
-First import `autolabel`, create a `LabelingAgent` object and then run the `plan` command against the dataset (available [here](https://autolabel-benchmarking.s3.us-west-2.amazonaws.com/movie_reviews/test.csv) and can be downloaded using the `get_data` function):
+First import `autolabel`, create a `LabelingAgent` object and then run the `plan` command against the dataset (available [here](https://docs.refuel.ai/guide/resources/refuel_datasets/) and can be downloaded through the `autolabel.get_data` function):
 
 ```python
 from autolabel import LabelingAgent, get_data
