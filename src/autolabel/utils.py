@@ -1,23 +1,39 @@
 import hashlib
 import json
-import regex
+import logging
 from string import Formatter
+from typing import Any, Dict, Iterable, List, Optional, Sequence, Union
 
-from typing import Any, List, Dict, Optional, Sequence, Union, Iterable
-
+import regex
+import wget
 from rich.console import Console, Group
 from rich.live import Live
 from rich.progress import (
-    Progress,
     BarColumn,
     MofNCompleteColumn,
+    Progress,
     ProgressColumn,
+    ProgressType,
     TextColumn,
     TimeElapsedColumn,
     TimeRemainingColumn,
-    ProgressType,
 )
 from rich.table import Table
+
+logger = logging.getLogger(__name__)
+
+EXAMPLE_DATASETS = [
+    "banking",
+    "civil_comments",
+    "ledgar",
+    "walmart_amazon",
+    "company",
+    "squad_v2",
+    "sciq",
+    "conll2003",
+]
+
+DATASET_URL = "https://autolabel-benchmarking.s3.us-west-2.amazonaws.com/{dataset}/{partition}.csv"
 
 
 def extract_valid_json_substring(string: str) -> str:
@@ -227,3 +243,22 @@ def print_table(
         table.add_row(*row)
     console = console or Console()
     console.print(table)
+
+
+def get_data(dataset_name: str):
+    if dataset_name not in EXAMPLE_DATASETS:
+        logger.error(
+            f"{dataset_name} not in list of available datasets: {str(EXAMPLE_DATASETS)}. Exiting..."
+        )
+        return
+    seed_url = DATASET_URL.format(dataset=dataset_name, partition="seed")
+    test_url = DATASET_URL.format(dataset=dataset_name, partition="test")
+
+    try:
+        print('Downloading seed example dataset to "seed.csv"...')
+        wget.download(seed_url)
+        print("\n")
+        print('Downloading test dataset to "test.csv"...')
+        wget.download(test_url)
+    except Exception as e:
+        logger.error(f"Error downloading dataset: {e}")
