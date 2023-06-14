@@ -23,4 +23,5 @@ jobs:
         make setup
         make check
       env:
-        OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+        OPENAI_API_KEY: 'dummy_key'
+        ANTHROPIC_API_KEY: 'dummy_key'
