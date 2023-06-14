@@ -137,8 +137,8 @@ def test_gpt4_return_probs():
 ################### PALM TESTS #######################
 def test_palm_initialization(mocker):
     mocker.patch(
-        "google.auth.default",
-        return_value=("temp", "temp"),
+        "vertexai.preview.language_models.TextGenerationModel.from_pretrained",
+        return_value="Test",
     )
     model = PaLMLLM(
         config=AutolabelConfig(config="assets/testing/config_banking_palm.json")
@@ -147,8 +147,8 @@ def test_palm_initialization(mocker):
 
 def test_palm_label(mocker):
     mocker.patch(
-        "google.auth.default",
-        return_value=("temp", "temp"),
+        "vertexai.preview.language_models.TextGenerationModel.from_pretrained",
+        return_value="Test",
     )
     model = PaLMLLM(
         config=AutolabelConfig(config="assets/testing/config_banking_palm.json")
@@ -167,8 +167,8 @@ def test_palm_label(mocker):
 
 def test_palm_get_cost(mocker):
     mocker.patch(
-        "google.auth.default",
-        return_value=("temp", "temp"),
+        "vertexai.preview.language_models.TextGenerationModel.from_pretrained",
+        return_value="Test",
     )
     model = PaLMLLM(
         config=AutolabelConfig(config="assets/testing/config_banking_palm.json")
@@ -180,8 +180,8 @@ def test_palm_get_cost(mocker):
 
 def test_palm_return_probs(mocker):
     mocker.patch(
-        "google.auth.default",
-        return_value=("temp", "temp"),
+        "vertexai.preview.language_models.TextGenerationModel.from_pretrained",
+        return_value="Test",
     )
     model = PaLMLLM(
         config=AutolabelConfig(config="assets/testing/config_banking_palm.json")
