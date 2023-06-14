@@ -1,4 +1,4 @@
-Autolabel provides some datasets out-of-the-box so you can easily get started with LLM-powered labeling. The full list of datasets is below:
+Autolabel provides datasets out-of-the-box so you can easily get started with LLM-powered labeling. The full list of datasets is below:
 
 | Dataset        | Task Type             |
 | ---------------| ----------------------|
@@ -12,23 +12,16 @@ Autolabel provides some datasets out-of-the-box so you can easily get started wi
 | conll2003      | Named Entity Matching |
 
 
-## Downloading datasets
-
-To download all datasets, navigate to the home directory of `autolabel` and run:
-```console
-% python get_data.py
-Getting data for banking
-Getting data for civil_comments
-Getting data for ledgar
-Getting data for walmart_amazon
-Getting data for company
-Getting data for squad_v2
-Getting data for sciq
-Getting data for conll2003
-```
+## Downloading any dataset
 
 To download a specific dataset, such as `squad_v2`, run:
-```console
-% python get_data.py --dataset squad_v2
-Getting data for squad_v2
+```python
+from autolabel import get_data
+
+get_data('civil_comments')
+> Downloading seed example dataset to "seed.csv"...
+> 100% [..............................................................................] 65757 / 65757
+
+> Downloading test dataset to "test.csv"...
+> 100% [............................................................................] 610663 / 610663
 ```
