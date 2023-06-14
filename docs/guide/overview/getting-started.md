@@ -53,6 +53,9 @@ First, create a JSON file that specifies:
 config = {
     "task_name": "MovieSentimentReview",
     "task_type": "classification",
+    "dataset": {
+        "label_column": "label"
+    },
     "model": {
         "provider": "openai",
         "name": "gpt-3.5-turbo"
@@ -62,20 +65,22 @@ config = {
         "labels": [
             "positive",
             "negative"
-        ]
+        ],
+        "example_template": "Example: {text}\nLabel: {label}"
     }
 }
 ```
 
 ### Preview the labeling against your dataset
 
-First import `autolabel`, create a `LabelingAgent` object and then run the `plan` command against the dataset (available [here](https://github.com/refuel-ai/autolabel/blob/main/docs/assets/movie_reviews.csv)):
+First import `autolabel`, create a `LabelingAgent` object and then run the `plan` command against the dataset (available [here](https://autolabel-benchmarking.s3.us-west-2.amazonaws.com/movie_reviews/test.csv) and can be downloaded using the `get_data` function):
 
 ```python
-from autolabel import LabelingAgent
+from autolabel import LabelingAgent, get_data
+get_data('movie_reviews')
 
 agent = LabelingAgent(config)
-agent.plan('docs/assets/movie_reviews.csv')
+agent.plan('test.csv')
 ```
 
 This produces:

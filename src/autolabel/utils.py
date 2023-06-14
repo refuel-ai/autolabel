@@ -31,6 +31,11 @@ EXAMPLE_DATASETS = [
     "squad_v2",
     "sciq",
     "conll2003",
+    "movie_reviews",
+]
+
+NO_SEED_DATASET = [
+    "movie_reviews",
 ]
 
 DATASET_URL = "https://autolabel-benchmarking.s3.us-west-2.amazonaws.com/{dataset}/{partition}.csv"
@@ -255,9 +260,10 @@ def get_data(dataset_name: str):
     test_url = DATASET_URL.format(dataset=dataset_name, partition="test")
 
     try:
-        print('Downloading seed example dataset to "seed.csv"...')
-        wget.download(seed_url)
-        print("\n")
+        if dataset_name not in NO_SEED_DATASET:
+            print('Downloading seed example dataset to "seed.csv"...')
+            wget.download(seed_url)
+            print("\n")
         print('Downloading test dataset to "test.csv"...')
         wget.download(test_url)
     except Exception as e:
