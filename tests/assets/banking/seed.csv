@@ -1,0 +1,16 @@
+example,label
+I have withdrawn cash from ATM but i received the wrong amount. I want cash back as in app its showing actual amount which i got. Please help me in this.,wrong_amount_of_cash_received
+How man currencies can I hold?,fiat_currency_support
+Can I unblock my pin?,pin_blocked
+How do i get my salary in the account?,receiving_money
+Can my daughter open an account?,age_limit
+Can I use app to freeze account and dispute fraud?,compromised_card
+What ATMs will accept this type of card?,atm_support
+My disposable virtual card will not work,virtual_card_not_working
+What is going on? My top-up is still pending. I use your system all the time but now it is just showing as pending.,pending_top_up
+I forgot my code to get into the app.,passcode_forgotten
+I don't recognize a debit payment that was made and would like to find out about the payment.,direct_debit_payment_not_recognised
+I think my phone is either lost or stolen.,lost_or_stolen_phone
+How long does a card delivery take?,card_arrival
+My transaction to pay for an item was returned to my account.,reverted_card_payment?
+"I tried to take out cash but the amount isn't right, so what do I do?",wrong_amount_of_cash_received
