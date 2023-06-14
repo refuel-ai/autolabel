@@ -251,7 +251,10 @@ def get_data(dataset_name: str):
     test_url = DATASET_URL.format(dataset=dataset_name, partition="test")
 
     try:
+        print('Downloading seed example dataset to "seed.csv"...')
         wget.download(seed_url)
+        print("\n")
+        print('Downloading test dataset to "test.csv"...')
         wget.download(test_url)
     except Exception as e:
         print(f"Error downloading dataset: {e}")
