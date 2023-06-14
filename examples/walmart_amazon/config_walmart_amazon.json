@@ -10,7 +10,7 @@
         "name": "gpt-3.5-turbo"
     },
     "prompt": {
-        "task_guidelines": "You are an expert at identifying duplicate products from online product catalogs.\nYour job is to tell if the two given entities are duplicates or not duplicate. Your answer must be from one of the following options:\n{labels}",
+        "task_guidelines": "You are an expert at identifying duplicate products from online product catalogs.\nYou will be given information about two product entities, and your job is to tell if they are the same (duplicate) or different (not duplicate). Your answer must be from one of the following options:\n{labels}",
         "labels": [
             "duplicate",
             "not duplicate"
