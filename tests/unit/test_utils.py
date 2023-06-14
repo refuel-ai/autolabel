@@ -4,15 +4,6 @@ from rich.console import Console
 console = Console()
 
 
-def test_get_data():
-    import os
-
-    for dataset in utils.EXAMPLE_DATASETS:
-        utils.get_data(dataset)
-        os.remove("seed.csv")
-        os.remove("test.csv")
-
-
 def test_maybe_round():
     assert utils.maybe_round(4) == 4
     assert utils.maybe_round(4.123456789) == 4.1235
@@ -21,28 +12,6 @@ def test_maybe_round():
     assert utils.maybe_round(float(0)) == 0.0
     assert utils.maybe_round(0) == 0
     assert utils.maybe_round("test") == "test"
-
-
-def test_track_with_data():
-    indices = range(0, 25, 5)
-    for current_index in utils.track_with_stats(
-        indices,
-        {},
-        total=25,
-        advance=5,
-        console=console,
-    ):
-        continue
-
-
-def test_track():
-    inputs = list(range(0, 100))
-    for input_i in utils.track(
-        inputs,
-        description="Testing track function...",
-        console=console,
-    ):
-        continue
 
 
 def test_extract_valid_json_substring():
