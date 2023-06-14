@@ -157,7 +157,7 @@ class LabelingAgent:
                 )
                 for i in range(len(chunk)):
                     annotation = LLMAnnotation(
-                        successfully_labeled="No",
+                        successfully_labeled=False,
                         label=self.task.NULL_LABEL_TOKEN,
                         raw_response="",
                         curr_sample=chunk[i],

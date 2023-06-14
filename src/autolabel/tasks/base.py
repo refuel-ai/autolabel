@@ -69,15 +69,15 @@ class BaseTask(ABC):
         # This is done to handle the case where the model generates an explanation before generating the label
         completion_text = response.text.strip().split("\n")[-1].strip()
         if len(response.text.strip()) == 0:
-            successfully_labeled = "no"
+            successfully_labeled = False
             llm_label = self.NULL_LABEL_TOKEN
             logger.warning(f"LLM response is empty")
         elif len(completion_text) == 0:
-            successfully_labeled = "no"
+            successfully_labeled = False
             llm_label = self.NULL_LABEL_TOKEN
             logger.error(f"Error parsing LLM response: {response.text}")
         else:
-            successfully_labeled = "yes"
+            successfully_labeled = True
             llm_label = completion_text.strip()
 
         return LLMAnnotation(
