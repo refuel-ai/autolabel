@@ -23,7 +23,6 @@ def test_read_csv():
     assert data_max_5_index_5[0].iloc[0].equals(data[0].iloc[5])
     assert len(data_max_5_index_5[1]) == 5
     assert len(data_max_5_index_5[2]) == 5
-    return True
 
 
 def test_read_dataframe():
@@ -45,7 +44,6 @@ def test_read_dataframe():
     assert data_max_5_index_5[0].iloc[0].equals(data[0].iloc[5])
     assert len(data_max_5_index_5[1]) == 5
     assert len(data_max_5_index_5[2]) == 5
-    return True
 
 
 def test_read_jsonl():
@@ -64,7 +62,6 @@ def test_read_jsonl():
     assert data_max_5_index_5[0].iloc[0].equals(data[0].iloc[5])
     assert len(data_max_5_index_5[1]) == 5
     assert len(data_max_5_index_5[2]) == 5
-    return True
 
 
 def test_read_file():
@@ -75,11 +72,5 @@ def test_read_file():
     try:
         _, _, _ = DatasetLoader.read_file("tests/assets/banking/test.txt", agent.config)
     except ValueError as ve:
-        return True
-    return False
-
-
-print(f"test_read_csv        :: {test_read_csv()}")
-print(f"test_read_dataframe  :: {test_read_dataframe()}")
-print(f"test_read_jsonl      :: {test_read_jsonl()}")
-print(f"test_read_file       :: {test_read_file()}")
+        return
+    assert 0

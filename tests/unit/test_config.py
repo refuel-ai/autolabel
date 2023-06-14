@@ -14,7 +14,3 @@ def test_config():
     agent7 = LabelingAgent(
         config="tests/assets/walmart_amazon/config_walmart_amazon.json"
     )
-    return True
-
-
-print(f"test_config :: {test_config()}")
