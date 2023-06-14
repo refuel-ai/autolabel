@@ -2,9 +2,9 @@
 
 Autolabel supports multiple LLMs for labeling data. Some LLMs are available by calling an API with the appropriate API keys (OpenAI, Anthropic, etc.) while others can be run locally (such as the ones available on Huggingface). The LLM used to label can be controlled using the `provider` and `name` keys in the dictionary specified under `model` in the input config. 
 
-Each LLM belongs to an LLM provider -- which refers to the organization or open-source framework through which we are able to access the LLM. A full list of LLM providers and LLMs that are currently supported is provided towards the end of the document.
+Each LLM belongs to an LLM provider -- which refers to the organization or open-source framework through which we are able to access the LLM. A full list of LLM providers and LLMs that are currently supported is provided towards the end of this page.
 
-Autolabel makes it easy to try out different LLMs for your task and this page will walk you through how to get started with each LLM provider and model. Separately, we've also benchmarked multiple LLMs across different datasets - you can read the full technical report here [link to blog post] or check out the latest benchmark results here [link to benchmarks]. 
+Autolabel makes it easy to try out different LLMs for your task and this page will walk you through how to get started with each LLM provider and model. Separately, we've also benchmarked multiple LLMs across different datasets - you can read the full technical report here [link to blog post] or check out the latest benchmark results [here](/guide/llms/benchmarks). 
 
 ## OpenAI
 To use models from [OpenAI](https://platform.openai.com/docs/models), you can set `provider` to `openai` when creating a labeling configuration. The specific model that will be queried can be specified using the `name` key. Autolabel currently supports the following models from OpenAI:
@@ -13,7 +13,7 @@ To use models from [OpenAI](https://platform.openai.com/docs/models), you can se
 * `gpt-3.5-turbo`
 * `gpt-4`  (8K Context)
 
-`gpt-4` (8K Context) is the most capable (and most expensive) model from OpenAI, while `gpt-3.5-turbo` is the cheapest (but still quite capable). `gpt-4` costs 15 times `gpt-3.5-turbo`, at $0.03/1K tokens while `gpt-3.5-turbo` costs only $0.002/1K tokens. `text-davinci-003` model on the other hand costs $0.02/1K tokens. Detailed pricing for these models is available [here](https://openai.com/pricing). 
+`gpt-4` (8K Context) is the most capable (and most expensive) model from OpenAI, while `gpt-3.5-turbo` is the cheapest (but still quite capable). `gpt-4` costs 15 times `gpt-3.5-turbo`, at $0.03/1K input tokens and $0.06/1K output tokens while `gpt-3.5-turbo` costs only $0.0015/1K input tokens and $0.002/1K output tokens. `text-davinci-003` model on the other hand costs $0.02/1K tokens. Detailed pricing for these models is available [here](https://openai.com/pricing).
 
 ### Setup
 To use OpenAI models with Autolabel, make sure to first install the relevant packages by running:
@@ -200,7 +200,11 @@ and also setting the following environment variable:
 ```
 export REFUEL_API_KEY=<your-refuel-key>
 ```
-replacing `<your-refuel-key>` with your API key, which you can get from [here](TBD). [TODO] INSTRUCTIONS FOR GETTING THE API KEY
+replacing `<your-refuel-key>` with your API key.
+
+### Getting a Refuel API key
+
+If you're interested in trying one of the LLMs hosted by Refuel, sign up for your Refuel API key by filling out the form <a href="https://refuel-ai.typeform.com/llm-access" target="_blank">here</a>. We'll review your application and get back to you soon!
 
 ### Example usage
 Here is an example of setting config to a dictionary that will use Refuel's `flan-t5-xxl` model. Specifically, note that in the dictionary proivded by the `model` tag, `provider` is set to `refuel` and `name` is set to be `flan-t5-xxl`.
@@ -288,7 +292,7 @@ These parameters can be passed in via the `params` dictionary under `model`. Her
 `chat-bison@001` always responds in a "chatty" manner (example below), often returning more than just the requested label. This can cause problems on certain labeling tasks.
 
 ### Content moderation
-Both Google LLMs seem to have much stricter content moderation rules than the other supported models. This can cause certain labeling jobs to completely fail as shown in our [technical report](). Consider a different model if your dataset has content that is likely to trigger Google's built-in content moderation.
+Both Google LLMs seem to have much stricter content moderation rules than the other supported models. This can cause certain labeling jobs to completely fail as shown in our technical report [add link to technical report]. Consider a different model if your dataset has content that is likely to trigger Google's built-in content moderation.
 
 ## Provider List
 The table lists out all the provider, model combinations that Autolabel supports today:
