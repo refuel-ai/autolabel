@@ -30,7 +30,7 @@ clean-test:
 clean: clean-pyc clean-test
 
 test: clean
-	pytest
+	OPENAI_API_KEY=test_key ANTHROPIC_API_KEY=test_key REFUEL_API_KEY=test_key pytest
 
 check: test
 
