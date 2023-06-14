@@ -1,6 +1,6 @@
 <picture>
-  <source media="(prefers-color-scheme: dark)" srcset="docs/assets/Autolabel_wt.png" style="width:400px">
-  <source media="(prefers-color-scheme: light)" srcset="docs/assets/Autolabel_blk.png"style="width:400px">
+  <source media="(prefers-color-scheme: dark)" srcset="docs/assets/Autolabel_wt.png" width="400">
+  <source media="(prefers-color-scheme: light)" srcset="docs/assets/Autolabel_blk.png" width="400">
 </picture>
 
 <p align="center">
