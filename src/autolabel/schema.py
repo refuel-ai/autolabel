@@ -68,7 +68,7 @@ class MetricResult(BaseModel):
 class LLMAnnotation(BaseModel):
     """Contains label information of a given data point, including the generated label, the prompt given to the LLM, and the LLMs response. Optionally includes a confidence_score if supported by the model"""
 
-    successfully_labeled: str
+    successfully_labeled: bool
     label: Any
     curr_sample: Optional[str] = ""
     confidence_score: Optional[float] = None

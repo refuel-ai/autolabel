@@ -25,6 +25,9 @@ class QuestionAnsweringTask(BaseTask):
         super().__init__(config)
 
     def construct_prompt(self, input: Dict, examples: List[Dict]) -> str:
+        # Copy over the input so that we can modify it
+        input = input.copy()
+
         # prepare seed examples
         example_template = self.config.example_template()
         fmt_examples = []

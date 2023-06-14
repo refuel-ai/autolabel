@@ -134,7 +134,7 @@ class NamedEntityRecognitionTask(BaseTask):
         self, response: Generation, curr_sample: Dict, prompt: str
     ) -> LLMAnnotation:
         output = {}
-        successfully_labeled = "no"
+        successfully_labeled = False
         text_column = self.config.text_column()
         input_str = curr_sample[text_column]
         try:
@@ -145,7 +145,7 @@ class NamedEntityRecognitionTask(BaseTask):
             logger.error(f"Error parsing LLM response: {response.text}, Error: {e}")
             llm_label = self.NULL_LABEL
 
-        successfully_labeled = "no" if llm_label == self.NULL_LABEL else "yes"
+        successfully_labeled = False if llm_label == self.NULL_LABEL else True
 
         # TODO: parse generation info correctly to fetch & transform logprobs -> score
         return LLMAnnotation(
@@ -183,7 +183,7 @@ class NamedEntityRecognitionTask(BaseTask):
     def get_labels_predictions_with_threshold(self, gt_labels, llm_labels, threshold):
         answered_gt_labels, answered_llm_preds = [], []
         for index, l in enumerate(llm_labels):
-            if l.successfully_labeled.lower() == "yes" and (
+            if l.successfully_labeled and (
                 l.confidence_score is None or l.confidence_score >= threshold
             ):
                 answered_gt_labels.append(

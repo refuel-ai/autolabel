@@ -12,7 +12,6 @@ from autolabel.utils import get_format_variables
 
 
 class ClassificationTask(BaseTask):
-
     DEFAULT_OUTPUT_GUIDELINES = (
         'You will return the answer with just one element: "the correct label"'
     )
@@ -24,6 +23,9 @@ class ClassificationTask(BaseTask):
         super().__init__(config)
 
     def construct_prompt(self, input: Dict, examples: List) -> str:
+        # Copy over the input so that we can modify it
+        input = input.copy()
+
         # prepare task guideline
         labels_list = self.config.labels_list()
         num_labels = len(labels_list)
