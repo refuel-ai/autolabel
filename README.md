@@ -151,5 +151,5 @@ We will be releasing a more detailed roadmap soon, but we love suggestions and c
 Autolabel is a rapidly developing project. We welcome contributions in all forms - bug reports, pull requests and ideas for improving the library.
 
 1. Join the conversation on [Discord](https://discord.gg/fweVnRx6CU)
-2. Review the 🛣️ [Roadmap]() and contribute your ideas.
+2. Review the 🛠️ [Roadmap](https://github.com/refuel-ai/autolabel/tree/main#%EF%B8%8F-roadmap) and contribute your ideas.
 3. Grab an [open issue](https://github.com/refuel-ai/autolabel/issues) on Github, and submit a [pull request](https://github.com/refuel-ai/autolabel/blob/main/CONTRIBUTING.md).
