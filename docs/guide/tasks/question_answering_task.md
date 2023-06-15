@@ -8,7 +8,7 @@ Question answering is the most fundamental task that can be solved using LLMs. M
 
 In addition to context, question answering tasks can also differ in the way that the answers are generated. The easiest form is one where there is a predefined set of options (for eg. yes or no) and the model needs to choose from one of these options. Another variant allows separate options for each question similar to SAT questions. The last variant is one where the model is free to generate its own answers. This variant is harder to evaluate because multiple answers could mean the same thing.
 
-## Example
+## Example [![open in colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/13DiE1dfG7pYGV2FLWkxPSbyTbABIm34I#scrollTo=c93fae0b)
 
 ### Dataset
 

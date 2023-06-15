@@ -2,7 +2,7 @@
 
 Entity matching in natural language processing (NLP) is a task that involves identifying and matching entities from different sources or datasets based on various fields or attributes. The goal is to determine if two entities refer to the same real-world object or entity, even if they are described differently or come from different data sources.
 
-## Example
+## Example [![open in colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/1kOoUhUY8rmISxVpQJETQ3Xc9TLrNWiRn#scrollTo=c93fae0b)
 
 ### Dataset
 
