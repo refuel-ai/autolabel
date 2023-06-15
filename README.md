@@ -10,7 +10,7 @@
 [![lint](https://github.com/refuel-ai/autolabel/actions/workflows/black.yaml/badge.svg)](https://github.com/refuel-ai/autolabel/actions/workflows/black.yaml/badge.svg) [![docs](https://github.com/refuel-ai/autolabel/actions/workflows/docs.yaml/badge.svg)](https://docs.refuel.ai/) ![Tests](https://github.com/refuel-ai/autolabel/actions/workflows/test.yaml/badge.svg) [![Discord](https://img.shields.io/discord/1098746693152931901)](https://discord.gg/fweVnRx6CU) [![Twitter](https://badgen.net/badge/icon/twitter?icon=twitter&label)](https://twitter.com/RefuelAI) [![License: MIT](https://badgen.net/badge/license/MIT/blue)](https://opensource.org/licenses/MIT)
 </div>
 
-## Quick Install
+## ⚡ Quick Install
 
 `pip install refuel-autolabel`
 
@@ -34,7 +34,7 @@ Autolabel provides a simple 3-step process for labeling data:
 2. Dry-run to make sure the final prompt looks good.
 3. Kick off a labeling run for your dataset!
 
-Let's imagine we are building an ML model to analyze sentiment analysis of movie review. We have a dataset of moview reviews that we'd like to get labeled first. For this case, here's what the example dataset and configs will look like:
+Let's imagine we are building an ML model to analyze sentiment analysis of movie review. We have a dataset of movie reviews that we'd like to get labeled first. For this case, here's what the example dataset and configs will look like:
 
 ```python
 {
@@ -49,7 +49,7 @@ Let's imagine we are building an ML model to analyze sentiment analysis of movie
         "delimiter": ","
     },
     "prompt": {
-        "task_guidelines": "You are an expert at analyzing the sentiment of moview reviews. Your job is to classify the provided movie review into one of the following labels: {labels}",
+        "task_guidelines": "You are an expert at analyzing the sentiment of movie reviews. Your job is to classify the provided movie review into one of the following labels: {labels}",
         "labels": [
             "positive",
             "negative",
@@ -101,7 +101,7 @@ This prints:
 ─────────────────────────────────────────
 
 Prompt Example:
-You are an expert at analyzing the sentiment of moview reviews. Your job is to classify the provided movie review into one of the following labels: [positive, negative, neutral]
+You are an expert at analyzing the sentiment of movie reviews. Your job is to classify the provided movie review into one of the following labels: [positive, negative, neutral]
 
 You will return the answer with just one element: "the correct label"
 
@@ -133,10 +133,23 @@ Finally, we can run the labeling on a subset or entirety of the dataset:
 labels, output_df, metrics = agent.run('examples/movie_reviews/dataset.csv')
 ```
 
+## 🛠️ Roadmap
+Our goal is to allow users to label, create or enrich any dataset, with any LLM - easily and quickly. 
+
+There are four focus areas for Autolabel for 2023:
+
+* **Tasks**: Add support for tasks such as retrieval, attribute enrichment and text generation/writing.
+* **LLMs**: Add support for more LLMs, especially open source models like Falcon, MPT and Dolly and the ability to plug in your own LLMs. 
+* Workflows for **experimenting with your datasets** more easily: Add support for richer data types (such as PDFs and HTML documents) and the ability to run benchmarking on your data sources.
+* Techniques to **improve labeling accuracy**: Add support for automatic prompt improvement and tools for better error analysis to iteratively improve LLM performance on different tasks 
+
+We will be releasing a more detailed roadmap soon, but we love suggestions and contributions from the community. Chat with the Refuel team and Autolabel community on [Discord](https://discord.gg/fweVnRx6CU) or open [Github issues](https://github.com/refuel-ai/autolabel/issues) to report bugs and request features. 
+
+
 ## 🙌 Contributing
 
 Autolabel is a rapidly developing project. We welcome contributions in all forms - bug reports, pull requests and ideas for improving the library.
 
 1. Join the conversation on [Discord](https://discord.gg/fweVnRx6CU)
-2. Review the 🛣️ [Roadmap]() and contribute your ideas.
+2. Review the 🛠️ [Roadmap](https://github.com/refuel-ai/autolabel/tree/main#%EF%B8%8F-roadmap) and contribute your ideas.
 3. Grab an [open issue](https://github.com/refuel-ai/autolabel/issues) on Github, and submit a [pull request](https://github.com/refuel-ai/autolabel/blob/main/CONTRIBUTING.md).
