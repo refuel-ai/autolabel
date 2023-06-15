@@ -27,7 +27,8 @@ nav:
     - Working with Autolabel:
       - Configs: guide/resources/configs.md
       - Refuel-provided Datasets: guide/resources/refuel_datasets.md
-  - Concepts: concepts/concepts.md
+  #- Concepts: concepts/concepts.md
+  # remove for now
   - Reference:
       - AutoLabeler: reference/labeler.md
       - Config: reference/configs.md

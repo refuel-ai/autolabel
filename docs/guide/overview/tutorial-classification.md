@@ -63,7 +63,7 @@ config = {
     },
     "prompt": {
         # very simple instructions for the LLM
-        "task_guidelines": "Is the provided comment 'toxic' or 'not toxic'?",
+        "task_guidelines": "Does the provided comment contain 'toxic' language? Say toxic or not toxic.",
         "labels": [ # list of labels to choose from
             "toxic",
             "not toxic"
@@ -84,82 +84,27 @@ agent.plan('test.csv')
 Output:
 ```console
 ┌──────────────────────────┬─────────┐
-│ Total Estimated Cost     │ $4.4322 │
+│ Total Estimated Cost     │ $4.4442 │
 │ Number of Examples       │ 2000    │
 │ Average cost per example │ $0.0022 │
 └──────────────────────────┴─────────┘
 ───────────────────────────────────────────────── Prompt Example ──────────────────────────────────────────────────
-Is the provided comment 'toxic' or 'not toxic'?
+Does the provided comment contain 'toxic' language? Say toxic or not toxic.
 
 You will return the answer with just one element: "the correct label"
 
 Now I want you to label the following example:
-Input: [ Integrity means that you pay your debts.]
-
-Does this apply to President Trump too?
+Input: [ Integrity means that you pay your debts.]. Does this apply to President Trump too?
 Output: 
-───────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+
 ```
 
 Finally, we run the data labeling:
 ```python
-_, output_df, _ = agent.run('test.csv', max_items=100)
+labels, df, metrics = agent.run('test.csv', max_items=100)
 ```
 
 ```
-┏━━━━━━━━━┳━━━━━━━━━━━┳━━━━━━━━━━┳━━━━━━━━━━━━━━━━━┓
-┃ support ┃ threshold ┃ accuracy ┃ completion_rate ┃
-┡━━━━━━━━━╇━━━━━━━━━━━╇━━━━━━━━━━╇━━━━━━━━━━━━━━━━━┩
-│ 100     │ -inf      │ 0.59     │ 1.0             │
-└─────────┴───────────┴──────────┴─────────────────┘
-```
-
-59% accuracy is not very good! Let's see if we can improve this further! 
-
-### Experiment #2: Few-shot prompting to provide helpful examples
-
-Similar to how human labelers find it helpful to use relevant examples when making a decision, LLM performance for labeling also goes up when choosing helpful examples in the prompt. For this next experiment, we will pick 10 helpful examples from `seed.csv` based on their "semantic similarity", or similar their content is (using embeddings). More information on prompting can be found [here](/guide/accuracy/few-shot).
-
-We take the previous config, and just update the following fields:
-```python
-config["prompt"]["few_shot_examples"] = "seed.csv"
-config["prompt"]["few_shot_selection"] = "semantic_similarity"
-config["prompt"]["few_shot_num"] = 10
-```
-
-That's it! We are now ready to create a `LabelingAgent` and run the same `agent.plan` and `agent.run` commands.
-
-```python
-agent.plan(dataset='test.csv')
-
-┌──────────────────────────┬─────────┐
-│ Total Estimated Cost     │ $8.3056 │
-│ Number of Examples       │ 2000    │
-│ Average cost per example │ $0.0042 │
-└──────────────────────────┴─────────┘
-───────────────────────────────────────────────── Prompt Example ──────────────────────────────────────────────────
-Is the provided comment 'toxic' or 'not toxic'?
-
-You will return the answer with just one element: "the correct label"
-
-Some examples with their output answers are provided below:
-
-Input: If Trump wants to totally reinvent the world political and economic order, I think he owes the American public some specific plans and proposed policies. Having "lots of meetings", and telling everyone what a great negotiator he is, is not a plan. The USA is already a great nation with great influence in the world, and we need to honor our long term alliances and commitments, or risk losing much financial and political power and influence. For Pete's sake, we owe these countries trillions of dollars of our national debit. What happens if they ask for their money back? But then Trump is unquestionably experienced in bankruptcies.
-Output: not toxic
-
-Input: Are you talking about the crooked Trump Foundation?
-Output: not toxic
-
-... more examples...
-```
-
-With additional examples, the cost has gone up. Now, we run the labeling with:
-
-```python
-_, output_df, _ = agent.run('test.csv', max_items=100)`:
-```
-
-```text
 ┏━━━━━━━━━┳━━━━━━━━━━━┳━━━━━━━━━━┳━━━━━━━━━━━━━━━━━┓
 ┃ support ┃ threshold ┃ accuracy ┃ completion_rate ┃
 ┡━━━━━━━━━╇━━━━━━━━━━━╇━━━━━━━━━━╇━━━━━━━━━━━━━━━━━┩
@@ -167,26 +112,154 @@ _, output_df, _ = agent.run('test.csv', max_items=100)`:
 └─────────┴───────────┴──────────┴─────────────────┘
 ```
 
-This didn't lead to the increase in performance we were hoping. Let's see what we can do to improve the accuracy. 
+54% accuracy is not very good! Let's see if we can improve this further!
+
+### Experiment #2: Few-shot prompting to provide helpful examples
+
+Similar to how human labelers find it helpful to use relevant examples when making a decision, LLM performance for labeling also goes up when choosing helpful examples in the prompt. For this next experiment, we will pick a few helpful examples from `seed.csv`. More information on few-shot prompting can be found [here](/guide/accuracy/few-shot).
+
+We take the previous config, and just update the following fields:
+```python
+{
+    "task_name": "ToxicCommentClassification",
+    "task_type": "classification",
+    "dataset": {
+        "label_column": "label",
+        "delimiter": ","
+    },
+    "model": {
+        "provider": "openai",
+        "name": "gpt-3.5-turbo",
+    },
+    "prompt": {
+        "task_guidelines":  "Does the provided comment contain 'toxic' language? Say toxic or not toxic.",
+        "labels": [
+            "toxic",
+            "not toxic"
+        ],
+        "few_shot_examples": [
+            {
+                "example": "It's ridiculous that these guys are being called 'protesters'. Being armed is a threat of violence, which makes them terrorists.",
+                "label": "toxic"
+            },
+            {
+                "example": "This is so cool. It's like, 'would you want your mother to read this??' Really great idea, well done!",
+                "label": "not toxic"
+            },
+            {
+                "example": "This bitch is nuts. Who would read a book by a woman",
+                "label": "toxic"
+            },
+            {
+                "example": "It was a great show. Not a combo I'd of expected to be good together but it was.",
+                "label": "not toxic"
+            }
+        ],
+        "few_shot_selection": "fixed",
+        "few_shot_num": 4,
+        "example_template": "Input: {example}\nOutput: {label}"
+    }
+}
+```
+
+That's it! We are now ready to create a `LabelingAgent` and run the same `agent.plan` and `agent.run` commands.
+
+```console
+┌──────────────────────────┬─────────┐
+│ Total Estimated Cost     │ $4.9442 │
+│ Number of Examples       │ 2000    │
+│ Average cost per example │ $0.0025 │
+└──────────────────────────┴─────────┘
+───────────────────────────────────────────────── Prompt Example ──────────────────────────────────────────────────
+Does the provided comment contain 'toxic' language? Say toxic or not toxic.
+
+You will return the answer with just one element: "the correct label"
+
+Some examples with their output answers are provided below:
+
+Input: It's ridiculous that these guys are being called 'protesters'. Being armed is a threat of violence, which makes them terrorists.
+Output: toxic
+
+Input: This is so cool. It's like, 'would you want your mother to read this??' Really great idea, well done!
+Output: not toxic
+
+Input: This bitch is nuts. Who would read a book by a woman
+Output: toxic
+
+Input: It was a great show. Not a combo I'd of expected to be good together but it was.
+Output: not toxic
+
+Now I want you to label the following example:
+Input: [ Integrity means that you pay your debts.] Does this apply to President Trump too?
+Output:
+```
+
+With additional examples, the cost has gone up slightly. Now, we run the labeling with:
+
+```python
+labels, df, metrics = agent.run('test.csv', max_items=100)`:
+```
+
+```console
+┏━━━━━━━━━┳━━━━━━━━━━━┳━━━━━━━━━━┳━━━━━━━━━━━━━━━━━┓
+┃ support ┃ threshold ┃ accuracy ┃ completion_rate ┃
+┡━━━━━━━━━╇━━━━━━━━━━━╇━━━━━━━━━━╇━━━━━━━━━━━━━━━━━┩
+│ 100     │ -inf      │ 0.68     │ 1.0             │
+└─────────┴───────────┴──────────┴─────────────────┘
+```
+
+Nice! We improved performance from 54% to 68% by providing a few examples to the LLM.
 
 ### Experiment #3: Improving task guidelines after reviewing errors (prompt engineering)
 
-Typically, you can improve the accuracy by reviewing mistakes and updating the task guidelines (see another example [here](/guide/accuracy/prompting-better)). You can review some of the mistakes from the previous run by looking at the output Pandas DataFrame produced called `output_df`:
+Typically, you can improve the accuracy by reviewing mistakes and updating the task guidelines (see another example [here](/guide/accuracy/prompting-better)). You can review some of the mistakes from the previous run by looking at the output Pandas DataFrame produced called `df`:
 ```python
-output_df[output_df['label'] != output_df['ToxicCommentClassification_llm_label']].head(10)
+df[df['label'] != df['ToxicCommentClassification_llm_label']].head(10)
 ```
 
-Let's say we update our guidelines by running:
+Let's say we update our task guidelines to be more explicit about how should the LLM make the decision about whether a comment is toxic or not:
+
 ```python
-new_task_guidelines = """
-You are an expert at identifying toxic comments.
-
-You aim to act in a fair and balanced manner, where comments that provide fair criticism of something or someone are labelled 'not toxic'. Similarly, criticisms of policy and politicians are marked 'not toxic', unless the comment includes obscenities, racial slurs or sexually explicit material.
-
-Any comments that are explicit, obscene, or insults a person, demographic or race are not allowed and labeled 'toxic'.
-"""
-
-config["prompt"]["task_guidelines"] = new_task_guidelines
+{
+    "task_name": "ToxicCommentClassification",
+    "task_type": "classification",
+    "dataset": {
+        "label_column": "label",
+        "delimiter": ","
+    },
+    "model": {
+        "provider": "openai",
+        "name": "gpt-3.5-turbo",
+    },
+    "prompt": {
+        "task_guidelines": "You are an expert at identifying toxic comments. You aim to act in a fair and balanced manner, where comments that provide fair criticism of something or someone are labelled 'not toxic'. Similarly, criticisms of policy and politicians are marked 'not toxic', unless the comment includes obscenities, racial slurs or sexually explicit material. Any comments that are sexually explicit, obscene, or insults a person, demographic or race are not allowed and labeled 'toxic'. \nYour job is to correctly label the provided input example into one of the following categories:\n{labels}",
+        "labels": [
+            "toxic",
+            "not toxic"
+        ],
+        "few_shot_examples": [
+            {
+                "example": "It's ridiculous that these guys are being called 'protesters'. Being armed is a threat of violence, which makes them terrorists.",
+                "label": "toxic"
+            },
+            {
+                "example": "This is so cool. It's like, 'would you want your mother to read this??' Really great idea, well done!",
+                "label": "not toxic"
+            },
+            {
+                "example": "This bitch is nuts. Who would read a book by a woman",
+                "label": "toxic"
+            },
+            {
+                "example": "It was a great show. Not a combo I'd of expected to be good together but it was.",
+                "label": "not toxic"
+            }
+        ],
+        "few_shot_selection": "fixed",
+        "few_shot_num": 4,
+        "example_template": "Input: {example}\nOutput: {label}"
+    }
+}
 ```
 
 Now, when we run `agent.run`, we get the following results:
@@ -199,9 +272,66 @@ Now, when we run `agent.run`, we get the following results:
 └─────────┴───────────┴──────────┴─────────────────┘
 ```
 
-We now hit an accuracy of 78%, which is very promising! If we spend more time improving the guidelines or choosing different examples, we can push accuracy even further. Finally, let's check out how confidence computation can help us label at very high accuracy levels. 
+We now hit an accuracy of 78%, which is very promising! If we spend more time improving the guidelines or choosing different examples, we can push accuracy even further.
 
-### Experiment #4: Using confidence scores
+### Experiment #4: Experimenting with LLMs
+
+We've iterated a fair bit on prompts, and few-shot examples. Let's evaluate a few different LLMs provided by the library out of the box. For example, we observe that we can boost performance even further by using `text-davinci-003`: 
+
+```python
+{
+    "task_name": "ToxicCommentClassification",
+    "task_type": "classification",
+    "dataset": {
+        "label_column": "label",
+        "delimiter": ","
+    },
+    "model": {
+        "provider": "openai",
+        "name": "text-davinci-003",
+    },
+    "prompt": {
+        "task_guidelines": "You are an expert at identifying toxic comments. You aim to act in a fair and balanced manner, where comments that provide fair criticism of something or someone are labelled 'not toxic'. Similarly, criticisms of policy and politicians are marked 'not toxic', unless the comment includes obscenities, racial slurs or sexually explicit material. Any comments that are sexually explicit, obscene, or insults a person, demographic or race are not allowed and labeled 'toxic'. \nYour job is to correctly label the provided input example into one of the following categories:\n{labels}",
+        "labels": [
+            "toxic",
+            "not toxic"
+        ],
+        "few_shot_examples": [
+            {
+                "example": "It's ridiculous that these guys are being called 'protesters'. Being armed is a threat of violence, which makes them terrorists.",
+                "label": "toxic"
+            },
+            {
+                "example": "This is so cool. It's like, 'would you want your mother to read this??' Really great idea, well done!",
+                "label": "not toxic"
+            },
+            {
+                "example": "This bitch is nuts. Who would read a book by a woman",
+                "label": "toxic"
+            },
+            {
+                "example": "It was a great show. Not a combo I'd of expected to be good together but it was.",
+                "label": "not toxic"
+            }
+        ],
+        "few_shot_selection": "fixed",
+        "few_shot_num": 4,
+        "example_template": "Input: {example}\nOutput: {label}"
+    }
+}
+```
+
+While the per token API price for this model is higher, we're able to boost the accuracy to 88%!
+
+```console
+┏━━━━━━━━━┳━━━━━━━━━━━┳━━━━━━━━━━┳━━━━━━━━━━━━━━━━━┓
+┃ support ┃ threshold ┃ accuracy ┃ completion_rate ┃
+┡━━━━━━━━━╇━━━━━━━━━━━╇━━━━━━━━━━╇━━━━━━━━━━━━━━━━━┩
+│ 100     │ -inf      │ 0.88     │ 1.0             │
+└─────────┴───────────┴──────────┴─────────────────┘
+```
+
+### Experiment #5: Using confidence scores
 
 Refuel provides LLMs that can compute confidence scores for every label, if the LLM you've chosen doesn't provide token-level log probabilities. This is helpful, because you can calibrate a confidence threshold for your labeling task, and then route less confident labels to humans, while you still get the benefits of auto-labeling for the confident examples. Let's see how this works. 
 
@@ -241,9 +371,7 @@ Actual Cost: 0.0376
 └─────────┴───────────┴──────────┴─────────────────┘
 ```
 
-The rows in this table show labeling performance at different confidence thresholds.
-
-If we were to label the entire dataset (and get a competion rate of `1.0`), we would have an accuracy of `78%`. However, we can set the confidence threshold at 0.6682 which allows us to label at 96% accuracy with a completion rate of 63%. This means, we would ignore all the data points where confidence score is less than 0.6682 (around 37% of all samples). This guarantees a very high quality labeled dataset for us! 
+The rows in this table show labeling performance at different confidence thresholds, and set an autolabeling confidence threshold at the desired accuracy. For instance, from the table above we can set the confidence threshold at 0.6682 which allows us to label at 96% accuracy with a completion rate of 63%.
 
 ## Final thoughts
 
