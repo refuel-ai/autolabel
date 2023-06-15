@@ -152,6 +152,16 @@ output_df.head()
 4. [Confidence estimation](https://docs.refuel.ai/guide/accuracy/confidence/) and explanations out of the box for every single output label
 5. [Caching and state management](https://docs.refuel.ai/guide/reliability/state-management/) to minimize costs and experimentation time
 
+## Access to Refuel hosted LLMs
+
+Refuel provides access to hosted open source LLMs for labeling, and for estimating confidence This is helpful, because you can calibrate a confidence threshold for your labeling task, and then route less confident labels to humans, while you still get the benefits of auto-labeling for the confident examples.
+
+In order to use Refuel hosted LLMs, you can [request access here](https://refuel-ai.typeform.com/llm-access).
+
+## Benchmark
+
+Check out our [technical report](https://www.refuel.ai/blog-posts/llm-labeling-technical-report) to learn more about the performance of various LLMs, and human annoators, on label quality, turnaround time and cost.
+
 ## 🛠️ Roadmap
 Our goal is to allow users to label, create or enrich any dataset, with any LLM - easily and quickly.
 
