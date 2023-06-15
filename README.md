@@ -5,9 +5,17 @@
     <b>Clean, labeled data at the speed of thought</b>.
 </p>
 
+<h4 align="center">
+  <a href="https://docs.refuel.ai/guide/overview/getting-started/">Getting started</a> |
+  <a href="https://docs.refuel.ai/">Docs</a> |
+  <a href="https://discord.gg/fweVnRx6CU">Discord</a> |
+  <a href="https://twitter.com/RefuelAI">Twitter</a> |
+  <a href="https://www.refuel.ai/">Website</a>
+</h4>
+
 <div align="center" style="width:800px">
 
-[![lint](https://github.com/refuel-ai/autolabel/actions/workflows/black.yaml/badge.svg)](https://github.com/refuel-ai/autolabel/actions/workflows/black.yaml/badge.svg) [![docs](https://github.com/refuel-ai/autolabel/actions/workflows/docs.yaml/badge.svg)](https://docs.refuel.ai/) ![Tests](https://github.com/refuel-ai/autolabel/actions/workflows/test.yaml/badge.svg) [![Discord](https://img.shields.io/discord/1098746693152931901)](https://discord.gg/fweVnRx6CU) [![Twitter](https://badgen.net/badge/icon/twitter?icon=twitter&label)](https://twitter.com/RefuelAI) [![License: MIT](https://badgen.net/badge/license/MIT/blue)](https://opensource.org/licenses/MIT)
+[![lint](https://github.com/refuel-ai/autolabel/actions/workflows/black.yaml/badge.svg)](https://github.com/refuel-ai/autolabel/actions/workflows/black.yaml/badge.svg) ![Tests](https://github.com/refuel-ai/autolabel/actions/workflows/test.yaml/badge.svg) ![Commit Activity](https://img.shields.io/github/commit-activity/m/refuel-ai/autolabel) [![Discord](https://img.shields.io/discord/1098746693152931901)](https://discord.gg/fweVnRx6CU) [![License: MIT](https://badgen.net/badge/license/MIT/blue)](https://opensource.org/licenses/MIT)
 </div>
 
 ## ⚡ Quick Install
@@ -16,15 +24,9 @@
 
 ## 🏷 What is Autolabel
 
-Access to [large, clean and diverse](https://twitter.com/karpathy/status/1528443124577513472?lang=en) labeled datasets is a critical component for any machine learning effort to be successful. But data labeling is a manual and time-consuming process. State-of-the-art LLMs like GPT-4 are able to [automatically label data](https://arxiv.org/abs/2303.15056) with [high accuracy](https://arxiv.org/abs/2303.16854), and at a fraction of the cost and time.
+Access to [large, clean and diverse](https://twitter.com/karpathy/status/1528443124577513472?lang=en) labeled datasets is a critical component for any machine learning effort to be successful. State-of-the-art LLMs like GPT-4 are able to [automatically label data](https://arxiv.org/abs/2303.15056) with [high accuracy](https://arxiv.org/abs/2303.16854), and at a fraction of the cost and time compared to manual labeling.
 
-Autolabel is a Python library to label, clean and enrich text datasets with any Large Language Models (LLM) of your choice. A few key features:
-
-1. Label data for [NLP tasks](https://docs.refuel.ai/guide/tasks/classification_task/) such as classification, question-answering and named entity-recognition, entity matching and more.
-2. Use commercial or open source [LLMs](https://docs.refuel.ai/guide/llms/llms/) from providers such as OpenAI, Anthropic, HuggingFace, Google and more.
-3. Support for research-proven LLM techniques to boost label quality, such as few-shot learning and chain-of-thought prompting.
-4. [Confidence estimation](https://docs.refuel.ai/guide/accuracy/confidence/) and explanations out of the box for every single output label
-5. [Caching and state management](https://docs.refuel.ai/guide/reliability/state-management/) to minimize costs and experimentation time
+Autolabel is a Python library to label, clean and enrich text datasets with any Large Language Models (LLM) of your choice.
 
 ## 🚀 Getting started
 
@@ -86,7 +88,7 @@ agent = LabelingAgent(config='config.json')
 Preview an example prompt that will be sent to the LLM:
 
 ```python
-agent.plan('examples/movie_reviews/dataset.csv')
+agent.plan('dataset.csv')
 ```
 
 This prints:
@@ -102,8 +104,6 @@ This prints:
 
 Prompt Example:
 You are an expert at analyzing the sentiment of movie reviews. Your job is to classify the provided movie review into one of the following labels: [positive, negative, neutral]
-
-You will return the answer with just one element: "the correct label"
 
 Some examples with their output answers are provided below:
 
@@ -130,11 +130,30 @@ Output:
 Finally, we can run the labeling on a subset or entirety of the dataset:
 
 ```python
-labels, output_df, metrics = agent.run('examples/movie_reviews/dataset.csv')
+labels, output_df, metrics = agent.run('dataset.csv')
 ```
 
+The output dataframe contains the label column:
+
+```python
+output_df.head()
+                                                text  ... MovieSentimentReview_llm_label
+0  I was very excited about seeing this film, ant...  ...                       negative
+1  Serum is about a crazy doctor that finds a ser...  ...                       negative
+4  I loved this movie. I knew it would be chocked...  ...                       positive
+...
+```
+
+## Features
+
+1. Label data for [NLP tasks](https://docs.refuel.ai/guide/tasks/classification_task/) such as classification, question-answering and named entity-recognition, entity matching and more.
+2. Use commercial or open source [LLMs](https://docs.refuel.ai/guide/llms/llms/) from providers such as OpenAI, Anthropic, HuggingFace, Google and more.
+3. Support for research-proven LLM techniques to boost label quality, such as few-shot learning and chain-of-thought prompting.
+4. [Confidence estimation](https://docs.refuel.ai/guide/accuracy/confidence/) and explanations out of the box for every single output label
+5. [Caching and state management](https://docs.refuel.ai/guide/reliability/state-management/) to minimize costs and experimentation time
+
 ## 🛠️ Roadmap
-Our goal is to allow users to label, create or enrich any dataset, with any LLM - easily and quickly. 
+Our goal is to allow users to label, create or enrich any dataset, with any LLM - easily and quickly.
 
 There are four focus areas for Autolabel for 2023:
 
@@ -143,13 +162,12 @@ There are four focus areas for Autolabel for 2023:
 * Workflows for **experimenting with your datasets** more easily: Add support for richer data types (such as PDFs and HTML documents) and the ability to run benchmarking on your data sources.
 * Techniques to **improve labeling accuracy**: Add support for automatic prompt improvement and tools for better error analysis to iteratively improve LLM performance on different tasks 
 
-We will be releasing a more detailed roadmap soon, but we love suggestions and contributions from the community. Chat with the Refuel team and Autolabel community on [Discord](https://discord.gg/fweVnRx6CU) or open [Github issues](https://github.com/refuel-ai/autolabel/issues) to report bugs and request features. 
-
+We will be releasing a more detailed roadmap soon, but we love suggestions and contributions from the community. Chat with the Refuel team and Autolabel community on [Discord](https://discord.gg/fweVnRx6CU) or open [Github issues](https://github.com/refuel-ai/autolabel/issues) to report bugs and request features.
 
 ## 🙌 Contributing
 
 Autolabel is a rapidly developing project. We welcome contributions in all forms - bug reports, pull requests and ideas for improving the library.
 
 1. Join the conversation on [Discord](https://discord.gg/fweVnRx6CU)
-2. Review the 🛠️ [Roadmap](https://github.com/refuel-ai/autolabel/tree/main#%EF%B8%8F-roadmap) and contribute your ideas.
-3. Grab an [open issue](https://github.com/refuel-ai/autolabel/issues) on Github, and submit a [pull request](https://github.com/refuel-ai/autolabel/blob/main/CONTRIBUTING.md).
+2. Open an [issue](https://github.com/refuel-ai/autolabel/issues) on Github for bugs and request features.
+3. Grab an open issue, and submit a [pull request](https://github.com/refuel-ai/autolabel/blob/main/CONTRIBUTING.md).
