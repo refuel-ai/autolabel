@@ -68,7 +68,11 @@ class BaseTask(ABC):
         # The last line of the response is the label
         # This is done to handle the case where the model generates an explanation before generating the label
         if self.config.chain_of_thought():
-            completion_text = extract_valid_json_substring(response.text)
+            try:
+                completion_text = extract_valid_json_substring(response.text)
+                completion_text = json.loads(completion_text)["label"]
+            except:
+                completion_text = None
         else:
             completion_text = response.text.strip().split("\n")[-1].strip()
         if len(response.text.strip()) == 0:

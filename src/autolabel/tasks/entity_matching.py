@@ -43,7 +43,7 @@ class EntityMatchingTask(BaseTask):
             # If chain of thought is enabled
             if label_column and self.config.chain_of_thought():
                 eg_copy[label_column] = json.dumps({"label": eg[label_column]})
-            fmt_examples.append(example_template.format_map(defaultdict(str, eg)))
+            fmt_examples.append(example_template.format_map(defaultdict(str, eg_copy)))
 
         # populate the current example in the prompt
         if label_column:
