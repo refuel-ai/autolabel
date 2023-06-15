@@ -119,7 +119,10 @@ class AutolabelConfig(BaseConfig):
 
     def example_template(self) -> str:
         """Returns a string containing a template for how examples will be formatted in the prompt"""
-        return self._prompt_config.get(self.EXAMPLE_TEMPLATE_KEY, None)
+        example_template = self._prompt_config.get(self.EXAMPLE_TEMPLATE_KEY, None)
+        if not example_template:
+            raise ValueError("An example template needs to be specified in the config.")
+        return example_template
 
     def output_format(self) -> str:
         return self._prompt_config.get(self.OUTPUT_FORMAT_KEY, None)
