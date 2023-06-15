@@ -43,8 +43,8 @@ A few examples are shown below:
 ## Start the labeling process
 Labeling with Autolabel is a 3-step process:
 
-* First, we specify a labeling configuration (see `config.json` below) and create a `LabelingAgent`
-* Next, we do a dry-run on our dataset using the LLM specified in `config.json` by running `agent.plan`
+* First, we specify a labeling configuration (see `config` object below) and create a `LabelingAgent`
+* Next, we do a dry-run on our dataset using the LLM specified in `config` by running `agent.plan`
 * Finally, we run the labeling with `agent.run`
 
 ### Experiment #1: Try simple labeling guidelines
