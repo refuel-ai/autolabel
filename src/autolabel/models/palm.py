@@ -14,6 +14,7 @@ logger = logging.getLogger(__name__)
 
 
 class PaLMLLM(BaseModel):
+    SEP_REPLACEMENT_TOKEN = "@@"
     CHAT_ENGINE_MODELS = ["chat-bison@001"]
     NUM_TRIES = 5
 
@@ -51,6 +52,18 @@ class PaLMLLM(BaseModel):
             self.llm = VertexAI(model_name=self.model_name, **self.model_params)
 
     def _label(self, prompts: List[str]) -> LLMResult:
+        for prompt in prompts:
+            if self.SEP_REPLACEMENT_TOKEN in prompt:
+                logger.warning(
+                    f"""Current prompt contains {self.SEP_REPLACEMENT_TOKEN} 
+                                which is currently used as a separator token by refuel
+                                llm. It is highly recommended to avoid having any
+                                occurences of this substring in the prompt.
+                            """
+                )
+        prompts = [
+            prompt.replace("\n", self.SEP_REPLACEMENT_TOKEN) for prompt in prompts
+        ]
         if self._engine == "chat":
             # Need to convert list[prompts] -> list[messages]
             # Currently the entire prompt is stuck into the "human message"
@@ -59,7 +72,13 @@ class PaLMLLM(BaseModel):
 
         for _ in range(self.NUM_TRIES):
             try:
-                return self.llm.generate(prompts)
+                result = self.llm.generate(prompts)
+                for generations in result.generations:
+                    for generation in generations:
+                        generation.text = generation.text.replace(
+                            self.SEP_REPLACEMENT_TOKEN, "\n"
+                        )
+                return result
             except Exception as e:
                 logger.error(f"Error generating from LLM: {e}.")
         generations = [[Generation(text="")] for _ in prompts]
