@@ -1,6 +1,5 @@
-<picture>
-  <img alt="Refuel logo" src="docs/assets/Autolabel_blk_w_background.png">
-</picture>
+<img alt="Refuel logo" src="https://raw.githubusercontent.com/refuel-ai/autolabel/main/docs/assets/Autolabel_blk_w_background.png">
+
 <p align="center">
     <b>Clean, labeled data at the speed of thought</b>.
 </p>
