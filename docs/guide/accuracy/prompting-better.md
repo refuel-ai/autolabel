@@ -2,6 +2,8 @@ Like most LLM tasks, a critical part of improving LLM performance in autolabelin
 
 Consider the following example of refining a prompt used for a classification task on the civil-comments dataset. Each labeling run below included 500 examples and used the same LLM: gpt-3.5-turbo and used a fixed-shot example selection strategy with 4 seed examples.
 
+[![open in colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/1IVHl2h5mxiFs1b5AwTtUKVqs0MXKXX8g#scrollTo=IYj0ijdKylNu)
+
 First attempt:
 ```json
 config = {
