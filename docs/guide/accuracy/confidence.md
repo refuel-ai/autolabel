@@ -49,7 +49,7 @@ Set the following environment variable:
 ```
 export REFUEL_API_KEY=<your-refuel-key>
 ```
-replacing `<your-refuel-key>` with your API key, which you can get from [here](TBD). [TODO] INSTRUCTIONS FOR GETTING THE API KEY
+replacing `<your-refuel-key>` with your API key, which you can get from [here](https://refuel-ai.typeform.com/llm-access)
 
 ## Interpretting Scores
 
