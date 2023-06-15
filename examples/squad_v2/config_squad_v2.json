@@ -1,9 +1,8 @@
 {
     "task_name": "OpenbookQAWikipedia",
-    "task_type": "multi_choice_question_answering",
+    "task_type": "question_answering",
     "dataset": {
         "label_column": "answer",
-        "explanation_column": "explanation",
         "delimiter": ","
     },
     "model": {
@@ -16,6 +15,6 @@
         "few_shot_examples": "seed.csv",
         "few_shot_selection": "semantic_similarity",
         "few_shot_num": 3,
-        "example_template": "Context: {context}\nQuestion: {question}\nAnswer: Let's think step by step.\n{explanation}\n{answer}"
+        "example_template": "Context: {context}\nQuestion: {question}\nAnswer:\n{answer}"
     }
 }
