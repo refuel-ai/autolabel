@@ -134,7 +134,16 @@ labels, output_df, metrics = agent.run('examples/movie_reviews/dataset.csv')
 ```
 
 ## 🛠️ Roadmap
+Our goal is to allow users to label, create or enrich any dataset, with any LLM - easily and quickly. 
 
+There are four focus areas for Autolabel for 2023:
+
+* **Tasks**: Add support for tasks such as retrieval, attribute enrichment and text generation/writing.
+* **LLMs**: Add support for more LLMs, especially open source models like Falcon, MPT and Dolly and the ability to plug in your own LLMs. 
+* Workflows for **experimenting with your datasets** more easily: Add support for richer data types (such as PDFs and HTML documents) and the ability to run benchmarking on your data sources.
+* Techniques to **improve labeling accuracy**: Add support for automatic prompt improvement and tools for better error analysis to iteratively improve LLM performance on different tasks 
+
+We will be releasing a more detailed roadmap soon, but we love suggestions and contributions from the community. Chat with the Refuel team and Autolabel community on [Discord](https://discord.gg/fweVnRx6CU) or open [Github issues](https://github.com/refuel-ai/autolabel/issues) to report bugs and request features. 
 
 
 ## 🙌 Contributing
