@@ -7,7 +7,7 @@ LLMs find it hard to perform well on complex reasoning tasks. We can unlock the 
 
 Chain of thought makes LLMs more effective at reasoning tasks like mathematical word problems, commonsense reasoning questions and complex medical questions. It also provides a window into the thought process of the LLM, though some research points the link between the generated explanation and the final answer may be weak.
 
-## Using Chain Of Thought in Autolabel
+## Using Chain Of Thought in Autolabel [![open in colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/1GYs0_4k8vhGk1LOJISppNN98DRq_Bur1#scrollTo=6xqMfKxa92Sj)
 
 Enabling chain-of-thought prompting for your task is straightforward with Autolabel. It works best when provided with a few seed examples with explanations. Thus enabling chain of thought requires a few things -  
 
