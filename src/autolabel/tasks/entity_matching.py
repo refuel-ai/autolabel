@@ -1,5 +1,6 @@
 from collections import defaultdict
 from typing import List, Dict, Tuple
+import json
 
 from langchain.prompts.prompt import PromptTemplate
 from sklearn.metrics import accuracy_score
@@ -35,12 +36,16 @@ class EntityMatchingTask(BaseTask):
 
         # prepare seed examples
         example_template = self.config.example_template()
+        label_column = self.config.label_column()
         fmt_examples = []
         for eg in examples:
+            eg_copy = eg.copy()
+            # If chain of thought is enabled
+            if label_column and self.config.chain_of_thought():
+                eg_copy[label_column] = json.dumps({"label": eg[label_column]})
             fmt_examples.append(example_template.format_map(defaultdict(str, eg)))
 
         # populate the current example in the prompt
-        label_column = self.config.label_column()
         if label_column:
             input[label_column] = ""
 
