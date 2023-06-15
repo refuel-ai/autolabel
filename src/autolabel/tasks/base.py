@@ -69,7 +69,9 @@ class BaseTask(ABC):
         # This is done to handle the case where the model generates an explanation before generating the label
         if self.config.chain_of_thought():
             try:
-                completion_text = extract_valid_json_substring(response.text)
+                completion_text = extract_valid_json_substring(
+                    response.text.strip().split("\n")[-1].strip()
+                )
                 completion_text = json.loads(completion_text)["label"]
             except:
                 completion_text = None

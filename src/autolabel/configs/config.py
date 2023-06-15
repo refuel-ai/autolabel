@@ -35,6 +35,7 @@ class AutolabelConfig(BaseConfig):
     EXAMPLE_TEMPLATE_KEY = "example_template"
     OUTPUT_GUIDELINE_KEY = "output_guidelines"
     OUTPUT_FORMAT_KEY = "output_format"
+    CHAIN_OF_THOUGHT_KEY = "chain_of_thought"
 
     def __init__(self, config: Union[str, Dict]) -> None:
         super().__init__(config)
@@ -131,4 +132,4 @@ class AutolabelConfig(BaseConfig):
 
     def chain_of_thought(self) -> bool:
         """Returns true if the model is able to perform chain of thought reasoning."""
-        return self.explanation_column() != None
+        return self._prompt_config.get(self.CHAIN_OF_THOUGHT_KEY, False)
