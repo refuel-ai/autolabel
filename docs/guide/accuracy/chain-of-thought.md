@@ -28,7 +28,7 @@ Now we can manually write the explanation for this or a couple of seed examples 
 ```python
 config = {
     "task_name": "OpenbookQAWikipedia",
-    "task_type": "multi_choice_question_answering",
+    "task_type": "question_answering",
     "dataset": {
         "label_column": "answer",
         "explanation_column": "explanation",
