@@ -127,7 +127,7 @@ class LabelingAgent:
         for current_index in track_with_stats(
             indices,
             postfix_dict,
-            total=len(inputs),
+            total=len(inputs) - current_index,
             advance=self.CHUNK_SIZE,
             console=console,
         ):
@@ -388,7 +388,7 @@ class LabelingAgent:
                 else:
                     print(f"Metric: {m.name}: {m.value}")
             print_table(table, console=console, default_style=METRIC_TABLE_STYLE)
-        pprint(f"{len(llm_labels)} examples have been labeled so far.")
+        pprint(f"{task_run.current_index} examples labeled so far.")
         if len(llm_labels) > 0:
             console.rule("Last Annotated Example")
             pprint("[bold blue]Prompt[/bold blue]: ", end="")
