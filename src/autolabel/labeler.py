@@ -388,7 +388,7 @@ class LabelingAgent:
                 else:
                     print(f"Metric: {m.name}: {m.value}")
             print_table(table, console=console, default_style=METRIC_TABLE_STYLE)
-        pprint(f"{task_run.current_index} examples have been labeled so far.")
+        pprint(f"{task_run.current_index} examples labeled so far.")
         if len(llm_labels) > 0:
             console.rule("Last Annotated Example")
             pprint("[bold blue]Prompt[/bold blue]: ", end="")
