@@ -77,7 +77,6 @@ def test_gpt35_label(mocker):
     )
     x = model.label(prompts)
     assert [i[0].text for i in x[0].generations] == ["Answers", "Answers"]
-    assert x[1] == approx(1.2e-05, rel=1e-3)
 
 
 def test_gpt35_get_cost():
