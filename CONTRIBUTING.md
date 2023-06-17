@@ -18,7 +18,7 @@ cd autolabel
 ```
 3. Install the library from source (preferably in a virtual environment): 
 ```bash
-pip install .[dev]
+pip install '.[dev]'
 ```
 4. Install [pre-commit](https://pre-commit.com/): 
 ```bash
