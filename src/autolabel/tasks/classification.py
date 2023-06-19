@@ -131,14 +131,14 @@ class ClassificationTask(BaseTask):
 
         eval_metrics_map = {
             Metric.SUPPORT: [],
-            Metric.THRESHOLD: [],
             Metric.ACCURACY: [],
             Metric.COMPLETION_RATE: [],
         }
         eval_metrics = []
-        thresholds = [] if self.config.confidence() else [float("-inf")]
+        thresholds = []
 
         if self.config.confidence():
+            eval_metrics_map[Metric.THRESHOLD] = []
             labels, confidences = self.auroc_score_labels(gt_labels, llm_labels)
             value, meaningful_thresholds = ConfidenceCalculator.compute_auroc(
                 labels, confidences
@@ -151,6 +151,8 @@ class ClassificationTask(BaseTask):
                     value=value,
                 )
             )
+        else:
+            thresholds.append(float("-inf"))
 
         for index, threshold in enumerate(thresholds):
             (
@@ -171,7 +173,9 @@ class ClassificationTask(BaseTask):
                 )
             else:
                 eval_metrics_map[Metric.ACCURACY].append(0.0)
-            eval_metrics_map[Metric.THRESHOLD].append(threshold)
+
+            if self.config.confidence():
+                eval_metrics_map[Metric.THRESHOLD].append(threshold)
 
         eval_metrics.extend(
             [

@@ -270,14 +270,14 @@ class NamedEntityRecognitionTask(BaseTask):
         eval_metrics_map = {
             Metric.F1: [],
             Metric.SUPPORT: [],
-            Metric.THRESHOLD: [],
             Metric.ACCURACY: [],
             Metric.COMPLETION_RATE: [],
         }
         eval_metrics = []
-        thresholds = [] if self.config.confidence() else [float("-inf")]
+        thresholds = []
 
         if self.config.confidence():
+            eval_metrics_map[Metric.THRESHOLD] = []
             all_gt_labels, all_llm_preds = self.get_labels_predictions_with_threshold(
                 gt_labels, llm_labels, float("-inf")
             )
@@ -293,6 +293,8 @@ class NamedEntityRecognitionTask(BaseTask):
                     value=value,
                 )
             )
+        else:
+            thresholds.append(float("-inf"))
 
         for index, threshold in enumerate(thresholds):
             (
@@ -324,7 +326,9 @@ class NamedEntityRecognitionTask(BaseTask):
             eval_metrics_map[Metric.COMPLETION_RATE].append(
                 len(curr_llm_labels) / float(len(gt_labels))
             )
-            eval_metrics_map[Metric.THRESHOLD].append(threshold)
+
+            if self.config.confidence():
+                eval_metrics_map[Metric.THRESHOLD].append(threshold)
         eval_metrics.extend(
             [
                 MetricResult(
