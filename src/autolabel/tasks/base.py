@@ -8,7 +8,7 @@ import json
 from langchain.prompts.prompt import PromptTemplate
 from langchain.schema import Generation
 from autolabel.configs import AutolabelConfig
-from autolabel.schema import LLMAnnotation, MetricResult, FewShotAlgorithm
+from autolabel.schema import LLMAnnotation, MetricResult, FewShotAlgorithm, TaskType
 from autolabel.utils import get_format_variables, extract_valid_json_substring
 
 logger = logging.getLogger(__name__)
@@ -86,8 +86,14 @@ class BaseTask(ABC):
             llm_label = self.NULL_LABEL_TOKEN
             logger.error(f"Error parsing LLM response: {response.text}")
         else:
-            successfully_labeled = True
             llm_label = completion_text.strip()
+            if self.config.task_type() in [
+                TaskType.CLASSIFICATION,
+                TaskType.ENTITY_MATCHING,
+            ]:
+                successfully_labeled = llm_label in self.config.labels_list()
+            else:
+                successfully_labeled = True
 
         return LLMAnnotation(
             successfully_labeled=successfully_labeled,
