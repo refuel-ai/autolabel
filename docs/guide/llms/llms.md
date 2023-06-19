@@ -10,10 +10,12 @@ Autolabel makes it easy to try out different LLMs for your task and this page wi
 To use models from [OpenAI](https://platform.openai.com/docs/models), you can set `provider` to `openai` when creating a labeling configuration. The specific model that will be queried can be specified using the `name` key. Autolabel currently supports the following models from OpenAI:
 
 * `text-davinci-003`
-* `gpt-3.5-turbo`
-* `gpt-4`  (8K Context)
+* `gpt-3.5-turbo` and `gpt-3.5-turbo-0613` (4,096 max tokens)
+* `gpt-3.5-turbo-16k` and `gpt-3.5-turbo-16k--613` (16,384 max tokens)
+* `gpt-4` and `gpt-4-0613`  (8,192 max tokens)
+* `gpt-4-32k` and `gpt-4-32k-0613`  (32,768 max tokens)
 
-`gpt-4` (8K Context) is the most capable (and most expensive) model from OpenAI, while `gpt-3.5-turbo` is the cheapest (but still quite capable). `gpt-4` costs 15 times `gpt-3.5-turbo`, at $0.03/1K input tokens and $0.06/1K output tokens while `gpt-3.5-turbo` costs only $0.0015/1K input tokens and $0.002/1K output tokens. `text-davinci-003` model on the other hand costs $0.02/1K tokens. Detailed pricing for these models is available [here](https://openai.com/pricing).
+`gpt-4` set of models are the most capable (and most expensive) from OpenAI, while `gpt-3.5-turbo` set of models are cheap (but still quite capable). Detailed pricing for these models is available [here](https://openai.com/pricing).
 
 ### Setup
 To use OpenAI models with Autolabel, make sure to first install the relevant packages by running:
