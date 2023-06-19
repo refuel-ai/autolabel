@@ -1,3 +1,4 @@
+import os
 import sys
 from typing import Dict, List, Optional, Tuple, Union
 import logging
@@ -297,6 +298,10 @@ class LabelingAgent:
         Args:
             dataset: path to a CSV dataset
         """
+        if self.config.confidence() and "REFUEL_API_KEY" not in os.environ:
+            raise ValueError(
+                "REFUEL_API_KEY environment variable must be set to compute confidence scores. You can request an API key at https://refuel-ai.typeform.com/llm-access."
+            )
 
         if isinstance(dataset, str):
             df, inputs, _ = DatasetLoader.read_file(
