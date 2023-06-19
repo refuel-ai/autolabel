@@ -275,7 +275,7 @@ class NamedEntityRecognitionTask(BaseTask):
             Metric.COMPLETION_RATE: [],
         }
         eval_metrics = []
-        thresholds = [float("-inf")]
+        thresholds = [] if self.config.confidence() else [float("-inf")]
 
         if self.config.confidence():
             all_gt_labels, all_llm_preds = self.get_labels_predictions_with_threshold(

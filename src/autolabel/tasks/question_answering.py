@@ -125,7 +125,7 @@ class QuestionAnsweringTask(BaseTask):
             Metric.COMPLETION_RATE: [],
         }
         eval_metrics = []
-        thresholds = [float("-inf")]
+        thresholds = [] if self.config.confidence() else [float("-inf")]
 
         if self.config.confidence():
             labels, confidences = self.auroc_score_labels(gt_labels, llm_labels)
