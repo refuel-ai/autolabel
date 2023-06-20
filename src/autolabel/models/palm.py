@@ -10,13 +10,19 @@ from autolabel.models import BaseModel
 from autolabel.configs import AutolabelConfig
 from autolabel.cache import BaseCache
 
+from tenacity import (
+    before_sleep_log,
+    retry,
+    stop_after_attempt,
+    wait_exponential,
+)
+
 logger = logging.getLogger(__name__)
 
 
 class PaLMLLM(BaseModel):
     SEP_REPLACEMENT_TOKEN = "@@"
     CHAT_ENGINE_MODELS = ["chat-bison@001"]
-    NUM_TRIES = 5
 
     DEFAULT_MODEL = "text-bison@001"
     DEFAULT_PARAMS = {"temperature": 0}
@@ -51,6 +57,15 @@ class PaLMLLM(BaseModel):
         else:
             self.llm = VertexAI(model_name=self.model_name, **self.model_params)
 
+    @retry(
+        reraise=True,
+        stop=stop_after_attempt(5),
+        wait=wait_exponential(multiplier=1, min=2, max=10),
+        before_sleep=before_sleep_log(logger, "WARNING"),
+    )
+    def _label_with_retry(self, prompts: List[str]) -> LLMResult:
+        return self.llm.generate(prompts)
+
     def _label(self, prompts: List[str]) -> LLMResult:
         for prompt in prompts:
             if self.SEP_REPLACEMENT_TOKEN in prompt:
@@ -70,17 +85,16 @@ class PaLMLLM(BaseModel):
             # We might consider breaking this up into human vs system message in future
             prompts = [[HumanMessage(content=prompt)] for prompt in prompts]
 
-        for _ in range(self.NUM_TRIES):
-            try:
-                result = self.llm.generate(prompts)
-                for generations in result.generations:
-                    for generation in generations:
-                        generation.text = generation.text.replace(
-                            self.SEP_REPLACEMENT_TOKEN, "\n"
-                        )
-                return result
-            except Exception as e:
-                logger.error(f"Error generating from LLM: {e}.")
+        try:
+            result = self._label_with_retry(prompts)
+            for generations in result.generations:
+                for generation in generations:
+                    generation.text = generation.text.replace(
+                        self.SEP_REPLACEMENT_TOKEN, "\n"
+                    )
+            return result
+        except Exception as e:
+            logger.error(f"Error generating from LLM: {e}.")
         generations = [[Generation(text="")] for _ in prompts]
         return LLMResult(generations=generations)
 
