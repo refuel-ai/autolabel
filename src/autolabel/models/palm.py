@@ -61,7 +61,7 @@ class PaLMLLM(BaseModel):
         reraise=True,
         stop=stop_after_attempt(5),
         wait=wait_exponential(multiplier=1, min=2, max=10),
-        before_sleep=before_sleep_log(logger, "WARNING"),
+        before_sleep=before_sleep_log(logger, logging.WARNING),
     )
     def _label_with_retry(self, prompts: List[str]) -> LLMResult:
         return self.llm.generate(prompts)
