@@ -91,8 +91,11 @@ class BaseTask(ABC):
                 TaskType.CLASSIFICATION,
                 TaskType.ENTITY_MATCHING,
             ]:
-                logger.warning(f"LLM response is not in the labels list")
-                successfully_labeled = llm_label in self.config.labels_list()
+                if llm_label in self.config.labels_list():
+                    successfully_labeled = True
+                else:
+                    logger.warning(f"LLM response is not in the labels list")
+                    successfully_labeled = False
             else:
                 successfully_labeled = True
 
