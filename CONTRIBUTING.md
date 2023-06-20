@@ -29,6 +29,9 @@ pre-commit install
 python -c "from autolabel import LabelingAgent"
 ```
 
+Here is a quick video that walks through the steps:
+![](https://github.com/refuel-ai/autolabel/assets/1568137/cd313e3d-ffa7-43a3-a969-a2fef8c13395)
+
 ## Code contribution guidelines
 
 Please follow a ["fork and pull request"](https://docs.github.com/en/get-started/quickstart/contributing-to-projects) workflow for submitting changes to the repository.
