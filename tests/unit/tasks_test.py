@@ -1,3 +1,4 @@
+import copy
 import json
 
 from autolabel.tasks import (
@@ -39,7 +40,7 @@ def test_classification_construct_prompt():
         assert example["example"] in prompt
         assert example["label"] in prompt
 
-    new_config = BANKING_CONFIG.copy()
+    new_config = copy.deepcopy(BANKING_CONFIG)
     del new_config["prompt"]["few_shot_selection"]
     new_config = AutolabelConfig(new_config)
     task = ClassificationTask(config=new_config)
@@ -50,8 +51,10 @@ def test_classification_construct_prompt():
 
 
 def test_classification_parse_llm_response():
-    config = AutolabelConfig(BANKING_CONFIG)
-    task = ClassificationTask(config=config)
+    new_config = copy.deepcopy(BANKING_CONFIG)
+    new_config["prompt"]["labels"].append("label-true")
+    new_config = AutolabelConfig(new_config)
+    task = ClassificationTask(config=new_config)
 
     input = {"example": "Here is an example", "label": "label-true"}
     prompt = "This is a prompt"
@@ -164,7 +167,7 @@ def test_entity_matching_construct_prompt():
         assert example["Title_entity1"] in prompt
         assert example["label"] in prompt
 
-    new_config = WALMART_AMAZON_CONFIG.copy()
+    new_config = copy.deepcopy(WALMART_AMAZON_CONFIG)
     del new_config["prompt"]["few_shot_selection"]
     new_config = AutolabelConfig(new_config)
     task = EntityMatchingTask(config=new_config)
@@ -174,8 +177,10 @@ def test_entity_matching_construct_prompt():
 
 
 def test_entity_matching_parse_llm_response():
-    config = AutolabelConfig(WALMART_AMAZON_CONFIG)
-    task = EntityMatchingTask(config=config)
+    new_config = copy.deepcopy(WALMART_AMAZON_CONFIG)
+    new_config = AutolabelConfig(new_config)
+    new_config["prompt"]["labels"].append("not duplicate - 1")
+    task = EntityMatchingTask(config=new_config)
 
     input = {
         "Title_entity1": "lexmark extra high yield return pgm print cartridge - magenta",
@@ -350,3 +355,45 @@ def test_question_answering_eval():
             assert metric.value[0] == 0.8
         elif metric.metric_type == Metric.SUPPORT:
             assert metric.value[0] == 4
+
+
+def test_classification_labels_not_in_labels_list():
+    config = AutolabelConfig(BANKING_CONFIG)
+    task = ClassificationTask(config=config)
+
+    input = {"example": "Here is an example", "label": "not-in-labels-list"}
+    prompt = "This is a prompt"
+
+    label = "This is the thing we want to test.\nnot-in-labels-list"
+    response = Generation(text=label)
+    parsed = task.parse_llm_response(response, input, prompt)
+    assert parsed.label == "not-in-labels-list"
+    assert parsed.successfully_labeled == False
+    assert parsed.raw_response == label
+
+
+def test_entity_matching_label_not_in_labels_list():
+    config = AutolabelConfig(WALMART_AMAZON_CONFIG)
+    task = EntityMatchingTask(config=config)
+
+    input = {
+        "Title_entity1": "lexmark extra high yield return pgm print cartridge - magenta",
+        "Category_entity1": "printers",
+        "Brand_entity1": "lexmark",
+        "ModelNo_entity1": "c782u1mg",
+        "Price_entity1": "214.88",
+        "Title_entity2": "lexmark 18c1428 return program print cartridge black",
+        "Category_entity2": "inkjet printer ink",
+        "Brand_entity2": "lexmark",
+        "ModelNo_entity2": "18c1428",
+        "Price_entity2": "19.97",
+        "label": "not-in-labels-list",
+    }
+    prompt = "This is a prompt"
+
+    label = "This is the thing we want to test.\nnot-in-labels-list"
+    response = Generation(text=label)
+    parsed = task.parse_llm_response(response, input, prompt)
+    assert parsed.label == "not-in-labels-list"
+    assert parsed.successfully_labeled == False
+    assert parsed.raw_response == label

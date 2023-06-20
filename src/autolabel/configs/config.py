@@ -101,7 +101,7 @@ class AutolabelConfig(BaseConfig):
     def task_guidelines(self) -> str:
         return self._prompt_config.get(self.TASK_GUIDELINE_KEY, "")
 
-    def labels_list(self) -> str:
+    def labels_list(self) -> List[str]:
         """Returns a list of valid labels"""
         return self._prompt_config.get(self.VALID_LABELS_KEY, [])
 
