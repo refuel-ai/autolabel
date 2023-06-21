@@ -66,17 +66,21 @@ class LabelingAgent:
             output_name: custom name of output CSV file
             start_index: skips annotating [0, start_index)
         """
+        dataset_loader = DatasetLoader(dataset, self.config, max_items, start_index)
 
         self.db.initialize()
         self.dataset = self.db.initialize_dataset(
-            dataset, self.config, start_index, max_items
+            dataset_loader.dat, self.config, start_index, max_items
         )
         self.task_object = self.db.initialize_task(self.config)
-        csv_file_name = (
-            output_name if output_name else f"{dataset.replace('.csv','')}_labeled.csv"
-        )
-
-        dataset_loader = DatasetLoader(dataset, self.config, max_items, start_index)
+        if isinstance(dataset, str):
+            csv_file_name = (
+                output_name
+                if output_name
+                else f"{dataset.replace('.csv','')}_labeled.csv"
+            )
+        else:
+            csv_file_name = "labeled.csv"
 
         # Initialize task run and check if it already exists
         self.task_run = self.db.get_task_run(self.task_object.id, self.dataset.id)
