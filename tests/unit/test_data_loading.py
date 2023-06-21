@@ -9,62 +9,62 @@ config_path = "tests/assets/banking/config_banking.json"
 
 def test_read_csv():
     agent = LabelingAgent(config=config_path)
-    data = DatasetLoader.read_csv(csv_path, agent.config)
+    dataset_loader = DatasetLoader(csv_path, agent.config)
     # test return types
-    assert isinstance(data, tuple)
-    assert isinstance(data[0], DataFrame)
-    assert isinstance(data[1], list)
-    assert isinstance(data[2], list) or data[2] is None
+    assert isinstance(dataset_loader, DatasetLoader)
+    assert isinstance(dataset_loader.dat, DataFrame)
+    assert isinstance(dataset_loader.inputs, list)
+    assert (
+        isinstance(dataset_loader.gt_labels, list) or dataset_loader.gt_labels is None
+    )
     # test reading_csv with max_items = 5, start_index = 5
-    data_max_5_index_5 = DatasetLoader.read_csv(
+    dataset_loader_max_5_index_5 = DatasetLoader(
         csv_path, agent.config, max_items=5, start_index=5
     )
-    assert data_max_5_index_5[0].shape[0] == 5
-    assert data_max_5_index_5[0].iloc[0].equals(data[0].iloc[5])
-    assert len(data_max_5_index_5[1]) == 5
-    assert len(data_max_5_index_5[2]) == 5
+    assert dataset_loader_max_5_index_5.dat.shape[0] == 5
+    assert dataset_loader_max_5_index_5.dat.iloc[0].equals(dataset_loader.dat.iloc[5])
+    assert len(dataset_loader_max_5_index_5.inputs) == 5
+    assert len(dataset_loader_max_5_index_5.gt_labels) == 5
 
 
 def test_read_dataframe():
     agent = LabelingAgent(config=config_path)
-    df, _, _ = DatasetLoader.read_csv(csv_path, agent.config)
-    data = DatasetLoader.read_dataframe(df, agent.config)
+    df = DatasetLoader(csv_path, agent.config).dat
+    dataset_loader = DatasetLoader(df, agent.config)
     # test return types
-    assert isinstance(data, tuple)
-    assert isinstance(data[0], DataFrame)
-    assert isinstance(data[1], list)
-    assert isinstance(data[2], list) or data[2] is None
+    assert isinstance(dataset_loader, DatasetLoader)
+    assert isinstance(dataset_loader.dat, DataFrame)
+    assert isinstance(dataset_loader.inputs, list)
+    assert (
+        isinstance(dataset_loader.gt_labels, list) or dataset_loader.gt_labels is None
+    )
     # confirm data matches
-    assert df.equals(data[0])
+    assert df.equals(dataset_loader.dat)
     # test loading data with max_items = 5, start_index = 5
-    data_max_5_index_5 = DatasetLoader.read_dataframe(
+    dataset_loader_max_5_index_5 = DatasetLoader(
         df, agent.config, max_items=5, start_index=5
     )
-    assert data_max_5_index_5[0].shape[0] == 5
-    assert data_max_5_index_5[0].iloc[0].equals(data[0].iloc[5])
-    assert len(data_max_5_index_5[1]) == 5
-    assert len(data_max_5_index_5[2]) == 5
+    assert dataset_loader_max_5_index_5.dat.shape[0] == 5
+    assert dataset_loader_max_5_index_5.dat.iloc[0].equals(dataset_loader.dat.iloc[5])
+    assert len(dataset_loader_max_5_index_5.inputs) == 5
+    assert len(dataset_loader_max_5_index_5.gt_labels) == 5
 
 
 def test_read_jsonl():
     agent = LabelingAgent(config=config_path)
-    data = DatasetLoader.read_jsonl(jsonl_path, agent.config)
+    dataset_loader = DatasetLoader(jsonl_path, agent.config)
     # test return types
-    assert isinstance(data, tuple)
-    assert isinstance(data[0], DataFrame)
-    assert isinstance(data[1], list)
-    assert isinstance(data[2], list) or data[2] is None
+    assert isinstance(dataset_loader, DatasetLoader)
+    assert isinstance(dataset_loader.dat, DataFrame)
+    assert isinstance(dataset_loader.inputs, list)
+    assert (
+        isinstance(dataset_loader.gt_labels, list) or dataset_loader.gt_labels is None
+    )
     # test reading_csv with max_items = 5, start_index = 5
-    data_max_5_index_5 = DatasetLoader.read_jsonl(
+    dataset_loader_max_5_index_5 = DatasetLoader(
         jsonl_path, agent.config, max_items=5, start_index=5
     )
-    assert data_max_5_index_5[0].shape[0] == 5
-    assert data_max_5_index_5[0].iloc[0].equals(data[0].iloc[5])
-    assert len(data_max_5_index_5[1]) == 5
-    assert len(data_max_5_index_5[2]) == 5
-
-
-def test_read_file():
-    agent = LabelingAgent(config=config_path)
-    csv_data, _, _ = DatasetLoader.read_file(csv_path, agent.config)
-    jsonl_data, _, _ = DatasetLoader.read_file(jsonl_path, agent.config)
+    assert dataset_loader_max_5_index_5.dat.shape[0] == 5
+    assert dataset_loader_max_5_index_5.dat.iloc[0].equals(dataset_loader.dat.iloc[5])
+    assert len(dataset_loader_max_5_index_5.inputs) == 5
+    assert len(dataset_loader_max_5_index_5.gt_labels) == 5
