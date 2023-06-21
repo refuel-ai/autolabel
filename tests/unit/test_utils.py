@@ -2,7 +2,6 @@
 
 import tempfile
 import os
-from unittest import mock
 from autolabel import utils
 from rich.console import Console
 
