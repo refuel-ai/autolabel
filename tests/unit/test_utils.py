@@ -18,9 +18,10 @@ def generate_tempfile_with_content(input_url: str) -> None:
         tmp_file.flush()
 
 
-@mock.patch("wget.download", side_effect=generate_tempfile_with_content)
-def test_get_data(mock_download) -> None:
+def test_get_data(mocker) -> None:
     """Test Get Data"""
+    mocker.patch("wget.download", side_effect=generate_tempfile_with_content)
+
     dataset_name = "banking"
 
     def assert_text_remove(file_name_: str, text: str):
