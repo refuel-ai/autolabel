@@ -1,4 +1,5 @@
 import hashlib
+import os
 import json
 import logging
 from string import Formatter
@@ -250,7 +251,26 @@ def print_table(
     console.print(table)
 
 
-def get_data(dataset_name: str):
+def get_data(dataset_name: str, force: bool = False):
+    """Download Datasets
+
+    Args:
+        dataset_name (str): dataset name
+        force (bool, optional): if set to True, downloads and overwrites the local test and seed files
+            if false then downloads onlyif the files are not present locally
+    """
+
+    def download(url: str) -> None:
+        """Downloads the data given an url"""
+        file_name = os.path.basename(url)
+        if force and os.path.exists(file_name):
+            print(f"File {file_name} exists. Removing")
+            os.remove(file_name)
+
+        if not os.path.exists(file_name):
+            print(f"Downloading example dataset from {url} to {file_name}...")
+            wget.download(url)
+
     if dataset_name not in EXAMPLE_DATASETS:
         logger.error(
             f"{dataset_name} not in list of available datasets: {str(EXAMPLE_DATASETS)}. Exiting..."
@@ -258,13 +278,9 @@ def get_data(dataset_name: str):
         return
     seed_url = DATASET_URL.format(dataset=dataset_name, partition="seed")
     test_url = DATASET_URL.format(dataset=dataset_name, partition="test")
-
     try:
         if dataset_name not in NO_SEED_DATASET:
-            print('Downloading seed example dataset to "seed.csv"...')
-            wget.download(seed_url)
-            print("\n")
-        print('Downloading test dataset to "test.csv"...')
-        wget.download(test_url)
+            download(seed_url)
+        download(test_url)
     except Exception as e:
         logger.error(f"Error downloading dataset: {e}")
