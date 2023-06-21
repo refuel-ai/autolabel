@@ -1,7 +1,67 @@
+"""Test utils"""
+
+import tempfile
+import os
+from unittest import mock
 from autolabel import utils
 from rich.console import Console
 
 console = Console()
+
+
+def generate_tempfile_with_content(input_url: str) -> None:
+    """Generate a Temporary file with dummy content"""
+    with tempfile.NamedTemporaryFile(dir="./", delete=False) as tmp_file:
+        file_name = os.path.basename(input_url)
+        os.rename(tmp_file.name, file_name)
+        tmp_file.write(f"{input_url}".encode("utf-8"))
+        tmp_file.flush()
+
+
+@mock.patch("wget.download", side_effect=generate_tempfile_with_content)
+def test_get_data(mock_download) -> None:
+    """Test Get Data"""
+    dataset_name = "banking"
+
+    def assert_text_remove(file_name_: str, text: str):
+        """Assert text and remove temp file
+
+        Args:
+            file_name_ (str): Temporary file name
+            text (str): text to check
+        """
+        with open(file_name_, "r") as tmp_file_read:
+            file_content = tmp_file_read.read()
+            assert file_content == text
+        os.remove(file_name)
+
+    # The below case handles the case when the force argument is not provided
+    # We create two dummy files and insert text to it.
+    # Since the files are already present download should not happen
+    for file_name in ["seed.csv", "test.csv"]:
+        generate_tempfile_with_content(f"temp_download_without_force/{file_name}")
+
+    utils.get_data(dataset_name=dataset_name)
+
+    for file_name in ["seed.csv", "test.csv"]:
+        assert_text_remove(file_name, text=f"temp_download_without_force/{file_name}")
+
+    # The below case handles the case when the force argument is provided
+    # We create two dummy files and insert text to it.
+    # Despite the files are already present, the files are deleted and new files
+    # are downloaded. The below case assert that the contents match the new files.
+    for file_name in ["seed.csv", "test.csv"]:
+        generate_tempfile_with_content(f"temp_download_with_force/{file_name}")
+
+    utils.get_data(dataset_name=dataset_name, force=True)
+
+    for file_name in ["seed.csv", "test.csv"]:
+        assert_text_remove(
+            file_name,
+            text=utils.DATASET_URL.format(
+                dataset=dataset_name, partition=file_name[0:-4]
+            ),
+        )
 
 
 def test_maybe_round():
