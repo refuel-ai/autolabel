@@ -12,7 +12,16 @@ from autolabel.cache import BaseCache
 
 
 class OpenAILLM(BaseModel):
-    CHAT_ENGINE_MODELS = ["gpt-3.5-turbo", "gpt-4"]
+    CHAT_ENGINE_MODELS = [
+        "gpt-3.5-turbo",
+        "gpt-3.5-turbo-0613",
+        "gpt-3.5-turbo-16k",
+        "gpt-3.5-turbo-16k-0613",
+        "gpt-4",
+        "gpt-4-0613",
+        "gpt-4-32k",
+        "gpt-4-32k-0613",
+    ]
     MODELS_WITH_TOKEN_PROBS = ["text-curie-001", "text-davinci-003"]
 
     # Default parameters for OpenAILLM
@@ -31,14 +40,26 @@ class OpenAILLM(BaseModel):
     COST_PER_PROMPT_TOKEN = {
         "text-davinci-003": 0.02 / 1000,
         "text-curie-001": 0.002 / 1000,
-        "gpt-3.5-turbo": 0.002 / 1000,
+        "gpt-3.5-turbo": 0.0015 / 1000,
+        "gpt-3.5-turbo-0613": 0.0015 / 1000,
+        "gpt-3.5-turbo-16k": 0.003 / 1000,
+        "gpt-3.5-turbo-16k-0613": 0.003 / 1000,
         "gpt-4": 0.03 / 1000,
+        "gpt-4-0613": 0.03 / 1000,
+        "gpt-4-32k": 0.06 / 1000,
+        "gpt-4-32k-0613": 0.06 / 1000,
     }
     COST_PER_COMPLETION_TOKEN = {
         "text-davinci-003": 0.02 / 1000,
         "text-curie-001": 0.002 / 1000,
         "gpt-3.5-turbo": 0.002 / 1000,
-        "gpt-4": 0.06 / 1000,  # $0.06 per 1000 tokens in response
+        "gpt-3.5-turbo-0613": 0.002 / 1000,
+        "gpt-3.5-turbo-16k": 0.004 / 1000,
+        "gpt-3.5-turbo-16k-0613": 0.004 / 1000,
+        "gpt-4": 0.06 / 1000,
+        "gpt-4-0613": 0.06 / 1000,
+        "gpt-4-32k": 0.12 / 1000,
+        "gpt-4-32k-0613": 0.12 / 1000,
     }
 
     @cached_property

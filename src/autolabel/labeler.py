@@ -4,7 +4,6 @@ import logging
 
 import numpy as np
 import pandas as pd
-from loguru import logger
 from rich import print as pprint
 from rich.console import Console
 from rich.prompt import Confirm
@@ -23,14 +22,7 @@ from autolabel.tasks import TaskFactory
 from autolabel.utils import track, track_with_stats, print_table, maybe_round
 
 console = Console()
-
-LOG_LEVEL_TO_INT = {
-    "DEBUG": logging.DEBUG,
-    "INFO": logging.INFO,
-    "WARNING": logging.WARNING,
-    "ERROR": logging.ERROR,
-    "CRITICAL": logging.CRITICAL,
-}
+logger = logging.getLogger(__name__)
 
 COST_TABLE_STYLES = {
     "parameter": "magenta bold",
@@ -46,19 +38,9 @@ class LabelingAgent:
     def __init__(
         self,
         config: Union[str, Dict],
-        log_level: Optional[str] = "INFO",
         cache: Optional[bool] = True,
     ) -> None:
-        # Set global log level for python logger
-        try:
-            logging.basicConfig(level=LOG_LEVEL_TO_INT[log_level.upper()], force=True)
-        except KeyError as e:
-            raise ValueError(
-                f"Invalid log level: {log_level}. Must be one of {list(LOG_LEVEL_TO_INT.keys())}"
-            )
         self.db = StateManager()
-        logger.remove()
-        logger.add(sys.stdout, level=log_level)
         self.cache = SQLAlchemyCache() if cache else None
 
         self.config = AutolabelConfig(config)
@@ -140,7 +122,7 @@ class LabelingAgent:
         for current_index in track_with_stats(
             indices,
             postfix_dict,
-            total=len(dataset_loader.inputs),
+            total=len(dataset_loader.inputs) - current_index,
             advance=self.CHUNK_SIZE,
             console=console,
         ):
@@ -172,7 +154,7 @@ class LabelingAgent:
                 )
                 for i in range(len(chunk)):
                     annotation = LLMAnnotation(
-                        successfully_labeled="No",
+                        successfully_labeled=False,
                         label=self.task.NULL_LABEL_TOKEN,
                         raw_response="",
                         curr_sample=chunk[i],
@@ -399,7 +381,7 @@ class LabelingAgent:
                 else:
                     print(f"Metric: {m.name}: {m.value}")
             print_table(table, console=console, default_style=METRIC_TABLE_STYLE)
-        pprint(f"{len(llm_labels)} examples have been labeled so far.")
+        pprint(f"{task_run.current_index} examples labeled so far.")
         if len(llm_labels) > 0:
             console.rule("Last Annotated Example")
             pprint("[bold blue]Prompt[/bold blue]: ", end="")

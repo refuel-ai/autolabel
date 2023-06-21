@@ -10,9 +10,10 @@ from autolabel.schema import LLMAnnotation, Metric, MetricResult
 from autolabel.tasks import BaseTask
 from autolabel.utils import get_format_variables
 
+import json
+
 
 class ClassificationTask(BaseTask):
-
     DEFAULT_OUTPUT_GUIDELINES = (
         'You will return the answer with just one element: "the correct label"'
     )
@@ -24,6 +25,9 @@ class ClassificationTask(BaseTask):
         super().__init__(config)
 
     def construct_prompt(self, input: Dict, examples: List) -> str:
+        # Copy over the input so that we can modify it
+        input = input.copy()
+
         # prepare task guideline
         labels_list = self.config.labels_list()
         num_labels = len(labels_list)
@@ -33,12 +37,16 @@ class ClassificationTask(BaseTask):
 
         # prepare seed examples
         example_template = self.config.example_template()
+        label_column = self.config.label_column()
         fmt_examples = []
         for eg in examples:
-            fmt_examples.append(example_template.format_map(defaultdict(str, eg)))
+            eg_copy = eg.copy()
+            # If chain of thought is enabled
+            if label_column and self.config.chain_of_thought():
+                eg_copy[label_column] = json.dumps({"label": eg[label_column]})
+            fmt_examples.append(example_template.format_map(defaultdict(str, eg_copy)))
 
         # populate the current example in the prompt
-        label_column = self.config.label_column()
         if label_column:
             input[label_column] = ""
 
@@ -123,14 +131,14 @@ class ClassificationTask(BaseTask):
 
         eval_metrics_map = {
             Metric.SUPPORT: [],
-            Metric.THRESHOLD: [],
             Metric.ACCURACY: [],
             Metric.COMPLETION_RATE: [],
         }
         eval_metrics = []
-        thresholds = [float("-inf")]
+        thresholds = []
 
         if self.config.confidence():
+            eval_metrics_map[Metric.THRESHOLD] = []
             labels, confidences = self.auroc_score_labels(gt_labels, llm_labels)
             value, meaningful_thresholds = ConfidenceCalculator.compute_auroc(
                 labels, confidences
@@ -143,6 +151,8 @@ class ClassificationTask(BaseTask):
                     value=value,
                 )
             )
+        else:
+            thresholds.append(float("-inf"))
 
         for index, threshold in enumerate(thresholds):
             (
@@ -163,7 +173,9 @@ class ClassificationTask(BaseTask):
                 )
             else:
                 eval_metrics_map[Metric.ACCURACY].append(0.0)
-            eval_metrics_map[Metric.THRESHOLD].append(threshold)
+
+            if self.config.confidence():
+                eval_metrics_map[Metric.THRESHOLD].append(threshold)
 
         eval_metrics.extend(
             [

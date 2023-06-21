@@ -9,12 +9,11 @@ This page will walk you through your very first labeling task using Refuel Autol
 
 Autolabel is available on PyPI and can be installed by running:
 ``` bash
-pip install refuel-autolabel
+pip install 'refuel-autolabel[openai]'
 ```
 
 Separate from the Autolabel library, you'll also need to install an integration with your favorite LLM provider. In the example below, we'll be using OpenAI, so you'll need to install the OpenAI SDK and set your API key as an environment variable:
 ```bash
-pip install openai
 export OPENAI_API_KEY="<your-openai-key>"
 ```
 
@@ -53,29 +52,49 @@ First, create a JSON file that specifies:
 config = {
     "task_name": "MovieSentimentReview",
     "task_type": "classification",
+    "dataset": {
+        "label_column": "label"
+    },
     "model": {
         "provider": "openai",
         "name": "gpt-3.5-turbo"
     },
     "prompt": {
-        "task_guidelines": "You are an expert at analyzing the sentiment of moview reviews. Your job is to classify the provided movie review as positive or negative.",
+        "task_guidelines": "You are an expert at analyzing the sentiment of movie reviews. Your job is to classify the provided movie review into one of the following labels: {labels}",
         "labels": [
             "positive",
-            "negative"
-        ]
+            "negative",
+            "neutral",
+        ],
+        "few_shot_examples": [
+            {
+                "example": "I got a fairly uninspired stupid film about how human industry is bad for nature.",
+                "label": "negative"
+            },
+            {
+                "example": "I loved this movie. I found it very heart warming to see Adam West, Burt Ward, Frank Gorshin, and Julie Newmar together again.",
+                "label": "positive"
+            },
+            {
+                "example": "This movie will be played next week at the Chinese theater.",
+                "label": "neutral"
+            }
+        ],
+        "example_template": "Exanple: {example}\Label: {label}"
     }
 }
 ```
 
 ### Preview the labeling against your dataset
 
-First import `autolabel`, create a `LabelingAgent` object and then run the `plan` command against the dataset (available [here](https://github.com/refuel-ai/autolabel/blob/main/docs/assets/movie_reviews.csv)):
+First import `autolabel`, create a `LabelingAgent` object and then run the `plan` command against the dataset (available [here](https://docs.refuel.ai/guide/resources/refuel_datasets/) and can be downloaded through the `autolabel.get_data` function):
 
 ```python
-from autolabel import LabelingAgent
+from autolabel import LabelingAgent, get_data
+get_data('movie_reviews')
 
 agent = LabelingAgent(config)
-agent.plan('docs/assets/movie_reviews.csv')
+agent.plan('test.csv')
 ```
 
 This produces:

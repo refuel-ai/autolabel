@@ -2,7 +2,7 @@ import json
 import os
 import requests
 from langchain.schema import LLMResult, Generation
-from loguru import logger
+import logging
 from typing import List, Optional
 
 
@@ -18,15 +18,23 @@ from tenacity import (
     wait_exponential,
 )
 
+logger = logging.getLogger(__name__)
+
 
 class RefuelLLM(BaseModel):
+    DEFAULT_PARAMS = {
+        "max_new_tokens": 128,
+        "temperature": 0.0,
+    }
+
     def __init__(self, config: AutolabelConfig, cache: BaseCache = None) -> None:
         super().__init__(config, cache)
         # populate model name
         # This is unused today, but in the future could
         # be used to decide which refuel model is queried
         self.model_name = config.model_name()
-        self.model_params = {}
+        model_params = config.model_params()
+        self.model_params = {**self.DEFAULT_PARAMS, **model_params}
 
         # initialize runtime
         self.BASE_API = "https://refuel-llm.refuel.ai/"
@@ -44,11 +52,11 @@ class RefuelLLM(BaseModel):
         reraise=True,
         stop=stop_after_attempt(5),
         wait=wait_exponential(multiplier=1, min=2, max=10),
-        before_sleep=before_sleep_log(logger, "WARNING"),
+        before_sleep=before_sleep_log(logger, logging.WARNING),
     )
     def _label_with_retry(self, prompt: str) -> requests.Response:
         payload = {
-            "data": {"model_input": prompt},
+            "data": {"model_input": prompt, "model_params": {**self.model_params}},
             "task": "generate",
         }
         headers = {"refuel_api_key": self.REFUEL_API_KEY}

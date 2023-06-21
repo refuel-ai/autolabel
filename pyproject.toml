@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "refuel-autolabel"
-version = "0.0.1"
+version = "0.0.4"
 description = "Library for LLM powered labeling"
 readme = "README.md"
 authors = [{ name = "Refuel.ai", email = "support@refuel.ai" }]
@@ -22,7 +22,7 @@ dependencies = [
     "numpy >= 1.23.0",
     "requests >= 2.27.0",
     "datasets >= 2.7.0",
-    "langchain >= 0.0.190",
+    "langchain >= 0.0.194",
     "nervaluate >= 0.1.8",
     "pandas >= 1.3.0",
     "scikit-learn >= 1.0.0",
@@ -33,7 +33,8 @@ dependencies = [
     "scipy >= 1.10.1",
     "pydantic >= 1.10.9",
     "torch >= 1.10.0",
-    "matplotlib >= 3.5.0"
+    "matplotlib >= 3.5.0",
+    "wget >= 3.2"
 ]
 requires-python = ">=3.6"
 
@@ -43,17 +44,34 @@ dev = [
     "bumpver",
     "pip-tools",
     "pytest",
+    "pytest-mock",
     "pre-commit"
 ]
 openai = [
     "openai >= 0.27.4",
-    "tiktoken >= 0.3.3",
+    "tiktoken >= 0.3.3"
 ]
 anthropic = [
     "anthropic >= 0.2.6"
 ]
 huggingface = [
     "transformers >= 4.25.0"
+]
+google = [
+    "google-cloud-aiplatform>=1.25.0"
+]
+all = [
+    "black",
+    "bumpver",
+    "pip-tools",
+    "pytest",
+    "pytest-mock",
+    "pre-commit",
+    "openai >= 0.27.4",
+    "tiktoken >= 0.3.3",
+    "anthropic >= 0.2.6",
+    "transformers >= 4.25.0",
+    "google-cloud-aiplatform>=1.25.0"
 ]
 
 [project.urls]

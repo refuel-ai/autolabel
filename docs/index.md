@@ -17,7 +17,7 @@ You can get started with Autolabel by simpling bringing the dataset you want to 
 
 * [Installation and your first labeling task](guide/overview/getting-started): Steps to install Autolabel and run sentiment analysis for movie reviews using OpenAI's `gpt-3.5-turbo`. 
 * [Classification tutorial](guide/overview/tutorial-classification.md): A deeper dive into how Autolabel can be used to detect toxic comments at 95%+ accuracy. 
-* [Here] () is a sample notebook that provides additional examples on using Autolabel for different NLP tasks.
+* [Here](https://github.com/refuel-ai/autolabel/tree/main/examples) are more examples with sample notebooks that show how Autolabel can be used for different NLP tasks.
 
 ## Resources
 

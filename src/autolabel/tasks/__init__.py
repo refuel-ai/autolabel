@@ -1,5 +1,5 @@
 from typing import Dict
-from loguru import logger
+import logging
 
 from .base import BaseTask
 from .classification import ClassificationTask
@@ -16,6 +16,8 @@ TASK_TYPE_TO_IMPLEMENTATION: Dict[TaskType, BaseTask] = {
     TaskType.QUESTION_ANSWERING: QuestionAnsweringTask,
     TaskType.ENTITY_MATCHING: EntityMatchingTask,
 }
+
+logger = logging.getLogger(__name__)
 
 
 class TaskFactory:

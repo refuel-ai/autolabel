@@ -2,6 +2,8 @@ Like most LLM tasks, a critical part of improving LLM performance in autolabelin
 
 Consider the following example of refining a prompt used for a classification task on the civil-comments dataset. Each labeling run below included 500 examples and used the same LLM: gpt-3.5-turbo and used a fixed-shot example selection strategy with 4 seed examples.
 
+[![open in colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/1IVHl2h5mxiFs1b5AwTtUKVqs0MXKXX8g#scrollTo=IYj0ijdKylNu)
+
 First attempt:
 ```json
 config = {
@@ -22,7 +24,7 @@ config = {
             "toxic",
             "not toxic"
         ],
-        "few_shot_examples": "../data/civil_comments_seed.csv",
+        "few_shot_examples": "../examples/civil_comments/seed.csv",
         "few_shot_selection": "fixed",
         "few_shot_num": 4,
         "example_template": "Input: {example}\nOutput: {label}"
@@ -34,7 +36,7 @@ config = {
 from autolabel import LabelingAgent
 
 agent = LabelingAgent(config=config)
-labels, df, metrics_list = agent.run('../data/civil_comments_test.csv', max_items = 100)
+labels, df, metrics_list = agent.run('../examples/civil_comments/test.csv', max_items = 100)
 ```
 
 Accuracy: 68%
@@ -64,7 +66,7 @@ We can replace the prompt in the above config with the following updated guideli
 
 ```py
 agent = LabelingAgent(config=config)
-labels, df, metrics_list = agent.run('../data/civil_comments_test.csv', max_items = 100)
+labels, df, metrics_list = agent.run('../examples/civil_comments/test.csv', max_items = 100)
 ```
 
 Accuracy: 74%

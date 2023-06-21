@@ -1,5 +1,5 @@
 from .base import Base
-from loguru import logger
+import logging
 from pydantic import BaseModel
 from sqlalchemy import Column, Integer, ForeignKey, JSON, DateTime
 from sqlalchemy.sql import func
@@ -7,6 +7,8 @@ from sqlalchemy.orm import relationship
 import json
 
 from autolabel.schema import LLMAnnotation
+
+logger = logging.getLogger(__name__)
 
 
 class AnnotationModel(Base):

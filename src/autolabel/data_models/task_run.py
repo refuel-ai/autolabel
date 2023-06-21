@@ -1,6 +1,6 @@
 from .base import Base
 import uuid
-from loguru import logger
+import logging
 from pydantic import BaseModel
 from sqlalchemy import Column, Integer, String, ForeignKey, Text, DateTime
 from sqlalchemy.sql import func
@@ -8,6 +8,8 @@ from sqlalchemy.orm import relationship
 import json
 
 from autolabel.schema import TaskRun
+
+logger = logging.getLogger(__name__)
 
 
 class TaskRunModel(Base):

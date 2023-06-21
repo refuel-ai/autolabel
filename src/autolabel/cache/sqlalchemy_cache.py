@@ -7,7 +7,9 @@ from autolabel.cache import BaseCache
 from typing import List
 from langchain.schema import Generation
 from autolabel.data_models import CacheEntryModel
-from loguru import logger
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 class SQLAlchemyCache(BaseCache):

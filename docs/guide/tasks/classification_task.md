@@ -2,7 +2,7 @@
 
 Text classification is a fundamental task in natural language processing (NLP) that involves categorizing textual data into predefined classes or categories. It is employed in various applications such as sentiment analysis, spam detection, topic classification, intent recognition, and document categorization and can be used in any setting where there are well defined categories which the LLM can understand and put an input into.
 
-## Example
+## Example [![open in colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/1x_CTOBG8uKV6O4wxsqWfaBL6G88szrDM)
 
 ### Dataset
 
@@ -81,7 +81,7 @@ config = {
             "apple_pay_or_google_pay",
             ...
         ],
-        "few_shot_examples": "data/banking_seed.csv",
+        "few_shot_examples": "../examples/banking/seed.csv",
         "few_shot_selection": "semantic_similarity",
         "few_shot_num": 5,
         "example_template": "Example: {example}\nOutput: {label}"
@@ -120,3 +120,6 @@ Actual Cost: 0.0058579999999999995
 **Accuracy** - We use accuracy as the main metric for evaluating classification tasks. This is done by checking the fraction of examples which are given the correct label in the training dataset.
 
 **Completion Rate** - There can be errors while running the LLM related to labeling for eg. the LLM may give a label which is not in the label list or provide an answer which is not parsable by the library. In this cases, we mark the example as not labeled successfully. The completion rate refers to the proportion of examples that were labeled successfully.
+
+### Notebook
+You can find a Jupyter notebook with code that you can run on your own [here](https://github.com/refuel-ai/autolabel/blob/main/examples/banking/example_banking.ipynb)

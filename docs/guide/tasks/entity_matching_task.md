@@ -2,7 +2,7 @@
 
 Entity matching in natural language processing (NLP) is a task that involves identifying and matching entities from different sources or datasets based on various fields or attributes. The goal is to determine if two entities refer to the same real-world object or entity, even if they are described differently or come from different data sources.
 
-## Example
+## Example [![open in colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/1kOoUhUY8rmISxVpQJETQ3Xc9TLrNWiRn#scrollTo=c93fae0b)
 
 ### Dataset
 
@@ -36,7 +36,11 @@ config = {
         "params": {}
     },
     "prompt": {
-        "task_guidelines": "You are an expert at identifying duplicate products from online product catalogs.\nYour job is to tell if the two given entities are duplicates or not. Say duplicate, if they are duplicate and not duplicate otherwise.",
+        "task_guidelines": "You are an expert at identifying duplicate products from online product catalogs.\nYou will be given information about two product entities, and your job is to tell if they are the same (duplicate) or different (not duplicate). Your answer must be from one of the following options:\n{labels}",
+        "labels": [
+            "duplicate",
+            "not duplicate"
+        ],
         "few_shot_examples": [
             {
                 "entity1": "Title: lexmark extra high yield return pgm print cartridge - magenta; Category: printers; Brand: lexmark; ModelNo: c782u1mg; Price: 214.88;",
@@ -93,12 +97,45 @@ config = {
     },
     "model": {
         "provider": "openai",
-        "name": "gpt-3.5-turbo",
-        "params": {}
+        "name": "gpt-3.5-turbo"
     },
     "prompt": {
-        "task_guidelines": "You are an expert at identifying duplicate products from online product catalogs.\nYour job is to tell if the two given entities are duplicates or not. Say duplicate, if they are duplicate and not duplicate otherwise.",
-        "example_template": "Entity1: Title: {entity1_title}; Category: {entity1_category}; Brand: {entity1_brand}; Price: {entity1_price};\nEntity2: Title: {entity2_title}; Category: {entity2_category}; Brand: {entity2_brand}; Price: {entity2_price};\nOutput: {label}"
+        "task_guidelines": "You are an expert at identifying duplicate products from online product catalogs.\nYou will be given information about two product entities, and your job is to tell if they are the same (duplicate) or different (not duplicate). Your answer must be from one of the following options:\n{labels}",
+        "labels": [
+            "duplicate",
+            "not duplicate"
+        ],
+        "example_template": "Title of entity1: {Title_entity1}; category of entity1: {Category_entity1}; brand of entity1: {Brand_entity1}; model number of entity1: {ModelNo_entity1}; price of entity1: {Price_entity1}\nTitle of entity2: {Title_entity2}; category of entity2: {Category_entity2}; brand of entity2: {Brand_entity2}; model number of entity2: {ModelNo_entity2}; price of entity2: {Price_entity2}\nDuplicate or not: {label}",
+        "few_shot_examples": [
+            {
+                "Title_entity1": "lexmark extra high yield return pgm print cartridge - magenta",
+                "Category_entity1": "printers",
+                "Brand_entity1": "lexmark",
+                "ModelNo_entity1": "c782u1mg",
+                "Price_entity1": "214.88",
+                "Title_entity2": "lexmark 18c1428 return program print cartridge black",
+                "Category_entity2": "inkjet printer ink",
+                "Brand_entity2": "lexmark",
+                "ModelNo_entity2": "18c1428",
+                "Price_entity2": "19.97",
+                "label": "not duplicate"
+            },
+            {
+                "Title_entity1": "edge tech proshot 4gb sdhc class 6 memory card",
+                "Category_entity1": "usb drives",
+                "Brand_entity1": "edge tech",
+                "ModelNo_entity1": "pe209780",
+                "Price_entity1": "10.88",
+                "Title_entity2": "4gb edge proshot sdhc memory card class6",
+                "Category_entity2": "computers accessories",
+                "Brand_entity2": "edge",
+                "ModelNo_entity2": "nan",
+                "Price_entity2": "17.83",
+                "label": "duplicate"
+            }
+        ],
+        "few_shot_selection": "fixed",
+        "few_shot_num": 2
     }
 }
 ```
@@ -121,7 +158,7 @@ On running the above config, this is an example output expected for labeling 100
 ┏━━━━━━━━━┳━━━━━━━━━━━┳━━━━━━━━━━┳━━━━━━━━━━━━━━━━━┓
 ┃ support ┃ threshold ┃ accuracy ┃ completion_rate ┃
 ┡━━━━━━━━━╇━━━━━━━━━━━╇━━━━━━━━━━╇━━━━━━━━━━━━━━━━━┩
-│ 100     │ -inf      │ 0.94     │ 1.0             │
+│ 100     │ -inf      │ 0.96     │ 1.0             │
 └─────────┴───────────┴──────────┴─────────────────┘
 ```
 

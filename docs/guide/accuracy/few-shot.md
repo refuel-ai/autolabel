@@ -4,7 +4,11 @@ It has been shown that the specific seed examples used while constructing the pr
 2. Semantic_similarity - Language embeddings are computed for all the examples in the seed set and a vector similarity search finds the few shot examples which are closest to the input datapoint. The hope is that closer datapoints from the seed set will give the model more context on how similar examples have been labeled, helping it improve performance.
 3. Max_marginal_relevance - Semantic similarity search is used to retrieve a set of candidate examples. Then, a diversity-driven selection strategy is used amongst these candidates to select a final subset of examples that have the most coverage of the initial pool of candidate examples.
 
-Example:
+
+Example: 
+
+[![open in colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/1qgfy7odvkCNKrB58ozAF4qXzu10rRGKx#scrollTo=x0js54dB0D7J)
+
 Consider the following labeling runs for a classification task on the banking dataset. There are a total of 1998 items to be labeled and we assume a starting labeled seedset of 200 examples. Here is the config to label this dataset in zero-shot fashion:
 
 ```py
@@ -110,7 +114,7 @@ config_zero_shot = {
 from autolabel import LabelingAgent
 
 agent = LabelingAgent(config=config_zero_shot)
-labels, df, metrics_list = agent.run('../data/banking_test.csv')
+labels, df, metrics_list = agent.run('../examples/banking/test.csv')
 ```
 
 This zero-shot task execution results in an accuracy of 70.19%. 
@@ -131,7 +135,7 @@ config_fixed_few_shot = {
     },
     "prompt": {
         ...
-        "few_shot_examples": {"../data/banking_seed.csv"},
+        "few_shot_examples": {"../examples/banking/seed.csv"},
         "few_shot_selection": "fixed",
         "few_shot_num": 10,
         "example_template": "Input: {example}\nOutput: {label}"
@@ -141,7 +145,7 @@ config_fixed_few_shot = {
 
 ```py
 agent = LabelingAgent(config=config_fixed_few_shot)
-labels, df, metrics_list = agent.run('../data/banking_test.csv')
+labels, df, metrics_list = agent.run('../examples/banking/test.csv')
 ```
 
 This leads to an accuracy of 73.16%, an improvement of ~3% over the zero-shot baseline.
@@ -162,7 +166,7 @@ config_semantic_similarity = {
     },
     "prompt": {
         ...
-        "few_shot_examples": {"../data/banking_seed.csv"},
+        "few_shot_examples": {"../examples/banking/seed.csv"},
         "few_shot_selection": "semantic_similarity",
         "few_shot_num": 10,
         "example_template": "Input: {example}\nOutput: {label}"
@@ -172,7 +176,7 @@ config_semantic_similarity = {
 
 ```py
 agent = LabelingAgent(config=config_semantic_similarity)
-labels, df, metrics_list = agent.run('../data/banking_test.csv')
+labels, df, metrics_list = agent.run('../examples/banking/test.csv')
 ```
 
 With semantic similarity example selectiom, we obtain a 79.02% accuracy, a significant increase of ~6% over the fixed-shot strategy.

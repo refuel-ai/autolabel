@@ -5,12 +5,14 @@ from typing import Dict, List, Tuple
 from copy import deepcopy
 
 from langchain.schema import Generation
-from loguru import logger
+import logging
 from nervaluate import Evaluator
 from autolabel.confidence import ConfidenceCalculator
 from autolabel.configs import AutolabelConfig
 from autolabel.schema import LLMAnnotation, Metric, MetricResult
 from autolabel.tasks import BaseTask
+
+logger = logging.getLogger(__name__)
 
 
 class NamedEntityRecognitionTask(BaseTask):
@@ -132,7 +134,7 @@ class NamedEntityRecognitionTask(BaseTask):
         self, response: Generation, curr_sample: Dict, prompt: str
     ) -> LLMAnnotation:
         output = {}
-        successfully_labeled = "no"
+        successfully_labeled = False
         text_column = self.config.text_column()
         input_str = curr_sample[text_column]
         try:
@@ -140,10 +142,10 @@ class NamedEntityRecognitionTask(BaseTask):
             output = self._llm_to_json_format(completion_text.strip())
             llm_label = self.add_text_spans(output, input_str)
         except Exception as e:
-            logger.info(f"Error parsing LLM response: {response.text}, Error: {e}")
+            logger.error(f"Error parsing LLM response: {response.text}, Error: {e}")
             llm_label = self.NULL_LABEL
 
-        successfully_labeled = "no" if llm_label == self.NULL_LABEL else "yes"
+        successfully_labeled = False if llm_label == self.NULL_LABEL else True
 
         # TODO: parse generation info correctly to fetch & transform logprobs -> score
         return LLMAnnotation(
@@ -181,7 +183,7 @@ class NamedEntityRecognitionTask(BaseTask):
     def get_labels_predictions_with_threshold(self, gt_labels, llm_labels, threshold):
         answered_gt_labels, answered_llm_preds = [], []
         for index, l in enumerate(llm_labels):
-            if l.successfully_labeled.lower() == "yes" and (
+            if l.successfully_labeled and (
                 l.confidence_score is None or l.confidence_score >= threshold
             ):
                 answered_gt_labels.append(
@@ -268,14 +270,14 @@ class NamedEntityRecognitionTask(BaseTask):
         eval_metrics_map = {
             Metric.F1: [],
             Metric.SUPPORT: [],
-            Metric.THRESHOLD: [],
             Metric.ACCURACY: [],
             Metric.COMPLETION_RATE: [],
         }
         eval_metrics = []
-        thresholds = [float("-inf")]
+        thresholds = []
 
         if self.config.confidence():
+            eval_metrics_map[Metric.THRESHOLD] = []
             all_gt_labels, all_llm_preds = self.get_labels_predictions_with_threshold(
                 gt_labels, llm_labels, float("-inf")
             )
@@ -291,6 +293,8 @@ class NamedEntityRecognitionTask(BaseTask):
                     value=value,
                 )
             )
+        else:
+            thresholds.append(float("-inf"))
 
         for index, threshold in enumerate(thresholds):
             (
@@ -322,7 +326,9 @@ class NamedEntityRecognitionTask(BaseTask):
             eval_metrics_map[Metric.COMPLETION_RATE].append(
                 len(curr_llm_labels) / float(len(gt_labels))
             )
-            eval_metrics_map[Metric.THRESHOLD].append(threshold)
+
+            if self.config.confidence():
+                eval_metrics_map[Metric.THRESHOLD].append(threshold)
         eval_metrics.extend(
             [
                 MetricResult(

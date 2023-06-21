@@ -2,14 +2,16 @@
 
 from abc import ABC, abstractmethod
 from typing import Dict, List
-from loguru import logger
+import logging
 import json
 
 from langchain.prompts.prompt import PromptTemplate
 from langchain.schema import Generation
 from autolabel.configs import AutolabelConfig
-from autolabel.schema import LLMAnnotation, MetricResult, FewShotAlgorithm
-from autolabel.utils import get_format_variables
+from autolabel.schema import LLMAnnotation, MetricResult, FewShotAlgorithm, TaskType
+from autolabel.utils import get_format_variables, extract_valid_json_substring
+
+logger = logging.getLogger(__name__)
 
 
 class BaseTask(ABC):
@@ -65,18 +67,37 @@ class BaseTask(ABC):
     ) -> LLMAnnotation:
         # The last line of the response is the label
         # This is done to handle the case where the model generates an explanation before generating the label
-        completion_text = response.text.strip().split("\n")[-1].strip()
+        if self.config.chain_of_thought():
+            try:
+                completion_text = extract_valid_json_substring(
+                    response.text.strip().split("\n")[-1].strip()
+                )
+                completion_text = json.loads(completion_text)["label"]
+            except:
+                completion_text = None
+        else:
+            completion_text = response.text.strip().split("\n")[-1].strip()
         if len(response.text.strip()) == 0:
-            successfully_labeled = "no"
+            successfully_labeled = False
             llm_label = self.NULL_LABEL_TOKEN
             logger.warning(f"LLM response is empty")
-        elif len(completion_text) == 0:
-            successfully_labeled = "no"
+        elif not completion_text:
+            successfully_labeled = False
             llm_label = self.NULL_LABEL_TOKEN
             logger.error(f"Error parsing LLM response: {response.text}")
         else:
-            successfully_labeled = "yes"
             llm_label = completion_text.strip()
+            if self.config.task_type() in [
+                TaskType.CLASSIFICATION,
+                TaskType.ENTITY_MATCHING,
+            ]:
+                if llm_label in self.config.labels_list():
+                    successfully_labeled = True
+                else:
+                    logger.warning(f"LLM response is not in the labels list")
+                    successfully_labeled = False
+            else:
+                successfully_labeled = True
 
         return LLMAnnotation(
             successfully_labeled=successfully_labeled,

@@ -36,7 +36,7 @@ Generating confidence scores is simple - setting the key `compute_confidence` to
             "Miscellaneous"
         ],
         "example_template": "Example: {example}\nOutput: {CategorizedLabels}",
-        "few_shot_examples": "data/conll2003_seed.csv",
+        "few_shot_examples": "../examples/conll2003/seed.csv",
         "few_shot_selection": "semantic_similarity",
         "few_shot_num": 5
     }
@@ -45,15 +45,11 @@ Generating confidence scores is simple - setting the key `compute_confidence` to
 
 In the above example, by setting `compute_confidence` to True, `autolabel` will start calling Refuel's api to generate token level probabilities and compute confidence scores for each prediction. In order for this to run successfully, ensure that the following setup has been completed:
 
-Install the relevant packages by running:
-```bash
-pip install refuel-autolabel[refuel]
-```
-and also set the following environment variable:
+Set the following environment variable:
 ```
 export REFUEL_API_KEY=<your-refuel-key>
 ```
-replacing `<your-refuel-key>` with your API key, which you can get from [here](TBD). [TODO] INSTRUCTIONS FOR GETTING THE API KEY
+replacing `<your-refuel-key>` with your API key, which you can get from [here](https://refuel-ai.typeform.com/llm-access)
 
 ## Interpretting Scores
 

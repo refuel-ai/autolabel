@@ -1,5 +1,0 @@
-{
-    "project_name": "Medical Question",
-    "task_type": "multi_choice_question_answering",
-    "prefix_prompt": "You are an expert at answer medical questions."
-}

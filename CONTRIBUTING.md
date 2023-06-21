@@ -18,9 +18,9 @@ cd autolabel
 ```
 3. Install the library from source (preferably in a virtual environment): 
 ```bash
-pip install .[dev]
+pip install '.[dev]'
 ```
-4. Install [pre-commit](https://pre-commit.com/): 
+4. Install [pre-commit](https://pre-commit.com/) and then run: 
 ```bash
 pre-commit install
 ```
@@ -28,6 +28,12 @@ pre-commit install
 ```bash
 python -c "from autolabel import LabelingAgent"
 ```
+
+Here is a quick video that walks through the steps:
+
+https://github.com/refuel-ai/autolabel/assets/1568137/8f63449a-6eab-4a23-bf74-1446024d86fb
+
+
 
 ## Code contribution guidelines
 

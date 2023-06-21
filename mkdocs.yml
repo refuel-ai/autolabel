@@ -10,10 +10,12 @@ nav:
     - Tutorial - Toxic comment classification: guide/overview/tutorial-classification.md
     - Models:
       - LLMs: guide/llms/llms.md
+      - Benchmarks: guide/llms/benchmarks.md
     - Labeling Tasks:
       - Classification Task: guide/tasks/classification_task.md
-      - Question Answering Task: guide/tasks/question_answering_task.md
       - Entity Matching Task: guide/tasks/entity_matching_task.md
+      - Named Entity Recognition Task: guide/tasks/named_entity_recognition_task.md
+      - Question Answering Task: guide/tasks/question_answering_task.md
     - Improving Labeling Accuracy:
       - Prompting Better: guide/accuracy/prompting-better.md
       - Few-shot Prompting: guide/accuracy/few-shot.md
@@ -22,9 +24,11 @@ nav:
     - Reliability and Robustness:
       - LLM Output Caching: guide/reliability/llm-output-caching.md
       - State Management: guide/reliability/state-management.md
-    - Working with Autolabel configs:
-      - Overview: guide/configs/overview.md
-  - Concepts: concepts/concepts.md
+    - Working with Autolabel:
+      - Configs: guide/resources/configs.md
+      - Refuel-provided Datasets: guide/resources/refuel_datasets.md
+  #- Concepts: concepts/concepts.md
+  # remove for now
   - Reference:
       - AutoLabeler: reference/labeler.md
       - Config: reference/configs.md
@@ -87,3 +91,5 @@ markdown_extensions:
   - pymdownx.emoji:
       emoji_index: !!python/name:materialx.emoji.twemoji
       emoji_generator: !!python/name:materialx.emoji.to_svg
+  - toc:
+      permalink: true
