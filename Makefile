@@ -41,4 +41,8 @@ help:
 	@echo 'docs-serve:           preview docs locally'
 	@echo 'docs-deploy:          deploy a new version of docs to Github Pages'
 	@echo 'dev: install          autolabel from source with dev dependencies'
+	@echo 'clean-pyc:            remove Python file artifacts'
+	@echo 'clean-test:           remove test and coverage artifacts'
+	@echo 'clean:                remove all build, test and coverage artifacts'
+	@echo 'test:                 clean previous build and test artifacts, and run all tests'
 	@echo '----'
