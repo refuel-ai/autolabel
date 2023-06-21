@@ -75,14 +75,8 @@ class LabelingAgent:
         csv_file_name = (
             output_name if output_name else f"{dataset.replace('.csv','')}_labeled.csv"
         )
-        if isinstance(dataset, str):
-            df, inputs, gt_labels = DatasetLoader.read_file(
-                dataset, self.config, max_items, start_index
-            )
-        elif isinstance(dataset, pd.DataFrame):
-            df, inputs, gt_labels = DatasetLoader.read_dataframe(
-                dataset, self.config, max_items, start_index
-            )
+
+        dataset_loader = DatasetLoader(dataset, self.config, max_items, start_index)
 
         # Initialize task run and check if it already exists
         self.task_run = self.db.get_task_run(self.task_object.id, self.dataset.id)
@@ -90,7 +84,7 @@ class LabelingAgent:
         if self.task_run:
             logger.info("Task run already exists.")
             self.task_run = self.handle_existing_task_run(
-                self.task_run, csv_file_name, gt_labels=gt_labels
+                self.task_run, csv_file_name, gt_labels=dataset_loader.gt_labels
             )
         else:
             self.task_run = self.db.create_task_run(
@@ -102,7 +96,8 @@ class LabelingAgent:
 
         # If this dataset config is a string, read the corrresponding csv file
         if isinstance(seed_examples, str):
-            _, seed_examples, _ = DatasetLoader.read_csv(seed_examples, self.config)
+            seed_loader = DatasetLoader(seed_examples, self.config)
+            seed_examples = seed_loader.inputs
 
         # Check explanations are present in data if explanation_column is passed in
         if (
@@ -115,7 +110,7 @@ class LabelingAgent:
             )
 
         self.example_selector = ExampleSelectorFactory.initialize_selector(
-            self.config, seed_examples, df.keys().tolist()
+            self.config, seed_examples, dataset_loader.dat.keys().tolist()
         )
 
         num_failures = 0
@@ -123,15 +118,17 @@ class LabelingAgent:
         cost = 0.0
         postfix_dict = {}
 
-        indices = range(current_index, len(inputs), self.CHUNK_SIZE)
+        indices = range(current_index, len(dataset_loader.inputs), self.CHUNK_SIZE)
         for current_index in track_with_stats(
             indices,
             postfix_dict,
-            total=len(inputs) - current_index,
+            total=len(dataset_loader.inputs) - current_index,
             advance=self.CHUNK_SIZE,
             console=console,
         ):
-            chunk = inputs[current_index : current_index + self.CHUNK_SIZE]
+            chunk = dataset_loader.inputs[
+                current_index : current_index + self.CHUNK_SIZE
+            ]
             final_prompts = []
             for i, input_i in enumerate(chunk):
                 # Fetch few-shot seed examples
@@ -206,9 +203,9 @@ class LabelingAgent:
                     self.db.session, self.task_run.id
                 )
                 llm_labels = [LLMAnnotation(**a.llm_annotation) for a in db_result]
-                if gt_labels:
+                if dataset_loader.gt_labels:
                     eval_result = self.task.eval(
-                        llm_labels, gt_labels[: len(llm_labels)]
+                        llm_labels, dataset_loader.gt_labels[: len(llm_labels)]
                     )
 
                     for m in eval_result:
@@ -232,8 +229,10 @@ class LabelingAgent:
         llm_labels = [LLMAnnotation(**a.llm_annotation) for a in db_result]
         eval_result = None
         # if true labels are provided, evaluate accuracy of predictions
-        if gt_labels:
-            eval_result = self.task.eval(llm_labels, gt_labels[: len(llm_labels)])
+        if dataset_loader.gt_labels:
+            eval_result = self.task.eval(
+                llm_labels, dataset_loader.gt_labels[: len(llm_labels)]
+            )
             table = {}
             # TODO: serialize and write to file
             for m in eval_result:
@@ -245,7 +244,7 @@ class LabelingAgent:
             print_table(table, console=console, default_style=METRIC_TABLE_STYLE)
 
         # Write output to CSV
-        output_df = df.copy()
+        output_df = dataset_loader.dat.copy()
         output_df[self.config.task_name() + "_llm_labeled_successfully"] = [
             l.successfully_labeled for l in llm_labels
         ]
@@ -298,14 +297,7 @@ class LabelingAgent:
             dataset: path to a CSV dataset
         """
 
-        if isinstance(dataset, str):
-            df, inputs, _ = DatasetLoader.read_file(
-                dataset, self.config, max_items, start_index
-            )
-        elif isinstance(dataset, pd.DataFrame):
-            df, inputs, _ = DatasetLoader.read_dataframe(
-                dataset, self.config, max_items, start_index
-            )
+        dataset_loader = DatasetLoader(dataset, self.config, max_items, start_index)
 
         prompt_list = []
         total_cost = 0
@@ -315,7 +307,8 @@ class LabelingAgent:
 
         # If this dataset config is a string, read the corrresponding csv file
         if isinstance(seed_examples, str):
-            _, seed_examples, _ = DatasetLoader.read_file(seed_examples, self.config)
+            seed_loader = DatasetLoader(seed_examples, self.config)
+            seed_examples = seed_loader.inputs
 
         # Check explanations are present in data if explanation_column is passed in
         if (
@@ -328,12 +321,12 @@ class LabelingAgent:
             )
 
         self.example_selector = ExampleSelectorFactory.initialize_selector(
-            self.config, seed_examples, df.keys().tolist()
+            self.config, seed_examples, dataset_loader.dat.keys().tolist()
         )
 
-        input_limit = min(len(inputs), 100)
+        input_limit = min(len(dataset_loader.inputs), 100)
         for input_i in track(
-            inputs[:input_limit],
+            dataset_loader.inputs[:input_limit],
             description="Generating Prompts...",
             console=console,
         ):
@@ -349,11 +342,11 @@ class LabelingAgent:
             curr_cost = self.llm.get_cost(prompt=final_prompt, label="")
             total_cost += curr_cost
 
-        total_cost = total_cost * (len(inputs) / input_limit)
+        total_cost = total_cost * (len(dataset_loader.inputs) / input_limit)
         table = {
             "Total Estimated Cost": f"${maybe_round(total_cost)}",
-            "Number of Examples": len(inputs),
-            "Average cost per example": f"${maybe_round(total_cost / len(inputs))}",
+            "Number of Examples": len(dataset_loader.inputs),
+            "Average cost per example": f"${maybe_round(total_cost / len(dataset_loader.inputs))}",
         }
         table = {"parameter": list(table.keys()), "value": list(table.values())}
         print_table(table, show_header=False, console=console, styles=COST_TABLE_STYLES)
