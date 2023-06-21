@@ -9,19 +9,8 @@ from rich.console import Console
 console = Console()
 
 
-def generate_tempfile_with_content(input_url: str) -> None:
-    """Generate a Temporary file with dummy content"""
-    with tempfile.NamedTemporaryFile(dir="./", delete=False) as tmp_file:
-        file_name = os.path.basename(input_url)
-        os.rename(tmp_file.name, file_name)
-        tmp_file.write(f"{input_url}".encode("utf-8"))
-        tmp_file.flush()
-
-
 def test_get_data(mocker) -> None:
     """Test Get Data"""
-    mocker.patch("wget.download", side_effect=generate_tempfile_with_content)
-
     dataset_name = "banking"
 
     def assert_text_remove(file_name_: str, text: str):
@@ -35,6 +24,16 @@ def test_get_data(mocker) -> None:
             file_content = tmp_file_read.read()
             assert file_content == text
         os.remove(file_name)
+
+    def generate_tempfile_with_content(input_url: str) -> None:
+        """Generate a Temporary file with dummy content"""
+        with tempfile.NamedTemporaryFile(dir="./", delete=False) as tmp_file:
+            file_name = os.path.basename(input_url)
+            os.rename(tmp_file.name, file_name)
+            tmp_file.write(f"{input_url}".encode("utf-8"))
+            tmp_file.flush()
+
+    mocker.patch("wget.download", side_effect=generate_tempfile_with_content)
 
     # The below case handles the case when the force argument is not provided
     # We create two dummy files and insert text to it.
