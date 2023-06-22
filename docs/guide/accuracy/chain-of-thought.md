@@ -1,7 +1,4 @@
-<figure markdown>
-  ![Chain-of-Thought prompting](/assets/standardvscotprompt.png){ width="600" }
-  <figcaption>Chain of Thought Prompting (Wei et al)</figcaption>
-</figure>
+![Chain-of-Thought-Prompting](https://raw.githubusercontent.com/JTarakRam/autolabel/main/docs/assets/standardvscotprompt.jpg)
 
 LLMs find it hard to perform well on complex reasoning tasks. We can unlock the reasoning abilities of LLMs using chain of thought prompting. This involves giving the LLM a few reasoning explanations along with the questions and answers and then asking the model to produce the reasoning before producing the answer. The hope is that the seed examples with explanations help the model understand the reasoning behind answer and prods it to use similar reasoning before arriving to the answer.
 
