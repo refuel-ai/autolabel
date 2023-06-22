@@ -1,6 +1,6 @@
 # Large Language Models (LLMs)
 
-Autolabel supports multiple LLMs for labeling data. Some LLMs are available by calling an API with the appropriate API keys (OpenAI, Anthropic, etc.) while others can be run locally (such as the ones available on Huggingface). The LLM used to label can be controlled using the `provider` and `name` keys in the dictionary specified under `model` in the input config. 
+Autolabel supports multiple LLMs for labeling data. Some LLMs are available by calling an API with the appropriate API keys (OpenAI, Anthropic, etc.) while others can be run locally (such as the ones available on Hugging Face). The LLM used to label can be controlled using the `provider` and `name` keys in the dictionary specified under `model` in the input config. 
 
 Each LLM belongs to an LLM provider -- which refers to the organization or open-source framework through which we are able to access the LLM. A full list of LLM providers and LLMs that are currently supported is provided towards the end of this page.
 
@@ -128,8 +128,8 @@ These parameters can be passed in via the `params` dictionary under `model`. Her
 }
 ```
 
-## Huggingface
-To use models from [Huggingface](https://huggingface.co/), you can set `provider` to `huggingface_pipeline` when creating a labeling configuration. The specific model that will be queried can be specified using the `name` key. Autolabel currently supports all Sequence2Sequence Language Models on Huggingface. All models available on Huggingface can be found [here](https://huggingface.co/docs/transformers/model_doc/openai-gpt#:~:text=TEXT-,MODELS,-ALBERT). Ensure that the model you choose can be loaded using `AutoModelForSeq2SeqLM`. Here are a few examples:
+## Hugging Face
+To use models from [Hugging Face](https://huggingface.co/), you can set `provider` to `huggingface_pipeline` when creating a labeling configuration. The specific model that will be queried can be specified using the `name` key. Autolabel currently supports all Sequence2Sequence Language Models on Hugging Face. All models available on Hugging Face can be found [here](https://huggingface.co/docs/transformers/model_doc/openai-gpt#:~:text=TEXT-,MODELS,-ALBERT). Ensure that the model you choose can be loaded using `AutoModelForSeq2SeqLM`. Here are a few examples:
 
 * `google/flan-t5-small` (all flan-t5-* models)
 * `google/pegasus-x-base`
@@ -138,13 +138,13 @@ To use models from [Huggingface](https://huggingface.co/), you can set `provider
 This will run the model locally on a GPU (if available). You can also specify  quantization strategy to load larger models in lower precision (and thus decreasing memory requirements).
 
 ### Setup
-To use Huggingface models with Autolabel, make sure to first install the relevant packages by running:
+To use Hugging Face models with Autolabel, make sure to first install the relevant packages by running:
 ```bash
 pip install refuel-autolabel[huggingface]
 ```
 
 ### Example usage
-Here is an example of setting config to a dictionary that will use `google/flan-t5-small` model for labeling via Huggingface. Specifically, note that in the dictionary proivded by the `model` tag, `provider` is set to `huggingface_pipeline` and `name` is set to be `google/flan-t5-small`. `name` can be switched to use any model that satisfies the constraints above.
+Here is an example of setting config to a dictionary that will use `google/flan-t5-small` model for labeling via Hugging Face. Specifically, note that in the dictionary proivded by the `model` tag, `provider` is set to `huggingface_pipeline` and `name` is set to be `google/flan-t5-small`. `name` can be switched to use any model that satisfies the constraints above.
 
 ```python
 config = {
@@ -171,7 +171,7 @@ A few parameters that can be passed in for `huggingface_pipeline` models to cont
 
 * `max_new_tokens` (int) - The maximum tokens to sample from the model
 * `temperature` (float) - A float b/w 0 and 1 which indicates the diversity you want in the output. 0 uses greedy sampling.
-* `quantize` (int) - The model quantization to use. 32 bit by default, but we also support 16 bit and 8 bit support for models which have been hosted on huggingface.
+* `quantize` (int) - The model quantization to use. 32 bit by default, but we also support 16 bit and 8 bit support for models which have been hosted on Hugging Face.
 
 These parameters can be passed in via the `params` dictionary under `model`. Here is an example:
 ```python
@@ -191,7 +191,7 @@ To use models hosted by [Refuel](https://refuel.ai/), you can set `provider` to 
 
 * `flan-t5-xxl`
 
-This is a 13 billion parameter model, which is also available on Huggingface [here](https://huggingface.co/google/flan-t5-xxl). However, running such a huge model locally is a challenge, which is why we are currently hosting the model on our servers.
+This is a 13 billion parameter model, which is also available on Hugging Face [here](https://huggingface.co/google/flan-t5-xxl). However, running such a huge model locally is a challenge, which is why we are currently hosting the model on our servers.
 
 ### Setup
 To use Refuel models with Autolabel, make sure set the following environment variable:
@@ -244,7 +244,7 @@ These parameters can be passed in via the `params` dictionary under `model`. Her
     }
 }
 ```
-`refuel` hosted LLMs support all the parameters that can be passed as a part of [GenerationConfig](https://huggingface.co/docs/transformers/main_classes/text_generation#transformers.GenerationConfig) while calling generate functions of Huggingface LLMs. 
+`refuel` hosted LLMs support all the parameters that can be passed as a part of [GenerationConfig](https://huggingface.co/docs/transformers/main_classes/text_generation#transformers.GenerationConfig) while calling generate functions of Hugging Face LLMs. 
 
 ## Google PaLM
 To use models from [Google](https://developers.generativeai.google/products/palm), you can set the `provider` to `google` when creating a labeling configuration. The specific model that will be queried can be specified using the `name` key. Autolabel currently supports the following models from Google:
