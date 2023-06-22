@@ -1,4 +1,5 @@
 """Test utils"""
+from typing import Optional, Any
 
 import tempfile
 import os
@@ -24,7 +25,9 @@ def test_get_data(mocker) -> None:
             assert file_content == text
         os.remove(file_name)
 
-    def generate_tempfile_with_content(input_url: str) -> None:
+    def generate_tempfile_with_content(
+        input_url: str, bar: Optional[Any] = None
+    ) -> None:
         """Generate a Temporary file with dummy content"""
         with tempfile.NamedTemporaryFile(dir="./", delete=False) as tmp_file:
             file_name = os.path.basename(input_url)
