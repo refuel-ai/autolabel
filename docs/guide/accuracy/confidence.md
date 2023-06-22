@@ -51,7 +51,7 @@ export REFUEL_API_KEY=<your-refuel-key>
 ```
 replacing `<your-refuel-key>` with your API key, which you can get from [here](https://refuel-ai.typeform.com/llm-access)
 
-## Interpretting Scores
+## Interpreting Scores
 
 To see how confidence scores can be used to make a tradeoff between task performance and completion rate, let's take a look at the following example:
 
