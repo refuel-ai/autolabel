@@ -261,11 +261,14 @@ def get_data(dataset_name: str, force: bool = False):
             if false then downloads onlyif the files are not present locally
     """
 
-    def download_bar(current, total, width = 80):
-        """custom progress bar for downloading data """
-        width = shutil.get_terminal_size()[0]//2
-        print(f"{current//total*100}% [{'.' * (current//total * int(width))}] [{current}/{total}] bytes",end='\r')
-        
+    def download_bar(current, total, width=80):
+        """custom progress bar for downloading data"""
+        width = shutil.get_terminal_size()[0] // 2
+        print(
+            f"{current//total*100}% [{'.' * (current//total * int(width))}] [{current}/{total}] bytes",
+            end="\r",
+        )
+
     def download(url: str) -> None:
         """Downloads the data given an url"""
         file_name = os.path.basename(url)
@@ -275,8 +278,7 @@ def get_data(dataset_name: str, force: bool = False):
 
         if not os.path.exists(file_name):
             print(f"Downloading example dataset from {url} to {file_name}...")
-            wget.download(url, bar = download_bar)
-
+            wget.download(url, bar=download_bar)
 
     if dataset_name not in EXAMPLE_DATASETS:
         logger.error(
