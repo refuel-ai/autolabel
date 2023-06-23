@@ -80,7 +80,7 @@ class LabelingAgent:
                 else f"{dataset.replace('.csv','')}_labeled.csv"
             )
         else:
-            csv_file_name = "labeled.csv"
+            csv_file_name = f"{self.config.task_name()}_labeled.csv"
 
         # Initialize task run and check if it already exists
         self.task_run = self.db.get_task_run(self.task_object.id, self.dataset.id)

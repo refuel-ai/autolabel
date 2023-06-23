@@ -218,11 +218,11 @@ class DatasetLoader:
             max_items (int, optional): max number of items to read. Defaults to None.
             start_index (int, optional): start index to read from. Defaults to 0.
         """
-        self.dat = pd.DataFrame(
-            dataset[
-                start_index : max_items if max_items and max_items > 0 else len(dataset)
-            ]
-        )
+        dataset.set_format("pandas")
+        self.dat = dataset[
+            start_index : max_items if max_items and max_items > 0 else len(dataset)
+        ]
+
         self.inputs = self.dat.to_dict(orient="records")
         self.gt_labels = (
             None
