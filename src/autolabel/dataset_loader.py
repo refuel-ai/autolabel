@@ -3,6 +3,7 @@ from typing import Dict, List, Tuple, Union
 import logging
 import pandas as pd
 from sqlalchemy.sql.selectable import Selectable
+from datasets import Dataset
 
 
 from autolabel.configs import AutolabelConfig
@@ -36,6 +37,8 @@ class DatasetLoader:
 
         if isinstance(dataset, str):
             self._read_file(dataset, config, max_items, start_index)
+        elif isinstance(dataset, Dataset):
+            self._read_hf_dataset(dataset, config, max_items, start_index)
         elif isinstance(dataset, pd.DataFrame):
             self._read_dataframe(dataset, config, start_index, max_items)
 
@@ -199,3 +202,32 @@ class DatasetLoader:
             )
         else:
             raise ValueError(f"Unsupported file format: {file}")
+
+    def _read_hf_dataset(
+        self,
+        dataset: Dataset,
+        config: AutolabelConfig,
+        max_items: int = None,
+        start_index: int = 0,
+    ) -> None:
+        """Read the huggingface dataset and sets dat, inputs and gt_labels
+
+        Args:
+            dataset (Dataset): dataset object to read from
+            config (AutolabelConfig): config object
+            max_items (int, optional): max number of items to read. Defaults to None.
+            start_index (int, optional): start index to read from. Defaults to 0.
+        """
+        dataset.set_format("pandas")
+        self.dat = dataset[
+            start_index : max_items if max_items and max_items > 0 else len(dataset)
+        ]
+
+        self.inputs = self.dat.to_dict(orient="records")
+        self.gt_labels = (
+            None
+            if not config.label_column()
+            or not len(self.inputs)
+            or config.label_column() not in self.inputs[0]
+            else self.dat[config.label_column()].tolist()
+        )
