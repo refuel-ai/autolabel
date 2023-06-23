@@ -314,8 +314,8 @@ The table lists out all the provider, model combinations that Autolabel supports
 | Provider     | Name              |
 | -------------| ----------------- |
 | openai       | text-davinci-003  |
-| openai       | gpt-3.5-turbo     |
-| openai       | gpt-4             |
+| openai       | [gpt-3.5-turbo](https://platform.openai.com/docs/models/gpt-3-5) |
+| openai       | [gpt-4](https://platform.openai.com/docs/models/gpt-4)|
 | anthropic    | claude-v1         |
 | anthropic    | claude-instant-v1 |
 | huggingface_pipeline    | [seq2seq models](https://huggingface.co/learn/nlp-course/chapter1/7?fw=pt#sequencetosequence-modelssequencetosequencemodels) |
