@@ -161,7 +161,7 @@ At this point, we have a labeled dataset ready, and we can begin training our ML
 If you want to use a Hugging Face dataset directly, you can pass it into `agent.plan` and `agent.run` as you would a file path or `pandas.DataFrame`.
 
 ```python
-dataset = load_dataset("banking77")
+dataset = load_dataset(DATASET_NAME)
 agent = LabelingAgent(config)
 
 agent.plan(test_dataset)
