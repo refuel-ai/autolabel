@@ -13,7 +13,6 @@ EXAMPLE_DATASETS = [
     "conll2003",
 ]
 
-
 def get_data(dataset_name):
     if dataset_name not in EXAMPLE_DATASETS:
         raise ValueError(f"Dataset {dataset_name} not supported")
@@ -24,8 +23,15 @@ def get_data(dataset_name):
     # Make directory if it doesn't exist
     os.makedirs(f"examples/{dataset_name}", exist_ok=True)
 
-    urllib.request.urlretrieve(seed_url, f"examples/{dataset_name}/seed.csv")
-    urllib.request.urlretrieve(test_url, f"examples/{dataset_name}/test.csv")
+    seed_filename = f"examples/{dataset_name}/seed.csv"
+    seed_bytes = urllib.request.urlopen(seed_url).info()["Content-Length"]
+    urllib.request.urlretrieve(seed_url, seed_filename)
+    print(seed_bytes)
+
+    test_filename = f"examples/{dataset_name}/test.csv"
+    test_bytes = urllib.request.urlopen(test_url).info()["Content-Length"]
+    urllib.request.urlretrieve(test_url, test_filename)
+    print(test_bytes)
 
 
 def get_all_data(args):
