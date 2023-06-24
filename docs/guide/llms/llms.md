@@ -45,7 +45,7 @@ config = {
         "params": {}
     },
     "prompt": {
-        "task_guidelines": "You are an expert at answering questions.",
+        "task_guidelines": "You are an expert at answering questions."
         "example_template": "Question: {question}\nAnswer: {answer}"
     }
 }
