@@ -1,28 +1,33 @@
 name: Tests
 
 on:
-  - push
+  pull_request:
+    branches:
+      - "main"
+  push:
+    branches:
+      - "main"
 
 jobs:
   test:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout
-      uses: actions/checkout@v2
-    - name: Install Python3.8
-      uses: actions/setup-python@v4
-      with:
-        python-version: 3.8
-        architecture: x64
-    - name: Install autolabel
-      run: |
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Install Python3.8
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.8
+          architecture: x64
+      - name: Install autolabel
+        run: |
           pip install '.[all]'
-    - name: Test with pytest
-      run: |
-        make setup
-        make check
-      env:
-        OPENAI_API_KEY: 'test_key'
-        ANTHROPIC_API_KEY: 'test_key'
-        REFUEL_API_KEY: 'test_key'
+      - name: Test with pytest
+        run: |
+          make setup
+          make check
+        env:
+          OPENAI_API_KEY: "test_key"
+          ANTHROPIC_API_KEY: "test_key"
+          REFUEL_API_KEY: "test_key"

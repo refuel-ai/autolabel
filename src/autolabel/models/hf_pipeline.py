@@ -9,7 +9,7 @@ from autolabel.cache import BaseCache
 
 class HFPipelineLLM(BaseModel):
     DEFAULT_MODEL = "google/flan-t5-xxl"
-    DEFAULT_PARAMS = {"max_new_tokens": 1000, "temperature": 0.0, "quantize": 8}
+    DEFAULT_PARAMS = {"temperature": 0.0, "quantize": 8}
 
     def __init__(self, config: AutolabelConfig, cache: BaseCache = None) -> None:
         try:
@@ -38,7 +38,9 @@ class HFPipelineLLM(BaseModel):
         # initialize HF pipeline
         tokenizer = AutoTokenizer.from_pretrained(self.model_name)
         quantize_bits = self.model_params["quantize"]
-        if quantize_bits == 8:
+        if not torch.cuda.is_available():
+            model = AutoModelForSeq2SeqLM.from_pretrained(self.model_name)
+        elif quantize_bits == 8:
             model = AutoModelForSeq2SeqLM.from_pretrained(
                 self.model_name, load_in_8bit=True, device_map="auto"
             )

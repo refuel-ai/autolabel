@@ -1,6 +1,7 @@
-This is a detailed tutorial that walks you through many features of the Autolabel library while solving a problem faced by many companies - labeling toxic comments for content moderation.
+This is a detailed tutorial that walks you through many features of the Autolabel library while solving a problem faced by many companies - labeling toxic comments for content moderation. We will be using OpenAI's `gpt-3.5-turbo` for the data labeling, and Refuel's LLM for confidence estimation.
 
-We will be using OpenAI's `gpt-3.5-turbo` for the data labeling, and Refuel's LLM for confidence estimation.
+If you want to run this code as you follow along, check out this Colab notebook: [![open in colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/1t-9vNLkyoyySAG_0w3eR98biBOXlMO-E?usp=sharing)
+
 
 ## Autolabel installation
 
@@ -373,10 +374,12 @@ Actual Cost: 0.0376
 
 The rows in this table show labeling performance at different confidence thresholds, and set an autolabeling confidence threshold at the desired accuracy. For instance, from the table above we can set the confidence threshold at 0.6682 which allows us to label at 96% accuracy with a completion rate of 63%.
 
+If you want to run this code as you follow along, check out this Colab notebook: [![open in colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/1t-9vNLkyoyySAG_0w3eR98biBOXlMO-E?usp=sharing)
+
 ## Final thoughts
 
 Hopefully, this tutorial was helpful in understanding how Autolabel can help you label datasets quickly and at high quality. A Jupyter notebook for this tutorial can be found [here](https://github.com/refuel-ai/autolabel/blob/main/examples/civil_comments/example_civil_comments.ipynb).
 
 You can find more example notebooks [here](https://github.com/refuel-ai/autolabel/tree/main/examples), including for tasks such as question answering, named entity recognition, etc. 
 
-Drop us a message in our <a href="https://discord.gg/uEdr8nrMGm" target="_blank">Discord</a> if you want to chat with us, or go to [Github](https://github.com/refuel-ai/autolabel/issues) to report any issues! 
+Drop us a message in our <a href="https://discord.gg/uEdr8nrMGm" target="_blank">Discord</a> if you want to chat with us, or go to [Github](https://github.com/refuel-ai/autolabel/issues) to report any issues!
