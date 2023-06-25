@@ -28,6 +28,7 @@ schema = {
                 "label_column": {"type": "string"},
                 "text_column": {"type": "string"},
                 "delimiter": {"type": "string"},
+                "explanation_column": {"type": "string"},
             },
             "additionalProperties": False,
         },
