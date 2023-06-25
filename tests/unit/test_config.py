@@ -41,7 +41,10 @@ def test_config():
 
 
 def test_schema_validation():
-    """Validate typos in the config file"""
+    """Validate config
+
+    This test case tests several validation scenarios.
+    """
 
     # Case 1:
     # ----------
