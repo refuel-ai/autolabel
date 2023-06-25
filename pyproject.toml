@@ -34,8 +34,8 @@ dependencies = [
     "pydantic >= 1.10.9",
     "torch >= 1.10.0",
     "matplotlib >= 3.5.0",
-    "wget >= 3.2"
-    "jsonschema" >= "4.17.3",
+    "wget >= 3.2",
+    "jsonschema" >= "4.17.3"
 ]
 requires-python = ">=3.6"
 
