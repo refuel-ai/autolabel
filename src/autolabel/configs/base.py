@@ -1,6 +1,7 @@
 import json
+from jsonschema import validate
 from typing import Any, Dict, List, Union
-
+from autolabel.configs.schema import schema
 import logging
 
 logger = logging.getLogger(__name__)
@@ -29,6 +30,10 @@ class BaseConfig:
 
     def _validate(self) -> bool:
         """Returns true if the config settings are valid"""
+        validate(
+            instance=self.config,
+            schema=schema,
+        )
         return True
 
     def get(self, key: str, default_value: Any = None) -> Any:
