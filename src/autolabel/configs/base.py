@@ -27,10 +27,6 @@ class BaseConfig:
             )
             return {}
 
-    def _validate(self) -> bool:
-        """Returns true if the config settings are valid"""
-        return True
-
     def get(self, key: str, default_value: Any = None) -> Any:
         return self.config.get(key, default_value)
 
