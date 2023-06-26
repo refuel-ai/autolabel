@@ -4,7 +4,7 @@ import pytest
 from jsonschema import validate, exceptions
 from autolabel import LabelingAgent
 from autolabel.configs.schema import schema
-from tests.unit import *
+
 
 CONFIG_SAMPLE_DICT = {
     "task_name": "ToxicCommentClassification",
@@ -123,7 +123,3 @@ def test_schema_validation():
         instance=CONFIG_SAMPLE_DICT,
         schema=schema,
     )
-
-
-if __name__ == "__main__":
-    test_config()
