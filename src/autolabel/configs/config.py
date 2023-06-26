@@ -49,11 +49,7 @@ class AutolabelConfig(BaseConfig):
             self.generate_logit_bias()
 
     def generate_logit_bias(self) -> None:
-        """Generates logit bias for the labels specified in the config
-
-        Returns:
-            Dict: logit bias dictionary
-        """
+        """Generates logit bias for the labels specified in the config"""
         encoding = tiktoken.encoding_for_model(self.model_name())
         logit_bias = {}
         max_tokens = 0
