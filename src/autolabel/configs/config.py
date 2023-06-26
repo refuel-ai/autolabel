@@ -2,6 +2,7 @@ from functools import cached_property
 from typing import Dict, List, Union
 
 from .base import BaseConfig
+from jsonschema import validate
 
 
 class AutolabelConfig(BaseConfig):
@@ -39,6 +40,16 @@ class AutolabelConfig(BaseConfig):
 
     def __init__(self, config: Union[str, Dict]) -> None:
         super().__init__(config)
+
+    def _validate(self) -> bool:
+        """Returns true if the config settings are valid"""
+        from autolabel.configs.schema import schema
+
+        validate(
+            instance=self.config,
+            schema=schema,
+        )
+        return True
 
     @cached_property
     def _dataset_config(self) -> Dict:

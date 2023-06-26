@@ -1,5 +1,34 @@
 """Config Schema"""
 
+from typing import List
+from autolabel.schema import ModelProvider, TaskType, FewShotAlgorithm
+
+
+def populate_vendors() -> List[str]:
+    """Generate Predefined Vendors
+
+    this function retrives the list of vendors from ModelProvider which acts
+    as the central storage for all the vendors/providers
+    """
+    return [enum_member.value for enum_member in ModelProvider]
+
+
+def populate_task_types() -> List[str]:
+    """Generate Predefined Tasktypes
+
+    this function retrives the list of acceptable task_types from TaskType
+    """
+    return [enum_member.value for enum_member in TaskType]
+
+
+def populate_few_shot_selection() -> List[str]:
+    """Generate Predefined Few shot selections
+
+    this function retrives the list of acceptable few_shot_selections
+    """
+    return [enum_member.value for enum_member in FewShotAlgorithm]
+
+
 # Schema definition for Autolabel API/ calls
 # 'additionalProperties' is set to False for al properties to handle typos
 # for not required properties/fields.
@@ -14,12 +43,8 @@ schema = {
             "description": "The task name of the labeling job",
         },
         "task_type": {
-            "enum": [
-                "classification",
-                "entity_matching",
-                "named_entity_recognition",
-                "question_answering",
-            ],
+            # Dynamically populate acceptable task_types
+            "enum": populate_task_types(),
             "description": "The type of auto labeling task",
         },
         "dataset": {
@@ -36,14 +61,8 @@ schema = {
             "type": "object",
             "properties": {
                 "provider": {
-                    "enum": [
-                        # The below are supported model providers
-                        "huggingface_pipeline",
-                        "refuel",
-                        "openai",
-                        "google",
-                        "anthropic",
-                    ],
+                    # Populate Model providers dynamically
+                    "enum": populate_vendors(),
                 },
                 "name": {"type": "string"},
                 "compute_confidence": {"type": "boolean"},
@@ -71,11 +90,8 @@ schema = {
                     ]
                 },
                 "few_shot_selection": {
-                    "enum": [
-                        "fixed",
-                        "semantic_similarity",
-                        # Add more to it as needed
-                    ],
+                    "enum": populate_few_shot_selection(),
+                    "type": "string",
                 },
                 "few_shot_num": {"type": "number"},
             },
