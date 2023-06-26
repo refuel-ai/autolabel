@@ -35,7 +35,7 @@ dependencies = [
     "torch >= 1.10.0",
     "matplotlib >= 3.5.0",
     "wget >= 3.2",
-    "jsonschema" >= "4.17.3"
+    "jsonschema >= 4.17.3"
 ]
 requires-python = ">=3.6"
 
