@@ -1,7 +1,9 @@
 from functools import cached_property
-from typing import Dict, List, Union
+from typing import Dict, List, Union, Tuple
 
 from .base import BaseConfig
+
+import tiktoken
 
 
 class AutolabelConfig(BaseConfig):
@@ -25,6 +27,8 @@ class AutolabelConfig(BaseConfig):
     MODEL_NAME_KEY = "name"
     MODEL_PARAMS_KEY = "params"
     COMPUTE_CONFIDENCE_KEY = "compute_confidence"
+    LOGIT_BIAS_KEY = "logit_bias"
+    MAX_TOKENS_KEY = "max_tokens"
 
     # Prompt config keys (config["prompt"][<key>])
     TASK_GUIDELINE_KEY = "task_guidelines"
@@ -39,6 +43,32 @@ class AutolabelConfig(BaseConfig):
 
     def __init__(self, config: Union[str, Dict]) -> None:
         super().__init__(config)
+        if self.logit_bias() and self.LOGIT_BIAS_KEY not in self.model_params():
+            if len(self.labels_list()) == 0:
+                raise ValueError("Logit bias is enabled but no labels are specified")
+            self.generate_logit_bias()
+
+    def generate_logit_bias(self) -> None:
+        """Generates logit bias for the labels specified in the config
+
+        Returns:
+            Dict: logit bias dictionary
+        """
+        encoding = tiktoken.encoding_for_model(self.model_name())
+        logit_bias = {}
+        max_tokens = 0
+        for label in self.labels_list():
+            if label not in logit_bias:
+                tokens = encoding.encode(label)
+                for token in tokens:
+                    logit_bias[token] = 100
+                max_tokens = max(max_tokens, len(tokens))
+
+        if self.MODEL_PARAMS_KEY not in self.config[self.MODEL_CONFIG_KEY]:
+            self._model_config[self.MODEL_PARAMS_KEY] = {}
+
+        self.model_params()[self.LOGIT_BIAS_KEY] = logit_bias
+        self.model_params()[self.MAX_TOKENS_KEY] = max_tokens
 
     @cached_property
     def _dataset_config(self) -> Dict:
@@ -96,6 +126,10 @@ class AutolabelConfig(BaseConfig):
     def confidence(self) -> bool:
         """Returns true if the model is able to return a confidence score along with its predictions"""
         return self._model_config.get(self.COMPUTE_CONFIDENCE_KEY, False)
+
+    def logit_bias(self) -> bool:
+        """Returns true if the model is configured to use a logit bias"""
+        return self._model_config.get(self.LOGIT_BIAS_KEY, False)
 
     # Prompt config
     def task_guidelines(self) -> str:
