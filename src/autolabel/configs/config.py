@@ -1,6 +1,5 @@
 from functools import cached_property
-from typing import Dict, List, Union, Tuple
-
+from typing import Dict, List, Union
 from .base import BaseConfig
 
 
@@ -26,7 +25,6 @@ class AutolabelConfig(BaseConfig):
     MODEL_PARAMS_KEY = "params"
     COMPUTE_CONFIDENCE_KEY = "compute_confidence"
     LOGIT_BIAS_KEY = "logit_bias"
-    MAX_TOKENS_KEY = "max_tokens"
 
     # Prompt config keys (config["prompt"][<key>])
     TASK_GUIDELINE_KEY = "task_guidelines"
