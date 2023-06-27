@@ -5,6 +5,7 @@ from autolabel.tasks import (
     ClassificationTask,
     EntityMatchingTask,
     QuestionAnsweringTask,
+    MultiLabelClassificationTask,
 )
 from autolabel.configs import AutolabelConfig
 from autolabel.schema import LLMAnnotation, Metric
@@ -18,6 +19,10 @@ WALMART_AMAZON_CONFIG = json.load(
 )
 
 SCIQ_CONFIG = json.load(open("tests/assets/sciq/config_sciq.json", "r"))
+
+SEM_EVAL_2018_CONFIG = json.load(
+    open("tests/assets/sem_eval_2018_task_1/config_sem_eval_2018_task_1.json", "r")
+)
 
 
 def test_classification_construct_prompt():
@@ -397,3 +402,79 @@ def test_entity_matching_label_not_in_labels_list():
     assert parsed.label == "not-in-labels-list"
     assert parsed.successfully_labeled == False
     assert parsed.raw_response == label
+
+
+def test_multi_label_classification_construct_prompt():
+    config = AutolabelConfig(SEM_EVAL_2018_CONFIG)
+    task = MultiLabelClassificationTask(config=config)
+    assert task.config != None
+
+    input = {"example": "Here is an example", "label": "label-1, label-2"}
+    examples = [
+        {"example": "Here is a seed example", "label": "labela, labelb"},
+        {"example": "Here is another seed example", "label": "labelc, labeld"},
+    ]
+    prompt = task.construct_prompt(input, examples)
+
+    assert SEM_EVAL_2018_CONFIG["prompt"]["output_guidelines"] in prompt
+    assert "\n".join(SEM_EVAL_2018_CONFIG["prompt"]["labels"]) in prompt
+    assert input["example"] in prompt
+    assert input["label"] not in prompt
+    for example in examples:
+        assert example["example"] in prompt
+        assert example["label"] in prompt
+
+    new_config = copy.deepcopy(SEM_EVAL_2018_CONFIG)
+    del new_config["prompt"]["few_shot_selection"]
+    new_config = AutolabelConfig(new_config)
+    task = ClassificationTask(config=new_config)
+    prompt = task.construct_prompt(input, examples)
+    for example in examples:
+        assert example["example"] not in prompt
+        assert example["label"] not in prompt
+
+
+def test_multi_label_classification_eval():
+    config = AutolabelConfig(SEM_EVAL_2018_CONFIG)
+    task = MultiLabelClassificationTask(config=config)
+
+    llm_labels = [
+        LLMAnnotation(
+            successfully_labeled=True,
+            label="neutral",
+        ),
+        LLMAnnotation(
+            successfully_labeled=False,
+            label=task.NULL_LABEL_TOKEN,
+        ),
+        LLMAnnotation(
+            successfully_labeled=True,
+            label="sadness",
+        ),
+        LLMAnnotation(
+            successfully_labeled=True,
+            label="anger, disgust",
+        ),
+        LLMAnnotation(
+            successfully_labeled=True,
+            label="joy, love, trust",
+        ),
+    ]
+    gt_labels = [
+        "anger, disgust",
+        "joy, optimism, trust",
+        "anticipation, joy, optimism",
+        "anger, disgust",
+        "joy, optimism",
+    ]
+    eval = task.eval(llm_labels, gt_labels)
+
+    for metric in eval:
+        if metric.metric_type == Metric.ACCURACY:
+            assert metric.value[0] == 0.25
+        elif metric.metric_type == Metric.F1:
+            assert metric.value[0] == 0.35
+        elif metric.metric_type == Metric.COMPLETION_RATE:
+            assert metric.value[0] == 0.8
+        elif metric.metric_type == Metric.SUPPORT:
+            assert metric.value[0] == 4
