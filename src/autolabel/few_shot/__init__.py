@@ -4,9 +4,9 @@ from typing import Dict, List
 from autolabel.configs import AutolabelConfig
 from autolabel.schema import FewShotAlgorithm, ModelProvider
 from langchain.embeddings import (
-    GooglePalmEmbeddings,
     HuggingFaceEmbeddings,
     OpenAIEmbeddings,
+    VertexAIEmbeddings,
 )
 from langchain.embeddings.base import Embeddings
 from langchain.prompts.example_selector import (
@@ -27,7 +27,7 @@ ALGORITHM_TO_IMPLEMENTATION: Dict[FewShotAlgorithm, BaseExampleSelector] = {
 PROVIDER_TO_MODEL: Dict[ModelProvider, Embeddings] = {
     ModelProvider.ANTHROPIC: OpenAIEmbeddings,
     ModelProvider.OPENAI: OpenAIEmbeddings,
-    ModelProvider.GOOGLE: GooglePalmEmbeddings,
+    ModelProvider.GOOGLE: VertexAIEmbeddings,
     ModelProvider.HUGGINGFACE_PIPELINE: HuggingFaceEmbeddings,
     ModelProvider.REFUEL: OpenAIEmbeddings,
 }
