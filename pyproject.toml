@@ -65,7 +65,7 @@ anthropic = [
 ]
 huggingface = [
     "transformers >= 4.25.0",
-    "accelerate 0.20.3"
+    "accelerate == 0.20.3"
 ]
 google = [
     "google-cloud-aiplatform>=1.25.0",
