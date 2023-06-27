@@ -66,6 +66,7 @@ schema = {
                 },
                 "name": {"type": "string"},
                 "compute_confidence": {"type": "boolean"},
+                "params": {"type": "object"},
             },
             "required": ["provider", "name"],
             "additionalProperties": False,
@@ -102,7 +103,6 @@ schema = {
     "required": [
         "task_name",
         "task_type",
-        "dataset",
         "model",
         "prompt",
     ],
