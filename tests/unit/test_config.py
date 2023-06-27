@@ -106,10 +106,10 @@ def test_schema_validation():
     # ----------
     # Test when one of the required field is not provided
     config_dict_copy = CONFIG_SAMPLE_DICT.copy()
-    del config_dict_copy["dataset"]
+    del config_dict_copy["model"]
     with pytest.raises(
         exceptions.ValidationError,
-        match=r"'dataset' is a required property",
+        match=r"'model' is a required property",
     ):
         validate(
             instance=config_dict_copy,
