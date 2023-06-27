@@ -11,6 +11,7 @@ EXAMPLE_DATASETS = [
     "squad_v2",
     "sciq",
     "conll2003",
+    "twitter_emotion_detection",
 ]
 
 
