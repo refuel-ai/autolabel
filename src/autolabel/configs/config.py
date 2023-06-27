@@ -1,5 +1,6 @@
 from functools import cached_property
 from typing import Dict, List, Union
+
 from .base import BaseConfig
 
 
