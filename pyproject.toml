@@ -34,7 +34,8 @@ dependencies = [
     "pydantic >= 1.10.9",
     "torch >= 1.10.0",
     "matplotlib >= 3.5.0",
-    "wget >= 3.2"
+    "wget >= 3.2",
+    "ipywidgets == 8.0.6"
 ]
 requires-python = ">=3.6"
 
@@ -63,10 +64,12 @@ anthropic = [
     "anthropic >= 0.2.6"
 ]
 huggingface = [
-    "transformers >= 4.25.0"
+    "transformers >= 4.25.0",
+    "accelerate 0.20.3"
 ]
 google = [
-    "google-cloud-aiplatform>=1.25.0"
+    "google-cloud-aiplatform>=1.25.0",
+    "google-generativeai"
 ]
 all = [
     "black",

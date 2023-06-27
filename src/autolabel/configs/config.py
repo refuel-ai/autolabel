@@ -12,6 +12,7 @@ class AutolabelConfig(BaseConfig):
     TASK_TYPE_KEY = "task_type"
     DATASET_CONFIG_KEY = "dataset"
     MODEL_CONFIG_KEY = "model"
+    EMBEDDING_CONFIG_KEY = "embedding"
     PROMPT_CONFIG_KEY = "prompt"
 
     # Dataset config keys (config["dataset"][<key>])
@@ -25,6 +26,10 @@ class AutolabelConfig(BaseConfig):
     MODEL_NAME_KEY = "name"
     MODEL_PARAMS_KEY = "params"
     COMPUTE_CONFIDENCE_KEY = "compute_confidence"
+
+    # Embedding config keys (config["embedding"][<key>])
+    EMBEDDING_PROVIDER_KEY = "provider"
+    EMBEDDING_MODEL_NAME_KEY = "model"
 
     # Prompt config keys (config["prompt"][<key>])
     TASK_GUIDELINE_KEY = "task_guidelines"
@@ -49,6 +54,11 @@ class AutolabelConfig(BaseConfig):
     def _model_config(self) -> Dict:
         """Returns information about the model being used for labeling (e.g. provider name, model name, parameters)"""
         return self.config[self.MODEL_CONFIG_KEY]
+
+    @cached_property
+    def _embedding_config(self) -> Dict:
+        """Returns information about the model being used for computing embeddings (e.g. provider name, model name)"""
+        return self.config[self.EMBEDDING_CONFIG_KEY]
 
     @cached_property
     def _prompt_config(self) -> Dict:
@@ -96,6 +106,15 @@ class AutolabelConfig(BaseConfig):
     def confidence(self) -> bool:
         """Returns true if the model is able to return a confidence score along with its predictions"""
         return self._model_config.get(self.COMPUTE_CONFIDENCE_KEY, False)
+
+    # Embedding config
+    def embedding_provider(self) -> str:
+        """Returns the name of the entity that provides the model used for computing embeddings"""
+        return self._embedding_config.get(self.EMBEDDING_PROVIDER_KEY, self.provider)
+
+    def embedding_model_name(self) -> str:
+        """Returns the name of the model being used for computing embeddings (e.g. sentence-transformers/all-mpnet-base-v2)"""
+        return self._embedding_config.get(self.EMBEDDING_MODEL_NAME_KEY, None)
 
     # Prompt config
     def task_guidelines(self) -> str:
