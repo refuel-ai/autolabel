@@ -2,10 +2,10 @@
 
 
 <h4 align="center">
-  <a href="https://docs.refuel.ai/">Docs</a> |
   <a href="https://discord.gg/fweVnRx6CU">Discord</a> |
   <a href="https://twitter.com/RefuelAI">Twitter</a> |
-  <a href="https://www.refuel.ai/">Website</a>
+  <a href="https://www.refuel.ai/">Website</a> |
+  <a href="https://www.refuel.ai/blog-posts/llm-labeling-technical-report">Benchmark</a>
 </h4>
 
 <div align="center" style="width:800px">
@@ -16,6 +16,10 @@
 ## ⚡ Quick Install
 
 `pip install refuel-autolabel`
+
+## 📖 Documentation
+
+[https://docs.refuel.ai/](https://docs.refuel.ai/)
 
 ## 🏷 What is Autolabel
 
@@ -158,16 +162,11 @@ In order to use Refuel hosted LLMs, you can [request access here](https://refuel
 Check out our [technical report](https://www.refuel.ai/blog-posts/llm-labeling-technical-report) to learn more about the performance of various LLMs, and human annoators, on label quality, turnaround time and cost.
 
 ## 🛠️ Roadmap
-Our goal is to allow users to label, create or enrich any dataset, with any LLM - easily and quickly.
 
-There are four focus areas for Autolabel for 2023:
+Check out our [public roadmap](https://github.com/orgs/refuel-ai/projects/15) to learn more about ongoing and planned improvements to the Autolabel library.
 
-* **Tasks**: Add support for tasks such as retrieval, attribute enrichment and text generation/writing.
-* **LLMs**: Add support for more LLMs, especially open source models like Falcon, MPT and Dolly and the ability to plug in your own LLMs. 
-* Workflows for **experimenting with your datasets** more easily: Add support for richer data types (such as PDFs and HTML documents) and the ability to run benchmarking on your data sources.
-* Techniques to **improve labeling accuracy**: Add support for automatic prompt improvement and tools for better error analysis to iteratively improve LLM performance on different tasks 
+We are always looking for suggestions and contributions from the community. Join the discussion on [Discord](https://discord.gg/fweVnRx6CU) or open a [Github issue](https://github.com/refuel-ai/autolabel/issues) to report bugs and request features.
 
-We will be releasing a more detailed roadmap soon, but we love suggestions and contributions from the community. Chat with the Refuel team and Autolabel community on [Discord](https://discord.gg/fweVnRx6CU) or open [Github issues](https://github.com/refuel-ai/autolabel/issues) to report bugs and request features.
 
 ## 🙌 Contributing
 
