@@ -1,5 +1,6 @@
 from functools import cached_property
 from typing import List, Optional
+import logging
 
 from langchain.chat_models import ChatOpenAI
 from langchain.llms import OpenAI
@@ -9,6 +10,9 @@ import tiktoken
 from autolabel.models import BaseModel
 from autolabel.configs import AutolabelConfig
 from autolabel.cache import BaseCache
+
+
+logger = logging.getLogger(__name__)
 
 
 class OpenAILLM(BaseModel):
@@ -76,6 +80,14 @@ class OpenAILLM(BaseModel):
 
         # populate model params and initialize the LLM
         model_params = config.model_params()
+        if config.logit_bias():
+            logit_bias = self._generate_logit_bias(config)
+            # if logit_bias or max_tokens is specified already, we don't want to overwrite it
+            model_params = {
+                **logit_bias,
+                **model_params,
+            }
+
         if self._engine == "chat":
             self.model_params = {**self.DEFAULT_PARAMS_CHAT_ENGINE, **model_params}
             self.llm = ChatOpenAI(model_name=self.model_name, **self.model_params)
@@ -85,6 +97,32 @@ class OpenAILLM(BaseModel):
                 **model_params,
             }
             self.llm = OpenAI(model_name=self.model_name, **self.model_params)
+
+    def _generate_logit_bias(self, config: AutolabelConfig) -> None:
+        """Generates logit bias for the labels specified in the config
+
+        Args:
+            config (AutolabelConfig): AutolabelConfig object
+
+        Returns:
+            Dict: logit bias and max tokens
+        """
+        if len(config.labels_list()) == 0:
+            logger.warning(
+                "No labels specified in the config. Skipping logit bias generation."
+            )
+            return {}
+        encoding = tiktoken.encoding_for_model(self.model_name)
+        logit_bias = {}
+        max_tokens = 0
+        for label in config.labels_list():
+            if label not in logit_bias:
+                tokens = encoding.encode(label)
+                for token in tokens:
+                    logit_bias[token] = 100
+                max_tokens = max(max_tokens, len(tokens))
+
+        return {"logit_bias": logit_bias, "max_tokens": max_tokens}
 
     def _label(self, prompts: List[str]) -> LLMResult:
         if self._engine == "chat":
