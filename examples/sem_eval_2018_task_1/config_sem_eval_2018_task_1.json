@@ -1,0 +1,46 @@
+{
+  "task_name": "EmotionClassification",
+  "task_type": "multi_label_classification",
+  "dataset": {
+    "label_column": "label",
+    "delimiter": ","
+  },
+  "model": {
+    "provider": "openai",
+    "name": "gpt-3.5-turbo"
+  },
+  "prompt": {
+    "task_guidelines": "You are an expert at detecting which emotions are behind a comment.\nYour job is to correctly label the provided input example into one or more of the following categories:\n{labels}",
+    "labels": [
+      "admiration",
+      "amusement",
+      "anger",
+      "annoyance",
+      "approval",
+      "caring",
+      "confusion",
+      "curiosity",
+      "desire",
+      "disappointment",
+      "disapproval",
+      "disgust",
+      "embarrassment",
+      "excitement",
+      "fear",
+      "gratitude",
+      "grief",
+      "joy",
+      "love",
+      "nervousness",
+      "optimism",
+      "pride",
+      "realization",
+      "relief",
+      "remorse",
+      "sadness",
+      "surprise",
+      "neutral"
+    ],
+    "example_template": "Input: {example}\nOutput: {label}"
+  }
+}
