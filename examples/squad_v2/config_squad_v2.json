@@ -10,26 +10,11 @@
         "name": "gpt-3.5-turbo"
     },
     "prompt": {
-        "task_guidelines": "You are an expert at answering questions based on wikipedia articles. Your job is to answer the following questions using the context provided with the question. The answer is a continuous span of words from the context. Use the context to answer the question. If the question cannot be answered using the context, answer the question as unanswerable.",
-        "few_shot_examples": [
-            {
-                "question": "What was created by the modern Conservative Party in 1859 to define basic Conservative principles?",
-                "answer": "unanswerable",
-                "context": "The modern Conservative Party was created out of the 'Pittite' Tories of the early 19th century. In the late 1820s disputes over political reform broke up this grouping. A government led by the Duke of Wellington collapsed amidst dire election results. Following this disaster Robert Peel set about assembling a new coalition of forces. Peel issued the Tamworth Manifesto in 1834 which set out the basic principles of Conservatism; – the necessity in specific cases of reform in order to survive, but an opposition to unnecessary change, that could lead to 'a perpetual vortex of agitation'. Meanwhile, the Whigs, along with free trade Tory followers of Robert Peel, and independent Radicals, formed the Liberal Party under Lord Palmerston in 1859, and transformed into a party of the growing urban middle-class, under the long leadership of William Ewart Gladstone."
-            },
-            {
-                "question": "When is King Mom symbolically burnt?",
-                "answer": "On the evening before Lent",
-                "context": "Carnival means weeks of events that bring colourfully decorated floats, contagiously throbbing music, luxuriously costumed groups of celebrants of all ages, King and Queen elections, electrifying jump-ups and torchlight parades, the Jouvert morning: the Children's Parades and finally the Grand Parade. Aruba's biggest celebration is a month-long affair consisting of festive 'jump-ups' (street parades), spectacular parades and creative contests. Music and flamboyant costumes play a central role, from the Queen elections to the Grand Parade. Street parades continue in various districts throughout the month, with brass band, steel drum and roadmarch tunes. On the evening before Lent, Carnival ends with the symbolic burning of King Momo."
-            },
-            {
-                "question": "How far does the Alps range stretch?",
-                "answer": "the Mediterranean Sea north above the Po basin, extending through France from Grenoble, eastward through mid and southern Switzerland",
-                "context": "The Alps are a crescent shaped geographic feature of central Europe that ranges in a 800 km (500 mi) arc from east to west and is 200 km (120 mi) in width. The mean height of the mountain peaks is 2.5 km (1.6 mi). The range stretches from the Mediterranean Sea north above the Po basin, extending through France from Grenoble, eastward through mid and southern Switzerland. The range continues toward Vienna in Austria, and east to the Adriatic Sea and into Slovenia. To the south it dips into northern Italy and to the north extends to the south border of Bavaria in Germany. In areas like Chiasso, Switzerland, and Neuschwanstein, Bavaria, the demarcation between the mountain range and the flatlands are clear; in other places such as Geneva, the demarcation is less clear. The countries with the greatest alpine territory are Switzerland, France, Austria and Italy."
-            }
-        ],
-        "few_shot_selection": "fixed",
-        "few_shot_num": 3,
+        "task_guidelines": "You are an expert at answering questions based on wikipedia articles. Your job is to answer the following questions using the context provided with the question.\nThe answer is a continuous span of words from the context.\nUse the context to answer the question. If the question cannot be answered using the context and the context alone without any outside knowledge, answer the question as unanswerable.",
+        "output_guidelines": "You will return the answer one element: \"the correct answer\". If the question is unanswerable, return the answer as \"unanswerable\"\n",
+        "few_shot_examples": "seed.csv",
+        "few_shot_selection": "semantic_similarity",
+        "few_shot_num": 4,
         "example_template": "Context: {context}\nQuestion: {question}\nAnswer: {answer}"
     }
 }
