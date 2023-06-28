@@ -466,7 +466,7 @@ def test_multilabel_classification_eval():
     gt_labels = [
         "anger, disgust",
         "joy, optimism, trust",
-        "anticipation, joy, optimism",
+        "anticipation, joy, sadness",
         "anger, disgust",
         "joy, optimism",
     ]
@@ -476,7 +476,7 @@ def test_multilabel_classification_eval():
         if metric.metric_type == Metric.ACCURACY:
             assert metric.value[0] == 0.25
         elif metric.metric_type == Metric.F1:
-            assert metric.value[0] == 0.35
+            assert metric.value[0] == 0.25
         elif metric.metric_type == Metric.COMPLETION_RATE:
             assert metric.value[0] == 0.8
         elif metric.metric_type == Metric.SUPPORT:
