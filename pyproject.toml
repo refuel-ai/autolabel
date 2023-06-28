@@ -61,7 +61,7 @@ openai = [
     "tiktoken >= 0.3.3"
 ]
 anthropic = [
-    "anthropic >= 0.2.6"
+    "anthropic == 0.2.6"
 ]
 huggingface = [
     "transformers >= 4.25.0"
