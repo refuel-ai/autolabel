@@ -65,7 +65,8 @@ anthropic = [
     "anthropic == 0.2.6"
 ]
 huggingface = [
-    "transformers >= 4.25.0"
+    "transformers >= 4.25.0",
+    "sentence_transformers"
 ]
 google = [
     "google-cloud-aiplatform>=1.25.0"
@@ -81,7 +82,8 @@ all = [
     "tiktoken >= 0.3.3",
     "anthropic == 0.2.6",
     "transformers >= 4.25.0",
-    "google-cloud-aiplatform>=1.25.0"
+    "google-cloud-aiplatform>=1.25.0",
+    "sentence_transformers"
 ]
 
 [project.urls]
