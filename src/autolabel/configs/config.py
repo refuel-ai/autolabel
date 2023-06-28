@@ -1,8 +1,9 @@
 from functools import cached_property
 from typing import Dict, List, Union
 
-from .base import BaseConfig
 from jsonschema import validate
+
+from .base import BaseConfig
 
 
 class AutolabelConfig(BaseConfig):
@@ -69,7 +70,7 @@ class AutolabelConfig(BaseConfig):
     @cached_property
     def _embedding_config(self) -> Dict:
         """Returns information about the model being used for computing embeddings (e.g. provider name, model name)"""
-        return self.config[self.EMBEDDING_CONFIG_KEY]
+        return self.config.get(self.EMBEDDING_CONFIG_KEY, {})
 
     @cached_property
     def _prompt_config(self) -> Dict:
@@ -121,7 +122,7 @@ class AutolabelConfig(BaseConfig):
     # Embedding config
     def embedding_provider(self) -> str:
         """Returns the name of the entity that provides the model used for computing embeddings"""
-        return self._embedding_config.get(self.EMBEDDING_PROVIDER_KEY, self.provider)
+        return self._embedding_config.get(self.EMBEDDING_PROVIDER_KEY, self.provider())
 
     def embedding_model_name(self) -> str:
         """Returns the name of the model being used for computing embeddings (e.g. sentence-transformers/all-mpnet-base-v2)"""

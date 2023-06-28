@@ -24,12 +24,12 @@ ALGORITHM_TO_IMPLEMENTATION: Dict[FewShotAlgorithm, BaseExampleSelector] = {
     FewShotAlgorithm.MAX_MARGINAL_RELEVANCE: MaxMarginalRelevanceExampleSelector,
 }
 
+DEFAULT_EMBEDDING_PROVIDER = OpenAIEmbeddings
+
 PROVIDER_TO_MODEL: Dict[ModelProvider, Embeddings] = {
-    ModelProvider.ANTHROPIC: OpenAIEmbeddings,
     ModelProvider.OPENAI: OpenAIEmbeddings,
     ModelProvider.GOOGLE: VertexAIEmbeddings,
     ModelProvider.HUGGINGFACE_PIPELINE: HuggingFaceEmbeddings,
-    ModelProvider.REFUEL: OpenAIEmbeddings,
 }
 
 logger = logging.getLogger(__name__)
@@ -61,9 +61,10 @@ class ExampleSelectorFactory:
             FewShotAlgorithm.SEMANTIC_SIMILARITY,
             FewShotAlgorithm.MAX_MARGINAL_RELEVANCE,
         ]:
-
             model_provider = config.embedding_provider()
-            embedding_model_class = PROVIDER_TO_MODEL[model_provider]
+            embedding_model_class = PROVIDER_TO_MODEL.get(
+                model_provider, DEFAULT_EMBEDDING_PROVIDER
+            )
             model_name = config.embedding_model_name()
             if model_name:
                 embedding_model = embedding_model_class(model_name=model_name)

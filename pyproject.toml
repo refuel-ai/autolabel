@@ -65,12 +65,10 @@ anthropic = [
     "anthropic >= 0.2.6"
 ]
 huggingface = [
-    "transformers >= 4.25.0",
-    "accelerate == 0.20.3"
+    "transformers >= 4.25.0"
 ]
 google = [
-    "google-cloud-aiplatform>=1.25.0",
-    "google-generativeai"
+    "google-cloud-aiplatform>=1.25.0"
 ]
 all = [
     "black",
