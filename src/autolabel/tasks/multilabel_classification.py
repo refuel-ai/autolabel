@@ -121,8 +121,8 @@ class MultilabelClassificationTask(BaseTask):
         """Evaluate the LLM generated labels by comparing them against ground truth
 
         Args:
-            llm_labels (List[LLMAnnotation]): _description_
-            gt_labels (List[str]): _description_
+            llm_labels (List[LLMAnnotation]): list of LLM generated labels
+            gt_labels (List[str]): list of ground truth labels
 
         Returns:
             List[MetricResult]: list of metrics and corresponding values
