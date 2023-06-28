@@ -5,7 +5,7 @@ from autolabel.tasks import (
     ClassificationTask,
     EntityMatchingTask,
     QuestionAnsweringTask,
-    MultiLabelClassificationTask,
+    MultilabelClassificationTask,
 )
 from autolabel.configs import AutolabelConfig
 from autolabel.schema import LLMAnnotation, Metric
@@ -20,8 +20,11 @@ WALMART_AMAZON_CONFIG = json.load(
 
 SCIQ_CONFIG = json.load(open("tests/assets/sciq/config_sciq.json", "r"))
 
-SEM_EVAL_2018_CONFIG = json.load(
-    open("tests/assets/sem_eval_2018_task_1/config_sem_eval_2018_task_1.json", "r")
+TWITTER_EMOTION_DETECTION_CONFIG = json.load(
+    open(
+        "tests/assets/twitter_emotion_detection/config_twitter_emotion_detection.json",
+        "r",
+    )
 )
 
 
@@ -404,9 +407,9 @@ def test_entity_matching_label_not_in_labels_list():
     assert parsed.raw_response == label
 
 
-def test_multi_label_classification_construct_prompt():
-    config = AutolabelConfig(SEM_EVAL_2018_CONFIG)
-    task = MultiLabelClassificationTask(config=config)
+def test_multilabel_classification_construct_prompt():
+    config = AutolabelConfig(TWITTER_EMOTION_DETECTION_CONFIG)
+    task = MultilabelClassificationTask(config=config)
     assert task.config != None
 
     input = {"example": "Here is an example", "label": "label-1, label-2"}
@@ -416,15 +419,15 @@ def test_multi_label_classification_construct_prompt():
     ]
     prompt = task.construct_prompt(input, examples)
 
-    assert SEM_EVAL_2018_CONFIG["prompt"]["output_guidelines"] in prompt
-    assert "\n".join(SEM_EVAL_2018_CONFIG["prompt"]["labels"]) in prompt
+    assert TWITTER_EMOTION_DETECTION_CONFIG["prompt"]["output_guidelines"] in prompt
+    assert "\n".join(TWITTER_EMOTION_DETECTION_CONFIG["prompt"]["labels"]) in prompt
     assert input["example"] in prompt
     assert input["label"] not in prompt
     for example in examples:
         assert example["example"] in prompt
         assert example["label"] in prompt
 
-    new_config = copy.deepcopy(SEM_EVAL_2018_CONFIG)
+    new_config = copy.deepcopy(TWITTER_EMOTION_DETECTION_CONFIG)
     del new_config["prompt"]["few_shot_selection"]
     new_config = AutolabelConfig(new_config)
     task = ClassificationTask(config=new_config)
@@ -434,9 +437,9 @@ def test_multi_label_classification_construct_prompt():
         assert example["label"] not in prompt
 
 
-def test_multi_label_classification_eval():
-    config = AutolabelConfig(SEM_EVAL_2018_CONFIG)
-    task = MultiLabelClassificationTask(config=config)
+def test_multilabel_classification_eval():
+    config = AutolabelConfig(TWITTER_EMOTION_DETECTION_CONFIG)
+    task = MultilabelClassificationTask(config=config)
 
     llm_labels = [
         LLMAnnotation(

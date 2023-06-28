@@ -1,8 +1,8 @@
 {
   "task_name": "EmotionClassification",
-  "task_type": "multi_label_classification",
+  "task_type": "multilabel_classification",
   "dataset": {
-    "label_column": "label",
+    "label_column": "labels",
     "delimiter": ","
   },
   "model": {

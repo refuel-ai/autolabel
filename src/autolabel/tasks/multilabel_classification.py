@@ -14,7 +14,7 @@ from autolabel.utils import get_format_variables
 import json
 
 
-class MultiLabelClassificationTask(BaseTask):
+class MultilabelClassificationTask(BaseTask):
     DEFAULT_OUTPUT_GUIDELINES = 'You will return the answer as a comma separated list of labels. For example: "label1, label2, label3"'
     DEFAULT_TASK_GUIDELINES = "Your job is to correctly label the provided input example into one or more of the following {num_labels} categories.\nCategories:\n{labels}\n"
 
