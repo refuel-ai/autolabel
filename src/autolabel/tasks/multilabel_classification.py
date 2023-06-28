@@ -2,20 +2,20 @@ from collections import defaultdict
 from typing import List, Dict, Tuple
 
 from langchain.prompts.prompt import PromptTemplate
-from sklearn.metrics import accuracy_score
+from sklearn.metrics import accuracy_score, f1_score
+from sklearn.preprocessing import MultiLabelBinarizer
 
 from autolabel.confidence import ConfidenceCalculator
 from autolabel.configs import AutolabelConfig
 from autolabel.schema import LLMAnnotation, Metric, MetricResult
 from autolabel.tasks import BaseTask
-from autolabel.tasks.utils import compute_f1
 from autolabel.utils import get_format_variables
 
 import json
 
 
 class MultilabelClassificationTask(BaseTask):
-    DEFAULT_OUTPUT_GUIDELINES = 'You will return the answer as a comma separated list of labels. For example: "label1, label2, label3"'
+    DEFAULT_OUTPUT_GUIDELINES = 'You will return the answer as a semicolon-separated list of labels. For example: "label1;label2;label3"'
     DEFAULT_TASK_GUIDELINES = "Your job is to correctly label the provided input example into one or more of the following {num_labels} categories.\nCategories:\n{labels}\n"
 
     GENERATE_EXPLANATION_PROMPT = "You are an expert at providing a well reasoned explanation for the output of a given task. \n\nBEGIN TASK DESCRIPTION\n{task_guidelines}\nEND TASK DESCRIPTION\nYou will be given an input example and the corresponding output. Your job is to provide an explanation for why the output is correct for the task above.\nThink step by step and generate an explanation. The last line of the explanation should be - So, the answer is <label>.\n{labeled_example}\nExplanation: "
@@ -177,14 +177,21 @@ class MultilabelClassificationTask(BaseTask):
             if self.config.confidence():
                 eval_metrics_map[Metric.THRESHOLD].append(threshold)
 
-            f1 = sum(
-                [
-                    compute_f1(curr_llm_labels[index], curr_gt_labels[index])
-                    for index in range(len(curr_llm_labels))
-                ]
-            )
+            def binarize_labels(curr_labels):
+                """Generate multilabel array from ground truth and LLM labels"""
+                mlb = MultiLabelBinarizer()
+                mlb.fit([self.config.labels_list()])
+                return mlb.transform(
+                    [x.split(self.config.label_separator()) for x in curr_labels]
+                )
+
             eval_metrics_map[Metric.F1].append(
-                (float(f1) / len(curr_llm_labels)) if len(curr_llm_labels) > 0 else 0.0
+                f1_score(
+                    binarize_labels(curr_gt_labels),
+                    binarize_labels(curr_llm_labels),
+                    average="macro",
+                    zero_division=0,
+                )
             )
 
         eval_metrics.extend(

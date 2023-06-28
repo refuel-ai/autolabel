@@ -17,6 +17,7 @@ class AutolabelConfig(BaseConfig):
 
     # Dataset config keys (config["dataset"][<key>])
     LABEL_COLUMN_KEY = "label_column"
+    LABEL_SEPARATOR_KEY = "label_separator"
     EXPLANATION_COLUMN_KEY = "explanation_column"
     TEXT_COLUMN_KEY = "text_column"
     DELIMITER_KEY = "delimiter"
@@ -78,6 +79,10 @@ class AutolabelConfig(BaseConfig):
     def label_column(self) -> str:
         """Returns the name of the column containing labels for the dataset. Used for comparing accuracy of autolabel results vs ground truth"""
         return self._dataset_config.get(self.LABEL_COLUMN_KEY, None)
+
+    def label_separator(self) -> str:
+        """Returns the token used to seperate multiple labels in the dataset. Defaults to a semicolon ';'"""
+        return self._dataset_config.get(self.LABEL_SEPARATOR_KEY, ";")
 
     def text_column(self) -> str:
         """Returns the name of the column containing text data we intend to label"""

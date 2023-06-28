@@ -3,6 +3,7 @@
   "task_type": "multilabel_classification",
   "dataset": {
     "label_column": "labels",
+    "label_separator": ", ",
     "delimiter": ","
   },
   "model": {

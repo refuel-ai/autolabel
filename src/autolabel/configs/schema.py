@@ -51,6 +51,7 @@ schema = {
             "type": "object",
             "properties": {
                 "label_column": {"type": "string"},
+                "label_separator": {"type": "string"},
                 "text_column": {"type": "string"},
                 "delimiter": {"type": "string"},
                 "explanation_column": {"type": "string"},
