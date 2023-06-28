@@ -1,8 +1,14 @@
+import logging
 from typing import Dict, List
 
-import logging
-
-from langchain.embeddings import OpenAIEmbeddings
+from autolabel.configs import AutolabelConfig
+from autolabel.schema import FewShotAlgorithm, ModelProvider
+from langchain.embeddings import (
+    HuggingFaceEmbeddings,
+    OpenAIEmbeddings,
+    VertexAIEmbeddings,
+)
+from langchain.embeddings.base import Embeddings
 from langchain.prompts.example_selector import (
     MaxMarginalRelevanceExampleSelector,
     SemanticSimilarityExampleSelector,
@@ -11,13 +17,19 @@ from langchain.prompts.example_selector.base import BaseExampleSelector
 
 from .fixed_example_selector import FixedExampleSelector
 from .vector_store import VectorStoreWrapper
-from autolabel.configs import AutolabelConfig
-from autolabel.schema import FewShotAlgorithm
 
 ALGORITHM_TO_IMPLEMENTATION: Dict[FewShotAlgorithm, BaseExampleSelector] = {
     FewShotAlgorithm.FIXED: FixedExampleSelector,
     FewShotAlgorithm.SEMANTIC_SIMILARITY: SemanticSimilarityExampleSelector,
     FewShotAlgorithm.MAX_MARGINAL_RELEVANCE: MaxMarginalRelevanceExampleSelector,
+}
+
+DEFAULT_EMBEDDING_PROVIDER = OpenAIEmbeddings
+
+PROVIDER_TO_MODEL: Dict[ModelProvider, Embeddings] = {
+    ModelProvider.OPENAI: OpenAIEmbeddings,
+    ModelProvider.GOOGLE: VertexAIEmbeddings,
+    ModelProvider.HUGGINGFACE_PIPELINE: HuggingFaceEmbeddings,
 }
 
 logger = logging.getLogger(__name__)
@@ -49,7 +61,16 @@ class ExampleSelectorFactory:
             FewShotAlgorithm.SEMANTIC_SIMILARITY,
             FewShotAlgorithm.MAX_MARGINAL_RELEVANCE,
         ]:
-            params["embeddings"] = OpenAIEmbeddings()
+            model_provider = config.embedding_provider()
+            embedding_model_class = PROVIDER_TO_MODEL.get(
+                model_provider, DEFAULT_EMBEDDING_PROVIDER
+            )
+            model_name = config.embedding_model_name()
+            if model_name:
+                embedding_model = embedding_model_class(model_name=model_name)
+            else:
+                embedding_model = embedding_model_class()
+            params["embeddings"] = embedding_model
             params["vectorstore_cls"] = VectorStoreWrapper
             input_keys = [
                 x

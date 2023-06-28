@@ -1,7 +1,8 @@
 """Config Schema"""
 
 from typing import List
-from autolabel.schema import ModelProvider, TaskType, FewShotAlgorithm
+
+from autolabel.schema import FewShotAlgorithm, ModelProvider, TaskType
 
 
 def populate_vendors() -> List[str]:
@@ -69,6 +70,17 @@ schema = {
                 "params": {"type": "object"},
             },
             "required": ["provider", "name"],
+            "additionalProperties": False,
+        },
+        "embedding": {
+            "type": "object",
+            "properties": {
+                "provider": {
+                    # Populate embedding model providers dynamically
+                    "enum": populate_vendors(),
+                },
+                "model": {"type": "string"},
+            },
             "additionalProperties": False,
         },
         "prompt": {
