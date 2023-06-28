@@ -412,20 +412,20 @@ def test_multilabel_classification_construct_prompt():
     task = MultilabelClassificationTask(config=config)
     assert task.config != None
 
-    input = {"example": "Here is an example", "label": "label-1, label-2"}
+    input = {"example": "Here is an example", "labels": "label-1, label-2"}
     examples = [
-        {"example": "Here is a seed example", "label": "labela, labelb"},
-        {"example": "Here is another seed example", "label": "labelc, labeld"},
+        {"example": "Here is a seed example", "labels": "labela, labelb"},
+        {"example": "Here is another seed example", "labels": "labelc, labeld"},
     ]
     prompt = task.construct_prompt(input, examples)
 
     assert TWITTER_EMOTION_DETECTION_CONFIG["prompt"]["output_guidelines"] in prompt
     assert "\n".join(TWITTER_EMOTION_DETECTION_CONFIG["prompt"]["labels"]) in prompt
     assert input["example"] in prompt
-    assert input["label"] not in prompt
+    assert input["labels"] not in prompt
     for example in examples:
         assert example["example"] in prompt
-        assert example["label"] in prompt
+        assert example["labels"] in prompt
 
     new_config = copy.deepcopy(TWITTER_EMOTION_DETECTION_CONFIG)
     del new_config["prompt"]["few_shot_selection"]
@@ -434,7 +434,7 @@ def test_multilabel_classification_construct_prompt():
     prompt = task.construct_prompt(input, examples)
     for example in examples:
         assert example["example"] not in prompt
-        assert example["label"] not in prompt
+        assert example["labels"] not in prompt
 
 
 def test_multilabel_classification_eval():

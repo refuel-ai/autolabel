@@ -42,7 +42,7 @@ class MultilabelClassificationTask(BaseTask):
             eg_copy = eg.copy()
             # If chain of thought is enabled
             if label_column and self.config.chain_of_thought():
-                eg_copy[label_column] = json.dumps({"label": eg[label_column]})
+                eg_copy[label_column] = json.dumps({label_column: eg[label_column]})
             fmt_examples.append(example_template.format_map(defaultdict(str, eg_copy)))
 
         # populate the current example in the prompt
