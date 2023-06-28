@@ -61,7 +61,7 @@ openai = [
     "tiktoken >= 0.3.3"
 ]
 anthropic = [
-    "anthropic >= 0.2.6"
+    "anthropic == 0.2.6"
 ]
 huggingface = [
     "transformers >= 4.25.0"
@@ -78,7 +78,7 @@ all = [
     "pre-commit",
     "openai >= 0.27.4",
     "tiktoken >= 0.3.3",
-    "anthropic >= 0.2.6",
+    "anthropic == 0.2.6",
     "transformers >= 4.25.0",
     "google-cloud-aiplatform>=1.25.0"
 ]
