@@ -1,5 +1,5 @@
 from autolabel import LabelingAgent
-from autolabel.dataset_loader import DatasetLoader
+from autolabel.data_loaders import DatasetLoader
 from pandas import DataFrame
 
 csv_path = "tests/assets/banking/test.csv"
