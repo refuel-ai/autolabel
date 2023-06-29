@@ -5,6 +5,7 @@ from autolabel.tasks import (
     ClassificationTask,
     EntityMatchingTask,
     QuestionAnsweringTask,
+    MultilabelClassificationTask,
 )
 from autolabel.configs import AutolabelConfig
 from autolabel.schema import LLMAnnotation, Metric
@@ -18,6 +19,13 @@ WALMART_AMAZON_CONFIG = json.load(
 )
 
 SCIQ_CONFIG = json.load(open("tests/assets/sciq/config_sciq.json", "r"))
+
+TWITTER_EMOTION_DETECTION_CONFIG = json.load(
+    open(
+        "tests/assets/twitter_emotion_detection/config_twitter_emotion_detection.json",
+        "r",
+    )
+)
 
 
 def test_classification_construct_prompt():
@@ -397,3 +405,79 @@ def test_entity_matching_label_not_in_labels_list():
     assert parsed.label == "not-in-labels-list"
     assert parsed.successfully_labeled == False
     assert parsed.raw_response == label
+
+
+def test_multilabel_classification_construct_prompt():
+    config = AutolabelConfig(TWITTER_EMOTION_DETECTION_CONFIG)
+    task = MultilabelClassificationTask(config=config)
+    assert task.config != None
+
+    input = {"example": "Here is an example", "labels": "label-1, label-2"}
+    examples = [
+        {"example": "Here is a seed example", "labels": "labela, labelb"},
+        {"example": "Here is another seed example", "labels": "labelc, labeld"},
+    ]
+    prompt = task.construct_prompt(input, examples)
+
+    assert TWITTER_EMOTION_DETECTION_CONFIG["prompt"]["output_guidelines"] in prompt
+    assert "\n".join(TWITTER_EMOTION_DETECTION_CONFIG["prompt"]["labels"]) in prompt
+    assert input["example"] in prompt
+    assert input["labels"] not in prompt
+    for example in examples:
+        assert example["example"] in prompt
+        assert example["labels"] in prompt
+
+    new_config = copy.deepcopy(TWITTER_EMOTION_DETECTION_CONFIG)
+    del new_config["prompt"]["few_shot_selection"]
+    new_config = AutolabelConfig(new_config)
+    task = ClassificationTask(config=new_config)
+    prompt = task.construct_prompt(input, examples)
+    for example in examples:
+        assert example["example"] not in prompt
+        assert example["labels"] not in prompt
+
+
+def test_multilabel_classification_eval():
+    config = AutolabelConfig(TWITTER_EMOTION_DETECTION_CONFIG)
+    task = MultilabelClassificationTask(config=config)
+
+    llm_labels = [
+        LLMAnnotation(
+            successfully_labeled=True,
+            label="neutral",
+        ),
+        LLMAnnotation(
+            successfully_labeled=False,
+            label=task.NULL_LABEL_TOKEN,
+        ),
+        LLMAnnotation(
+            successfully_labeled=True,
+            label="sadness",
+        ),
+        LLMAnnotation(
+            successfully_labeled=True,
+            label="anger, disgust",
+        ),
+        LLMAnnotation(
+            successfully_labeled=True,
+            label="joy, love, trust",
+        ),
+    ]
+    gt_labels = [
+        "anger, disgust",
+        "joy, optimism, trust",
+        "anticipation, joy, sadness",
+        "anger, disgust",
+        "joy, optimism",
+    ]
+    eval = task.eval(llm_labels, gt_labels)
+
+    for metric in eval:
+        if metric.metric_type == Metric.ACCURACY:
+            assert metric.value[0] == 0.25
+        elif metric.metric_type == Metric.F1:
+            assert metric.value[0] == 0.25
+        elif metric.metric_type == Metric.COMPLETION_RATE:
+            assert metric.value[0] == 0.8
+        elif metric.metric_type == Metric.SUPPORT:
+            assert metric.value[0] == 4
