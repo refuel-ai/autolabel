@@ -1,7 +1,8 @@
+from os.path import expanduser, join
 from typing import Any, Optional
+
 from sqlalchemy import create_engine
 from sqlalchemy.engine.base import Engine
-from os.path import join, expanduser
 
 DB_ENGINE = None
 DB_PATH = join(expanduser("~"), ".autolabel.db")
