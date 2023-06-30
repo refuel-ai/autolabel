@@ -1,6 +1,8 @@
 from functools import cached_property
 from typing import Dict, List, Union
 
+from jsonschema import validate
+
 from .base import BaseConfig
 
 
@@ -12,10 +14,12 @@ class AutolabelConfig(BaseConfig):
     TASK_TYPE_KEY = "task_type"
     DATASET_CONFIG_KEY = "dataset"
     MODEL_CONFIG_KEY = "model"
+    EMBEDDING_CONFIG_KEY = "embedding"
     PROMPT_CONFIG_KEY = "prompt"
 
     # Dataset config keys (config["dataset"][<key>])
     LABEL_COLUMN_KEY = "label_column"
+    LABEL_SEPARATOR_KEY = "label_separator"
     EXPLANATION_COLUMN_KEY = "explanation_column"
     TEXT_COLUMN_KEY = "text_column"
     DELIMITER_KEY = "delimiter"
@@ -26,6 +30,10 @@ class AutolabelConfig(BaseConfig):
     MODEL_PARAMS_KEY = "params"
     COMPUTE_CONFIDENCE_KEY = "compute_confidence"
     LOGIT_BIAS_KEY = "logit_bias"
+
+    # Embedding config keys (config["embedding"][<key>])
+    EMBEDDING_PROVIDER_KEY = "provider"
+    EMBEDDING_MODEL_NAME_KEY = "model"
 
     # Prompt config keys (config["prompt"][<key>])
     TASK_GUIDELINE_KEY = "task_guidelines"
@@ -41,6 +49,16 @@ class AutolabelConfig(BaseConfig):
     def __init__(self, config: Union[str, Dict]) -> None:
         super().__init__(config)
 
+    def _validate(self) -> bool:
+        """Returns true if the config settings are valid"""
+        from autolabel.configs.schema import schema
+
+        validate(
+            instance=self.config,
+            schema=schema,
+        )
+        return True
+
     @cached_property
     def _dataset_config(self) -> Dict:
         """Returns information about the dataset being used for labeling (e.g. label_column, text_column, delimiter)"""
@@ -50,6 +68,11 @@ class AutolabelConfig(BaseConfig):
     def _model_config(self) -> Dict:
         """Returns information about the model being used for labeling (e.g. provider name, model name, parameters)"""
         return self.config[self.MODEL_CONFIG_KEY]
+
+    @cached_property
+    def _embedding_config(self) -> Dict:
+        """Returns information about the model being used for computing embeddings (e.g. provider name, model name)"""
+        return self.config.get(self.EMBEDDING_CONFIG_KEY, {})
 
     @cached_property
     def _prompt_config(self) -> Dict:
@@ -68,6 +91,10 @@ class AutolabelConfig(BaseConfig):
     def label_column(self) -> str:
         """Returns the name of the column containing labels for the dataset. Used for comparing accuracy of autolabel results vs ground truth"""
         return self._dataset_config.get(self.LABEL_COLUMN_KEY, None)
+
+    def label_separator(self) -> str:
+        """Returns the token used to seperate multiple labels in the dataset. Defaults to a semicolon ';'"""
+        return self._dataset_config.get(self.LABEL_SEPARATOR_KEY, ";")
 
     def text_column(self) -> str:
         """Returns the name of the column containing text data we intend to label"""
@@ -101,6 +128,15 @@ class AutolabelConfig(BaseConfig):
     def logit_bias(self) -> bool:
         """Returns true if the model is configured to use a logit bias"""
         return self._model_config.get(self.LOGIT_BIAS_KEY, False)
+
+    # Embedding config
+    def embedding_provider(self) -> str:
+        """Returns the name of the entity that provides the model used for computing embeddings"""
+        return self._embedding_config.get(self.EMBEDDING_PROVIDER_KEY, self.provider())
+
+    def embedding_model_name(self) -> str:
+        """Returns the name of the model being used for computing embeddings (e.g. sentence-transformers/all-mpnet-base-v2)"""
+        return self._embedding_config.get(self.EMBEDDING_MODEL_NAME_KEY, None)
 
     # Prompt config
     def task_guidelines(self) -> str:

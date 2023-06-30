@@ -4,7 +4,14 @@ from sqlalchemy.engine.base import Engine
 from os.path import join, expanduser
 
 DB_ENGINE = None
-DB_PATH = join(expanduser("~"), ".autolabel.db")
+
+# This creates one global ".autolabel.db" in your home directory.
+# Having one global SQLite database in ~ is a poor idea, since
+# SQLite cannot handle multiple simultaneous writes (if you have
+# several different labeling jobs going on).
+#DB_PATH = join(expanduser("~"), ".autolabel.db")
+
+DB_PATH = ".autolabel.db"
 
 
 def create_db_engine(db_path: Optional[str] = DB_PATH) -> Engine:

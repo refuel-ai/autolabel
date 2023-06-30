@@ -1,0 +1,35 @@
+{
+  "task_name": "EmotionClassification",
+  "task_type": "multilabel_classification",
+  "dataset": {
+    "label_column": "labels",
+    "label_separator": ", ",
+    "delimiter": ","
+  },
+  "model": {
+    "provider": "openai",
+    "name": "gpt-3.5-turbo"
+  },
+  "prompt": {
+    "task_guidelines": "You are an expert at classifying tweets as neutral or one or more of the given emotions that best represent the mental state of the poster.\nYour job is to correctly label the provided input example into one or more of the following categories:\n{labels}",
+    "output_guidelines": "You will return the answer as a comma separated list of labels sorted in alphabetical order. For example: \"label1, label2, label3\"",
+    "labels": [
+      "neutral",
+      "anger",
+      "anticipation",
+      "disgust",
+      "fear",
+      "joy",
+      "love",
+      "optimism",
+      "pessimism",
+      "sadness",
+      "surprise",
+      "trust"
+    ],
+    "few_shot_examples": "seed.csv",
+    "few_shot_selection": "semantic_similarity",
+    "few_shot_num": 5,
+    "example_template": "Input: {example}\nOutput: {labels}"
+  }
+}

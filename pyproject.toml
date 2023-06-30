@@ -34,7 +34,9 @@ dependencies = [
     "pydantic >= 1.10.9",
     "torch >= 1.10.0",
     "matplotlib >= 3.5.0",
-    "wget >= 3.2"
+    "wget >= 3.2",
+    "ipywidgets == 8.0.6",
+    "jsonschema >= 4.17.3"
 ]
 requires-python = ">=3.6"
 
@@ -60,10 +62,11 @@ openai = [
     "tiktoken >= 0.3.3"
 ]
 anthropic = [
-    "anthropic >= 0.2.6"
+    "anthropic == 0.2.6"
 ]
 huggingface = [
-    "transformers >= 4.25.0"
+    "transformers >= 4.25.0",
+    "sentence_transformers"
 ]
 google = [
     "google-cloud-aiplatform>=1.25.0"
@@ -77,9 +80,10 @@ all = [
     "pre-commit",
     "openai >= 0.27.4",
     "tiktoken >= 0.3.3",
-    "anthropic >= 0.2.6",
+    "anthropic == 0.2.6",
     "transformers >= 4.25.0",
-    "google-cloud-aiplatform>=1.25.0"
+    "google-cloud-aiplatform>=1.25.0",
+    "sentence_transformers"
 ]
 
 [project.urls]

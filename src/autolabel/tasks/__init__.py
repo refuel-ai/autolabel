@@ -6,6 +6,7 @@ from .classification import ClassificationTask
 from .entity_matching import EntityMatchingTask
 from .question_answering import QuestionAnsweringTask
 from .named_entity_recognition import NamedEntityRecognitionTask
+from .multilabel_classification import MultilabelClassificationTask
 
 from autolabel.configs import AutolabelConfig
 from autolabel.schema import TaskType
@@ -15,6 +16,7 @@ TASK_TYPE_TO_IMPLEMENTATION: Dict[TaskType, BaseTask] = {
     TaskType.NAMED_ENTITY_RECOGNITION: NamedEntityRecognitionTask,
     TaskType.QUESTION_ANSWERING: QuestionAnsweringTask,
     TaskType.ENTITY_MATCHING: EntityMatchingTask,
+    TaskType.MULTILABEL_CLASSIFICATION: MultilabelClassificationTask,
 }
 
 logger = logging.getLogger(__name__)
