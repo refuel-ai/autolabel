@@ -109,6 +109,31 @@ The model config contains information about the LLM provider and specific model 
 ```
 
 
+##Embedding
+
+
+The embedding config contains information about the text embedding model provider and the specific model we intend to use for computing text embeddings. There are 2 embedding config keys:
+
+
+1. provider: This key specifies the text embedding model provider.
+2. model: The model specifies which of the provider's text embedding models to use for generating labels. This key is optional and a default text embedding model is used if no provider is specified
+
+
+```json title="Example 1: Huggingface sentence transformers model"
+"embedding": {
+    "provider": "huggingface_pipeline",
+    "model": "sentence-transformers/all-mpnet-base-v2"
+   }
+```
+
+
+```json title="Example 2: Google model with no model name"
+"embedding": {
+    "provider": "google"
+    }
+```
+
+
 ##Prompt
 
 
