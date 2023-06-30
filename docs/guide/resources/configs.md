@@ -116,7 +116,7 @@ The embedding config contains information about the text embedding model provide
 
 
 1. provider: This key specifies the text embedding model provider.
-2. model: The model specifies which of the provider's text embedding models to use for generating labels. This key is optional and a default text embedding model is used if no provider is specified
+2. model: The model specifies which of the provider's text embedding models to use for generating labels. This key is optional and a default text embedding model is used if no model is specified
 
 
 ```json title="Example 1: Huggingface sentence transformers model"
