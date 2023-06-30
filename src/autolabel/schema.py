@@ -27,6 +27,7 @@ class TaskType(str, Enum):
     NAMED_ENTITY_RECOGNITION = "named_entity_recognition"
     QUESTION_ANSWERING = "question_answering"
     ENTITY_MATCHING = "entity_matching"
+    MULTILABEL_CLASSIFICATION = "multilabel_classification"
 
 
 class FewShotAlgorithm(str, Enum):
