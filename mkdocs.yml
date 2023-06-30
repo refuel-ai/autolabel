@@ -10,6 +10,7 @@ nav:
     - Tutorial - Toxic comment classification: guide/overview/tutorial-classification.md
     - Models:
       - LLMs: guide/llms/llms.md
+      - Embedding Models: guide/llms/embeddings.md
       - Benchmarks: guide/llms/benchmarks.md
     - Labeling Tasks:
       - Classification Task: guide/tasks/classification_task.md
