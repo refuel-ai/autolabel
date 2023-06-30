@@ -181,6 +181,6 @@ labels, df, metrics_list = agent.run('../examples/banking/test.csv')
 
 With semantic similarity example selection, we obtain a 79.02% accuracy, a significant increase of ~6% over the fixed-shot strategy.
 
-By default, Autolabel uses openAI to compute text embeddings for few shot example selection strategies that require them (semantic similarity, max marginal relevance). However, Autolabel also supports alternative embedding model providers such as Google Vertex AI and Huggingface as outlined [here](/guide/llms/embeddings).
+By default, Autolabel uses OpenAI to compute text embeddings for few shot example selection strategies that require them (semantic similarity, max marginal relevance). However, Autolabel also supports alternative embedding model providers such as Google Vertex AI and Huggingface as outlined [here](/guide/llms/embeddings).
 
 It is almost always advisable to use an example selection strategy over a zero-shot approach in your autolabeling workflows, but the choice of which example selection strategy to use is dependent upon the specific labeling task and dataset. In some cases, there may not be sufficient labeled data to use as a seedset for semantic similarity and so fixed few-shot may be ideal as it requires a small fixed number of labeled examples. In other cases, a semantic similarity example selection strategy may be necessary for labeling tasks that are more complex and require more similar labeled references for the LLM.
