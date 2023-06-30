@@ -16,7 +16,7 @@ class CohereLLM(BaseModel):
     # Default parameters for OpenAILLM
     DEFAULT_MODEL = "command"
     DEFAULT_MODEL_PARAMS = {
-        "max_tokens": 1000,
+        "max_tokens": 512,
         "temperature": 0.0,
     }
 
