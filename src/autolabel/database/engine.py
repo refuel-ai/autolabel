@@ -9,7 +9,7 @@ DB_ENGINE = None
 # Having one global SQLite database in ~ is a poor idea, since
 # SQLite cannot handle multiple simultaneous writes (if you have
 # several different labeling jobs going on).
-#DB_PATH = join(expanduser("~"), ".autolabel.db")
+# DB_PATH = join(expanduser("~"), ".autolabel.db")
 
 DB_PATH = ".autolabel.db"
 
