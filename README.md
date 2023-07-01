@@ -1,6 +1,5 @@
 <img alt="Refuel logo" src="https://raw.githubusercontent.com/refuel-ai/autolabel/main/docs/assets/Autolabel_blk_w_background.png">
 
-
 <h4 align="center">
   <a href="https://discord.gg/fweVnRx6CU">Discord</a> |
   <a href="https://twitter.com/RefuelAI">Twitter</a> |
@@ -54,7 +53,7 @@ Let's imagine we are building an ML model to analyze sentiment analysis of movie
         "labels": [
             "positive",
             "negative",
-            "neutral",
+            "neutral"
         ],
         "few_shot_examples": [
             {
@@ -166,7 +165,6 @@ Check out our [technical report](https://www.refuel.ai/blog-posts/llm-labeling-t
 Check out our [public roadmap](https://github.com/orgs/refuel-ai/projects/15) to learn more about ongoing and planned improvements to the Autolabel library.
 
 We are always looking for suggestions and contributions from the community. Join the discussion on [Discord](https://discord.gg/fweVnRx6CU) or open a [Github issue](https://github.com/refuel-ai/autolabel/issues) to report bugs and request features.
-
 
 ## 🙌 Contributing
 
