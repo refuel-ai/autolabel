@@ -18,6 +18,7 @@ class ModelProvider(str, Enum):
     HUGGINGFACE_PIPELINE = "huggingface_pipeline"
     REFUEL = "refuel"
     GOOGLE = "google"
+    COHERE = "cohere"
 
 
 class TaskType(str, Enum):

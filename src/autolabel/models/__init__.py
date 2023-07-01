@@ -43,6 +43,10 @@ class ModelFactory:
                 from .palm import PaLMLLM
 
                 model_cls = PaLMLLM
+            elif model_provider == ModelProvider.COHERE:
+                from .cohere import CohereLLM
+
+                model_cls = CohereLLM
             else:
                 raise ValueError
         except ValueError as e:
