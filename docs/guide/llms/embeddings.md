@@ -19,7 +19,7 @@ export OPENAI_API_KEY=<your-openai-key>
 replacing `<your-openai-key>` with your API key, which you can get from [here](https://platform.openai.com/account/api-keys).
 
 ### Example usage
-Here is an example of setting config to a dictionary that will use openai's `text-embedding-ada-002` model for computing text embeddings. Specifically, note that in the dictionary provided by the `embedding` tag, `provider` is set to `openai` and `model` is not set so it will default to `text-embedding-ada-002`.
+Here is an example of setting config to a dictionary that will use OpenAI's `text-embedding-ada-002` model for computing text embeddings. Specifically, note that in the dictionary provided by the `embedding` tag, `provider` is set to `openai` and `model` is not set so it will default to `text-embedding-ada-002`.
 
 ```python
 config = {
