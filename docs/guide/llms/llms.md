@@ -29,7 +29,7 @@ export OPENAI_API_KEY=<your-openai-key>
 replacing `<your-openai-key>` with your API key, which you can get from [here](https://platform.openai.com/account/api-keys).
 
 ### Example usage
-Here is an example of setting config to a dictionary that will use openai's `gpt-3.5-turbo` model for labeling. Specifically, note that in the dictionary proivded by the `model` tag, `provider` is set to `openai` and `name` is set to be `gpt-3.5-turbo`. `name` can be switched to use any of the three models mentioned above.
+Here is an example of setting config to a dictionary that will use OpenAI's `gpt-3.5-turbo` model for labeling. Specifically, note that in the dictionary proivded by the `model` tag, `provider` is set to `openai` and `name` is set to be `gpt-3.5-turbo`. `name` can be switched to use any of the three models mentioned above.
 
 ```python
 config = {
