@@ -11,6 +11,7 @@ from autolabel.models import BaseModel
 from autolabel.configs import AutolabelConfig
 from autolabel.cache import BaseCache
 
+import os
 
 logger = logging.getLogger(__name__)
 
@@ -77,6 +78,9 @@ class OpenAILLM(BaseModel):
         super().__init__(config, cache)
         # populate model name
         self.model_name = config.model_name() or self.DEFAULT_MODEL
+
+        if os.getenv("OPENAI_API_KEY") == None:
+            raise ValueError("OPENAI_API_KEY environment variable not set")
 
         # populate model params and initialize the LLM
         model_params = config.model_params()
