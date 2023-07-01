@@ -8,7 +8,7 @@ from autolabel.data_loaders.read_datasets import (
     CSVReader,
     JsonlReader,
     HuggingFaceDataset,
-    SqlDataset,
+    # SqlDataset,
     DataFrameDataset,
 )
 
