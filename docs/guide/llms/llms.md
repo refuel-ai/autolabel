@@ -308,6 +308,67 @@ These parameters can be passed in via the `params` dictionary under `model`. Her
 ### Content moderation
 Both Google LLMs seem to have much stricter content moderation rules than the other supported models. This can cause certain labeling jobs to completely fail as shown in our technical report [add link to technical report]. Consider a different model if your dataset has content that is likely to trigger Google's built-in content moderation.
 
+## Cohere
+To use models from [Cohere](https://cohere.com/), you can set the `provider` to `cohere` when creating a labeling configuration. The specific model that will be queried can be specified using the `name` key. Autolabel currently supports the following models from Cohere:
+
+* `command` (4096 max tokens)
+* `command-light` (4096 max tokens)
+* `base` (2048 max tokens)
+* `base-light` (2048 max tokens)
+
+`command` is an instruction-following conversational model that performs language tasks with high quality, while `command-light` is an almost as capable, but much faster option. `base` is a model that performs generative language tasks, while `base-light` much faster but a little less capable. All models cost the same at $15/1 million tokens. Detailed pricing for these models is available [here](https://cohere.com/pricing).
+
+### Setup
+To use Cohere models with Autolabel, make sure to first install the relevant packages by running:
+```bash
+pip install 'refuel-autolabel[cohere]'
+```
+and also setting the following environment variable:
+```
+export COHERE_API_KEY=<your-cohere-key>
+```
+replacing `<your-cohere-key>` with your API key, which you can get from [here](https://dashboard.cohere.ai/).
+
+### Example usage
+Here is an example of setting config to a dictionary that will use cohere's `command` model for labeling. Specifically, note that in the dictionary proivded by the `model` tag, `provider` is set to `cohere` and `name` is set to be `command`. `name` can be switched to use any of the four models mentioned above.
+
+```python
+config = {
+    "task_name": "OpenbookQAWikipedia",
+    "task_type": "question_answering",
+    "dataset": {
+        "label_column": "answer",
+        "delimiter": ","
+    },
+    "model": {
+        "provider": "cohere",
+        "name": "command",
+        "params": {}
+    },
+    "prompt": {
+        "task_guidelines": "You are an expert at answering questions.",
+        "example_template": "Question: {question}\nAnswer: {answer}"
+    }
+}
+```
+### Additional parameters
+A few parameters that can be passed in for `cohere` models to control the model behavior:
+
+* `max_tokens` (int): The maximum number of tokens to predict per generation
+* `temperature` (float): The degree of randomness in generations from 0.0 to 5.0, lower is less random.
+
+These parameters can be passed in via the `params` dictionary under `model`. Here is an example:
+```python
+"model": {
+    "provider": "cohere",
+    "name": "command",
+    "params": {
+        "max_tokens": 512,
+        "temperature": 0.1
+    }
+}
+```
+
 ## Provider List
 The table lists out all the provider, model combinations that Autolabel supports today:
 
@@ -322,3 +383,7 @@ The table lists out all the provider, model combinations that Autolabel supports
 | refuel    | flan-t5-xxl |
 | google       | text-bison@001    |
 | google       | chat-bison@001    |
+| cohere       | command           |
+| cohere       | command-light     |
+| cohere       | base              |
+| cohere       | base-light        |
