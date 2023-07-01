@@ -75,4 +75,4 @@ In this second iteration, we added more detail to the prompt such as addressing 
 
 Further improvements:
 
-After subsequently experimenting with a few different variations to this prompt, we do not see significant improvements in performance for this task. As a result, after sufficient iteration of the prompt, it is better to look for performance gains through other modifications to the task configuration. For example, comparing different LLM's can often lead to significant improvements. With the same final prompt above, the text-davinci-003 model achieved 88% accuracy, a 14% increase compared to gpt-turbo-3.5.
+After subsequently experimenting with a few different variations to this prompt, we do not see significant improvements in performance for this task. As a result, after sufficient iteration of the prompt, it is better to look for performance gains through other modifications to the task configuration. For example, comparing different LLMs can often lead to significant improvements. With the same final prompt above, the text-davinci-003 model achieved 88% accuracy, a 14% increase compared to gpt-turbo-3.5.

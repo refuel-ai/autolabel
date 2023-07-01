@@ -1,6 +1,6 @@
 # Embedding Models
 
-Autolabel also supports various models to compute text embeddings that are used in some few shot example selection strategies such as [semantic similarity and max marginal relevance](/guide/accuracy/few-shot). Like the LLM's that Autolabel supports, each embedding model belongs to a provider. Currently the library supports embedding models from 3 providers: OpenAI, Google Vertex AI, and Huggingface. By default, if no embedding config is present in the labeling config but a few shot strategy that requires text embeddings is enabled, Autolabel defaults to use OpenAI embeddings and an OpenAI API key will be required. 
+Autolabel also supports various models to compute text embeddings that are used in some few shot example selection strategies such as [semantic similarity and max marginal relevance](/guide/accuracy/few-shot). Like the LLMs that Autolabel supports, each embedding model belongs to a provider. Currently the library supports embedding models from 3 providers: OpenAI, Google Vertex AI, and Huggingface. By default, if no embedding config is present in the labeling config but a few shot strategy that requires text embeddings is enabled, Autolabel defaults to use OpenAI embeddings and an OpenAI API key will be required. 
 
 Details on how to set up the embedding config for each provider are below.
 
