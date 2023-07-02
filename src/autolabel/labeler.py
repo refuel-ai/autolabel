@@ -302,6 +302,7 @@ class LabelingAgent:
         """
 
         dataset_loader = DatasetLoader(dataset, self.config, max_items, start_index)
+        dataset_loader.validate()
 
         prompt_list = []
         total_cost = 0
@@ -312,6 +313,7 @@ class LabelingAgent:
         # If this dataset config is a string, read the corrresponding csv file
         if isinstance(seed_examples, str):
             seed_loader = DatasetLoader(seed_examples, self.config)
+            seed_loader.validate()
             seed_examples = seed_loader.inputs
 
         # Check explanations are present in data if explanation_column is passed in
