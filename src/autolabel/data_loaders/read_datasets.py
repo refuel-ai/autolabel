@@ -1,4 +1,4 @@
-from typing import Dict, List, Tuple, Union
+from typing import Dict, List, Union
 
 import logging
 import pandas as pd
@@ -12,7 +12,10 @@ from typing import Union
 
 
 @dataclass
-class DataLoaderAttribute:
+class DataAttribute:
+    """Data Attributes"""
+
+    columns: List
     dataset: Union[pd.DataFrame, Dataset]
     inputs: Dict
     gt_labels: List
@@ -25,7 +28,7 @@ class CSVReader:
         config: AutolabelConfig,
         max_items: int = None,
         start_index: int = 0,
-    ) -> DataLoaderAttribute:
+    ) -> DataAttribute:
         """Read the csv file and sets dat, inputs and gt_labels
 
         Args:
@@ -39,6 +42,7 @@ class CSVReader:
         label_column = config.label_column()
 
         dat = pd.read_csv(csv_file, sep=delimiter, dtype="str")[start_index:]
+
         dat = dat.astype(str)
         if max_items and max_items > 0:
             max_items = min(max_items, len(dat))
@@ -50,10 +54,11 @@ class CSVReader:
             if not label_column or not len(inputs) or label_column not in inputs[0]
             else dat[label_column].tolist()
         )
-        return DataLoaderAttribute(
-            dat,
-            inputs,
-            gt_labels,
+        return DataAttribute(
+            columns=list(dat.columns),
+            dataset=dat,
+            inputs=inputs,
+            gt_labels=gt_labels,
         )
 
 
@@ -64,7 +69,7 @@ class JsonlReader:
         config: AutolabelConfig,
         max_items: int = None,
         start_index: int = 0,
-    ) -> DataLoaderAttribute:
+    ) -> DataAttribute:
         """Read the jsonl file and sets dat, inputs and gt_labels
 
         Args:
@@ -88,10 +93,11 @@ class JsonlReader:
             if not label_column or not len(inputs) or label_column not in inputs[0]
             else dat[label_column].tolist()
         )
-        return DataLoaderAttribute(
-            dat,
-            inputs,
-            gt_labels,
+        return DataAttribute(
+            columns=list(dat.columns),
+            dataset=dat,
+            inputs=inputs,
+            gt_labels=gt_labels,
         )
 
 
@@ -102,7 +108,7 @@ class HuggingFaceDataset:
         config: AutolabelConfig,
         max_items: int = None,
         start_index: int = 0,
-    ) -> DataLoaderAttribute:
+    ) -> DataAttribute:
         """Read the huggingface dataset and sets dat, inputs and gt_labels
 
         Args:
@@ -124,7 +130,12 @@ class HuggingFaceDataset:
             or config.label_column() not in inputs[0]
             else dat[config.label_column()].tolist()
         )
-        return DataLoaderAttribute(dat, inputs, gt_labels)
+        return DataAttribute(
+            columns=list(dat.columns),
+            dataset=dat,
+            inputs=inputs,
+            gt_labels=gt_labels,
+        )
 
 
 class SqlDataset:
@@ -135,7 +146,7 @@ class SqlDataset:
         config: AutolabelConfig,
         max_items: int = None,
         start_index: int = 0,
-    ) -> DataLoaderAttribute:
+    ) -> DataAttribute:
         """Read the sql query and sets dat, inputs and gt_labels
 
         Args:
@@ -159,10 +170,11 @@ class SqlDataset:
             if not label_column or not len(inputs) or label_column not in inputs[0]
             else dat[label_column].tolist()
         )
-        return DataLoaderAttribute(
-            dat,
-            inputs,
-            gt_labels,
+        return DataAttribute(
+            columns=list(dat.columns),
+            dataset=dat,
+            inputs=inputs,
+            gt_labels=gt_labels,
         )
 
 
@@ -173,7 +185,7 @@ class DataFrameDataset:
         config: AutolabelConfig,
         max_items: int = None,
         start_index: int = 0,
-    ) -> DataLoaderAttribute:
+    ) -> DataAttribute:
         """Read the csv file and sets dat, inputs and gt_labels
 
         Args:
@@ -195,8 +207,9 @@ class DataFrameDataset:
             if not label_column or not len(inputs) or label_column not in inputs[0]
             else dat[label_column].tolist()
         )
-        return DataLoaderAttribute(
-            dat,
-            inputs,
-            gt_labels,
+        return DataAttribute(
+            columns=list(dat.columns),
+            dataset=dat,
+            inputs=inputs,
+            gt_labels=gt_labels,
         )

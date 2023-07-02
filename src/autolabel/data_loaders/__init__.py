@@ -1,25 +1,32 @@
-from typing import Dict, Union
-
 import logging
 import pandas as pd
+from typing import Dict, Union
+from tabulate import tabulate
 from datasets import Dataset
 from autolabel.data_loaders.read_datasets import (
-    DataLoaderAttribute,
+    DataAttribute,
     CSVReader,
     JsonlReader,
     HuggingFaceDataset,
     # SqlDataset,
     DataFrameDataset,
 )
-
+from autolabel.data_loaders.validation import TaskDataValidation
 from autolabel.configs import AutolabelConfig
 
 logger = logging.getLogger(__name__)
 
 
+class DataValidationFailed(Exception):
+    def __init__(self, message):
+        self.message = message
+        super().__init__(self.message)
+
+
 class DatasetLoader:
     # TODO: add support for reading from SQL databases
     # TODO: add support for reading and loading datasets in chunks
+    MAX_ERROR_DISPLAYED = 100
 
     def __init__(
         self,
@@ -41,23 +48,47 @@ class DatasetLoader:
         self.max_items = max_items
         self.start_index = start_index
 
-        self.__data_attr: DataLoaderAttribute = None
-
+        self.__data_attr: DataAttribute = None
+        self.__malformed_records = None
         self._read()
+
+    @property
+    def dat(
+        self,
+    ) -> Union[pd.DataFrame, Dataset]:
+        return self.__data_attr.dataset
+
+    @property
+    def inputs(
+        self,
+    ) -> Dict:
+        return self.__data_attr.inputs
+
+    @property
+    def gt_labels(
+        self,
+    ) -> str:
+        return self.__data_attr.gt_labels
+
+    @property
+    def columns(
+        self,
+    ) -> str:
+        return self.__data_attr.columns
 
     def _read(
         self,
     ):
         if isinstance(self.dataset, str):
-            self.__data_attr: DataLoaderAttribute = self._read_file(
+            self.__data_attr: DataAttribute = self._read_file(
                 self.dataset, self.config, self.max_items, self.start_index
             )
         elif isinstance(self.dataset, Dataset):
-            self.__data_attr: DataLoaderAttribute = HuggingFaceDataset.read(
+            self.__data_attr: DataAttribute = HuggingFaceDataset.read(
                 self.dataset, self.config, self.max_items, self.start_index
             )
         elif isinstance(self.dataset, pd.DataFrame):
-            self.__data_attr: DataLoaderAttribute = DataFrameDataset.read(
+            self.__data_attr: DataAttribute = DataFrameDataset.read(
                 self.dataset, self.config, self.start_index, self.max_items
             )
 
@@ -90,20 +121,34 @@ class DatasetLoader:
         else:
             raise ValueError(f"Unsupported file format: {file}")
 
-    @property
-    def dat(
-        self,
-    ) -> Union[pd.DataFrame, Dataset]:
-        return self.__data_attr.dataset
+    def validate(self):
+        """Validate Data"""
+        data_validation = TaskDataValidation(
+            task_type=self.config.task_type(),
+            label_column=self.config.label_column(),
+            example_template=self.config.example_template(),
+        )
 
-    @property
-    def inputs(
-        self,
-    ) -> Dict:
-        return self.__data_attr.inputs
+        # Validate columns
+        data_validation.validate_dataset_columns(
+            dataset_columns=self.__data_attr.columns
+        )
 
-    @property
-    def gt_labels(
-        self,
-    ) -> str:
-        return self.__data_attr.gt_labels
+        # Validate datatype and data format
+        self.__malformed_records = data_validation.validate(
+            data=self.__data_attr.inputs
+        )
+
+        table = tabulate(
+            self.__malformed_records[0 : self.MAX_ERROR_DISPLAYED],
+            headers="keys",
+            tablefmt="fancy_grid",
+            numalign="center",
+            stralign="left",
+        )
+
+        print(table)
+        if len(self.__malformed_records) > 0:
+            raise DataValidationFailed(
+                f"Validation failed for {len(self.__malformed_records)} rows."
+            )
