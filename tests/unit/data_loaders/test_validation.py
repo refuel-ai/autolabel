@@ -2,6 +2,7 @@
 from autolabel.configs import AutolabelConfig
 from autolabel.data_loaders.validation import TaskDataValidation
 
+
 CLASSIFICATION_CONFIG_SAMPLE_DICT = {
     "task_name": "LegalProvisionsClassification",
     "task_type": "classification",
@@ -11,6 +12,7 @@ CLASSIFICATION_CONFIG_SAMPLE_DICT = {
         "task_guidelines": "You are an expert at understanding legal contracts. Your job is to correctly classify legal provisions in contracts into one of the following categories.\nCategories:{labels}\n",
         "labels": [
             "Agreements",
+            "Argument",
         ],
         "example_template": "Example: {example}\nOutput: {label}",
         "few_shot_examples": "seed.csv",
@@ -40,11 +42,36 @@ NER_CONFIG_SAMPLE_DICT = {
     },
 }
 
+EM_CONFIG_SAMPLE_DICT = {
+    "task_name": "ProductCatalogEntityMatch",
+    "task_type": "entity_matching",
+    "dataset": {"label_column": "label", "delimiter": ","},
+    "model": {"provider": "openai", "name": "gpt-3.5-turbo"},
+    "prompt": {
+        "task_guidelines": "You are an expert at identifying duplicate products from online product catalogs.\nYou will be given information about two product entities, and your job is to tell if they are the same (duplicate) or different (not duplicate). Your answer must be from one of the following options:\n{labels}",
+        "labels": ["duplicate", "not duplicate"],
+        "example_template": "Title of entity1: {Title_entity1}; \nDuplicate or not: {label}",
+        "few_shot_selection": "fixed",
+        "few_shot_num": 2,
+    },
+}
+
 
 def test_validate_classification_task():
     """Test Validate classification"""
     config = AutolabelConfig(CLASSIFICATION_CONFIG_SAMPLE_DICT)
-    expected_output = expected_output = [
+    data = [
+        {"question": "s", "answer": "ee"},  # Wrong column names
+        {"example": "s", "label": 1},  # int value not accepted
+        {"example": "s", "label": "['w', 'd']"},  # w, d are incorrect labels
+        {
+            "example": "s",
+            "label": "['Agreements', 'Random']",
+        },  # Random not valid label
+        {"example": "s", "label": "['Agreements', 'Argument']"},  # Correct
+        {"example": "s", "label": "['Agreements']"},  # Correct
+    ]
+    expected_output = [
         {
             "loc": "example",
             "msg": "field required",
@@ -64,28 +91,22 @@ def test_validate_classification_task():
             "type": "type_error.str",
         },
         {
-            "loc": "example",
-            "msg": "str type expected",
-            "row_num": 3,
-            "type": "type_error.str",
+            "loc": "__root__",
+            "msg": "labels: {'w', 'd'} do not match promt/labels provided in config ",
+            "row_num": 2,
+            "type": "value_error",
         },
         {
-            "loc": "label",
-            "msg": "str type expected",
+            "loc": "__root__",
+            "msg": "labels: {'Random'} do not match promt/labels provided in config ",
             "row_num": 3,
-            "type": "type_error.str",
+            "type": "value_error",
         },
-    ]
-    data = [
-        {"question": "s", "answer": "ee"},
-        {"example": "s", "label": 1},
-        {"example": "s", "label": "['w', 'd']"},
-        {"example": 1234, "label": 443},
-        {"example": "qo", "label": "wiw"},
     ]
     data_validation = TaskDataValidation(
         task_type=config.task_type(),
         label_column=config.label_column(),
+        labels_list=config.labels_list(),
         example_template=config.example_template(),
     )
     error_table = data_validation.validate(data=data)
@@ -98,7 +119,36 @@ def test_validate_ner_task():
     """Test Validate NamedEntityRecognition"""
     config = AutolabelConfig(NER_CONFIG_SAMPLE_DICT)
 
+    data = [
+        {
+            # Miscellaneous is not a valid label mentioned in NER_CONFIG_SAMPLE_DICT
+            "example": "example1",
+            "CategorizedLabels": '{"Location": ["Okla"], "Miscellaneous": []}',
+        },
+        {
+            # Not a valid Json
+            "example": "example2",
+            "CategorizedLabels": '{"Location":["Texas"], ""Miscellaneous"": []}',
+        },
+        {
+            # label is not the correct column name
+            "example": "example3",
+            "label": '{"Location":["Texas"], "Miscellaneous": ["USDA", "PPAS"]}',
+        },
+        {
+            # Correct
+            "example": "example2",
+            "CategorizedLabels": '{"Location":["Texas"]}',
+        },
+    ]
     expected_output = [
+        {
+            "loc": "__root__",
+            "msg": "labels: {'Miscellaneous'} do not match promt/labels provided in "
+            "config ",
+            "row_num": 0,
+            "type": "value_error",
+        },
         {
             "loc": "__root__",
             "msg": "Expecting ':' delimiter: line 1 column 26 (char 25)",
@@ -108,37 +158,60 @@ def test_validate_ner_task():
         {
             "loc": "CategorizedLabels",
             "msg": "field required",
-            "row_num": 3,
+            "row_num": 2,
             "type": "value_error.missing",
-        },
-    ]
-
-    data = [
-        {
-            "example": "example1",
-            "CategorizedLabels": '{"Location": ["Okla"], "Miscellaneous": []}',
-        },
-        {
-            "example": "example2",
-            "CategorizedLabels": '{"Location":["Texas"], ""Miscellaneous"": []}',
-        },
-        {
-            "example": "example2",
-            "CategorizedLabels": '{"Location":["Texas"], "Miscellaneous": ["USDA", "PPAS"]}',
-        },
-        {
-            "example": "example3",
-            "label": '{"Location":["Texas"], "Miscellaneous": ["USDA", "PPAS"]}',
         },
     ]
 
     data_validation = TaskDataValidation(
         task_type=config.task_type(),
         label_column=config.label_column(),
+        labels_list=config.labels_list(),
         example_template=config.example_template(),
     )
 
     error_table = data_validation.validate(data=data)
+
+    for exp_out, err_out in zip(expected_output, error_table):
+        assert exp_out == err_out
+
+
+def test_validate_EM_task():
+    """Test Validate NamedEntityRecognition"""
+    config = AutolabelConfig(EM_CONFIG_SAMPLE_DICT)
+
+    data = [
+        {"Title_entity1": "example1", "label": "duplicate"},
+        {"Title_entity1": "example2", "label": "not duplicate"},
+        {"ErrorColumn": "example2", "label": '{"Location":["Texas"]}'},
+        {"Title_entity1": "example2", "label": "duplicate not duplicate"},
+    ]
+
+    expected_output = [
+        {
+            "loc": "Title_entity1",
+            "msg": "field required",
+            "row_num": 2,
+            "type": "value_error.missing",
+        },
+        {
+            "loc": "__root__",
+            "msg": "labels: duplicate not duplicate do not match promt/labels provided "
+            "in config ",
+            "row_num": 3,
+            "type": "value_error",
+        },
+    ]
+
+    data_validation = TaskDataValidation(
+        task_type=config.task_type(),
+        label_column=config.label_column(),
+        labels_list=config.labels_list(),
+        example_template=config.example_template(),
+    )
+
+    error_table = data_validation.validate(data=data)
+
     for exp_out, err_out in zip(expected_output, error_table):
         assert exp_out == err_out
 
@@ -152,6 +225,7 @@ def test_columns():
     data_validation = TaskDataValidation(
         task_type=config.task_type(),
         label_column=config.label_column(),
+        labels_list=config.labels_list(),
         example_template=config.example_template(),
     )
 

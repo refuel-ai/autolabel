@@ -3,7 +3,7 @@
 import re
 import json
 
-from typing import Dict, List, Union
+from typing import Dict, List, Union, Optional
 from dataclasses import dataclass
 from json.decoder import JSONDecodeError
 from pydantic import BaseModel, create_model, ValidationError, root_validator
@@ -18,12 +18,22 @@ class NERTaskValidate:
     """
 
     label_column: str
+    labels_set: set  # A NER Task should have a unique set of labels in config
 
-    @staticmethod
-    def validate(value: str):
+    def validate(self, value: str):
+        """Validate NER
+
+        A NER label can only be a dictionary
+        """
+        # TODO: This can be made better
         if value.startswith("{") and value.endswith("}"):
             try:
-                _ = json.loads(value)
+                seed_labels = json.loads(value)
+                unmatched_label = set(seed_labels.keys()) - self.labels_set
+                if len(unmatched_label) != 0:
+                    raise ValueError(
+                        f"labels: {unmatched_label} do not match promt/labels provided in config "
+                    )
             except JSONDecodeError:
                 raise
         else:
@@ -38,16 +48,31 @@ class ClassificationTaskValidate:
     """
 
     label_column: str
+    labels_set: set  # A classification Task should have a unique set of labels in config
 
-    @staticmethod
-    def validate(value: str):
+    def validate(self, value: str):
+        """Validate classification
+
+        A classification label(ground_truth) could either be a list or string
+        """
+        # TODO: This can be made better
         if value.startswith("[") and value.endswith("]"):
             try:
-                value_list = eval(value)
-                if not isinstance(value_list, list):
+                seed_labels = eval(value)
+                if not isinstance(seed_labels, list):
                     raise
+                unmatched_label = set(seed_labels) - self.labels_set
+                if len(unmatched_label) != 0:
+                    raise ValueError(
+                        f"labels: {unmatched_label} do not match promt/labels provided in config "
+                    )
             except SyntaxError:
                 raise
+        else:
+            if value not in self.labels_set:
+                raise ValueError(
+                    f"labels: {value} do not match promt/labels provided in config "
+                )
 
 
 @dataclass
@@ -58,6 +83,13 @@ class EMTaskValidate:
     """
 
     label_column: str
+    labels_set: set  # An EntityMatching Task should have a unique set of labels in config
+
+    def validate(self, value: str):
+        if value not in self.labels_set:
+            raise ValueError(
+                f"labels: {value} do not match promt/labels provided in config "
+            )
 
 
 @dataclass
@@ -68,6 +100,9 @@ class QATaskValidate:
     """
 
     label_column: str
+    labels_set: Optional[
+        set
+    ]  # A QA task may or may not have a unique set of label list
 
 
 TaskTypeValidate = Union[
@@ -106,7 +141,7 @@ def fetch_expected_columns(
 
 
 def data_validation_and_schema_check(schema: Dict, validation_task: TaskTypeValidate):
-    """Validate data and schema
+    """Validate data format and datatype
 
     Args:
         schema (Dict): input schema
@@ -152,12 +187,24 @@ class TaskDataValidation:
         self,
         task_type: str,
         label_column: str,
+        labels_list: Optional[List],
         example_template: str,
     ):
+        """Task Validation
+
+        Args:
+            task_type (str): the type of task, classification, named_entity_recognition, etc.., "config/task_type"
+            label_column (str): the label column as specified in config, "config/dataset/label_column"
+            labels_list (Optional[List]): list of valid labels provided in config "config/prompt/labels"
+            example_template (str): example template from config "config/prompt/example_template"
+        """
         self.__expected_columns = fetch_expected_columns(example_template)
         self.__schema = {col: (StrictStr, ...) for col in self.__expected_columns}
-        self.__validation_task = DataValidationTasks.__dict__[task_type]
-        self.__validation_task.label_column = label_column
+
+        # Initialize Validation task and add attributes
+        self.__validation_task = DataValidationTasks.__dict__[task_type](
+            label_column=label_column, labels_set=set(labels_list)
+        )
 
     @property
     def expected_columns(self) -> List:
@@ -178,14 +225,14 @@ class TaskDataValidation:
 
     def validate(self, data: List[dict]) -> List[Dict]:
         """Validate Data"""
-        validation = data_validation_and_schema_check(
+        data_validation = data_validation_and_schema_check(
             self.schema,
             self.validation_task,
         )
         error_messages = []
         for index, item in enumerate(data):
             try:
-                validation.validate(item)
+                data_validation.validate(item)
             except ValidationError as e:
                 for err in e.errors():
                     field = ".".join(err["loc"])

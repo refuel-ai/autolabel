@@ -126,6 +126,7 @@ class DatasetLoader:
         data_validation = TaskDataValidation(
             task_type=self.config.task_type(),
             label_column=self.config.label_column(),
+            labels_list=self.config.labels_list(),
             example_template=self.config.example_template(),
         )
 
@@ -134,6 +135,7 @@ class DatasetLoader:
             dataset_columns=self.__data_attr.columns
         )
 
+        # Validate whether the labels_list matches the gt_labels entirely
         # Validate datatype and data format
         self.__malformed_records = data_validation.validate(
             data=self.__data_attr.inputs
