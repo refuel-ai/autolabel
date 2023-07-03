@@ -63,7 +63,7 @@ def test_validate_classification_task():
     data = [
         {"question": "s", "answer": "ee"},  # Wrong column names
         {"example": "s", "label": 1},  # int value not accepted
-        {"example": "s", "label": "['w', 'd']"},  # w, d are incorrect labels
+        {"example": "s", "label": "['w']"},  # w, d are incorrect labels
         {
             "example": "s",
             "label": "['Agreements', 'Random']",
@@ -92,7 +92,7 @@ def test_validate_classification_task():
         },
         {
             "loc": "__root__",
-            "msg": "labels: {'w', 'd'} do not match promt/labels provided in config ",
+            "msg": "labels: {'w'} do not match promt/labels provided in config ",
             "row_num": 2,
             "type": "value_error",
         },
