@@ -235,7 +235,3 @@ def test_columns():
         data_validation.validate_dataset_columns(
             dataset_columns=["input", "CategorizedLabels"]
         )
-
-
-if __name__ == "__main__":
-    test_validate_classification_task()

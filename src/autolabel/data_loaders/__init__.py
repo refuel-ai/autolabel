@@ -135,7 +135,6 @@ class DatasetLoader:
             dataset_columns=self.__data_attr.columns
         )
 
-        # Validate whether the labels_list matches the gt_labels entirely
         # Validate datatype and data format
         self.__malformed_records = data_validation.validate(
             data=self.__data_attr.inputs
