@@ -14,6 +14,7 @@ nav:
       - Benchmarks: guide/llms/benchmarks.md
     - Labeling Tasks:
       - Classification Task: guide/tasks/classification_task.md
+      - Multilabel Classification Task: guide/tasks/multilabel_classification_task.md
       - Entity Matching Task: guide/tasks/entity_matching_task.md
       - Named Entity Recognition Task: guide/tasks/named_entity_recognition_task.md
       - Question Answering Task: guide/tasks/question_answering_task.md

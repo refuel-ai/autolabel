@@ -129,4 +129,4 @@ Actual Cost: 0.0025
 
 ### Notebook
 
-You can find a Jupyter notebook with code that you can run on your own [here](https://github.com/refuel-ai/autolabel/blob/main/examples/twitter_emotion_detection/example_twitter_emotion_detection.ipynb)
+You can find a Jupyter notebook with code that you can run on your own [here](https://github.com/refuel-ai/autolabel/blob/main/examples/twitter_emotion_detection/example_twitter_emotion_detection.ipynb).
