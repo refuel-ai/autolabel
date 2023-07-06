@@ -4,6 +4,7 @@ from typing import Dict, List
 from autolabel.configs import AutolabelConfig
 from autolabel.schema import FewShotAlgorithm, ModelProvider
 from langchain.embeddings import (
+    CohereEmbeddings,
     HuggingFaceEmbeddings,
     OpenAIEmbeddings,
     VertexAIEmbeddings,
@@ -30,6 +31,7 @@ PROVIDER_TO_MODEL: Dict[ModelProvider, Embeddings] = {
     ModelProvider.OPENAI: OpenAIEmbeddings,
     ModelProvider.GOOGLE: VertexAIEmbeddings,
     ModelProvider.HUGGINGFACE_PIPELINE: HuggingFaceEmbeddings,
+    ModelProvider.COHERE: CohereEmbeddings,
 }
 
 logger = logging.getLogger(__name__)
