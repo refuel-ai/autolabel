@@ -1,4 +1,5 @@
 """Test Validation"""
+import pytest
 from autolabel.configs import AutolabelConfig
 from autolabel.data_loaders.validation import TaskDataValidation
 
@@ -59,7 +60,6 @@ EM_CONFIG_SAMPLE_DICT = {
 
 def test_validate_classification_task():
     """Test Validate classification"""
-    config = AutolabelConfig(CLASSIFICATION_CONFIG_SAMPLE_DICT)
     data = [
         {"question": "s", "answer": "ee"},  # Wrong column names
         {"example": "s", "label": 1},  # int value not accepted
@@ -104,10 +104,7 @@ def test_validate_classification_task():
         },
     ]
     data_validation = TaskDataValidation(
-        task_type=config.task_type(),
-        label_column=config.label_column(),
-        labels_list=config.labels_list(),
-        example_template=config.example_template(),
+        config=AutolabelConfig(CLASSIFICATION_CONFIG_SAMPLE_DICT)
     )
     error_table = data_validation.validate(data=data)
 
@@ -117,8 +114,6 @@ def test_validate_classification_task():
 
 def test_validate_ner_task():
     """Test Validate NamedEntityRecognition"""
-    config = AutolabelConfig(NER_CONFIG_SAMPLE_DICT)
-
     data = [
         {
             # Miscellaneous is not a valid label mentioned in NER_CONFIG_SAMPLE_DICT
@@ -163,12 +158,7 @@ def test_validate_ner_task():
         },
     ]
 
-    data_validation = TaskDataValidation(
-        task_type=config.task_type(),
-        label_column=config.label_column(),
-        labels_list=config.labels_list(),
-        example_template=config.example_template(),
-    )
+    data_validation = TaskDataValidation(config=AutolabelConfig(NER_CONFIG_SAMPLE_DICT))
 
     error_table = data_validation.validate(data=data)
 
@@ -178,8 +168,6 @@ def test_validate_ner_task():
 
 def test_validate_EM_task():
     """Test Validate NamedEntityRecognition"""
-    config = AutolabelConfig(EM_CONFIG_SAMPLE_DICT)
-
     data = [
         {"Title_entity1": "example1", "label": "duplicate"},
         {"Title_entity1": "example2", "label": "not duplicate"},
@@ -203,12 +191,7 @@ def test_validate_EM_task():
         },
     ]
 
-    data_validation = TaskDataValidation(
-        task_type=config.task_type(),
-        label_column=config.label_column(),
-        labels_list=config.labels_list(),
-        example_template=config.example_template(),
-    )
+    data_validation = TaskDataValidation(config=AutolabelConfig(EM_CONFIG_SAMPLE_DICT))
 
     error_table = data_validation.validate(data=data)
 
@@ -217,17 +200,8 @@ def test_validate_EM_task():
 
 
 def test_columns():
-    import pytest
-
     """Test Validate NamedEntityRecognition"""
-    config = AutolabelConfig(NER_CONFIG_SAMPLE_DICT)
-
-    data_validation = TaskDataValidation(
-        task_type=config.task_type(),
-        label_column=config.label_column(),
-        labels_list=config.labels_list(),
-        example_template=config.example_template(),
-    )
+    data_validation = TaskDataValidation(config=AutolabelConfig(NER_CONFIG_SAMPLE_DICT))
 
     with pytest.raises(
         AssertionError, match=r"columns={'example'} missing in config.example_template"

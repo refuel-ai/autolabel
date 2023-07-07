@@ -4,14 +4,13 @@ import re
 import json
 
 from typing import Dict, List, Union, Optional
-from dataclasses import dataclass
 from json.decoder import JSONDecodeError
 from pydantic import BaseModel, create_model, ValidationError, root_validator
 from pydantic.types import StrictStr
+from autolabel.configs import AutolabelConfig
 
 
-@dataclass
-class NERTaskValidate:
+class NERTaskValidate(BaseModel):
     """Validate NER Task
 
     The label column can either be a string or a json
@@ -40,8 +39,7 @@ class NERTaskValidate:
             raise
 
 
-@dataclass
-class ClassificationTaskValidate:
+class ClassificationTaskValidate(BaseModel):
     """Validate Classification Task
 
     The label column can either be a string or a string of list
@@ -75,8 +73,7 @@ class ClassificationTaskValidate:
                 )
 
 
-@dataclass
-class EMTaskValidate:
+class EMTaskValidate(BaseModel):
     """Validate Entity Matching Task
 
     As of now we assume that the input label_column is a string
@@ -92,8 +89,7 @@ class EMTaskValidate:
             )
 
 
-@dataclass
-class QATaskValidate:
+class QATaskValidate(BaseModel):
     """Validate Question Answering Task
 
     As of now we assume that the input label_column is a string
@@ -113,97 +109,39 @@ TaskTypeValidate = Union[
 ]
 
 
-@dataclass
-class DataValidationTasks:
+class DataValidationTasks(BaseModel):
     classification: TaskTypeValidate = ClassificationTaskValidate
     named_entity_recognition: TaskTypeValidate = NERTaskValidate
     entity_matching: TaskTypeValidate = EMTaskValidate
     question_answering: TaskTypeValidate = QATaskValidate
 
 
-def fetch_expected_columns(
-    example_template: str, pattern: str = r"\{([^}]*)\}"
-) -> List:
-    """Fetch desired columns fro example template
-
-    Args:
-        example_template (str): example template from config file
-        pattern (str, optional): regex pattern. Defaults to r"\{([^}]*)}".
-
-    Returns:
-        List: Returns list of columns
-    """
-    column_name_lists = []
-    for text in example_template.split("\n"):
-        matches = re.findall(pattern, text)
-        column_name_lists += matches
-    return column_name_lists
-
-
-def data_validation_and_schema_check(schema: Dict, validation_task: TaskTypeValidate):
-    """Validate data format and datatype
-
-    Args:
-        schema (Dict): input schema
-        validation_task (TaskTypeValidate): validation task
-
-    Raises:
-        e: Validation error if the inputs are not string
-        e: Validation error if validation_task fails
-
-    Returns:
-        DataValidation: Pydantic Model for validation
-    """
-    Model = create_model("Model", **schema)
-
-    class DataValidation(BaseModel):
-        """Data Validation"""
-
-        @classmethod
-        def validate(cls, data):
-            """Valdiate data types"""
-            model = Model(**data)
-            try:
-                cls(**model.dict())
-            except ValidationError as e:
-                raise e
-
-        @root_validator(pre=True, allow_reuse=True)
-        def check_fields(cls, values):
-            """Validate data format"""
-            try:
-                label_column_value = values[validation_task.label_column]
-                validation_task.validate(label_column_value)
-            except ValidationError as e:
-                raise e
-
-    return DataValidation
-
-
 class TaskDataValidation:
     """Task Validation"""
 
-    def __init__(
-        self,
-        task_type: str,
-        label_column: str,
-        labels_list: Optional[List],
-        example_template: str,
-    ):
+    def __init__(self, config: AutolabelConfig):
         """Task Validation
 
         Args:
-            task_type (str): the type of task, classification, named_entity_recognition, etc.., "config/task_type"
-            label_column (str): the label column as specified in config, "config/dataset/label_column"
-            labels_list (Optional[List]): list of valid labels provided in config "config/prompt/labels"
-            example_template (str): example template from config "config/prompt/example_template"
+            config: AutolabelConfig = User passed parsed configuration
         """
-        self.__expected_columns = fetch_expected_columns(example_template)
+        # the type of task, classification, named_entity_recognition, etc.., "config/task_type"
+        task_type: str = config.task_type()
+        # the label column as specified in config, "config/dataset/label_column"
+        label_column: str = config.label_column()
+        # list of valid labels provided in config "config/prompt/labels"
+        labels_list: Optional[List] = config.labels_list()
+        # example template from config "config/prompt/example_template"
+        example_template: str = config.example_template()
+
+        self.__expected_columns = self.fetch_expected_columns(example_template)
         self.__schema = {col: (StrictStr, ...) for col in self.__expected_columns}
 
-        # Initialize Validation task and add attributes
         self.__validation_task = DataValidationTasks.__dict__[task_type](
             label_column=label_column, labels_set=set(labels_list)
+        )
+        self.__data_validation = self.data_validation_and_schema_check(
+            self.__validation_task
         )
 
     @property
@@ -223,16 +161,72 @@ class TaskDataValidation:
         """Fetch validation task"""
         return self.__validation_task
 
+    def fetch_expected_columns(
+        self, example_template: str, pattern: str = r"\{([^}]*)\}"
+    ) -> List:
+        """Fetch desired columns from example template
+
+        Args:
+            example_template (str): example template from config file
+            pattern (str, optional): regex pattern. Defaults to r"\{([^}]*)}".
+
+        Returns:
+            List: Returns list of columns
+        """
+        column_name_lists = []
+        for text in example_template.split("\n"):
+            matches = re.findall(pattern, text)
+            column_name_lists += matches
+        return column_name_lists
+
+    def data_validation_and_schema_check(self, validation_task: BaseModel):
+        """Validate data format and datatype
+
+        Args:
+            validation_task (TaskTypeValidate): validation task
+
+        Raises:
+            e: Validation error if the inputs are not string
+            e: Validation error if validation_task fails
+
+        Returns:
+            DataValidation: Pydantic Model for validation
+        """
+        Model = create_model("Model", **self.__schema)
+
+        class DataValidation(BaseModel):
+            """Data Validation"""
+
+            # We define validate as a classmethod such that a dynamic `data` can be passed
+            # iteratively to the validate method using `DataValidation.validate`
+            @classmethod
+            def validate(cls, data):
+                """Valdiate data types"""
+                model = Model(**data)
+                try:
+                    # We perform the normal pydantic validation here
+                    # This checks both the Schema and also calls check_fields
+                    cls(**model.dict())
+                except ValidationError as e:
+                    raise e
+
+            @root_validator(pre=True, allow_reuse=True)
+            def check_fields(cls, values):
+                """Validate data format"""
+                try:
+                    label_column_value = values[validation_task.label_column]
+                    validation_task.validate(label_column_value)
+                except ValidationError as e:
+                    raise e
+
+        return DataValidation
+
     def validate(self, data: List[dict]) -> List[Dict]:
         """Validate Data"""
-        data_validation = data_validation_and_schema_check(
-            self.schema,
-            self.validation_task,
-        )
         error_messages = []
         for index, item in enumerate(data):
             try:
-                data_validation.validate(item)
+                self.__data_validation.validate(item)
             except ValidationError as e:
                 for err in e.errors():
                     field = ".".join(err["loc"])

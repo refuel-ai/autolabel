@@ -2,7 +2,8 @@ from typing import Dict, List, Union
 
 import logging
 import pandas as pd
-from dataclasses import dataclass
+
+from pydantic import BaseModel, validator
 from datasets import Dataset
 from sqlalchemy.sql.selectable import Selectable
 from autolabel.configs import AutolabelConfig
@@ -11,14 +12,22 @@ logger = logging.getLogger(__name__)
 from typing import Union
 
 
-@dataclass
-class DataAttribute:
+class AutolabelDataset(BaseModel):
     """Data Attributes"""
 
     columns: List
-    dataset: Union[pd.DataFrame, Dataset]
-    inputs: Dict
+    dataset: Union[pd.DataFrame, None]
+    inputs: List[Dict]
     gt_labels: List
+
+    @validator("dataset", allow_reuse=True)
+    def validate_dataframe(cls, value):
+        if not isinstance(value, pd.DataFrame):
+            raise ValueError("Value must be a pandas DataFrame")
+        return value
+
+    class Config:
+        arbitrary_types_allowed = True
 
 
 class CSVReader:
@@ -28,7 +37,7 @@ class CSVReader:
         config: AutolabelConfig,
         max_items: int = None,
         start_index: int = 0,
-    ) -> DataAttribute:
+    ) -> AutolabelDataset:
         """Read the csv file and sets dat, inputs and gt_labels
 
         Args:
@@ -54,7 +63,7 @@ class CSVReader:
             if not label_column or not len(inputs) or label_column not in inputs[0]
             else dat[label_column].tolist()
         )
-        return DataAttribute(
+        return AutolabelDataset(
             columns=list(dat.columns),
             dataset=dat,
             inputs=inputs,
@@ -69,7 +78,7 @@ class JsonlReader:
         config: AutolabelConfig,
         max_items: int = None,
         start_index: int = 0,
-    ) -> DataAttribute:
+    ) -> AutolabelDataset:
         """Read the jsonl file and sets dat, inputs and gt_labels
 
         Args:
@@ -93,7 +102,7 @@ class JsonlReader:
             if not label_column or not len(inputs) or label_column not in inputs[0]
             else dat[label_column].tolist()
         )
-        return DataAttribute(
+        return AutolabelDataset(
             columns=list(dat.columns),
             dataset=dat,
             inputs=inputs,
@@ -101,14 +110,14 @@ class JsonlReader:
         )
 
 
-class HuggingFaceDataset:
+class HuggingFaceDatasetReader:
     @staticmethod
     def read(
         dataset: Dataset,
         config: AutolabelConfig,
         max_items: int = None,
         start_index: int = 0,
-    ) -> DataAttribute:
+    ) -> AutolabelDataset:
         """Read the huggingface dataset and sets dat, inputs and gt_labels
 
         Args:
@@ -130,7 +139,7 @@ class HuggingFaceDataset:
             or config.label_column() not in inputs[0]
             else dat[config.label_column()].tolist()
         )
-        return DataAttribute(
+        return AutolabelDataset(
             columns=list(dat.columns),
             dataset=dat,
             inputs=inputs,
@@ -138,7 +147,7 @@ class HuggingFaceDataset:
         )
 
 
-class SqlDataset:
+class SqlDatasetReader:
     @staticmethod
     def read(
         sql: Union[str, Selectable],
@@ -146,7 +155,7 @@ class SqlDataset:
         config: AutolabelConfig,
         max_items: int = None,
         start_index: int = 0,
-    ) -> DataAttribute:
+    ) -> AutolabelDataset:
         """Read the sql query and sets dat, inputs and gt_labels
 
         Args:
@@ -170,7 +179,7 @@ class SqlDataset:
             if not label_column or not len(inputs) or label_column not in inputs[0]
             else dat[label_column].tolist()
         )
-        return DataAttribute(
+        return AutolabelDataset(
             columns=list(dat.columns),
             dataset=dat,
             inputs=inputs,
@@ -178,14 +187,14 @@ class SqlDataset:
         )
 
 
-class DataFrameDataset:
+class DataframeReader:
     @staticmethod
     def read(
         df: pd.DataFrame,
         config: AutolabelConfig,
         max_items: int = None,
         start_index: int = 0,
-    ) -> DataAttribute:
+    ) -> AutolabelDataset:
         """Read the csv file and sets dat, inputs and gt_labels
 
         Args:
@@ -207,7 +216,7 @@ class DataFrameDataset:
             if not label_column or not len(inputs) or label_column not in inputs[0]
             else dat[label_column].tolist()
         )
-        return DataAttribute(
+        return AutolabelDataset(
             columns=list(dat.columns),
             dataset=dat,
             inputs=inputs,
