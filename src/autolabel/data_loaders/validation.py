@@ -10,6 +10,10 @@ from pydantic.types import StrictStr
 from autolabel.configs import AutolabelConfig
 
 
+# Regex pattern to extract expected column from onfig.example_template()
+EXPECTED_COLUMN_PATTERN = r"\{([^}]*)\}"
+
+
 class NERTaskValidate(BaseModel):
     """Validate NER Task
 
@@ -31,7 +35,7 @@ class NERTaskValidate(BaseModel):
                 unmatched_label = set(seed_labels.keys()) - self.labels_set
                 if len(unmatched_label) != 0:
                     raise ValueError(
-                        f"labels: {unmatched_label} do not match promt/labels provided in config "
+                        f"labels: '{unmatched_label}' not in promt/labels provided in config "
                     )
             except JSONDecodeError:
                 raise
@@ -62,14 +66,14 @@ class ClassificationTaskValidate(BaseModel):
                 unmatched_label = set(seed_labels) - self.labels_set
                 if len(unmatched_label) != 0:
                     raise ValueError(
-                        f"labels: {unmatched_label} do not match promt/labels provided in config "
+                        f"labels: '{unmatched_label}' not in promt/labels provided in config "
                     )
             except SyntaxError:
                 raise
         else:
             if value not in self.labels_set:
                 raise ValueError(
-                    f"labels: {value} do not match promt/labels provided in config "
+                    f"labels: '{value}' not in promt/labels provided in config "
                 )
 
 
@@ -85,7 +89,7 @@ class EMTaskValidate(BaseModel):
     def validate(self, value: str):
         if value not in self.labels_set:
             raise ValueError(
-                f"labels: {value} do not match promt/labels provided in config "
+                f"labels: '{value}' not in promt/labels provided in config "
             )
 
 
@@ -99,6 +103,10 @@ class QATaskValidate(BaseModel):
     labels_set: Optional[
         set
     ]  # A QA task may or may not have a unique set of label list
+
+    def validate(self, value: str):
+        """Since question answering is arbitarary task we have no validation"""
+        pass
 
 
 TaskTypeValidate = Union[
@@ -132,11 +140,9 @@ class TaskDataValidation:
         # list of valid labels provided in config "config/prompt/labels"
         labels_list: Optional[List] = config.labels_list()
         # example template from config "config/prompt/example_template"
-        self.example_template: str = config.example_template()
-        # Regex pattern to extract expected column from onfig.example_template()
-        self.excepted_column_template_pattern: str = r"\{([^}]*)\}"
 
-        # self.__expected_columns = self.fetch_expected_columns(example_template)
+        self.example_template: str = config.example_template()
+
         self.__schema = {col: (StrictStr, ...) for col in self.expected_columns}
 
         self.__validation_task = DataValidationTasks.__dict__[task_type](
@@ -151,7 +157,7 @@ class TaskDataValidation:
         """Fetch expected columns"""
         column_name_lists = []
         for text in self.example_template.split("\n"):
-            matches = re.findall(self.excepted_column_template_pattern, text)
+            matches = re.findall(EXPECTED_COLUMN_PATTERN, text)
             column_name_lists += matches
         return column_name_lists
 
@@ -235,7 +241,6 @@ class TaskDataValidation:
         and are contined within the columns of the dataset(seed.csv)
         """
         missing_columns = set(self.expected_columns) - set(dataset_columns)
-
         assert (
             len(missing_columns) == 0
-        ), f"columns={missing_columns} missing in config.example_template"
+        ), f"columns={missing_columns} missing in seed.csv file"

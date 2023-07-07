@@ -1,5 +1,6 @@
 import logging
 import pandas as pd
+from tabulate import tabulate
 from typing import Dict, Union
 from datasets import Dataset
 from autolabel.data_loaders.read_datasets import (
@@ -89,6 +90,7 @@ class DatasetLoader:
                     max_items=self.max_items,
                     start_index=self.start_index,
                 )
+
             elif self.dataset.endswith(".jsonl"):
                 self.__al_dataset = JsonlReader.read(
                     self.dataset,
@@ -121,7 +123,17 @@ class DatasetLoader:
             data=self.__al_dataset.inputs
         )
 
-        logger.warning(f"Data Validation failed for {self.__malformed_records} records")
+        table = tabulate(
+            self.__malformed_records[0 : self.MAX_ERROR_DISPLAYED],
+            headers="keys",
+            tablefmt="fancy_grid",
+            numalign="center",
+            stralign="left",
+        )
+
+        logger.warning(
+            f"Data Validation failed for {len(self.__malformed_records)} records: \n Stats: \n {table}"
+        )
 
         if len(self.__malformed_records) > 0:
             raise DataValidationFailed(

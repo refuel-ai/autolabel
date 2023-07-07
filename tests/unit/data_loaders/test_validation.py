@@ -92,13 +92,13 @@ def test_validate_classification_task():
         },
         {
             "loc": "__root__",
-            "msg": "labels: {'w'} do not match promt/labels provided in config ",
+            "msg": "labels: '{'w'}' not in promt/labels provided in config ",
             "row_num": 2,
             "type": "value_error",
         },
         {
             "loc": "__root__",
-            "msg": "labels: {'Random'} do not match promt/labels provided in config ",
+            "msg": "labels: '{'Random'}' not in promt/labels provided in config ",
             "row_num": 3,
             "type": "value_error",
         },
@@ -139,8 +139,7 @@ def test_validate_ner_task():
     expected_output = [
         {
             "loc": "__root__",
-            "msg": "labels: {'Miscellaneous'} do not match promt/labels provided in "
-            "config ",
+            "msg": "labels: '{'Miscellaneous'}' not in promt/labels provided in config ",
             "row_num": 0,
             "type": "value_error",
         },
@@ -177,16 +176,15 @@ def test_validate_EM_task():
 
     expected_output = [
         {
+            "row_num": 2,
             "loc": "Title_entity1",
             "msg": "field required",
-            "row_num": 2,
             "type": "value_error.missing",
         },
         {
-            "loc": "__root__",
-            "msg": "labels: duplicate not duplicate do not match promt/labels provided "
-            "in config ",
             "row_num": 3,
+            "loc": "__root__",
+            "msg": "labels: 'duplicate not duplicate' not in promt/labels provided in config ",
             "type": "value_error",
         },
     ]
@@ -204,7 +202,7 @@ def test_columns():
     data_validation = TaskDataValidation(config=AutolabelConfig(NER_CONFIG_SAMPLE_DICT))
 
     with pytest.raises(
-        AssertionError, match=r"columns={'example'} missing in config.example_template"
+        AssertionError, match=r"columns={'example'} missing in seed.csv file"
     ):
         data_validation.validate_dataset_columns(
             dataset_columns=["input", "CategorizedLabels"]
