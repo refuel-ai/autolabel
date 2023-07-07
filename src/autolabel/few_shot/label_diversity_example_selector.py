@@ -96,8 +96,8 @@ class LabelDiversitySimilarityExampleSelector(BaseExampleSelector, BaseModel):
         return ids[0]
 
     def select_examples(self, input_variables: Dict[str, str]) -> List[dict]:
-        """Select which examples to use based on semantic similarity."""
-        # Get the docs with the highest similarity.
+        """Select which examples to use based on label diversity and semantic similarity."""
+        # Get the docs with the highest similarity for each label.
         if self.input_keys:
             input_variables = {key: input_variables[key] for key in self.input_keys}
         query = " ".join(sorted_values(input_variables))
@@ -120,17 +120,16 @@ class LabelDiversitySimilarityExampleSelector(BaseExampleSelector, BaseModel):
         input_keys: Optional[List[str]] = None,
         **vectorstore_cls_kwargs: Any,
     ) -> LabelDiversitySimilarityExampleSelector:
-        """Create k-shot example selector using example list and embeddings.
-
-        Reshuffles examples dynamically based on query similarity.
+        """Create k-shot example selector using example list and embeddings, taking label diversity and semantic similarity into account.
 
         Args:
             examples: List of examples to use in the prompt.
-            embeddings: An iniialized embedding API interface, e.g. OpenAIEmbeddings().
+            embeddings: An initialized embedding API interface, e.g. OpenAIEmbeddings().
             vectorstore_cls: A vector store DB interface class, e.g. FAISS.
             k: Number of examples to select
             input_keys: If provided, the search is based on the input variables
                 instead of all variables.
+            label_key: The column name corresponding to the label
             vectorstore_cls_kwargs: optional kwargs containing url for vector store
 
         Returns:
