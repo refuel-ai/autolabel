@@ -97,6 +97,7 @@ class ExampleSelectorFactory:
             FewShotAlgorithm.LABEL_DIVERSITY_SIMILARITY,
         ]:
             params["label_key"] = config.label_column()
+            params["num_labels"] = len(config.labels_list())
 
         example_cls = ALGORITHM_TO_IMPLEMENTATION[algorithm]
         return example_cls.from_examples(**params)
