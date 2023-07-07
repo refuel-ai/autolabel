@@ -9,7 +9,6 @@ from sqlalchemy.sql.selectable import Selectable
 from autolabel.configs import AutolabelConfig
 
 logger = logging.getLogger(__name__)
-from typing import Union
 
 
 class AutolabelDataset(BaseModel):
