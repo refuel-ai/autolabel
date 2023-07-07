@@ -17,12 +17,18 @@ from langchain.prompts.example_selector import (
 from langchain.prompts.example_selector.base import BaseExampleSelector
 
 from .fixed_example_selector import FixedExampleSelector
+from .label_diversity_example_selector import (
+    LabelDiversityRandomExampleSelector,
+    LabelDiversitySimilarityExampleSelector,
+)
 from .vector_store import VectorStoreWrapper
 
 ALGORITHM_TO_IMPLEMENTATION: Dict[FewShotAlgorithm, BaseExampleSelector] = {
     FewShotAlgorithm.FIXED: FixedExampleSelector,
     FewShotAlgorithm.SEMANTIC_SIMILARITY: SemanticSimilarityExampleSelector,
     FewShotAlgorithm.MAX_MARGINAL_RELEVANCE: MaxMarginalRelevanceExampleSelector,
+    FewShotAlgorithm.LABEL_DIVERSITY_RANDOM: LabelDiversityRandomExampleSelector,
+    FewShotAlgorithm.LABEL_DIVERSITY_SIMILARITY: LabelDiversitySimilarityExampleSelector,
 }
 
 DEFAULT_EMBEDDING_PROVIDER = OpenAIEmbeddings
@@ -62,6 +68,7 @@ class ExampleSelectorFactory:
         if algorithm in [
             FewShotAlgorithm.SEMANTIC_SIMILARITY,
             FewShotAlgorithm.MAX_MARGINAL_RELEVANCE,
+            FewShotAlgorithm.LABEL_DIVERSITY_SIMILARITY,
         ]:
             model_provider = config.embedding_provider()
             embedding_model_class = PROVIDER_TO_MODEL.get(
@@ -85,6 +92,11 @@ class ExampleSelectorFactory:
                 ExampleSelectorFactory.MAX_CANDIDATE_EXAMPLES,
                 ExampleSelectorFactory.CANDIDATE_EXAMPLES_FACTOR * params["k"],
             )
+        if algorithm in [
+            FewShotAlgorithm.LABEL_DIVERSITY_RANDOM,
+            FewShotAlgorithm.LABEL_DIVERSITY_SIMILARITY,
+        ]:
+            params["label_key"] = config.label_column()
 
         example_cls = ALGORITHM_TO_IMPLEMENTATION[algorithm]
         return example_cls.from_examples(**params)

@@ -1,14 +1,13 @@
+import logging
 import os
 import sys
 from typing import Dict, List, Optional, Tuple, Union
-import logging
 
 import numpy as np
 import pandas as pd
 from rich import print as pprint
 from rich.console import Console
 from rich.prompt import Confirm
-import pandas as pd
 
 from autolabel.cache import SQLAlchemyCache
 from autolabel.confidence import ConfidenceCalculator
@@ -20,7 +19,7 @@ from autolabel.few_shot import ExampleSelectorFactory
 from autolabel.models import BaseModel, ModelFactory
 from autolabel.schema import LLMAnnotation, MetricResult, TaskRun, TaskStatus
 from autolabel.tasks import TaskFactory
-from autolabel.utils import track, track_with_stats, print_table, maybe_round
+from autolabel.utils import maybe_round, print_table, track, track_with_stats
 
 console = Console()
 logger = logging.getLogger(__name__)

@@ -1,6 +1,9 @@
 from __future__ import annotations
 
+import copy
 import heapq
+from itertools import groupby
+from operator import itemgetter
 from typing import Any, Callable, Dict, Iterable, List, Optional, Tuple, Type
 
 import numpy as np
@@ -207,6 +210,82 @@ class VectorStoreWrapper(VectorStore):
         results["documents"] = [[self._texts[index] for index in result_ids]]
         results["distances"] = [scores]
         results["metadatas"] = [[self._metadatas[index] for index in result_ids]]
+        return _results_to_docs_and_scores(results)
+
+    def label_diversity_similarity_search(
+        self,
+        query: str,
+        label_key: str,
+        k: int = 4,
+        filter: Optional[Dict[str, str]] = None,
+        **kwargs: Any,
+    ) -> List[Document]:
+        """Run semantic similarity search.
+        Args:
+            query (str): Query text to search for.
+            k (int): Number of results to return per label.
+            filter (Optional[Dict[str, str]]): Filter by metadata. Defaults to None.
+        Returns:
+            List[Document]: List of documents most similar to the query text.
+        """
+        docs_and_scores = self.label_diversity_similarity_search_with_score(
+            query, label_key, k, filter=filter
+        )
+        return [doc for doc, _ in docs_and_scores]
+
+    def label_diversity_similarity_search_with_score(
+        self,
+        query: str,
+        label_key: str,
+        k: int = 4,
+        filter: Optional[Dict[str, str]] = None,
+        **kwargs: Any,
+    ) -> List[Tuple[Document, float]]:
+        """Run semantic similarity search and retrieve distances.
+        Args:
+            query (str): Query text to search for.
+            k (int): Number of results to return. Defaults to 4.
+            filter (Optional[Dict[str, str]]): Filter by metadata. Defaults to None.
+        Returns:
+            List[Tuple[Document, float]]: List of documents most similar to the query
+                text with distance in float.
+        """
+        query_embeddings = torch.tensor([self._embedding_function.embed_query(query)])
+        data = []
+        data = zip(self._corpus_embeddings, self._texts, self._metadatas)
+        sorted_data = sorted(data, key=lambda item: item[2].get(label_key))
+
+        documents = []
+        scores = []
+        metadatas = []
+        for label, label_examples in groupby(
+            sorted_data, key=lambda item: item[2].get(label_key)
+        ):
+            label_examples_list = list(label_examples)
+            label_embeddings = list(
+                map(lambda label_example: label_example[0], label_examples_list)
+            )
+            label_texts = list(
+                map(lambda label_example: label_example[1], label_examples_list)
+            )
+            label_metadatas = list(
+                map(lambda label_example: label_example[2], label_examples_list)
+            )
+
+            result_ids_and_scores = semantic_search(
+                corpus_embeddings=label_embeddings,
+                query_embeddings=query_embeddings,
+                top_k=k,
+            )
+            result_ids = [result["corpus_id"] for result in result_ids_and_scores[0]]
+            documents.extend([label_texts[index] for index in result_ids])
+            metadatas.extend([label_metadatas[index] for index in result_ids])
+            scores.extend([result["score"] for result in result_ids_and_scores[0]])
+        results = {}
+
+        results["documents"] = [documents]
+        results["distances"] = [scores]
+        results["metadatas"] = [metadatas]
 
         return _results_to_docs_and_scores(results)
 

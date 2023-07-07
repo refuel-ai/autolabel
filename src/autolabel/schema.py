@@ -1,13 +1,13 @@
 from datetime import datetime
 from enum import Enum
-from typing import Any, Dict, Optional, List, Union
-import pandas as pd
+from typing import Any, Dict, List, Optional, Union
 
+import pandas as pd
+from langchain.schema import Generation
 from pydantic import BaseModel
 
 from autolabel.configs import AutolabelConfig
 from autolabel.utils import calculate_md5
-from langchain.schema import Generation
 
 
 class ModelProvider(str, Enum):
@@ -37,6 +37,8 @@ class FewShotAlgorithm(str, Enum):
     FIXED = "fixed"
     SEMANTIC_SIMILARITY = "semantic_similarity"
     MAX_MARGINAL_RELEVANCE = "max_marginal_relevance"
+    LABEL_DIVERSITY_RANDOM = "label_diversity_random"
+    LABEL_DIVERSITY_SIMILARITY = "label_diversity_similarity"
 
 
 class TaskStatus(str, Enum):
