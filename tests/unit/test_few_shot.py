@@ -1,7 +1,7 @@
 import json
 
 from autolabel.configs import AutolabelConfig
-from autolabel.dataset_loader import DatasetLoader
+from autolabel.data_loaders import DatasetLoader
 from autolabel.few_shot import ExampleSelectorFactory
 from langchain.embeddings import HuggingFaceEmbeddings
 from pytest import approx
