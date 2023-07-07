@@ -2,7 +2,7 @@
 
 import re
 import json
-
+from functools import cached_property
 from typing import Dict, List, Union, Optional
 from json.decoder import JSONDecodeError
 from pydantic import BaseModel, create_model, ValidationError, root_validator
@@ -132,10 +132,12 @@ class TaskDataValidation:
         # list of valid labels provided in config "config/prompt/labels"
         labels_list: Optional[List] = config.labels_list()
         # example template from config "config/prompt/example_template"
-        example_template: str = config.example_template()
+        self.example_template: str = config.example_template()
+        # Regex pattern to extract expected column from onfig.example_template()
+        self.excepted_column_template_pattern: str = r"\{([^}]*)\}"
 
-        self.__expected_columns = self.fetch_expected_columns(example_template)
-        self.__schema = {col: (StrictStr, ...) for col in self.__expected_columns}
+        # self.__expected_columns = self.fetch_expected_columns(example_template)
+        self.__schema = {col: (StrictStr, ...) for col in self.expected_columns}
 
         self.__validation_task = DataValidationTasks.__dict__[task_type](
             label_column=label_column, labels_set=set(labels_list)
@@ -144,10 +146,14 @@ class TaskDataValidation:
             self.__validation_task
         )
 
-    @property
+    @cached_property
     def expected_columns(self) -> List:
         """Fetch expected columns"""
-        return self.__expected_columns
+        column_name_lists = []
+        for text in self.example_template.split("\n"):
+            matches = re.findall(self.excepted_column_template_pattern, text)
+            column_name_lists += matches
+        return column_name_lists
 
     @property
     def schema(self) -> Dict:
@@ -160,24 +166,6 @@ class TaskDataValidation:
     ) -> TaskTypeValidate:
         """Fetch validation task"""
         return self.__validation_task
-
-    def fetch_expected_columns(
-        self, example_template: str, pattern: str = r"\{([^}]*)\}"
-    ) -> List:
-        """Fetch desired columns from example template
-
-        Args:
-            example_template (str): example template from config file
-            pattern (str, optional): regex pattern. Defaults to r"\{([^}]*)}".
-
-        Returns:
-            List: Returns list of columns
-        """
-        column_name_lists = []
-        for text in example_template.split("\n"):
-            matches = re.findall(pattern, text)
-            column_name_lists += matches
-        return column_name_lists
 
     def data_validation_and_schema_check(self, validation_task: BaseModel):
         """Validate data format and datatype
