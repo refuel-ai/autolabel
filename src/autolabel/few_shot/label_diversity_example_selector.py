@@ -54,6 +54,7 @@ class LabelDiversityRandomExampleSelector(BaseExampleSelector, BaseModel):
         cls,
         examples: List[dict],
         label_key: str,
+        num_labels: int,
         k: int = 4,
     ) -> LabelDiversityRandomExampleSelector:
         """Create label diversity example selector using example list and embeddings.
@@ -66,7 +67,7 @@ class LabelDiversityRandomExampleSelector(BaseExampleSelector, BaseModel):
         Returns:
             The ExampleSelector instantiated
         """
-        return cls(k=k, examples=examples, label_key=label_key)
+        return cls(k=k, examples=examples, label_key=label_key, num_labels=num_labels)
 
 
 class LabelDiversitySimilarityExampleSelector(BaseExampleSelector, BaseModel):
@@ -123,6 +124,7 @@ class LabelDiversitySimilarityExampleSelector(BaseExampleSelector, BaseModel):
         label_key: str,
         embeddings: Embeddings,
         vectorstore_cls: Type[VectorStore],
+        num_labels: int,
         k: int = 4,
         input_keys: Optional[List[str]] = None,
         **vectorstore_cls_kwargs: Any,
@@ -157,4 +159,5 @@ class LabelDiversitySimilarityExampleSelector(BaseExampleSelector, BaseModel):
             k=k,
             input_keys=input_keys,
             label_key=label_key,
+            num_labels=num_labels,
         )
