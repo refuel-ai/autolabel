@@ -11,7 +11,7 @@ To use models from [OpenAI](https://platform.openai.com/docs/models), you can se
 
 * `text-davinci-003`
 * `gpt-3.5-turbo` and `gpt-3.5-turbo-0613` (4,096 max tokens)
-* `gpt-3.5-turbo-16k` and `gpt-3.5-turbo-16k--613` (16,384 max tokens)
+* `gpt-3.5-turbo-16k` and `gpt-3.5-turbo-16k-0613` (16,384 max tokens)
 * `gpt-4` and `gpt-4-0613`  (8,192 max tokens)
 * `gpt-4-32k` and `gpt-4-32k-0613`  (32,768 max tokens)
 
