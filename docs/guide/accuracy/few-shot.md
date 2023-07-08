@@ -181,6 +181,64 @@ labels, df, metrics_list = agent.run('../examples/banking/test.csv')
 
 With semantic similarity example selection, we obtain a 79.02% accuracy, a significant increase of ~6% over the fixed-shot strategy.
 
+Autolabel also offers two strategies that prioritize label diversity when selecting examples: labeling diversity at random and labeling diversity with similarity. The former randomly samples a fixed number of examples per unique label in your dataset. The latter also samples a fixed number of examples per unique label, but takes into account semantic similarity when sampling this fixed number. Here are example configs for using label diversity example selection strategies.
+
+```py
+config_label_diversity_random = {
+    "task_name": "ToxicCommentClassification",
+    "task_type": "classification",
+    "dataset": {
+        "label_column": "label",
+        "delimiter": ","
+    },
+    "model": {
+        "provider": "openai",
+        "name": "gpt-3.5-turbo"
+    },
+    "prompt": {
+        ...
+        "few_shot_examples": {"../examples/civil_comments/seed.csv"},
+        "few_shot_selection": "label_diversity_random",
+        "few_shot_num": 5,
+        "example_template": "Input: {example}\nOutput: {label}"
+    }
+}
+```
+
+```py
+agent = LabelingAgent(config=config_semantic_similarity)
+labels, df, metrics_list = agent.run('../examples/civil_comments/test.csv', max_items=200)
+```
+
+```py
+config_label_diversity_similarity = {
+    "task_name": "ToxicCommentClassification",
+    "task_type": "classification",
+    "dataset": {
+        "label_column": "label",
+        "delimiter": ","
+    },
+    "model": {
+        "provider": "openai",
+        "name": "gpt-3.5-turbo"
+    },
+    "prompt": {
+        ...
+        "few_shot_examples": {"../examples/civil_comments/seed.csv"},
+        "few_shot_selection": "label_diversity_similarity",
+        "few_shot_num": 5,
+        "example_template": "Input: {example}\nOutput: {label}"
+    }
+}
+```
+
+```py
+agent = LabelingAgent(config=config_semantic_similarity)
+labels, df, metrics_list = agent.run('../examples/civil_comments/test.csv', max_items=200)
+```
+
+For this run on the civil comments dataset, label diversity at random achieved 80% accuracy and label diversity with semantic similarity achieved 78% accuracy. For the same subset of data, the use of regular semantic similarity example selection obtained 72% accuracy, making for a significant improvement by using label diversity. Label diversity example selection strategies are likely best suited for labeling tasks with a small number of unique labels, which is the case for the civil comments dataset with only 2 labels. This may be because equal representation of the possible labels may be less likely to bias the LLM towards a particular label (if all or most examples had that label).
+
 By default, Autolabel uses OpenAI to compute text embeddings for few shot example selection strategies that require them (semantic similarity, max marginal relevance). However, Autolabel also supports alternative embedding model providers such as Google Vertex AI and Huggingface as outlined [here](/guide/llms/embeddings).
 
 It is almost always advisable to use an example selection strategy over a zero-shot approach in your autolabeling workflows, but the choice of which example selection strategy to use is dependent upon the specific labeling task and dataset. In some cases, there may not be sufficient labeled data to use as a seedset for semantic similarity and so fixed few-shot may be ideal as it requires a small fixed number of labeled examples. In other cases, a semantic similarity example selection strategy may be necessary for labeling tasks that are more complex and require more similar labeled references for the LLM.
