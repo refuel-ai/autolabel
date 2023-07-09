@@ -206,7 +206,7 @@ config_label_diversity_random = {
 ```
 
 ```py
-agent = LabelingAgent(config=config_semantic_similarity)
+agent = LabelingAgent(config=config_label_diversity_random)
 labels, df, metrics_list = agent.run('../examples/civil_comments/test.csv', max_items=200)
 ```
 
@@ -233,11 +233,11 @@ config_label_diversity_similarity = {
 ```
 
 ```py
-agent = LabelingAgent(config=config_semantic_similarity)
+agent = LabelingAgent(config=config_label_diversity_similarity)
 labels, df, metrics_list = agent.run('../examples/civil_comments/test.csv', max_items=200)
 ```
 
-For this run on the civil comments dataset, label diversity at random achieved 80% accuracy and label diversity with semantic similarity achieved 78% accuracy. For the same subset of data, the use of regular semantic similarity example selection obtained 72% accuracy, making for a significant improvement by using label diversity. Label diversity example selection strategies are likely best suited for labeling tasks with a small number of unique labels, which is the case for the civil comments dataset with only 2 labels. This may be because equal representation of the possible labels may be less likely to bias the LLM towards a particular label (if all or most examples had that label).
+For this run on the civil comments dataset, label diversity at random achieved 80% accuracy and label diversity with semantic similarity achieved 78% accuracy. For the same subset of data, the use of regular semantic similarity example selection obtained 72% accuracy, making for a significant improvement by using label diversity. Label diversity example selection strategies are likely best suited for labeling tasks with a small number of unique labels, which is the case for the civil comments dataset with only 2 labels. This may be because equal representation of the possible labels may be less likely to bias the LLM towards a particular label (especially if all or most examples have a single label).
 
 By default, Autolabel uses OpenAI to compute text embeddings for few shot example selection strategies that require them (semantic similarity, max marginal relevance). However, Autolabel also supports alternative embedding model providers such as Google Vertex AI and Huggingface as outlined [here](/guide/llms/embeddings).
 
