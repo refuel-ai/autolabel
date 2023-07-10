@@ -135,7 +135,7 @@ config_fixed_few_shot = {
     },
     "prompt": {
         ...
-        "few_shot_examples": {"../examples/banking/seed.csv"},
+        "few_shot_examples": "../examples/banking/seed.csv",
         "few_shot_selection": "fixed",
         "few_shot_num": 10,
         "example_template": "Input: {example}\nOutput: {label}"
@@ -166,7 +166,7 @@ config_semantic_similarity = {
     },
     "prompt": {
         ...
-        "few_shot_examples": {"../examples/banking/seed.csv"},
+        "few_shot_examples": "../examples/banking/seed.csv",
         "few_shot_selection": "semantic_similarity",
         "few_shot_num": 10,
         "example_template": "Input: {example}\nOutput: {label}"
@@ -197,7 +197,7 @@ config_label_diversity_random = {
     },
     "prompt": {
         ...
-        "few_shot_examples": {"../examples/civil_comments/seed.csv"},
+        "few_shot_examples": "../examples/civil_comments/seed.csv",
         "few_shot_selection": "label_diversity_random",
         "few_shot_num": 5,
         "example_template": "Input: {example}\nOutput: {label}"
@@ -224,7 +224,7 @@ config_label_diversity_similarity = {
     },
     "prompt": {
         ...
-        "few_shot_examples": {"../examples/civil_comments/seed.csv"},
+        "few_shot_examples": "../examples/civil_comments/seed.csv",
         "few_shot_selection": "label_diversity_similarity",
         "few_shot_num": 5,
         "example_template": "Input: {example}\nOutput: {label}"
