@@ -3,7 +3,6 @@ import pytest
 from autolabel.configs import AutolabelConfig
 from autolabel.data_loaders.validation import TaskDataValidation
 
-
 CLASSIFICATION_CONFIG_SAMPLE_DICT = {
     "task_name": "LegalProvisionsClassification",
     "task_type": "classification",
@@ -92,13 +91,13 @@ def test_validate_classification_task():
         },
         {
             "loc": "__root__",
-            "msg": "labels: '{'w'}' not in promt/labels provided in config ",
+            "msg": "labels: '{'w'}' not in prompt/labels provided in config ",
             "row_num": 2,
             "type": "value_error",
         },
         {
             "loc": "__root__",
-            "msg": "labels: '{'Random'}' not in promt/labels provided in config ",
+            "msg": "labels: '{'Random'}' not in prompt/labels provided in config ",
             "row_num": 3,
             "type": "value_error",
         },
@@ -139,7 +138,7 @@ def test_validate_ner_task():
     expected_output = [
         {
             "loc": "__root__",
-            "msg": "labels: '{'Miscellaneous'}' not in promt/labels provided in config ",
+            "msg": "labels: '{'Miscellaneous'}' not in prompt/labels provided in config ",
             "row_num": 0,
             "type": "value_error",
         },
@@ -184,7 +183,7 @@ def test_validate_EM_task():
         {
             "row_num": 3,
             "loc": "__root__",
-            "msg": "labels: 'duplicate not duplicate' not in promt/labels provided in config ",
+            "msg": "labels: 'duplicate not duplicate' not in prompt/labels provided in config ",
             "type": "value_error",
         },
     ]
