@@ -1,14 +1,14 @@
 """Data and Schema Validation"""
 
-import re
 import json
+import re
 from functools import cached_property
-from typing import Dict, List, Union, Optional
 from json.decoder import JSONDecodeError
-from pydantic import BaseModel, create_model, ValidationError, root_validator
-from pydantic.types import StrictStr
-from autolabel.configs import AutolabelConfig
+from typing import Dict, List, Optional, Union
 
+from autolabel.configs import AutolabelConfig
+from pydantic import BaseModel, ValidationError, create_model, root_validator
+from pydantic.types import StrictStr
 
 # Regex pattern to extract expected column from onfig.example_template()
 EXPECTED_COLUMN_PATTERN = r"\{([^}]*)\}"
@@ -35,7 +35,7 @@ class NERTaskValidate(BaseModel):
                 unmatched_label = set(seed_labels.keys()) - self.labels_set
                 if len(unmatched_label) != 0:
                     raise ValueError(
-                        f"labels: '{unmatched_label}' not in promt/labels provided in config "
+                        f"labels: '{unmatched_label}' not in prompt/labels provided in config "
                     )
             except JSONDecodeError:
                 raise
@@ -66,14 +66,14 @@ class ClassificationTaskValidate(BaseModel):
                 unmatched_label = set(seed_labels) - self.labels_set
                 if len(unmatched_label) != 0:
                     raise ValueError(
-                        f"labels: '{unmatched_label}' not in promt/labels provided in config "
+                        f"labels: '{unmatched_label}' not in prompt/labels provided in config "
                     )
             except SyntaxError:
                 raise
         else:
             if value not in self.labels_set:
                 raise ValueError(
-                    f"labels: '{value}' not in promt/labels provided in config "
+                    f"labels: '{value}' not in prompt/labels provided in config "
                 )
 
 
@@ -89,7 +89,7 @@ class EMTaskValidate(BaseModel):
     def validate(self, value: str):
         if value not in self.labels_set:
             raise ValueError(
-                f"labels: '{value}' not in promt/labels provided in config "
+                f"labels: '{value}' not in prompt/labels provided in config "
             )
 
 
@@ -139,9 +139,11 @@ class TaskDataValidation:
         label_column: str = config.label_column()
         # list of valid labels provided in config "config/prompt/labels"
         labels_list: Optional[List] = config.labels_list()
-        # example template from config "config/prompt/example_template"
 
+        # example template from config "config/prompt/example_template"
         self.example_template: str = config.example_template()
+        # the explanation column as specified in config, "config/dataset/explanation_column"
+        self.explanation_column: str = config.explanation_column()
 
         self.__schema = {col: (StrictStr, ...) for col in self.expected_columns}
 
@@ -159,6 +161,8 @@ class TaskDataValidation:
         for text in self.example_template.split("\n"):
             matches = re.findall(EXPECTED_COLUMN_PATTERN, text)
             column_name_lists += matches
+        if self.explanation_column and self.explanation_column in column_name_lists:
+            column_name_lists.remove(self.explanation_column)
         return column_name_lists
 
     @property
@@ -237,8 +241,8 @@ class TaskDataValidation:
     def validate_dataset_columns(self, dataset_columns: List):
         """Validate columns
 
-        Valiate if the columns mentioned in example_template dataset are correct
-        and are contined within the columns of the dataset(seed.csv)
+        Validate if the columns mentioned in example_template dataset are correct
+        and are contained within the columns of the dataset(seed.csv)
         """
         missing_columns = set(self.expected_columns) - set(dataset_columns)
         assert (

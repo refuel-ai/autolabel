@@ -12,9 +12,9 @@ from rich.prompt import Confirm
 from autolabel.cache import SQLAlchemyCache
 from autolabel.confidence import ConfidenceCalculator
 from autolabel.configs import AutolabelConfig
+from autolabel.data_loaders import DatasetLoader
 from autolabel.data_models import AnnotationModel, TaskRunModel
 from autolabel.database import StateManager
-from autolabel.data_loaders import DatasetLoader
 from autolabel.few_shot import ExampleSelectorFactory
 from autolabel.models import BaseModel, ModelFactory
 from autolabel.schema import LLMAnnotation, MetricResult, TaskRun, TaskStatus
@@ -305,9 +305,7 @@ class LabelingAgent:
                 "REFUEL_API_KEY environment variable must be set to compute confidence scores. You can request an API key at https://refuel-ai.typeform.com/llm-access."
             )
 
-        dataset_loader = DatasetLoader(
-            dataset, self.config, max_items, start_index, validate=True
-        )
+        dataset_loader = DatasetLoader(dataset, self.config, max_items, start_index)
 
         prompt_list = []
         total_cost = 0
@@ -317,7 +315,7 @@ class LabelingAgent:
 
         # If this dataset config is a string, read the corrresponding csv file
         if isinstance(seed_examples, str):
-            seed_loader = DatasetLoader(seed_examples, self.config, validate=True)
+            seed_loader = DatasetLoader(seed_examples, self.config)
             seed_examples = seed_loader.inputs
 
         # Check explanations are present in data if explanation_column is passed in
@@ -445,7 +443,8 @@ class LabelingAgent:
         out_file = None
         if isinstance(seed_examples, str):
             out_file = seed_examples
-            _, seed_examples, _ = DatasetLoader.read_file(seed_examples, self.config)
+            seed_loader = DatasetLoader(seed_examples, self.config)
+            seed_examples = seed_loader.inputs
 
         explanation_column = self.config.explanation_column()
         if not explanation_column:
