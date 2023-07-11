@@ -66,6 +66,30 @@ class PaLMLLM(BaseModel):
     def _label_with_retry(self, prompts: List[str]) -> LLMResult:
         return self.llm.generate(prompts)
 
+    def _label_individually(self, prompts: List[str]) -> LLMResult:
+        """Label each prompt individually. Should be used only after trying as a batch first.
+
+        Args:
+            prompts (List[str]): List of prompts to label
+
+        Returns:
+            LLMResult: LLMResult object with generations
+        """
+        generations = []
+        for i, prompt in enumerate(prompts):
+            try:
+                response = self._label_with_retry([prompt])
+                for generation in response.generations[0]:
+                    generation.text = generation.text.replace(
+                        self.SEP_REPLACEMENT_TOKEN, "\n"
+                    )
+                generations.append(response.generations[0])
+            except Exception as e:
+                print(f"Error generating from LLM: {e}, returning empty generation")
+                generations.append([Generation(text="")])
+
+        return LLMResult(generations=generations)
+
     def _label(self, prompts: List[str]) -> LLMResult:
         for prompt in prompts:
             if self.SEP_REPLACEMENT_TOKEN in prompt:
@@ -95,20 +119,7 @@ class PaLMLLM(BaseModel):
             return result
         except Exception as e:
             print(f"Error generating from LLM: {e}, retrying each prompt individually")
-            generations = []
-            for i, prompt in enumerate(prompts):
-                try:
-                    response = self._label_with_retry([prompt])
-                    for generation in response.generations[0]:
-                        generation.text = generation.text.replace(
-                            self.SEP_REPLACEMENT_TOKEN, "\n"
-                        )
-                    generations.append(response.generations[0])
-                except Exception as e:
-                    print(f"Error generating from LLM: {e}, returning empty generation")
-                    generations.append([Generation(text="")])
-
-            return LLMResult(generations=generations)
+            self._label_individually(prompts)
 
     def get_cost(self, prompt: str, label: Optional[str] = "") -> float:
         if self.model_name is None:

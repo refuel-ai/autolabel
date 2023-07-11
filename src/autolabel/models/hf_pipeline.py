@@ -1,6 +1,6 @@
 from typing import List, Optional
 from langchain.llms import HuggingFacePipeline
-from langchain.schema import LLMResult, Generation
+from langchain.schema import LLMResult
 
 from autolabel.models import BaseModel
 from autolabel.configs import AutolabelConfig
@@ -70,16 +70,7 @@ class HFPipelineLLM(BaseModel):
             return self.llm.generate(prompts)
         except Exception as e:
             print(f"Error generating from LLM: {e}, retrying each prompt individually")
-            generations = []
-            for i, prompt in enumerate(prompts):
-                try:
-                    response = self.llm.generate([prompt])
-                    generations.append(response.generations[0])
-                except Exception as e:
-                    print(f"Error generating from LLM: {e}, returning empty generation")
-                    generations.append([Generation(text="")])
-
-            return LLMResult(generations=generations)
+            return self._label_individually(prompts)
 
     def get_cost(self, prompt: str, label: Optional[str] = "") -> float:
         # Model inference for this model is being run locally
