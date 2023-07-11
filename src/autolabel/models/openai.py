@@ -137,8 +137,16 @@ class OpenAILLM(BaseModel):
         try:
             return self.llm.generate(prompts)
         except Exception as e:
-            print(f"Error generating from LLM: {e}, returning empty result")
-            generations = [[Generation(text="")] for _ in prompts]
+            print(f"Error generating from LLM: {e}, retrying each prompt individually")
+            generations = []
+            for i, prompt in enumerate(prompts):
+                try:
+                    response = self.llm.generate([prompt])
+                    generations.append(response.generations[0])
+                except Exception as e:
+                    print(f"Error generating from LLM: {e}, returning empty generation")
+                    generations.append([Generation(text="")])
+
             return LLMResult(generations=generations)
 
     def get_cost(self, prompt: str, label: Optional[str] = "") -> float:

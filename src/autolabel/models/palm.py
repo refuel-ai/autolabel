@@ -94,9 +94,21 @@ class PaLMLLM(BaseModel):
                     )
             return result
         except Exception as e:
-            logger.error(f"Error generating from LLM: {e}.")
-        generations = [[Generation(text="")] for _ in prompts]
-        return LLMResult(generations=generations)
+            print(f"Error generating from LLM: {e}, retrying each prompt individually")
+            generations = []
+            for i, prompt in enumerate(prompts):
+                try:
+                    response = self._label_with_retry([prompt])
+                    for generation in response.generations[0]:
+                        generation.text = generation.text.replace(
+                            self.SEP_REPLACEMENT_TOKEN, "\n"
+                        )
+                    generations.append(response.generations[0])
+                except Exception as e:
+                    print(f"Error generating from LLM: {e}, returning empty generation")
+                    generations.append([Generation(text="")])
+
+            return LLMResult(generations=generations)
 
     def get_cost(self, prompt: str, label: Optional[str] = "") -> float:
         if self.model_name is None:
