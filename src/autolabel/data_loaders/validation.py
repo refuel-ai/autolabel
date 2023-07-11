@@ -125,11 +125,13 @@ class MLCTaskValidate(BaseModel):
             try:
                 seed_labels = eval(value)
                 if not isinstance(seed_labels, list):
-                    raise
+                    raise ValueError(
+                        f"value: '{value}' is not a list of labels as expected"
+                    )
                 unmatched_label = set(seed_labels) - self.labels_set
                 if len(unmatched_label) != 0:
                     raise ValueError(
-                        f"labels: '{unmatched_label}' not in promt/labels provided in config "
+                        f"labels: '{unmatched_label}' not in prompt/labels provided in config "
                     )
             except SyntaxError:
                 raise
