@@ -10,10 +10,10 @@ Autolabel makes it easy to try out different LLMs for your task and this page wi
 To use models from [OpenAI](https://platform.openai.com/docs/models), you can set `provider` to `openai` when creating a labeling configuration. The specific model that will be queried can be specified using the `name` key. Autolabel currently supports the following models from OpenAI:
 
 * `text-davinci-003`
-* `gpt-3.5-turbo` and `gpt-3.5-turbo-0613` (4,096 max tokens)
+* `gpt-3.5-turbo`, `gpt-3.5-turbo-0301` and `gpt-3.5-turbo-0613` (4,096 max tokens)
 * `gpt-3.5-turbo-16k` and `gpt-3.5-turbo-16k-0613` (16,384 max tokens)
-* `gpt-4` and `gpt-4-0613`  (8,192 max tokens)
-* `gpt-4-32k` and `gpt-4-32k-0613`  (32,768 max tokens)
+* `gpt-4`, `gpt-4-0314` and `gpt-4-0613`  (8,192 max tokens)
+* `gpt-4-32k`, `gpt-4-32k-0314` and `gpt-4-32k-0613`  (32,768 max tokens)
 
 `gpt-4` set of models are the most capable (and most expensive) from OpenAI, while `gpt-3.5-turbo` set of models are cheap (but still quite capable). Detailed pricing for these models is available [here](https://openai.com/pricing).
 
@@ -375,8 +375,8 @@ The table lists out all the provider, model combinations that Autolabel supports
 | Provider     | Name              |
 | -------------| ----------------- |
 | openai       | text-davinci-003  |
-| openai       | [gpt-3.5-turbo](https://platform.openai.com/docs/models/gpt-3-5)|
-| openai       | [gpt-4](https://platform.openai.com/docs/models/gpt-4)|
+| openai       | [gpt-3.5-turbo models](https://platform.openai.com/docs/models/gpt-3-5)|
+| openai       | [gpt-4 models](https://platform.openai.com/docs/models/gpt-4)|
 | anthropic    | claude-v1         |
 | anthropic    | claude-instant-v1 |
 | huggingface_pipeline    | [seq2seq models](https://huggingface.co/learn/nlp-course/chapter1/7?fw=pt#sequencetosequence-modelssequencetosequencemodels) |
