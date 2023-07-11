@@ -131,11 +131,10 @@ class DatasetLoader:
             stralign="left",
         )
 
-        logger.warning(
-            f"Data Validation failed for {len(self.__malformed_records)} records: \n Stats: \n {table}"
-        )
-
         if len(self.__malformed_records) > 0:
+            logger.warning(
+                f"Data Validation failed for {len(self.__malformed_records)} records: \n Stats: \n {table}"
+            )
             raise DataValidationFailed(
                 f"Validation failed for {len(self.__malformed_records)} rows."
             )
