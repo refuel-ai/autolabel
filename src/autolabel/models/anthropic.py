@@ -5,7 +5,7 @@ from autolabel.configs import AutolabelConfig
 from autolabel.models import BaseModel
 from autolabel.cache import BaseCache
 from langchain.chat_models import ChatAnthropic
-from langchain.schema import Generation, LLMResult, HumanMessage
+from langchain.schema import LLMResult, HumanMessage
 
 
 class AnthropicLLM(BaseModel):
@@ -40,12 +40,10 @@ class AnthropicLLM(BaseModel):
     def _label(self, prompts: List[str]) -> LLMResult:
         prompts = [[HumanMessage(content=prompt)] for prompt in prompts]
         try:
-            response = self.llm.generate(prompts)
-            return response
+            return self.llm.generate(prompts)
         except Exception as e:
-            print(f"Error generating from LLM: {e}, returning empty result")
-            generations = [[Generation(text="")] for _ in prompts]
-            return LLMResult(generations=generations)
+            print(f"Error generating from LLM: {e}, retrying each prompt individually")
+            return self._label_individually(prompts)
 
     def get_cost(self, prompt: str, label: Optional[str] = "") -> float:
         num_prompt_toks = tokenizer.count_tokens(prompt)

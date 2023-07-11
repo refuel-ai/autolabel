@@ -41,9 +41,8 @@ class CohereLLM(BaseModel):
         try:
             return self.llm.generate(prompts)
         except Exception as e:
-            print(f"Error generating from LLM: {e}, returning empty result")
-            generations = [[Generation(text="")] for _ in prompts]
-            return LLMResult(generations=generations)
+            print(f"Error generating from LLM: {e}, retrying each prompt individually")
+            return self._label_individually(prompts)
 
     def get_cost(self, prompt: str, label: Optional[str] = "") -> float:
         num_prompt_toks = len(self.co.tokenize(prompt).tokens)

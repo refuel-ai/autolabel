@@ -4,7 +4,7 @@ import logging
 
 from langchain.chat_models import ChatOpenAI
 from langchain.llms import OpenAI
-from langchain.schema import LLMResult, HumanMessage, Generation
+from langchain.schema import LLMResult, HumanMessage
 import tiktoken
 
 from autolabel.models import BaseModel
@@ -146,9 +146,8 @@ class OpenAILLM(BaseModel):
         try:
             return self.llm.generate(prompts)
         except Exception as e:
-            print(f"Error generating from LLM: {e}, returning empty result")
-            generations = [[Generation(text="")] for _ in prompts]
-            return LLMResult(generations=generations)
+            print(f"Error generating from LLM: {e}, retrying each prompt individually")
+            return self._label_individually(prompts)
 
     def get_cost(self, prompt: str, label: Optional[str] = "") -> float:
         encoding = tiktoken.encoding_for_model(self.model_name)

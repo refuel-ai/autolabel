@@ -3,7 +3,7 @@
 from abc import ABC, abstractmethod
 from typing import List, Optional, Dict, Tuple
 
-from langchain.schema import LLMResult
+from langchain.schema import LLMResult, Generation
 
 from autolabel.configs import AutolabelConfig
 from autolabel.schema import CacheEntry
@@ -51,6 +51,26 @@ class BaseModel(ABC):
 
         generations = [existing_prompts[i] for i in range(len(prompts))]
         return LLMResult(generations=generations, llm_output=llm_output), cost
+
+    def _label_individually(self, prompts: List[str]) -> LLMResult:
+        """Label each prompt individually. Should be used only after trying as a batch first.
+
+        Args:
+            prompts (List[str]): List of prompts to label
+
+        Returns:
+            LLMResult: LLMResult object with generations
+        """
+        generations = []
+        for prompt in prompts:
+            try:
+                response = self.llm.generate([prompt])
+                generations.append(response.generations[0])
+            except Exception as e:
+                print(f"Error generating from LLM: {e}, returning empty generation")
+                generations.append([Generation(text="")])
+
+        return LLMResult(generations=generations)
 
     @abstractmethod
     def _label(self, prompts: List[str]) -> LLMResult:
