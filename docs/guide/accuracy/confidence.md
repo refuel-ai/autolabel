@@ -5,7 +5,7 @@
   <figcaption>ChatGPT summarizing a non-existent New York Times article even without access to the Internet</figcaption>
 </figure>
 
-One of the biggest criticisms of using a LLMs so far has been hallucinations - LLMs can seem very confidence in their language even when they are completely incorrect. `autolabel` provides a confidence score for each LLM output that is correlated with the likelihood of that output being incorrect, i.e. if the confidence score is high, then it is more likely that the output is correct, and if confidence score is low, it is likely that the LLM has produced an incorrect output. 
+One of the biggest criticisms of using a LLMs so far has been hallucinations - LLMs can seem very confidence in their language even when they are completely incorrect. `autolabel` provides a confidence score for each LLM output that is correlated with the likelihood of that output being incorrect, i.e. if the confidence score is high, then it is more likely that the output is correct, and if confidence score is low, it is likely that the LLM has produced an incorrect output.
 
 ## Computing Confidence Scores
 

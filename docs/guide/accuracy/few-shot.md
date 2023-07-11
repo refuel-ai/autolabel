@@ -1,11 +1,16 @@
-It has been shown that the specific seed examples used while constructing the prompt have an impact on the performance of the model. Seed examples are the labeled dataset examples which the model is shown to help it understand the task better. Selecting the seed example per datapoint can help boost performance. We support the following example selection techniques:
+# Few-shot Prompting
 
-1. Fixed_few_shot - The same set of seed examples are used for every input data point.
-2. Semantic_similarity - Language embeddings are computed for all the examples in the seed set and a vector similarity search finds the few shot examples which are closest to the input datapoint. The hope is that closer datapoints from the seed set will give the model more context on how similar examples have been labeled, helping it improve performance.
-3. Max_marginal_relevance - Semantic similarity search is used to retrieve a set of candidate examples. Then, a diversity-driven selection strategy is used amongst these candidates to select a final subset of examples that have the most coverage of the initial pool of candidate examples.
+It has been shown that the specific seed examples used while constructing the prompt have an impact on the performance of the model. Seed examples are the labeled examples which are shown as demonstration to the LLM to help it understand the task better. Optimally selecting the seed examples can help boost performance and save on labeling costs by reducing the context size.
 
+We support the following few-shot example selection techniques:
 
-Example: 
+1. **Fixed** - The same set of seed examples are used for every input data point.
+2. **Semantic_similarity** - Embeddings are computed for all the examples in the seed set and a vector similarity search finds the few shot examples which are closest to the input datapoint. Closer datapoints from the seed set can give the model more context on how similar examples have been labeled, helping it improve performance.
+3. **Max_marginal_relevance** - Semantic similarity search is used to retrieve a set of candidate examples. Then, a diversity-driven selection strategy is used amongst these candidates to select a final subset of examples that have the most coverage of the initial pool of candidate examples.
+4. **Label diversity** - This strategy focuses on ensuring that the few-shot examples selected provide coverage across all the valid output labels.
+5. **Label diversity with similarity** - This strategy is a combination of (2) and (4) above - it samples a fixed number of examples per valid label, and within each label it selects the examples that are most similar to the input.
+
+Example:
 
 [![open in colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/1qgfy7odvkCNKrB58ozAF4qXzu10rRGKx#scrollTo=x0js54dB0D7J)
 
@@ -117,7 +122,7 @@ agent = LabelingAgent(config=config_zero_shot)
 labels, df, metrics_list = agent.run('../examples/banking/test.csv')
 ```
 
-This zero-shot task execution results in an accuracy of 70.19%. 
+This zero-shot task execution results in an accuracy of 70.19%.
 
 Iterating on this, we compare a fixed few-shot example selection strategy, which randomly chooses k examples from the labeled seedset and appends these same k examples to each prompt for the 1998 items to be labeled. In this case, we use k=10 seed examples per prompt. To use this selection strategy, we need to modify the config:
 
@@ -181,7 +186,7 @@ labels, df, metrics_list = agent.run('../examples/banking/test.csv')
 
 With semantic similarity example selection, we obtain a 79.02% accuracy, a significant increase of ~6% over the fixed-shot strategy.
 
-Autolabel also offers two strategies that prioritize label diversity when selecting examples: labeling diversity at random and labeling diversity with similarity. The former randomly samples a fixed number of examples per unique label in your dataset. The latter also samples a fixed number of examples per unique label, but takes into account semantic similarity when sampling this fixed number. Here are example configs for using label diversity example selection strategies.
+Finally, let's take a look at label diversity set of example selection techniques in action:
 
 ```py
 config_label_diversity_random = {
@@ -237,8 +242,10 @@ agent = LabelingAgent(config=config_label_diversity_similarity)
 labels, df, metrics_list = agent.run('../examples/civil_comments/test.csv', max_items=200)
 ```
 
-For this run on the civil comments dataset, label diversity at random achieved 80% accuracy and label diversity with semantic similarity achieved 78% accuracy. For the same subset of data, the use of regular semantic similarity example selection obtained 72% accuracy, making for a significant improvement by using label diversity. Label diversity example selection strategies are likely best suited for labeling tasks with a small number of unique labels, which is the case for the civil comments dataset with only 2 labels. This is because equal representation of all the possible labels may be less likely to bias the LLM towards a particular label.
+For this run on the civil comments dataset, label diversity at random achieved 80% accuracy and label diversity with semantic similarity achieved 78% accuracy. For the same subset of data, the use of regular semantic similarity example selection obtained 72% accuracy, making for a significant improvement by using label diversity. 
+
+Label diversity example selection strategies are likely best suited for labeling tasks with a small number of unique labels, which is the case for the civil comments dataset with only 2 labels. This is because equal representation of all the possible labels may be less likely to bias the LLM towards a particular label.
 
 By default, Autolabel uses OpenAI to compute text embeddings for few shot example selection strategies that require them (semantic similarity, max marginal relevance). However, Autolabel also supports alternative embedding model providers such as Google Vertex AI and Huggingface as outlined [here](/guide/llms/embeddings).
 
-It is almost always advisable to use an example selection strategy over a zero-shot approach in your autolabeling workflows, but the choice of which example selection strategy to use is dependent upon the specific labeling task and dataset. In some cases, there may not be sufficient labeled data to use as a seedset for semantic similarity and so fixed few-shot may be ideal as it requires a small fixed number of labeled examples. In other cases, a semantic similarity example selection strategy may be necessary for labeling tasks that are more complex and require more similar labeled references for the LLM.
+It is almost always advisable to use an example selection strategy over a zero-shot approach in your autolabeling workflows, but the choice of which example selection strategy to use is dependent upon the specific labeling task and dataset.
