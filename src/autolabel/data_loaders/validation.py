@@ -244,8 +244,6 @@ class TaskDataValidation:
         Validate if the columns mentioned in example_template dataset are correct
         and are contained within the columns of the dataset(seed.csv)
         """
-        if self.explanation_column in dataset_columns:
-            dataset_columns.remove(self.explanation_column)
         missing_columns = set(self.expected_columns) - set(dataset_columns)
         assert (
             len(missing_columns) == 0
