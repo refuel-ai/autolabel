@@ -1,0 +1,26 @@
+{
+    "task_name": "ToxicCommentClassification",
+    "task_type": "classification",
+    "dataset": {
+        "label_column": "label",
+        "explanation_column": "explanation",
+        "delimiter": ","
+    },
+    "model": {
+        "provider": "openai",
+        "name": "gpt-3.5-turbo"
+    },
+    "prompt": {
+        "task_guidelines": "You are an expert at identifying toxic comments. You aim to act in a fair and balanced manner, where comments that provide fair criticism of something or someone are labelled 'not toxic'. Similarly, criticisms of policy and politicians are marked 'not toxic', unless the comment includes obscenities, racial slurs or sexually explicit material. Any comments that are sexually explicit, obscene, or insults a person, demographic or race are not allowed and labeled 'toxic'. \nYour job is to correctly label the provided input example into one of the following categories:\n{labels}",
+        "output_guidelines": "Your answer will consist of an explanation, followed by the correct answer. The last line of the response should always be is JSON format with one key: {\"label\": \"the correct answer\"}.\n",
+        "labels": [
+            "toxic",
+            "not toxic"
+        ],
+        "few_shot_examples": "seed.csv",
+        "few_shot_selection": "label_diversity_random",
+        "few_shot_num": 4,
+        "chain_of_thought": true,
+        "example_template": "Input: {example}\nOutput: Let's think step by step.\n{explanation}\n{label}"
+    }
+}
