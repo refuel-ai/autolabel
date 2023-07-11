@@ -24,6 +24,8 @@ class OpenAILLM(BaseModel):
         "gpt-3.5-turbo-16k",
         "gpt-3.5-turbo-16k-0613",
         "gpt-4",
+        "gpt-4-0314",
+        "gpt-4-32k-0314",
         "gpt-4-0613",
         "gpt-4-32k",
         "gpt-4-32k-0613",
@@ -55,6 +57,8 @@ class OpenAILLM(BaseModel):
         "gpt-4-0613": 0.03 / 1000,
         "gpt-4-32k": 0.06 / 1000,
         "gpt-4-32k-0613": 0.06 / 1000,
+        "gpt-4-0314": 0.03 / 1000,
+        "gpt-4-32k-0314": 0.06 / 1000,
     }
     COST_PER_COMPLETION_TOKEN = {
         "text-davinci-003": 0.02 / 1000,
@@ -68,6 +72,8 @@ class OpenAILLM(BaseModel):
         "gpt-4-0613": 0.06 / 1000,
         "gpt-4-32k": 0.12 / 1000,
         "gpt-4-32k-0613": 0.12 / 1000,
+        "gpt-4-0314": 0.06 / 1000,
+        "gpt-4-32k-0314": 0.12 / 1000,
     }
 
     @cached_property
