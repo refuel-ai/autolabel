@@ -47,15 +47,11 @@ def compute_f1(
     """
     if labels:
         mlb = MultiLabelBinarizer()
-        mlb.fit(labels)
-
-        def binarize_labels(curr_labels):
-            """Generate multilabel array from ground truth and LLM labels"""
-            return mlb.transform([x.split(sep) for x in curr_labels])
+        mlb.fit([labels])
 
         return f1_score(
-            binarize_labels(truth),
-            binarize_labels(prediction),
+            mlb.transform([x.split(sep) for x in truth]),
+            mlb.transform([x.split(sep) for x in prediction]),
             average=average,
             zero_division=0,
         )
