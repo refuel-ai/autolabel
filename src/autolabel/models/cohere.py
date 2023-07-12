@@ -34,6 +34,11 @@ class CohereLLM(BaseModel):
             **self.DEFAULT_MODEL_PARAMS,
             **model_params,
         }
+        if type(config.num_predictions()) is int and config.num_predictions() > 1:
+            raise ValueError(
+                f"CohereLLM does not support num_predictions > 1, got {config.num_predictions()}"
+            )
+
         self.llm = Cohere(model=self.model_name, **self.model_params)
         self.co = cohere.Client(api_key=os.environ["COHERE_API_KEY"])
 

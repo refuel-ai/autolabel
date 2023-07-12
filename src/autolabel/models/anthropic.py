@@ -34,6 +34,11 @@ class AnthropicLLM(BaseModel):
         # populate model params
         model_params = config.model_params()
         self.model_params = {**self.DEFAULT_PARAMS, **model_params}
+        if type(config.num_predictions()) is int and config.num_predictions() > 1:
+            raise ValueError(
+                f"AnthropicLLM does not support num_predictions > 1, got {config.num_predictions()}"
+            )
+
         # initialize LLM
         self.llm = ChatAnthropic(model=self.model_name, **self.model_params)
 

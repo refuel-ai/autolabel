@@ -33,6 +33,9 @@ class HFPipelineLLM(BaseModel):
 
         # populate model params
         model_params = config.model_params()
+        if type(config.num_predictions()) is int and config.num_predictions() > 1:
+            model_params["num_return_sequences"] = config.num_predictions()
+
         self.model_params = {**self.DEFAULT_PARAMS, **model_params}
 
         # initialize HF pipeline

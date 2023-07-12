@@ -100,6 +100,8 @@ class OpenAILLM(BaseModel):
                 **logit_bias,
                 **model_params,
             }
+            if type(config.num_predictions()) is int and config.num_predictions() > 1:
+                model_params["n"] = config.num_predictions()
 
         if self._engine == "chat":
             self.model_params = {**self.DEFAULT_PARAMS_CHAT_ENGINE, **model_params}

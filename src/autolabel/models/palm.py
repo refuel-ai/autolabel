@@ -48,6 +48,11 @@ class PaLMLLM(BaseModel):
 
         # populate model params and initialize the LLM
         model_params = config.model_params()
+        if type(config.num_predictions()) is int and config.num_predictions() > 1:
+            raise ValueError(
+                f"PaLM does not support num_predictions > 1, got {config.num_predictions()}"
+            )
+
         self.model_params = {
             **self.DEFAULT_PARAMS,
             **model_params,
