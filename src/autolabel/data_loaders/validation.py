@@ -109,11 +109,43 @@ class QATaskValidate(BaseModel):
         pass
 
 
+class MLCTaskValidate(BaseModel):
+    """Validate Multilabel Classification Task
+
+    As of now we assume that the input label_column is a string
+
+    The label column can be a delimited string or a string of list
+    """
+
+    label_column: str
+    labels_set: set  # A Multilabel Classification Task should have a unique set of labels in config
+
+    def validate(self, value: str):
+        if value.startswith("[") and value.endswith("]"):
+            try:
+                seed_labels = eval(value)
+                if not isinstance(seed_labels, list):
+                    raise ValueError(
+                        f"value: '{value}' is not a list of labels as expected"
+                    )
+                unmatched_label = set(seed_labels) - self.labels_set
+                if len(unmatched_label) != 0:
+                    raise ValueError(
+                        f"labels: '{unmatched_label}' not in prompt/labels provided in config "
+                    )
+            except SyntaxError:
+                raise
+        else:
+            # TODO: split by delimiter specified in config and validate each label
+            pass
+
+
 TaskTypeValidate = Union[
     NERTaskValidate,
     ClassificationTaskValidate,
     EMTaskValidate,
     QATaskValidate,
+    MLCTaskValidate,
 ]
 
 
@@ -122,6 +154,7 @@ class DataValidationTasks(BaseModel):
     named_entity_recognition: TaskTypeValidate = NERTaskValidate
     entity_matching: TaskTypeValidate = EMTaskValidate
     question_answering: TaskTypeValidate = QATaskValidate
+    multilabel_classification: TaskTypeValidate = MLCTaskValidate
 
 
 class TaskDataValidation:
