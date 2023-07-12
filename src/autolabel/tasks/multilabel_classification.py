@@ -9,7 +9,7 @@ from autolabel.confidence import ConfidenceCalculator
 from autolabel.configs import AutolabelConfig
 from autolabel.schema import LLMAnnotation, Metric, MetricResult
 from autolabel.tasks import BaseTask
-from autolabel.utils import get_format_variables
+from autolabel.utils import get_format_variables, compute_f1
 
 import json
 
@@ -177,20 +177,13 @@ class MultilabelClassificationTask(BaseTask):
             if self.config.confidence():
                 eval_metrics_map[Metric.THRESHOLD].append(threshold)
 
-            def binarize_labels(curr_labels):
-                """Generate multilabel array from ground truth and LLM labels"""
-                mlb = MultiLabelBinarizer()
-                mlb.fit([self.config.labels_list()])
-                return mlb.transform(
-                    [x.split(self.config.label_separator()) for x in curr_labels]
-                )
-
             eval_metrics_map[Metric.F1].append(
-                f1_score(
-                    binarize_labels(curr_gt_labels),
-                    binarize_labels(curr_llm_labels),
+                compute_f1(
+                    curr_gt_labels,
+                    curr_llm_labels,
                     average="macro",
-                    zero_division=0,
+                    labels=self.config.labels_list(),
+                    sep=self.config.label_separator(),
                 )
             )
 
