@@ -9,7 +9,8 @@ from autolabel.confidence import ConfidenceCalculator
 from autolabel.configs import AutolabelConfig
 from autolabel.schema import LLMAnnotation, Metric, MetricResult
 from autolabel.tasks import BaseTask
-from autolabel.utils import get_format_variables, compute_f1
+from autolabel.tasks.utils import compute_f1
+from autolabel.utils import get_format_variables
 
 import json
 
