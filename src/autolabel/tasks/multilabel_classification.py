@@ -2,8 +2,7 @@ from collections import defaultdict
 from typing import List, Dict, Tuple
 
 from langchain.prompts.prompt import PromptTemplate
-from sklearn.metrics import accuracy_score, f1_score
-from sklearn.preprocessing import MultiLabelBinarizer
+from sklearn.metrics import accuracy_score
 
 from autolabel.confidence import ConfidenceCalculator
 from autolabel.configs import AutolabelConfig

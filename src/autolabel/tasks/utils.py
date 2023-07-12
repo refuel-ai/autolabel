@@ -3,6 +3,7 @@ import re
 from typing import List
 
 from sklearn.metrics import f1_score
+from sklearn.preprocessing import MultiLabelBinarizer
 
 
 def normalize_text(s: str) -> str:
