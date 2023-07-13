@@ -129,7 +129,8 @@ class MultilabelClassificationTask(BaseTask):
         """
 
         eval_metrics_map = {
-            Metric.F1: [],
+            Metric.F1_MACRO: [],
+            Metric.F1_WEIGHTED: [],
             Metric.SUPPORT: [],
             Metric.ACCURACY: [],
             Metric.COMPLETION_RATE: [],
@@ -177,11 +178,21 @@ class MultilabelClassificationTask(BaseTask):
             if self.config.confidence():
                 eval_metrics_map[Metric.THRESHOLD].append(threshold)
 
-            eval_metrics_map[Metric.F1].append(
+            eval_metrics_map[Metric.F1_MACRO].append(
                 compute_f1(
                     curr_gt_labels,
                     curr_llm_labels,
                     average="macro",
+                    labels=self.config.labels_list(),
+                    sep=self.config.label_separator(),
+                )
+            )
+
+            eval_metrics_map[Metric.F1_WEIGHTED].append(
+                compute_f1(
+                    curr_gt_labels,
+                    curr_llm_labels,
+                    average="weighted",
                     labels=self.config.labels_list(),
                     sep=self.config.label_separator(),
                 )

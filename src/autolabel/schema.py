@@ -56,6 +56,8 @@ class Metric(str, Enum):
     CONFUSION_MATRIX = "confusion_matrix"
     LABEL_DISTRIBUTION = "label_distribution"
     F1 = "f1"
+    F1_MACRO = "f1_macro"
+    F1_WEIGHTED = "f1_weighted"
     # Confidence metrics
     AUROC = "auroc"
     THRESHOLD = "threshold"
