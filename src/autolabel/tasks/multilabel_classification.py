@@ -2,13 +2,13 @@ from collections import defaultdict
 from typing import List, Dict, Tuple
 
 from langchain.prompts.prompt import PromptTemplate
-from sklearn.metrics import accuracy_score, f1_score
-from sklearn.preprocessing import MultiLabelBinarizer
+from sklearn.metrics import accuracy_score
 
 from autolabel.confidence import ConfidenceCalculator
 from autolabel.configs import AutolabelConfig
 from autolabel.schema import LLMAnnotation, Metric, MetricResult
 from autolabel.tasks import BaseTask
+from autolabel.tasks.utils import compute_f1
 from autolabel.utils import get_format_variables
 
 import json
@@ -129,7 +129,8 @@ class MultilabelClassificationTask(BaseTask):
         """
 
         eval_metrics_map = {
-            Metric.F1: [],
+            Metric.F1_MACRO: [],
+            Metric.F1_WEIGHTED: [],
             Metric.SUPPORT: [],
             Metric.ACCURACY: [],
             Metric.COMPLETION_RATE: [],
@@ -177,20 +178,23 @@ class MultilabelClassificationTask(BaseTask):
             if self.config.confidence():
                 eval_metrics_map[Metric.THRESHOLD].append(threshold)
 
-            def binarize_labels(curr_labels):
-                """Generate multilabel array from ground truth and LLM labels"""
-                mlb = MultiLabelBinarizer()
-                mlb.fit([self.config.labels_list()])
-                return mlb.transform(
-                    [x.split(self.config.label_separator()) for x in curr_labels]
-                )
-
-            eval_metrics_map[Metric.F1].append(
-                f1_score(
-                    binarize_labels(curr_gt_labels),
-                    binarize_labels(curr_llm_labels),
+            eval_metrics_map[Metric.F1_MACRO].append(
+                compute_f1(
+                    curr_gt_labels,
+                    curr_llm_labels,
                     average="macro",
-                    zero_division=0,
+                    labels=self.config.labels_list(),
+                    sep=self.config.label_separator(),
+                )
+            )
+
+            eval_metrics_map[Metric.F1_WEIGHTED].append(
+                compute_f1(
+                    curr_gt_labels,
+                    curr_llm_labels,
+                    average="weighted",
+                    labels=self.config.labels_list(),
+                    sep=self.config.label_separator(),
                 )
             )
 

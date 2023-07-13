@@ -166,14 +166,8 @@ class QuestionAnsweringTask(BaseTask):
             if self.config.confidence():
                 eval_metrics_map[Metric.THRESHOLD].append(threshold)
 
-            f1 = sum(
-                [
-                    compute_f1(curr_llm_labels[index], curr_gt_labels[index])
-                    for index in range(len(curr_llm_labels))
-                ]
-            )
             eval_metrics_map[Metric.F1].append(
-                (float(f1) / len(curr_llm_labels)) if len(curr_llm_labels) > 0 else 0.0
+                compute_f1(curr_gt_labels, curr_llm_labels)
             )
 
         eval_metrics.extend(

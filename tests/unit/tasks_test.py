@@ -475,8 +475,10 @@ def test_multilabel_classification_eval():
     for metric in eval:
         if metric.metric_type == Metric.ACCURACY:
             assert metric.value[0] == 0.25
-        elif metric.metric_type == Metric.F1:
+        elif metric.metric_type == Metric.F1_MACRO:
             assert metric.value[0] == 0.25
+        elif metric.metric_type == Metric.F1_WEIGHTED:
+            assert metric.value[0] == 5 / 9
         elif metric.metric_type == Metric.COMPLETION_RATE:
             assert metric.value[0] == 0.8
         elif metric.metric_type == Metric.SUPPORT:
