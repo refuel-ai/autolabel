@@ -69,6 +69,7 @@ schema = {
                 "name": {"type": "string"},
                 "compute_confidence": {"type": "boolean"},
                 "params": {"type": "object"},
+                "num_predictions": {"type": "integer"},
             },
             "required": ["provider", "name"],
             "additionalProperties": False,

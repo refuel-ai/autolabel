@@ -197,6 +197,7 @@ class LabelingAgent:
                         final_annotation,
                         current_index + i,
                         self.task_run.id,
+                        annotations
                     )
             cost += curr_cost
             postfix_dict[self.COST_KEY] = f"{cost:.2f}"
@@ -257,6 +258,15 @@ class LabelingAgent:
         ]
         if self.config.confidence():
             output_df["llm_confidence"] = [l.confidence_score for l in llm_labels]
+
+        if self.config.num_predictions() > 1:
+            all_llm_labels = [[LLMAnnotation(**a) for a in annotation.all_annotations] for annotation in db_result]
+            for i in range(self.config.num_predictions()):
+                output_df[self.config.task_name() + f"_llm_label_{i}"] = [
+                    l[i].label for l in all_llm_labels
+                ]
+                if self.config.confidence():
+                    output_df[f"llm_confidence_{i}"] = [l[i].confidence_score for l in all_llm_labels]
 
         # Only save to csv if output_name is provided or dataset is a string
         if not output_name and isinstance(dataset, str):

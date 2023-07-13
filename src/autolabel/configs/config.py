@@ -30,7 +30,7 @@ class AutolabelConfig(BaseConfig):
     MODEL_PARAMS_KEY = "params"
     COMPUTE_CONFIDENCE_KEY = "compute_confidence"
     LOGIT_BIAS_KEY = "logit_bias"
-    NUM_PREDICTIONs_KEY = "num_predictions"
+    NUM_PREDICTIONS_KEY = "num_predictions"
 
     # Embedding config keys (config["embedding"][<key>])
     EMBEDDING_PROVIDER_KEY = "provider"
@@ -132,7 +132,7 @@ class AutolabelConfig(BaseConfig):
 
     def num_predictions(self) -> int:
         """Returns the number of predictions the model should return"""
-        return self._model_config.get(self.NUM_PREDICTIONs_KEY, 1)
+        return self._model_config.get(self.NUM_PREDICTIONS_KEY, 1)
 
     # Embedding config
     def embedding_provider(self) -> str:

@@ -93,6 +93,9 @@ class OpenAILLM(BaseModel):
 
         # populate model params and initialize the LLM
         model_params = config.model_params()
+        if config.num_predictions() > 1:
+            model_params["n"] = config.num_predictions()
+        
         if config.logit_bias():
             logit_bias = self._generate_logit_bias(config)
             # if logit_bias or max_tokens is specified already, we don't want to overwrite it
@@ -100,8 +103,6 @@ class OpenAILLM(BaseModel):
                 **logit_bias,
                 **model_params,
             }
-            if type(config.num_predictions()) is int and config.num_predictions() > 1:
-                model_params["n"] = config.num_predictions()
 
         if self._engine == "chat":
             self.model_params = {**self.DEFAULT_PARAMS_CHAT_ENGINE, **model_params}

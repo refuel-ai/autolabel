@@ -34,7 +34,7 @@ class CohereLLM(BaseModel):
             **self.DEFAULT_MODEL_PARAMS,
             **model_params,
         }
-        if type(config.num_predictions()) is int and config.num_predictions() > 1:
+        if config.num_predictions() > 1:
             raise ValueError(
                 f"CohereLLM does not support num_predictions > 1, got {config.num_predictions()}"
             )

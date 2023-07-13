@@ -7,7 +7,7 @@
     },
     "model": {
         "provider": "openai",
-        "name": "gpt-3.5-turbo"
+        "name": "gpt-4"
     },
     "prompt": {
         "task_guidelines": "You are an expert at answering questions based on wikipedia articles. Your job is to answer the following questions using the context provided with the question.\nThe answer is a continuous span of words from the context.\nUse the context to answer the question. If the question cannot be answered using the context and the context alone without any outside knowledge, answer the question as unanswerable.",

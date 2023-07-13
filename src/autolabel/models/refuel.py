@@ -34,7 +34,7 @@ class RefuelLLM(BaseModel):
         # be used to decide which refuel model is queried
         self.model_name = config.model_name()
         model_params = config.model_params()
-        if type(config.num_predictions()) is int and config.num_predictions() > 1:
+        if config.num_predictions() > 1:
             model_params["num_return_sequences"] = config.num_predictions()
         self.model_params = {**self.DEFAULT_PARAMS, **model_params}
 

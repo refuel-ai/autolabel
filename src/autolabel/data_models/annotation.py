@@ -1,4 +1,5 @@
 from .base import Base
+from typing import List, Union
 import logging
 from pydantic import BaseModel
 from sqlalchemy import Column, Integer, ForeignKey, JSON, DateTime
@@ -18,6 +19,7 @@ class AnnotationModel(Base):
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     index = Column(Integer)
     llm_annotation = Column(JSON)
+    all_annotations = Column(JSON)
     task_run_id = Column(Integer, ForeignKey("task_runs.id"))
     task_runs = relationship("TaskRunModel", back_populates="annotations")
 
@@ -26,10 +28,16 @@ class AnnotationModel(Base):
 
     @classmethod
     def create_from_llm_annotation(
-        cls, db, llm_annotation: LLMAnnotation, index: int, task_run_id: int
+        cls,
+        db,
+        llm_annotation: LLMAnnotation,
+        index: int,
+        task_run_id: int,
+        all_annotations: List[LLMAnnotation] = None,
     ):
         db_object = cls(
             llm_annotation=json.loads(llm_annotation.json()),
+            all_annotations=[json.loads(a.json()) for a in all_annotations] if all_annotations is not None else None,
             index=index,
             task_run_id=task_run_id,
         )
