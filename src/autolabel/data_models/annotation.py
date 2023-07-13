@@ -37,7 +37,9 @@ class AnnotationModel(Base):
     ):
         db_object = cls(
             llm_annotation=json.loads(llm_annotation.json()),
-            all_annotations=[json.loads(a.json()) for a in all_annotations] if all_annotations is not None else None,
+            all_annotations=[json.loads(a.json()) for a in all_annotations]
+            if all_annotations is not None
+            else None,
             index=index,
             task_run_id=task_run_id,
         )
