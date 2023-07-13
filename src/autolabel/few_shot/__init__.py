@@ -49,7 +49,10 @@ class ExampleSelectorFactory:
 
     @staticmethod
     def initialize_selector(
-        config: AutolabelConfig, examples: List[Dict], columns: List[str]
+        config: AutolabelConfig,
+        examples: List[Dict],
+        columns: List[str],
+        cache: bool = True,
     ) -> BaseExampleSelector:
         algorithm = config.few_shot_algorithm()
         if not algorithm:
@@ -100,4 +103,7 @@ class ExampleSelectorFactory:
             params["num_labels"] = len(config.labels_list())
 
         example_cls = ALGORITHM_TO_IMPLEMENTATION[algorithm]
+
+        params["cache"] = cache
+
         return example_cls.from_examples(**params)
