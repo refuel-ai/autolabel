@@ -171,7 +171,10 @@ class VectorStoreWrapper(VectorStore):
                 for idx, text in enumerate(texts):
                     result = conn.execute(
                         f"SELECT embedding FROM {EMBEDDINGS_TABLE} WHERE embedding_function = ? AND text = ?",
-                        self._embedding_function.model,
+                        self._embedding_function.model
+                        if self._embedding_function.__class__.__name__
+                        != "HuggingFaceEmbeddings"
+                        else self._embedding_function.model_name,
                         text,
                     ).fetchone()
                     if result:
@@ -203,7 +206,10 @@ class VectorStoreWrapper(VectorStore):
                 for text, embedding in zip(texts, embeddings):
                     conn.execute(
                         f"INSERT INTO {EMBEDDINGS_TABLE} (embedding_function, text, embedding) VALUES (?, ?, ?)",
-                        self._embedding_function.model,
+                        self._embedding_function.model
+                        if self._embedding_function.__class__.__name__
+                        != "HuggingFaceEmbeddings"
+                        else self._embedding_function.model_name,
                         text,
                         pickle.dumps(embedding),
                     )
