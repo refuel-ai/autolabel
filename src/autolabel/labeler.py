@@ -32,7 +32,6 @@ METRIC_TABLE_STYLE = "cyan bold"
 
 
 class LabelingAgent:
-    CHUNK_SIZE = 5
     COST_KEY = "Cost in $"
 
     def __init__(
@@ -122,17 +121,16 @@ class LabelingAgent:
         cost = 0.0
         postfix_dict = {}
 
-        indices = range(current_index, len(dataset_loader.inputs), self.CHUNK_SIZE)
+        indices = range(current_index, len(dataset_loader.inputs))
+
         for current_index in track_with_stats(
             indices,
             postfix_dict,
             total=len(dataset_loader.inputs) - current_index,
-            advance=self.CHUNK_SIZE,
             console=console,
         ):
-            chunk = dataset_loader.inputs[
-                current_index : current_index + self.CHUNK_SIZE
-            ]
+            chunk = [dataset_loader.inputs[current_index]]
+
             final_prompts = []
             for i, input_i in enumerate(chunk):
                 # Fetch few-shot seed examples
@@ -144,9 +142,8 @@ class LabelingAgent:
                 final_prompt = self.task.construct_prompt(input_i, examples)
                 final_prompts.append(final_prompt)
 
-            # Get response from LLM
             try:
-                response, curr_cost = self.llm.label(final_prompts)
+                response, curr_cost = self.llm.label(final_prompt)
             except Exception as e:
                 # TODO (dhruva): We need to handle this case carefully
                 # When we erorr out, we will have less elements in the llm_labels
@@ -202,7 +199,7 @@ class LabelingAgent:
             postfix_dict[self.COST_KEY] = f"{cost:.2f}"
 
             # Evaluate the task every eval_every examples
-            if (current_index + self.CHUNK_SIZE) % eval_every == 0:
+            if (current_index % eval_every) == 0:
                 db_result = AnnotationModel.get_annotations_by_task_run_id(
                     self.db.session, self.task_run.id
                 )
