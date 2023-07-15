@@ -109,3 +109,6 @@ exclude = '''
   | dist
 )/
 '''
+
+[project.scripts]
+my-client = "autolabel.cli:app"
