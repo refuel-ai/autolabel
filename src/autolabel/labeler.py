@@ -143,7 +143,7 @@ class LabelingAgent:
                 final_prompts.append(final_prompt)
 
             try:
-                response, curr_cost = self.llm.label(final_prompt)
+                response, curr_cost = self.llm.label(final_prompts)
             except Exception as e:
                 # TODO (dhruva): We need to handle this case carefully
                 # When we erorr out, we will have less elements in the llm_labels
