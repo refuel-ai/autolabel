@@ -199,7 +199,7 @@ class LabelingAgent:
             postfix_dict[self.COST_KEY] = f"{cost:.2f}"
 
             # Evaluate the task every eval_every examples
-            if (current_index % eval_every) == 0:
+            if (current_index + 1) % eval_every == 0:
                 db_result = AnnotationModel.get_annotations_by_task_run_id(
                     self.db.session, self.task_run.id
                 )
