@@ -35,10 +35,8 @@ def plan(
     config: Annotated[
         str, typer.Argument(help="Path to config file", show_default=False)
     ],
-    max_items: Annotated[
-        Optional[int], typer.Argument(help="Max number of items to label")
-    ] = None,
-    start_index: Annotated[Optional[int], typer.Argument(help="Index to start at")] = 0,
+    max_items: Annotated[int, typer.Option(help="Max number of items to label")] = None,
+    start_index: Annotated[int, typer.Option(help="Index to start at")] = 0,
     cache: Annotated[bool, typer.Option(help="Cache results")] = True,
 ):
     """[bold]Plan[/bold] a labeling session in accordance with the provided dataset and config file"""
@@ -54,10 +52,8 @@ def run(
     config: Annotated[
         str, typer.Argument(help="Path to config file", show_default=False)
     ],
-    max_items: Annotated[
-        Optional[int], typer.Argument(help="Max number of items to label")
-    ] = None,
-    start_index: Annotated[Optional[int], typer.Argument(help="Index to start at")] = 0,
+    max_items: Annotated[int, typer.Option(help="Max number of items to label")] = None,
+    start_index: Annotated[int, typer.Option(help="Index to start at")] = 0,
     cache: Annotated[bool, typer.Option(help="Cache results")] = True,
 ):
     """[bold]Run[/bold] a labeling session in accordance with the provided dataset and config file"""

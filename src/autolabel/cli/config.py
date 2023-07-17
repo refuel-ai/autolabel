@@ -19,6 +19,7 @@ DEFAULT_EXAMPLE_TEMPLATE = "Example: {example}\nLabel: {label}"
 
 
 def _create_dataset_config(task_type: TaskType, seed: Optional[str] = None) -> Dict:
+    print("[bold]Dataset Configuration[/bold]")
     dataset_config = {}
 
     detected_delimiter = ","
@@ -63,6 +64,7 @@ def _create_dataset_config(task_type: TaskType, seed: Optional[str] = None) -> D
 
 
 def _create_prompt_config(config: Dict, seed: Optional[str] = None) -> Dict:
+    print("[bold]Prompt Configuration[/bold]")
     prompt_config = {}
 
     if seed:
@@ -74,7 +76,9 @@ def _create_prompt_config(config: Dict, seed: Optional[str] = None) -> Dict:
         default=None,
     )
     if task_guidelines:
-        prompt_config[AutolabelConfig.TASK_GUIDELINE_KEY] = task_guidelines
+        prompt_config[AutolabelConfig.TASK_GUIDELINE_KEY] = task_guidelines.replace(
+            "\\n", "\n"
+        )
 
     seed_labels = (
         dataset_loader.dat[unvalidated_config.label_column()].unique().tolist()
@@ -82,15 +86,15 @@ def _create_prompt_config(config: Dict, seed: Optional[str] = None) -> Dict:
         else []
     )
     if seed_labels and Confirm.ask(
-        f"Detected labels in seed dataset.\n{seed_labels}\nUse these labels?"
+        f"Detected {len(seed_labels)} unique labels in seed dataset. Use these labels?"
     ):
         prompt_config[AutolabelConfig.VALID_LABELS_KEY] = seed_labels
     else:
         labels = []
-        label = Prompt.ask("Enter a label (or leave blank to finish)")
+        label = Prompt.ask("Enter a valid label (or leave blank for none)")
         while label:
             labels.append(label)
-            label = Prompt.ask("Enter a label (or leave blank to finish)")
+            label = Prompt.ask("Enter a valid label (or leave blank to finish)")
         if labels:
             prompt_config[AutolabelConfig.VALID_LABELS_KEY] = labels
 
@@ -98,9 +102,11 @@ def _create_prompt_config(config: Dict, seed: Optional[str] = None) -> Dict:
         prompt_config[AutolabelConfig.FEW_SHOT_EXAMPLE_SET_KEY] = seed
     else:
         few_shot_example_set = []
-        example = Prompt.ask("Enter an example or row number (or leave blank for none)")
+        example = Prompt.ask(
+            f"Enter an example {'or row number ' if seed else ''}(or leave blank for none)"
+        )
         while example:
-            if example.isdigit():
+            if seed and example.isdigit():
                 example = dataset_loader.dat.iloc[int(example)][
                     AutolabelConfig.TEXT_COLUMN_KEY
                 ]
@@ -109,15 +115,24 @@ def _create_prompt_config(config: Dict, seed: Optional[str] = None) -> Dict:
                 ]
                 print(example, label)
             else:
-                label = Prompt.ask("Enter the label for this example", choices=labels)
+                label = Prompt.ask(
+                    "Enter the label for this example",
+                    choices=prompt_config[AutolabelConfig.VALID_LABELS_KEY],
+                    show_choices=len(prompt_config[AutolabelConfig.VALID_LABELS_KEY])
+                    <= 5,
+                )
             few_shot_example_set.append(
                 {
-                    config[AutolabelConfig.TEXT_COLUMN_KEY]: example,
-                    config[AutolabelConfig.LABEL_COLUMN_KEY]: label,
+                    config[AutolabelConfig.DATASET_CONFIG_KEY][
+                        AutolabelConfig.TEXT_COLUMN_KEY
+                    ]: example,
+                    config[AutolabelConfig.DATASET_CONFIG_KEY][
+                        AutolabelConfig.LABEL_COLUMN_KEY
+                    ]: label,
                 }
             )
             example = Prompt.ask(
-                "Enter an example or row number (or leave blank to finish)"
+                f"Enter an example {'or row number ' if seed else ''}(or leave blank to finish)"
             )
         if few_shot_example_set:
             prompt_config[
@@ -160,6 +175,7 @@ def _create_prompt_config(config: Dict, seed: Optional[str] = None) -> Dict:
 
 
 def _create_model_config() -> Dict:
+    print("[bold]Model Configuration[/bold]")
     model_config = {}
 
     model_config[AutolabelConfig.PROVIDER_KEY] = Prompt.ask(
