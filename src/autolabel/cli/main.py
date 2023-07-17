@@ -23,7 +23,11 @@ def create_config_command(
         typer.Argument(help="Optional seed dataset to help auto-fill the config."),
     ] = None
 ):
-    """Create a new task [bold]config[/bold] file"""
+    """Create a new task [bold]config[/bold] file
+
+    To use the labels list in the task guidelines, surround the word "labels" with curly braces.
+    To use column values in the example template, surround the column name with curly braces.
+    """
     create_config(seed)
 
 

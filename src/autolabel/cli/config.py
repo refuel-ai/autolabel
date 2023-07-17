@@ -8,9 +8,10 @@ from rich.prompt import Prompt, IntPrompt, Confirm
 
 import pandas as pd
 
-from autolabel.configs import AutolabelConfig, UnvalidatedAutolabelConfig
+from autolabel.configs import AutolabelConfig
 from autolabel.schema import TaskType, FewShotAlgorithm, ModelProvider
 from autolabel.data_loaders import DatasetLoader
+from autolabel.models import ModelFactory
 
 
 DEFAULT_TEXT_COLUMN = "example"
@@ -25,22 +26,19 @@ def _create_dataset_config(task_type: TaskType, seed: Optional[str] = None) -> D
     detected_delimiter = ","
     if seed:
         if seed.endswith(".csv"):
-            with open(seed, "r") as f:
-                dialect = csv.Sniffer().sniff(f.read(1024))
-                f.seek(0)
-            detected_delimiter = dialect.delimiter
+            try:
+                with open(seed, "r") as f:
+                    dialect = csv.Sniffer().sniff(f.read(1024))
+                    f.seek(0)
+                detected_delimiter = dialect.delimiter
+            except Exception:
+                pass
 
     delimiter = Prompt.ask(
         "Enter the delimiter",
         default=detected_delimiter,
     )
     dataset_config[AutolabelConfig.DELIMITER_KEY] = delimiter
-
-    text_column = Prompt.ask(
-        "Enter the text column name",
-        default=DEFAULT_TEXT_COLUMN,
-    )
-    dataset_config[AutolabelConfig.TEXT_COLUMN_KEY] = text_column
 
     label_column = Prompt.ask(
         "Enter the label column name", default=DEFAULT_LABEL_COLUMN
@@ -68,7 +66,7 @@ def _create_prompt_config(config: Dict, seed: Optional[str] = None) -> Dict:
     prompt_config = {}
 
     if seed:
-        unvalidated_config = UnvalidatedAutolabelConfig(config)
+        unvalidated_config = AutolabelConfig(config, validate=False)
         dataset_loader = DatasetLoader(seed, unvalidated_config, validate=False)
 
     task_guidelines = Prompt.ask(
@@ -98,41 +96,48 @@ def _create_prompt_config(config: Dict, seed: Optional[str] = None) -> Dict:
         if labels:
             prompt_config[AutolabelConfig.VALID_LABELS_KEY] = labels
 
+    prompt_config[AutolabelConfig.EXAMPLE_TEMPLATE_KEY] = Prompt.ask(
+        "Enter the example template",
+        default=DEFAULT_EXAMPLE_TEMPLATE,
+    ).replace("\\n", "\n")
+
+    # get variable names from example template f string
+    example_template_variables = [
+        v.split("}")[0].split("{")[1]
+        for v in prompt_config[AutolabelConfig.EXAMPLE_TEMPLATE_KEY].split(" ")
+        if "{" in v and "}" in v
+    ]
+    if (
+        config[AutolabelConfig.DATASET_CONFIG_KEY][AutolabelConfig.LABEL_COLUMN_KEY]
+        not in example_template_variables
+    ):
+        print(
+            "[red]The label column name must be included in the example template[/red]"
+        )
+        raise typer.Abort()
+
     if seed and Confirm.ask(f"Use {seed} as few shot example dataset?"):
         prompt_config[AutolabelConfig.FEW_SHOT_EXAMPLE_SET_KEY] = seed
     else:
         few_shot_example_set = []
         example = Prompt.ask(
-            f"Enter an example {'or row number ' if seed else ''}(or leave blank for none)"
+            f"Enter the value for {example_template_variables[0]} {'or row number ' if seed else ''}(or leave blank for none)"
         )
         while example:
+            example_dict = {}
             if seed and example.isdigit():
-                example = dataset_loader.dat.iloc[int(example)][
-                    AutolabelConfig.TEXT_COLUMN_KEY
-                ]
-                label = dataset_loader.dat.iloc[int(example)][
-                    AutolabelConfig.LABEL_COLUMN_KEY
-                ]
-                print(example, label)
+                example_dict = dataset_loader.dat.iloc[int(example)].to_dict()
+                print(example_dict)
             else:
-                label = Prompt.ask(
-                    "Enter the label for this example",
-                    choices=prompt_config[AutolabelConfig.VALID_LABELS_KEY],
-                    show_choices=len(prompt_config[AutolabelConfig.VALID_LABELS_KEY])
-                    <= 5,
-                )
-            few_shot_example_set.append(
-                {
-                    config[AutolabelConfig.DATASET_CONFIG_KEY][
-                        AutolabelConfig.TEXT_COLUMN_KEY
-                    ]: example,
-                    config[AutolabelConfig.DATASET_CONFIG_KEY][
-                        AutolabelConfig.LABEL_COLUMN_KEY
-                    ]: label,
-                }
-            )
+                example_dict[example_template_variables[0]] = example
+                for variable in example_template_variables[1:]:
+                    example_dict[variable] = Prompt.ask(
+                        f"Enter the value for {variable}"
+                    )
+
+            few_shot_example_set.append(example_dict)
             example = Prompt.ask(
-                f"Enter an example {'or row number ' if seed else ''}(or leave blank to finish)"
+                f"Enter the value for {example_template_variables[0]} {'or row number ' if seed else ''}(or leave blank to finish)"
             )
         if few_shot_example_set:
             prompt_config[
@@ -145,13 +150,11 @@ def _create_prompt_config(config: Dict, seed: Optional[str] = None) -> Dict:
             choices=[a for a in FewShotAlgorithm],
         )
         prompt_config[AutolabelConfig.FEW_SHOT_NUM_KEY] = IntPrompt.ask(
-            "Enter the number of few shot examples to use", default=5
+            "Enter the number of few shot examples to use",
+            default=min(
+                len(prompt_config[AutolabelConfig.FEW_SHOT_EXAMPLE_SET_KEY]), 5
+            ),
         )
-
-    prompt_config[AutolabelConfig.EXAMPLE_TEMPLATE_KEY] = Prompt.ask(
-        "Enter the example template",
-        default=DEFAULT_EXAMPLE_TEMPLATE,
-    ).replace("\\n", "\n")
 
     output_guideline = Prompt.ask(
         "Enter the output guideline (optional)",

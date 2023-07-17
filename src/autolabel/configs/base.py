@@ -9,12 +9,13 @@ logger = logging.getLogger(__name__)
 class BaseConfig:
     """Used for parsing, validating, and storing information about the labeling task passed to the LabelingAgent. Additional config classes should extend from this base class."""
 
-    def __init__(self, config: Union[str, Dict]) -> None:
+    def __init__(self, config: Union[str, Dict], validate: bool = True) -> None:
         if isinstance(config, str):
             self.config = self._safe_load_json(config)
         else:
             self.config = config
-        self._validate()
+        if validate:
+            self._validate()
 
     def _safe_load_json(self, json_file_path: str) -> Dict:
         """Loads config settings from a provided json file"""

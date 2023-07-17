@@ -111,4 +111,4 @@ exclude = '''
 '''
 
 [project.scripts]
-my-client = "autolabel.cli:app"
+autolabel = "autolabel.cli.main:app"
