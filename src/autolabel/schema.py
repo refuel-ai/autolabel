@@ -80,6 +80,7 @@ class LLMAnnotation(BaseModel):
     confidence_score: Optional[float] = None
     generation_info: Optional[Dict[str, Any]] = None
     raw_response: Optional[str] = ""
+    explanation: Optional[str] = ""
     prompt: Optional[str] = ""
 
 
