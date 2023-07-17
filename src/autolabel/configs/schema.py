@@ -111,6 +111,7 @@ schema = {
                 "few_shot_num": {"type": "number"},
                 "chain_of_thought": {"type": "boolean"},
             },
+            "required": ["task_guidelines"],
             "additionalProperties": False,
         },
     },

@@ -12,6 +12,7 @@ from autolabel.configs import AutolabelConfig
 from autolabel.schema import TaskType, FewShotAlgorithm, ModelProvider
 from autolabel.data_loaders import DatasetLoader
 from autolabel.models import ModelFactory
+from autolabel.tasks import TASK_TYPE_TO_IMPLEMENTATION
 
 
 DEFAULT_TEXT_COLUMN = "example"
@@ -69,14 +70,12 @@ def _create_prompt_config(config: Dict, seed: Optional[str] = None) -> Dict:
         unvalidated_config = AutolabelConfig(config, validate=False)
         dataset_loader = DatasetLoader(seed, unvalidated_config, validate=False)
 
-    task_guidelines = Prompt.ask(
-        "Enter the task guidelines (optional)",
-        default=None,
-    )
-    if task_guidelines:
-        prompt_config[AutolabelConfig.TASK_GUIDELINE_KEY] = task_guidelines.replace(
-            "\\n", "\n"
-        )
+    prompt_config[AutolabelConfig.TASK_GUIDELINE_KEY] = Prompt.ask(
+        "Enter the task guidelines",
+        default=TASK_TYPE_TO_IMPLEMENTATION[
+            TaskType(config[AutolabelConfig.TASK_TYPE_KEY])
+        ].DEFAULT_TASK_GUIDELINES,
+    ).replace("\\n", "\n")
 
     seed_labels = (
         dataset_loader.dat[unvalidated_config.label_column()].unique().tolist()
