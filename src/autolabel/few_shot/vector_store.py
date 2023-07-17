@@ -158,16 +158,19 @@ class VectorStoreWrapper(VectorStore):
 
     def _get_embeddings(self, texts: Iterable[str]) -> List[List[float]]:
         """Get embeddings from the database. If not found, compute them and add them to the database.
+
+        If no database is used, compute the embeddings and return them.
+
         Args:
             texts (Iterable[str]): Iterable of texts to embed.
         Returns:
             List[List[float]]: List of embeddings.
         """
-        embeddings = []
-        uncached_texts = []
-        uncached_texts_indices = []
         if self._db_engine:
             with self._db_engine.connect() as conn:
+                embeddings = []
+                uncached_texts = []
+                uncached_texts_indices = []
                 for idx, text in enumerate(texts):
                     result = conn.execute(
                         f"SELECT embedding FROM {EMBEDDINGS_TABLE} WHERE embedding_function = ? AND text = ?",
@@ -183,16 +186,17 @@ class VectorStoreWrapper(VectorStore):
                         embeddings.append(None)
                         uncached_texts.append(text)
                         uncached_texts_indices.append(idx)
+
                 uncached_embeddings = self._embedding_function.embed_documents(
                     uncached_texts
                 )
                 self._add_embeddings_to_cache(uncached_texts, uncached_embeddings)
                 for idx, embedding in zip(uncached_texts_indices, uncached_embeddings):
                     embeddings[idx] = embedding
+
+                return embeddings
         else:
             return self._embedding_function.embed_documents(list(texts))
-
-        return embeddings
 
     def _add_embeddings_to_cache(
         self, texts: Iterable[str], embeddings: List[List[float]]
@@ -426,6 +430,7 @@ class VectorStoreWrapper(VectorStore):
             texts (List[str]): List of texts to add to the collection.
             embedding (Optional[Embeddings]): Embedding function. Defaults to None.
             metadatas (Optional[List[dict]]): List of metadatas. Defaults to None.
+            cache (bool): Whether to cache the embeddings. Defaults to True.
         Returns:
             vector_store: Vectorstore with seedset embeddings
         """
