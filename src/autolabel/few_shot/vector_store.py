@@ -163,11 +163,11 @@ class VectorStoreWrapper(VectorStore):
         Returns:
             List[List[float]]: List of embeddings.
         """
+        embeddings = []
+        uncached_texts = []
+        uncached_texts_indices = []
         if self._db_engine:
             with self._db_engine.connect() as conn:
-                embeddings = []
-                uncached_texts = []
-                uncached_texts_indices = []
                 for idx, text in enumerate(texts):
                     result = conn.execute(
                         f"SELECT embedding FROM {EMBEDDINGS_TABLE} WHERE embedding_function = ? AND text = ?",
@@ -183,20 +183,21 @@ class VectorStoreWrapper(VectorStore):
                         embeddings.append(None)
                         uncached_texts.append(text)
                         uncached_texts_indices.append(idx)
-
                 uncached_embeddings = self._embedding_function.embed_documents(
                     uncached_texts
                 )
-                self._add_embeddings(uncached_texts, uncached_embeddings)
+                self._add_embeddings_to_cache(uncached_texts, uncached_embeddings)
                 for idx, embedding in zip(uncached_texts_indices, uncached_embeddings):
                     embeddings[idx] = embedding
+        else:
+            return self._embedding_function.embed_documents(list(texts))
 
-                return embeddings
+        return embeddings
 
-    def _add_embeddings(
+    def _add_embeddings_to_cache(
         self, texts: Iterable[str], embeddings: List[List[float]]
     ) -> None:
-        """Save embeddings to the database.
+        """Save embeddings to the database. If self._db_engine is None, do nothing.
         Args:
             texts (Iterable[str]): Iterable of texts.
             embeddings (List[List[float]]): List of embeddings.
