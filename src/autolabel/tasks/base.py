@@ -107,5 +107,5 @@ class BaseTask(ABC):
             raw_response=response.text,
             prompt=prompt,
             curr_sample=json.dumps(curr_sample),
-            explanation = explanation if self.config.chain_of_thought() else "",
+            explanation=explanation if self.config.chain_of_thought() else "",
         )
