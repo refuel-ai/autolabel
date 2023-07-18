@@ -259,7 +259,14 @@ class LabelingAgent:
             l.label for l in llm_labels
         ]
         if self.config.confidence():
-            output_df["llm_confidence"] = [l.confidence_score for l in llm_labels]
+            output_df[self.config.task_name() + "_llm_confidence"] = [
+                l.confidence_score for l in llm_labels
+            ]
+
+        if self.config.chain_of_thought():
+            output_df[self.config.task_name() + "_llm_explanation"] = [
+                l.explanation for l in llm_labels
+            ]
 
         # Only save to csv if output_name is provided or dataset is a string
         if not output_name and isinstance(dataset, str):

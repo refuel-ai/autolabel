@@ -44,19 +44,20 @@ config = {
         "few_shot_selection": "semantic_similarity",
         "few_shot_num": 3,
         "example_template": "Context: {context}\nQuestion: {question}\nAnswer: Let's think step by step.\n{explanation}\n{answer}",
-        "chain_of_thought": true
+        "chain_of_thought": True
     }
 }
 ```
 
 Notice the changes that we have made to the config compared to the config without Chain-of-Thought [here](/guide/tasks/question_answering_task):
 
-* `chain_of_thought` flag - this tells labeling agent to expect an explanation for the answer, in the seed dataset as well as LLM generated responses.  
-* `explanation_column` - this is the column where the explanation for the seed examples will reside.
-* `example_template` - Notice that the template contains contains the explanation column as well. This tells the config where the explanation should be put when using the seed examples. We use the `Let's think step by step` prompt to initiate the chain of thought in the model.
-* `output_guidelines` - We are explicitly prompting the LLM to first output an explanation, and then the final answer.
+- `chain_of_thought` flag - this tells labeling agent to expect an explanation for the answer, in the seed dataset as well as LLM generated responses.
+- `explanation_column` - this is the column where the explanation for the seed examples will reside.
+- `example_template` - Notice that the template contains contains the explanation column as well. This tells the config where the explanation should be put when using the seed examples. We use the `Let's think step by step` prompt to initiate the chain of thought in the model.
+- `output_guidelines` - We are explicitly prompting the LLM to first output an explanation, and then the final answer.
 
 Now, in order to generate explanations for the seed examples, in case they were not manually generated is,
+
 ```py
 from autolabel import LabelingAgent
 agent = LabelingAgent(config)
@@ -68,6 +69,7 @@ Once these explanations are generated, the dataset looks like
 {{ read_csv('docs/assets/squad_with_explanation_preview.csv') }}
 
 Now to generate labels for this dataset, all we have to do is,
+
 ```py
 agent.plan('data/squad_v2_test.csv')
 agent.run('data/squad_v2_test.csv', max_items = 100)
