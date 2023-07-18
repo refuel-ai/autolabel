@@ -4,6 +4,8 @@ import heapq
 from itertools import groupby
 from typing import Any, Callable, Dict, Iterable, List, Optional, Tuple, Type
 
+from autolabel.database import create_db_engine
+
 import numpy as np
 import torch
 from langchain.docstore.document import Document
@@ -11,6 +13,9 @@ from langchain.embeddings.base import Embeddings
 from langchain.vectorstores.base import VectorStore
 from langchain.vectorstores.utils import maximal_marginal_relevance
 from torch import Tensor
+import pickle
+
+EMBEDDINGS_TABLE = "autolabel_embeddings"
 
 
 def _results_to_docs_and_scores(results: Any) -> List[Tuple[Document, float]]:
@@ -136,11 +141,83 @@ class VectorStoreWrapper(VectorStore):
         corpus_embeddings: Optional[Tensor] = None,
         texts: Optional[List[str]] = None,
         metadatas: Optional[List[Dict[str, str]]] = None,
+        cache: bool = True,
     ) -> None:
         self._embedding_function = embedding_function
         self._corpus_embeddings = corpus_embeddings
         self._texts = texts
         self._metadatas = metadatas
+        if cache:
+            self._db_engine = create_db_engine()
+            with self._db_engine.connect() as conn:
+                conn.execute(
+                    f"CREATE TABLE IF NOT EXISTS {EMBEDDINGS_TABLE} (embedding_function TEXT, text TEXT, embedding BLOB)"
+                )
+        else:
+            self._db_engine = None
+
+    def _get_embeddings(self, texts: Iterable[str]) -> List[List[float]]:
+        """Get embeddings from the database. If not found, compute them and add them to the database.
+
+        If no database is used, compute the embeddings and return them.
+
+        Args:
+            texts (Iterable[str]): Iterable of texts to embed.
+        Returns:
+            List[List[float]]: List of embeddings.
+        """
+        if self._db_engine:
+            with self._db_engine.connect() as conn:
+                embeddings = []
+                uncached_texts = []
+                uncached_texts_indices = []
+                for idx, text in enumerate(texts):
+                    result = conn.execute(
+                        f"SELECT embedding FROM {EMBEDDINGS_TABLE} WHERE embedding_function = ? AND text = ?",
+                        self._embedding_function.model
+                        if self._embedding_function.__class__.__name__
+                        != "HuggingFaceEmbeddings"
+                        else self._embedding_function.model_name,
+                        text,
+                    ).fetchone()
+                    if result:
+                        embeddings.append(pickle.loads(result[0]))
+                    else:
+                        embeddings.append(None)
+                        uncached_texts.append(text)
+                        uncached_texts_indices.append(idx)
+
+                uncached_embeddings = self._embedding_function.embed_documents(
+                    uncached_texts
+                )
+                self._add_embeddings_to_cache(uncached_texts, uncached_embeddings)
+                for idx, embedding in zip(uncached_texts_indices, uncached_embeddings):
+                    embeddings[idx] = embedding
+
+                return embeddings
+        else:
+            return self._embedding_function.embed_documents(list(texts))
+
+    def _add_embeddings_to_cache(
+        self, texts: Iterable[str], embeddings: List[List[float]]
+    ) -> None:
+        """Save embeddings to the database. If self._db_engine is None, do nothing.
+        Args:
+            texts (Iterable[str]): Iterable of texts.
+            embeddings (List[List[float]]): List of embeddings.
+        """
+        if self._db_engine:
+            with self._db_engine.connect() as conn:
+                for text, embedding in zip(texts, embeddings):
+                    conn.execute(
+                        f"INSERT INTO {EMBEDDINGS_TABLE} (embedding_function, text, embedding) VALUES (?, ?, ?)",
+                        self._embedding_function.model
+                        if self._embedding_function.__class__.__name__
+                        != "HuggingFaceEmbeddings"
+                        else self._embedding_function.model_name,
+                        text,
+                        pickle.dumps(embedding),
+                    )
 
     def add_texts(
         self,
@@ -154,9 +231,9 @@ class VectorStoreWrapper(VectorStore):
         Returns:
             List[str]: List of IDs of the added texts.
         """
-        embeddings = None
         if self._embedding_function is not None:
-            embeddings = self._embedding_function.embed_documents(list(texts))
+            embeddings = self._get_embeddings(texts)
+
         self._corpus_embeddings = torch.tensor(embeddings)
         self._texts = texts
         self._metadatas = metadatas
@@ -196,7 +273,7 @@ class VectorStoreWrapper(VectorStore):
             List[Tuple[Document, float]]: List of documents most similar to the query
                 text with distance in float.
         """
-        query_embeddings = torch.tensor([self._embedding_function.embed_query(query)])
+        query_embeddings = torch.tensor([self._get_embeddings([query])[0]])
         result_ids_and_scores = semantic_search(
             corpus_embeddings=self._corpus_embeddings,
             query_embeddings=query_embeddings,
@@ -248,7 +325,7 @@ class VectorStoreWrapper(VectorStore):
             List[Tuple[Document, float]]: List of documents most similar to the query
                 text with distance in float.
         """
-        query_embeddings = torch.tensor([self._embedding_function.embed_query(query)])
+        query_embeddings = torch.tensor([self._get_embeddings([query])[0]])
         data = []
         data = zip(self._corpus_embeddings, self._texts, self._metadatas)
         sorted_data = sorted(data, key=lambda item: item[2].get(label_key))
@@ -295,7 +372,7 @@ class VectorStoreWrapper(VectorStore):
         lambda_mult: float = 0.5,
         **kwargs: Any,
     ) -> List[Document]:
-        query_embedding = self._embedding_function.embed_query(query)
+        query_embedding = self._get_embeddings([query])[0]
         query_embeddings = torch.tensor([query_embedding])
         result_ids_and_scores = semantic_search(
             corpus_embeddings=self._corpus_embeddings,
@@ -344,6 +421,7 @@ class VectorStoreWrapper(VectorStore):
         texts: List[str],
         embedding: Optional[Embeddings] = None,
         metadatas: Optional[List[dict]] = None,
+        cache: bool = True,
         **kwargs: Any,
     ) -> VectorStoreWrapper:
         """Create a vectorstore from raw text.
@@ -352,11 +430,16 @@ class VectorStoreWrapper(VectorStore):
             texts (List[str]): List of texts to add to the collection.
             embedding (Optional[Embeddings]): Embedding function. Defaults to None.
             metadatas (Optional[List[dict]]): List of metadatas. Defaults to None.
+            cache (bool): Whether to cache the embeddings. Defaults to True.
         Returns:
             vector_store: Vectorstore with seedset embeddings
         """
         vector_store = cls(
-            embedding_function=embedding, corpus_embeddings=None, texts=None, **kwargs
+            embedding_function=embedding,
+            corpus_embeddings=None,
+            texts=None,
+            cache=cache,
+            **kwargs,
         )
         vector_store.add_texts(texts=texts, metadatas=metadatas)
         return vector_store

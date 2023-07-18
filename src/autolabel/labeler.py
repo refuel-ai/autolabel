@@ -114,7 +114,10 @@ class LabelingAgent:
             )
 
         self.example_selector = ExampleSelectorFactory.initialize_selector(
-            self.config, seed_examples, dataset_loader.dat.keys().tolist()
+            self.config,
+            seed_examples,
+            dataset_loader.dat.keys().tolist(),
+            cache=self.cache is not None,
         )
 
         num_failures = 0
@@ -329,7 +332,10 @@ class LabelingAgent:
             )
 
         self.example_selector = ExampleSelectorFactory.initialize_selector(
-            self.config, seed_examples, dataset_loader.dat.keys().tolist()
+            self.config,
+            seed_examples,
+            dataset_loader.dat.keys().tolist(),
+            cache=self.cache is not None,
         )
 
         input_limit = min(len(dataset_loader.inputs), 100)
