@@ -129,21 +129,18 @@ class LabelingAgent:
             total=len(dataset_loader.inputs) - current_index,
             console=console,
         ):
-            chunk = [dataset_loader.inputs[current_index]]
+            chunk = dataset_loader.inputs[current_index]
 
-            final_prompts = []
-            for i, input_i in enumerate(chunk):
-                # Fetch few-shot seed examples
-                if self.example_selector:
-                    examples = self.example_selector.select_examples(input_i)
-                else:
-                    examples = []
+            if self.example_selector:
+                examples = self.example_selector.select_examples(chunk)
+            else:
+                examples = []
                 # Construct Prompt to pass to LLM
-                final_prompt = self.task.construct_prompt(input_i, examples)
-                final_prompts.append(final_prompt)
+            final_prompt = self.task.construct_prompt(chunk, examples)
 
             try:
-                response, curr_cost = self.llm.label(final_prompts)
+                # `response` should always be len==1
+                response, curr_cost = self.llm.label([final_prompt])
             except Exception as e:
                 # TODO (dhruva): We need to handle this case carefully
                 # When we erorr out, we will have less elements in the llm_labels
@@ -151,27 +148,29 @@ class LabelingAgent:
                 # maintained either. We should either remove the elements we errored
                 # out on from gt_labels or add None labels to the llm_labels.
                 logger.error(
-                    "Error in generating response:" + repr(e), "Prompt: ", chunk
+                    "Error in generating response:" + repr(e), "Prompt: ", final_prompt
                 )
-                for i in range(len(chunk)):
-                    annotation = LLMAnnotation(
-                        successfully_labeled=False,
-                        label=self.task.NULL_LABEL_TOKEN,
-                        raw_response="",
-                        curr_sample=chunk[i],
-                        prompt=final_prompts[i],
-                        confidence_score=0,
-                    )
-                    AnnotationModel.create_from_llm_annotation(
-                        self.db.session,
-                        annotation,
-                        current_index + i,
-                        self.task_run.id,
-                    )
-                num_failures += len(chunk)
+                # for i in range(len(chunk)):
+                annotation = LLMAnnotation(
+                    successfully_labeled=False,
+                    label=self.task.NULL_LABEL_TOKEN,
+                    raw_response="",
+                    curr_sample=chunk,
+                    prompt=final_prompt,
+                    confidence_score=0,
+                )
+                AnnotationModel.create_from_llm_annotation(
+                    self.db.session,
+                    annotation,
+                    current_index,
+                    self.task_run.id,
+                )
+                num_failures += 1 
                 response = None
 
             if response is not None:
+                # here response will always be len == 1
+                # because we generate inference for len(final_prompt) which is length 1
                 for i in range(len(response.generations)):
                     response_item = response.generations[i]
                     annotations = []
@@ -179,13 +178,13 @@ class LabelingAgent:
                         if self.config.confidence():
                             annotation = self.confidence.calculate(
                                 model_generation=self.task.parse_llm_response(
-                                    generation, chunk[i], final_prompts[i]
+                                    generation, chunk, final_prompt
                                 ),
-                                prompt=final_prompts[i],
+                                prompt=final_prompt,
                             )
                         else:
                             annotation = self.task.parse_llm_response(
-                                generation, chunk[i], final_prompts[i]
+                                generation, chunk, final_prompt
                             )
                         annotations.append(annotation)
                     final_annotation = self.majority_annotation(annotations)
