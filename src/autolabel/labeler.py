@@ -165,7 +165,7 @@ class LabelingAgent:
                     current_index,
                     self.task_run.id,
                 )
-                num_failures += 1 
+                num_failures += 1
                 response = None
 
             if response is not None:
