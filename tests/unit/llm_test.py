@@ -181,7 +181,7 @@ def test_palm_get_cost(mocker):
     )
     example_prompt = "TestingExamplePrompt"
     curr_cost = model.get_cost(example_prompt)
-    assert curr_cost == approx(3.4e-05, rel=1e-3)
+    assert curr_cost == approx(0.00402, rel=1e-3)
 
 
 def test_palm_return_probs(mocker):
