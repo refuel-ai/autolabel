@@ -25,7 +25,8 @@ class PaLMLLM(BaseModel):
     CHAT_ENGINE_MODELS = ["chat-bison@001"]
 
     DEFAULT_MODEL = "text-bison@001"
-    DEFAULT_PARAMS = {"temperature": 0}
+    # Reference: https://developers.generativeai.google/guide/concepts#model_parameters for "A token is approximately 4 characters"
+    DEFAULT_PARAMS = {"temperature": 0, "max_output_tokens": 1000}
 
     # Reference: https://cloud.google.com/vertex-ai/pricing
     COST_PER_CHARACTER = {
@@ -125,7 +126,9 @@ class PaLMLLM(BaseModel):
         if self.model_name is None:
             return 0.0
         cost_per_char = self.COST_PER_CHARACTER.get(self.model_name, 0.0)
-        return cost_per_char * len(prompt)
+        return cost_per_char * len(prompt) + cost_per_char * (
+            len(label) if label else self.config.model_params["max_output_tokens"]
+        )
 
     def returns_token_probs(self) -> bool:
         return False
