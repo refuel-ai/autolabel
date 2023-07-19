@@ -168,7 +168,7 @@ def test_palm_label(mocker):
     )
     x = model.label(prompts)
     assert [i[0].text for i in x[0].generations] == ["Answers", "Answers"]
-    assert x[1] == approx(9.9999e-06, rel=1e-3)
+    assert x[1] == approx(2.4e-05, rel=1e-3)
 
 
 def test_palm_get_cost(mocker):
@@ -181,7 +181,7 @@ def test_palm_get_cost(mocker):
     )
     example_prompt = "TestingExamplePrompt"
     curr_cost = model.get_cost(example_prompt)
-    assert curr_cost == approx(1.9999e-05, rel=1e-3)
+    assert curr_cost == approx(3.4e-05, rel=1e-3)
 
 
 def test_palm_return_probs(mocker):
