@@ -127,7 +127,7 @@ class PaLMLLM(BaseModel):
             return 0.0
         cost_per_char = self.COST_PER_CHARACTER.get(self.model_name, 0.0)
         return cost_per_char * len(prompt) + cost_per_char * (
-            len(label) if label else self.config.model_params["max_output_tokens"]
+            len(label) if label else 4 * self.config.model_params["max_output_tokens"]
         )
 
     def returns_token_probs(self) -> bool:
