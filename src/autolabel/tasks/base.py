@@ -92,7 +92,7 @@ class BaseTask(ABC):
             logger.warning("LLM response is empty")
             error = LabelingError(
                 error_type=ErrorType.EMPTY_RESPONSE_ERROR,
-                message="Empty response from LLM",
+                error_message="Empty response from LLM",
             )
         elif not completion_text:
             successfully_labeled = False

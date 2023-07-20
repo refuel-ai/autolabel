@@ -30,8 +30,8 @@ def test_anthropic_label(mocker):
         ),
     )
     x = model.label(prompts)
-    assert [i[0].text for i in x[0].generations] == ["Answers", "Answers"]
-    assert x[1] == approx(0.00010944, rel=1e-3)
+    assert [i[0].text for i in x.generations] == ["Answers", "Answers"]
+    assert x.cost == approx(0.00010944, rel=1e-3)
 
 
 def test_anthropic_get_cost():
@@ -76,7 +76,7 @@ def test_gpt35_label(mocker):
         ),
     )
     x = model.label(prompts)
-    assert [i[0].text for i in x[0].generations] == ["Answers", "Answers"]
+    assert [i[0].text for i in x.generations] == ["Answers", "Answers"]
 
 
 def test_gpt35_get_cost():
@@ -117,8 +117,8 @@ def test_gpt4_label(mocker):
         ),
     )
     x = model.label(prompts)
-    assert [i[0].text for i in x[0].generations] == ["Answers", "Answers"]
-    assert x[1] == approx(0.00023999, rel=1e-3)
+    assert [i[0].text for i in x.generations] == ["Answers", "Answers"]
+    assert x.cost == approx(0.00023999, rel=1e-3)
 
 
 def test_gpt4_get_cost():
@@ -167,8 +167,8 @@ def test_palm_label(mocker):
         ),
     )
     x = model.label(prompts)
-    assert [i[0].text for i in x[0].generations] == ["Answers", "Answers"]
-    assert x[1] == approx(2.4e-05, rel=1e-3)
+    assert [i[0].text for i in x.generations] == ["Answers", "Answers"]
+    assert x.cost == approx(2.4e-05, rel=1e-3)
 
 
 def test_palm_get_cost(mocker):
@@ -225,8 +225,8 @@ def test_refuel_label(mocker):
         return_value=PostRequestMockResponse(resp='"Answers"'),
     )
     x = model.label(prompts)
-    assert [i[0].text for i in x[0].generations] == ["Answers", "Answers"]
-    assert x[1] == 0
+    assert [i[0].text for i in x.generations] == ["Answers", "Answers"]
+    assert x.cost == 0
 
 
 def test_refuel_get_cost():
