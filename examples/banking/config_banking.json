@@ -6,7 +6,7 @@
         "delimiter": ","
     },
     "model": {
-        "provider": "openai",
+        "provider": "huggingface_pipeline",
         "name": "gpt-3.5-turbo"
     },
     "prompt": {
@@ -91,6 +91,7 @@
             "wrong_amount_of_cash_received",
             "wrong_exchange_rate_for_cash_withdrawal"
         ],
+         "output_guidelines": "\nYou will simply return the option that corresponds to the answer. Do NOT output any explanation. Do NOT output any thing other than the answer from the options above.\n",
         "few_shot_examples": "seed.csv",
         "few_shot_selection": "semantic_similarity",
         "few_shot_num": 10,

@@ -1,6 +1,6 @@
 from typing import List, Optional
 from langchain.llms import HuggingFacePipeline
-from langchain.schema import LLMResult
+from langchain.schema import LLMResult, Generation
 
 from autolabel.models import BaseModel
 from autolabel.configs import AutolabelConfig
@@ -13,7 +13,7 @@ class HFPipelineLLM(BaseModel):
 
     def __init__(self, config: AutolabelConfig, cache: BaseCache = None) -> None:
         try:
-            from transformers import AutoModelForSeq2SeqLM, AutoTokenizer, pipeline
+            from transformers import AutoModelForSeq2SeqLM, AutoTokenizer, pipeline, LlamaForCausalLM
         except ImportError:
             raise ValueError(
                 "Could not import transformers python package. "
@@ -29,45 +29,30 @@ class HFPipelineLLM(BaseModel):
             )
         super().__init__(config, cache)
         # populate model name
-        self.model_name = config.model_name() or self.DEFAULT_MODEL
+        self.model_name = "NousResearch/Llama-2-13b-chat-hf"
 
         # populate model params
         model_params = config.model_params()
         self.model_params = {**self.DEFAULT_PARAMS, **model_params}
 
-        # initialize HF pipeline
-        tokenizer = AutoTokenizer.from_pretrained(self.model_name)
-        quantize_bits = self.model_params["quantize"]
-        if not torch.cuda.is_available():
-            model = AutoModelForSeq2SeqLM.from_pretrained(self.model_name)
-        elif quantize_bits == 8:
-            model = AutoModelForSeq2SeqLM.from_pretrained(
-                self.model_name, load_in_8bit=True, device_map="auto"
-            )
-        elif quantize_bits == "16":
-            model = AutoModelForSeq2SeqLM.from_pretrained(
-                self.model_name, torch_dtype=torch.float16, device_map="auto"
-            )
-        else:
-            model = AutoModelForSeq2SeqLM.from_pretrained(
-                self.model_name, device_map="auto"
-            )
-
-        model_kwargs = dict(self.model_params)  # make a copy of the model params
-        model_kwargs.pop("quantize", None)  # remove quantize from the model params
-        pipe = pipeline(
-            "text2text-generation",
-            model=model,
-            tokenizer=tokenizer,
-            **model_kwargs,
-        )
-
-        # initialize LLM
-        self.llm = HuggingFacePipeline(pipeline=pipe, model_kwargs=model_kwargs)
+        self.llm = LlamaForCausalLM.from_pretrained(self.model_name, device_map="auto", cache_dir="/workspace/dhruva")
+        self.tokenizer = AutoTokenizer.from_pretrained(self.model_name, use_fast=True)
 
     def _label(self, prompts: List[str]) -> LLMResult:
+        def sanitize_out(str):
+            str = str.split(":")[-1].split("(")[-1].split(")")[0]
+            blacklist = ["Sure! Here's my answer:", "Sure! Here's the answer:", "<s>", "</s>", "\n"]
+            for word in blacklist:
+                str = str.replace(word, "")
+            return str.strip().lower()
+            
         try:
-            return self.llm.generate(prompts)
+            prompts = [f"[INST]{prompt}[/INST]" for prompt in prompts]
+            input_ids = self.tokenizer(prompts, return_tensors='pt').input_ids.cuda()
+            output = self.llm.generate(inputs=input_ids, temperature=0.7, max_new_tokens=512, top_p=0.95, repetition_penalty=1.15)
+            decoded_outputs = self.tokenizer.batch_decode(output)
+            to_ret = LLMResult(generations=[[Generation(text=sanitize_out(decoded_outputs[i].replace(prompts[i], "")))] for i in range(len(decoded_outputs))])
+            return to_ret
         except Exception as e:
             print(f"Error generating from LLM: {e}, retrying each prompt individually")
             return self._label_individually(prompts)
