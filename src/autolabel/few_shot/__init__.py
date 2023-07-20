@@ -104,6 +104,10 @@ class ExampleSelectorFactory:
 
         example_cls = ALGORITHM_TO_IMPLEMENTATION[algorithm]
 
-        params["cache"] = cache
+        if algorithm not in [
+            FewShotAlgorithm.FIXED,
+            FewShotAlgorithm.LABEL_DIVERSITY_RANDOM,
+        ]:
+            params["cache"] = cache
 
         return example_cls.from_examples(**params)
