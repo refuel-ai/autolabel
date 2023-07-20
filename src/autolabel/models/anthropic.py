@@ -42,7 +42,6 @@ class AnthropicLLM(BaseModel):
         try:
             return self.llm.generate(prompts)
         except Exception as e:
-            print(f"Error generating from LLM: {e}, retrying each prompt individually")
             return self._label_individually(prompts)
 
     def get_cost(self, prompt: str, label: Optional[str] = "") -> float:

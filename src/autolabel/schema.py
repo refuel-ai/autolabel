@@ -71,6 +71,22 @@ class MetricResult(BaseModel):
     value: Any
 
 
+class ErrorType(str, Enum):
+    """Enum of supported error types"""
+
+    LLM_PROVIDER_ERROR = "llm_provider_error"
+    PARSING_ERROR = "parsing_error"
+    OUTPUT_GUIDELINES_NOT_FOLLOWED_ERROR = "output_guidelines_not_followed_error"
+    EMPTY_RESPONSE_ERROR = "empty_response_error"
+
+
+class LabelingError(BaseModel):
+    """Contains information about an error that occurred during the labeling process"""
+
+    error_type: ErrorType
+    error_message: str
+
+
 class LLMAnnotation(BaseModel):
     """Contains label information of a given data point, including the generated label, the prompt given to the LLM, and the LLMs response. Optionally includes a confidence_score if supported by the model"""
 
@@ -82,6 +98,7 @@ class LLMAnnotation(BaseModel):
     raw_response: Optional[str] = ""
     explanation: Optional[str] = ""
     prompt: Optional[str] = ""
+    error: Optional[LabelingError] = None
 
 
 class Dataset(BaseModel):
@@ -172,3 +189,16 @@ class CacheEntry(BaseModel):
 
     class Config:
         orm_mode = True
+
+
+class RefuelLLMResult(BaseModel):
+    """List of generated outputs. This is a List[List[]] because
+    each input could have multiple candidate generations."""
+
+    generations: List[List[Generation]]
+
+    """Errors encountered while running the labeling job"""
+    errors: List[LabelingError]
+
+    """Costs incurred during the labeling job"""
+    costs: Optional[float] = 0.0

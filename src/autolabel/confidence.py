@@ -86,7 +86,7 @@ class ConfidenceCalculator:
                 return -math.e ** token[token_str]
         return 0
 
-    def calculate(self, model_generation: LLMAnnotation, **kwargs) -> LLMAnnotation:
+    def calculate(self, model_generation: LLMAnnotation, **kwargs) -> float:
         if self.score_type not in self.SUPPORTED_CALCULATORS:
             raise NotImplementedError()
 
@@ -110,8 +110,7 @@ class ConfidenceCalculator:
             logprobs=logprobs,
             **kwargs,
         )
-        model_generation.confidence_score = confidence
-        return model_generation
+        return confidence
 
     @retry(
         reraise=True,

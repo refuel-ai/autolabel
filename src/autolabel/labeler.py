@@ -17,7 +17,14 @@ from autolabel.data_models import AnnotationModel, TaskRunModel
 from autolabel.database import StateManager
 from autolabel.few_shot import ExampleSelectorFactory
 from autolabel.models import BaseModel, ModelFactory
-from autolabel.schema import LLMAnnotation, MetricResult, TaskRun, TaskStatus
+from autolabel.schema import (
+    LLMAnnotation,
+    MetricResult,
+    TaskRun,
+    TaskStatus,
+    LabelingError,
+    ErrorType,
+)
 from autolabel.tasks import TaskFactory
 from autolabel.utils import maybe_round, print_table, track, track_with_stats
 
@@ -141,63 +148,47 @@ class LabelingAgent:
                 # Construct Prompt to pass to LLM
             final_prompt = self.task.construct_prompt(chunk, examples)
 
-            try:
-                # `response` should always be len==1
-                response, curr_cost = self.llm.label([final_prompt])
-            except Exception as e:
-                # TODO (dhruva): We need to handle this case carefully
-                # When we erorr out, we will have less elements in the llm_labels
-                # than the gt_labels array, with the 1:1 mapping not being
-                # maintained either. We should either remove the elements we errored
-                # out on from gt_labels or add None labels to the llm_labels.
-                logger.error(
-                    "Error in generating response:" + repr(e), "Prompt: ", final_prompt
-                )
-                # for i in range(len(chunk)):
-                annotation = LLMAnnotation(
-                    successfully_labeled=False,
-                    label=self.task.NULL_LABEL_TOKEN,
-                    raw_response="",
-                    curr_sample=chunk,
-                    prompt=final_prompt,
-                    confidence_score=0,
-                )
+            response = self.llm.label([final_prompt])
+            for i, generations, error in zip(
+                range(len(response.generations)), response.generations, response.errors
+            ):
+                if error is not None:
+                    annotation = LLMAnnotation(
+                        successfully_labeled=False,
+                        label=self.task.NULL_LABEL_TOKEN,
+                        raw_response="",
+                        curr_sample=chunk,
+                        prompt=final_prompt,
+                        confidence_score=0,
+                        error=LabelingError(
+                            error_type=ErrorType.LLM_ERROR, error_message=str(error)
+                        ),
+                    )
+                else:
+                    annotations = []
+                    for generation in generations:
+                        annotation = self.task.parse_llm_response(
+                            generation, chunk, final_prompt
+                        )
+
+                        if self.config.confidence():
+                            annotation.confidence_score = self.confidence.calculate(
+                                model_generation=annotation,
+                                prompt=final_prompt,
+                            )
+
+                        annotations.append(annotation)
+                    annotation = self.majority_annotation(annotations)
+
+                # Store the annotation in the database
                 AnnotationModel.create_from_llm_annotation(
                     self.db.session,
                     annotation,
-                    current_index,
+                    current_index + i,
                     self.task_run.id,
                 )
-                num_failures += 1
-                response = None
 
-            if response is not None:
-                # here response will always be len == 1
-                # because we generate inference for len(final_prompt) which is length 1
-                for i in range(len(response.generations)):
-                    response_item = response.generations[i]
-                    annotations = []
-                    for generation in response_item:
-                        if self.config.confidence():
-                            annotation = self.confidence.calculate(
-                                model_generation=self.task.parse_llm_response(
-                                    generation, chunk, final_prompt
-                                ),
-                                prompt=final_prompt,
-                            )
-                        else:
-                            annotation = self.task.parse_llm_response(
-                                generation, chunk, final_prompt
-                            )
-                        annotations.append(annotation)
-                    final_annotation = self.majority_annotation(annotations)
-                    AnnotationModel.create_from_llm_annotation(
-                        self.db.session,
-                        final_annotation,
-                        current_index + i,
-                        self.task_run.id,
-                    )
-            cost += curr_cost
+            cost += response.cost
             postfix_dict[self.COST_KEY] = f"{cost:.2f}"
 
             # Evaluate the task every eval_every examples
@@ -250,6 +241,9 @@ class LabelingAgent:
         output_df = dataset_loader.dat.copy()
         output_df[self.config.task_name() + "_llm_labeled_successfully"] = [
             l.successfully_labeled for l in llm_labels
+        ]
+        output_df[self.config.task_name() + "_llm_error"] = [
+            l.error for l in llm_labels
         ]
         output_df[self.config.task_name() + "_llm_label"] = [
             l.label for l in llm_labels
@@ -465,7 +459,7 @@ class LabelingAgent:
             seed_examples, description="Generating explanations", console=console
         ):
             explanation_prompt = self.task.get_explanation_prompt(seed_example)
-            explanation, _ = self.llm.label([explanation_prompt])
+            explanation = self.llm.label([explanation_prompt])
             explanation = explanation.generations[0][0].text
             seed_example["explanation"] = str(explanation) if explanation else ""
 
