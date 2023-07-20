@@ -11,6 +11,7 @@ from autolabel.schema import LLMAnnotation, Metric, MetricResult
 from autolabel.tasks import BaseTask
 from autolabel.tasks.utils import normalize_text, compute_f1
 from autolabel.utils import get_format_variables
+from autolabel.tasks.utils import filter_unlabeled_examples
 
 
 class QuestionAnsweringTask(BaseTask):
@@ -156,9 +157,15 @@ class QuestionAnsweringTask(BaseTask):
                 )
 
             eval_metrics_map[Metric.SUPPORT].append(len(curr_gt_labels))
-            if len(curr_gt_labels) > 0:
+
+            (
+                filtered_curr_gt_labels,
+                filtered_curr_llm_labels,
+            ) = filter_unlabeled_examples(curr_gt_labels, curr_llm_labels)
+
+            if len(filtered_curr_gt_labels) > 0:
                 eval_metrics_map[Metric.ACCURACY].append(
-                    accuracy_score(curr_gt_labels, curr_llm_labels)
+                    accuracy_score(filtered_curr_gt_labels, filtered_curr_llm_labels)
                 )
             else:
                 eval_metrics_map[Metric.ACCURACY].append(0.0)
@@ -167,7 +174,7 @@ class QuestionAnsweringTask(BaseTask):
                 eval_metrics_map[Metric.THRESHOLD].append(threshold)
 
             eval_metrics_map[Metric.F1].append(
-                compute_f1(curr_gt_labels, curr_llm_labels)
+                compute_f1(filtered_curr_gt_labels, filtered_curr_llm_labels)
             )
 
         eval_metrics.extend(

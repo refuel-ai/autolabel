@@ -10,6 +10,7 @@ from autolabel.schema import LLMAnnotation, Metric, MetricResult
 from autolabel.tasks import BaseTask
 from autolabel.tasks.utils import compute_f1
 from autolabel.utils import get_format_variables
+from autolabel.tasks.utils import filter_unlabeled_examples
 
 import json
 
@@ -168,9 +169,13 @@ class MultilabelClassificationTask(BaseTask):
                 )
 
             eval_metrics_map[Metric.SUPPORT].append(len(curr_gt_labels))
-            if len(curr_gt_labels) > 0:
+            (
+                filtered_curr_gt_labels,
+                filtered_curr_llm_labels,
+            ) = filter_unlabeled_examples(curr_gt_labels, curr_llm_labels)
+            if len(filtered_curr_gt_labels) > 0:
                 eval_metrics_map[Metric.ACCURACY].append(
-                    accuracy_score(curr_gt_labels, curr_llm_labels)
+                    accuracy_score(filtered_curr_gt_labels, filtered_curr_llm_labels)
                 )
             else:
                 eval_metrics_map[Metric.ACCURACY].append(0.0)
@@ -180,8 +185,8 @@ class MultilabelClassificationTask(BaseTask):
 
             eval_metrics_map[Metric.F1_MACRO].append(
                 compute_f1(
-                    curr_gt_labels,
-                    curr_llm_labels,
+                    filtered_curr_gt_labels,
+                    filtered_curr_llm_labels,
                     average="macro",
                     labels=self.config.labels_list(),
                     sep=self.config.label_separator(),
@@ -190,8 +195,8 @@ class MultilabelClassificationTask(BaseTask):
 
             eval_metrics_map[Metric.F1_WEIGHTED].append(
                 compute_f1(
-                    curr_gt_labels,
-                    curr_llm_labels,
+                    filtered_curr_gt_labels,
+                    filtered_curr_llm_labels,
                     average="weighted",
                     labels=self.config.labels_list(),
                     sep=self.config.label_separator(),

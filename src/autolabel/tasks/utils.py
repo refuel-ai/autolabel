@@ -4,6 +4,7 @@ from typing import List
 
 from sklearn.metrics import f1_score
 from sklearn.preprocessing import MultiLabelBinarizer
+from autolabel.schema import LLMAnnotation
 
 
 def normalize_text(s: str) -> str:
@@ -81,3 +82,24 @@ def compute_f1(
             f1_scores.append(2 * (prec * rec) / (prec + rec))
 
         return sum(f1_scores) / len(f1_scores)
+
+
+def filter_unlabeled_examples(gt_labels: List[str], llm_labels: List[LLMAnnotation]):
+    """Filter out unlabeled examples from the ground truth and LLM generated labels.
+    This is done by checking the ground truth labels which have nan values.
+    The corresponding ground truth and LLM labels are removed from the filtered labels lists.
+
+    Args:
+        gt_labels (List[str]): ground truth labels
+        llm_labels (List[LLMAnnotation]): llm labels
+
+    Returns:
+        Tuple[List[str], List[LLMAnnotation]]: filtered ground truth and LLM generated labels
+    """
+    filtered_gt_labels = []
+    filtered_llm_labels = []
+    for gt_label, llm_label in zip(gt_labels, llm_labels):
+        if gt_label != "nan":
+            filtered_gt_labels.append(gt_label)
+            filtered_llm_labels.append(llm_label)
+    return filtered_gt_labels, filtered_llm_labels
