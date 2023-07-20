@@ -129,11 +129,18 @@ These parameters can be passed in via the `params` dictionary under `model`. Her
 ```
 
 ## Hugging Face
-To use models from [Hugging Face](https://huggingface.co/), you can set `provider` to `huggingface_pipeline` when creating a labeling configuration. The specific model that will be queried can be specified using the `name` key. Autolabel currently supports all Sequence2Sequence Language Models on Hugging Face. All models available on Hugging Face can be found [here](https://huggingface.co/docs/transformers/model_doc/openai-gpt#:~:text=TEXT-,MODELS,-ALBERT). Ensure that the model you choose can be loaded using `AutoModelForSeq2SeqLM`. Here are a few examples:
+To use models from [Hugging Face](https://huggingface.co/), you can set `provider` to `huggingface_pipeline` when creating a labeling configuration. The specific model that will be queried can be specified using the `name` key. Autolabel currently supports all Sequence2Sequence and Causal Language Models on Hugging Face. All models available on Hugging Face can be found [here](https://huggingface.co/docs/transformers/model_doc/openai-gpt#:~:text=TEXT-,MODELS,-ALBERT). Ensure that the model you choose can be loaded using `AutoModelForSeq2SeqLM` or `AutoModelForCausalLM`. Here are a few examples:
 
+Sequence2Sequence Language Models:
 * `google/flan-t5-small` (all flan-t5-* models)
 * `google/pegasus-x-base`
 * `microsoft/prophetnet-large-uncased`
+
+Causal Language Models:
+* `gpt2`
+* `openlm-research/open_llama_3b`
+* `meta-llama/Llama-2-70b`
+
 
 This will run the model locally on a GPU (if available). You can also specify  quantization strategy to load larger models in lower precision (and thus decreasing memory requirements).
 
@@ -184,6 +191,15 @@ These parameters can be passed in via the `params` dictionary under `model`. Her
         "quantize": 8
     }
 },
+```
+
+#### Llama 2
+To use Llama 2, you can use the following model configuration:
+```python
+"model": {
+    "provider": "huggingface_pipeline",
+    "name": "meta-llama/Llama-2-7b",
+}
 ```
 
 ## Refuel
