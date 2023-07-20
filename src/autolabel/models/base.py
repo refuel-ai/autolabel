@@ -42,7 +42,7 @@ class BaseModel(ABC):
 
             # Set the existing prompts to the new results
             for i, result, error in zip(
-                missing_prompt_idxs, new_results.generation, new_results.errors
+                missing_prompt_idxs, new_results.generations, new_results.errors
             ):
                 existing_prompts[i] = result
                 errors[i] = error

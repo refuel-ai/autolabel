@@ -9,7 +9,7 @@ from typing import List, Optional
 from autolabel.models import BaseModel
 from autolabel.configs import AutolabelConfig
 from autolabel.cache import BaseCache
-from autolabel.schema import LabelingError, ErrorType
+from autolabel.schema import LabelingError, ErrorType, RefuelLLMResult
 
 
 from tenacity import (
@@ -66,7 +66,7 @@ class RefuelLLM(BaseModel):
         response.raise_for_status()
         return response
 
-    def _label(self, prompts: List[str]) -> LLMResult:
+    def _label(self, prompts: List[str]) -> RefuelLLMResult:
         generations = []
         errors = []
         for prompt in prompts:
@@ -95,7 +95,7 @@ class RefuelLLM(BaseModel):
                 errors.append(
                     LabelingError(error_type=ErrorType.LLM_PROVIDER_ERROR, error=e)
                 )
-        return LLMResult(generations=generations, errors=errors)
+        return RefuelLLMResult(generations=generations, errors=errors)
 
     def get_cost(self, prompt: str, label: Optional[str] = "") -> float:
         return 0

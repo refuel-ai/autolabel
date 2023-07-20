@@ -5,6 +5,7 @@ from langchain.schema import LLMResult
 from autolabel.models import BaseModel
 from autolabel.configs import AutolabelConfig
 from autolabel.cache import BaseCache
+from autolabel.schema import RefuelLLMResult
 
 
 class HFPipelineLLM(BaseModel):
@@ -65,9 +66,12 @@ class HFPipelineLLM(BaseModel):
         # initialize LLM
         self.llm = HuggingFacePipeline(pipeline=pipe, model_kwargs=model_kwargs)
 
-    def _label(self, prompts: List[str]) -> LLMResult:
+    def _label(self, prompts: List[str]) -> RefuelLLMResult:
         try:
-            return self.llm.generate(prompts)
+            result = self.llm.generate(prompts)
+            return RefuelLLMResult(
+                generations=result.generations, errors=[None] * len(result.generations)
+            )
         except Exception as e:
             return self._label_individually(prompts)
 

@@ -198,7 +198,7 @@ class RefuelLLMResult(BaseModel):
     generations: List[List[Generation]]
 
     """Errors encountered while running the labeling job"""
-    errors: List[LabelingError]
+    errors: List[Optional[LabelingError]]
 
     """Costs incurred during the labeling job"""
-    costs: Optional[float] = 0.0
+    cost: Optional[float] = 0.0

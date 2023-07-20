@@ -9,6 +9,7 @@ from langchain.schema import LLMResult, HumanMessage, Generation
 from autolabel.models import BaseModel
 from autolabel.configs import AutolabelConfig
 from autolabel.cache import BaseCache
+from autolabel.schema import RefuelLLMResult
 
 from tenacity import (
     before_sleep_log,
@@ -91,7 +92,7 @@ class PaLMLLM(BaseModel):
 
         return LLMResult(generations=generations)
 
-    def _label(self, prompts: List[str]) -> LLMResult:
+    def _label(self, prompts: List[str]) -> RefuelLLMResult:
         for prompt in prompts:
             if self.SEP_REPLACEMENT_TOKEN in prompt:
                 logger.warning(
@@ -117,7 +118,9 @@ class PaLMLLM(BaseModel):
                     generation.text = generation.text.replace(
                         self.SEP_REPLACEMENT_TOKEN, "\n"
                     )
-            return result
+            return RefuelLLMResult(
+                generations=result.generations, errors=[None] * len(result.generations)
+            )
         except Exception as e:
             self._label_individually(prompts)
 

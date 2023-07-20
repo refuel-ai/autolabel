@@ -6,6 +6,7 @@ from autolabel.models import BaseModel
 from autolabel.cache import BaseCache
 from langchain.chat_models import ChatAnthropic
 from langchain.schema import LLMResult, HumanMessage
+from autolabel.schema import RefuelLLMResult
 
 
 class AnthropicLLM(BaseModel):
@@ -37,10 +38,13 @@ class AnthropicLLM(BaseModel):
         # initialize LLM
         self.llm = ChatAnthropic(model=self.model_name, **self.model_params)
 
-    def _label(self, prompts: List[str]) -> LLMResult:
+    def _label(self, prompts: List[str]) -> RefuelLLMResult:
         prompts = [[HumanMessage(content=prompt)] for prompt in prompts]
         try:
-            return self.llm.generate(prompts)
+            result = self.llm.generate(prompts)
+            return RefuelLLMResult(
+                generations=result.generations, errors=[None] * len(result.generations)
+            )
         except Exception as e:
             return self._label_individually(prompts)
 

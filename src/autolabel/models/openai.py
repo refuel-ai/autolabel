@@ -10,6 +10,7 @@ import tiktoken
 from autolabel.models import BaseModel
 from autolabel.configs import AutolabelConfig
 from autolabel.cache import BaseCache
+from autolabel.schema import RefuelLLMResult
 
 import os
 
@@ -137,14 +138,17 @@ class OpenAILLM(BaseModel):
 
         return {"logit_bias": logit_bias, "max_tokens": max_tokens}
 
-    def _label(self, prompts: List[str]) -> LLMResult:
+    def _label(self, prompts: List[str]) -> RefuelLLMResult:
         if self._engine == "chat":
             # Need to convert list[prompts] -> list[messages]
             # Currently the entire prompt is stuck into the "human message"
             # We might consider breaking this up into human vs system message in future
             prompts = [[HumanMessage(content=prompt)] for prompt in prompts]
         try:
-            return self.llm.generate(prompts)
+            result = self.llm.generate(prompts)
+            return RefuelLLMResult(
+                generations=result.generations, errors=[None] * len(result.generations)
+            )
         except Exception as e:
             return self._label_individually(prompts)
 

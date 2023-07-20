@@ -2,6 +2,7 @@ import logging
 import os
 import sys
 from typing import Dict, List, Optional, Tuple, Union
+import json
 
 import numpy as np
 import pandas as pd
@@ -157,12 +158,10 @@ class LabelingAgent:
                         successfully_labeled=False,
                         label=self.task.NULL_LABEL_TOKEN,
                         raw_response="",
-                        curr_sample=chunk,
+                        curr_sample=json.dumps(chunk),
                         prompt=final_prompt,
                         confidence_score=0,
-                        error=LabelingError(
-                            error_type=ErrorType.LLM_ERROR, error_message=str(error)
-                        ),
+                        error=error,
                     )
                 else:
                     annotations = []
