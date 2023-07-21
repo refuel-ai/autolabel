@@ -5,6 +5,7 @@ from typing import Dict, List, Tuple
 from copy import deepcopy
 
 from langchain.schema import Generation
+from sklearn.metrics import roc_auc_score
 import logging
 from nervaluate import Evaluator
 from autolabel.confidence import ConfidenceCalculator
@@ -245,12 +246,18 @@ class NamedEntityRecognitionTask(BaseTask):
             )
         )
 
-        eval_metrics.append(
-            MetricResult(
-                name=MetricType.SUPPORT,
-                value=len(answered_gt_labels),
+        if self.config.confidence():
+            match, confidences = self.auroc_score_labels(
+                answered_gt_labels, answered_llm_preds
             )
-        )
+            auroc = roc_auc_score(match, confidences)
+            eval_metrics.append(
+                MetricResult(
+                    name=MetricType.AUROC,
+                    value=auroc,
+                )
+            )
+
         return eval_metrics
 
     def eval(
@@ -273,14 +280,6 @@ class NamedEntityRecognitionTask(BaseTask):
             for index in range(len(gt_labels))
         ]
 
-        eval_metrics_map = {
-            MetricType.F1: [],
-            MetricType.SUPPORT: [],
-            MetricType.ACCURACY: [],
-            MetricType.COMPLETION_RATE: [],
-        }
-        eval_metrics = []
-
         (
             curr_gt_labels,
             curr_llm_labels,
@@ -298,26 +297,29 @@ class NamedEntityRecognitionTask(BaseTask):
             )
         )
 
+        eval_metrics = []
+
+        eval_metrics.append(
+            MetricResult(
+                name=MetricType.SUPPORT,
+                value=len(gt_labels),
+            )
+        )
+
+        eval_metrics.append(
+            MetricResult(
+                name=MetricType.COMPLETION_RATE,
+                value=len(curr_llm_labels) / float(len(gt_labels))
+                if len(gt_labels) > 0
+                else 0.0,
+            )
+        )
+
         curr_threshold_metrics = self.run_metrics(
             curr_gt_labels,
             curr_llm_labels,
             entity_types_set,
         )
 
-        for metric in curr_threshold_metrics:
-            eval_metrics_map[metric.metric_type].append(metric.value)
-
-        eval_metrics_map[MetricType.COMPLETION_RATE].append(
-            len(curr_llm_labels) / float(len(gt_labels))
-        )
-
-        eval_metrics.extend(
-            [
-                MetricResult(
-                    name=i,
-                    value=eval_metrics_map[i],
-                )
-                for i in eval_metrics_map.keys()
-            ]
-        )
+        eval_metrics.extend(curr_threshold_metrics)
         return eval_metrics

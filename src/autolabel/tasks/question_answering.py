@@ -35,13 +35,15 @@ class QuestionAnsweringTask(BaseTask):
         super().__init__(config)
         self.metrics = [
             AccuracyMetric(),
-            AUROCMetric(),
             SupportMetric(),
             CompletionRateMetric(),
             F1Metric(
                 type=F1Type.TEXT,
             ),
         ]
+
+        if self.config.confidence():
+            self.metrics.append(AUROCMetric())
 
     def construct_prompt(self, input: Dict, examples: List[Dict]) -> str:
         # Copy over the input so that we can modify it
@@ -101,14 +103,14 @@ class QuestionAnsweringTask(BaseTask):
         self,
         llm_labels: List[LLMAnnotation],
         gt_labels: List[str],
-        additional_metrics: Optional[List[BaseMetric]] = None,
+        additional_metrics: Optional[List[BaseMetric]] = [],
     ) -> List[MetricResult]:
         """Evaluate the LLM generated labels by comparing them against ground truth
 
         Args:
             llm_labels (List[LLMAnnotation]): _description_
             gt_labels (List[str]): _description_
-            additional_metrics (Optional[List[BaseMetric]], optional): _description_. Defaults to None.
+            additional_metrics (Optional[List[BaseMetric]], optional): _description_. Defaults to [].
 
         Returns:
             List[MetricResult]: list of metrics and corresponding values
@@ -116,6 +118,6 @@ class QuestionAnsweringTask(BaseTask):
         eval_metrics = []
 
         for metric in self.metrics + additional_metrics:
-            eval_metrics.append(metric.compute(llm_labels, gt_labels))
+            eval_metrics.extend(metric.compute(llm_labels, gt_labels))
 
         return eval_metrics

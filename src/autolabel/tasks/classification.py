@@ -33,10 +33,12 @@ class ClassificationTask(BaseTask):
         super().__init__(config)
         self.metrics = [
             AccuracyMetric(),
-            AUROCMetric(),
             SupportMetric(),
             CompletionRateMetric(),
         ]
+
+        if self.config.confidence():
+            self.metrics.append(AUROCMetric())
 
     def construct_prompt(self, input: Dict, examples: List) -> str:
         # Copy over the input so that we can modify it

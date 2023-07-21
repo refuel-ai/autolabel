@@ -202,14 +202,12 @@ class LabelingAgent:
                     )
 
                     for m in eval_result:
-                        if not isinstance(m.value, list) or len(m.value) < 1:
+                        # This is a row wise metric
+                        if isinstance(m.value, list):
                             continue
-                        elif isinstance(m.value[0], float):
-                            postfix_dict[m.name] = f"{m.value[0]:.4f}"
-                        elif isinstance(m.value[0], int):
-                            postfix_dict[m.name] = f"{m.value[0]}"
-                        elif len(m.value[0]) > 0:
-                            postfix_dict[m.name] = f"{m.value[0][0]:.4f}"
+                        postfix_dict[m.name] = (
+                            f"{m.value:.4f}" if isinstance(m.value, float) else m.value
+                        )
 
             # Update task run state
             self.task_run = self.save_task_run_state(
