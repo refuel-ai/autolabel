@@ -3,6 +3,8 @@ import os
 import json
 import logging
 from string import Formatter
+import re
+import string
 from typing import Any, Dict, Iterable, List, Optional, Sequence, Union
 import shutil
 
@@ -293,3 +295,23 @@ def get_data(dataset_name: str, force: bool = False):
         download(test_url)
     except Exception as e:
         logger.error(f"Error downloading dataset: {e}")
+
+
+def normalize_text(s: str) -> str:
+    """Removing articles and punctuation, and standardizing whitespace are all typical text processing steps."""
+
+    def remove_articles(text):
+        regex = re.compile(r"\b(a|an|the)\b", re.UNICODE)
+        return re.sub(regex, " ", text)
+
+    def white_space_fix(text):
+        return " ".join(text.split())
+
+    def remove_punc(text):
+        exclude = set(string.punctuation)
+        return "".join(ch for ch in text if ch not in exclude)
+
+    def lower(text):
+        return text.lower()
+
+    return white_space_fix(remove_articles(remove_punc(lower(s))))

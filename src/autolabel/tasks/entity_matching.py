@@ -5,12 +5,18 @@ import json
 from langchain.prompts.prompt import PromptTemplate
 from sklearn.metrics import accuracy_score
 
-from autolabel.confidence import ConfidenceCalculator
 from autolabel.configs import AutolabelConfig
-from autolabel.schema import LLMAnnotation, Metric, MetricResult
+from autolabel.schema import LLMAnnotation, MetricResult
 from autolabel.tasks import BaseTask
 from autolabel.utils import get_format_variables
 from autolabel.tasks.utils import filter_unlabeled_examples
+from autolabel.metrics import (
+    AccuracyMetric,
+    AUROCMetric,
+    SupportMetric,
+    CompletionRateMetric,
+    BaseMetric,
+)
 
 
 class EntityMatchingTask(BaseTask):
@@ -23,6 +29,14 @@ class EntityMatchingTask(BaseTask):
 
     def __init__(self, config: AutolabelConfig) -> None:
         super().__init__(config)
+        self.metrics = [
+            AccuracyMetric(),
+            SupportMetric(),
+            CompletionRateMetric(),
+        ]
+
+        if self.config.confidence():
+            self.metrics.append(AUROCMetric())
 
     def construct_prompt(self, input: Dict, examples: List[Dict]) -> str:
         # Copy over the input so that we can modify it
@@ -94,100 +108,26 @@ class EntityMatchingTask(BaseTask):
             labeled_example=fmt_example,
         )
 
-    def auroc_score_labels(
-        self, gt_labels, llm_labels
-    ) -> Tuple[List[int], List[float]]:
-        labels = []
-        confidences = []
-        for index, llm_label in enumerate(llm_labels):
-            labels.append(llm_label.label.lower() == gt_labels[index].lower())
-            confidences.append(llm_label.confidence_score)
-
-        return labels, confidences
-
-    def get_labels_predictions_with_threshold(self, gt_labels, llm_labels, threshold):
-        answered_gt_labels, answered_llm_preds = [], []
-        for index, l in enumerate(llm_labels):
-            if l.label != self.NULL_LABEL_TOKEN and (
-                l.confidence_score is None or l.confidence_score >= threshold
-            ):
-                answered_llm_preds.append(l.label.lower())
-                answered_gt_labels.append(gt_labels[index].lower())
-
-        return answered_gt_labels, answered_llm_preds
-
     def eval(
-        self, llm_labels: List[LLMAnnotation], gt_labels: List[str]
+        self,
+        llm_labels: List[LLMAnnotation],
+        gt_labels: List[str],
+        additional_metrics: List[BaseMetric] = [],
     ) -> List[MetricResult]:
         """Evaluate the LLM generated labels by comparing them against ground truth
 
         Args:
             llm_labels (List[LLMAnnotation]): _description_
             gt_labels (List[str]): _description_
+            additional_metrics (List[BaseMetric], optional): List of additional metrics to run. Defaults to [].
 
         Returns:
             List[MetricResult]: list of metrics and corresponding values
         """
 
-        eval_metrics_map = {
-            Metric.SUPPORT: [],
-            Metric.ACCURACY: [],
-            Metric.COMPLETION_RATE: [],
-        }
         eval_metrics = []
-        thresholds = []
 
-        if self.config.confidence():
-            eval_metrics_map[Metric.THRESHOLD] = []
-            labels, confidences = self.auroc_score_labels(gt_labels, llm_labels)
-            value, meaningful_thresholds = ConfidenceCalculator.compute_auroc(
-                labels, confidences
-            )
-            thresholds.extend(meaningful_thresholds)
-            eval_metrics.append(
-                MetricResult(
-                    metric_type=Metric.AUROC,
-                    name="auroc",
-                    value=value,
-                )
-            )
-        else:
-            thresholds.append(float("-inf"))
+        for metric in self.metrics + additional_metrics:
+            eval_metrics.extend(metric.compute(llm_labels, gt_labels))
 
-        for index, threshold in enumerate(thresholds):
-            (
-                curr_gt_labels,
-                curr_llm_labels,
-            ) = self.get_labels_predictions_with_threshold(
-                gt_labels, llm_labels, threshold
-            )
-            if len(gt_labels) > 0:
-                eval_metrics_map[Metric.COMPLETION_RATE].append(
-                    len(curr_gt_labels) / float(len(gt_labels))
-                )
-            eval_metrics_map[Metric.SUPPORT].append(len(curr_gt_labels))
-            (
-                filtered_curr_gt_labels,
-                filtered_curr_llm_labels,
-            ) = filter_unlabeled_examples(curr_gt_labels, curr_llm_labels)
-            if len(filtered_curr_gt_labels) > 0:
-                eval_metrics_map[Metric.ACCURACY].append(
-                    accuracy_score(filtered_curr_gt_labels, filtered_curr_llm_labels)
-                )
-            else:
-                eval_metrics_map[Metric.ACCURACY].append(0.0)
-
-            if self.config.confidence():
-                eval_metrics_map[Metric.THRESHOLD].append(threshold)
-
-        eval_metrics.extend(
-            [
-                MetricResult(
-                    metric_type=i,
-                    name=i.value,
-                    value=eval_metrics_map[i],
-                )
-                for i in eval_metrics_map.keys()
-            ]
-        )
         return eval_metrics

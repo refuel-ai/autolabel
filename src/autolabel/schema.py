@@ -45,7 +45,7 @@ class TaskStatus(str, Enum):
     ACTIVE = "active"
 
 
-class Metric(str, Enum):
+class MetricType(str, Enum):
     """Enum of supported performance metrics. Some metrics are always available (task agnostic), while others are only supported by certain types of tasks"""
 
     # Task agnostic
@@ -56,17 +56,23 @@ class Metric(str, Enum):
     CONFUSION_MATRIX = "confusion_matrix"
     LABEL_DISTRIBUTION = "label_distribution"
     F1 = "f1"
-    F1_MACRO = "f1_macro"
-    F1_WEIGHTED = "f1_weighted"
+    F1_MICRO = "micro"
+    F1_MACRO = "macro"
+    F1_WEIGHTED = "weighted"
+    TEXT_PARTIAL_MATCH = "text_partial_match"
     # Confidence metrics
     AUROC = "auroc"
     THRESHOLD = "threshold"
 
 
+class F1Type(str, Enum):
+    MULTI_LABEL = "multi_label"
+    TEXT = "text"
+
+
 class MetricResult(BaseModel):
     """Contains performance metrics gathered from autolabeler runs"""
 
-    metric_type: Metric
     name: str
     value: Any
 

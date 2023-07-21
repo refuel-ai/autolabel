@@ -27,61 +27,61 @@ def normalize_text(s: str) -> str:
     return white_space_fix(remove_articles(remove_punc(lower(s))))
 
 
-def compute_f1(
-    truth: List,
-    prediction: List,
-    average: str = "micro",
-    labels: List[str] = None,
-    sep: str = None,
-) -> float:
-    """
-    Compute f1 scores based on given ground truth labels.
+# def compute_f1(
+#     truth: List,
+#     prediction: List,
+#     average: str = "micro",
+#     labels: List[str] = None,
+#     sep: str = None,
+# ) -> float:
+#     """
+#     Compute f1 scores based on given ground truth labels.
 
-    If labels are provided, uses sklearn to binarize the labels and compute f1 scores.
-    Otherwise, uses bag of words approach to compute f1 scores.
+#     If labels are provided, uses sklearn to binarize the labels and compute f1 scores.
+#     Otherwise, uses bag of words approach to compute f1 scores.
 
-    Args:
-        prediction: model generated prediction
-        truth: ground truth label to compare against
-    Returns:
-        f1_score: values range from [0,1], with 1 indicating perfect accuracy
-    """
-    if labels:
-        mlb = MultiLabelBinarizer()
-        mlb.fit([labels])
+#     Args:
+#         prediction: model generated prediction
+#         truth: ground truth label to compare against
+#     Returns:
+#         f1_score: values range from [0,1], with 1 indicating perfect accuracy
+#     """
+#     if labels:
+#         mlb = MultiLabelBinarizer()
+#         mlb.fit([labels])
 
-        return f1_score(
-            mlb.transform([x.split(sep) for x in truth]),
-            mlb.transform([x.split(sep) for x in prediction]),
-            average=average,
-            zero_division=0,
-        )
-    else:
-        truth = [normalize_text(t).split(sep) for t in truth]
-        prediction = [normalize_text(p).split(sep) for p in prediction]
+#         return f1_score(
+#             mlb.transform([x.split(sep) for x in truth]),
+#             mlb.transform([x.split(sep) for x in prediction]),
+#             average=average,
+#             zero_division=0,
+#         )
+#     else:
+#         truth = [normalize_text(t).split(sep) for t in truth]
+#         prediction = [normalize_text(p).split(sep) for p in prediction]
 
-        tp_pairs = zip(truth, prediction)
+#         tp_pairs = zip(truth, prediction)
 
-        f1_scores = []
-        for truth_tokens, pred_tokens in tp_pairs:
-            # if either the prediction or the truth is no-answer then f1 = 1 if they agree, 0 otherwise
-            if len(truth_tokens) == 0 or len(pred_tokens) == 0:
-                f1_scores.append(int(truth_tokens == pred_tokens))
-                continue
+#         f1_scores = []
+#         for truth_tokens, pred_tokens in tp_pairs:
+#             # if either the prediction or the truth is no-answer then f1 = 1 if they agree, 0 otherwise
+#             if len(truth_tokens) == 0 or len(pred_tokens) == 0:
+#                 f1_scores.append(int(truth_tokens == pred_tokens))
+#                 continue
 
-            common_tokens = set(truth_tokens) & set(pred_tokens)
+#             common_tokens = set(truth_tokens) & set(pred_tokens)
 
-            # if there are no common tokens then f1 = 0
-            if len(common_tokens) == 0:
-                f1_scores.append(0)
-                continue
+#             # if there are no common tokens then f1 = 0
+#             if len(common_tokens) == 0:
+#                 f1_scores.append(0)
+#                 continue
 
-            rec = len(common_tokens) / len(truth_tokens)
-            prec = len(common_tokens) / len(pred_tokens)
+#             rec = len(common_tokens) / len(truth_tokens)
+#             prec = len(common_tokens) / len(pred_tokens)
 
-            f1_scores.append(2 * (prec * rec) / (prec + rec))
+#             f1_scores.append(2 * (prec * rec) / (prec + rec))
 
-        return sum(f1_scores) / len(f1_scores)
+#         return sum(f1_scores) / len(f1_scores)
 
 
 def filter_unlabeled_examples(gt_labels: List[str], llm_labels: List[LLMAnnotation]):
