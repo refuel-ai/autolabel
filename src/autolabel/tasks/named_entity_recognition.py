@@ -280,10 +280,7 @@ class NamedEntityRecognitionTask(BaseTask):
             for index in range(len(gt_labels))
         ]
 
-        (
-            curr_gt_labels,
-            curr_llm_labels,
-        ) = self.get_labels_predictions_with_threshold(
+        (curr_gt_labels, curr_llm_labels,) = self.get_labels_predictions_with_threshold(
             gt_labels, llm_labels, float("-inf")
         )
 
