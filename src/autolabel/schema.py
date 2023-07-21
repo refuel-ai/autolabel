@@ -56,9 +56,15 @@ class MetricType(str, Enum):
     CONFUSION_MATRIX = "confusion_matrix"
     LABEL_DISTRIBUTION = "label_distribution"
     F1 = "f1"
+<<<<<<< HEAD
     F1_MICRO = "f1_micro"
     F1_MACRO = "f1_macro"
     F1_WEIGHTED = "f1_weighted"
+=======
+    F1_MICRO = "micro"
+    F1_MACRO = "macro"
+    F1_WEIGHTED = "weighted"
+>>>>>>> 4041b74 (added initial metric calculation)
     TEXT_PARTIAL_MATCH = "text_partial_match"
     # Confidence metrics
     AUROC = "auroc"
