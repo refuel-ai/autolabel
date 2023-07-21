@@ -9,7 +9,13 @@ import logging
 from nervaluate import Evaluator
 from autolabel.confidence import ConfidenceCalculator
 from autolabel.configs import AutolabelConfig
-from autolabel.schema import LLMAnnotation, Metric, MetricResult
+from autolabel.schema import (
+    LLMAnnotation,
+    Metric,
+    MetricResult,
+    LabelingError,
+    ErrorType,
+)
 from autolabel.tasks import BaseTask
 
 logger = logging.getLogger(__name__)
@@ -135,6 +141,7 @@ class NamedEntityRecognitionTask(BaseTask):
     ) -> LLMAnnotation:
         output = {}
         successfully_labeled = False
+        error = None
         text_column = self.config.text_column()
         input_str = curr_sample[text_column]
         try:
@@ -144,6 +151,7 @@ class NamedEntityRecognitionTask(BaseTask):
         except Exception as e:
             logger.error(f"Error parsing LLM response: {response.text}, Error: {e}")
             llm_label = self.NULL_LABEL
+            error = LabelingError(error_type=ErrorType.PARSING_ERROR, error_msg=str(e))
 
         successfully_labeled = False if llm_label == self.NULL_LABEL else True
 
@@ -155,6 +163,7 @@ class NamedEntityRecognitionTask(BaseTask):
             generation_info=response.generation_info,
             raw_response=response.text,
             prompt=prompt,
+            error=error,
         )
 
     def auroc_score_labels(

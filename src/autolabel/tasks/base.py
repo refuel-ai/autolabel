@@ -8,7 +8,14 @@ import json
 from langchain.prompts.prompt import PromptTemplate
 from langchain.schema import Generation
 from autolabel.configs import AutolabelConfig
-from autolabel.schema import LLMAnnotation, MetricResult, FewShotAlgorithm, TaskType
+from autolabel.schema import (
+    LLMAnnotation,
+    MetricResult,
+    FewShotAlgorithm,
+    TaskType,
+    LabelingError,
+    ErrorType,
+)
 from autolabel.utils import get_format_variables, extract_valid_json_substring
 
 logger = logging.getLogger(__name__)
@@ -67,6 +74,7 @@ class BaseTask(ABC):
     ) -> LLMAnnotation:
         # The last line of the response is the label
         # This is done to handle the case where the model generates an explanation before generating the label
+        error = None
         if self.config.chain_of_thought():
             try:
                 explanation = response.text.strip().split("\n")[0].strip()
@@ -81,11 +89,19 @@ class BaseTask(ABC):
         if len(response.text.strip()) == 0:
             successfully_labeled = False
             llm_label = self.NULL_LABEL_TOKEN
-            logger.warning(f"LLM response is empty")
+            logger.warning("LLM response is empty")
+            error = LabelingError(
+                error_type=ErrorType.EMPTY_RESPONSE_ERROR,
+                error_message="Empty response from LLM",
+            )
         elif not completion_text:
             successfully_labeled = False
             llm_label = self.NULL_LABEL_TOKEN
-            logger.error(f"Error parsing LLM response: {response.text}")
+            logger.warning(f"Error parsing LLM response: {response.text}")
+            error = LabelingError(
+                error_type=ErrorType.PARSING_ERROR,
+                error_message=f"Error parsing LLM response: {response.text}",
+            )
         else:
             llm_label = completion_text.strip()
             if self.config.task_type() in [
@@ -97,6 +113,10 @@ class BaseTask(ABC):
                 else:
                     logger.warning(f"LLM response is not in the labels list")
                     successfully_labeled = False
+                    error = LabelingError(
+                        error_type=ErrorType.OUTPUT_GUIDELINES_NOT_FOLLOWED_ERROR,
+                        error_message=f"LLM response is not in the labels list: {llm_label}",
+                    )
             else:
                 successfully_labeled = True
 
@@ -108,4 +128,5 @@ class BaseTask(ABC):
             prompt=prompt,
             curr_sample=json.dumps(curr_sample),
             explanation=explanation if self.config.chain_of_thought() else "",
+            error=error,
         )
