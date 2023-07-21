@@ -5,6 +5,7 @@ import json
 import typer
 from rich import print
 from rich.prompt import Prompt, IntPrompt, Confirm
+import enquiries
 
 import pandas as pd
 
@@ -24,16 +25,11 @@ DEFAULT_EXAMPLE_TEMPLATE = "Example: {example}\nLabel: {label}"
 DEFAULT_CONFIG = {
     "dataset": {
         "delimiter": ",",
-        "text_column": "example",
         "label_column": "label",
     },
     "prompt": {
         "task_guidelines": "Classify the examples into one of the following labels: {labels}",
-        "few_shot_examples": "seed.csv",
-        "few_shot_selection": "fixed",
-        "few_shot_num": 5,
         "example_template": "Example: {example}\nLabel: {label}",
-        "chain_of_thought": False,
     },
     "model": {
         "provider": "openai",
@@ -45,21 +41,46 @@ DEFAULT_CONFIG = {
 def _get_sub_config(key: str, **kwargs) -> Dict:
     config = {}
     for p in schema["properties"][key]["properties"]:
-        if p in kwargs:
-            config[p] = kwargs[p]
+        if f"{key}_{p}" in kwargs and kwargs[f"{key}_{p}"] is not None:
+            config[p] = kwargs[f"{key}_{p}"]
     return {**DEFAULT_CONFIG[key], **config}
 
 
-def create_config(task_name: str, task_type: str, seed: Optional[str] = None, **kwargs):
+def create_config(
+    task_name: str, seed: Optional[str] = None, task_type: str = None, **kwargs
+):
+    if not task_type:
+        task_type = enquiries.choose(
+            "Choose a task type",
+            [t.value for t in TaskType],
+        )
     try:
         TaskType(task_type)
     except ValueError:
-        print(f"[red]Invalid task type: {task_type}[/red]")
+        print(f"[ƒred]Invalid task type: {task_type}[/red]")
         raise typer.Abort()
     config = {ALC.TASK_NAME_KEY: task_name, ALC.TASK_TYPE_KEY: task_type}
     config[ALC.DATASET_CONFIG_KEY] = _get_sub_config("dataset", **kwargs)
     config[ALC.MODEL_CONFIG_KEY] = _get_sub_config("model", **kwargs)
+    if (
+        "prompt_task_guidelines" not in kwargs
+        or kwargs["prompt_task_guidelines"] is None
+    ):
+        kwargs["prompt_task_guidelines"] = TASK_TYPE_TO_IMPLEMENTATION[
+            task_type
+        ].DEFAULT_TASK_GUIDELINES
+    # TODO: add automatic label detection to fill the labels list for any task that requires it
     config[ALC.PROMPT_CONFIG_KEY] = _get_sub_config("prompt", **kwargs)
+
+    print(config)
+    try:
+        ALC(config)
+    except Exception as e:
+        print(f"error validating config: {e}")
+        raise typer.Abort()
+    print(f"Writing config to {config[ALC.TASK_NAME_KEY]}_config.json")
+    with open(f"{config[ALC.TASK_NAME_KEY]}_config.json", "w") as config_file:
+        json.dump(config, config_file, indent=4)
 
 
 def _create_dataset_config_wizard(
@@ -84,17 +105,31 @@ def _create_dataset_config_wizard(
         default=detected_delimiter,
     )
     dataset_config[ALC.DELIMITER_KEY] = delimiter
+    if seed:
+        df = pd.read_csv(seed, delimiter=delimiter, nrows=0)
+        column_names = df.columns.tolist()
+        label_column = enquiries.choose(
+            "Choose the label column",
+            column_names,
+        )
+        dataset_config[ALC.LABEL_COLUMN_KEY] = label_column
+        explanation_column = enquiries.choose(
+            "Choose the explanation column (optional)",
+            [None] + column_names,
+        )
+        if explanation_column:
+            dataset_config[ALC.EXPLANATION_COLUMN_KEY] = explanation_column
+    else:
+        label_column = Prompt.ask(
+            "Enter the label column name", default=DEFAULT_LABEL_COLUMN
+        )
+        dataset_config[ALC.LABEL_COLUMN_KEY] = label_column
 
-    label_column = Prompt.ask(
-        "Enter the label column name", default=DEFAULT_LABEL_COLUMN
-    )
-    dataset_config[ALC.LABEL_COLUMN_KEY] = label_column
-
-    explanation_column = Prompt.ask(
-        "Enter the explanation column name (optional)", default=None
-    )
-    if explanation_column:
-        dataset_config[ALC.EXPLANATION_COLUMN_KEY] = explanation_column
+        explanation_column = Prompt.ask(
+            "Enter the explanation column name (optional)", default=None
+        )
+        if explanation_column:
+            dataset_config[ALC.EXPLANATION_COLUMN_KEY] = explanation_column
 
     if task_type == TaskType.MULTILABEL_CLASSIFICATION:
         label_separator = Prompt.ask(
@@ -110,9 +145,9 @@ def _create_model_config_wizard() -> Dict:
     print("[bold]Model Configuration[/bold]")
     model_config = {}
 
-    model_config[ALC.PROVIDER_KEY] = Prompt.ask(
+    model_config[ALC.PROVIDER_KEY] = enquiries.choose(
         "Enter the model provider",
-        choices=[p for p in ModelProvider],
+        [p.value for p in ModelProvider],
     )
 
     model_config[ALC.MODEL_NAME_KEY] = Prompt.ask("Enter the model name")
@@ -226,9 +261,9 @@ def _create_prompt_config_wizard(config: Dict, seed: Optional[str] = None) -> Di
             prompt_config[ALC.FEW_SHOT_EXAMPLE_SET_KEY] = few_shot_example_set
 
     if ALC.FEW_SHOT_EXAMPLE_SET_KEY in prompt_config:
-        prompt_config[ALC.FEW_SHOT_SELECTION_ALGORITHM_KEY] = Prompt.ask(
+        prompt_config[ALC.FEW_SHOT_SELECTION_ALGORITHM_KEY] = enquiries.choose(
             "Enter the few shot selection algorithm",
-            choices=[a for a in FewShotAlgorithm],
+            [a.value for a in FewShotAlgorithm],
         )
         prompt_config[ALC.FEW_SHOT_NUM_KEY] = IntPrompt.ask(
             "Enter the number of few shot examples to use",
@@ -256,10 +291,14 @@ def _create_prompt_config_wizard(config: Dict, seed: Optional[str] = None) -> Di
     return prompt_config
 
 
-def create_config_wizard(task_name: str, task_type: str, seed: Optional[str] = None):
+def create_config_wizard(task_name: str, seed: Optional[str] = None, **kwargs):
     """Create a new task [bold]config[/bold] file"""
-    config = {}
-    config[ALC.TASK_NAME_KEY] = task_name
+    config = {ALC.TASK_NAME_KEY: task_name}
+    if not task_type:
+        task_type = enquiries.choose(
+            "Choose a task type",
+            [t.value for t in TaskType],
+        )
     try:
         TaskType(task_type)
         config[ALC.TASK_TYPE_KEY] = task_type

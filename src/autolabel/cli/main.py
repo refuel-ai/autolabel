@@ -26,158 +26,186 @@ def create_config_command(
             help="Name of the task to create a config for", show_default=False
         ),
     ],
-    task_type: Annotated[
-        str,
-        typer.Argument(
-            help=f"Type of task to create a config for. Options: {', '.join([t for t in TaskType])}",
-            show_default=False,
-        ),
-    ],
     seed: Annotated[
         Optional[str],
         typer.Argument(help="Optional seed dataset to help auto-fill the config."),
     ] = None,
-    label_column: Annotated[
+    task_type: Annotated[
         str,
         typer.Option(
+            "--type",
+            help=f"Type of task to create. Options: {', '.join([t for t in TaskType])}",
+            show_default=False,
+        ),
+    ] = None,
+    dataset_label_column: Annotated[
+        str,
+        typer.Option(
+            "--label-column",
             help="Name of the column containing the labels",
             rich_help_panel="Dataset Configuration",
         ),
     ] = "label",
-    label_separator: Annotated[
+    dataset_label_separator: Annotated[
         str,
         typer.Option(
+            "--label-separator",
             help="Separator to use when separating multiple labels for multilabel classification",
             show_default=False,
             rich_help_panel="Dataset Configuration",
         ),
-    ] = ";",
-    explanation_column: Annotated[
+    ] = None,
+    dataset_explanation_column: Annotated[
         str,
         typer.Option(
+            "--explanation-column",
             help="Name of the column containing the explanations",
             show_default=False,
             rich_help_panel="Dataset Configuration",
         ),
     ] = None,
-    text_column: Annotated[
+    dataset_text_column: Annotated[
         str,
         typer.Option(
+            "--text-column",
             help="Name of the column containing the text to label",
+            show_default=False,
             rich_help_panel="Dataset Configuration",
         ),
-    ] = "example",
-    delimiter: Annotated[
+    ] = None,
+    dataset_delimiter: Annotated[
         str,
         typer.Option(
+            "--delimiter",
             help="Delimiter to use when parsing the dataset",
             show_default=False,
             rich_help_panel="Dataset Configuration",
         ),
     ] = None,  # None means it will be guessed from seed.csv or default to a comma
-    provider: Annotated[
+    model_provider: Annotated[
         str,
         typer.Option(
+            "--provider",
             help=f"Provider of the model to use. Options: {', '.join([p for p in ModelProvider])}",
             rich_help_panel="Model Configuration",
         ),
     ] = "openai",
-    model_name: Annotated[
+    model_model_name: Annotated[
         str,
         typer.Option(
+            "--model",
             help="Name of the model to use",
             rich_help_panel="Model Configuration",
         ),
     ] = "gpt-3.5-turbo",
-    compute_confidence: Annotated[
+    model_compute_confidence: Annotated[
         bool,
         typer.Option(
+            "--compute-confidence",
             help="Whether to compute confidence scores for each label",
+            show_default=False,
             rich_help_panel="Model Configuration",
         ),
-    ] = False,
-    logit_bias: Annotated[
+    ] = None,
+    model_logit_bias: Annotated[
         bool,
         typer.Option(
+            "--logit-bias",
             help="Whether to use logit biasing to constrain the model to certain tokens",
+            show_default=False,
             rich_help_panel="Model Configuration",
         ),
-    ] = False,
+    ] = None,
     embedding_provider: Annotated[
         str,
         typer.Option(
+            "--embedding-provider",
             help=f"Provider of the embedding model to use. Options: {', '.join([p for p in PROVIDER_TO_MODEL])}",
+            show_default=False,
             rich_help_panel="Embedding Configuration",
         ),
-    ] = "openai",
+    ] = None,
     embedding_model_name: Annotated[
         str,
         typer.Option(
+            "--embedding-model",
             help="Name of the embedding model to use",
             show_default=False,
             rich_help_panel="Embedding Configuration",
         ),
     ] = None,
-    task_guidelines: Annotated[
+    prompt_task_guidelines: Annotated[
         str,
         typer.Option(
-            help="Guidelines for the task",
+            "--task-guidelines",
+            help='Guidelines for the task. "{labels}" will be replaced with a newline-separated list of labels',
             show_default=False,
             rich_help_panel="Prompt Configuration",
         ),
     ] = None,
-    use_seed: Annotated[
-        bool,
-        typer.Option(
-            help="Whether to use the seed dataset as the example set",
-            rich_help_panel="Prompt Configuration",
-        ),
-    ] = True,
-    example_selection: Annotated[
+    prompt_few_shot_examples: Annotated[
         str,
         typer.Option(
-            help=f"What algorithm to use to select examples from the seed dataset. Options: {', '.join([a for a in FewShotAlgorithm])}",
+            "--few-shot-examples",
+            help="Seed dataset to use for few-shot prompting",
+            show_default=False,
             rich_help_panel="Prompt Configuration",
         ),
-    ] = "fixed",
-    num_examples: Annotated[
+    ] = None,
+    prompt_example_selection: Annotated[
+        str,
+        typer.Option(
+            "--example-selection",
+            help=f"What algorithm to use to select examples from the seed dataset. Options: {', '.join([a for a in FewShotAlgorithm])}",
+            show_default=False,
+            rich_help_panel="Prompt Configuration",
+        ),
+    ] = None,
+    prompt_num_examples: Annotated[
         int,
         typer.Option(
+            "--num-examples",
             help="Number of examples to select from the seed dataset",
-            rich_help_panel="Prompt Configuration",
-        ),
-    ] = 5,
-    example_template: Annotated[
-        str,
-        typer.Option(
-            help="Template to use for each example",
             show_default=False,
             rich_help_panel="Prompt Configuration",
         ),
     ] = None,
-    output_guidelines: Annotated[
+    prompt_example_template: Annotated[
         str,
         typer.Option(
+            "--example-template",
+            help='Template to use for each example. "{column_name}" will be replaced with the corresponding column value for each example',
+            show_default=False,
+            rich_help_panel="Prompt Configuration",
+        ),
+    ] = None,
+    prompt_output_guidelines: Annotated[
+        str,
+        typer.Option(
+            "--output-guidelines",
             help="Guidelines for the output",
             show_default=False,
             rich_help_panel="Prompt Configuration",
         ),
     ] = None,
-    output_format: Annotated[
+    prompt_output_format: Annotated[
         str,
         typer.Option(
+            "--output-format",
             help="Format to use for the output",
             show_default=False,
             rich_help_panel="Prompt Configuration",
         ),
     ] = None,
-    chain_of_thought: Annotated[
+    prompt_chain_of_thought: Annotated[
         bool,
         typer.Option(
+            "--chain-of-thought",
             help="Whether to use chain of thought",
+            show_default=False,
             rich_help_panel="Prompt Configuration",
         ),
-    ] = False,
+    ] = None,
     wizard: Annotated[
         bool,
         typer.Option(help="Use step-by-step wizard to create config", is_flag=True),
@@ -185,13 +213,36 @@ def create_config_command(
 ):
     """Create a new task [bold]config[/bold] file
 
-    To use the labels list in the task guidelines, surround the word "labels" with curly braces.
+
     To use column values in the example template, surround the column name with curly braces.
     """
     if wizard:
-        create_config_wizard(task_name, task_type, seed)
+        create_config_wizard(task_name, seed, task_type=task_type)
     else:
-        create_config(task_name, task_type, seed)
+        create_config(
+            task_name,
+            seed,
+            task_type,
+            dataset_label_column=dataset_label_column,
+            dataset_label_separator=dataset_label_separator,
+            dataset_explanation_column=dataset_explanation_column,
+            dataset_text_column=dataset_text_column,
+            dataset_delimiter=dataset_delimiter,
+            model_provider=model_provider,
+            model_model_name=model_model_name,
+            model_compute_confidence=model_compute_confidence,
+            model_logit_bias=model_logit_bias,
+            embedding_provider=embedding_provider,
+            embedding_model_name=embedding_model_name,
+            prompt_task_guidelines=prompt_task_guidelines,
+            prompt_few_shot_examples=prompt_few_shot_examples,
+            prompt_example_selection=prompt_example_selection,
+            prompt_num_examples=prompt_num_examples,
+            prompt_example_template=prompt_example_template,
+            prompt_output_guidelines=prompt_output_guidelines,
+            prompt_output_format=prompt_output_format,
+            prompt_chain_of_thought=prompt_chain_of_thought,
+        )
 
 
 @app.command()
