@@ -31,7 +31,7 @@ def test_anthropic_label(mocker):
     )
     x = model.label(prompts)
     assert [i[0].text for i in x.generations] == ["Answers", "Answers"]
-    assert x.cost == approx(0.00010944, rel=1e-3)
+    assert sum(x.costs) == approx(0.00010944, rel=1e-3)
 
 
 def test_anthropic_get_cost():
@@ -118,7 +118,7 @@ def test_gpt4_label(mocker):
     )
     x = model.label(prompts)
     assert [i[0].text for i in x.generations] == ["Answers", "Answers"]
-    assert x.cost == approx(0.00023999, rel=1e-3)
+    assert sum(x.costs) == approx(0.00023999, rel=1e-3)
 
 
 def test_gpt4_get_cost():
@@ -168,7 +168,7 @@ def test_palm_label(mocker):
     )
     x = model.label(prompts)
     assert [i[0].text for i in x.generations] == ["Answers", "Answers"]
-    assert x.cost == approx(2.4e-05, rel=1e-3)
+    assert sum(x.costs) == approx(2.4e-05, rel=1e-3)
 
 
 def test_palm_get_cost(mocker):
@@ -226,7 +226,7 @@ def test_refuel_label(mocker):
     )
     x = model.label(prompts)
     assert [i[0].text for i in x.generations] == ["Answers", "Answers"]
-    assert x.cost == 0
+    assert sum(x.costs) == 0
 
 
 def test_refuel_get_cost():
