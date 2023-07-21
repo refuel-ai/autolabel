@@ -11,5 +11,5 @@ class SupportMetric(BaseMetric):
     def compute(
         self, llm_labels: List[LLMAnnotation], gt_labels: List[str]
     ) -> List[MetricResult]:
-        self.value = [MetricResult(name=MetricType.SUPPORT, value=len(llm_labels))]
-        return self.value
+        value = [MetricResult(name=MetricType.SUPPORT, value=len(llm_labels))]
+        return value

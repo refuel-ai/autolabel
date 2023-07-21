@@ -36,7 +36,7 @@ class F1Metric(BaseMetric):
         mlb = MultiLabelBinarizer()
         mlb.fit([self.labels])
 
-        self.value = []
+        value = []
         for average in self.average:
             score = f1_score(
                 mlb.transform([x.split(self.sep) for x in filtered_gt_labels]),
@@ -44,8 +44,8 @@ class F1Metric(BaseMetric):
                 average=average,
                 zero_division=0,
             )
-            self.value.append(MetricResult(name=average, value=score))
-        return self.value
+            value.append(MetricResult(name=average, value=score))
+        return value
 
     def text_compute(
         self, llm_labels: List[LLMAnnotation], gt_labels: List[str]
@@ -83,7 +83,7 @@ class F1Metric(BaseMetric):
 
             f1_scores.append(2 * (prec * rec) / (prec + rec))
 
-        self.values = [
+        values = [
             MetricResult(
                 name=MetricType.TEXT_PARTIAL_MATCH,
                 value=f1_scores,
@@ -94,7 +94,7 @@ class F1Metric(BaseMetric):
             ),
         ]
 
-        return self.values
+        return values
 
     def compute(
         self, llm_labels: List[LLMAnnotation], gt_labels: List[str]

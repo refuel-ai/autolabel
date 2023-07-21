@@ -27,10 +27,10 @@ class AccuracyMetric(BaseMetric):
         else:
             accuracy = 0.0
 
-        self.value = [
+        value = [
             MetricResult(
                 name=MetricType.ACCURACY,
                 value=accuracy,
             )
         ]
-        return self.value
+        return value

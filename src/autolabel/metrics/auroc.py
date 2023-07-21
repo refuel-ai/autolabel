@@ -28,10 +28,10 @@ class AUROCMetric(BaseMetric):
 
         auroc = roc_auc_score(match, confidence)
 
-        self.value = [
+        value = [
             MetricResult(
                 name=MetricType.AUROC,
                 value=auroc,
             )
         ]
-        return self.value
+        return value

@@ -20,10 +20,10 @@ class CompletionRateMetric(BaseMetric):
             completion_rate = completed / len(llm_labels)
         else:
             completion_rate = 0.0
-        self.value = [
+        value = [
             MetricResult(
                 name=MetricType.COMPLETION_RATE,
                 value=completion_rate,
             )
         ]
-        return self.value
+        return value

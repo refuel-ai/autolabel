@@ -5,8 +5,6 @@ from autolabel.schema import LLMAnnotation, MetricResult
 
 
 class BaseMetric(ABC):
-    value: List[MetricResult]
-
     def __init__(self) -> None:
         super().__init__()
 
