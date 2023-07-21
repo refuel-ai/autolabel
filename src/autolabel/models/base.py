@@ -23,7 +23,7 @@ class BaseModel(ABC):
         existing_prompts = {}
         missing_prompt_idxs = list(range(len(prompts)))
         missing_prompts = prompts
-        cost = 0.0
+        costs = []
         errors = [None for i in range(len(prompts))]
         if self.cache:
             (
@@ -36,8 +36,8 @@ class BaseModel(ABC):
         if len(missing_prompts) > 0:
             new_results = self._label(missing_prompts)
             for ind, prompt in enumerate(missing_prompts):
-                cost += self.get_cost(
-                    prompt, label=new_results.generations[ind][0].text
+                costs.append(
+                    self.get_cost(prompt, label=new_results.generations[ind][0].text)
                 )
 
             # Set the existing prompts to the new results
@@ -51,7 +51,7 @@ class BaseModel(ABC):
                 self.update_cache(missing_prompt_idxs, new_results, prompts)
 
         generations = [existing_prompts[i] for i in range(len(prompts))]
-        return RefuelLLMResult(generations=generations, cost=cost, errors=errors)
+        return RefuelLLMResult(generations=generations, costs=costs, errors=errors)
 
     def _label_individually(self, prompts: List[str]) -> RefuelLLMResult:
         """Label each prompt individually. Should be used only after trying as a batch first.

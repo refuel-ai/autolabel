@@ -187,7 +187,7 @@ class LabelingAgent:
                     self.task_run.id,
                 )
 
-            cost += response.cost
+            cost += sum(response.costs)
             postfix_dict[self.COST_KEY] = f"{cost:.2f}"
 
             # Evaluate the task every eval_every examples

@@ -201,4 +201,4 @@ class RefuelLLMResult(BaseModel):
     errors: List[Optional[LabelingError]]
 
     """Costs incurred during the labeling job"""
-    cost: Optional[float] = 0.0
+    costs: Optional[List[float]] = []
