@@ -8,7 +8,8 @@ from rich.prompt import Prompt, IntPrompt, Confirm
 
 import pandas as pd
 
-from autolabel.configs import AutolabelConfig
+from autolabel.configs import AutolabelConfig as ALC
+from autolabel.configs.schema import schema
 from autolabel.schema import TaskType, FewShotAlgorithm, ModelProvider
 from autolabel.data_loaders import DatasetLoader
 from autolabel.models import ModelFactory
@@ -20,7 +21,50 @@ DEFAULT_LABEL_COLUMN = "label"
 DEFAULT_EXAMPLE_TEMPLATE = "Example: {example}\nLabel: {label}"
 
 
-def _create_dataset_config(task_type: TaskType, seed: Optional[str] = None) -> Dict:
+DEFAULT_CONFIG = {
+    "dataset": {
+        "delimiter": ",",
+        "text_column": "example",
+        "label_column": "label",
+    },
+    "prompt": {
+        "task_guidelines": "Classify the examples into one of the following labels: {labels}",
+        "few_shot_examples": "seed.csv",
+        "few_shot_selection": "fixed",
+        "few_shot_num": 5,
+        "example_template": "Example: {example}\nLabel: {label}",
+        "chain_of_thought": False,
+    },
+    "model": {
+        "provider": "openai",
+        "name": "gpt-3.5-turbo",
+    },
+}
+
+
+def _get_sub_config(key: str, **kwargs) -> Dict:
+    config = {}
+    for p in schema["properties"][key]["properties"]:
+        if p in kwargs:
+            config[p] = kwargs[p]
+    return {**DEFAULT_CONFIG[key], **config}
+
+
+def create_config(task_name: str, task_type: str, seed: Optional[str] = None, **kwargs):
+    try:
+        TaskType(task_type)
+    except ValueError:
+        print(f"[red]Invalid task type: {task_type}[/red]")
+        raise typer.Abort()
+    config = {ALC.TASK_NAME_KEY: task_name, ALC.TASK_TYPE_KEY: task_type}
+    config[ALC.DATASET_CONFIG_KEY] = _get_sub_config("dataset", **kwargs)
+    config[ALC.MODEL_CONFIG_KEY] = _get_sub_config("model", **kwargs)
+    config[ALC.PROMPT_CONFIG_KEY] = _get_sub_config("prompt", **kwargs)
+
+
+def _create_dataset_config_wizard(
+    task_type: TaskType, seed: Optional[str] = None
+) -> Dict:
     print("[bold]Dataset Configuration[/bold]")
     dataset_config = {}
 
@@ -39,41 +83,81 @@ def _create_dataset_config(task_type: TaskType, seed: Optional[str] = None) -> D
         "Enter the delimiter",
         default=detected_delimiter,
     )
-    dataset_config[AutolabelConfig.DELIMITER_KEY] = delimiter
+    dataset_config[ALC.DELIMITER_KEY] = delimiter
 
     label_column = Prompt.ask(
         "Enter the label column name", default=DEFAULT_LABEL_COLUMN
     )
-    dataset_config[AutolabelConfig.LABEL_COLUMN_KEY] = label_column
+    dataset_config[ALC.LABEL_COLUMN_KEY] = label_column
 
     explanation_column = Prompt.ask(
         "Enter the explanation column name (optional)", default=None
     )
     if explanation_column:
-        dataset_config[AutolabelConfig.EXPLANATION_COLUMN_KEY] = explanation_column
+        dataset_config[ALC.EXPLANATION_COLUMN_KEY] = explanation_column
 
     if task_type == TaskType.MULTILABEL_CLASSIFICATION:
         label_separator = Prompt.ask(
             "Enter the label separator",
             default=";",
         )
-        dataset_config[AutolabelConfig.LABEL_SEPARATOR_KEY] = label_separator
+        dataset_config[ALC.LABEL_SEPARATOR_KEY] = label_separator
 
     return dataset_config
 
 
-def _create_prompt_config(config: Dict, seed: Optional[str] = None) -> Dict:
+def _create_model_config_wizard() -> Dict:
+    print("[bold]Model Configuration[/bold]")
+    model_config = {}
+
+    model_config[ALC.PROVIDER_KEY] = Prompt.ask(
+        "Enter the model provider",
+        choices=[p for p in ModelProvider],
+    )
+
+    model_config[ALC.MODEL_NAME_KEY] = Prompt.ask("Enter the model name")
+
+    model_params = {}
+    model_param = Prompt.ask(
+        "Enter a model parameter name (or leave blank for none)",
+        default=None,
+    )
+    while model_param:
+        model_param_value = Prompt.ask(
+            f"Enter the value for {model_param}",
+        )
+        model_params[model_param] = model_param_value
+        model_param = Prompt.ask(
+            "Enter a model parameter name (or leave blank to finish)",
+            default=None,
+        )
+
+    if model_params:
+        model_config[ALC.MODEL_PARAMS_KEY] = model_params
+
+    model_config[ALC.COMPUTE_CONFIDENCE_KEY] = Confirm.ask(
+        "Should the model compute confidence?", default=False
+    )
+
+    model_config[ALC.LOGIT_BIAS_KEY] = Confirm.ask(
+        "Should the model use logit bias?", default=False
+    )
+
+    return model_config
+
+
+def _create_prompt_config_wizard(config: Dict, seed: Optional[str] = None) -> Dict:
     print("[bold]Prompt Configuration[/bold]")
     prompt_config = {}
 
     if seed:
-        unvalidated_config = AutolabelConfig(config, validate=False)
+        unvalidated_config = ALC(config, validate=False)
         dataset_loader = DatasetLoader(seed, unvalidated_config, validate=False)
 
-    prompt_config[AutolabelConfig.TASK_GUIDELINE_KEY] = Prompt.ask(
+    prompt_config[ALC.TASK_GUIDELINE_KEY] = Prompt.ask(
         "Enter the task guidelines",
         default=TASK_TYPE_TO_IMPLEMENTATION[
-            TaskType(config[AutolabelConfig.TASK_TYPE_KEY])
+            TaskType(config[ALC.TASK_TYPE_KEY])
         ].DEFAULT_TASK_GUIDELINES,
     ).replace("\\n", "\n")
 
@@ -85,7 +169,7 @@ def _create_prompt_config(config: Dict, seed: Optional[str] = None) -> Dict:
     if seed_labels and Confirm.ask(
         f"Detected {len(seed_labels)} unique labels in seed dataset. Use these labels?"
     ):
-        prompt_config[AutolabelConfig.VALID_LABELS_KEY] = seed_labels
+        prompt_config[ALC.VALID_LABELS_KEY] = seed_labels
     else:
         labels = []
         label = Prompt.ask("Enter a valid label (or leave blank for none)")
@@ -93,9 +177,9 @@ def _create_prompt_config(config: Dict, seed: Optional[str] = None) -> Dict:
             labels.append(label)
             label = Prompt.ask("Enter a valid label (or leave blank to finish)")
         if labels:
-            prompt_config[AutolabelConfig.VALID_LABELS_KEY] = labels
+            prompt_config[ALC.VALID_LABELS_KEY] = labels
 
-    prompt_config[AutolabelConfig.EXAMPLE_TEMPLATE_KEY] = Prompt.ask(
+    prompt_config[ALC.EXAMPLE_TEMPLATE_KEY] = Prompt.ask(
         "Enter the example template",
         default=DEFAULT_EXAMPLE_TEMPLATE,
     ).replace("\\n", "\n")
@@ -103,11 +187,11 @@ def _create_prompt_config(config: Dict, seed: Optional[str] = None) -> Dict:
     # get variable names from example template f string
     example_template_variables = [
         v.split("}")[0].split("{")[1]
-        for v in prompt_config[AutolabelConfig.EXAMPLE_TEMPLATE_KEY].split(" ")
+        for v in prompt_config[ALC.EXAMPLE_TEMPLATE_KEY].split(" ")
         if "{" in v and "}" in v
     ]
     if (
-        config[AutolabelConfig.DATASET_CONFIG_KEY][AutolabelConfig.LABEL_COLUMN_KEY]
+        config[ALC.DATASET_CONFIG_KEY][ALC.LABEL_COLUMN_KEY]
         not in example_template_variables
     ):
         print(
@@ -116,7 +200,7 @@ def _create_prompt_config(config: Dict, seed: Optional[str] = None) -> Dict:
         raise typer.Abort()
 
     if seed and Confirm.ask(f"Use {seed} as few shot example dataset?"):
-        prompt_config[AutolabelConfig.FEW_SHOT_EXAMPLE_SET_KEY] = seed
+        prompt_config[ALC.FEW_SHOT_EXAMPLE_SET_KEY] = seed
     else:
         few_shot_example_set = []
         example = Prompt.ask(
@@ -139,20 +223,16 @@ def _create_prompt_config(config: Dict, seed: Optional[str] = None) -> Dict:
                 f"Enter the value for {example_template_variables[0]} {'or row number ' if seed else ''}(or leave blank to finish)"
             )
         if few_shot_example_set:
-            prompt_config[
-                AutolabelConfig.FEW_SHOT_EXAMPLE_SET_KEY
-            ] = few_shot_example_set
+            prompt_config[ALC.FEW_SHOT_EXAMPLE_SET_KEY] = few_shot_example_set
 
-    if AutolabelConfig.FEW_SHOT_EXAMPLE_SET_KEY in prompt_config:
-        prompt_config[AutolabelConfig.FEW_SHOT_SELECTION_ALGORITHM_KEY] = Prompt.ask(
+    if ALC.FEW_SHOT_EXAMPLE_SET_KEY in prompt_config:
+        prompt_config[ALC.FEW_SHOT_SELECTION_ALGORITHM_KEY] = Prompt.ask(
             "Enter the few shot selection algorithm",
             choices=[a for a in FewShotAlgorithm],
         )
-        prompt_config[AutolabelConfig.FEW_SHOT_NUM_KEY] = IntPrompt.ask(
+        prompt_config[ALC.FEW_SHOT_NUM_KEY] = IntPrompt.ask(
             "Enter the number of few shot examples to use",
-            default=min(
-                len(prompt_config[AutolabelConfig.FEW_SHOT_EXAMPLE_SET_KEY]), 5
-            ),
+            default=min(len(prompt_config[ALC.FEW_SHOT_EXAMPLE_SET_KEY]), 5),
         )
 
     output_guideline = Prompt.ask(
@@ -160,85 +240,46 @@ def _create_prompt_config(config: Dict, seed: Optional[str] = None) -> Dict:
         default=None,
     )
     if output_guideline:
-        prompt_config[AutolabelConfig.OUTPUT_GUIDELINE_KEY] = output_guideline
+        prompt_config[ALC.OUTPUT_GUIDELINE_KEY] = output_guideline
 
     output_format = Prompt.ask(
         "Enter the output format (optional)",
         default=None,
     )
     if output_format:
-        prompt_config[AutolabelConfig.OUTPUT_FORMAT_KEY] = output_format
+        prompt_config[ALC.OUTPUT_FORMAT_KEY] = output_format
 
-    prompt_config[AutolabelConfig.CHAIN_OF_THOUGHT_KEY] = Confirm.ask(
+    prompt_config[ALC.CHAIN_OF_THOUGHT_KEY] = Confirm.ask(
         "Should the prompt use a chain of thought?", default=False
     )
 
     return prompt_config
 
 
-def _create_model_config() -> Dict:
-    print("[bold]Model Configuration[/bold]")
-    model_config = {}
-
-    model_config[AutolabelConfig.PROVIDER_KEY] = Prompt.ask(
-        "Enter the model provider",
-        choices=[p for p in ModelProvider],
-    )
-
-    model_config[AutolabelConfig.MODEL_NAME_KEY] = Prompt.ask("Enter the model name")
-
-    model_params = {}
-    model_param = Prompt.ask(
-        "Enter a model parameter name (or leave blank for none)",
-        default=None,
-    )
-    while model_param:
-        model_param_value = Prompt.ask(
-            f"Enter the value for {model_param}",
-        )
-        model_params[model_param] = model_param_value
-        model_param = Prompt.ask(
-            "Enter a model parameter name (or leave blank to finish)",
-            default=None,
-        )
-
-    if model_params:
-        model_config[AutolabelConfig.MODEL_PARAMS_KEY] = model_params
-
-    model_config[AutolabelConfig.COMPUTE_CONFIDENCE_KEY] = Confirm.ask(
-        "Should the model compute confidence?", default=False
-    )
-
-    model_config[AutolabelConfig.LOGIT_BIAS_KEY] = Confirm.ask(
-        "Should the model use logit bias?", default=False
-    )
-
-    return model_config
-
-
-def create_config(seed: Optional[str] = None):
+def create_config_wizard(task_name: str, task_type: str, seed: Optional[str] = None):
     """Create a new task [bold]config[/bold] file"""
     config = {}
-    config[AutolabelConfig.TASK_NAME_KEY] = Prompt.ask("Enter the task name")
-    config[AutolabelConfig.TASK_TYPE_KEY] = Prompt.ask(
-        "Enter the task type", choices=[t for t in TaskType]
-    )
+    config[ALC.TASK_NAME_KEY] = task_name
+    try:
+        TaskType(task_type)
+        config[ALC.TASK_TYPE_KEY] = task_type
+    except ValueError:
+        print(f"[red]Invalid task type: {task_type}[/red]")
+        raise typer.Abort()
 
-    config[AutolabelConfig.DATASET_CONFIG_KEY] = _create_dataset_config(
-        config[AutolabelConfig.TASK_TYPE_KEY], seed
+    config[ALC.DATASET_CONFIG_KEY] = _create_dataset_config_wizard(
+        config[ALC.TASK_TYPE_KEY], seed
     )
-    config[AutolabelConfig.PROMPT_CONFIG_KEY] = _create_prompt_config(config, seed)
-    config[AutolabelConfig.MODEL_CONFIG_KEY] = _create_model_config()
+    config[ALC.MODEL_CONFIG_KEY] = _create_model_config_wizard()
+    config[ALC.PROMPT_CONFIG_KEY] = _create_prompt_config_wizard(config, seed)
 
     print(config)
     try:
-        AutolabelConfig(config)
+        ALC(config)
     except Exception as e:
         print(f"error validating config: {e}")
         if Confirm.ask("Would you like to fix the config?"):
             config = create_config(seed)
-    print(f"Writing config to {config[AutolabelConfig.TASK_NAME_KEY]}_config.json")
-    with open(
-        f"{config[AutolabelConfig.TASK_NAME_KEY]}_config.json", "w"
-    ) as config_file:
+    print(f"Writing config to {config[ALC.TASK_NAME_KEY]}_config.json")
+    with open(f"{config[ALC.TASK_NAME_KEY]}_config.json", "w") as config_file:
         json.dump(config, config_file, indent=4)
