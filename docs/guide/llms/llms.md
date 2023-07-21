@@ -139,7 +139,7 @@ Sequence2Sequence Language Models:
 Causal Language Models:
 * `gpt2`
 * `openlm-research/open_llama_3b`
-* `meta-llama/Llama-2-70b`
+* `meta-llama/Llama-2-7b`
 
 
 This will run the model locally on a GPU (if available). You can also specify  quantization strategy to load larger models in lower precision (and thus decreasing memory requirements).
@@ -193,7 +193,6 @@ These parameters can be passed in via the `params` dictionary under `model`. Her
 },
 ```
 
-#### Llama 2
 To use Llama 2, you can use the following model configuration:
 ```python
 "model": {
@@ -395,7 +394,7 @@ The table lists out all the provider, model combinations that Autolabel supports
 | openai       | [gpt-4 models](https://platform.openai.com/docs/models/gpt-4)|
 | anthropic    | claude-v1         |
 | anthropic    | claude-instant-v1 |
-| huggingface_pipeline    | [seq2seq models](https://huggingface.co/learn/nlp-course/chapter1/7?fw=pt#sequencetosequence-modelssequencetosequencemodels) |
+| huggingface_pipeline    | [seq2seq models](https://huggingface.co/learn/nlp-course/chapter1/7?fw=pt#sequencetosequence-modelssequencetosequencemodels) and [causalLM models](https://huggingface.co/docs/transformers/tasks/language_modeling) |
 | refuel    | flan-t5-xxl |
 | google       | text-bison@001    |
 | google       | chat-bison@001    |
