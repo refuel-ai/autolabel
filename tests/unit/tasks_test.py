@@ -515,3 +515,59 @@ def test_multilabel_classification_eval():
             assert metric.value == 0.8
         elif metric.name == MetricType.SUPPORT:
             assert metric.value == 5
+
+
+def custom_metric_test():
+    config = AutolabelConfig(TWITTER_EMOTION_DETECTION_CONFIG)
+    task = MultilabelClassificationTask(config=config)
+    llm_labels = [
+        LLMAnnotation(
+            successfully_labeled=True,
+            label="neutral",
+            error=None,
+        ),
+        LLMAnnotation(
+            successfully_labeled=False,
+            label=task.NULL_LABEL_TOKEN,
+            error=LabelingError(
+                error_type=ErrorType.LLM_PROVIDER_ERROR,
+                error_message="No label provided",
+            ),
+        ),
+        LLMAnnotation(
+            successfully_labeled=True,
+            label="sadness",
+            error=None,
+        ),
+        LLMAnnotation(
+            successfully_labeled=True,
+            label="anger, disgust",
+            error=None,
+        ),
+        LLMAnnotation(
+            successfully_labeled=True,
+            label="joy, love, trust",
+            error=None,
+        ),
+    ]
+
+    gt_labels = [
+        "anger, disgust",
+        "joy, optimism, trust",
+        "anticipation, joy, sadness",
+        "anger, disgust",
+        "joy, optimism",
+    ]
+
+    from autolabel.metrics import BaseMetric
+    from autolabel.schema import MetricResult
+
+    class NewMetric(BaseMetric):
+        def compute(self, llm_labels, gt_labels):
+            return [MetricResult(name="new_metric", value=0.25)]
+
+    eval = task.eval(llm_labels, gt_labels, additional_metrics=[NewMetric()])
+
+    for metric in eval:
+        if metric.name == "new_metric":
+            assert metric.value == 0.25
