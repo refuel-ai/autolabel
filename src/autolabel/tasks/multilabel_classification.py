@@ -132,6 +132,6 @@ class MultilabelClassificationTask(BaseTask):
 
         eval_metrics = []
         for metric in self.metrics + additional_metrics:
-            eval_metrics.append(metric.compute(llm_labels, gt_labels))
+            eval_metrics.extend(metric.compute(llm_labels, gt_labels))
 
         return eval_metrics

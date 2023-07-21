@@ -18,6 +18,7 @@ from autolabel.data_models import AnnotationModel, TaskRunModel
 from autolabel.database import StateManager
 from autolabel.few_shot import ExampleSelectorFactory
 from autolabel.models import BaseModel, ModelFactory
+from autolabel.metrics import BaseMetric
 from autolabel.schema import (
     LLMAnnotation,
     MetricResult,
@@ -64,6 +65,7 @@ class LabelingAgent:
         output_name: Optional[str] = None,
         start_index: Optional[int] = 0,
         eval_every: Optional[int] = 50,
+        additional_metrics: Optional[List[BaseMetric]] = None,
     ) -> Tuple[pd.Series, pd.DataFrame, List[MetricResult]]:
         """Labels data in a given dataset. Output written to new CSV file.
 
@@ -227,10 +229,10 @@ class LabelingAgent:
             table = {}
             # TODO: serialize and write to file
             for m in eval_result:
-                if isinstance(m.value, list) and len(m.value) > 0:
-                    table[m.name] = m.value
+                if isinstance(m.value, list):
+                    continue
                 else:
-                    print(f"Metric: {m.name}: {maybe_round(m.value)}")
+                    table[m.name] = m.value
             print(f"Actual Cost: {maybe_round(cost)}")
             print_table(table, console=console, default_style=METRIC_TABLE_STYLE)
 
@@ -384,10 +386,11 @@ class LabelingAgent:
             eval_result = self.task.eval(llm_labels, gt_labels)
             table = {}
             for m in eval_result:
-                if isinstance(m.value, list) and len(m.value) > 0:
-                    table[m.name] = m.value
+                if isinstance(m.value, list):
+                    continue
                 else:
-                    print(f"Metric: {m.name}: {m.value}")
+                    table[m.name] = m.value
+
             print_table(table, console=console, default_style=METRIC_TABLE_STYLE)
         pprint(f"{task_run.current_index} examples labeled so far.")
         if len(llm_labels) > 0:

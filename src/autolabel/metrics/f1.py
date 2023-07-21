@@ -39,7 +39,7 @@ class F1Metric(BaseMetric):
         self.value = []
         for average in self.average:
             score = f1_score(
-                mlb.transform([x.split(self.sep) for x in gt_labels]),
+                mlb.transform([x.split(self.sep) for x in filtered_gt_labels]),
                 mlb.transform([x.split(self.sep) for x in filtered_llm_labels]),
                 average=average,
                 zero_division=0,
