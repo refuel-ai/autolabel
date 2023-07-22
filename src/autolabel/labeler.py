@@ -26,6 +26,7 @@ from autolabel.schema import (
 )
 from autolabel.tasks import TaskFactory
 from autolabel.utils import maybe_round, print_table, track, track_with_stats
+from autolabel.labeling_output import LabelingOutput
 
 console = Console()
 logger = logging.getLogger(__name__)
@@ -240,26 +241,11 @@ class LabelingAgent:
             print(f"Actual Cost: {maybe_round(cost)}")
             print_table(table, console=console, default_style=METRIC_TABLE_STYLE)
 
-        # Write output to CSV
-        output_df = dataset_loader.dat.copy()
-        output_df[self.config.task_name() + "_llm_labeled_successfully"] = [
-            l.successfully_labeled for l in llm_labels
-        ]
-        output_df[self.config.task_name() + "_llm_error"] = [
-            l.error for l in llm_labels
-        ]
-        output_df[self.config.task_name() + "_llm_label"] = [
-            l.label for l in llm_labels
-        ]
-        if self.config.confidence():
-            output_df[self.config.task_name() + "_llm_confidence"] = [
-                l.confidence_score for l in llm_labels
-            ]
-
-        if self.config.chain_of_thought():
-            output_df[self.config.task_name() + "_llm_explanation"] = [
-                l.explanation for l in llm_labels
-            ]
+        output = LabelingOutput(
+            df=dataset_loader.dat.copy(),
+            llm_labels=llm_labels,
+            metrics=eval_result,
+        )
 
         # Only save to csv if output_name is provided or dataset is a string
         if not output_name and isinstance(dataset, str):
@@ -268,29 +254,8 @@ class LabelingAgent:
             )
 
         if output_name:
-            if output_name.endswith(".csv"):
-                output_df.to_csv(
-                    str(output_name),
-                    sep=self.config.delimiter(),
-                    header=True,
-                    index=False,
-                )
-            elif output_name.endswith(".jsonl"):
-                output_df.to_json(
-                    str(output_name),
-                    orient="records",
-                    lines=True,
-                    force_ascii=False,
-                )
-            else:
-                raise ValueError(f"Unsupported output file format: {output_name}")
-
-        pprint(f"Total number of failures: {num_failures}")
-        return (
-            output_df[self.config.task_name() + "_llm_label"],
-            output_df,
-            eval_result,
-        )
+            output.save(output_file_name=output_name)
+        return output
 
     def plan(
         self,
