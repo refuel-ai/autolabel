@@ -1,4 +1,4 @@
-from typing import Optional, Dict
+from typing import Optional, Dict, List
 import csv
 import json
 
@@ -42,12 +42,65 @@ def _get_sub_config(key: str, **kwargs) -> Dict:
     config = {}
     for p in schema["properties"][key]["properties"]:
         if f"{key}_{p}" in kwargs and kwargs[f"{key}_{p}"] is not None:
-            config[p] = kwargs[f"{key}_{p}"]
+            if isinstance(kwargs[f"{key}_{p}"], str):
+                config[p] = kwargs[f"{key}_{p}"].replace("\\n", "\n")
+            else:
+                config[p] = kwargs[f"{key}_{p}"]
     return {**DEFAULT_CONFIG[key], **config}
 
 
+def _get_labels_from_seed(df: pd.DataFrame, config: Dict) -> List[str]:
+    try:
+        if config[ALC.TASK_TYPE_KEY] in [
+            TaskType.CLASSIFICATION.value,
+            TaskType.ENTITY_MATCHING.value,
+        ]:
+            return (
+                df[config[ALC.DATASET_CONFIG_KEY][ALC.LABEL_COLUMN_KEY]]
+                .unique()
+                .tolist()
+            )
+        elif config[ALC.TASK_TYPE_KEY] == TaskType.NAMED_ENTITY_RECOGNITION.value:
+            return list(
+                pd.json_normalize(
+                    df[config[ALC.DATASET_CONFIG_KEY][ALC.LABEL_COLUMN_KEY]].apply(
+                        json.loads
+                    )
+                ).columns
+            )
+        elif config[ALC.TASK_TYPE_KEY] == TaskType.MULTILABEL_CLASSIFICATION.value:
+            return (
+                df[config[ALC.DATASET_CONFIG_KEY][ALC.LABEL_COLUMN_KEY]]
+                .str.split(config[ALC.DATASET_CONFIG_KEY][ALC.LABEL_SEPARATOR_KEY])
+                .explode()
+                .unique()
+                .tolist()
+            )
+    except Exception:
+        return []
+
+
+def _get_example_template_from_seed(df: pd.DataFrame, config: Dict) -> str:
+    return "\n".join(
+        map(
+            lambda x: f"{x.replace(' ', '_').capitalize()}: {{{x}}}",
+            list(
+                filter(
+                    lambda x: x != config[ALC.DATASET_CONFIG_KEY][ALC.LABEL_COLUMN_KEY],
+                    df.columns.tolist(),
+                    # )
+                )
+            )
+            + [config[ALC.DATASET_CONFIG_KEY][ALC.LABEL_COLUMN_KEY]],
+        )
+    )
+
+
 def create_config(
-    task_name: str, seed: Optional[str] = None, task_type: str = None, **kwargs
+    task_name: str,
+    seed: Optional[str] = None,
+    task_type: Optional[str] = None,
+    **kwargs,
 ):
     if not task_type:
         task_type = enquiries.choose(
@@ -57,9 +110,14 @@ def create_config(
     try:
         TaskType(task_type)
     except ValueError:
-        print(f"[ƒred]Invalid task type: {task_type}[/red]")
+        print(f"[red]Invalid task type: {task_type}[/red]")
         raise typer.Abort()
     config = {ALC.TASK_NAME_KEY: task_name, ALC.TASK_TYPE_KEY: task_type}
+    if (
+        task_type == TaskType.MULTILABEL_CLASSIFICATION.value
+        and kwargs["dataset_label_separator"] is None
+    ):
+        kwargs["dataset_label_separator"] = ";"
     config[ALC.DATASET_CONFIG_KEY] = _get_sub_config("dataset", **kwargs)
     config[ALC.MODEL_CONFIG_KEY] = _get_sub_config("model", **kwargs)
     if (
@@ -69,7 +127,34 @@ def create_config(
         kwargs["prompt_task_guidelines"] = TASK_TYPE_TO_IMPLEMENTATION[
             task_type
         ].DEFAULT_TASK_GUIDELINES
-    # TODO: add automatic label detection to fill the labels list for any task that requires it
+
+    if seed:
+        try:
+            df = pd.read_csv(
+                seed,
+                delimiter=config[ALC.DATASET_CONFIG_KEY][ALC.DELIMITER_KEY],
+                nrows=100,
+            )
+            if config[ALC.DATASET_CONFIG_KEY][ALC.LABEL_COLUMN_KEY] not in df.columns:
+                config[ALC.DATASET_CONFIG_KEY][ALC.LABEL_COLUMN_KEY] = enquiries.choose(
+                    "Choose the label column",
+                    df.columns.tolist(),
+                )
+            labels = _get_labels_from_seed(df, config)
+            if labels:
+                kwargs["prompt_labels"] = labels
+
+            if (
+                "prompt_example_template" not in kwargs
+                or kwargs["prompt_example_template"] is None
+            ):
+                kwargs["prompt_example_template"] = _get_example_template_from_seed(
+                    df, config
+                )
+        except Exception:
+            pass
+
+    # TODO: add automatic example template generation
     config[ALC.PROMPT_CONFIG_KEY] = _get_sub_config("prompt", **kwargs)
 
     print(config)
@@ -291,7 +376,12 @@ def _create_prompt_config_wizard(config: Dict, seed: Optional[str] = None) -> Di
     return prompt_config
 
 
-def create_config_wizard(task_name: str, seed: Optional[str] = None, **kwargs):
+def create_config_wizard(
+    task_name: str,
+    seed: Optional[str] = None,
+    task_type: Optional[str] = None,
+    **kwargs,
+):
     """Create a new task [bold]config[/bold] file"""
     config = {ALC.TASK_NAME_KEY: task_name}
     if not task_type:

@@ -90,7 +90,7 @@ def create_config_command(
             rich_help_panel="Model Configuration",
         ),
     ] = "openai",
-    model_model_name: Annotated[
+    model_name: Annotated[
         str,
         typer.Option(
             "--model",
@@ -229,7 +229,7 @@ def create_config_command(
             dataset_text_column=dataset_text_column,
             dataset_delimiter=dataset_delimiter,
             model_provider=model_provider,
-            model_model_name=model_model_name,
+            model_name=model_name,
             model_compute_confidence=model_compute_confidence,
             model_logit_bias=model_logit_bias,
             embedding_provider=embedding_provider,
