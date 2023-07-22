@@ -62,7 +62,7 @@ class LabelingAgent:
         output_name: Optional[str] = None,
         start_index: Optional[int] = 0,
         eval_every: Optional[int] = 50,
-        additional_metrics: Optional[List[BaseMetric]] = None,
+        additional_metrics: Optional[List[BaseMetric]] = [],
     ) -> Tuple[pd.Series, pd.DataFrame, List[MetricResult]]:
         """Labels data in a given dataset. Output written to new CSV file.
 

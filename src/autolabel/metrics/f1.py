@@ -41,7 +41,7 @@ class F1Metric(BaseMetric):
             score = f1_score(
                 mlb.transform([x.split(self.sep) for x in filtered_gt_labels]),
                 mlb.transform([x.split(self.sep) for x in filtered_llm_labels]),
-                average=average,
+                average=average.split("_")[-1],
                 zero_division=0,
             )
             value.append(MetricResult(name=average, value=score))
