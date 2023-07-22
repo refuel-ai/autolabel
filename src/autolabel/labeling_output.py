@@ -1,14 +1,8 @@
 from typing import List, Optional
 import pandas as pd
-import json
 
 from autolabel.schema import MetricResult, LLMAnnotation
 from autolabel.configs import AutolabelConfig
-from autolabel.tasks import TaskFactory
-from autolabel.utils import print_table
-from rich.console import Console
-
-METRIC_TABLE_STYLE = "cyan bold"
 
 
 class LabelingOutput:
@@ -27,7 +21,6 @@ class LabelingOutput:
         self.df = df
         self.metrics = metrics
         self.prefix = self.config.task_name() + "_"
-        self.task = TaskFactory.from_config(self.config)
 
         if llm_labels is not None:
             self.add_columns_to_df(llm_labels)
@@ -91,26 +84,6 @@ class LabelingOutput:
         else:
             raise ValueError(f"Unsupported output file format: {output_file_name}")
 
-    def filter(self, label=None, ground_truth=None, filter_func=None):
-        filtered_df = self.df
-
-        if label:
-            filtered_df = filtered_df[filtered_df[self.prefix + "label"] == label]
-
-        if ground_truth:
-            filtered_df = filtered_df[
-                filtered_df[self.config.label_column()] == ground_truth
-            ]
-
-        if filter_func:
-            filtered_df = filtered_df.apply(filter_func, axis=1)
-
-        return LabelingOutput(
-            self.config,
-            filtered_df,
-            self.metrics,
-        )
-
     def errors(self):
         filtered_df = self.df[self.df[self.prefix + "error"].notnull()]
         return LabelingOutput(
@@ -128,7 +101,7 @@ class LabelingOutput:
         )
 
     def mistakes(self, label: str = None, ground_truth: str = None):
-        gt_label_column = self.config.label_column()
+        gt_label_column = self.config().label_column()
 
         if gt_label_column is None:
             raise ValueError(
@@ -152,7 +125,7 @@ class LabelingOutput:
         )
 
     def correct(self):
-        gt_label_column = self.config.label_column()
+        gt_label_column = self.config().label_column()
 
         if gt_label_column is None:
             raise ValueError("Cannot compute correct without ground truth label column")
@@ -167,7 +140,7 @@ class LabelingOutput:
         )
 
     def correct_and_confident(self, threshold: float = 0.5):
-        gt_label_column = self.config.label_column()
+        gt_label_column = self.config().label_column()
 
         if gt_label_column is None:
             raise ValueError("Cannot compute correct without ground truth label column")
@@ -186,26 +159,3 @@ class LabelingOutput:
             filtered_df,
             self.metrics,
         )
-
-    def eval(self):
-        gt_label_column = self.config.label_column()
-
-        if gt_label_column is None:
-            raise ValueError("Cannot compute eval without ground truth label column")
-
-        gt_labels = self.df[gt_label_column]
-        llm_labels = [
-            LLMAnnotation(**json.loads(x))
-            for x in self.df[self.prefix + "annotation"].tolist()
-        ]
-
-        metrics = self.task.eval(llm_labels, gt_labels)
-
-        table = {}
-        for metric in metrics:
-            if not isinstance(metric.value, list):
-                table[metric.name] = metric.value
-
-        print_table(table, console=Console(), default_style=METRIC_TABLE_STYLE)
-
-        return metrics
