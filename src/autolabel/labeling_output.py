@@ -101,7 +101,7 @@ class LabelingOutput:
         )
 
     def mistakes(self, label: str = None, ground_truth: str = None):
-        gt_label_column = self.config().label_column()
+        gt_label_column = self.config.label_column()
 
         if gt_label_column is None:
             raise ValueError(
@@ -125,7 +125,7 @@ class LabelingOutput:
         )
 
     def correct(self):
-        gt_label_column = self.config().label_column()
+        gt_label_column = self.config.label_column()
 
         if gt_label_column is None:
             raise ValueError("Cannot compute correct without ground truth label column")
@@ -140,7 +140,7 @@ class LabelingOutput:
         )
 
     def correct_and_confident(self, threshold: float = 0.5):
-        gt_label_column = self.config().label_column()
+        gt_label_column = self.config.label_column()
 
         if gt_label_column is None:
             raise ValueError("Cannot compute correct without ground truth label column")

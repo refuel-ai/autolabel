@@ -242,6 +242,7 @@ class LabelingAgent:
             print_table(table, console=console, default_style=METRIC_TABLE_STYLE)
 
         output = LabelingOutput(
+            config=self.config,
             df=dataset_loader.dat.copy(),
             llm_labels=llm_labels,
             metrics=eval_result,
