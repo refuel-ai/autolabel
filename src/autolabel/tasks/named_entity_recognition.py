@@ -5,13 +5,14 @@ from typing import Dict, List, Tuple
 from copy import deepcopy
 
 from langchain.schema import Generation
+from sklearn.metrics import roc_auc_score
 import logging
 from nervaluate import Evaluator
 from autolabel.confidence import ConfidenceCalculator
 from autolabel.configs import AutolabelConfig
 from autolabel.schema import (
     LLMAnnotation,
-    Metric,
+    MetricType,
     MetricResult,
     LabelingError,
     ErrorType,
@@ -226,8 +227,7 @@ class NamedEntityRecognitionTask(BaseTask):
         # f1 score
         eval_metrics.append(
             MetricResult(
-                metric_type=Metric.F1,
-                name=f"f1",
+                name=MetricType.F1,
                 value=results["exact"]["f1"],
             )
         )
@@ -241,19 +241,23 @@ class NamedEntityRecognitionTask(BaseTask):
         )
         eval_metrics.append(
             MetricResult(
-                metric_type=Metric.ACCURACY,
-                name=f"accuracy",
+                name=MetricType.ACCURACY,
                 value=accuracy,
             )
         )
 
-        eval_metrics.append(
-            MetricResult(
-                metric_type=Metric.SUPPORT,
-                name=f"support",
-                value=len(answered_gt_labels),
+        if self.config.confidence():
+            match, confidences = self.auroc_score_labels(
+                answered_gt_labels, answered_llm_preds
             )
-        )
+            auroc = roc_auc_score(match, confidences)
+            eval_metrics.append(
+                MetricResult(
+                    name=MetricType.AUROC,
+                    value=auroc,
+                )
+            )
+
         return eval_metrics
 
     def eval(
@@ -276,76 +280,46 @@ class NamedEntityRecognitionTask(BaseTask):
             for index in range(len(gt_labels))
         ]
 
-        eval_metrics_map = {
-            Metric.F1: [],
-            Metric.SUPPORT: [],
-            Metric.ACCURACY: [],
-            Metric.COMPLETION_RATE: [],
-        }
-        eval_metrics = []
-        thresholds = []
-
-        if self.config.confidence():
-            eval_metrics_map[Metric.THRESHOLD] = []
-            all_gt_labels, all_llm_preds = self.get_labels_predictions_with_threshold(
-                gt_labels, llm_labels, float("-inf")
-            )
-            labels, confidences = self.auroc_score_labels(all_gt_labels, all_llm_preds)
-            value, meaningful_thresholds = ConfidenceCalculator.compute_auroc(
-                labels, confidences
-            )
-            thresholds.extend(meaningful_thresholds)
-            eval_metrics.append(
-                MetricResult(
-                    metric_type=Metric.AUROC,
-                    name="auroc",
-                    value=value,
-                )
-            )
-        else:
-            thresholds.append(float("-inf"))
-
-        for index, threshold in enumerate(thresholds):
-            (
-                curr_gt_labels,
-                curr_llm_labels,
-            ) = self.get_labels_predictions_with_threshold(
-                gt_labels, llm_labels, threshold
-            )
-
-            entity_types_set = list(
-                set(
-                    [
-                        gt_entity.get("label")
-                        for gt_label in curr_gt_labels
-                        for gt_entity in gt_label
-                    ]
-                )
-            )
-
-            curr_threshold_metrics = self.run_metrics(
-                curr_gt_labels,
-                curr_llm_labels,
-                entity_types_set,
-            )
-
-            for metric in curr_threshold_metrics:
-                eval_metrics_map[metric.metric_type].append(metric.value)
-
-            eval_metrics_map[Metric.COMPLETION_RATE].append(
-                len(curr_llm_labels) / float(len(gt_labels))
-            )
-
-            if self.config.confidence():
-                eval_metrics_map[Metric.THRESHOLD].append(threshold)
-        eval_metrics.extend(
-            [
-                MetricResult(
-                    metric_type=i,
-                    name=i.value,
-                    value=eval_metrics_map[i],
-                )
-                for i in eval_metrics_map.keys()
-            ]
+        (
+            curr_gt_labels,
+            curr_llm_labels,
+        ) = self.get_labels_predictions_with_threshold(
+            gt_labels, llm_labels, float("-inf")
         )
+
+        entity_types_set = list(
+            set(
+                [
+                    gt_entity.get("label")
+                    for gt_label in curr_gt_labels
+                    for gt_entity in gt_label
+                ]
+            )
+        )
+
+        eval_metrics = []
+
+        eval_metrics.append(
+            MetricResult(
+                name=MetricType.SUPPORT,
+                value=len(gt_labels),
+            )
+        )
+
+        eval_metrics.append(
+            MetricResult(
+                name=MetricType.COMPLETION_RATE,
+                value=len(curr_llm_labels) / float(len(gt_labels))
+                if len(gt_labels) > 0
+                else 0.0,
+            )
+        )
+
+        curr_threshold_metrics = self.run_metrics(
+            curr_gt_labels,
+            curr_llm_labels,
+            entity_types_set,
+        )
+
+        eval_metrics.extend(curr_threshold_metrics)
         return eval_metrics

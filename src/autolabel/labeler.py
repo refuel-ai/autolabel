@@ -1,6 +1,5 @@
 import logging
 import os
-import sys
 from typing import Dict, List, Optional, Tuple, Union
 import json
 
@@ -18,13 +17,12 @@ from autolabel.data_models import AnnotationModel, TaskRunModel
 from autolabel.database import StateManager
 from autolabel.few_shot import ExampleSelectorFactory
 from autolabel.models import BaseModel, ModelFactory
+from autolabel.metrics import BaseMetric
 from autolabel.schema import (
     LLMAnnotation,
     MetricResult,
     TaskRun,
     TaskStatus,
-    LabelingError,
-    ErrorType,
 )
 from autolabel.tasks import TaskFactory
 from autolabel.utils import maybe_round, print_table, track, track_with_stats
@@ -64,6 +62,7 @@ class LabelingAgent:
         output_name: Optional[str] = None,
         start_index: Optional[int] = 0,
         eval_every: Optional[int] = 50,
+        additional_metrics: Optional[List[BaseMetric]] = [],
     ) -> Tuple[pd.Series, pd.DataFrame, List[MetricResult]]:
         """Labels data in a given dataset. Output written to new CSV file.
 
@@ -95,7 +94,10 @@ class LabelingAgent:
         if self.task_run:
             logger.info("Task run already exists.")
             self.task_run = self.handle_existing_task_run(
-                self.task_run, csv_file_name, gt_labels=dataset_loader.gt_labels
+                self.task_run,
+                csv_file_name,
+                gt_labels=dataset_loader.gt_labels,
+                additional_metrics=additional_metrics,
             )
         else:
             self.task_run = self.db.create_task_run(
@@ -198,18 +200,18 @@ class LabelingAgent:
                 llm_labels = [LLMAnnotation(**a.llm_annotation) for a in db_result]
                 if dataset_loader.gt_labels:
                     eval_result = self.task.eval(
-                        llm_labels, dataset_loader.gt_labels[: len(llm_labels)]
+                        llm_labels,
+                        dataset_loader.gt_labels[: len(llm_labels)],
+                        additional_metrics=additional_metrics,
                     )
 
                     for m in eval_result:
-                        if not isinstance(m.value, list) or len(m.value) < 1:
+                        # This is a row wise metric
+                        if isinstance(m.value, list):
                             continue
-                        elif isinstance(m.value[0], float):
-                            postfix_dict[m.name] = f"{m.value[0]:.4f}"
-                        elif isinstance(m.value[0], int):
-                            postfix_dict[m.name] = f"{m.value[0]}"
-                        elif len(m.value[0]) > 0:
-                            postfix_dict[m.name] = f"{m.value[0][0]:.4f}"
+                        postfix_dict[m.name] = (
+                            f"{m.value:.4f}" if isinstance(m.value, float) else m.value
+                        )
 
             # Update task run state
             self.task_run = self.save_task_run_state(
@@ -224,15 +226,17 @@ class LabelingAgent:
         # if true labels are provided, evaluate accuracy of predictions
         if dataset_loader.gt_labels:
             eval_result = self.task.eval(
-                llm_labels, dataset_loader.gt_labels[: len(llm_labels)]
+                llm_labels,
+                dataset_loader.gt_labels[: len(llm_labels)],
+                additional_metrics=additional_metrics,
             )
             table = {}
             # TODO: serialize and write to file
             for m in eval_result:
-                if isinstance(m.value, list) and len(m.value) > 0:
-                    table[m.name] = m.value
+                if isinstance(m.value, list):
+                    continue
                 else:
-                    print(f"Metric: {m.name}: {maybe_round(m.value)}")
+                    table[m.name] = m.value
             print(f"Actual Cost: {maybe_round(cost)}")
             print_table(table, console=console, default_style=METRIC_TABLE_STYLE)
 
@@ -366,7 +370,11 @@ class LabelingAgent:
         console.rule()
 
     def handle_existing_task_run(
-        self, task_run: TaskRun, csv_file_name: str, gt_labels: List[str] = None
+        self,
+        task_run: TaskRun,
+        csv_file_name: str,
+        gt_labels: List[str] = None,
+        additional_metrics: List[BaseMetric] = [],
     ) -> TaskRun:
         """
         Allows for continuing an existing labeling task. The user will be asked whether they wish to continue from where the run previously left off, or restart from the beginning.
@@ -383,13 +391,16 @@ class LabelingAgent:
         if gt_labels and len(llm_labels) > 0:
             pprint("Evaluating the existing task...")
             gt_labels = gt_labels[: len(llm_labels)]
-            eval_result = self.task.eval(llm_labels, gt_labels)
+            eval_result = self.task.eval(
+                llm_labels, gt_labels, additional_metrics=additional_metrics
+            )
             table = {}
             for m in eval_result:
-                if isinstance(m.value, list) and len(m.value) > 0:
-                    table[m.name] = m.value
+                if isinstance(m.value, list):
+                    continue
                 else:
-                    print(f"Metric: {m.name}: {m.value}")
+                    table[m.name] = m.value
+
             print_table(table, console=console, default_style=METRIC_TABLE_STYLE)
         pprint(f"{task_run.current_index} examples labeled so far.")
         if len(llm_labels) > 0:
