@@ -26,8 +26,13 @@ clean-pyc:
 clean-test:
 	rm -f .coverage
 	rm -f .coverage.*
+	rm -fr .pytest_cache
 
-clean: clean-pyc clean-test
+clean-build:
+	rm -fr build/
+	rm -fr dist/
+
+clean: clean-pyc clean-test clean-build
 
 test: clean
 	OPENAI_API_KEY=test_key ANTHROPIC_API_KEY=test_key REFUEL_API_KEY=test_key pytest
@@ -43,6 +48,7 @@ help:
 	@echo 'dev: install          autolabel from source with dev dependencies'
 	@echo 'clean-pyc:            remove Python file artifacts'
 	@echo 'clean-test:           remove test and coverage artifacts'
+	@echo 'clean-build:          remove build artifacts'
 	@echo 'clean:                remove all build, test and coverage artifacts'
 	@echo 'test:                 clean previous build and test artifacts, and run all tests'
 	@echo '----'
