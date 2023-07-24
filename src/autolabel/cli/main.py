@@ -28,13 +28,15 @@ def create_config_command(
     ],
     seed: Annotated[
         Optional[str],
-        typer.Argument(help="Optional seed dataset to help auto-fill the config."),
+        typer.Argument(
+            help="Optional seed dataset to help auto-fill the config. Recommended for a more accurate config"
+        ),
     ] = None,
     task_type: Annotated[
         str,
         typer.Option(
             "--type",
-            help=f"Type of task to create. Options: {', '.join([t for t in TaskType])}",
+            help=f"Type of task to create. Options: [magenta]{', '.join([t for t in TaskType])}[/magenta]",
             show_default=False,
         ),
     ] = None,
@@ -86,7 +88,7 @@ def create_config_command(
         str,
         typer.Option(
             "--provider",
-            help=f"Provider of the model to use. Options: {', '.join([p for p in ModelProvider])}",
+            help=f"Provider of the model to use. Options: [magenta]{', '.join([p for p in ModelProvider])}[/magenta]",
             rich_help_panel="Model Configuration",
         ),
     ] = "openai",
@@ -120,7 +122,7 @@ def create_config_command(
         str,
         typer.Option(
             "--embedding-provider",
-            help=f"Provider of the embedding model to use. Options: {', '.join([p for p in PROVIDER_TO_MODEL])}",
+            help=f"Provider of the embedding model to use. Options: [magenta]{', '.join([p for p in PROVIDER_TO_MODEL])}[/magenta]",
             show_default=False,
             rich_help_panel="Embedding Configuration",
         ),
@@ -138,7 +140,7 @@ def create_config_command(
         str,
         typer.Option(
             "--task-guidelines",
-            help='Guidelines for the task. "{labels}" will be replaced with a newline-separated list of labels',
+            help="Guidelines for the task. [code]{labels}[/code] will be replaced with a newline-separated list of labels",
             show_default=False,
             rich_help_panel="Prompt Configuration",
         ),
@@ -156,7 +158,7 @@ def create_config_command(
         str,
         typer.Option(
             "--example-selection",
-            help=f"What algorithm to use to select examples from the seed dataset. Options: {', '.join([a for a in FewShotAlgorithm])}",
+            help=f"What algorithm to use to select examples from the seed dataset. Options: [magenta]{', '.join([a for a in FewShotAlgorithm])}[/magenta]",
             show_default=False,
             rich_help_panel="Prompt Configuration",
         ),
@@ -174,7 +176,7 @@ def create_config_command(
         str,
         typer.Option(
             "--example-template",
-            help='Template to use for each example. "{column_name}" will be replaced with the corresponding column value for each example',
+            help="Template to use for each example. [code]{column_name}[/code] will be replaced with the corresponding column value for each example",
             show_default=False,
             rich_help_panel="Prompt Configuration",
         ),

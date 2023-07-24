@@ -88,7 +88,6 @@ def _get_example_template_from_seed(df: pd.DataFrame, config: Dict) -> str:
                 filter(
                     lambda x: x != config[ALC.DATASET_CONFIG_KEY][ALC.LABEL_COLUMN_KEY],
                     df.columns.tolist(),
-                    # )
                 )
             )
             + [config[ALC.DATASET_CONFIG_KEY][ALC.LABEL_COLUMN_KEY]],
