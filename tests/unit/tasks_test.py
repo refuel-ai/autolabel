@@ -6,6 +6,7 @@ from autolabel.tasks import (
     EntityMatchingTask,
     QuestionAnsweringTask,
     MultilabelClassificationTask,
+    NamedEntityRecognitionTask,
 )
 from autolabel.configs import AutolabelConfig
 from autolabel.schema import LLMAnnotation, MetricType, LabelingError, ErrorType
@@ -19,6 +20,8 @@ WALMART_AMAZON_CONFIG = json.load(
 )
 
 SCIQ_CONFIG = json.load(open("tests/assets/sciq/config_sciq.json", "r"))
+
+CONLL_CONFIG = json.load(open("tests/assets/conll2003/config_conll2003.json", "r"))
 
 TWITTER_EMOTION_DETECTION_CONFIG = json.load(
     open(
@@ -56,6 +59,48 @@ def test_classification_construct_prompt():
     for example in examples:
         assert example["example"] not in prompt
         assert example["label"] not in prompt
+
+
+def test_classification_no_label_column_in_input():
+    config = AutolabelConfig(BANKING_CONFIG)
+    task = ClassificationTask(config=config)
+    assert task.config != None
+
+    input = {"example": "Here is an example"}
+    examples = [
+        {"example": "Here is a seed example", "label": "label1"},
+        {"example": "Here is another seed example", "label": "label2"},
+    ]
+    prompt = task.construct_prompt(input, examples)
+
+    assert BANKING_CONFIG["prompt"]["output_guidelines"] in prompt
+    assert "\n".join(BANKING_CONFIG["prompt"]["labels"]) in prompt
+    assert input["example"] in prompt
+    for example in examples:
+        assert example["example"] in prompt
+        assert example["label"] in prompt
+
+
+def test_classification_no_label_column_in_config():
+    new_config = copy.deepcopy(BANKING_CONFIG)
+    new_config["dataset"]["label_column"] = None
+    config = AutolabelConfig(new_config)
+    task = ClassificationTask(config=config)
+    assert task.config != None
+
+    input = {"example": "Here is an example"}
+    examples = [
+        {"example": "Here is a seed example", "label": "label1"},
+        {"example": "Here is another seed example", "label": "label2"},
+    ]
+    prompt = task.construct_prompt(input, examples)
+
+    assert BANKING_CONFIG["prompt"]["output_guidelines"] in prompt
+    assert "\n".join(BANKING_CONFIG["prompt"]["labels"]) in prompt
+    assert input["example"] in prompt
+    for example in examples:
+        assert example["example"] in prompt
+        assert example["label"] in prompt
 
 
 def test_classification_parse_llm_response():
@@ -387,6 +432,64 @@ def test_question_answering_eval():
             assert metric.value == 0.8
         elif metric.name == MetricType.SUPPORT:
             assert metric.value == 5
+
+
+def ner_construct_prompt():
+    config = AutolabelConfig(CONLL_CONFIG)
+    task = NamedEntityRecognitionTask(config=config)
+    assert task.config != None
+
+    input = {
+        "example": "The role of the 70,000 mainly Kurdish village guards who fight Kurdistan Workers Party ( PKK ) guerrillas in the southeast has been questioned recently after media allegations that many of them are involved in common crime .",
+        "IndividualLabels": '[{"Description": "Miscellaneous", "Text": "Kurdish"}, {"Description": "Organization", "Text": "Kurdistan Workers Party"}, {"Description": "Organization", "Text": "PKK"}]',
+        "CategorizedLabels": '{"Location": [], "Organization": ["Kurdistan Workers Party", "PKK"], "Person": [], "Miscellaneous": ["Kurdish"]}',
+    }
+    examples = [
+        {
+            "example": "The head of the region 's main pro-state militia is at the centre of a security scandal that has shaken the government .",
+            "IndividualLabels": "[]",
+            "CategorizedLabels": '{"Location": [], "Organization": [], "Person": [], "Miscellaneous": []}',
+        },
+        {
+            "example": "More than 21,000 people have been killed in the 12-year-old conflict between Turkish security forces and the PKK , fighting for Kurdish autonomy or independence .",
+            "IndividualLabels": '[{"Description": "Miscellaneous", "Text": "Turkish"}, {"Description": "Organization", "Text": "PKK"}, {"Description": "Miscellaneous", "Text": "Kurdish"}]',
+            "CategorizedLabels": '{"Location": [], "Organization": ["PKK"], "Person": [], "Miscellaneous": ["Turkish", "Kurdish"]}',
+        },
+    ]
+    prompt = task.construct_prompt(input, examples)
+
+    assert input["example"] in prompt
+    assert task._json_to_llm_format(input["CategorizedLabels"]) in prompt
+    for example in examples:
+        assert example["example"] in prompt
+        assert task._json_to_llm_format(example["CategorizedLabels"]) in prompt
+
+
+def ner_parse_llm_response():
+    config = AutolabelConfig(SCIQ_CONFIG)
+    task = NamedEntityRecognitionTask(config=config)
+
+    input = {
+        "example": "The role of the 70,000 mainly Kurdish village guards who fight Kurdistan Workers Party ( PKK ) guerrillas in the southeast has been questioned recently after media allegations that many of them are involved in common crime .",
+        "IndividualLabels": '[{"Description": "Miscellaneous", "Text": "Kurdish"}, {"Description": "Organization", "Text": "Kurdistan Workers Party"}, {"Description": "Organization", "Text": "PKK"}]',
+        "CategorizedLabels": '{"Location": [], "Organization": ["Kurdistan Workers Party", "PKK"], "Person": [], "Miscellaneous": ["Kurdish"]}',
+    }
+    prompt = "This is a prompt"
+
+    label = task._json_to_llm_format(input["CategorizedLabels"])
+    response = Generation(text=label)
+    parsed = task.parse_llm_response(response, input, prompt)
+    assert parsed.label == input["CategorizedLabels"]
+    assert parsed.successfully_labeled == True
+    assert parsed.raw_response == label
+    assert parsed.error is None
+
+    label = ""
+    response = Generation(text=label)
+    parsed = task.parse_llm_response(response, input, prompt)
+    assert parsed.label == task.NULL_LABEL_TOKEN
+    assert parsed.successfully_labeled == False
+    assert parsed.error is not None
 
 
 def test_classification_labels_not_in_labels_list():
