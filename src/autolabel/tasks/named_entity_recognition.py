@@ -1,7 +1,7 @@
 import json
 import re
 from collections import defaultdict
-from typing import Dict, List, Tuple
+from typing import Dict, List, Tuple, Optional
 from copy import deepcopy
 
 from langchain.schema import Generation
@@ -18,6 +18,7 @@ from autolabel.schema import (
     ErrorType,
 )
 from autolabel.tasks import BaseTask
+from autolabel.metrics import BaseMetric
 
 logger = logging.getLogger(__name__)
 
@@ -261,7 +262,10 @@ class NamedEntityRecognitionTask(BaseTask):
         return eval_metrics
 
     def eval(
-        self, llm_labels: List[LLMAnnotation], gt_labels: List[str]
+        self,
+        llm_labels: List[LLMAnnotation],
+        gt_labels: List[str],
+        additional_metrics: Optional[List[BaseMetric]] = [],
     ) -> List[MetricResult]:
         """Evaluate the LLM generated labels by comparing them against ground truth
 
