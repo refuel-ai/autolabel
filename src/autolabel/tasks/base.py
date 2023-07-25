@@ -1,7 +1,7 @@
 """Base interface that all prediction tasks will implement."""
 
 from abc import ABC, abstractmethod
-from typing import Dict, List
+from typing import Dict, List, Optional
 import logging
 import json
 
@@ -17,6 +17,7 @@ from autolabel.schema import (
     ErrorType,
 )
 from autolabel.utils import get_format_variables, extract_valid_json_substring
+from autolabel.metrics import BaseMetric
 
 logger = logging.getLogger(__name__)
 
@@ -60,7 +61,12 @@ class BaseTask(ABC):
         pass
 
     @abstractmethod
-    def eval(self, llm_labels: List, gt_labels: List) -> List[MetricResult]:
+    def eval(
+        self,
+        llm_labels: List,
+        gt_labels: List,
+        additional_metrics: Optional[List[BaseMetric]] = [],
+    ) -> List[MetricResult]:
         pass
 
     @abstractmethod

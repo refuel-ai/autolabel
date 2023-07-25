@@ -51,11 +51,11 @@ schema = {
         "dataset": {
             "type": "object",
             "properties": {
-                "label_column": {"type": "string"},
-                "label_separator": {"type": "string"},
-                "text_column": {"type": "string"},
-                "delimiter": {"type": "string"},
-                "explanation_column": {"type": "string"},
+                "label_column": {"type": ["string", "null"]},
+                "label_separator": {"type": ["string", "null"]},
+                "text_column": {"type": ["string", "null"]},
+                "delimiter": {"type": ["string", "null"]},
+                "explanation_column": {"type": ["string", "null"]},
             },
             "additionalProperties": False,
         },
@@ -67,8 +67,8 @@ schema = {
                     "enum": populate_vendors(),
                 },
                 "name": {"type": "string"},
-                "compute_confidence": {"type": "boolean"},
-                "params": {"type": "object"},
+                "compute_confidence": {"type": ["boolean", "null"]},
+                "params": {"type": ["object", "null"]},
             },
             "required": ["provider", "name"],
             "additionalProperties": False,
@@ -101,14 +101,15 @@ schema = {
                         # When few_shor_example is a string. It shoulf point to the
                         # filepath of a csv/other files containing the few shot examples
                         {"type": "string"},
+                        {"type": "null"},
                     ]
                 },
                 "few_shot_selection": {
                     "enum": populate_few_shot_selection(),
-                    "type": "string",
+                    "type": ["string", "null"],
                 },
-                "few_shot_num": {"type": "number"},
-                "chain_of_thought": {"type": "boolean"},
+                "few_shot_num": {"type": ["number", "null"]},
+                "chain_of_thought": {"type": ["boolean", "null"]},
             },
             "required": ["task_guidelines"],
             "additionalProperties": False,

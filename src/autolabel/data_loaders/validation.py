@@ -20,8 +20,8 @@ class NERTaskValidate(BaseModel):
     The label column can either be a string or a json
     """
 
-    label_column: str
-    labels_set: set  # A NER Task should have a unique set of labels in config
+    label_column: Optional[str]
+    labels_set: Optional[set]  # A NER Task should have a unique set of labels in config
 
     def validate(self, value: str):
         """Validate NER
@@ -49,8 +49,10 @@ class ClassificationTaskValidate(BaseModel):
     The label column can either be a string or a string of list
     """
 
-    label_column: str
-    labels_set: set  # A classification Task should have a unique set of labels in config
+    label_column: Optional[str]
+    labels_set: Optional[
+        set
+    ]  # A classification Task should have a unique set of labels in config
 
     def validate(self, value: str):
         """Validate classification
@@ -83,8 +85,10 @@ class EMTaskValidate(BaseModel):
     As of now we assume that the input label_column is a string
     """
 
-    label_column: str
-    labels_set: set  # An EntityMatching Task should have a unique set of labels in config
+    label_column: Optional[str]
+    labels_set: Optional[
+        set
+    ]  # An EntityMatching Task should have a unique set of labels in config
 
     def validate(self, value: str):
         if value not in self.labels_set:
@@ -99,7 +103,7 @@ class QATaskValidate(BaseModel):
     As of now we assume that the input label_column is a string
     """
 
-    label_column: str
+    label_column: Optional[str]
     labels_set: Optional[
         set
     ]  # A QA task may or may not have a unique set of label list
@@ -117,8 +121,10 @@ class MLCTaskValidate(BaseModel):
     The label column can be a delimited string or a string of list
     """
 
-    label_column: str
-    labels_set: set  # A Multilabel Classification Task should have a unique set of labels in config
+    label_column: Optional[str]
+    labels_set: Optional[
+        set
+    ]  # A Multilabel Classification Task should have a unique set of labels in config
 
     def validate(self, value: str):
         if value.startswith("[") and value.endswith("]"):
@@ -178,6 +184,9 @@ class TaskDataValidation:
         # the explanation column as specified in config, "config/dataset/explanation_column"
         self.explanation_column: str = config.explanation_column()
 
+        # the label column as specified in config, "config/dataset/label_column"
+        self.label_column = config.label_column()
+
         self.__schema = {col: (StrictStr, ...) for col in self.expected_columns}
 
         self.__validation_task = DataValidationTasks.__dict__[task_type](
@@ -196,6 +205,8 @@ class TaskDataValidation:
             column_name_lists += matches
         if self.explanation_column and self.explanation_column in column_name_lists:
             column_name_lists.remove(self.explanation_column)
+        if self.label_column and self.label_column in column_name_lists:
+            column_name_lists.remove(self.label_column)
         return column_name_lists
 
     @property
@@ -245,8 +256,12 @@ class TaskDataValidation:
             def check_fields(cls, values):
                 """Validate data format"""
                 try:
-                    label_column_value = values[validation_task.label_column]
-                    validation_task.validate(label_column_value)
+                    if (
+                        validation_task.label_column
+                        and validation_task.label_column in values
+                    ):
+                        label_column_value = values[validation_task.label_column]
+                        validation_task.validate(label_column_value)
                 except ValidationError as e:
                     raise e
 
