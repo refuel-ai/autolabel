@@ -7,7 +7,7 @@ from autolabel import LabelingAgent
 from autolabel.schema import TaskType, ModelProvider, FewShotAlgorithm
 from autolabel.few_shot import PROVIDER_TO_MODEL
 
-from autolabel.cli.config import create_config, create_config_wizard
+from autolabel.cli.config import init, create_config_wizard
 
 app = typer.Typer(
     rich_markup_mode="rich",
@@ -16,26 +16,39 @@ app = typer.Typer(
 )
 
 
-@app.command(
-    name="config",
-)
-def create_config_command(
-    task_name: Annotated[
-        str,
-        typer.Argument(
-            help="Name of the task to create a config for", show_default=False
-        ),
-    ],
+@app.command(name="config")
+def config_command(
     seed: Annotated[
         Optional[str],
         typer.Argument(
             help="Optional seed dataset to help auto-fill the config. Recommended for a more accurate config"
         ),
     ] = None,
+):
+    """Create a new task [bold]config[/bold] file"""
+    create_config_wizard(seed)
+
+
+@app.command(
+    name="init",
+)
+def init_command(
+    seed: Annotated[
+        Optional[str],
+        typer.Argument(
+            help="Optional seed dataset to help auto-fill the config. Recommended for a more accurate config"
+        ),
+    ] = None,
+    task_name: Annotated[
+        str,
+        typer.Option(
+            help="Name of the task to create a config for",
+            show_default=False,
+        ),
+    ] = None,
     task_type: Annotated[
         str,
         typer.Option(
-            "--type",
             help=f"Type of task to create. Options: [magenta]{', '.join([t for t in TaskType])}[/magenta]",
             show_default=False,
         ),
@@ -45,9 +58,10 @@ def create_config_command(
         typer.Option(
             "--label-column",
             help="Name of the column containing the labels",
+            show_default=False,
             rich_help_panel="Dataset Configuration",
         ),
-    ] = "label",
+    ] = None,
     dataset_label_separator: Annotated[
         str,
         typer.Option(
@@ -136,6 +150,14 @@ def create_config_command(
             rich_help_panel="Embedding Configuration",
         ),
     ] = None,
+    guess_labels: Annotated[
+        bool,
+        typer.Option(
+            "--guess-labels",
+            help="Whether to guess the labels from the seed dataset. If set, --task-type, --delimiter, and --label-column (and --label-separator for mulitlabel classification) must be defined",
+            rich_help_panel="Prompt Configuration",
+        ),
+    ] = False,
     prompt_task_guidelines: Annotated[
         str,
         typer.Option(
@@ -208,43 +230,33 @@ def create_config_command(
             rich_help_panel="Prompt Configuration",
         ),
     ] = None,
-    wizard: Annotated[
-        bool,
-        typer.Option(help="Use step-by-step wizard to create config", is_flag=True),
-    ] = False,
 ):
-    """Create a new task [bold]config[/bold] file
-
-
-    To use column values in the example template, surround the column name with curly braces.
-    """
-    if wizard:
-        create_config_wizard(task_name, seed, task_type=task_type)
-    else:
-        create_config(
-            task_name,
-            seed,
-            task_type,
-            dataset_label_column=dataset_label_column,
-            dataset_label_separator=dataset_label_separator,
-            dataset_explanation_column=dataset_explanation_column,
-            dataset_text_column=dataset_text_column,
-            dataset_delimiter=dataset_delimiter,
-            model_provider=model_provider,
-            model_name=model_name,
-            model_compute_confidence=model_compute_confidence,
-            model_logit_bias=model_logit_bias,
-            embedding_provider=embedding_provider,
-            embedding_model_name=embedding_model_name,
-            prompt_task_guidelines=prompt_task_guidelines,
-            prompt_few_shot_examples=prompt_few_shot_examples,
-            prompt_example_selection=prompt_example_selection,
-            prompt_num_examples=prompt_num_examples,
-            prompt_example_template=prompt_example_template,
-            prompt_output_guidelines=prompt_output_guidelines,
-            prompt_output_format=prompt_output_format,
-            prompt_chain_of_thought=prompt_chain_of_thought,
-        )
+    """Create a new template [bold]config[/bold] file"""
+    init(
+        seed,
+        task_name,
+        task_type,
+        dataset_label_column=dataset_label_column,
+        dataset_label_separator=dataset_label_separator,
+        dataset_explanation_column=dataset_explanation_column,
+        dataset_text_column=dataset_text_column,
+        dataset_delimiter=dataset_delimiter,
+        model_provider=model_provider,
+        model_name=model_name,
+        model_compute_confidence=model_compute_confidence,
+        model_logit_bias=model_logit_bias,
+        embedding_provider=embedding_provider,
+        embedding_model_name=embedding_model_name,
+        guess_labels=guess_labels,
+        prompt_task_guidelines=prompt_task_guidelines,
+        prompt_few_shot_examples=prompt_few_shot_examples,
+        prompt_example_selection=prompt_example_selection,
+        prompt_num_examples=prompt_num_examples,
+        prompt_example_template=prompt_example_template,
+        prompt_output_guidelines=prompt_output_guidelines,
+        prompt_output_format=prompt_output_format,
+        prompt_chain_of_thought=prompt_chain_of_thought,
+    )
 
 
 @app.command()

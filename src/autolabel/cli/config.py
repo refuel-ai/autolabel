@@ -16,26 +16,11 @@ from autolabel.data_loaders import DatasetLoader
 from autolabel.models import ModelFactory
 from autolabel.tasks import TASK_TYPE_TO_IMPLEMENTATION
 
-
-DEFAULT_TEXT_COLUMN = "example"
-DEFAULT_LABEL_COLUMN = "label"
-DEFAULT_EXAMPLE_TEMPLATE = "Example: {example}\nLabel: {label}"
-
-
-DEFAULT_CONFIG = {
-    "dataset": {
-        "delimiter": ",",
-        "label_column": "label",
-    },
-    "prompt": {
-        "task_guidelines": "Classify the examples into one of the following labels: {labels}",
-        "example_template": "Example: {example}\nLabel: {label}",
-    },
-    "model": {
-        "provider": "openai",
-        "name": "gpt-3.5-turbo",
-    },
-}
+from autolabel.cli.template import (
+    TEMPLATE_CONFIG,
+    TEMPLATE_TASK_NAME,
+    TEMPLATE_LABEL_SEPARATOR,
+)
 
 
 def _get_sub_config(key: str, **kwargs) -> Dict:
@@ -46,123 +31,77 @@ def _get_sub_config(key: str, **kwargs) -> Dict:
                 config[p] = kwargs[f"{key}_{p}"].replace("\\n", "\n")
             else:
                 config[p] = kwargs[f"{key}_{p}"]
-    return {**DEFAULT_CONFIG[key], **config}
+    return {**TEMPLATE_CONFIG[key], **config}
 
 
 def _get_labels_from_seed(df: pd.DataFrame, config: Dict) -> List[str]:
-    try:
-        if config[ALC.TASK_TYPE_KEY] in [
-            TaskType.CLASSIFICATION.value,
-            TaskType.ENTITY_MATCHING.value,
-        ]:
-            return (
-                df[config[ALC.DATASET_CONFIG_KEY][ALC.LABEL_COLUMN_KEY]]
-                .unique()
-                .tolist()
-            )
-        elif config[ALC.TASK_TYPE_KEY] == TaskType.NAMED_ENTITY_RECOGNITION.value:
-            return list(
-                pd.json_normalize(
-                    df[config[ALC.DATASET_CONFIG_KEY][ALC.LABEL_COLUMN_KEY]].apply(
-                        json.loads
-                    )
-                ).columns
-            )
-        elif config[ALC.TASK_TYPE_KEY] == TaskType.MULTILABEL_CLASSIFICATION.value:
-            return (
-                df[config[ALC.DATASET_CONFIG_KEY][ALC.LABEL_COLUMN_KEY]]
-                .str.split(config[ALC.DATASET_CONFIG_KEY][ALC.LABEL_SEPARATOR_KEY])
-                .explode()
-                .unique()
-                .tolist()
-            )
-    except Exception:
-        return []
-
-
-def _get_example_template_from_seed(df: pd.DataFrame, config: Dict) -> str:
-    return "\n".join(
-        map(
-            lambda x: f"{x.replace(' ', '_').capitalize()}: {{{x}}}",
-            list(
-                filter(
-                    lambda x: x != config[ALC.DATASET_CONFIG_KEY][ALC.LABEL_COLUMN_KEY],
-                    df.columns.tolist(),
-                )
-            )
-            + [config[ALC.DATASET_CONFIG_KEY][ALC.LABEL_COLUMN_KEY]],
+    if config[ALC.TASK_TYPE_KEY] in [
+        TaskType.CLASSIFICATION.value,
+        TaskType.ENTITY_MATCHING.value,
+    ]:
+        return (
+            df[config[ALC.DATASET_CONFIG_KEY][ALC.LABEL_COLUMN_KEY]].unique().tolist()
         )
-    )
+    elif config[ALC.TASK_TYPE_KEY] == TaskType.NAMED_ENTITY_RECOGNITION.value:
+        return list(
+            pd.json_normalize(
+                df[config[ALC.DATASET_CONFIG_KEY][ALC.LABEL_COLUMN_KEY]].apply(
+                    json.loads
+                )
+            ).columns
+        )
+    elif config[ALC.TASK_TYPE_KEY] == TaskType.MULTILABEL_CLASSIFICATION.value:
+        return (
+            df[config[ALC.DATASET_CONFIG_KEY][ALC.LABEL_COLUMN_KEY]]
+            .str.split(config[ALC.DATASET_CONFIG_KEY][ALC.LABEL_SEPARATOR_KEY])
+            .explode()
+            .unique()
+            .tolist()
+        )
 
 
-def create_config(
-    task_name: str,
+def init(
     seed: Optional[str] = None,
+    task_name: Optional[str] = None,
     task_type: Optional[str] = None,
+    guess_labels: bool = False,
     **kwargs,
 ):
-    if not task_type:
-        task_type = enquiries.choose(
-            "Choose a task type",
-            [t.value for t in TaskType],
-        )
+    if not task_name:
+        task_name = TEMPLATE_CONFIG[ALC.TASK_NAME_KEY]
     try:
         TaskType(task_type)
     except ValueError:
-        print(f"[red]Invalid task type: {task_type}[/red]")
-        raise typer.Abort()
+        task_type = TEMPLATE_CONFIG[ALC.TASK_TYPE_KEY]
     config = {ALC.TASK_NAME_KEY: task_name, ALC.TASK_TYPE_KEY: task_type}
     if (
         task_type == TaskType.MULTILABEL_CLASSIFICATION.value
         and kwargs["dataset_label_separator"] is None
     ):
-        kwargs["dataset_label_separator"] = ";"
+        kwargs["dataset_label_separator"] = TEMPLATE_LABEL_SEPARATOR
     config[ALC.DATASET_CONFIG_KEY] = _get_sub_config("dataset", **kwargs)
     config[ALC.MODEL_CONFIG_KEY] = _get_sub_config("model", **kwargs)
-    if (
-        "prompt_task_guidelines" not in kwargs
-        or kwargs["prompt_task_guidelines"] is None
-    ):
-        kwargs["prompt_task_guidelines"] = TASK_TYPE_TO_IMPLEMENTATION[
-            task_type
-        ].DEFAULT_TASK_GUIDELINES
 
-    if seed:
+    if guess_labels and seed:
         try:
             df = pd.read_csv(
                 seed,
                 delimiter=config[ALC.DATASET_CONFIG_KEY][ALC.DELIMITER_KEY],
                 nrows=100,
             )
-            if config[ALC.DATASET_CONFIG_KEY][ALC.LABEL_COLUMN_KEY] not in df.columns:
-                config[ALC.DATASET_CONFIG_KEY][ALC.LABEL_COLUMN_KEY] = enquiries.choose(
-                    "Choose the label column",
-                    df.columns.tolist(),
-                )
             labels = _get_labels_from_seed(df, config)
             if labels:
                 kwargs["prompt_labels"] = labels
-
-            if (
-                "prompt_example_template" not in kwargs
-                or kwargs["prompt_example_template"] is None
-            ):
-                kwargs["prompt_example_template"] = _get_example_template_from_seed(
-                    df, config
-                )
         except Exception:
-            pass
+            print("[red]Failed to infer labels[/red]")
 
     # TODO: add automatic example template generation
     config[ALC.PROMPT_CONFIG_KEY] = _get_sub_config("prompt", **kwargs)
 
     print(config)
-    try:
-        ALC(config)
-    except Exception as e:
-        print(f"error validating config: {e}")
-        raise typer.Abort()
-    print(f"Writing config to {config[ALC.TASK_NAME_KEY]}_config.json")
+    print(
+        f'Writing config to {config[ALC.TASK_NAME_KEY] if config[ALC.TASK_NAME_KEY] != TEMPLATE_TASK_NAME else "template"}_config.json'
+    )
     with open(f"{config[ALC.TASK_NAME_KEY]}_config.json", "w") as config_file:
         json.dump(config, config_file, indent=4)
 
@@ -204,9 +143,7 @@ def _create_dataset_config_wizard(
         if explanation_column:
             dataset_config[ALC.EXPLANATION_COLUMN_KEY] = explanation_column
     else:
-        label_column = Prompt.ask(
-            "Enter the label column name", default=DEFAULT_LABEL_COLUMN
-        )
+        label_column = Prompt.ask("Enter the label column name")
         dataset_config[ALC.LABEL_COLUMN_KEY] = label_column
 
         explanation_column = Prompt.ask(
@@ -300,23 +237,27 @@ def _create_prompt_config_wizard(config: Dict, seed: Optional[str] = None) -> Di
 
     prompt_config[ALC.EXAMPLE_TEMPLATE_KEY] = Prompt.ask(
         "Enter the example template",
-        default=DEFAULT_EXAMPLE_TEMPLATE,
     ).replace("\\n", "\n")
-
-    # get variable names from example template f string
     example_template_variables = [
         v.split("}")[0].split("{")[1]
         for v in prompt_config[ALC.EXAMPLE_TEMPLATE_KEY].split(" ")
         if "{" in v and "}" in v
     ]
-    if (
+    while (
         config[ALC.DATASET_CONFIG_KEY][ALC.LABEL_COLUMN_KEY]
         not in example_template_variables
     ):
         print(
             "[red]The label column name must be included in the example template[/red]"
         )
-        raise typer.Abort()
+        prompt_config[ALC.EXAMPLE_TEMPLATE_KEY] = Prompt.ask(
+            "Enter the example template",
+        ).replace("\\n", "\n")
+        example_template_variables = [
+            v.split("}")[0].split("{")[1]
+            for v in prompt_config[ALC.EXAMPLE_TEMPLATE_KEY].split(" ")
+            if "{" in v and "}" in v
+        ]
 
     if seed and Confirm.ask(f"Use {seed} as few shot example dataset?"):
         prompt_config[ALC.FEW_SHOT_EXAMPLE_SET_KEY] = seed
@@ -376,24 +317,17 @@ def _create_prompt_config_wizard(config: Dict, seed: Optional[str] = None) -> Di
 
 
 def create_config_wizard(
-    task_name: str,
     seed: Optional[str] = None,
-    task_type: Optional[str] = None,
     **kwargs,
 ):
     """Create a new task [bold]config[/bold] file"""
-    config = {ALC.TASK_NAME_KEY: task_name}
-    if not task_type:
-        task_type = enquiries.choose(
-            "Choose a task type",
-            [t.value for t in TaskType],
-        )
-    try:
-        TaskType(task_type)
-        config[ALC.TASK_TYPE_KEY] = task_type
-    except ValueError:
-        print(f"[red]Invalid task type: {task_type}[/red]")
-        raise typer.Abort()
+    config = {}
+    task_name = Prompt.ask("Enter the task name")
+    config[ALC.TASK_NAME_KEY] = task_name
+    config[ALC.TASK_TYPE_KEY] = enquiries.choose(
+        "Choose a task type",
+        [t.value for t in TaskType],
+    )
 
     config[ALC.DATASET_CONFIG_KEY] = _create_dataset_config_wizard(
         config[ALC.TASK_TYPE_KEY], seed
