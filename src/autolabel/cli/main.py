@@ -25,7 +25,7 @@ def config_command(
         ),
     ] = None,
 ):
-    """Create a new task [bold]config[/bold] file"""
+    """Create a new [bold]config[/bold] file using a wizard 🪄"""
     create_config_wizard(seed)
 
 
@@ -231,7 +231,7 @@ def init_command(
         ),
     ] = None,
 ):
-    """Create a new template [bold]config[/bold] file"""
+    """Generate a new template [bold]config[/bold] file 📄"""
     init(
         seed,
         task_name,
@@ -271,7 +271,7 @@ def plan(
     start_index: Annotated[int, typer.Option(help="Index to start at")] = 0,
     cache: Annotated[bool, typer.Option(help="Cache results")] = True,
 ):
-    """[bold]Plan[/bold] a labeling session in accordance with the provided dataset and config file"""
+    """[bold]Plan[/bold] 🔍 a labeling session in accordance with the provided dataset and config file"""
     agent = LabelingAgent(config=config, cache=cache)
     agent.plan(dataset, max_items=max_items, start_index=start_index)
 
@@ -288,7 +288,7 @@ def run(
     start_index: Annotated[int, typer.Option(help="Index to start at")] = 0,
     cache: Annotated[bool, typer.Option(help="Cache results")] = True,
 ):
-    """[bold]Run[/bold] a labeling session in accordance with the provided dataset and config file"""
+    """[bold]Run[/bold] ▶️ a labeling session in accordance with the provided dataset and config file"""
     agent = LabelingAgent(config=config, cache=cache)
     agent.run(dataset, max_items=max_items, start_index=start_index)
 
