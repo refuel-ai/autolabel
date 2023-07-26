@@ -210,9 +210,12 @@ class LabelingAgent:
                         # This is a row wise metric
                         if isinstance(m.value, list):
                             continue
-                        postfix_dict[m.name] = (
-                            f"{m.value:.4f}" if isinstance(m.value, float) else m.value
-                        )
+                        elif m.show_running:
+                            postfix_dict[m.name] = (
+                                f"{m.value:.4f}"
+                                if isinstance(m.value, float)
+                                else m.value
+                            )
 
             # Update task run state
             self.task_run = self.save_task_run_state(
@@ -236,8 +239,10 @@ class LabelingAgent:
             for m in eval_result:
                 if isinstance(m.value, list):
                     continue
-                else:
+                elif m.show_running:
                     table[m.name] = m.value
+                else:
+                    print(f"{m.name}:\n{m.value}")
             print(f"Actual Cost: {maybe_round(cost)}")
             print_table(table, console=console, default_style=METRIC_TABLE_STYLE)
 
@@ -364,8 +369,10 @@ class LabelingAgent:
             for m in eval_result:
                 if isinstance(m.value, list):
                     continue
-                else:
+                elif m.show_running:
                     table[m.name] = m.value
+                else:
+                    print(f"{m.name}:\n{m.value}")
 
             print_table(table, console=console, default_style=METRIC_TABLE_STYLE)
         pprint(f"{task_run.current_index} examples labeled so far.")

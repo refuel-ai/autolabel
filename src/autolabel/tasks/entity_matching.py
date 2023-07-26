@@ -15,6 +15,7 @@ from autolabel.metrics import (
     AUROCMetric,
     SupportMetric,
     CompletionRateMetric,
+    ClassificationReportMetric,
     BaseMetric,
 )
 
@@ -33,6 +34,7 @@ class EntityMatchingTask(BaseTask):
             AccuracyMetric(),
             SupportMetric(),
             CompletionRateMetric(),
+            ClassificationReportMetric(),
         ]
 
         if self.config.confidence():

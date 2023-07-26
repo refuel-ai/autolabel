@@ -64,6 +64,9 @@ class MetricType(str, Enum):
     AUROC = "auroc"
     THRESHOLD = "threshold"
 
+    # Aggregate Metrics
+    CLASSIFICATION_REPORT = "classification_report"
+
 
 class F1Type(str, Enum):
     MULTI_LABEL = "multi_label"
@@ -75,6 +78,7 @@ class MetricResult(BaseModel):
 
     name: str
     value: Any
+    show_running: Optional[bool] = True
 
 
 class ErrorType(str, Enum):
