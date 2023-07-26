@@ -1,7 +1,7 @@
 import logging
 import os
-import sys
 from typing import Dict, List, Optional, Tuple, Union
+import json
 
 import numpy as np
 import pandas as pd
@@ -17,7 +17,13 @@ from autolabel.data_models import AnnotationModel, TaskRunModel
 from autolabel.database import StateManager
 from autolabel.few_shot import ExampleSelectorFactory
 from autolabel.models import BaseModel, ModelFactory
-from autolabel.schema import LLMAnnotation, MetricResult, TaskRun, TaskStatus
+from autolabel.metrics import BaseMetric
+from autolabel.schema import (
+    LLMAnnotation,
+    MetricResult,
+    TaskRun,
+    TaskStatus,
+)
 from autolabel.tasks import TaskFactory
 from autolabel.utils import maybe_round, print_table, track, track_with_stats
 
@@ -32,7 +38,6 @@ METRIC_TABLE_STYLE = "cyan bold"
 
 
 class LabelingAgent:
-    CHUNK_SIZE = 5
     COST_KEY = "Cost in $"
 
     def __init__(
@@ -57,6 +62,7 @@ class LabelingAgent:
         output_name: Optional[str] = None,
         start_index: Optional[int] = 0,
         eval_every: Optional[int] = 50,
+        additional_metrics: Optional[List[BaseMetric]] = [],
     ) -> Tuple[pd.Series, pd.DataFrame, List[MetricResult]]:
         """Labels data in a given dataset. Output written to new CSV file.
 
@@ -88,7 +94,10 @@ class LabelingAgent:
         if self.task_run:
             logger.info("Task run already exists.")
             self.task_run = self.handle_existing_task_run(
-                self.task_run, csv_file_name, gt_labels=dataset_loader.gt_labels
+                self.task_run,
+                csv_file_name,
+                gt_labels=dataset_loader.gt_labels,
+                additional_metrics=additional_metrics,
             )
         else:
             self.task_run = self.db.create_task_run(
@@ -114,7 +123,10 @@ class LabelingAgent:
             )
 
         self.example_selector = ExampleSelectorFactory.initialize_selector(
-            self.config, seed_examples, dataset_loader.dat.keys().tolist()
+            self.config,
+            seed_examples,
+            dataset_loader.dat.keys().tolist(),
+            cache=self.cache is not None,
         )
 
         num_failures = 0
@@ -122,105 +134,84 @@ class LabelingAgent:
         cost = 0.0
         postfix_dict = {}
 
-        indices = range(current_index, len(dataset_loader.inputs), self.CHUNK_SIZE)
+        indices = range(current_index, len(dataset_loader.inputs))
+
         for current_index in track_with_stats(
             indices,
             postfix_dict,
             total=len(dataset_loader.inputs) - current_index,
-            advance=self.CHUNK_SIZE,
             console=console,
         ):
-            chunk = dataset_loader.inputs[
-                current_index : current_index + self.CHUNK_SIZE
-            ]
-            final_prompts = []
-            for i, input_i in enumerate(chunk):
-                # Fetch few-shot seed examples
-                if self.example_selector:
-                    examples = self.example_selector.select_examples(input_i)
-                else:
-                    examples = []
-                # Construct Prompt to pass to LLM
-                final_prompt = self.task.construct_prompt(input_i, examples)
-                final_prompts.append(final_prompt)
+            chunk = dataset_loader.inputs[current_index]
 
-            # Get response from LLM
-            try:
-                response, curr_cost = self.llm.label(final_prompts)
-            except Exception as e:
-                # TODO (dhruva): We need to handle this case carefully
-                # When we erorr out, we will have less elements in the llm_labels
-                # than the gt_labels array, with the 1:1 mapping not being
-                # maintained either. We should either remove the elements we errored
-                # out on from gt_labels or add None labels to the llm_labels.
-                logger.error(
-                    "Error in generating response:" + repr(e), "Prompt: ", chunk
-                )
-                for i in range(len(chunk)):
+            if self.example_selector:
+                examples = self.example_selector.select_examples(chunk)
+            else:
+                examples = []
+                # Construct Prompt to pass to LLM
+            final_prompt = self.task.construct_prompt(chunk, examples)
+
+            response = self.llm.label([final_prompt])
+            for i, generations, error in zip(
+                range(len(response.generations)), response.generations, response.errors
+            ):
+                if error is not None:
                     annotation = LLMAnnotation(
                         successfully_labeled=False,
                         label=self.task.NULL_LABEL_TOKEN,
                         raw_response="",
-                        curr_sample=chunk[i],
-                        prompt=final_prompts[i],
+                        curr_sample=json.dumps(chunk),
+                        prompt=final_prompt,
                         confidence_score=0,
+                        error=error,
                     )
-                    AnnotationModel.create_from_llm_annotation(
-                        self.db.session,
-                        annotation,
-                        current_index + i,
-                        self.task_run.id,
-                    )
-                num_failures += len(chunk)
-                response = None
-
-            if response is not None:
-                for i in range(len(response.generations)):
-                    response_item = response.generations[i]
+                else:
                     annotations = []
-                    for generation in response_item:
+                    for generation in generations:
+                        annotation = self.task.parse_llm_response(
+                            generation, chunk, final_prompt
+                        )
+
                         if self.config.confidence():
-                            annotation = self.confidence.calculate(
-                                model_generation=self.task.parse_llm_response(
-                                    generation, chunk[i], final_prompts[i]
-                                ),
-                                prompt=final_prompts[i],
+                            annotation.confidence_score = self.confidence.calculate(
+                                model_generation=annotation,
+                                prompt=final_prompt,
                             )
-                        else:
-                            annotation = self.task.parse_llm_response(
-                                generation, chunk[i], final_prompts[i]
-                            )
+
                         annotations.append(annotation)
-                    final_annotation = self.majority_annotation(annotations)
-                    AnnotationModel.create_from_llm_annotation(
-                        self.db.session,
-                        final_annotation,
-                        current_index + i,
-                        self.task_run.id,
-                    )
-            cost += curr_cost
+                    annotation = self.majority_annotation(annotations)
+
+                # Store the annotation in the database
+                AnnotationModel.create_from_llm_annotation(
+                    self.db.session,
+                    annotation,
+                    current_index + i,
+                    self.task_run.id,
+                )
+
+            cost += sum(response.costs)
             postfix_dict[self.COST_KEY] = f"{cost:.2f}"
 
             # Evaluate the task every eval_every examples
-            if (current_index + self.CHUNK_SIZE) % eval_every == 0:
+            if (current_index + 1) % eval_every == 0:
                 db_result = AnnotationModel.get_annotations_by_task_run_id(
                     self.db.session, self.task_run.id
                 )
                 llm_labels = [LLMAnnotation(**a.llm_annotation) for a in db_result]
                 if dataset_loader.gt_labels:
                     eval_result = self.task.eval(
-                        llm_labels, dataset_loader.gt_labels[: len(llm_labels)]
+                        llm_labels,
+                        dataset_loader.gt_labels[: len(llm_labels)],
+                        additional_metrics=additional_metrics,
                     )
 
                     for m in eval_result:
-                        if not isinstance(m.value, list) or len(m.value) < 1:
+                        # This is a row wise metric
+                        if isinstance(m.value, list):
                             continue
-                        elif isinstance(m.value[0], float):
-                            postfix_dict[m.name] = f"{m.value[0]:.4f}"
-                        elif isinstance(m.value[0], int):
-                            postfix_dict[m.name] = f"{m.value[0]}"
-                        elif len(m.value[0]) > 0:
-                            postfix_dict[m.name] = f"{m.value[0][0]:.4f}"
+                        postfix_dict[m.name] = (
+                            f"{m.value:.4f}" if isinstance(m.value, float) else m.value
+                        )
 
             # Update task run state
             self.task_run = self.save_task_run_state(
@@ -235,15 +226,17 @@ class LabelingAgent:
         # if true labels are provided, evaluate accuracy of predictions
         if dataset_loader.gt_labels:
             eval_result = self.task.eval(
-                llm_labels, dataset_loader.gt_labels[: len(llm_labels)]
+                llm_labels,
+                dataset_loader.gt_labels[: len(llm_labels)],
+                additional_metrics=additional_metrics,
             )
             table = {}
             # TODO: serialize and write to file
             for m in eval_result:
-                if isinstance(m.value, list) and len(m.value) > 0:
-                    table[m.name] = m.value
+                if isinstance(m.value, list):
+                    continue
                 else:
-                    print(f"Metric: {m.name}: {maybe_round(m.value)}")
+                    table[m.name] = m.value
             print(f"Actual Cost: {maybe_round(cost)}")
             print_table(table, console=console, default_style=METRIC_TABLE_STYLE)
 
@@ -252,11 +245,21 @@ class LabelingAgent:
         output_df[self.config.task_name() + "_llm_labeled_successfully"] = [
             l.successfully_labeled for l in llm_labels
         ]
+        output_df[self.config.task_name() + "_llm_error"] = [
+            l.error for l in llm_labels
+        ]
         output_df[self.config.task_name() + "_llm_label"] = [
             l.label for l in llm_labels
         ]
         if self.config.confidence():
-            output_df["llm_confidence"] = [l.confidence_score for l in llm_labels]
+            output_df[self.config.task_name() + "_llm_confidence"] = [
+                l.confidence_score for l in llm_labels
+            ]
+
+        if self.config.chain_of_thought():
+            output_df[self.config.task_name() + "_llm_explanation"] = [
+                l.explanation for l in llm_labels
+            ]
 
         # Only save to csv if output_name is provided or dataset is a string
         if not output_name and isinstance(dataset, str):
@@ -329,7 +332,10 @@ class LabelingAgent:
             )
 
         self.example_selector = ExampleSelectorFactory.initialize_selector(
-            self.config, seed_examples, dataset_loader.dat.keys().tolist()
+            self.config,
+            seed_examples,
+            dataset_loader.dat.keys().tolist(),
+            cache=self.cache is not None,
         )
 
         input_limit = min(len(dataset_loader.inputs), 100)
@@ -364,7 +370,11 @@ class LabelingAgent:
         console.rule()
 
     def handle_existing_task_run(
-        self, task_run: TaskRun, csv_file_name: str, gt_labels: List[str] = None
+        self,
+        task_run: TaskRun,
+        csv_file_name: str,
+        gt_labels: List[str] = None,
+        additional_metrics: List[BaseMetric] = [],
     ) -> TaskRun:
         """
         Allows for continuing an existing labeling task. The user will be asked whether they wish to continue from where the run previously left off, or restart from the beginning.
@@ -381,13 +391,16 @@ class LabelingAgent:
         if gt_labels and len(llm_labels) > 0:
             pprint("Evaluating the existing task...")
             gt_labels = gt_labels[: len(llm_labels)]
-            eval_result = self.task.eval(llm_labels, gt_labels)
+            eval_result = self.task.eval(
+                llm_labels, gt_labels, additional_metrics=additional_metrics
+            )
             table = {}
             for m in eval_result:
-                if isinstance(m.value, list) and len(m.value) > 0:
-                    table[m.name] = m.value
+                if isinstance(m.value, list):
+                    continue
                 else:
-                    print(f"Metric: {m.name}: {m.value}")
+                    table[m.name] = m.value
+
             print_table(table, console=console, default_style=METRIC_TABLE_STYLE)
         pprint(f"{task_run.current_index} examples labeled so far.")
         if len(llm_labels) > 0:
@@ -456,7 +469,7 @@ class LabelingAgent:
             seed_examples, description="Generating explanations", console=console
         ):
             explanation_prompt = self.task.get_explanation_prompt(seed_example)
-            explanation, _ = self.llm.label([explanation_prompt])
+            explanation = self.llm.label([explanation_prompt])
             explanation = explanation.generations[0][0].text
             seed_example["explanation"] = str(explanation) if explanation else ""
 

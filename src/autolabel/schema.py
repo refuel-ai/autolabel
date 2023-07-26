@@ -45,7 +45,7 @@ class TaskStatus(str, Enum):
     ACTIVE = "active"
 
 
-class Metric(str, Enum):
+class MetricType(str, Enum):
     """Enum of supported performance metrics. Some metrics are always available (task agnostic), while others are only supported by certain types of tasks"""
 
     # Task agnostic
@@ -56,19 +56,41 @@ class Metric(str, Enum):
     CONFUSION_MATRIX = "confusion_matrix"
     LABEL_DISTRIBUTION = "label_distribution"
     F1 = "f1"
+    F1_MICRO = "f1_micro"
     F1_MACRO = "f1_macro"
     F1_WEIGHTED = "f1_weighted"
+    TEXT_PARTIAL_MATCH = "text_partial_match"
     # Confidence metrics
     AUROC = "auroc"
     THRESHOLD = "threshold"
 
 
+class F1Type(str, Enum):
+    MULTI_LABEL = "multi_label"
+    TEXT = "text"
+
+
 class MetricResult(BaseModel):
     """Contains performance metrics gathered from autolabeler runs"""
 
-    metric_type: Metric
     name: str
     value: Any
+
+
+class ErrorType(str, Enum):
+    """Enum of supported error types"""
+
+    LLM_PROVIDER_ERROR = "llm_provider_error"
+    PARSING_ERROR = "parsing_error"
+    OUTPUT_GUIDELINES_NOT_FOLLOWED_ERROR = "output_guidelines_not_followed_error"
+    EMPTY_RESPONSE_ERROR = "empty_response_error"
+
+
+class LabelingError(BaseModel):
+    """Contains information about an error that occurred during the labeling process"""
+
+    error_type: ErrorType
+    error_message: str
 
 
 class LLMAnnotation(BaseModel):
@@ -80,7 +102,9 @@ class LLMAnnotation(BaseModel):
     confidence_score: Optional[float] = None
     generation_info: Optional[Dict[str, Any]] = None
     raw_response: Optional[str] = ""
+    explanation: Optional[str] = ""
     prompt: Optional[str] = ""
+    error: Optional[LabelingError] = None
 
 
 class Dataset(BaseModel):
@@ -171,3 +195,16 @@ class CacheEntry(BaseModel):
 
     class Config:
         orm_mode = True
+
+
+class RefuelLLMResult(BaseModel):
+    """List of generated outputs. This is a List[List[]] because
+    each input could have multiple candidate generations."""
+
+    generations: List[List[Generation]]
+
+    """Errors encountered while running the labeling job"""
+    errors: List[Optional[LabelingError]]
+
+    """Costs incurred during the labeling job"""
+    costs: Optional[List[float]] = []

@@ -1,4 +1,4 @@
-from typing import Dict, List, Union
+from typing import Dict, List, Union, Optional
 
 import logging
 import pandas as pd
@@ -17,7 +17,7 @@ class AutolabelDataset(BaseModel):
     columns: List
     dataset: Union[pd.DataFrame, None]
     inputs: List[Dict]
-    gt_labels: List
+    gt_labels: Optional[List]
 
     @validator("dataset", allow_reuse=True)
     def validate_dataframe(cls, value):

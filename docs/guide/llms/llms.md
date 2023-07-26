@@ -129,11 +129,18 @@ These parameters can be passed in via the `params` dictionary under `model`. Her
 ```
 
 ## Hugging Face
-To use models from [Hugging Face](https://huggingface.co/), you can set `provider` to `huggingface_pipeline` when creating a labeling configuration. The specific model that will be queried can be specified using the `name` key. Autolabel currently supports all Sequence2Sequence Language Models on Hugging Face. All models available on Hugging Face can be found [here](https://huggingface.co/docs/transformers/model_doc/openai-gpt#:~:text=TEXT-,MODELS,-ALBERT). Ensure that the model you choose can be loaded using `AutoModelForSeq2SeqLM`. Here are a few examples:
+To use models from [Hugging Face](https://huggingface.co/), you can set `provider` to `huggingface_pipeline` when creating a labeling configuration. The specific model that will be queried can be specified using the `name` key. Autolabel currently supports all Sequence2Sequence and Causal Language Models on Hugging Face. All models available on Hugging Face can be found [here](https://huggingface.co/docs/transformers/model_doc/openai-gpt#:~:text=TEXT-,MODELS,-ALBERT). Ensure that the model you choose can be loaded using `AutoModelForSeq2SeqLM` or `AutoModelForCausalLM`. Here are a few examples:
 
+Sequence2Sequence Language Models:
 * `google/flan-t5-small` (all flan-t5-* models)
 * `google/pegasus-x-base`
 * `microsoft/prophetnet-large-uncased`
+
+Causal Language Models:
+* `gpt2`
+* `openlm-research/open_llama_3b`
+* `meta-llama/Llama-2-7b`
+
 
 This will run the model locally on a GPU (if available). You can also specify  quantization strategy to load larger models in lower precision (and thus decreasing memory requirements).
 
@@ -184,6 +191,14 @@ These parameters can be passed in via the `params` dictionary under `model`. Her
         "quantize": 8
     }
 },
+```
+
+To use Llama 2, you can use the following model configuration:
+```python
+"model": {
+    "provider": "huggingface_pipeline",
+    "name": "meta-llama/Llama-2-7b",
+}
 ```
 
 ## Refuel
@@ -379,7 +394,7 @@ The table lists out all the provider, model combinations that Autolabel supports
 | openai       | [gpt-4 models](https://platform.openai.com/docs/models/gpt-4)|
 | anthropic    | claude-v1         |
 | anthropic    | claude-instant-v1 |
-| huggingface_pipeline    | [seq2seq models](https://huggingface.co/learn/nlp-course/chapter1/7?fw=pt#sequencetosequence-modelssequencetosequencemodels) |
+| huggingface_pipeline    | [seq2seq models](https://huggingface.co/learn/nlp-course/chapter1/7?fw=pt#sequencetosequence-modelssequencetosequencemodels) and [causalLM models](https://huggingface.co/docs/transformers/tasks/language_modeling) |
 | refuel    | flan-t5-xxl |
 | google       | text-bison@001    |
 | google       | chat-bison@001    |

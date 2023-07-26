@@ -5,6 +5,7 @@ from langchain.schema import LLMResult
 from autolabel.models import BaseModel
 from autolabel.configs import AutolabelConfig
 from autolabel.cache import BaseCache
+from autolabel.schema import RefuelLLMResult
 
 
 class HFPipelineLLM(BaseModel):
@@ -13,7 +14,17 @@ class HFPipelineLLM(BaseModel):
 
     def __init__(self, config: AutolabelConfig, cache: BaseCache = None) -> None:
         try:
-            from transformers import AutoModelForSeq2SeqLM, AutoTokenizer, pipeline
+            from transformers import (
+                AutoConfig,
+                AutoModelForSeq2SeqLM,
+                AutoModelForCausalLM,
+                AutoTokenizer,
+                pipeline,
+            )
+            from transformers.models.auto.modeling_auto import (
+                MODEL_FOR_CAUSAL_LM_MAPPING,
+                MODEL_FOR_SEQ_TO_SEQ_CAUSAL_LM_MAPPING,
+            )
         except ImportError:
             raise ValueError(
                 "Could not import transformers python package. "
@@ -36,22 +47,30 @@ class HFPipelineLLM(BaseModel):
         self.model_params = {**self.DEFAULT_PARAMS, **model_params}
 
         # initialize HF pipeline
-        tokenizer = AutoTokenizer.from_pretrained(self.model_name)
+        tokenizer = AutoTokenizer.from_pretrained(self.model_name, use_fast=False)
         quantize_bits = self.model_params["quantize"]
+        model_config = AutoConfig.from_pretrained(self.model_name)
+        if isinstance(model_config, tuple(MODEL_FOR_CAUSAL_LM_MAPPING)):
+            AutoModel = AutoModelForCausalLM
+        elif isinstance(model_config, tuple(MODEL_FOR_SEQ_TO_SEQ_CAUSAL_LM_MAPPING)):
+            AutoModel = AutoModelForSeq2SeqLM
+        else:
+            raise ValueError(
+                "model_name is neither a causal LM nor a seq2seq LM. Please check the model_name."
+            )
+
         if not torch.cuda.is_available():
-            model = AutoModelForSeq2SeqLM.from_pretrained(self.model_name)
+            model = AutoModel.from_pretrained(self.model_name)
         elif quantize_bits == 8:
-            model = AutoModelForSeq2SeqLM.from_pretrained(
+            model = AutoModel.from_pretrained(
                 self.model_name, load_in_8bit=True, device_map="auto"
             )
         elif quantize_bits == "16":
-            model = AutoModelForSeq2SeqLM.from_pretrained(
+            model = AutoModel.from_pretrained(
                 self.model_name, torch_dtype=torch.float16, device_map="auto"
             )
         else:
-            model = AutoModelForSeq2SeqLM.from_pretrained(
-                self.model_name, device_map="auto"
-            )
+            model = AutoModel.from_pretrained(self.model_name, device_map="auto")
 
         model_kwargs = dict(self.model_params)  # make a copy of the model params
         model_kwargs.pop("quantize", None)  # remove quantize from the model params
@@ -65,11 +84,13 @@ class HFPipelineLLM(BaseModel):
         # initialize LLM
         self.llm = HuggingFacePipeline(pipeline=pipe, model_kwargs=model_kwargs)
 
-    def _label(self, prompts: List[str]) -> LLMResult:
+    def _label(self, prompts: List[str]) -> RefuelLLMResult:
         try:
-            return self.llm.generate(prompts)
+            result = self.llm.generate(prompts)
+            return RefuelLLMResult(
+                generations=result.generations, errors=[None] * len(result.generations)
+            )
         except Exception as e:
-            print(f"Error generating from LLM: {e}, retrying each prompt individually")
             return self._label_individually(prompts)
 
     def get_cost(self, prompt: str, label: Optional[str] = "") -> float:

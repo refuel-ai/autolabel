@@ -9,6 +9,7 @@ from langchain.schema import LLMResult, HumanMessage, Generation
 from autolabel.models import BaseModel
 from autolabel.configs import AutolabelConfig
 from autolabel.cache import BaseCache
+from autolabel.schema import RefuelLLMResult
 
 from tenacity import (
     before_sleep_log,
@@ -25,7 +26,8 @@ class PaLMLLM(BaseModel):
     CHAT_ENGINE_MODELS = ["chat-bison@001"]
 
     DEFAULT_MODEL = "text-bison@001"
-    DEFAULT_PARAMS = {"temperature": 0}
+    # Reference: https://developers.generativeai.google/guide/concepts#model_parameters for "A token is approximately 4 characters"
+    DEFAULT_PARAMS = {"temperature": 0, "max_output_tokens": 1000}
 
     # Reference: https://cloud.google.com/vertex-ai/pricing
     COST_PER_CHARACTER = {
@@ -90,7 +92,7 @@ class PaLMLLM(BaseModel):
 
         return LLMResult(generations=generations)
 
-    def _label(self, prompts: List[str]) -> LLMResult:
+    def _label(self, prompts: List[str]) -> RefuelLLMResult:
         for prompt in prompts:
             if self.SEP_REPLACEMENT_TOKEN in prompt:
                 logger.warning(
@@ -116,16 +118,19 @@ class PaLMLLM(BaseModel):
                     generation.text = generation.text.replace(
                         self.SEP_REPLACEMENT_TOKEN, "\n"
                     )
-            return result
+            return RefuelLLMResult(
+                generations=result.generations, errors=[None] * len(result.generations)
+            )
         except Exception as e:
-            print(f"Error generating from LLM: {e}, retrying each prompt individually")
             self._label_individually(prompts)
 
     def get_cost(self, prompt: str, label: Optional[str] = "") -> float:
         if self.model_name is None:
             return 0.0
         cost_per_char = self.COST_PER_CHARACTER.get(self.model_name, 0.0)
-        return cost_per_char * len(prompt)
+        return cost_per_char * len(prompt) + cost_per_char * (
+            len(label) if label else 4 * self.model_params["max_output_tokens"]
+        )
 
     def returns_token_probs(self) -> bool:
         return False
