@@ -125,9 +125,9 @@ class AutolabelConfig(BaseConfig):
         """Returns true if the model is able to return a confidence score along with its predictions"""
         return self._model_config.get(self.COMPUTE_CONFIDENCE_KEY, False)
 
-    def logit_bias(self) -> bool:
-        """Returns true if the model is configured to use a logit bias"""
-        return self._model_config.get(self.LOGIT_BIAS_KEY, False)
+    def logit_bias(self) -> float:
+        """Returns the logit bias for the labels specified in the config"""
+        return self._model_config.get(self.LOGIT_BIAS_KEY, 0.0)
 
     # Embedding config
     def embedding_provider(self) -> str:

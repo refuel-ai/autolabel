@@ -94,11 +94,9 @@ class OpenAILLM(BaseModel):
 
         # populate model params and initialize the LLM
         model_params = config.model_params()
-        if config.logit_bias():
-            logit_bias = self._generate_logit_bias(config)
-            # if logit_bias or max_tokens is specified already, we don't want to overwrite it
+        if config.logit_bias() != 0:
             model_params = {
-                **logit_bias,
+                **self._generate_logit_bias(),
                 **model_params,
             }
 
@@ -112,16 +110,13 @@ class OpenAILLM(BaseModel):
             }
             self.llm = OpenAI(model_name=self.model_name, **self.model_params)
 
-    def _generate_logit_bias(self, config: AutolabelConfig) -> None:
+    def _generate_logit_bias(self) -> None:
         """Generates logit bias for the labels specified in the config
-
-        Args:
-            config (AutolabelConfig): AutolabelConfig object
 
         Returns:
             Dict: logit bias and max tokens
         """
-        if len(config.labels_list()) == 0:
+        if len(self.config.labels_list()) == 0:
             logger.warning(
                 "No labels specified in the config. Skipping logit bias generation."
             )
@@ -129,11 +124,11 @@ class OpenAILLM(BaseModel):
         encoding = tiktoken.encoding_for_model(self.model_name)
         logit_bias = {}
         max_tokens = 0
-        for label in config.labels_list():
+        for label in self.config.labels_list():
             if label not in logit_bias:
                 tokens = encoding.encode(label)
                 for token in tokens:
-                    logit_bias[token] = 100
+                    logit_bias[token] = self.config.logit_bias()
                 max_tokens = max(max_tokens, len(tokens))
 
         return {"logit_bias": logit_bias, "max_tokens": max_tokens}
