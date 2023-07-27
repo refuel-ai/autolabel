@@ -99,10 +99,13 @@ def init(
     config[ALC.PROMPT_CONFIG_KEY] = _get_sub_config("prompt", **kwargs)
 
     print(config)
-    print(
-        f'Writing config to {config[ALC.TASK_NAME_KEY] if config[ALC.TASK_NAME_KEY] != TEMPLATE_TASK_NAME else "template"}_config.json'
+    config_name = (
+        config[ALC.TASK_NAME_KEY]
+        if config[ALC.TASK_NAME_KEY] != TEMPLATE_TASK_NAME
+        else "template"
     )
-    with open(f"{config[ALC.TASK_NAME_KEY]}_config.json", "w") as config_file:
+    print(f"Writing config to {config_name}_config.json")
+    with open(f"{config_name}_config.json", "w") as config_file:
         json.dump(config, config_file, indent=4)
 
 
