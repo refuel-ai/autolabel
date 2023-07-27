@@ -176,19 +176,19 @@ def init_command(
             rich_help_panel="Prompt Configuration",
         ),
     ] = None,
-    prompt_example_selection: Annotated[
+    prompt_few_shot_selection: Annotated[
         str,
         typer.Option(
-            "--example-selection",
+            "--few-shot-selection",
             help=f"What algorithm to use to select examples from the seed dataset. Options: [magenta]{', '.join([a for a in FewShotAlgorithm])}[/magenta]",
             show_default=False,
             rich_help_panel="Prompt Configuration",
         ),
     ] = None,
-    prompt_num_examples: Annotated[
+    prompt_few_shot_num: Annotated[
         int,
         typer.Option(
-            "--num-examples",
+            "--few-shot-num",
             help="Number of examples to select from the seed dataset",
             show_default=False,
             rich_help_panel="Prompt Configuration",
@@ -250,8 +250,8 @@ def init_command(
         guess_labels=guess_labels,
         prompt_task_guidelines=prompt_task_guidelines,
         prompt_few_shot_examples=prompt_few_shot_examples,
-        prompt_example_selection=prompt_example_selection,
-        prompt_num_examples=prompt_num_examples,
+        prompt_few_shot_selection=prompt_few_shot_selection,
+        prompt_few_shot_num=prompt_few_shot_num,
         prompt_example_template=prompt_example_template,
         prompt_output_guidelines=prompt_output_guidelines,
         prompt_output_format=prompt_output_format,
