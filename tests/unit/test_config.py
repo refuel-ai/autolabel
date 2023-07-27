@@ -56,7 +56,7 @@ def test_schema_validation():
     config_dict_copy = CONFIG_SAMPLE_DICT.copy()
     config_dict_copy["prompt"] = {
         "labels": ["toxic", "not toxic"],
-        "example_templates": "Input: {example}\nOutput: {label}",
+        "example_template": "Input: {example}\nOutput: {label}",
     }
     with pytest.raises(
         exceptions.ValidationError, match=r"'task_guidelines' is a required property"

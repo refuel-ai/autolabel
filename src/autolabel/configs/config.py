@@ -46,8 +46,8 @@ class AutolabelConfig(BaseConfig):
     OUTPUT_FORMAT_KEY = "output_format"
     CHAIN_OF_THOUGHT_KEY = "chain_of_thought"
 
-    def __init__(self, config: Union[str, Dict]) -> None:
-        super().__init__(config)
+    def __init__(self, config: Union[str, Dict], validate: bool = True) -> None:
+        super().__init__(config, validate=validate)
 
     def _validate(self) -> bool:
         """Returns true if the config settings are valid"""

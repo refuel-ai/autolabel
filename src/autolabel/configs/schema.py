@@ -68,6 +68,7 @@ schema = {
                 },
                 "name": {"type": "string"},
                 "compute_confidence": {"type": ["boolean", "null"]},
+                "logit_bias": {"type": ["boolean", "null"]},
                 "params": {"type": ["object", "null"]},
             },
             "required": ["provider", "name"],
