@@ -5,7 +5,7 @@ import json
 import typer
 from rich import print
 from rich.prompt import Prompt, IntPrompt, Confirm
-import enquiries
+from simple_term_menu import TerminalMenu
 
 import pandas as pd
 
@@ -134,15 +134,14 @@ def _create_dataset_config_wizard(
     if seed:
         df = pd.read_csv(seed, delimiter=delimiter, nrows=0)
         column_names = df.columns.tolist()
-        label_column = enquiries.choose(
-            "Choose the label column",
-            column_names,
-        )
+        label_column = column_names[
+            TerminalMenu(column_names, title="Choose a label column").show()
+        ]
         dataset_config[ALC.LABEL_COLUMN_KEY] = label_column
-        explanation_column = enquiries.choose(
-            "Choose the explanation column (optional)",
-            [None] + column_names,
-        )
+        options = [None] + column_names
+        explanation_column = options[
+            TerminalMenu(options, title="Choose an explanation column").show()
+        ]
         if explanation_column:
             dataset_config[ALC.EXPLANATION_COLUMN_KEY] = explanation_column
     else:
@@ -172,10 +171,10 @@ def _create_model_config_wizard() -> Dict:
     print("[bold]Model Configuration[/bold]")
     model_config = {}
 
-    model_config[ALC.PROVIDER_KEY] = enquiries.choose(
-        "Enter the model provider",
-        [p.value for p in ModelProvider],
-    )
+    options = [p.value for p in ModelProvider]
+    model_config[ALC.PROVIDER_KEY] = options[
+        TerminalMenu(options, title="Enter the model provider").show()
+    ]
 
     model_config[ALC.MODEL_NAME_KEY] = Prompt.ask("Enter the model name")
 
@@ -292,10 +291,10 @@ def _create_prompt_config_wizard(config: Dict, seed: Optional[str] = None) -> Di
             prompt_config[ALC.FEW_SHOT_EXAMPLE_SET_KEY] = few_shot_example_set
 
     if ALC.FEW_SHOT_EXAMPLE_SET_KEY in prompt_config:
-        prompt_config[ALC.FEW_SHOT_SELECTION_ALGORITHM_KEY] = enquiries.choose(
-            "Enter the few shot selection algorithm",
-            [a.value for a in FewShotAlgorithm],
-        )
+        options = [a.value for a in FewShotAlgorithm]
+        prompt_config[ALC.FEW_SHOT_SELECTION_ALGORITHM_KEY] = options[
+            TerminalMenu(options, title="Enter the few shot selection algorithm").show()
+        ]
         prompt_config[ALC.FEW_SHOT_NUM_KEY] = IntPrompt.ask(
             "Enter the number of few shot examples to use",
             default=min(len(prompt_config[ALC.FEW_SHOT_EXAMPLE_SET_KEY]), 5),
@@ -330,10 +329,10 @@ def create_config_wizard(
     config = {}
     task_name = Prompt.ask("Enter the task name")
     config[ALC.TASK_NAME_KEY] = task_name
-    config[ALC.TASK_TYPE_KEY] = enquiries.choose(
-        "Choose a task type",
-        [t.value for t in TaskType],
-    )
+    options = [t.value for t in TaskType]
+    config[ALC.TASK_TYPE_KEY] = options[
+        TerminalMenu(options, title="Choose a task type").show()
+    ]
 
     config[ALC.DATASET_CONFIG_KEY] = _create_dataset_config_wizard(
         config[ALC.TASK_TYPE_KEY], seed
