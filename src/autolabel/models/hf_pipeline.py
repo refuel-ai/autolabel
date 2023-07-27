@@ -11,8 +11,6 @@ from autolabel.schema import RefuelLLMResult
 
 logger = logging.getLogger(__name__)
 
-DEFAULT_NUM_BEAMS = 4
-
 
 class HFPipelineLLM(BaseModel):
     DEFAULT_MODEL = "google/flan-t5-xxl"
@@ -51,7 +49,7 @@ class HFPipelineLLM(BaseModel):
         # populate model params
         model_params = config.model_params()
         self.model_params = {**self.DEFAULT_PARAMS, **model_params}
-        if config.logit_bias():
+        if config.logit_bias() != 0:
             self.model_params = {
                 **self._generate_sequence_bias(),
                 **self.model_params,
@@ -118,23 +116,14 @@ class HFPipelineLLM(BaseModel):
         tokenizer = AutoTokenizer.from_pretrained(
             self.model_name, use_fast=False, add_prefix_space=True
         )
-        sequence_bias = {
-            tuple([tokenizer.eos_token_id]): 100.0,
-            # tuple(tokenizer([label], add_special_tokens=False).input_ids[0]): float(
-            #     "inf"
-            # )
-            # for label in self.config.labels_list()
-        }
+        sequence_bias = {tuple([tokenizer.eos_token_id]): self.config.logit_bias()}
         max_new_tokens = 0
         for label in self.config.labels_list():
             tokens = tuple(tokenizer([label], add_special_tokens=False).input_ids[0])
-            # sequence_bias[tokens] = 10.0
-            # sequence_bias[tuple([tokens[0]])] = 10.0
             for token in tokens:
-                sequence_bias[tuple([token])] = 100.0
+                sequence_bias[tuple([token])] = self.config.logit_bias()
             max_new_tokens = max(max_new_tokens, len(tokens))
 
-        print(sequence_bias, max_new_tokens)
         return {
             "sequence_bias": sequence_bias,
             "max_new_tokens": max_new_tokens,
