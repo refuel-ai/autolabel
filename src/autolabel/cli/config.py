@@ -144,6 +144,9 @@ def _create_dataset_config_wizard(
             dataset_config[ALC.EXPLANATION_COLUMN_KEY] = explanation_column
     else:
         label_column = Prompt.ask("Enter the label column name")
+        while not label_column:
+            print("[red]The label column name cannot be blank[/red]")
+            label_column = Prompt.ask("Enter the label column name")
         dataset_config[ALC.LABEL_COLUMN_KEY] = label_column
 
         explanation_column = Prompt.ask(
