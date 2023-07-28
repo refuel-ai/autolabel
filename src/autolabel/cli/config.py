@@ -2,9 +2,8 @@ from typing import Optional, Dict, List
 import csv
 import json
 
-import typer
 from rich import print
-from rich.prompt import Prompt, IntPrompt, Confirm
+from rich.prompt import Prompt, IntPrompt, FloatPrompt, Confirm
 from simple_term_menu import TerminalMenu
 
 import pandas as pd
@@ -200,9 +199,13 @@ def _create_model_config_wizard() -> Dict:
         "Should the model compute confidence?", default=False
     )
 
-    model_config[ALC.LOGIT_BIAS_KEY] = Confirm.ask(
-        "Should the model use logit bias?", default=False
-    )
+    if model_config[ALC.PROVIDER_KEY] in [
+        ModelProvider.HUGGINGFACE_PIPELINE,
+        ModelProvider.OPENAI,
+    ]:
+        model_config[ALC.LOGIT_BIAS_KEY] = FloatPrompt.ask(
+            "What is the strength of logit bias?", default=0.0
+        )
 
     return model_config
 
@@ -346,7 +349,8 @@ def create_config_wizard(
     except Exception as e:
         print(f"error validating config: {e}")
         if Confirm.ask("Would you like to fix the config?"):
-            config = create_config(seed)
+            create_config_wizard(seed)
+            return
     print(f"Writing config to {config[ALC.TASK_NAME_KEY]}_config.json")
     with open(f"{config[ALC.TASK_NAME_KEY]}_config.json", "w") as config_file:
         json.dump(config, config_file, indent=4)
