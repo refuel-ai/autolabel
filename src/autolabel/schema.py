@@ -212,3 +212,9 @@ class RefuelLLMResult(BaseModel):
 
     """Costs incurred during the labeling job"""
     costs: Optional[List[float]] = []
+
+
+class TransformType(str, Enum):
+    """Enum containing all Transforms supported by autolabel"""
+
+    WEBPAGE_TRANSFORM = "webpage_transform"

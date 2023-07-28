@@ -28,8 +28,8 @@ class StateManager:
         self,
         dataset: Union[str, pd.DataFrame],
         config: AutolabelConfig,
-        start_index: int,
-        max_items: Optional[int],
+        start_index: int = 0,
+        max_items: Optional[int] = None,
     ):
         # TODO: Check if this works for max_items = None
 

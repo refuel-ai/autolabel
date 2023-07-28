@@ -59,6 +59,11 @@ schema = {
             },
             "additionalProperties": False,
         },
+        "transforms": {
+            "type": "array",
+            "items": {"type": "object"},
+            "additionalProperties": False,
+        },
         "model": {
             "type": "object",
             "properties": {

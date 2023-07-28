@@ -1,7 +1,7 @@
 """Test Validation"""
 import pytest
 from autolabel.configs import AutolabelConfig
-from autolabel.data_loaders.validation import TaskDataValidation
+from autolabel.dataset.validation import TaskDataValidation
 
 CLASSIFICATION_CONFIG_SAMPLE_DICT = {
     "task_name": "LegalProvisionsClassification",
