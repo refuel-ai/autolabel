@@ -1,5 +1,6 @@
 from typing import Optional
 from typing_extensions import Annotated
+import logging
 
 import typer
 
@@ -270,8 +271,32 @@ def plan(
     max_items: Annotated[int, typer.Option(help="Max number of items to label")] = None,
     start_index: Annotated[int, typer.Option(help="Index to start at")] = 0,
     cache: Annotated[bool, typer.Option(help="Cache results")] = True,
+    verbose_debug: Annotated[
+        bool, typer.Option("--debug", "-vv", help="Verbose (debug log level)")
+    ] = False,
+    verbose_info: Annotated[
+        bool, typer.Option("--info", "-v", help="Verbose (info log level)")
+    ] = False,
+    quiet_warning: Annotated[
+        bool, typer.Option("--error", "-q", help="Quiet (error log level)")
+    ] = False,
+    quiet_error: Annotated[
+        bool, typer.Option("--critical", "-qq", help="Quiet (critical log level)")
+    ] = False,
 ):
     """[bold]Plan[/bold] 🔍 a labeling session in accordance with the provided dataset and config file"""
+    if verbose_debug:
+        log_level = logging.DEBUG
+    elif verbose_info:
+        log_level = logging.INFO
+    elif quiet_warning:
+        log_level = logging.ERROR
+    elif quiet_error:
+        log_level = logging.CRITICAL
+    else:
+        log_level = logging.WARNING
+    logging.getLogger("autolabel").setLevel(log_level)
+    logging.getLogger("langchain").setLevel(log_level)
     agent = LabelingAgent(config=config, cache=cache)
     agent.plan(dataset, max_items=max_items, start_index=start_index)
 
@@ -287,8 +312,32 @@ def run(
     max_items: Annotated[int, typer.Option(help="Max number of items to label")] = None,
     start_index: Annotated[int, typer.Option(help="Index to start at")] = 0,
     cache: Annotated[bool, typer.Option(help="Cache results")] = True,
+    verbose_debug: Annotated[
+        bool, typer.Option("--debug", "-vv", help="Verbose (debug log level)")
+    ] = False,
+    verbose_info: Annotated[
+        bool, typer.Option("--info", "-v", help="Verbose (info log level)")
+    ] = False,
+    quiet_warning: Annotated[
+        bool, typer.Option("--error", "-q", help="Quiet (error log level)")
+    ] = False,
+    quiet_error: Annotated[
+        bool, typer.Option("--critical", "-qq", help="Quiet (critical log level)")
+    ] = False,
 ):
     """[bold]Run[/bold] ▶️ a labeling session in accordance with the provided dataset and config file"""
+    if verbose_debug:
+        log_level = logging.DEBUG
+    elif verbose_info:
+        log_level = logging.INFO
+    elif quiet_warning:
+        log_level = logging.ERROR
+    elif quiet_error:
+        log_level = logging.CRITICAL
+    else:
+        log_level = logging.WARNING
+    logging.getLogger("autolabel").setLevel(log_level)
+    logging.getLogger("langchain").setLevel(log_level)
     agent = LabelingAgent(config=config, cache=cache)
     agent.run(dataset, max_items=max_items, start_index=start_index)
 
