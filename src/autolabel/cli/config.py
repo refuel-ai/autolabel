@@ -186,7 +186,16 @@ def _create_model_config_wizard() -> Dict:
         model_param_value = Prompt.ask(
             f"Enter the value for {model_param}",
         )
-        model_params[model_param] = model_param_value
+        if model_param_value.lower() in ["true", "false"]:
+            model_params[model_param] = model_param_value.lower() == "true"
+        elif model_param_value.isdigit():
+            model_params[model_param] = int(model_param_value)
+        else:
+            try:
+                model_params[model_param] = float(model_param_value)
+            except ValueError:
+                model_params[model_param] = model_param_value
+
         model_param = Prompt.ask(
             "Enter a model parameter name (or leave blank to finish)",
             default=None,
