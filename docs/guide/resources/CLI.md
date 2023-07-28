@@ -113,6 +113,39 @@ For example, if you have a file called `seed.csv` in the current directory, you 
 autolabel config seed.csv
 ```
 
+Here's an example of what the prompt configuration section would look like with a seed file:
+
+```
+Detected 2 unique labels in seed dataset. Use these labels? [y/n]: y
+Enter the example template: Example: {example}\nLabel: {label}
+Use seed.csv as few shot example dataset? [y/n]: n
+Enter the value for example or row number (or leave blank for none): 3
+{'example': "When all else fails, change the subject to Hillary's emails.", 'label': 'not toxic'}
+Enter the value for example or row number (or leave blank to finish): 7
+{
+    'example': 'He may like the internal forum, but the reality is he has affirmed traditional doctrine and practices. While he does like the internal forum he has not changed anything.',
+    'label': 'not toxic'
+}
+Enter the value for example or row number (or leave blank to finish): 24
+{'example': '........... said the blind dumb and deaf lemming.', 'label': 'toxic'}
+Enter the value for example or row number (or leave blank to finish): 64
+{
+    'example': 'Do you have a citation for that statement or did you just make it up yourself? BTW, this thread is about the unhealthy liar the Democrats have
+nominated.',
+    'label': 'not toxic'
+}
+Enter the value for example or row number (or leave blank to finish):
+Enter the few shot selection algorithm
+> fixed
+  semantic_similarity
+  max_marginal_relevance
+  label_diversity_random
+  label_diversity_similarity
+Enter the number of few shot examples to use (4):
+```
+
+As you can see, the CLI automatically detected the labels in the seed file and used them to generate the labels list. It also automatically filled the few shot examples with the examples from the seed file after letting the user choose the rows to use.
+
 ### Specifying Model Parameters
 To specify model parameters, you can simply enter the parameter name and value when prompted. For example, if you wanted to specify the `temperature` parameter for the `gpt-3.5-turbo` model, you would run the following command:
 
@@ -226,3 +259,6 @@ The `run` command works identically to running `LabelingAgent({config}).run({dat
 ```bash
 autolabel run <path-to-dataset> <path-to-config>
 ```
+
+## Help
+If any of the commands are unclear, you can run `autolabel --help` to see the help menu or `autolabel <command> --help` to see the help menu for a specific command.
