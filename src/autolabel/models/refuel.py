@@ -1,16 +1,13 @@
 import json
 import os
 import requests
-from langchain.schema import LLMResult, Generation
 import logging
 from typing import List, Optional
-
 
 from autolabel.models import BaseModel
 from autolabel.configs import AutolabelConfig
 from autolabel.cache import BaseCache
 from autolabel.schema import LabelingError, ErrorType, RefuelLLMResult
-
 
 from tenacity import (
     before_sleep_log,
@@ -28,12 +25,21 @@ class RefuelLLM(BaseModel):
         "temperature": 0.0,
     }
 
-    def __init__(self, config: AutolabelConfig, cache: BaseCache = None) -> None:
+    def __init__(
+        self,
+        config: AutolabelConfig,
+        cache: BaseCache = None,
+        model_name: str = None,
+    ) -> None:
         super().__init__(config, cache)
+        from langchain.schema import Generation
+
+        self.generation = Generation
+
         # populate model name
         # This is unused today, but in the future could
         # be used to decide which refuel model is queried
-        self.model_name = config.model_name()
+        self.model_name = model_name
         model_params = config.model_params()
         self.model_params = {**self.DEFAULT_PARAMS, **model_params}
 
@@ -84,14 +90,14 @@ class RefuelLLM(BaseModel):
                 response = json.loads(response.json()["body"]).replace(
                     self.SEP_REPLACEMENT_TOKEN, "\n"
                 )
-                generations.append([Generation(text=response)])
+                generations.append([self.generation(text=response)])
                 errors.append(None)
             except Exception as e:
                 # This signifies an error in generating the response using RefuelLLm
                 logger.error(
                     f"Unable to generate prediction: {e}",
                 )
-                generations.append([Generation(text="")])
+                generations.append([self.generation(text="")])
                 errors.append(
                     LabelingError(error_type=ErrorType.LLM_PROVIDER_ERROR, error=e)
                 )

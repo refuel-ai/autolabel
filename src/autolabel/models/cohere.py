@@ -1,11 +1,5 @@
-from functools import cached_property
 from typing import List, Optional
 import os
-
-import cohere
-from langchain.llms import Cohere
-from langchain.schema import LLMResult
-from langchain import PromptTemplate, LLMChain
 
 from autolabel.models import BaseModel
 from autolabel.configs import AutolabelConfig
@@ -24,10 +18,15 @@ class CohereLLM(BaseModel):
     # Reference: https://cohere.com/pricing
     COST_PER_TOKEN = 15 / 1_000_000
 
-    def __init__(self, config: AutolabelConfig, cache: BaseCache = None) -> None:
+    def __init__(
+        self, config: AutolabelConfig, cache: BaseCache = None, model_name: str = None
+    ) -> None:
         super().__init__(config, cache)
+        import cohere
+        from langchain.llms import Cohere
+
         # populate model name
-        self.model_name = config.model_name() or self.DEFAULT_MODEL
+        self.model_name = model_name or self.DEFAULT_MODEL
 
         # populate model params and initialize the LLM
         model_params = config.model_params()

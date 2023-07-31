@@ -2,10 +2,6 @@ from functools import cached_property
 from typing import List, Optional
 import logging
 
-from langchain.chat_models import ChatVertexAI
-from langchain.llms import VertexAI
-from langchain.schema import LLMResult, HumanMessage, Generation
-
 from autolabel.models import BaseModel
 from autolabel.configs import AutolabelConfig
 from autolabel.cache import BaseCache
@@ -43,10 +39,24 @@ class PaLMLLM(BaseModel):
         else:
             return "completion"
 
-    def __init__(self, config: AutolabelConfig, cache: BaseCache = None) -> None:
+    def __init__(
+        self,
+        config: AutolabelConfig,
+        cache: BaseCache = None,
+        model_name: str = None,
+    ) -> None:
         super().__init__(config, cache)
+
+        from langchain.chat_models import ChatVertexAI
+        from langchain.llms import VertexAI
+        from langchain.schema import LLMResult, HumanMessage, Generation
+
+        self.llm_result = LLMResult
+        self.human_message = HumanMessage
+        self.generation = Generation
+
         # populate model name
-        self.model_name = config.model_name() or self.DEFAULT_MODEL
+        self.model_name = model_name or self.DEFAULT_MODEL
 
         # populate model params and initialize the LLM
         model_params = config.model_params()
@@ -65,10 +75,10 @@ class PaLMLLM(BaseModel):
         wait=wait_exponential(multiplier=1, min=2, max=10),
         before_sleep=before_sleep_log(logger, logging.WARNING),
     )
-    def _label_with_retry(self, prompts: List[str]) -> LLMResult:
+    def _label_with_retry(self, prompts: List[str]):
         return self.llm.generate(prompts)
 
-    def _label_individually(self, prompts: List[str]) -> LLMResult:
+    def _label_individually(self, prompts: List[str]):
         """Label each prompt individually. Should be used only after trying as a batch first.
 
         Args:
@@ -88,9 +98,9 @@ class PaLMLLM(BaseModel):
                 generations.append(response.generations[0])
             except Exception as e:
                 print(f"Error generating from LLM: {e}, returning empty generation")
-                generations.append([Generation(text="")])
+                generations.append([self.generation(text="")])
 
-        return LLMResult(generations=generations)
+        return self.llm_result(generations=generations)
 
     def _label(self, prompts: List[str]) -> RefuelLLMResult:
         for prompt in prompts:
@@ -109,7 +119,7 @@ class PaLMLLM(BaseModel):
             # Need to convert list[prompts] -> list[messages]
             # Currently the entire prompt is stuck into the "human message"
             # We might consider breaking this up into human vs system message in future
-            prompts = [[HumanMessage(content=prompt)] for prompt in prompts]
+            prompts = [[self.human_message(content=prompt)] for prompt in prompts]
 
         try:
             result = self._label_with_retry(prompts)

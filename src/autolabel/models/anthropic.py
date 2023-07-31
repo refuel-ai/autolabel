@@ -4,8 +4,6 @@ from anthropic import tokenizer
 from autolabel.configs import AutolabelConfig
 from autolabel.models import BaseModel
 from autolabel.cache import BaseCache
-from langchain.chat_models import ChatAnthropic
-from langchain.schema import LLMResult, HumanMessage
 from autolabel.schema import RefuelLLMResult
 
 
@@ -28,10 +26,18 @@ class AnthropicLLM(BaseModel):
         "claude-instant-v1": (5.51 / 1000000),
     }
 
-    def __init__(self, config: AutolabelConfig, cache: BaseCache = None) -> None:
+    def __init__(
+        self, config: AutolabelConfig, cache: BaseCache = None, model_name: str = None
+    ) -> None:
         super().__init__(config, cache)
+
+        from langchain.chat_models import ChatAnthropic
+        from langchain.schema import HumanMessage
+
+        self.human_message = HumanMessage
+
         # populate model name
-        self.model_name = config.model_name() or self.DEFAULT_MODEL
+        self.model_name = model_name or self.DEFAULT_MODEL
         # populate model params
         model_params = config.model_params()
         self.model_params = {**self.DEFAULT_PARAMS, **model_params}
@@ -39,7 +45,7 @@ class AnthropicLLM(BaseModel):
         self.llm = ChatAnthropic(model=self.model_name, **self.model_params)
 
     def _label(self, prompts: List[str]) -> RefuelLLMResult:
-        prompts = [[HumanMessage(content=prompt)] for prompt in prompts]
+        prompts = [[self.human_message(content=prompt)] for prompt in prompts]
         try:
             result = self.llm.generate(prompts)
             return RefuelLLMResult(

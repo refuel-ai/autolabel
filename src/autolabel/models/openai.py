@@ -1,10 +1,6 @@
 from functools import cached_property
 from typing import List, Optional
 import logging
-
-from langchain.chat_models import ChatOpenAI
-from langchain.llms import OpenAI
-from langchain.schema import LLMResult, HumanMessage
 import tiktoken
 
 from autolabel.models import BaseModel
@@ -84,10 +80,19 @@ class OpenAILLM(BaseModel):
         else:
             return "completion"
 
-    def __init__(self, config: AutolabelConfig, cache: BaseCache = None) -> None:
+    def __init__(
+        self, config: AutolabelConfig, cache: BaseCache = None, model_name: str = None
+    ) -> None:
         super().__init__(config, cache)
+
+        from langchain.chat_models import ChatOpenAI
+        from langchain.llms import OpenAI
+        from langchain.schema import HumanMessage
+
+        self.human_message = HumanMessage
+
         # populate model name
-        self.model_name = config.model_name() or self.DEFAULT_MODEL
+        self.model_name = model_name or self.DEFAULT_MODEL
 
         if os.getenv("OPENAI_API_KEY") is None:
             raise ValueError("OPENAI_API_KEY environment variable not set")
@@ -138,7 +143,7 @@ class OpenAILLM(BaseModel):
             # Need to convert list[prompts] -> list[messages]
             # Currently the entire prompt is stuck into the "human message"
             # We might consider breaking this up into human vs system message in future
-            prompts = [[HumanMessage(content=prompt)] for prompt in prompts]
+            prompts = [[self.human_message(content=prompt)] for prompt in prompts]
         try:
             result = self.llm.generate(prompts)
             return RefuelLLMResult(

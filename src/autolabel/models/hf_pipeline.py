@@ -1,8 +1,5 @@
-from typing import List, Optional, Dict
 import logging
-from langchain.llms import HuggingFacePipeline
-from langchain.schema import LLMResult
-
+from typing import List, Optional, Dict
 from autolabel.models import BaseModel
 from autolabel.configs import AutolabelConfig
 from autolabel.cache import BaseCache
@@ -16,7 +13,11 @@ class HFPipelineLLM(BaseModel):
     DEFAULT_MODEL = "google/flan-t5-xxl"
     DEFAULT_PARAMS = {"temperature": 0.0, "quantize": 8}
 
-    def __init__(self, config: AutolabelConfig, cache: BaseCache = None) -> None:
+    def __init__(
+        self, config: AutolabelConfig, cache: BaseCache = None, model_name: str = None
+    ) -> None:
+        from langchain.llms import HuggingFacePipeline
+
         try:
             from transformers import (
                 AutoConfig,
@@ -44,7 +45,7 @@ class HFPipelineLLM(BaseModel):
             )
         super().__init__(config, cache)
         # populate model name
-        self.model_name = config.model_name() or self.DEFAULT_MODEL
+        self.model_name = model_name or self.DEFAULT_MODEL
 
         # populate model params
         model_params = config.model_params()
