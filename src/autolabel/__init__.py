@@ -2,6 +2,7 @@ from importlib import metadata
 
 from .labeler import LabelingAgent
 from .utils import get_data
+from .generator import DatasetGenerator
 
 try:
     __version__ = metadata.version("refuel-autolabel")
