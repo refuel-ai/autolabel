@@ -3,9 +3,8 @@ from typing import List, Dict, Any
 
 
 class BaseTransform(ABC):
-    def __init__(self, input_template: str, output_columns: List[str]) -> None:
+    def __init__(self, output_columns: List[str]) -> None:
         super().__init__()
-        self.input_template = input_template
         self.output_columns = output_columns
 
     @abstractmethod

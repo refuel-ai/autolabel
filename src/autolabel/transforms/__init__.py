@@ -19,22 +19,17 @@ class TransformFactory:
         """
         assert "name" in dict, f"Transform name must be specified in transform {dict}"
         assert (
-            "input_template" in dict
-        ), f"Input template must be specified in transform {dict}"
-        assert (
             "output_columns" in dict
         ), f"Output columns must be specified in transform {dict}"
 
         name = dict["name"]
-        input_template = dict["input_template"]
-        output_columns = dict["output_columns"]
         params = dict.get("params", {})
+        output_columns = dict["output_columns"]
 
         if name not in TRANSFORM_REGISTRY:
             raise ValueError(f"Unknown transform type {name}")
         model_cls = TRANSFORM_REGISTRY[name]
         return model_cls(
-            input_template=input_template,
             output_columns=output_columns,
             **params,
         )
