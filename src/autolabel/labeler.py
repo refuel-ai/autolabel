@@ -43,13 +43,13 @@ class LabelingAgent:
 
     def __init__(
         self,
-        config: Union[str, Dict],
+        config: AutolabelConfig,
         cache: Optional[bool] = True,
     ) -> None:
         self.db = StateManager()
         self.cache = SQLAlchemyCache() if cache else None
 
-        self.config = AutolabelConfig(config)
+        self.config = config
         self.task = TaskFactory.from_config(self.config)
         self.llm: BaseModel = ModelFactory.from_config(self.config, cache=self.cache)
         self.confidence = ConfidenceCalculator(
