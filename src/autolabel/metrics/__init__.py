@@ -4,3 +4,4 @@ from .auroc import AUROCMetric
 from .completion_rate import CompletionRateMetric
 from .support import SupportMetric
 from .f1 import F1Metric
+from .classification_report import ClassificationReportMetric
