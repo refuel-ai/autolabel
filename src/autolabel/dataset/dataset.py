@@ -41,7 +41,7 @@ class AutolabelDataset:
             elif dataset.endswith(".jsonl"):
                 df = pd.read_json(dataset, lines=True, dtype="str")
         elif isinstance(dataset, pd.DataFrame):
-            df = dataset
+            df = dataset.copy()
 
         df = df[start_index:]
         if max_items and max_items > 0:
@@ -60,7 +60,6 @@ class AutolabelDataset:
         self.inputs = inputs
         self.gt_labels = gt_labels
         self.config = config
-        self.prefix = self.config.task_name() + "_"
 
         if validate:
             self._validate()
@@ -73,21 +72,29 @@ class AutolabelDataset:
         if self.df is not None:
             return self.df.__str__()
 
+    def get_slice(self, max_items: int = None, start_index: int = 0):
+        df = self.df[start_index:]
+        if max_items and max_items > 0:
+            max_items = min(max_items, len(df))
+            df = df[:max_items]
+
+        return AutolabelDataset(df, self.config)
+
     def process_labels(
         self, llm_labels: List[LLMAnnotation], metrics: List[MetricResult] = None
     ):
         # Add the LLM labels to the dataframe
-        self.df[self.prefix + "label"] = [x.label for x in llm_labels]
+        self.df[self.generate_label_name("label")] = [x.label for x in llm_labels]
 
         # Add the LLM errors to the dataframe
-        self.df[self.prefix + "error"] = [x.error for x in llm_labels]
+        self.df[self.generate_label_name("error")] = [x.error for x in llm_labels]
 
         # Add labeled success column to the dataframe
-        self.df[self.prefix + "successfully_labeled"] = [
+        self.df[self.generate_label_name("successfully_labeled")] = [
             x.successfully_labeled for x in llm_labels
         ]
 
-        self.df[self.prefix + "annotation"] = [x.json() for x in llm_labels]
+        self.df[self.generate_label_name("annotation")] = [x.json() for x in llm_labels]
 
         # Add row level LLM metrics to the dataframe
         if metrics is not None:
@@ -96,17 +103,19 @@ class AutolabelDataset:
                     isinstance(metric.value, list)
                     and len(metric.value) == self.df.shape[0]
                 ):
-                    self.df[self.prefix + metric.name] = metric.value
+                    self.df[self.generate_label_name(metric.name)] = metric.value
 
         # Add the LLM confidence scores to the dataframe if confidence is set in config
         if self.config.confidence():
-            self.df[self.prefix + "confidence"] = [
+            self.df[self.generate_label_name("confidence")] = [
                 x.confidence_score for x in llm_labels
             ]
 
         # Add the LLM explanations to the dataframe if chain of thought is set in config
         if self.config.chain_of_thought():
-            self.df[self.prefix + "explanation"] = [l.explanation for l in llm_labels]
+            self.df[self.generate_label_name("explanation")] = [
+                l.explanation for l in llm_labels
+            ]
 
     def save(self, output_file_name: str):
         if output_file_name.endswith(".csv"):
@@ -130,7 +139,9 @@ class AutolabelDataset:
         filtered_df = self.df
 
         if label:
-            filtered_df = filtered_df[filtered_df[self.prefix + "label"] == label]
+            filtered_df = filtered_df[
+                filtered_df[self.generate_label_name("label")] == label
+            ]
 
         if ground_truth:
             filtered_df = filtered_df[
@@ -145,15 +156,15 @@ class AutolabelDataset:
             self.config,
         )
 
-    def errors(self):
-        filtered_df = self.df[self.df[self.prefix + "error"].notnull()]
+    def non_completed(self):
+        filtered_df = self.df[self.df[self.generate_label_name("error")].notnull()]
         return AutolabelDataset(filtered_df, self.config)
 
-    def non_errors(self):
-        filtered_df = self.df[self.df[self.prefix + "error"].isnull()]
+    def completed(self):
+        filtered_df = self.df[self.df[self.generate_label_name("error")].isnull()]
         return AutolabelDataset(filtered_df, self.config)
 
-    def mistakes(self, label: str = None, ground_truth: str = None):
+    def incorrect(self, label: str = None, ground_truth: str = None):
         gt_label_column = self.config.label_column()
 
         if gt_label_column is None:
@@ -162,11 +173,13 @@ class AutolabelDataset:
             )
 
         filtered_df = self.df[
-            self.df[self.prefix + "label"] != self.df[gt_label_column]
+            self.df[self.generate_label_name("label")] != self.df[gt_label_column]
         ]
 
         if label:
-            filtered_df = filtered_df[filtered_df[self.prefix + "label"] == label]
+            filtered_df = filtered_df[
+                filtered_df[self.generate_label_name("label")] == label
+            ]
 
         if ground_truth:
             filtered_df = filtered_df[filtered_df[gt_label_column] == ground_truth]
@@ -180,24 +193,18 @@ class AutolabelDataset:
             raise ValueError("Cannot compute correct without ground truth label column")
 
         filtered_df = self.df[
-            self.df[self.prefix + "label"] == self.df[gt_label_column]
+            self.df[self.generate_label_name("label")] == self.df[gt_label_column]
         ]
         return AutolabelDataset(filtered_df, self.config)
 
-    def correct_and_confident(self, threshold: float = 0.5):
-        gt_label_column = self.config.label_column()
-
-        if gt_label_column is None:
-            raise ValueError("Cannot compute correct without ground truth label column")
-
+    def filter_by_confidence(self, threshold: float = 0.5):
         if not self.config.confidence():
             raise ValueError(
                 "Cannot compute correct and confident without confidence scores"
             )
 
         filtered_df = self.df[
-            (self.df[self.prefix + "label"] == self.df[gt_label_column])
-            & (self.df[self.prefix + "confidence"] >= threshold)
+            self.df[self.generate_label_name("confidence")] >= threshold
         ]
         return AutolabelDataset(filtered_df, self.config)
 
@@ -210,7 +217,7 @@ class AutolabelDataset:
         gt_labels = self.df[gt_label_column]
         llm_labels = [
             LLMAnnotation(**json.loads(x))
-            for x in self.df[self.prefix + "annotation"].tolist()
+            for x in self.df[self.generate_label_name("annotation")].tolist()
         ]
 
         task = TaskFactory.from_config(self.config)
@@ -255,6 +262,10 @@ class AutolabelDataset:
             raise DataValidationFailed(
                 f"Validation failed for {len(self.__malformed_records)} rows."
             )
+
+    def generate_label_name(self, col_name: str):
+        """Generate label name"""
+        return f"{self.config.task_name()}_{col_name}"
 
 
 class DataValidationFailed(Exception):

@@ -27,7 +27,6 @@ from autolabel.schema import (
 )
 from autolabel.tasks import TaskFactory
 from autolabel.utils import maybe_round, print_table, track, track_with_stats
-from autolabel.labeling_output import LabelingOutput
 
 console = Console()
 logger = logging.getLogger(__name__)
@@ -63,6 +62,8 @@ class LabelingAgent:
         output_name: Optional[str] = None,
         eval_every: Optional[int] = 50,
         additional_metrics: Optional[List[BaseMetric]] = [],
+        max_items: Optional[int] = None,
+        start_index: int = 0,
     ) -> Tuple[pd.Series, pd.DataFrame, List[MetricResult]]:
         """Labels data in a given dataset. Output written to new CSV file.
 
@@ -72,6 +73,8 @@ class LabelingAgent:
             output_name: custom name of output CSV file
             start_index: skips annotating [0, start_index)
         """
+
+        dataset = dataset.get_slice(max_items=max_items, start_index=start_index)
 
         self.db.initialize()
         self.dataset_obj = self.db.initialize_dataset(dataset.df, self.config)
@@ -257,12 +260,16 @@ class LabelingAgent:
     def plan(
         self,
         dataset: AutolabelDataset,
+        max_items: Optional[int] = None,
+        start_index: int = 0,
     ) -> None:
         """Calculates and prints the cost of calling autolabel.run() on a given dataset
 
         Args:
             dataset: path to a CSV dataset
         """
+        dataset = dataset.get_slice(max_items=max_items, start_index=start_index)
+
         if self.config.confidence() and "REFUEL_API_KEY" not in os.environ:
             raise ValueError(
                 "REFUEL_API_KEY environment variable must be set to compute confidence scores. You can request an API key at https://refuel-ai.typeform.com/llm-access."

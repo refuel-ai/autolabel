@@ -6,9 +6,7 @@ from autolabel.schema import TransformType
 
 logger = logging.getLogger(__name__)
 
-TRANSFORM_REGISTRY = {
-    TransformType.WEBPAGE_TRANSFORM: "webpage_transform",
-}
+TRANSFORM_REGISTRY = {}
 
 
 class TransformFactory:
