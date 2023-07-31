@@ -1,7 +1,7 @@
 import json
 
 from autolabel.configs import AutolabelConfig
-from autolabel.data_loaders import DatasetLoader
+from autolabel.dataset import AutolabelDataset
 from autolabel.few_shot import ExampleSelectorFactory
 from langchain.embeddings import HuggingFaceEmbeddings
 from pytest import approx
@@ -15,11 +15,11 @@ BANKING_CONFIG = json.load(open("tests/assets/banking/config_banking.json", "r")
 def test_embedding_provider():
     config = AutolabelConfig(BANKING_HF_EMBEDDINGS_CONFIG)
     seed_examples = config.few_shot_example_set()
-    dataset_loader = DatasetLoader("tests/assets/banking/test.csv", config, 5, 0)
-    seed_loader = DatasetLoader(seed_examples, config)
+    dataset = AutolabelDataset("tests/assets/banking/test.csv", config, 5, 0)
+    seed_loader = AutolabelDataset(seed_examples, config)
     seed_examples = seed_loader.inputs
     example_selector = ExampleSelectorFactory.initialize_selector(
-        config, seed_examples, dataset_loader.dat.keys().tolist()
+        config, seed_examples, dataset.df.keys().tolist()
     )
     assert isinstance(
         example_selector.vectorstore._embedding_function, HuggingFaceEmbeddings

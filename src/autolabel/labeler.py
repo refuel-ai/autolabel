@@ -12,12 +12,13 @@ from rich.prompt import Confirm
 from autolabel.cache import SQLAlchemyCache
 from autolabel.confidence import ConfidenceCalculator
 from autolabel.configs import AutolabelConfig
-from autolabel.data_loaders import DatasetLoader
+from autolabel.dataset import AutolabelDataset
 from autolabel.data_models import AnnotationModel, TaskRunModel
 from autolabel.database import StateManager
 from autolabel.few_shot import ExampleSelectorFactory
 from autolabel.models import BaseModel, ModelFactory
 from autolabel.metrics import BaseMetric
+from autolabel.transforms import TransformFactory
 from autolabel.schema import (
     LLMAnnotation,
     MetricResult,
@@ -26,7 +27,6 @@ from autolabel.schema import (
 )
 from autolabel.tasks import TaskFactory
 from autolabel.utils import maybe_round, print_table, track, track_with_stats
-from autolabel.labeling_output import LabelingOutput
 
 console = Console()
 logger = logging.getLogger(__name__)
@@ -58,12 +58,12 @@ class LabelingAgent:
 
     def run(
         self,
-        dataset: Union[str, pd.DataFrame],
-        max_items: Optional[int] = None,
+        dataset: AutolabelDataset,
         output_name: Optional[str] = None,
-        start_index: Optional[int] = 0,
         eval_every: Optional[int] = 50,
         additional_metrics: Optional[List[BaseMetric]] = [],
+        max_items: Optional[int] = None,
+        start_index: int = 0,
     ) -> Tuple[pd.Series, pd.DataFrame, List[MetricResult]]:
         """Labels data in a given dataset. Output written to new CSV file.
 
@@ -73,12 +73,11 @@ class LabelingAgent:
             output_name: custom name of output CSV file
             start_index: skips annotating [0, start_index)
         """
-        dataset_loader = DatasetLoader(dataset, self.config, max_items, start_index)
+
+        dataset = dataset.get_slice(max_items=max_items, start_index=start_index)
 
         self.db.initialize()
-        self.dataset = self.db.initialize_dataset(
-            dataset_loader.dat, self.config, start_index, max_items
-        )
+        self.dataset_obj = self.db.initialize_dataset(dataset.df, self.config)
         self.task_object = self.db.initialize_task(self.config)
         if isinstance(dataset, str):
             csv_file_name = (
@@ -90,19 +89,19 @@ class LabelingAgent:
             csv_file_name = f"{self.config.task_name()}_labeled.csv"
 
         # Initialize task run and check if it already exists
-        self.task_run = self.db.get_task_run(self.task_object.id, self.dataset.id)
+        self.task_run = self.db.get_task_run(self.task_object.id, self.dataset_obj.id)
         # Resume/Delete the task if it already exists or create a new task run
         if self.task_run:
             logger.info("Task run already exists.")
             self.task_run = self.handle_existing_task_run(
                 self.task_run,
                 csv_file_name,
-                gt_labels=dataset_loader.gt_labels,
+                gt_labels=dataset.gt_labels,
                 additional_metrics=additional_metrics,
             )
         else:
             self.task_run = self.db.create_task_run(
-                csv_file_name, self.task_object.id, self.dataset.id
+                csv_file_name, self.task_object.id, self.dataset_obj.id
             )
 
         # Get the seed examples from the dataset config
@@ -110,7 +109,7 @@ class LabelingAgent:
 
         # If this dataset config is a string, read the corrresponding csv file
         if isinstance(seed_examples, str):
-            seed_loader = DatasetLoader(seed_examples, self.config)
+            seed_loader = AutolabelDataset(seed_examples, self.config)
             seed_examples = seed_loader.inputs
 
         # Check explanations are present in data if explanation_column is passed in
@@ -126,7 +125,7 @@ class LabelingAgent:
         self.example_selector = ExampleSelectorFactory.initialize_selector(
             self.config,
             seed_examples,
-            dataset_loader.dat.keys().tolist(),
+            dataset.df.keys().tolist(),
             cache=self.cache is not None,
         )
 
@@ -135,15 +134,15 @@ class LabelingAgent:
         cost = 0.0
         postfix_dict = {}
 
-        indices = range(current_index, len(dataset_loader.inputs))
+        indices = range(current_index, len(dataset.inputs))
 
         for current_index in track_with_stats(
             indices,
             postfix_dict,
-            total=len(dataset_loader.inputs) - current_index,
+            total=len(dataset.inputs) - current_index,
             console=console,
         ):
-            chunk = dataset_loader.inputs[current_index]
+            chunk = dataset.inputs[current_index]
 
             if self.example_selector:
                 examples = self.example_selector.select_examples(chunk)
@@ -199,10 +198,10 @@ class LabelingAgent:
                     self.db.session, self.task_run.id
                 )
                 llm_labels = [LLMAnnotation(**a.llm_annotation) for a in db_result]
-                if dataset_loader.gt_labels:
+                if dataset.gt_labels:
                     eval_result = self.task.eval(
                         llm_labels,
-                        dataset_loader.gt_labels[: len(llm_labels)],
+                        dataset.gt_labels[: len(llm_labels)],
                         additional_metrics=additional_metrics,
                     )
 
@@ -228,10 +227,10 @@ class LabelingAgent:
         llm_labels = [LLMAnnotation(**a.llm_annotation) for a in db_result]
         eval_result = None
         # if true labels are provided, evaluate accuracy of predictions
-        if dataset_loader.gt_labels:
+        if dataset.gt_labels:
             eval_result = self.task.eval(
                 llm_labels,
-                dataset_loader.gt_labels[: len(llm_labels)],
+                dataset.gt_labels[: len(llm_labels)],
                 additional_metrics=additional_metrics,
             )
             table = {}
@@ -246,12 +245,7 @@ class LabelingAgent:
             print(f"Actual Cost: {maybe_round(cost)}")
             print_table(table, console=console, default_style=METRIC_TABLE_STYLE)
 
-        output = LabelingOutput(
-            config=self.config,
-            df=dataset_loader.dat.copy(),
-            llm_labels=llm_labels,
-            metrics=eval_result,
-        )
+        dataset.process_labels(llm_labels, eval_result)
 
         # Only save to csv if output_name is provided or dataset is a string
         if not output_name and isinstance(dataset, str):
@@ -260,13 +254,13 @@ class LabelingAgent:
             )
 
         if output_name:
-            output.save(output_file_name=output_name)
-        return output
+            dataset.save(output_file_name=output_name)
+        return dataset
 
     def plan(
         self,
-        dataset: Union[str, pd.DataFrame],
-        max_items: int = None,
+        dataset: AutolabelDataset,
+        max_items: Optional[int] = None,
         start_index: int = 0,
     ) -> None:
         """Calculates and prints the cost of calling autolabel.run() on a given dataset
@@ -274,12 +268,12 @@ class LabelingAgent:
         Args:
             dataset: path to a CSV dataset
         """
+        dataset = dataset.get_slice(max_items=max_items, start_index=start_index)
+
         if self.config.confidence() and "REFUEL_API_KEY" not in os.environ:
             raise ValueError(
                 "REFUEL_API_KEY environment variable must be set to compute confidence scores. You can request an API key at https://refuel-ai.typeform.com/llm-access."
             )
-
-        dataset_loader = DatasetLoader(dataset, self.config, max_items, start_index)
 
         prompt_list = []
         total_cost = 0
@@ -289,7 +283,7 @@ class LabelingAgent:
 
         # If this dataset config is a string, read the corrresponding csv file
         if isinstance(seed_examples, str):
-            seed_loader = DatasetLoader(seed_examples, self.config)
+            seed_loader = AutolabelDataset(seed_examples, self.config)
             seed_examples = seed_loader.inputs
 
         # Check explanations are present in data if explanation_column is passed in
@@ -305,13 +299,13 @@ class LabelingAgent:
         self.example_selector = ExampleSelectorFactory.initialize_selector(
             self.config,
             seed_examples,
-            dataset_loader.dat.keys().tolist(),
+            dataset.df.keys().tolist(),
             cache=self.cache is not None,
         )
 
-        input_limit = min(len(dataset_loader.inputs), 100)
+        input_limit = min(len(dataset.inputs), 100)
         for input_i in track(
-            dataset_loader.inputs[:input_limit],
+            dataset.inputs[:input_limit],
             description="Generating Prompts...",
             console=console,
         ):
@@ -327,11 +321,11 @@ class LabelingAgent:
             curr_cost = self.llm.get_cost(prompt=final_prompt, label="")
             total_cost += curr_cost
 
-        total_cost = total_cost * (len(dataset_loader.inputs) / input_limit)
+        total_cost = total_cost * (len(dataset.inputs) / input_limit)
         table = {
             "Total Estimated Cost": f"${maybe_round(total_cost)}",
-            "Number of Examples": len(dataset_loader.inputs),
-            "Average cost per example": f"${maybe_round(total_cost / len(dataset_loader.inputs))}",
+            "Number of Examples": len(dataset.inputs),
+            "Average cost per example": f"${maybe_round(total_cost / len(dataset.inputs))}",
         }
         table = {"parameter": list(table.keys()), "value": list(table.values())}
         print_table(table, show_header=False, console=console, styles=COST_TABLE_STYLES)
@@ -339,6 +333,22 @@ class LabelingAgent:
         console.rule("Prompt Example")
         print(f"{prompt_list[0]}")
         console.rule()
+
+    def transform(self, dataset: AutolabelDataset):
+        transforms = []
+        for transform_dict in self.config.transforms():
+            transforms.append(TransformFactory.from_dict(transform_dict))
+
+        for transform in transforms:
+            # apply transform
+            outputs = []
+            for input_dict in dataset.inputs:
+                output_dict = transform.transform(input_dict)
+                outputs.append(output_dict)
+            output_df = pd.DataFrame.from_records(outputs)
+            final_df = pd.concat([dataset.df, output_df], axis=1)
+            dataset = AutolabelDataset(final_df, self.config)
+        return dataset
 
     def handle_existing_task_run(
         self,
@@ -388,7 +398,7 @@ class LabelingAgent:
             TaskRunModel.delete_by_id(self.db.session, task_run.id)
             pprint("Deleted the existing task and starting a new one...")
             task_run = self.db.create_task_run(
-                csv_file_name, self.task_object.id, self.dataset.id
+                csv_file_name, self.task_object.id, self.dataset_obj.id
             )
         return task_run
 
@@ -429,7 +439,7 @@ class LabelingAgent:
         out_file = None
         if isinstance(seed_examples, str):
             out_file = seed_examples
-            seed_loader = DatasetLoader(seed_examples, self.config)
+            seed_loader = AutolabelDataset(seed_examples, self.config)
             seed_examples = seed_loader.inputs
 
         explanation_column = self.config.explanation_column()
