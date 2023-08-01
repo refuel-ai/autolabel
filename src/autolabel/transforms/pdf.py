@@ -1,7 +1,5 @@
 from typing import List, Dict, Any
 
-from langchain.document_loaders import PyPDFLoader
-
 from autolabel.transforms import BaseTransform
 
 
@@ -33,6 +31,12 @@ class PDFTransform(BaseTransform):
         Returns:
             Dict[str, any]: The transformed row of data.
         """
+        try:
+            from langchain.document_loaders import PyPDFLoader
+        except ImportError:
+            raise ImportError(
+                "pypdf is required to use the pdf transform. Please install pypdf with the following command: pip install pypdf"
+            )
         loader = PyPDFLoader(row[self.file_path_column])
         page_contents = []
         for idx, page in enumerate(loader.load_and_split()):

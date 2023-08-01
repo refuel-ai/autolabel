@@ -39,8 +39,7 @@ dependencies = [
     "jsonschema >= 4.17.3",
     "tabulate >= 0.9.0",
     "typer[all] >= 0.9.0",
-    "simple-term-menu >= 1.6.1",
-    "pypdf >= 3.14.0"
+    "simple-term-menu >= 1.6.1"
 ]
 requires-python = ">=3.6"
 
@@ -91,7 +90,8 @@ all = [
     "transformers >= 4.25.0",
     "google-cloud-aiplatform>=1.25.0",
     "cohere>=4.11.2",
-    "sentence_transformers"
+    "sentence_transformers",
+    "pypdf >= 3.14.0"
 ]
 
 [project.urls]
