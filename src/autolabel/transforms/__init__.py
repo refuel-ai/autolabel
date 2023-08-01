@@ -7,7 +7,7 @@ from autolabel.schema import TransformType
 
 logger = logging.getLogger(__name__)
 
-TRANSFORM_REGISTRY = {PDFTransform.name(): PDFTransform}
+TRANSFORM_REGISTRY = {TransformType.PDF: PDFTransform}
 
 
 class TransformFactory:
