@@ -1,12 +1,13 @@
 import logging
 
 from .base import BaseTransform
+from .pdf import PDFTransform
 from typing import Dict, List
 from autolabel.schema import TransformType
 
 logger = logging.getLogger(__name__)
 
-TRANSFORM_REGISTRY = {}
+TRANSFORM_REGISTRY = {PDFTransform.name(): PDFTransform}
 
 
 class TransformFactory:

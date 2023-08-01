@@ -7,8 +7,9 @@ class BaseTransform(ABC):
         super().__init__()
         self.output_columns = output_columns
 
+    @staticmethod
     @abstractmethod
-    def name(self) -> str:
+    def name() -> str:
         pass
 
     @abstractmethod
