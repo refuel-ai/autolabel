@@ -1,4 +1,3 @@
-import pytest
 from autolabel.transforms.pdf import PDFTransform
 
 
