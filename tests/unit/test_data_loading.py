@@ -1,6 +1,7 @@
 from autolabel import LabelingAgent
 from autolabel.dataset import AutolabelDataset
 from pandas import DataFrame
+from autolabel.configs import AutolabelConfig
 
 csv_path = "tests/assets/banking/test.csv"
 jsonl_path = "tests/assets/banking/test.jsonl"
@@ -8,7 +9,7 @@ config_path = "tests/assets/banking/config_banking.json"
 
 
 def test_read_csv():
-    agent = LabelingAgent(config=config_path)
+    agent = LabelingAgent(config=AutolabelConfig(config_path))
     dataset = AutolabelDataset(csv_path, agent.config)
     # test return types
     assert isinstance(dataset, AutolabelDataset)
@@ -26,7 +27,7 @@ def test_read_csv():
 
 
 def test_read_dataframe():
-    agent = LabelingAgent(config=config_path)
+    agent = LabelingAgent(config=AutolabelConfig(config_path))
     df = AutolabelDataset(csv_path, agent.config).df
     dataset = AutolabelDataset(df, agent.config)
     # test return types
@@ -47,7 +48,7 @@ def test_read_dataframe():
 
 
 def test_read_jsonl():
-    agent = LabelingAgent(config=config_path)
+    agent = LabelingAgent(config=AutolabelConfig(config_path))
     dataset = AutolabelDataset(jsonl_path, agent.config)
     # test return types
     assert isinstance(dataset, AutolabelDataset)
