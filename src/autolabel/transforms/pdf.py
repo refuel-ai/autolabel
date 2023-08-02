@@ -1,5 +1,8 @@
 from typing import List, Dict, Any
 
+from pdf2image import convert_from_path
+import pytesseract
+
 from autolabel.transforms import BaseTransform
 
 
@@ -21,6 +24,23 @@ class PDFTransform(BaseTransform):
     def name() -> str:
         return "pdf"
 
+    @staticmethod
+    def extract_text(path: str) -> List[str]:
+        """This function extracts text from a PDF file using the pdf2image and pytesseract libraries.
+
+        Args:
+            path (str): The path to the PDF file.
+
+        Returns:
+            List[str]: A list of strings, one for each page of the PDF file.
+        """
+        pages = convert_from_path(path)
+        texts = []
+        for page in pages:
+            text = pytesseract.image_to_string(page)
+            texts.append(text)
+        return texts
+
     def transform(self, row: Dict[str, any]) -> Dict[str, any]:
         """This function transforms a PDF file into a string of text. It uses the PyPDFLoader to load and split the PDF into pages.
         Each page is then converted into text and appended to the output string.
@@ -37,12 +57,10 @@ class PDFTransform(BaseTransform):
             raise ImportError(
                 "pypdf is required to use the pdf transform. Please install pypdf with the following command: pip install pypdf"
             )
-        loader = PyPDFLoader(row[self.file_path_column])
+        pages = self.extract_text(row[self.file_path_column])
         page_contents = []
-        for idx, page in enumerate(loader.load_and_split()):
-            page_contents.append(
-                self.page_header.format(page_num=idx + 1) + page.page_content
-            )
+        for idx, page in enumerate(pages):
+            page_contents.append(self.page_header.format(page_num=idx + 1) + page)
         output = self.page_sep.join(page_contents)
         return {
             self.output_columns[0]: output,
