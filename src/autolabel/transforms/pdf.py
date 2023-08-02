@@ -19,12 +19,32 @@ class PDFTransform(BaseTransform):
         self.page_header = page_header
         self.page_sep = page_sep
 
+        if self.ocr_enabled:
+            try:
+                from pdf2image import convert_from_path
+                import pytesseract
+
+                self.convert_from_path = convert_from_path
+                self.pytesseract = pytesseract
+            except ImportError:
+                raise ImportError(
+                    "pdf2image and pytesseract are required to use the pdf transform with ocr. Please install pdf2image and pytesseract with the following command: pip install pdf2image pytesseract"
+                )
+        else:
+            try:
+                from langchain.document_loaders import PDFPlumberLoader
+
+                self.PDFPlumberLoader = PDFPlumberLoader
+            except ImportError:
+                raise ImportError(
+                    "pdfplumber is required to use the pdf transform. Please install pdfplumber with the following command: pip install pdfplumber"
+                )
+
     @staticmethod
     def name() -> str:
         return "pdf"
 
-    @staticmethod
-    def extract_text(path: str) -> List[str]:
+    def extract_text(self, path: str) -> List[str]:
         """
         This function extracts text from a PDF file using the pdfplumber library.
 
@@ -34,17 +54,10 @@ class PDFTransform(BaseTransform):
         Returns:
             List[str]: A list of strings, each index containing the extracted text from each page of the PDF file.
         """
-        try:
-            from langchain.document_loaders import PDFPlumberLoader
-        except ImportError:
-            raise ImportError(
-                "pdfplumber is required to use the pdf transform. Please install pdfplumber with the following command: pip install pdfplumber"
-            )
-        loader = PDFPlumberLoader(path)
+        loader = self.PDFPlumberLoader(path)
         return [doc.page_content for doc in loader.load()]
 
-    @staticmethod
-    def extract_text_ocr(path: str) -> List[str]:
+    def extract_text_ocr(self, path: str) -> List[str]:
         """This function extracts text from a PDF file using the pdf2image and pytesseract libraries.
 
         Args:
@@ -53,22 +66,14 @@ class PDFTransform(BaseTransform):
         Returns:
             List[str]: A list of strings, one for each page of the PDF file.
         """
-        try:
-            from pdf2image import convert_from_path
-            import pytesseract
-            from pytesseract import TesseractNotFoundError
-        except ImportError:
-            raise ImportError(
-                "pdf2image and pytesseract are required to use the pdf transform with ocr. Please install pdf2image and pytesseract with the following command: pip install pdf2image pytesseract"
-            )
-        pages = convert_from_path(path)
+        pages = self.convert_from_path(path)
         try:
             texts = []
             for page in pages:
-                text = pytesseract.image_to_string(page)
+                text = self.pytesseract.image_to_string(page)
                 texts.append(text)
             return texts
-        except TesseractNotFoundError:
+        except Exception as e:
             raise ImportError(
                 "The tesseract engine is required to use the pdf transform with ocr. Please see https://tesseract-ocr.github.io/tessdoc/Installation.html for installation instructions."
             )
