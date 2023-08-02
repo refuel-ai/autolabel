@@ -9,7 +9,7 @@ from autolabel.cache import BaseCache
 
 logger = logging.getLogger(__name__)
 
-MODEL_NAME_IDENTIFIER = lambda provider, model_name: f"{provider}{model_name}"
+MODEL_NAME_IDENTIFIER = lambda provider, model_name: f"{provider}-{model_name}"
 
 
 class ModelRegistry:
@@ -26,7 +26,10 @@ class ModelRegistry:
         return self._data[key]
 
     def register(
-        self, provider: str, model_name: str, model: Union[type, Callable]
+        self,
+        model_name: str,
+        model: BaseModel,
+        provider="custom",
     ) -> None:
         """Register the model object."""
         model_meta = namedtuple("ModelMeta", self._headers)
@@ -76,9 +79,7 @@ def _register_anothropic() -> None:
     model_name = AnthropicLLM.DEFAULT_MODEL
 
     MODEL_REGISTRY.register(
-        provider=ModelProvider.ANTHROPIC,
-        model_name=model_name,
-        model=AnthropicLLM
+        provider=ModelProvider.ANTHROPIC, model_name=model_name, model=AnthropicLLM
     )
 
 
@@ -160,7 +161,9 @@ class ModelFactory:
             model_obj = model_cls(config=config, cache=cache)
             # The below ensures that users should based off of the BaseModel
             # when creating/registering custom models.
-            assert isinstance(model_obj, BaseModel)
+            assert isinstance(model_obj, BaseModel), (
+                f"{model_obj} should inherit from autolabel.models.BaseModel"
+            )
         except ValueError as e:
             logger.error(
                 f"provider={provider}, model={model_name} is not in the list of supported "
