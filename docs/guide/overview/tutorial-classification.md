@@ -73,6 +73,7 @@ config = {
     }
 }
 ```
+*To create a custom configuration, you can use the [CLI](/guide/resources/CLI) or [write your own](/guide/resources/configs).*
 
 Now, we do the dry-run with `agent.plan`:
 ```python
