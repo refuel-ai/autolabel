@@ -91,7 +91,7 @@ all = [
     "google-cloud-aiplatform>=1.25.0",
     "cohere>=4.11.2",
     "sentence_transformers",
-    "pypdf >= 3.14.0"
+    "pdfplumber >= 0.10.2"
 ]
 
 [project.urls]
