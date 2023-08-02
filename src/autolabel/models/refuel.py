@@ -31,6 +31,7 @@ class RefuelLLM(BaseModel):
         cache: BaseCache = None,
     ) -> None:
         super().__init__(config, cache)
+
         from langchain.schema import Generation
 
         self.generation = Generation

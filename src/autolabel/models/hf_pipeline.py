@@ -16,6 +16,8 @@ class HFPipelineLLM(BaseModel):
     def __init__(
         self, config: AutolabelConfig, cache: BaseCache = None
     ) -> None:
+        super().__init__(config, cache)
+
         from langchain.llms import HuggingFacePipeline
 
         try:
@@ -43,7 +45,6 @@ class HFPipelineLLM(BaseModel):
                 "Could not import torch package. "
                 "Please it install it with `pip install torch`."
             )
-        super().__init__(config, cache)
         # populate model name
         self.model_name = config.model_name() or self.DEFAULT_MODEL
 
