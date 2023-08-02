@@ -163,8 +163,10 @@ class ModelFactory:
             assert isinstance(model_obj, BaseModel)
         except ValueError as e:
             logger.error(
-                f"{config.provider()} is not in the list of supported providers: \
-                {list(ModelProvider.__members__.keys())}"
+                f"provider={provider}, model={model_name} is not in the list of supported "
+                f"providers {list(ModelProvider.__members__.keys())} or their respective models "
+                f"\nCheckout \n\t`from autolabel.models import MODEL_REGISTRY; print(MODEL_REGISTRY)` "
+                f"to fetch the list of supported providers and their models"
             )
             return None
         return model_obj
