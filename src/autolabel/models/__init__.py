@@ -161,9 +161,9 @@ class ModelFactory:
             model_obj = model_cls(config=config, cache=cache)
             # The below ensures that users should based off of the BaseModel
             # when creating/registering custom models.
-            assert isinstance(model_obj, BaseModel), (
-                f"{model_obj} should inherit from autolabel.models.BaseModel"
-            )
+            assert isinstance(
+                model_obj, BaseModel
+            ), f"{model_obj} should inherit from autolabel.models.BaseModel"
         except ValueError as e:
             logger.error(
                 f"provider={provider}, model={model_name} is not in the list of supported "

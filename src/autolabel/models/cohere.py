@@ -18,9 +18,7 @@ class CohereLLM(BaseModel):
     # Reference: https://cohere.com/pricing
     COST_PER_TOKEN = 15 / 1_000_000
 
-    def __init__(
-        self, config: AutolabelConfig, cache: BaseCache = None
-    ) -> None:
+    def __init__(self, config: AutolabelConfig, cache: BaseCache = None) -> None:
         super().__init__(config, cache)
         import cohere
         from langchain.llms import Cohere

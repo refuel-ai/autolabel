@@ -26,9 +26,7 @@ class AnthropicLLM(BaseModel):
         "claude-instant-v1": (5.51 / 1000000),
     }
 
-    def __init__(
-        self, config: AutolabelConfig, cache: BaseCache = None
-    ) -> None:
+    def __init__(self, config: AutolabelConfig, cache: BaseCache = None) -> None:
         super().__init__(config, cache)
 
         from langchain.chat_models import ChatAnthropic

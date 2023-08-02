@@ -80,9 +80,7 @@ class OpenAILLM(BaseModel):
         else:
             return "completion"
 
-    def __init__(
-        self, config: AutolabelConfig, cache: BaseCache = None
-    ) -> None:
+    def __init__(self, config: AutolabelConfig, cache: BaseCache = None) -> None:
         super().__init__(config, cache)
 
         from langchain.chat_models import ChatOpenAI
