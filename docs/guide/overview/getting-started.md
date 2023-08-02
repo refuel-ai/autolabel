@@ -89,7 +89,7 @@ config = {
 }
 ```
 
-*To create a custom configuration, you can use the [CLI](/guide/resources/CLI) or [write your own](/guide/resources/configs).*
+*To create a custom configuration, you can use the [CLI](https://docs.refuel.ai/guide/resources/CLI) or [write your own](https://docs.refuel.ai/guide/resources/configs/).*
 
 ### Preview the labeling against your dataset
 
