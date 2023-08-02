@@ -28,6 +28,7 @@ nav:
       - State Management: guide/reliability/state-management.md
     - Working with Autolabel:
       - Configs: guide/resources/configs.md
+      - CLI: guide/resources/CLI.md
       - Refuel-provided Datasets: guide/resources/refuel_datasets.md
   #- Concepts: concepts/concepts.md
   # remove for now

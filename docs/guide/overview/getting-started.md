@@ -89,6 +89,8 @@ config = {
 }
 ```
 
+*To create a custom configuration, you can use the [CLI](https://docs.refuel.ai/guide/resources/CLI) or [write your own](https://docs.refuel.ai/guide/resources/configs/).*
+
 ### Preview the labeling against your dataset
 
 First import `autolabel`, create a `LabelingAgent` object and then run the `plan` command against the dataset (available [here](https://docs.refuel.ai/guide/resources/refuel_datasets/) and can be downloaded through the `autolabel.get_data` function):

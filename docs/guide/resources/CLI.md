@@ -1,4 +1,4 @@
-The Autolabel CLI was created to make the config file creation process easier. It is a simple command line interface that will ask you a series of questions and then generate a config file for you. To use it, simply run the following command:
+The Autolabel CLI was created to make the [config](https://docs.refuel.ai/guide/resources/configs) file creation process easier. It is a simple command line interface that will ask you a series of questions and then generate a config file for you. To use it, simply run the following command:
 
 ```bash
 autolabel config
