@@ -2,7 +2,6 @@ import logging
 from tabulate import tabulate
 from typing import Union, Callable, Any
 from .base import BaseModel
-from functools import partial
 from collections import namedtuple
 from autolabel.configs import AutolabelConfig
 from autolabel.schema import ModelProvider
@@ -65,7 +64,7 @@ def _register_openai() -> None:
         MODEL_REGISTRY.register(
             provider=ModelProvider.OPENAI,
             model_name=model_name,
-            model=partial(OpenAILLM, model_name=model_name),
+            model=OpenAILLM,
         )
 
 
@@ -79,7 +78,7 @@ def _register_anothropic() -> None:
     MODEL_REGISTRY.register(
         provider=ModelProvider.ANTHROPIC,
         model_name=model_name,
-        model=partial(AnthropicLLM, model_name=model_name),
+        model=AnthropicLLM
     )
 
 
@@ -93,7 +92,7 @@ def _register_cohere() -> None:
     MODEL_REGISTRY.register(
         provider=ModelProvider.COHERE,
         model_name=model_name,
-        model=partial(CohereLLM, model_name=model_name),
+        model=CohereLLM,
     )
 
 
@@ -107,7 +106,7 @@ def _register_hugging_face_models() -> None:
     MODEL_REGISTRY.register(
         provider=ModelProvider.HUGGINGFACE_PIPELINE,
         model_name=model_name,
-        model=partial(HFPipelineLLM, model_name=model_name),
+        model=HFPipelineLLM,
     )
 
 
@@ -122,7 +121,7 @@ def _register_palm() -> None:
         MODEL_REGISTRY.register(
             provider=ModelProvider.GOOGLE,
             model_name=model_name,
-            model=partial(PaLMLLM, model_name=model_name),
+            model=PaLMLLM,
         )
 
 
@@ -135,7 +134,7 @@ def _register_refuel() -> None:
     MODEL_REGISTRY.register(
         provider=ModelProvider.REFUEL,
         model_name=model_name,
-        model=partial(RefuelLLM, model_name=model_name),
+        model=RefuelLLM,
     )
 
 

@@ -27,7 +27,7 @@ class AnthropicLLM(BaseModel):
     }
 
     def __init__(
-        self, config: AutolabelConfig, cache: BaseCache = None, model_name: str = None
+        self, config: AutolabelConfig, cache: BaseCache = None
     ) -> None:
         super().__init__(config, cache)
 
@@ -37,7 +37,7 @@ class AnthropicLLM(BaseModel):
         self.human_message = HumanMessage
 
         # populate model name
-        self.model_name = model_name or self.DEFAULT_MODEL
+        self.model_name = config.model_name() or self.DEFAULT_MODEL
         # populate model params
         model_params = config.model_params()
         self.model_params = {**self.DEFAULT_PARAMS, **model_params}

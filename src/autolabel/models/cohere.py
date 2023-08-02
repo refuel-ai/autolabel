@@ -19,14 +19,14 @@ class CohereLLM(BaseModel):
     COST_PER_TOKEN = 15 / 1_000_000
 
     def __init__(
-        self, config: AutolabelConfig, cache: BaseCache = None, model_name: str = None
+        self, config: AutolabelConfig, cache: BaseCache = None
     ) -> None:
         super().__init__(config, cache)
         import cohere
         from langchain.llms import Cohere
 
         # populate model name
-        self.model_name = model_name or self.DEFAULT_MODEL
+        self.model_name = config.model_name() or self.DEFAULT_MODEL
 
         # populate model params and initialize the LLM
         model_params = config.model_params()

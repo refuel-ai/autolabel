@@ -29,7 +29,6 @@ class RefuelLLM(BaseModel):
         self,
         config: AutolabelConfig,
         cache: BaseCache = None,
-        model_name: str = None,
     ) -> None:
         super().__init__(config, cache)
         from langchain.schema import Generation
@@ -39,7 +38,7 @@ class RefuelLLM(BaseModel):
         # populate model name
         # This is unused today, but in the future could
         # be used to decide which refuel model is queried
-        self.model_name = model_name
+        self.model_name = config.model_name()
         model_params = config.model_params()
         self.model_params = {**self.DEFAULT_PARAMS, **model_params}
 

@@ -81,7 +81,7 @@ class OpenAILLM(BaseModel):
             return "completion"
 
     def __init__(
-        self, config: AutolabelConfig, cache: BaseCache = None, model_name: str = None
+        self, config: AutolabelConfig, cache: BaseCache = None
     ) -> None:
         super().__init__(config, cache)
 
@@ -92,7 +92,7 @@ class OpenAILLM(BaseModel):
         self.human_message = HumanMessage
 
         # populate model name
-        self.model_name = model_name or self.DEFAULT_MODEL
+        self.model_name = config.model_name() or self.DEFAULT_MODEL
 
         if os.getenv("OPENAI_API_KEY") is None:
             raise ValueError("OPENAI_API_KEY environment variable not set")

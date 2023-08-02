@@ -14,7 +14,7 @@ class HFPipelineLLM(BaseModel):
     DEFAULT_PARAMS = {"temperature": 0.0, "quantize": 8}
 
     def __init__(
-        self, config: AutolabelConfig, cache: BaseCache = None, model_name: str = None
+        self, config: AutolabelConfig, cache: BaseCache = None
     ) -> None:
         from langchain.llms import HuggingFacePipeline
 
@@ -45,7 +45,7 @@ class HFPipelineLLM(BaseModel):
             )
         super().__init__(config, cache)
         # populate model name
-        self.model_name = model_name or self.DEFAULT_MODEL
+        self.model_name = config.model_name() or self.DEFAULT_MODEL
 
         # populate model params
         model_params = config.model_params()

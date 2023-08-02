@@ -43,7 +43,6 @@ class PaLMLLM(BaseModel):
         self,
         config: AutolabelConfig,
         cache: BaseCache = None,
-        model_name: str = None,
     ) -> None:
         super().__init__(config, cache)
 
@@ -56,7 +55,7 @@ class PaLMLLM(BaseModel):
         self.generation = Generation
 
         # populate model name
-        self.model_name = model_name or self.DEFAULT_MODEL
+        self.model_name = config.model_name() or self.DEFAULT_MODEL
 
         # populate model params and initialize the LLM
         model_params = config.model_params()
