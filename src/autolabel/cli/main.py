@@ -7,6 +7,7 @@ import typer
 from autolabel import LabelingAgent
 from autolabel.schema import TaskType, ModelProvider, FewShotAlgorithm
 from autolabel.few_shot import PROVIDER_TO_MODEL
+from autolabel.dataset import AutolabelDataset
 
 from autolabel.cli.config import init, create_config_wizard
 
@@ -260,6 +261,26 @@ def init_command(
     )
 
 
+def setup_logging(
+    verbose_debug: bool = False,
+    verbose_info: bool = False,
+    quiet_warning: bool = False,
+    quiet_error: bool = False,
+):
+    if verbose_debug:
+        log_level = logging.DEBUG
+    elif verbose_info:
+        log_level = logging.INFO
+    elif quiet_warning:
+        log_level = logging.ERROR
+    elif quiet_error:
+        log_level = logging.CRITICAL
+    else:
+        log_level = logging.WARNING
+    logging.getLogger("autolabel").setLevel(log_level)
+    logging.getLogger("langchain").setLevel(log_level)
+
+
 @app.command()
 def plan(
     dataset: Annotated[
@@ -285,19 +306,10 @@ def plan(
     ] = False,
 ):
     """[bold]Plan[/bold] 🔍 a labeling session in accordance with the provided dataset and config file"""
-    if verbose_debug:
-        log_level = logging.DEBUG
-    elif verbose_info:
-        log_level = logging.INFO
-    elif quiet_warning:
-        log_level = logging.ERROR
-    elif quiet_error:
-        log_level = logging.CRITICAL
-    else:
-        log_level = logging.WARNING
-    logging.getLogger("autolabel").setLevel(log_level)
-    logging.getLogger("langchain").setLevel(log_level)
+    setup_logging(verbose_debug, verbose_info, quiet_warning, quiet_error)
     agent = LabelingAgent(config=config, cache=cache)
+    config = agent.config
+    dataset = AutolabelDataset(dataset, config)
     agent.plan(dataset, max_items=max_items, start_index=start_index)
 
 
@@ -326,19 +338,10 @@ def run(
     ] = False,
 ):
     """[bold]Run[/bold] ▶️ a labeling session in accordance with the provided dataset and config file"""
-    if verbose_debug:
-        log_level = logging.DEBUG
-    elif verbose_info:
-        log_level = logging.INFO
-    elif quiet_warning:
-        log_level = logging.ERROR
-    elif quiet_error:
-        log_level = logging.CRITICAL
-    else:
-        log_level = logging.WARNING
-    logging.getLogger("autolabel").setLevel(log_level)
-    logging.getLogger("langchain").setLevel(log_level)
+    setup_logging(verbose_debug, verbose_info, quiet_warning, quiet_error)
     agent = LabelingAgent(config=config, cache=cache)
+    config = agent.config
+    dataset = AutolabelDataset(dataset, config)
     agent.run(dataset, max_items=max_items, start_index=start_index)
 
 
