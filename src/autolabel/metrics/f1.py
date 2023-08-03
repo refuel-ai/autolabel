@@ -1,8 +1,9 @@
 from typing import List, Optional
+import json
 
 from autolabel.metrics import BaseMetric
 from autolabel.schema import LLMAnnotation, MetricResult, MetricType, F1Type
-from sklearn.preprocessing import MultiLabelBinarizer
+from sklearn.preprocessing import MultiLabelBinarizer, LabelEncoder
 from sklearn.metrics import f1_score
 from autolabel.utils import normalize_text
 
@@ -96,10 +97,45 @@ class F1Metric(BaseMetric):
 
         return values
 
+    def attribute_extraction_compute(
+        self, llm_labels: List[str], gt_labels: List[str]
+    ) -> float:
+        # Convert JSON strings to dictionaries
+        llm_labels = [json.loads(label.label) for label in llm_labels]
+        gt_labels = [json.loads(label) for label in gt_labels]
+
+        # Get all unique labels
+        all_labels = set()
+        for label in llm_labels + gt_labels:
+            all_labels.update(label.values())
+
+        # Initialize label encoder
+        le = LabelEncoder()
+        le.fit(list(all_labels))
+
+        # Compute F1 score for each attribute
+        f1_scores = []
+        for llm_label, gt_label in zip(llm_labels, gt_labels):
+            for attribute in gt_label.keys():
+                # Encode labels as integers
+                y_true = le.transform([gt_label[attribute]])
+                y_pred = le.transform([llm_label.get(attribute, None)])
+
+                # Compute F1 score
+                f1 = f1_score(y_true, y_pred, average="micro")
+                f1_scores.append(f1)
+
+        # Compute average F1 score
+        avg_f1_score = sum(f1_scores) / len(f1_scores)
+
+        return [MetricResult(metric_type=MetricType.F1, value=avg_f1_score)]
+
     def compute(
         self, llm_labels: List[LLMAnnotation], gt_labels: List[str]
     ) -> List[MetricResult]:
         if self.type == F1Type.MULTI_LABEL:
             return self.multi_label_compute(llm_labels, gt_labels)
+        elif self.type == F1Type.ATTRIBUTE_EXTRACTION:
+            return self.attribute_extraction_compute(llm_labels, gt_labels)
         else:
             return self.text_compute(llm_labels, gt_labels)
