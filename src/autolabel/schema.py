@@ -219,3 +219,4 @@ class TransformType(str, Enum):
 
     WEBPAGE_TRANSFORM = "webpage_transform"
     PDF = "pdf"
+    PDF_OCR = "pdf_ocr"
