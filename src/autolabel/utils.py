@@ -158,6 +158,55 @@ def track(
             progress.refresh()
 
 
+async def gather_async_tasks_with_progress(
+    tasks: Iterable,
+    description: str = None,
+    total: Optional[int] = None,
+    advance: int = 1,
+    transient: bool = False,
+    console: Optional[Console] = None,
+    disable: bool = False,
+) -> Iterable:
+    """Gather async tasks with progress bar
+
+    Args:
+        tasks (Iterable): A sequence of async tasks you wish to gather.
+        description (str, optional): Description of task show next to progress bar. Defaults to `None`.
+        total (int, optional): Total number of steps. Default is len(sequence).
+        advance (int, optional): Number of steps to advance progress by. Defaults to 1. Total / advance must less than or equal to len(sequence) for progress to reach finished state.
+        transient (bool, optional): Clear the progress on exit. Defaults to False.
+        console (Console, optional): Console to write to. Default creates internal Console instance.
+        disable (bool, optional): Disable display of progress.
+    Returns:
+        Iterable: Returns an iterable of the results of the async tasks.
+    """
+    progress = _autolabel_progress(
+        description=description,
+        transient=transient,
+        console=console,
+        disable=disable,
+    )
+
+    if total is None:
+        total = len(tasks)
+
+    async def _task_with_tracker(task, progress, progress_task):
+        res = await task
+        progress.advance(
+            progress_task,
+            advance=min(advance, total - progress.tasks[progress_task].completed),
+        )
+        progress.refresh()
+        return res
+
+    with progress:
+        progress_task = progress.add_task(description, total=total)
+        tasks = [_task_with_tracker(task, progress, progress_task) for task in tasks]
+        import asyncio
+
+        return await asyncio.gather(*tasks)
+
+
 def track_with_stats(
     sequence: Union[Sequence[ProgressType], Iterable[ProgressType]],
     stats: Dict[str, str],

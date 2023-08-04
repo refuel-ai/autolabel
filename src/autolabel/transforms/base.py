@@ -12,5 +12,8 @@ class BaseTransform(ABC):
         pass
 
     @abstractmethod
-    def transform(self, row: Dict[str, Any]) -> Dict[str, Any]:
+    async def _apply(self, row: Dict[str, Any]) -> Dict[str, Any]:
         pass
+
+    async def apply(self, row: Dict[str, Any]) -> Dict[str, Any]:
+        return await self._apply(row)

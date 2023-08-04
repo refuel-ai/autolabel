@@ -2,8 +2,7 @@ import logging
 import os
 from typing import Dict, List, Optional, Tuple, Union
 import json
-
-import numpy as np
+import asyncio
 import pandas as pd
 from rich import print as pprint
 from rich.console import Console
@@ -18,7 +17,7 @@ from autolabel.database import StateManager
 from autolabel.few_shot import ExampleSelectorFactory
 from autolabel.models import BaseModel, ModelFactory
 from autolabel.metrics import BaseMetric
-from autolabel.transforms import TransformFactory
+from autolabel.transforms import BaseTransform, TransformFactory
 from autolabel.schema import (
     LLMAnnotation,
     MetricResult,
@@ -26,7 +25,13 @@ from autolabel.schema import (
     TaskStatus,
 )
 from autolabel.tasks import TaskFactory
-from autolabel.utils import maybe_round, print_table, track, track_with_stats
+from autolabel.utils import (
+    maybe_round,
+    print_table,
+    track,
+    track_with_stats,
+    gather_async_tasks_with_progress,
+)
 
 console = Console()
 logger = logging.getLogger(__name__)
@@ -334,20 +339,29 @@ class LabelingAgent:
         print(f"{prompt_list[0]}")
         console.rule()
 
+    async def async_run_transform(
+        self, transform: BaseTransform, dataset: AutolabelDataset
+    ):
+        transform_outputs = [
+            transform.apply(input_dict) for input_dict in dataset.inputs
+        ]
+        outputs = await gather_async_tasks_with_progress(
+            transform_outputs,
+            description=f"Running transform {transform.name()}...",
+            console=console,
+        )
+        output_df = pd.DataFrame.from_records(outputs)
+        final_df = pd.concat([dataset.df, output_df], axis=1)
+        dataset = AutolabelDataset(final_df, self.config)
+        return dataset
+
     def transform(self, dataset: AutolabelDataset):
         transforms = []
         for transform_dict in self.config.transforms():
             transforms.append(TransformFactory.from_dict(transform_dict))
-
         for transform in transforms:
-            # apply transform
-            outputs = []
-            for input_dict in dataset.inputs:
-                output_dict = transform.transform(input_dict)
-                outputs.append(output_dict)
-            output_df = pd.DataFrame.from_records(outputs)
-            final_df = pd.concat([dataset.df, output_df], axis=1)
-            dataset = AutolabelDataset(final_df, self.config)
+            dataset = asyncio.run(self.async_run_transform(transform, dataset))
+
         return dataset
 
     def handle_existing_task_run(

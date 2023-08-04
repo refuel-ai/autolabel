@@ -57,6 +57,7 @@ dev = [
     "mkdocstrings-python",
     "pip-tools",
     "pytest",
+    "pytest-asyncio",
     "pytest-mock",
     "pre-commit"
 ]
