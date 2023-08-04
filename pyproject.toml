@@ -92,7 +92,10 @@ all = [
     "transformers >= 4.25.0",
     "google-cloud-aiplatform>=1.25.0",
     "cohere>=4.11.2",
-    "sentence_transformers"
+    "sentence_transformers",
+    "bs4",
+    "httpx",
+    "fake_useragent"
 ]
 
 [project.urls]
