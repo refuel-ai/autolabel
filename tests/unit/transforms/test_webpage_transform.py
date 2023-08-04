@@ -19,3 +19,4 @@ async def test_webpage_transform():
     assert set(transformed_row.keys()) == set(["webpage_content", "metadata"])
     assert isinstance(transformed_row["webpage_content"], str)
     assert isinstance(transformed_row["metadata"], dict)
+    assert len(transformed_row["webpage_content"]) > 0

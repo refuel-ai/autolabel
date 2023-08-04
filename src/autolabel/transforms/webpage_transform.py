@@ -4,6 +4,7 @@ from typing import List, Dict, Any, Tuple
 import asyncio
 import logging
 import pandas as pd
+import ssl
 
 logger = logging.getLogger(__name__)
 
@@ -75,31 +76,30 @@ class WebpageTransform(BaseTransform):
         if retry_count >= self.max_retries:
             logger.warning(f"Max retries reached for URL: {url}")
             return None, None
+
         try:
             client = self.client
             if not verify:
                 client = self.client_with_no_verify
             response = await client.get(url, headers=headers)
+
             # TODO: Add support for other parsers
             soup = self.beautiful_soup(response.text, HTML_PARSER)
             return soup.get_text(), self._load_metadata(url, soup)
+        except self.httpx.ConnectTimeout as e:
+            logger.error(f"Timeout when fetching content from URL: {url}")
+            return None, None
+        except ssl.SSLCertVerificationError as e:
+            logger.warning(
+                f"SSL verification error when fetching content from URL: {url}, retrying with verify=False"
+            )
+            await asyncio.sleep(BACKOFF**retry_count)
+            return await self._load_url(
+                url, verify=False, headers=headers, retry_count=retry_count + 1
+            )
         except Exception as e:
-            if "RemoteDisconnected" in str(e):
-                await asyncio.sleep(BACKOFF**retry_count)
-                return await self._load_url(
-                    url, verify=verify, headers={}, retry_count=retry_count + 1
-                )
-            elif "CERTIFICATE_VERIFY_FAILED" in str(e):
-                await asyncio.sleep(BACKOFF**retry_count)
-                return await self._load_url(
-                    url, verify=False, headers=headers, retry_count=retry_count + 1
-                )
-            elif isinstance(e, self.httpx.ConnectTimeout):
-                logger.error(f"Timeout when fetching content from URL: {url}")
-                return None, None
-            else:
-                logger.error(f"Error fetching content from URL: {url}. Exception: {e}")
-                return None, None
+            logger.error(f"Error fetching content from URL: {url}. Exception: {e}")
+            return None, None
 
     async def _apply(self, row: Dict[str, Any]) -> Dict[str, Any]:
         url = row[self.url_column]
