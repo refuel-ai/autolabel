@@ -37,16 +37,11 @@ class DatasetGenerator:
     def _format_examples(self, examples: List[Dict]) -> str:
         if examples is None:
             return ""
+        examples_df = pd.DataFrame(examples)
         return (
             "```csv\n"
-            + "\n".join(
-                [self.config.delimiter().join(self.columns)]
-                + [
-                    self.config.delimiter().join([example[col] for col in self.columns])
-                    for example in examples
-                ]
-            )
-            + "\n```"
+            + examples_df.to_csv(index=False, sep=self.config.delimiter())
+            + "```"
         )
 
     def _generate_column_description(self, col: str, examples: List[Dict]) -> str:
