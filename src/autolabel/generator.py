@@ -6,6 +6,8 @@ import pandas as pd
 
 from autolabel.configs import AutolabelConfig
 from autolabel.models import ModelFactory
+from autolabel.dataset import AutolabelDataset
+from autolabel import LabelingAgent
 
 
 logger = logging.getLogger(__name__)
@@ -51,6 +53,11 @@ class DatasetGenerator:
             raise result.errors[0]
         description = result.generations[0][0].text.strip()
         return description
+
+    def _validate_labels(self, dataset: AutolabelDataset):
+        agent = LabelingAgent(self.config)
+        dataset = agent.run(dataset)
+        return dataset
 
     def generate(
         self,
@@ -116,6 +123,12 @@ class DatasetGenerator:
 
         response = io.StringIO(response)
         df = pd.read_csv(response, sep=self.config.delimiter())
-        self.df = df
+        dataset = AutolabelDataset(df, self.config)
+        try:
+            dataset = self._validate_labels(dataset)
+        except Exception as e:
+            logger.error(
+                f"Error validating labels, please check to make sure everything looks ok: {e}"
+            )
 
-        return df
+        return dataset
