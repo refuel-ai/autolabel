@@ -73,6 +73,7 @@ config = {
     }
 }
 ```
+*To create a custom configuration, you can use the [CLI](https://docs.refuel.ai/guide/resources/CLI) or [write your own](https://docs.refuel.ai/guide/resources/configs).*
 
 Now, we do the dry-run with `agent.plan`:
 ```python

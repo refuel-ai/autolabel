@@ -2,7 +2,7 @@ import logging
 
 from .base import BaseTransform
 from .pdf import PDFTransform
-from .pdf_ocr import PDFOCRTransform
+from .webpage_transform import WebpageTransform
 from typing import Dict, List
 from autolabel.schema import TransformType
 
@@ -10,7 +10,7 @@ logger = logging.getLogger(__name__)
 
 TRANSFORM_REGISTRY = {
     TransformType.PDF: PDFTransform,
-    TransformType.PDF_OCR: PDFOCRTransform,
+    TransformType.WEBPAGE_TRANSFORM: WebpageTransform,
 }
 
 
