@@ -1,12 +1,15 @@
 import logging
 
 from .base import BaseTransform
+from .webpage_transform import WebpageTransform
 from typing import Dict, List
 from autolabel.schema import TransformType
 
 logger = logging.getLogger(__name__)
 
-TRANSFORM_REGISTRY = {}
+TRANSFORM_REGISTRY = {
+    TransformType.WEBPAGE_TRANSFORM: WebpageTransform,
+}
 
 
 class TransformFactory:
