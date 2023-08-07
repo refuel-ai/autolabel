@@ -1,12 +1,13 @@
 from typing import List, Dict, Any
 
+from autolabel.schema import TransformType
 from autolabel.transforms import BaseTransform
 
 
 class PDFTransform(BaseTransform):
     def __init__(
         self,
-        output_columns: List[str],
+        output_columns: Dict[str, Any],
         file_path_column: str,
         ocr_enabled: bool = False,
         page_header: str = "Page {page_num}: {page_content}",
@@ -19,6 +20,15 @@ class PDFTransform(BaseTransform):
         self.page_format = page_header
         self.page_sep = page_sep
 
+        # PDFPlumber is required for both for metadata extraction
+        try:
+            from langchain.document_loaders import PDFPlumberLoader
+
+            self.PDFPlumberLoader = PDFPlumberLoader
+        except ImportError:
+            raise ImportError(
+                "pdfplumber is required to use the pdf transform. Please install pdfplumber with the following command: pip install pdfplumber"
+            )
         if self.ocr_enabled:
             try:
                 from pdf2image import convert_from_path
@@ -35,27 +45,26 @@ class PDFTransform(BaseTransform):
                 raise EnvironmentError(
                     "The tesseract engine is required to use the pdf transform with ocr. Please see https://tesseract-ocr.github.io/tessdoc/Installation.html for installation instructions."
                 )
-        else:
-            try:
-                from langchain.document_loaders import PDFPlumberLoader
-
-                self.PDFPlumberLoader = PDFPlumberLoader
-            except ImportError:
-                raise ImportError(
-                    "pdfplumber is required to use the pdf transform. Please install pdfplumber with the following command: pip install pdfplumber"
-                )
 
     @staticmethod
     def name() -> str:
-        return "pdf"
+        return TransformType.PDF
 
-    def get_page_texts(self, row: Dict[str, any]) -> List[str]:
+    @property
+    def output_columns(self) -> Dict[str, Any]:
+        COLUMN_NAMES = [
+            "content_column",
+            "metadata_column",
+        ]
+        return {k: self._output_columns.get(k, k) for k in COLUMN_NAMES}
+
+    def get_page_texts(self, row: Dict[str, Any]) -> List[str]:
         """This function gets the text from each page of a PDF file.
         If OCR is enabled, it uses the pdf2image library to convert the PDF into images and then uses
         pytesseract to convert the images into text. Otherwise, it uses pdfplumber to extract the text.
 
         Args:
-            row (Dict[str, any]): The row of data to be transformed.
+            row (Dict[str, Any]): The row of data to be transformed.
 
         Returns:
             List[str]: A list of strings containing the text from each page of the PDF.
@@ -67,22 +76,25 @@ class PDFTransform(BaseTransform):
             loader = self.PDFPlumberLoader(row[self.file_path_column])
             return [page.page_content for page in loader.load()]
 
-    async def _apply(self, row: Dict[str, any]) -> Dict[str, any]:
+    async def _apply(self, row: Dict[str, Any]) -> Dict[str, Any]:
         """This function transforms a PDF file into a string of text.
         The text is formatted according to the page_format and
         page_sep parameters and returned as a string.
 
         Args:
-            row (Dict[str, any]): The row of data to be transformed.
+            row (Dict[str, Any]): The row of data to be transformed.
 
         Returns:
-            Dict[str, any]: The dict of output columns.
+            Dict[str, Any]: The dict of output columns.
         """
         texts = []
         for idx, text in enumerate(get_page_texts(row)):
             texts.append(self.page_format.format(page_num=idx + 1, page_content=text))
         output = self.page_sep.join(texts)
-        return {
-            self.output_columns[0]: output,
-            self.output_columns[1]: len(texts),
+        transformed_row = {
+            self.output_columns["content_column"]: output,
+            self.output_columns["metadata_column"]: {
+                "num_pages": len(texts)
+            },  # TODO: add more metadata
         }
+        return transformed_row
