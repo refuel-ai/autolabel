@@ -57,6 +57,7 @@ dev = [
     "mkdocstrings-python",
     "pip-tools",
     "pytest",
+    "pytest-asyncio",
     "pytest-mock",
     "pre-commit"
 ]
@@ -82,6 +83,7 @@ all = [
     "bumpver",
     "pip-tools",
     "pytest",
+    "pytest-asyncio",
     "pytest-mock",
     "pre-commit",
     "openai >= 0.27.4",
@@ -90,7 +92,13 @@ all = [
     "transformers >= 4.25.0",
     "google-cloud-aiplatform>=1.25.0",
     "cohere>=4.11.2",
-    "sentence_transformers"
+    "sentence_transformers",
+    "pdfplumber >= 0.10.2",
+    "pdf2image >= 1.16.3",
+    "pytesseract >= 0.3.10",
+    "bs4",
+    "httpx",
+    "fake_useragent"
 ]
 
 [project.urls]
