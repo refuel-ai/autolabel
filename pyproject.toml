@@ -95,7 +95,7 @@ all = [
     "sentence_transformers",
     "pdfplumber >= 0.10.2",
     "pdf2image >= 1.16.3",
-    "pytesseract >= 0.3.10"
+    "pytesseract >= 0.3.10",
     "bs4",
     "httpx",
     "fake_useragent"

@@ -20,15 +20,6 @@ class PDFTransform(BaseTransform):
         self.page_format = page_header
         self.page_sep = page_sep
 
-        # PDFPlumber is required for both for metadata extraction
-        try:
-            from langchain.document_loaders import PDFPlumberLoader
-
-            self.PDFPlumberLoader = PDFPlumberLoader
-        except ImportError:
-            raise ImportError(
-                "pdfplumber is required to use the pdf transform. Please install pdfplumber with the following command: pip install pdfplumber"
-            )
         if self.ocr_enabled:
             try:
                 from pdf2image import convert_from_path
@@ -44,6 +35,15 @@ class PDFTransform(BaseTransform):
             except EnvironmentError:
                 raise EnvironmentError(
                     "The tesseract engine is required to use the pdf transform with ocr. Please see https://tesseract-ocr.github.io/tessdoc/Installation.html for installation instructions."
+                )
+        else:
+            try:
+                from langchain.document_loaders import PDFPlumberLoader
+
+                self.PDFPlumberLoader = PDFPlumberLoader
+            except ImportError:
+                raise ImportError(
+                    "pdfplumber is required to use the pdf transform. Please install pdfplumber with the following command: pip install pdfplumber"
                 )
 
     @staticmethod
@@ -88,13 +88,11 @@ class PDFTransform(BaseTransform):
             Dict[str, Any]: The dict of output columns.
         """
         texts = []
-        for idx, text in enumerate(get_page_texts(row)):
+        for idx, text in enumerate(self.get_page_texts(row)):
             texts.append(self.page_format.format(page_num=idx + 1, page_content=text))
         output = self.page_sep.join(texts)
         transformed_row = {
             self.output_columns["content_column"]: output,
-            self.output_columns["metadata_column"]: {
-                "num_pages": len(texts)
-            },  # TODO: add more metadata
+            self.output_columns["metadata_column"]: {"num_pages": len(texts)},
         }
         return transformed_row
