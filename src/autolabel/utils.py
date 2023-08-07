@@ -1,3 +1,4 @@
+import asyncio
 import hashlib
 import os
 import json
@@ -202,8 +203,6 @@ async def gather_async_tasks_with_progress(
     with progress:
         progress_task = progress.add_task(description, total=total)
         tasks = [_task_with_tracker(task, progress, progress_task) for task in tasks]
-        import asyncio
-
         return await asyncio.gather(*tasks)
 
 

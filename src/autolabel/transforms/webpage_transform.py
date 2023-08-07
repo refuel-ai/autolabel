@@ -1,6 +1,6 @@
 from autolabel.schema import TransformType
 from autolabel.transforms import BaseTransform
-from typing import List, Dict, Any, Tuple
+from typing import Dict, Any
 import asyncio
 import logging
 import pandas as pd
@@ -20,7 +20,7 @@ class WebpageTransform(BaseTransform):
     def __init__(
         self,
         url_column: str,
-        output_columns: List[str],
+        output_columns: Dict[str, Any],
         timeout: int = 5,
         headers: Dict[str, str] = HEADERS,
     ) -> None:
@@ -59,6 +59,16 @@ class WebpageTransform(BaseTransform):
     def name(self) -> str:
         return TransformType.WEBPAGE_TRANSFORM
 
+    @property
+    def output_columns(self) -> Dict[str, Any]:
+        COLUMN_NAMES = [
+            "content_column",
+            "content_in_bytes_column",
+            "soup_column",
+            "metadata_column",
+        ]
+        return {k: self._output_columns.get(k, k) for k in COLUMN_NAMES}
+
     def _load_metadata(self, url, soup) -> Dict[str, Any]:
         metadata = {"url": url}
         if soup.find("title"):
@@ -72,10 +82,10 @@ class WebpageTransform(BaseTransform):
 
     async def _load_url(
         self, url: str, verify=True, headers=HEADERS, retry_count=0
-    ) -> Tuple[str, Dict[str, Any]]:
+    ) -> Dict[str, Any]:
         if retry_count >= self.max_retries:
             logger.warning(f"Max retries reached for URL: {url}")
-            return None, None
+            return {}
 
         try:
             client = self.client
@@ -84,11 +94,17 @@ class WebpageTransform(BaseTransform):
             response = await client.get(url, headers=headers)
 
             # TODO: Add support for other parsers
-            soup = self.beautiful_soup(response.text, HTML_PARSER)
-            return soup.get_text(), self._load_metadata(url, soup)
+            content_bytes = response.content
+            soup = self.beautiful_soup(content_bytes, HTML_PARSER)
+            return {
+                "content": soup.get_text(),
+                "content_bytes": content_bytes,
+                "soup": soup,
+                "metadata": self._load_metadata(url, soup),
+            }
         except self.httpx.ConnectTimeout as e:
             logger.error(f"Timeout when fetching content from URL: {url}")
-            return None, None
+            return {}
         except ssl.SSLCertVerificationError as e:
             logger.warning(
                 f"SSL verification error when fetching content from URL: {url}, retrying with verify=False"
@@ -99,17 +115,23 @@ class WebpageTransform(BaseTransform):
             )
         except Exception as e:
             logger.error(f"Error fetching content from URL: {url}. Exception: {e}")
-            return None, None
+            return {}
 
     async def _apply(self, row: Dict[str, Any]) -> Dict[str, Any]:
         url = row[self.url_column]
-        content, metadata = None, None
+        url_response_data = {}
         if pd.isna(url):
             logger.warning(f"Empty url in row {row}")
         else:
-            content, metadata = await self._load_url(url)
+            url_response_data = await self._load_url(url)
 
-        return {
-            column: value
-            for column, value in zip(self.output_columns, [content, metadata])
+        transformed_row = {
+            self.output_columns["content_column"]: url_response_data.get("content"),
+            self.output_columns["content_in_bytes_column"]: url_response_data.get(
+                "content_bytes"
+            ),
+            self.output_columns["soup_column"]: url_response_data.get("soup"),
+            self.output_columns["metadata_column"]: url_response_data.get("metadata"),
         }
+
+        return transformed_row
