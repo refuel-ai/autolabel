@@ -8,7 +8,11 @@ pytest_plugins = ("pytest_asyncio",)
 async def test_webpage_transform():
     # Initialize the transform class
     transform = WebpageTransform(
-        output_columns=["webpage_content", "metadata"], url_column="url"
+        output_columns={
+            "content_column": "webpage_content",
+            "metadata_column": "metadata",
+        },
+        url_column="url",
     )
 
     # Create a mock row
@@ -16,7 +20,9 @@ async def test_webpage_transform():
     # Transform the row
     transformed_row = await transform.apply(row)
     # Check the output
-    assert set(transformed_row.keys()) == set(["webpage_content", "metadata"])
+    assert set(transformed_row.keys()) == set(
+        ["webpage_content", "metadata", "content_in_bytes_column", "soup_column"]
+    )
     assert isinstance(transformed_row["webpage_content"], str)
     assert isinstance(transformed_row["metadata"], dict)
     assert len(transformed_row["webpage_content"]) > 0
