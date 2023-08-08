@@ -6,68 +6,26 @@ from autolabel.cache import BaseCache
 
 logger = logging.getLogger(__name__)
 
-MODEL_REGISTRY = {}
+from autolabel.models.openai import OpenAILLM
+from autolabel.models.anthropic import AnthropicLLM
+from autolabel.models.cohere import CohereLLM
+from autolabel.models.palm import PaLMLLM
+from autolabel.models.hf_pipeline import HFPipelineLLM
+from autolabel.models.refuel import RefuelLLM
+
+MODEL_REGISTRY = {
+    ModelProvider.OPENAI: OpenAILLM,
+    ModelProvider.ANTHROPIC: AnthropicLLM,
+    ModelProvider.COHERE: CohereLLM,
+    ModelProvider.HUGGINGFACE_PIPELINE: HFPipelineLLM,
+    ModelProvider.GOOGLE: PaLMLLM,
+    ModelProvider.REFUEL: RefuelLLM,
+}
 
 
 def register_model(name, model_cls):
+    """Register Model class"""
     MODEL_REGISTRY[name] = model_cls
-
-
-def _register_openai() -> None:
-    """Register OpenAI models"""
-    from autolabel.models.openai import OpenAILLM
-
-    register_model(
-        name=ModelProvider.OPENAI,
-        model_cls=OpenAILLM,
-    )
-
-
-def _register_anothropic() -> None:
-    """Register Anthropic models"""
-    from autolabel.models.anthropic import AnthropicLLM
-
-    register_model(name=ModelProvider.ANTHROPIC, model_cls=AnthropicLLM)
-
-
-def _register_cohere() -> None:
-    """Register Cohere models"""
-    from autolabel.models.cohere import CohereLLM
-
-    register_model(
-        name=ModelProvider.COHERE,
-        model_cls=CohereLLM,
-    )
-
-
-def _register_hugging_face_models() -> None:
-    """Register Cohere models"""
-    from autolabel.models.hf_pipeline import HFPipelineLLM
-
-    register_model(
-        name=ModelProvider.HUGGINGFACE_PIPELINE,
-        model_cls=HFPipelineLLM,
-    )
-
-
-def _register_palm() -> None:
-    """Register Google models"""
-    from autolabel.models.palm import PaLMLLM
-
-    register_model(
-        name=ModelProvider.GOOGLE,
-        model_cls=PaLMLLM,
-    )
-
-
-def _register_refuel() -> None:
-    """Register Refuel models"""
-    from autolabel.models.refuel import RefuelLLM
-
-    register_model(
-        name=ModelProvider.REFUEL,
-        model_cls=RefuelLLM,
-    )
 
 
 class ModelFactory:
@@ -102,11 +60,3 @@ class ModelFactory:
             )
             return None
         return model_obj
-
-
-_register_openai()
-_register_anothropic()
-_register_cohere()
-_register_hugging_face_models()
-_register_palm()
-_register_refuel()

@@ -5,7 +5,6 @@ from autolabel.models import BaseModel
 from autolabel.configs import AutolabelConfig
 from autolabel.cache import BaseCache
 from autolabel.schema import RefuelLLMResult
-from langchain.llms import Cohere
 
 
 class CohereLLM(BaseModel):
@@ -22,6 +21,7 @@ class CohereLLM(BaseModel):
     def __init__(self, config: AutolabelConfig, cache: BaseCache = None) -> None:
         super().__init__(config, cache)
         import cohere
+        from langchain.llms import Cohere
 
         # populate model name
         self.model_name = config.model_name() or self.DEFAULT_MODEL

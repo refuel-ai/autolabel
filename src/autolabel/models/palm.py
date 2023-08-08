@@ -6,8 +6,6 @@ from autolabel.models import BaseModel
 from autolabel.configs import AutolabelConfig
 from autolabel.cache import BaseCache
 from autolabel.schema import RefuelLLMResult
-from langchain.chat_models import ChatVertexAI
-from langchain.llms import VertexAI
 from langchain.schema import LLMResult, HumanMessage, Generation
 from tenacity import (
     before_sleep_log,
@@ -47,6 +45,10 @@ class PaLMLLM(BaseModel):
         cache: BaseCache = None,
     ) -> None:
         super().__init__(config, cache)
+
+        from langchain.chat_models import ChatVertexAI
+        from langchain.llms import VertexAI
+
         # populate model name
         self.model_name = config.model_name() or self.DEFAULT_MODEL
 
