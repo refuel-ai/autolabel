@@ -220,3 +220,4 @@ class TransformType(str, Enum):
     """Enum containing all Transforms supported by autolabel"""
 
     WEBPAGE_TRANSFORM = "webpage_transform"
+    PDF = "pdf"

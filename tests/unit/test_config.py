@@ -4,6 +4,7 @@ import pytest
 from jsonschema import validate, exceptions
 from autolabel import LabelingAgent
 from autolabel.configs.schema import schema
+from autolabel.configs import AutolabelConfig
 
 
 CONFIG_SAMPLE_DICT = {
@@ -25,19 +26,25 @@ CONFIG_SAMPLE_DICT = {
 
 def test_config():
     """Test configurations"""
-    agent0 = LabelingAgent(config="tests/assets/banking/config_banking.json")
+    agent0 = LabelingAgent(
+        config=AutolabelConfig("tests/assets/banking/config_banking.json")
+    )
     config0 = agent0.config
     assert config0.label_column() == "label"
     assert config0.task_type() == "classification"
     assert config0.delimiter() == ","
 
-    agent1 = LabelingAgent(config="tests/assets/conll2003/config_conll2003.json")
+    agent1 = LabelingAgent(
+        config=AutolabelConfig("tests/assets/conll2003/config_conll2003.json")
+    )
     config1 = agent1.config
     assert config1.label_column() == "CategorizedLabels"
     assert config1.text_column() == "example"
     assert config1.task_type() == "named_entity_recognition"
 
-    agent2 = LabelingAgent(config="tests/assets/squad_v2/config_squad_v2.json")
+    agent2 = LabelingAgent(
+        config=AutolabelConfig("tests/assets/squad_v2/config_squad_v2.json")
+    )
     config2 = agent2.config
     assert config2.label_column() == "answer"
     assert config2.task_type() == "question_answering"
