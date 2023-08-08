@@ -69,10 +69,10 @@ class PaLMLLM(BaseModel):
         wait=wait_exponential(multiplier=1, min=2, max=10),
         before_sleep=before_sleep_log(logger, logging.WARNING),
     )
-    def _label_with_retry(self, prompts: List[str]):
+    def _label_with_retry(self, prompts: List[str]) -> LLMResult:
         return self.llm.generate(prompts)
 
-    def _label_individually(self, prompts: List[str]):
+    def _label_individually(self, prompts: List[str]) -> LLMResult:
         """Label each prompt individually. Should be used only after trying as a batch first.
 
         Args:
