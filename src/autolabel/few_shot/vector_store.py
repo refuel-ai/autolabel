@@ -15,6 +15,8 @@ from langchain.vectorstores.utils import maximal_marginal_relevance
 from torch import Tensor
 import pickle
 
+from sqlalchemy.sql import text as sql_text
+
 EMBEDDINGS_TABLE = "autolabel_embeddings"
 
 
@@ -150,9 +152,8 @@ class VectorStoreWrapper(VectorStore):
         if cache:
             self._db_engine = create_db_engine()
             with self._db_engine.connect() as conn:
-                conn.execute(
-                    f"CREATE TABLE IF NOT EXISTS {EMBEDDINGS_TABLE} (embedding_function TEXT, text TEXT, embedding BLOB)"
-                )
+                query = f"CREATE TABLE IF NOT EXISTS {EMBEDDINGS_TABLE} (embedding_function TEXT, text TEXT, embedding BLOB)"
+                conn.execute(sql_text(query))
         else:
             self._db_engine = None
 
@@ -172,14 +173,17 @@ class VectorStoreWrapper(VectorStore):
                 uncached_texts = []
                 uncached_texts_indices = []
                 for idx, text in enumerate(texts):
-                    result = conn.execute(
-                        f"SELECT embedding FROM {EMBEDDINGS_TABLE} WHERE embedding_function = ? AND text = ?",
-                        self._embedding_function.model
+                    query = sql_text(
+                        f"SELECT embedding FROM {EMBEDDINGS_TABLE} WHERE embedding_function = :x AND text = :y",
+                    )
+                    params = {
+                        "x": self._embedding_function.model
                         if self._embedding_function.__class__.__name__
                         != "HuggingFaceEmbeddings"
                         else self._embedding_function.model_name,
-                        text,
-                    ).fetchone()
+                        "y": text,
+                    }
+                    result = conn.execute(query, params).fetchone()
                     if result:
                         embeddings.append(pickle.loads(result[0]))
                     else:
@@ -209,15 +213,18 @@ class VectorStoreWrapper(VectorStore):
         if self._db_engine:
             with self._db_engine.connect() as conn:
                 for text, embedding in zip(texts, embeddings):
-                    conn.execute(
-                        f"INSERT INTO {EMBEDDINGS_TABLE} (embedding_function, text, embedding) VALUES (?, ?, ?)",
-                        self._embedding_function.model
+                    query = sql_text(
+                        f"INSERT INTO {EMBEDDINGS_TABLE} (embedding_function, text, embedding) VALUES (:x, :y, :z)"
+                    )
+                    params = {
+                        "x": self._embedding_function.model
                         if self._embedding_function.__class__.__name__
                         != "HuggingFaceEmbeddings"
                         else self._embedding_function.model_name,
-                        text,
-                        pickle.dumps(embedding),
-                    )
+                        "y": text,
+                        "z": pickle.dumps(embedding),
+                    }
+                    conn.execute(query, params)
 
     def add_texts(
         self,
