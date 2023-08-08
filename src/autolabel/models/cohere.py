@@ -1,11 +1,5 @@
-from functools import cached_property
 from typing import List, Optional
 import os
-
-import cohere
-from langchain.llms import Cohere
-from langchain.schema import LLMResult
-from langchain import PromptTemplate, LLMChain
 
 from autolabel.models import BaseModel
 from autolabel.configs import AutolabelConfig
@@ -26,6 +20,9 @@ class CohereLLM(BaseModel):
 
     def __init__(self, config: AutolabelConfig, cache: BaseCache = None) -> None:
         super().__init__(config, cache)
+        import cohere
+        from langchain.llms import Cohere
+
         # populate model name
         self.model_name = config.model_name() or self.DEFAULT_MODEL
 

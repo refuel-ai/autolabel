@@ -1,16 +1,14 @@
 from functools import cached_property
 from typing import List, Optional
 import logging
-
-from langchain.chat_models import ChatOpenAI
-from langchain.llms import OpenAI
-from langchain.schema import LLMResult, HumanMessage
 import tiktoken
 
 from autolabel.models import BaseModel
 from autolabel.configs import AutolabelConfig
 from autolabel.cache import BaseCache
 from autolabel.schema import RefuelLLMResult
+from langchain.schema import HumanMessage
+
 
 import os
 
@@ -86,6 +84,9 @@ class OpenAILLM(BaseModel):
 
     def __init__(self, config: AutolabelConfig, cache: BaseCache = None) -> None:
         super().__init__(config, cache)
+        from langchain.chat_models import ChatOpenAI
+        from langchain.llms import OpenAI
+
         # populate model name
         self.model_name = config.model_name() or self.DEFAULT_MODEL
 

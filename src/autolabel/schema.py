@@ -19,6 +19,7 @@ class ModelProvider(str, Enum):
     REFUEL = "refuel"
     GOOGLE = "google"
     COHERE = "cohere"
+    CUSTOM = "custom"
 
 
 class TaskType(str, Enum):

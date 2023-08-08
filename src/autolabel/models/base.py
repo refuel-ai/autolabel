@@ -1,13 +1,13 @@
 """Base interface that all model providers will implement."""
 
 from abc import ABC, abstractmethod
-from typing import List, Optional, Dict, Tuple
-
-from langchain.schema import LLMResult, Generation
+from typing import List, Optional
 
 from autolabel.configs import AutolabelConfig
 from autolabel.schema import CacheEntry, LabelingError, RefuelLLMResult, ErrorType
 from autolabel.cache import BaseCache
+
+from langchain.schema import Generation
 
 
 class BaseModel(ABC):

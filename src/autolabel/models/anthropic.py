@@ -4,9 +4,8 @@ from anthropic import tokenizer
 from autolabel.configs import AutolabelConfig
 from autolabel.models import BaseModel
 from autolabel.cache import BaseCache
-from langchain.chat_models import ChatAnthropic
-from langchain.schema import LLMResult, HumanMessage
 from autolabel.schema import RefuelLLMResult
+from langchain.schema import HumanMessage
 
 
 class AnthropicLLM(BaseModel):
@@ -30,6 +29,8 @@ class AnthropicLLM(BaseModel):
 
     def __init__(self, config: AutolabelConfig, cache: BaseCache = None) -> None:
         super().__init__(config, cache)
+        from langchain.chat_models import ChatAnthropic
+
         # populate model name
         self.model_name = config.model_name() or self.DEFAULT_MODEL
         # populate model params
