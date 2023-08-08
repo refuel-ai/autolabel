@@ -1,5 +1,6 @@
 import logging
 import os
+import io
 from typing import Dict, List, Optional, Tuple, Union
 import json
 import asyncio
@@ -31,6 +32,7 @@ from autolabel.utils import (
     track,
     track_with_stats,
     gather_async_tasks_with_progress,
+    get_format_variables,
 )
 
 console = Console()
@@ -477,6 +479,32 @@ class LabelingAgent:
             df.to_csv(out_file, index=False)
 
         return seed_examples
+
+    def generate_synthetic_dataset(
+        self, examples_per_label: int = 5, guidelines: str = None
+    ) -> AutolabelDataset:
+        columns = get_format_variables(self.config.example_template())
+        df = pd.DataFrame(columns=columns)
+        for label in self.config.labels_list():
+            prompt = self.task.get_generate_dataset_prompt(
+                label, examples_per_label, guidelines
+            )
+            print(prompt)
+
+            result = self.llm.label([prompt])
+            if result.errors[0] is not None:
+                raise result.errors[0]
+
+            response = result.generations[0][0].text.strip()
+            if response.endswith("```"):
+                response = response[:-3].strip()
+
+            print(response)
+            response = io.StringIO(response)
+            label_df = pd.read_csv(response, sep=self.config.delimiter())
+            label_df[self.config.label_column()] = label
+            df = pd.concat([df, label_df], axis=0)
+        return AutolabelDataset(df, self.config)
 
     def clear_cache(self):
         if self.cache:

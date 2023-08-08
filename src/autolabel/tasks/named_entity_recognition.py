@@ -111,6 +111,11 @@ class NamedEntityRecognitionTask(BaseTask):
             "Explanation generation not implemented for this task"
         )
 
+    def get_generate_dataset_prompt(
+        self, label: str, num_rows: int, guidelines: str = None
+    ) -> str:
+        raise NotImplementedError("Dataset generation not implemented for this task")
+
     def add_text_spans(self, raw_output: dict, input: str) -> list:
         processed_output = []
         for entity_type in raw_output:

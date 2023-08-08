@@ -96,8 +96,12 @@ schema = {
                 "task_guidelines": {"type": "string"},
                 "output_guidelines": {"type": "string"},
                 "labels": {
-                    "type": "array",
-                    "items": {"type": "string"}
+                    "anyOf": [
+                        {"type": "array", "items": {"type": "string"}},
+                        {
+                            "type": "object"
+                        },  # This is for when the labels are provided with descriptions
+                    ],
                     # "uniqueItems": True
                 },
                 "example_template": {"type": "string"},

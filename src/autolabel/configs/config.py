@@ -145,7 +145,17 @@ class AutolabelConfig(BaseConfig):
 
     def labels_list(self) -> List[str]:
         """Returns a list of valid labels"""
-        return self._prompt_config.get(self.VALID_LABELS_KEY, [])
+        if isinstance(self._prompt_config.get(self.VALID_LABELS_KEY, []), List):
+            return self._prompt_config.get(self.VALID_LABELS_KEY, [])
+        else:
+            return self._prompt_config.get(self.VALID_LABELS_KEY, {}).keys()
+
+    def label_descriptions(self) -> Dict[str, str]:
+        """Returns a dict of label descriptions"""
+        if isinstance(self._prompt_config.get(self.VALID_LABELS_KEY, []), List):
+            return {}
+        else:
+            return self._prompt_config.get(self.VALID_LABELS_KEY, {})
 
     def few_shot_example_set(self) -> Union[str, List]:
         """Returns examples of how data should be labeled, used to guide context to the model about the task it is performing"""
