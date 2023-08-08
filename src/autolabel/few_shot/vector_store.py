@@ -154,6 +154,7 @@ class VectorStoreWrapper(VectorStore):
             with self._db_engine.connect() as conn:
                 query = f"CREATE TABLE IF NOT EXISTS {EMBEDDINGS_TABLE} (embedding_function TEXT, text TEXT, embedding BLOB)"
                 conn.execute(sql_text(query))
+                conn.commit()
         else:
             self._db_engine = None
 
@@ -225,6 +226,7 @@ class VectorStoreWrapper(VectorStore):
                         "z": pickle.dumps(embedding),
                     }
                     conn.execute(query, params)
+                    conn.commit()
 
     def add_texts(
         self,
