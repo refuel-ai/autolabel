@@ -191,7 +191,7 @@ class Annotation(BaseModel):
         orm_mode = True
 
 
-class CacheEntry(BaseModel):
+class GenerationCacheEntry(BaseModel):
     model_name: str
     prompt: str
     model_params: str
@@ -219,3 +219,21 @@ class TransformType(str, Enum):
 
     WEBPAGE_TRANSFORM = "webpage_transform"
     PDF = "pdf"
+
+
+class TransformCacheEntry(BaseModel):
+    transform_name: TransformType
+    transform_params: Dict[str, Any]
+    input: Dict[str, Any]
+    output: Optional[Dict[str, Any]] = None
+    creation_time_ms: Optional[int] = -1
+    ttl_ms: Optional[int] = -1
+
+    class Config:
+        orm_mode = True
+
+    def get_id(self) -> str:
+        """
+        Generates a unique ID for the given transform cache configuration
+        """
+        return calculate_md5([self.transform_name, self.transform_params, self.input])

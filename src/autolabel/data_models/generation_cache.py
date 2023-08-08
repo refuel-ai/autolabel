@@ -5,10 +5,10 @@ from sqlalchemy.orm import relationship
 from langchain.schema import Generation
 import json
 
-from autolabel.schema import CacheEntry
+from autolabel.schema import GenerationCacheEntry
 
 
-class CacheEntryModel(Base):
+class GenerationCacheEntryModel(Base):
     """an SQLAlchemy based Cache system for storing and retriving CacheEntries"""
 
     __tablename__ = "generation_cache"
@@ -23,7 +23,7 @@ class CacheEntryModel(Base):
         return f"<Cache(model_name={self.model_name},prompt={self.prompt},model_params={self.model_params},generations={self.generations})>"
 
     @classmethod
-    def get(cls, db, cache_entry: CacheEntry):
+    def get(cls, db, cache_entry: GenerationCacheEntry):
         looked_up_entry = (
             db.query(cls)
             .filter(
@@ -40,7 +40,7 @@ class CacheEntryModel(Base):
         generations = json.loads(looked_up_entry.generations)["generations"]
         generations = [Generation(**gen) for gen in generations]
 
-        entry = CacheEntry(
+        entry = GenerationCacheEntry(
             model_name=looked_up_entry.model_name,
             prompt=looked_up_entry.prompt,
             model_params=looked_up_entry.model_params,
@@ -58,6 +58,7 @@ class CacheEntryModel(Base):
             generations=json.dumps(generations),
         )
         db.add(db_object)
+        db.commit()
         return cache_entry
 
     @classmethod

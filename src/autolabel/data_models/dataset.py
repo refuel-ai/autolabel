@@ -21,6 +21,7 @@ class DatasetModel(Base):
     def create(cls, db, dataset: BaseModel):
         db_object = cls(**json.loads(dataset.json()))
         db.add(db_object)
+        db.commit()
         return db_object
 
     @classmethod

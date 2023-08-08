@@ -34,6 +34,7 @@ class AnnotationModel(Base):
             task_run_id=task_run_id,
         )
         db.add(db_object)
+        db.commit()
         db_object = db.query(cls).order_by(cls.id.desc()).first()
         logger.debug(f"created new annotation: {db_object}")
         return db_object
@@ -60,3 +61,4 @@ class AnnotationModel(Base):
 
     def delete(self, db):
         db.delete(self)
+        db.commit()

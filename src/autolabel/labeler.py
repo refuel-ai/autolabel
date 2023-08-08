@@ -8,7 +8,7 @@ from rich import print as pprint
 from rich.console import Console
 from rich.prompt import Confirm
 
-from autolabel.cache import SQLAlchemyCache
+from autolabel.cache import SQLAlchemyGenerationCache, SQLAlchemyTransformCache
 from autolabel.confidence import ConfidenceCalculator
 from autolabel.configs import AutolabelConfig
 from autolabel.dataset import AutolabelDataset
@@ -52,13 +52,16 @@ class LabelingAgent:
         cache: Optional[bool] = True,
     ) -> None:
         self.db = StateManager()
-        self.cache = SQLAlchemyCache() if cache else None
+        self.generation_cache = SQLAlchemyGenerationCache() if cache else None
+        self.transform_cache = SQLAlchemyTransformCache() if cache else None
 
         self.config = (
             config if isinstance(config, AutolabelConfig) else AutolabelConfig(config)
         )
         self.task = TaskFactory.from_config(self.config)
-        self.llm: BaseModel = ModelFactory.from_config(self.config, cache=self.cache)
+        self.llm: BaseModel = ModelFactory.from_config(
+            self.config, cache=self.generation_cache
+        )
         self.confidence = ConfidenceCalculator(
             score_type="logprob_average", llm=self.llm
         )
@@ -133,7 +136,7 @@ class LabelingAgent:
             self.config,
             seed_examples,
             dataset.df.keys().tolist(),
-            cache=self.cache is not None,
+            cache=self.generation_cache is not None,
         )
 
         num_failures = 0
@@ -307,7 +310,7 @@ class LabelingAgent:
             self.config,
             seed_examples,
             dataset.df.keys().tolist(),
-            cache=self.cache is not None,
+            cache=self.generation_cache is not None,
         )
 
         input_limit = min(len(dataset.inputs), 100)
@@ -360,7 +363,9 @@ class LabelingAgent:
     def transform(self, dataset: AutolabelDataset):
         transforms = []
         for transform_dict in self.config.transforms():
-            transforms.append(TransformFactory.from_dict(transform_dict))
+            transforms.append(
+                TransformFactory.from_dict(transform_dict, cache=self.transform_cache)
+            )
         for transform in transforms:
             dataset = asyncio.run(self.async_run_transform(transform, dataset))
 
@@ -478,8 +483,15 @@ class LabelingAgent:
 
         return seed_examples
 
-    def clear_cache(self):
-        if self.cache:
-            self.cache.clear()
-        else:
-            logger.error("No cache to clear")
+    def clear_cache(self, use_ttl: bool = True):
+        """
+        Clears the generation and transformation cache from autolabel.
+        Args:
+            use_ttl: If true, only clears the cache if the ttl has expired.
+            If this is true, only the transform cache will be cleared (as the generation cache does not use ttl)
+        """
+        if self.generation_cache and not use_ttl:
+            self.generation_cache.clear()
+
+        if self.transform_cache:
+            self.transform_cache.clear(use_ttl=use_ttl)

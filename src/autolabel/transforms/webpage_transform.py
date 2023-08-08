@@ -6,6 +6,8 @@ import logging
 import pandas as pd
 import ssl
 
+from autolabel.cache import BaseCache
+
 logger = logging.getLogger(__name__)
 
 MAX_RETRIES = 3
@@ -19,12 +21,13 @@ HTML_PARSER = "html.parser"
 class WebpageTransform(BaseTransform):
     def __init__(
         self,
+        cache: BaseCache,
         url_column: str,
         output_columns: Dict[str, Any],
         timeout: int = 5,
         headers: Dict[str, str] = HEADERS,
     ) -> None:
-        super().__init__(output_columns)
+        super().__init__(output_columns, cache)
         self.url_column = url_column
         self.headers = headers
         self.max_retries = MAX_RETRIES
@@ -38,6 +41,7 @@ class WebpageTransform(BaseTransform):
                 headers["User-Agent"] = UserAgent().random
 
             self.httpx = httpx
+            self.timeout_time = timeout
             self.timeout = httpx.Timeout(timeout)
             limits = httpx.Limits(
                 max_keepalive_connections=MAX_KEEPALIVE_CONNECTIONS,
@@ -135,3 +139,10 @@ class WebpageTransform(BaseTransform):
         }
 
         return transformed_row
+
+    def params(self):
+        return {
+            "url_column": self.url_column,
+            "output_columns": self.output_columns,
+            "timeout": self.timeout_time,
+        }

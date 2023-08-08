@@ -6,7 +6,12 @@ from typing import List, Optional, Dict, Tuple
 from langchain.schema import LLMResult, Generation
 
 from autolabel.configs import AutolabelConfig
-from autolabel.schema import CacheEntry, LabelingError, RefuelLLMResult, ErrorType
+from autolabel.schema import (
+    GenerationCacheEntry,
+    LabelingError,
+    RefuelLLMResult,
+    ErrorType,
+)
 from autolabel.cache import BaseCache
 
 
@@ -99,7 +104,7 @@ class BaseModel(ABC):
         missing_prompt_idxs = []
         existing_prompts = {}
         for i, prompt in enumerate(prompts):
-            cache_entry = CacheEntry(
+            cache_entry = GenerationCacheEntry(
                 prompt=prompt,
                 model_name=self.model_name,
                 model_params=model_params_string,
@@ -129,7 +134,7 @@ class BaseModel(ABC):
             if error is not None:
                 continue
 
-            cache_entry = CacheEntry(
+            cache_entry = GenerationCacheEntry(
                 prompt=prompts[i],
                 model_name=self.model_name,
                 model_params=model_params_string,
