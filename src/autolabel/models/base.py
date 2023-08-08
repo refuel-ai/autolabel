@@ -7,13 +7,11 @@ from autolabel.configs import AutolabelConfig
 from autolabel.schema import CacheEntry, LabelingError, RefuelLLMResult, ErrorType
 from autolabel.cache import BaseCache
 
+from langchain.schema import Generation
+
 
 class BaseModel(ABC):
     def __init__(self, config: AutolabelConfig, cache: BaseCache) -> None:
-        from langchain.schema import Generation
-
-        self.generation = Generation
-
         self.config = config
         self.cache = cache
         self.model_params = config.model_params()
@@ -74,7 +72,7 @@ class BaseModel(ABC):
                 errors.append(None)
             except Exception as e:
                 print(f"Error generating from LLM: {e}")
-                generations.append([self.generation(text="")])
+                generations.append([Generation(text="")])
                 errors.append(
                     LabelingError(
                         error_type=ErrorType.LLM_PROVIDER_ERROR, error_message=str(e)

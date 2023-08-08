@@ -5,6 +5,7 @@ from autolabel.configs import AutolabelConfig
 from autolabel.cache import BaseCache
 from autolabel.schema import RefuelLLMResult
 
+from langchain.llms import HuggingFacePipeline
 
 logger = logging.getLogger(__name__)
 
@@ -15,9 +16,6 @@ class HFPipelineLLM(BaseModel):
 
     def __init__(self, config: AutolabelConfig, cache: BaseCache = None) -> None:
         super().__init__(config, cache)
-
-        from langchain.llms import HuggingFacePipeline
-
         try:
             from transformers import (
                 AutoConfig,

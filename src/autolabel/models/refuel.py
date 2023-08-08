@@ -15,6 +15,7 @@ from tenacity import (
     stop_after_attempt,
     wait_exponential,
 )
+from langchain.schema import Generation
 
 logger = logging.getLogger(__name__)
 
@@ -31,10 +32,6 @@ class RefuelLLM(BaseModel):
         cache: BaseCache = None,
     ) -> None:
         super().__init__(config, cache)
-
-        from langchain.schema import Generation
-
-        self.generation = Generation
 
         # populate model name
         # This is unused today, but in the future could
@@ -90,14 +87,14 @@ class RefuelLLM(BaseModel):
                 response = json.loads(response.json()["body"]).replace(
                     self.SEP_REPLACEMENT_TOKEN, "\n"
                 )
-                generations.append([self.generation(text=response)])
+                generations.append([Generation(text=response)])
                 errors.append(None)
             except Exception as e:
                 # This signifies an error in generating the response using RefuelLLm
                 logger.error(
                     f"Unable to generate prediction: {e}",
                 )
-                generations.append([self.generation(text="")])
+                generations.append([Generation(text="")])
                 errors.append(
                     LabelingError(error_type=ErrorType.LLM_PROVIDER_ERROR, error=e)
                 )

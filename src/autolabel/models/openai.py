@@ -8,6 +8,11 @@ from autolabel.configs import AutolabelConfig
 from autolabel.cache import BaseCache
 from autolabel.schema import RefuelLLMResult
 
+from langchain.chat_models import ChatOpenAI
+from langchain.llms import OpenAI
+from langchain.schema import HumanMessage
+
+
 import os
 
 logger = logging.getLogger(__name__)
@@ -83,12 +88,6 @@ class OpenAILLM(BaseModel):
     def __init__(self, config: AutolabelConfig, cache: BaseCache = None) -> None:
         super().__init__(config, cache)
 
-        from langchain.chat_models import ChatOpenAI
-        from langchain.llms import OpenAI
-        from langchain.schema import HumanMessage
-
-        self.human_message = HumanMessage
-
         # populate model name
         self.model_name = config.model_name() or self.DEFAULT_MODEL
 
@@ -141,7 +140,7 @@ class OpenAILLM(BaseModel):
             # Need to convert list[prompts] -> list[messages]
             # Currently the entire prompt is stuck into the "human message"
             # We might consider breaking this up into human vs system message in future
-            prompts = [[self.human_message(content=prompt)] for prompt in prompts]
+            prompts = [[HumanMessage(content=prompt)] for prompt in prompts]
         try:
             result = self.llm.generate(prompts)
             return RefuelLLMResult(

@@ -6,7 +6,9 @@ from autolabel.models import BaseModel
 from autolabel.configs import AutolabelConfig
 from autolabel.cache import BaseCache
 from autolabel.schema import RefuelLLMResult
-
+from langchain.chat_models import ChatVertexAI
+from langchain.llms import VertexAI
+from langchain.schema import LLMResult, HumanMessage, Generation
 from tenacity import (
     before_sleep_log,
     retry,
@@ -45,15 +47,6 @@ class PaLMLLM(BaseModel):
         cache: BaseCache = None,
     ) -> None:
         super().__init__(config, cache)
-
-        from langchain.chat_models import ChatVertexAI
-        from langchain.llms import VertexAI
-        from langchain.schema import LLMResult, HumanMessage, Generation
-
-        self.llm_result = LLMResult
-        self.human_message = HumanMessage
-        self.generation = Generation
-
         # populate model name
         self.model_name = config.model_name() or self.DEFAULT_MODEL
 
@@ -97,9 +90,9 @@ class PaLMLLM(BaseModel):
                 generations.append(response.generations[0])
             except Exception as e:
                 print(f"Error generating from LLM: {e}, returning empty generation")
-                generations.append([self.generation(text="")])
+                generations.append([Generation(text="")])
 
-        return self.llm_result(generations=generations)
+        return LLMResult(generations=generations)
 
     def _label(self, prompts: List[str]) -> RefuelLLMResult:
         for prompt in prompts:
@@ -118,7 +111,7 @@ class PaLMLLM(BaseModel):
             # Need to convert list[prompts] -> list[messages]
             # Currently the entire prompt is stuck into the "human message"
             # We might consider breaking this up into human vs system message in future
-            prompts = [[self.human_message(content=prompt)] for prompt in prompts]
+            prompts = [[HumanMessage(content=prompt)] for prompt in prompts]
 
         try:
             result = self._label_with_retry(prompts)
