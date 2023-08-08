@@ -42,7 +42,6 @@ class ModelFactory:
             model: a fully configured BaseModel object
         """
         provider = ModelProvider(config.provider())
-        model_name = config.model_name()
         try:
             model_cls = MODEL_REGISTRY[provider]
             model_obj = model_cls(config=config, cache=cache)
@@ -53,10 +52,8 @@ class ModelFactory:
             ), f"{model_obj} should inherit from autolabel.models.BaseModel"
         except ValueError as e:
             logger.error(
-                f"provider={provider}, model={model_name} is not in the list of supported "
-                f"providers {list(ModelProvider.__members__.keys())} or their respective models "
-                f"\nCheckout \n\t`from autolabel.models import MODEL_REGISTRY; print(MODEL_REGISTRY)` "
-                f"to fetch the list of supported providers and their models"
+                f"{config.provider()} is not in the list of supported providers: \
+                {list(ModelProvider.__members__.keys())}"
             )
             return None
         return model_obj
