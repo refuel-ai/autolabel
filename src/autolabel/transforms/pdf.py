@@ -5,19 +5,20 @@ from autolabel.transforms import BaseTransform
 
 
 class PDFTransform(BaseTransform):
+    """This class is used to extract text from PDFs. The output columns dictionary for this class should include the keys 'content_column' and 'metadata_column'"""
+
     def __init__(
         self,
         output_columns: Dict[str, Any],
         file_path_column: str,
         ocr_enabled: bool = False,
-        page_header: str = "Page {page_num}: {page_content}",
+        page_format: str = "Page {page_num}: {page_content}",
         page_sep: str = "\n\n",
     ) -> None:
-        """The output columns for this class should be in the order: [content_column, num_pages_column]"""
         super().__init__(output_columns)
         self.file_path_column = file_path_column
         self.ocr_enabled = ocr_enabled
-        self.page_format = page_header
+        self.page_format = page_format
         self.page_sep = page_sep
 
         if self.ocr_enabled:
