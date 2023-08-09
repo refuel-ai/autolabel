@@ -490,8 +490,5 @@ class LabelingAgent:
             use_ttl: If true, only clears the cache if the ttl has expired.
             If this is true, only the transform cache will be cleared (as the generation cache does not use ttl)
         """
-        if self.generation_cache and not use_ttl:
-            self.generation_cache.clear()
-
-        if self.transform_cache:
-            self.transform_cache.clear(use_ttl=use_ttl)
+        self.generation_cache.clear(use_ttl=use_ttl)
+        self.transform_cache.clear(use_ttl=use_ttl)
