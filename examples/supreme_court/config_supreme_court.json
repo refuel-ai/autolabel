@@ -2,7 +2,7 @@
     "task_name": "SupremeCourtAttributeExtraction",
     "task_type": "attribute_extraction",
     "dataset": {
-        "label_column": "label",
+        "label_column": "output_dict",
         "text_column": "text",
         "delimiter": ","
     },
