@@ -488,7 +488,6 @@ class LabelingAgent:
         Clears the generation and transformation cache from autolabel.
         Args:
             use_ttl: If true, only clears the cache if the ttl has expired.
-            If this is true, only the transform cache will be cleared (as the generation cache does not use ttl)
         """
         self.generation_cache.clear(use_ttl=use_ttl)
         self.transform_cache.clear(use_ttl=use_ttl)

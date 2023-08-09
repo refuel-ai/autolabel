@@ -5,31 +5,36 @@ repo_name: refuel-ai/autolabel
 
 nav:
   - Guide:
-    - Introduction: index.md
-    - Getting Started: guide/overview/getting-started.md
-    - Tutorial - Toxic comment classification: guide/overview/tutorial-classification.md
-    - Models:
-      - LLMs: guide/llms/llms.md
-      - Embedding Models: guide/llms/embeddings.md
-      - Benchmarks: guide/llms/benchmarks.md
-    - Labeling Tasks:
-      - Classification Task: guide/tasks/classification_task.md
-      - Multilabel Classification Task: guide/tasks/multilabel_classification_task.md
-      - Entity Matching Task: guide/tasks/entity_matching_task.md
-      - Named Entity Recognition Task: guide/tasks/named_entity_recognition_task.md
-      - Question Answering Task: guide/tasks/question_answering_task.md
-    - Improving Labeling Accuracy:
-      - Prompting Better: guide/accuracy/prompting-better.md
-      - Few-shot Prompting: guide/accuracy/few-shot.md
-      - Confidence: guide/accuracy/confidence.md
-      - Chain of Thought: guide/accuracy/chain-of-thought.md
-    - Reliability and Robustness:
-      - LLM Output Caching: guide/reliability/llm-output-caching.md
-      - State Management: guide/reliability/state-management.md
-    - Working with Autolabel:
-      - Configs: guide/resources/configs.md
-      - CLI: guide/resources/CLI.md
-      - Refuel-provided Datasets: guide/resources/refuel_datasets.md
+      - Introduction: index.md
+      - Getting Started: guide/overview/getting-started.md
+      - Tutorial - Toxic comment classification: guide/overview/tutorial-classification.md
+      - Models:
+          - LLMs: guide/llms/llms.md
+          - Embedding Models: guide/llms/embeddings.md
+          - Benchmarks: guide/llms/benchmarks.md
+      - Labeling Tasks:
+          - Classification Task: guide/tasks/classification_task.md
+          - Multilabel Classification Task: guide/tasks/multilabel_classification_task.md
+          - Entity Matching Task: guide/tasks/entity_matching_task.md
+          - Named Entity Recognition Task: guide/tasks/named_entity_recognition_task.md
+          - Question Answering Task: guide/tasks/question_answering_task.md
+      - Transformations:
+          - Introduction: guide/transforms/introduction.md
+          - Webpage Transform: guide/transforms/webpage_transform.md
+          - PDF Transform: guide/transforms/pdf_transform.md
+      - Improving Labeling Accuracy:
+          - Prompting Better: guide/accuracy/prompting-better.md
+          - Few-shot Prompting: guide/accuracy/few-shot.md
+          - Confidence: guide/accuracy/confidence.md
+          - Chain of Thought: guide/accuracy/chain-of-thought.md
+      - Reliability and Robustness:
+          - LLM Output Caching: guide/reliability/llm-output-caching.md
+          - State Management: guide/reliability/state-management.md
+      - Working with Autolabel:
+          - Configs: guide/resources/configs.md
+          - AutolabelDataset: guide/resources/autolabel_dataset.md
+          - CLI: guide/resources/CLI.md
+          - Refuel-provided Datasets: guide/resources/refuel_datasets.md
   #- Concepts: concepts/concepts.md
   # remove for now
   - Reference:
@@ -61,13 +66,13 @@ theme:
   palette:
     - scheme: default
       toggle:
-        icon: material/toggle-switch-off-outline 
+        icon: material/toggle-switch-off-outline
         name: Switch to dark mode
       primary: indigo
-    - scheme: slate 
+    - scheme: slate
       toggle:
         icon: material/toggle-switch
-        name: Switch to light mode    
+        name: Switch to light mode
       primary: indigo
 
 plugins:

@@ -9,7 +9,12 @@ rendering:
 show_root_heading: yes
 show_root_full_path: no
 
-::: src.autolabel.data_models.cache.GenerationCacheEntryModel
+::: src.autolabel.data_models.generation_cache.GenerationCacheEntryModel
+rendering:
+show_root_heading: yes
+show_root_full_path: no
+
+::: src.autolabel.data_models.transform_cache.TransformCacheEntryModel
 rendering:
 show_root_heading: yes
 show_root_full_path: no

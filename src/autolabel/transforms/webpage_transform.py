@@ -67,7 +67,7 @@ class WebpageTransform(BaseTransform):
     def output_columns(self) -> Dict[str, Any]:
         COLUMN_NAMES = [
             "content_column",
-            "content_in_bytes_column",
+            # "content_in_bytes_column",
             "soup_column",
             "metadata_column",
         ]
@@ -102,7 +102,7 @@ class WebpageTransform(BaseTransform):
             soup = self.beautiful_soup(content_bytes, HTML_PARSER)
             return {
                 "content": soup.get_text(),
-                "content_bytes": content_bytes,
+                # "content_bytes": content_bytes,
                 "soup": soup,
                 "metadata": self._load_metadata(url, soup),
             }
@@ -131,9 +131,9 @@ class WebpageTransform(BaseTransform):
 
         transformed_row = {
             self.output_columns["content_column"]: url_response_data.get("content"),
-            self.output_columns["content_in_bytes_column"]: url_response_data.get(
-                "content_bytes"
-            ),
+            # self.output_columns["content_in_bytes_column"]: url_response_data.get(
+            #     "content_bytes"
+            # ),
             self.output_columns["soup_column"]: url_response_data.get("soup"),
             self.output_columns["metadata_column"]: url_response_data.get("metadata"),
         }
