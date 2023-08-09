@@ -4,6 +4,7 @@ from sqlalchemy import Column, Integer, String, Text, JSON
 from sqlalchemy.orm import relationship
 from langchain.schema import Generation
 import json
+import time
 
 from autolabel.schema import GenerationCacheEntry
 
@@ -18,6 +19,8 @@ class GenerationCacheEntryModel(Base):
     prompt = Column(Text)
     model_params = Column(Text)
     generations = Column(JSON)
+    creation_time_ms = Column(Integer)
+    ttl_ms = Column(Integer)
 
     def __repr__(self):
         return f"<Cache(model_name={self.model_name},prompt={self.prompt},model_params={self.model_params},generations={self.generations})>"
@@ -45,6 +48,8 @@ class GenerationCacheEntryModel(Base):
             prompt=looked_up_entry.prompt,
             model_params=looked_up_entry.model_params,
             generations=generations,
+            creation_time_ms=looked_up_entry.creation_time_ms,
+            ttl_ms=looked_up_entry.ttl_ms,
         )
         return entry
 
@@ -56,11 +61,20 @@ class GenerationCacheEntryModel(Base):
             prompt=cache_entry.prompt,
             model_params=cache_entry.model_params,
             generations=json.dumps(generations),
+            creation_time_ms=int(time.time() * 1000),
+            ttl_ms=cache_entry.ttl_ms,
         )
         db.add(db_object)
         db.commit()
         return cache_entry
 
     @classmethod
-    def clear(cls, db):
-        db.query(cls).delete()
+    def clear(cls, db, use_ttl: bool = True) -> None:
+        if use_ttl:
+            current_time_ms = int(time.time() * 1000)
+            db.query(cls).filter(
+                current_time_ms - cls.creation_time_ms > cls.ttl_ms
+            ).delete()
+        else:
+            db.query(cls).delete()
+        db.commit()

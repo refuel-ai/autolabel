@@ -196,6 +196,8 @@ class GenerationCacheEntry(BaseModel):
     prompt: str
     model_params: str
     generations: Optional[List[Generation]] = None
+    creation_time_ms: Optional[int] = -1
+    ttl_ms: Optional[int] = -1
 
     class Config:
         orm_mode = True

@@ -16,6 +16,8 @@ from autolabel.cache import BaseCache
 
 
 class BaseModel(ABC):
+    TTL_MS = 60 * 60 * 24 * 365 * 3 * 1000  # 3 years
+
     def __init__(self, config: AutolabelConfig, cache: BaseCache) -> None:
         self.config = config
         self.cache = cache
@@ -139,6 +141,7 @@ class BaseModel(ABC):
                 model_name=self.model_name,
                 model_params=model_params_string,
                 generations=result,
+                ttl_ms=self.TTL_MS,
             )
             self.cache.update(cache_entry)
 

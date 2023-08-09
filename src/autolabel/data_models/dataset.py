@@ -34,3 +34,4 @@ class DatasetModel(Base):
 
     def delete(self, db):
         db.delete(self)
+        db.commit()

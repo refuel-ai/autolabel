@@ -12,7 +12,12 @@ logger = logging.getLogger(__name__)
 
 
 class SQLAlchemyTransformCache(BaseCache):
-    """A cache system implemented with SQL Alchemy"""
+    """
+    A cache system implemented with SQL Alchemy for storing the output of transforms.
+    This cache system is used to avoid re-computing the output of transforms that have already been computed.
+    This currently stores the input and the outputs of the transform.
+    Caching is based on the transform name, params and input.
+    """
 
     def __init__(self):
         self.engine = create_db_engine()
