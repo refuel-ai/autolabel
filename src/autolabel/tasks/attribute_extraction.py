@@ -196,12 +196,46 @@ class AttributeExtractionTask(BaseTask):
     ) -> List[MetricResult]:
         """Evaluate the LLM generated labels by comparing them against ground truth"""
 
-        eval_metrics = []
-        # for metric in self.metrics + additional_metrics:
-        #     eval_metrics.extend(metric.compute(llm_labels, gt_labels))
+        # Conver gt_labels to list of dictionaries, llm_labels is already a list of dictionaries
+        gt_labels = [json.loads(gt_label) for gt_label in gt_labels]
+        # Convert llm_labels and gt_labels to dictionary of lists
+        llm_labels_dict = defaultdict(list)
+        gt_labels_dict = defaultdict(list)
 
-        # # Calculate aggregate metrics
-        # aggregate_metrics = self.calculate_aggregate_metrics(llm_labels, gt_labels)
-        # eval_metrics.extend(aggregate_metrics)
+        for llm_label in llm_labels:
+            for attribute, value in llm_label.label.items():
+                llm_labels_dict[attribute].append(
+                    LLMAnnotation(
+                        successfully_labeled=llm_label.successfully_labeled,
+                        label=value,
+                        raw_response=llm_label.raw_response,
+                        curr_sample=llm_label.curr_sample,
+                        prompt=llm_label.prompt,
+                        error=llm_label.error,
+                    )
+                )
+
+        for gt_label in gt_labels:
+            for attribute, value in gt_label.items():
+                gt_labels_dict[attribute].append(value)
+
+        eval_metrics = []
+
+        for metric in self.metrics + additional_metrics:
+            if isinstance(metric, AccuracyMetric):
+                for output_attribute in self.config.output_attributes():
+                    metrics = metric.compute(
+                        llm_labels_dict[output_attribute["name"]],
+                        gt_labels_dict[output_attribute["name"]],
+                    )
+                    for m in metrics:
+                        eval_metrics.append(
+                            MetricResult(
+                                name=f'{m.name} ({output_attribute["name"]})',
+                                value=m.value,
+                            )
+                        )
+            else:
+                eval_metrics.extend(metric.compute(llm_labels, gt_labels))
 
         return eval_metrics
