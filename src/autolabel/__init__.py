@@ -2,7 +2,6 @@ from importlib import metadata
 
 from .labeler import LabelingAgent
 from .utils import get_data
-from .generator import DatasetGenerator
 from .dataset import AutolabelDataset
 from .configs import AutolabelConfig
 
