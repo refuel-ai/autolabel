@@ -32,6 +32,7 @@ from autolabel.utils import (
     track,
     track_with_stats,
     gather_async_tasks_with_progress,
+    in_notebook,
 )
 
 console = Console()
@@ -66,6 +67,11 @@ class LabelingAgent:
         self.confidence = ConfidenceCalculator(
             score_type="logprob_average", llm=self.llm
         )
+
+        if in_notebook():
+            import nest_asyncio
+
+            nest_asyncio.apply()
 
     def run(
         self,

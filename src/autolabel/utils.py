@@ -364,3 +364,19 @@ def normalize_text(s: str) -> str:
         return text.lower()
 
     return white_space_fix(remove_articles(remove_punc(lower(s))))
+
+
+def in_notebook():
+    """
+    Check if we are in a notebook. Taken from https://stackoverflow.com/a/39662359/9263185
+    """
+    try:
+        from IPython import get_ipython
+
+        if "IPKernelApp" not in get_ipython().config:  # pragma: no cover
+            return False
+    except ImportError:
+        return False
+    except AttributeError:
+        return False
+    return True
