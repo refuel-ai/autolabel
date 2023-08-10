@@ -1,4 +1,4 @@
-The Webpage transform supports loading and processing webpage urls. Given a url, this transform will send the request to load the webpage and then parse the webpage returned to collect the text to send to the LLM.  
+The Webpage transform supports loading and processing webpage urls. Given a url, this transform will send the request to load the webpage and then parse the webpage returned to collect the text to send to the LLM.
 
 Use this transform yourself here in a Colab - [![open in colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/1PwrdBUUX1u4X2SWjgKYNxB11Gb7XEIZs#scrollTo=1f17f05a)
 
@@ -6,10 +6,12 @@ In order to use this transform, use the following steps:
 
 ## Installation
 
-Use the following command to download all dependencies for the webpage transform.
+Use the following command to download all dependencies for the webpage transform. `beautifulsoup4` must be version `4.12.2` or higher.
+
 ```bash
-pip install bs4 httpx fake_useragent
+pip install beautifulsoup4 httpx fake_useragent
 ```
+
 Make sure to do this before running the transform.
 
 ## Parameters for this transform
@@ -41,6 +43,7 @@ Below is an example of a webpage transform to extract text from a webpage:
 ```
 
 ## Run the transform
+
 ```python
 from autolabel import LabelingAgent, AutolabelDataset
 agent = LabelingAgent(config)
