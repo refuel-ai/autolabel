@@ -147,8 +147,9 @@ Notice how in this case, we specify how the different columns defining different
 ```py
 from autolabel import LabelingAgent
 agent = LabelingAgent(config)
-agent.plan('data/walmart_amazon_test.csv')
-agent.run('data/walmart_amazon_test.csv', max_items = 100)
+ds = AutolabelDataset('data/walmart_amazon_test.csv', config = config)
+agent.plan(ds)
+agent.run(ds, max_items = 100)
 ```
 
 ### Evaluation metrics
