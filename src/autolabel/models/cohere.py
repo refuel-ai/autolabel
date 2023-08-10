@@ -20,8 +20,13 @@ class CohereLLM(BaseModel):
 
     def __init__(self, config: AutolabelConfig, cache: BaseCache = None) -> None:
         super().__init__(config, cache)
-        import cohere
-        from langchain.llms import Cohere
+        try:
+            import cohere
+            from langchain.llms import Cohere
+        except ImportError:
+            raise ImportError(
+                "cohere is required to use the cohere LLM. Please install it with the following command: pip install 'refuel-autolabel[cohere]'"
+            )
 
         # populate model name
         self.model_name = config.model_name() or self.DEFAULT_MODEL
