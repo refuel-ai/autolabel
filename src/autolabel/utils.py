@@ -364,3 +364,12 @@ def normalize_text(s: str) -> str:
         return text.lower()
 
     return white_space_fix(remove_articles(remove_punc(lower(s))))
+
+
+def dump_strings_in_dict(inp: Dict):
+    """Dump all strings in a dictionary"""
+    outp = {}
+    for k, v in inp.items():
+        if isinstance(v, str):
+            outp[k] = v
+    return json.dumps(outp)

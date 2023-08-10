@@ -8,6 +8,7 @@ import logging
 from autolabel.utils import print_table
 from rich.console import Console
 import json
+import pickle
 from autolabel.tasks import TaskFactory
 
 logger = logging.getLogger(__name__)
@@ -109,7 +110,9 @@ class AutolabelDataset:
             x.successfully_labeled for x in llm_labels
         ]
 
-        self.df[self.generate_label_name("annotation")] = [x.json() for x in llm_labels]
+        self.df[self.generate_label_name("annotation")] = [
+            pickle.dumps(x) for x in llm_labels
+        ]
 
         # Add row level LLM metrics to the dataframe
         if metrics is not None:

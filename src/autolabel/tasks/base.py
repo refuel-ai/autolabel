@@ -4,6 +4,7 @@ from abc import ABC, abstractmethod
 from typing import Dict, List, Optional
 import logging
 import json
+import pickle
 
 from langchain.prompts.prompt import PromptTemplate
 from langchain.schema import Generation
@@ -16,7 +17,11 @@ from autolabel.schema import (
     LabelingError,
     ErrorType,
 )
-from autolabel.utils import get_format_variables, extract_valid_json_substring
+from autolabel.utils import (
+    get_format_variables,
+    extract_valid_json_substring,
+    dump_strings_in_dict,
+)
 from autolabel.metrics import BaseMetric
 
 logger = logging.getLogger(__name__)
@@ -132,7 +137,7 @@ class BaseTask(ABC):
             generation_info=response.generation_info,
             raw_response=response.text,
             prompt=prompt,
-            curr_sample=json.dumps(curr_sample),
+            curr_sample=pickle.dumps(curr_sample),
             explanation=explanation if self.config.chain_of_thought() else "",
             error=error,
         )
