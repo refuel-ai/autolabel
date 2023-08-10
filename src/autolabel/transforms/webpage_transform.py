@@ -22,12 +22,12 @@ class WebpageTransform(BaseTransform):
     def __init__(
         self,
         cache: BaseCache,
-        url_column: str,
         output_columns: Dict[str, Any],
+        url_column: str,
         timeout: int = 5,
         headers: Dict[str, str] = HEADERS,
     ) -> None:
-        super().__init__(output_columns, cache)
+        super().__init__(cache, output_columns)
         self.url_column = url_column
         self.headers = headers
         self.max_retries = MAX_RETRIES
@@ -102,7 +102,7 @@ class WebpageTransform(BaseTransform):
             soup = self.beautiful_soup(content_bytes, HTML_PARSER)
             return {
                 "content": soup.get_text(),
-                # "content_bytes": content_bytes,
+                "content_bytes": content_bytes,
                 "soup": soup,
                 "metadata": self._load_metadata(url, soup),
             }

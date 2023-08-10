@@ -1,4 +1,4 @@
-from typing import Dict, List, Union
+from typing import Dict, List, Union, Callable
 import pandas as pd
 from autolabel.configs import AutolabelConfig
 from autolabel.dataset.validation import TaskDataValidation
@@ -158,7 +158,9 @@ class AutolabelDataset:
         else:
             raise ValueError(f"Unsupported output file format: {output_file_name}")
 
-    def filter(self, label=None, ground_truth=None, filter_func=None):
+    def filter(
+        self, label: str = None, ground_truth: str = None, filter_func: Callable = None
+    ):
         """
         Filter the dataset based on the label, ground truth or a custom filter function.
         In case multiple filters are applied, the filters are applied in the following order:
@@ -253,8 +255,7 @@ class AutolabelDataset:
         """
         Filter the dataset to only include items with confidence scores greater than the threshold.
         Args:
-            threshold: The threshold to filter on. This means that only items with confidence scores
-            greater than the threshold will be included.
+            threshold: The threshold to filter on. This means that only items with confidence scores greater than the threshold will be included.
         """
         if not self.config.confidence():
             raise ValueError(

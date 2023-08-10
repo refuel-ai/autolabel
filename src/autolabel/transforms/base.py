@@ -9,14 +9,12 @@ class BaseTransform(ABC):
 
     TTL_MS = 60 * 60 * 24 * 7 * 1000  # 1 week
 
-    def __init__(self, output_columns: Dict[str, Any], cache: BaseCache) -> None:
+    def __init__(self, cache: BaseCache, output_columns: Dict[str, Any]) -> None:
         """
         Initialize a transform.
         Args:
-            output_columns: A dictionary of output columns. The keys are the names of the output columns
-            as expected by the transform. The values are the column names they should be mapped to in
-            the dataset.
             cache: A cache object to use for caching the results of this transform.
+            output_columns: A dictionary of output columns. The keys are the names of the output columns as expected by the transform. The values are the column names they should be mapped to in the dataset.
         """
         super().__init__()
         self._output_columns = output_columns

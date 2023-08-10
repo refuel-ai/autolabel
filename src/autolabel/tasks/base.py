@@ -20,7 +20,6 @@ from autolabel.schema import (
 from autolabel.utils import (
     get_format_variables,
     extract_valid_json_substring,
-    dump_strings_in_dict,
 )
 from autolabel.metrics import BaseMetric
 

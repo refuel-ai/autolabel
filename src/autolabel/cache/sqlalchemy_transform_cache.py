@@ -38,10 +38,8 @@ class SQLAlchemyTransformCache(BaseCache):
         """
         cache_entry = TransformCacheEntryModel.get(self.session, entry)
         if cache_entry is None:
-            logger.debug("Cache miss")
             return None
 
-        logger.debug("Cache hit")
         return cache_entry.output
 
     def update(self, entry: TransformCacheEntry) -> None:
