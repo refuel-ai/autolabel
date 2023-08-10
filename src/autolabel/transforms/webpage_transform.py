@@ -57,7 +57,7 @@ class WebpageTransform(BaseTransform):
             self.beautiful_soup = BeautifulSoup
         except ImportError:
             raise ImportError(
-                "BeautifulSoup, httpx and fake_useragent are required to use the webpage transform. Please install them with the following command: pip install bs4 httpx fake_useragent"
+                "BeautifulSoup, httpx and fake_useragent are required to use the webpage transform. Please install them with the following command: pip install beautifulsoup4 httpx fake_useragent"
             )
 
     def name(self) -> str:
