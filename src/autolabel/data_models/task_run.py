@@ -40,7 +40,7 @@ class TaskRunModel(Base):
         logger.debug(f"creating new task: {task_run}")
         db_object = cls(**task_run.dict())
         db.add(db_object)
-        db.flush()
+        db.commit()
         db.refresh(db_object)
         logger.debug(f"created new task: {db_object}")
         return db_object
@@ -64,6 +64,7 @@ class TaskRunModel(Base):
         logger.debug(f"updating task_run: {task_run}")
         for key, value in task_run.dict().items():
             setattr(task_run_orm, key, value)
+        db.commit()
         logger.debug(f"task_run updated: {task_run}")
         return TaskRun.from_orm(task_run_orm)
 
@@ -73,4 +74,4 @@ class TaskRunModel(Base):
 
     def delete(self, db):
         db.delete(self)
-        db.flush()
+        db.commit()

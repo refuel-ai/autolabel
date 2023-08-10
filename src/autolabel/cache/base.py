@@ -1,9 +1,6 @@
 """Base interface that all caches will implement."""
 
 from abc import ABC, abstractmethod
-from typing import Optional, List
-from autolabel.schema import CacheEntry
-from langchain.schema import Generation
 
 
 class BaseCache(ABC):
@@ -13,11 +10,16 @@ class BaseCache(ABC):
         super().__init__()
 
     @abstractmethod
-    def lookup(self, entry: CacheEntry) -> List[Generation]:
+    def lookup(self, entry):
         """abstract method to retrieve a cached entry. Must be implemented by classes derived from BaseCache."""
         pass
 
     @abstractmethod
-    def update(self, entry: CacheEntry) -> None:
+    def update(self, entry):
         """abstract method to update the cache with a new entry. Must be implemented by classes derived from BaseCache."""
+        pass
+
+    @abstractmethod
+    def clear(self) -> None:
+        """abstract method to clear the cache. Must be implemented by classes derived from BaseCache."""
         pass

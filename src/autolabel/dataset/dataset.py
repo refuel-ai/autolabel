@@ -29,7 +29,7 @@ class AutolabelDataset:
     def __init__(
         self,
         dataset: Union[pd.DataFrame, str],
-        config: AutolabelConfig,
+        config: Union[AutolabelConfig, str, Dict],
         max_items: int = None,
         start_index: int = 0,
         validate=False,
@@ -59,7 +59,10 @@ class AutolabelDataset:
         self.df = df
         self.inputs = inputs
         self.gt_labels = gt_labels
-        self.config = config
+        if not (isinstance(config, AutolabelConfig)):
+            self.config = AutolabelConfig(config)
+        else:
+            self.config = config
 
         if validate:
             self._validate()

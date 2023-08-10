@@ -2,11 +2,13 @@ from typing import List, Dict, Any
 
 from autolabel.schema import TransformType
 from autolabel.transforms import BaseTransform
+from autolabel.cache import BaseCache
 
 
 class PDFTransform(BaseTransform):
     def __init__(
         self,
+        cache: BaseCache,
         output_columns: Dict[str, Any],
         file_path_column: str,
         ocr_enabled: bool = False,
@@ -14,7 +16,7 @@ class PDFTransform(BaseTransform):
         page_sep: str = "\n\n",
     ) -> None:
         """The output columns for this class should be in the order: [content_column, num_pages_column]"""
-        super().__init__(output_columns)
+        super().__init__(output_columns, cache)
         self.file_path_column = file_path_column
         self.ocr_enabled = ocr_enabled
         self.page_format = page_header
@@ -96,3 +98,12 @@ class PDFTransform(BaseTransform):
             self.output_columns["metadata_column"]: {"num_pages": len(texts)},
         }
         return transformed_row
+
+    def params(self):
+        return {
+            "file_path_column": self.file_path_column,
+            "ocr_enabled": self.ocr_enabled,
+            "page_header": self.page_format,
+            "page_sep": self.page_sep,
+            "output_columns": self.output_columns,
+        }
