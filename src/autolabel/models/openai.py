@@ -1,7 +1,6 @@
 from functools import cached_property
 from typing import List, Optional
 import logging
-import tiktoken
 
 from autolabel.models import BaseModel
 from autolabel.configs import AutolabelConfig
@@ -84,8 +83,14 @@ class OpenAILLM(BaseModel):
 
     def __init__(self, config: AutolabelConfig, cache: BaseCache = None) -> None:
         super().__init__(config, cache)
-        from langchain.chat_models import ChatOpenAI
-        from langchain.llms import OpenAI
+        try:
+            from langchain.chat_models import ChatOpenAI
+            from langchain.llms import OpenAI
+            import tiktoken
+        except ImportError:
+            raise ImportError(
+                "anthropic is required to use the anthropic LLM. Please install it with the following command: pip install 'refuel-autolabel[openai]'"
+            )
 
         # populate model name
         self.model_name = config.model_name() or self.DEFAULT_MODEL
@@ -111,6 +116,8 @@ class OpenAILLM(BaseModel):
             }
             self.llm = OpenAI(model_name=self.model_name, **self.model_params)
 
+        self.tiktoken = tiktoken
+
     def _generate_logit_bias(self) -> None:
         """Generates logit bias for the labels specified in the config
 
@@ -122,7 +129,7 @@ class OpenAILLM(BaseModel):
                 "No labels specified in the config. Skipping logit bias generation."
             )
             return {}
-        encoding = tiktoken.encoding_for_model(self.model_name)
+        encoding = self.tiktoken.encoding_for_model(self.model_name)
         logit_bias = {}
         max_tokens = 0
         for label in self.config.labels_list():
@@ -149,7 +156,7 @@ class OpenAILLM(BaseModel):
             return self._label_individually(prompts)
 
     def get_cost(self, prompt: str, label: Optional[str] = "") -> float:
-        encoding = tiktoken.encoding_for_model(self.model_name)
+        encoding = self.tiktoken.encoding_for_model(self.model_name)
         num_prompt_toks = len(encoding.encode(prompt))
         if label:
             num_label_toks = len(encoding.encode(label))
