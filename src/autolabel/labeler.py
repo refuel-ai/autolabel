@@ -2,6 +2,7 @@ import logging
 import os
 from typing import Dict, List, Optional, Tuple, Union
 import json
+import pickle
 import asyncio
 import pandas as pd
 from rich import print as pprint
@@ -170,7 +171,7 @@ class LabelingAgent:
                         successfully_labeled=False,
                         label=self.task.NULL_LABEL_TOKEN,
                         raw_response="",
-                        curr_sample=json.dumps(chunk),
+                        curr_sample=pickle.dumps(chunk),
                         prompt=final_prompt,
                         confidence_score=0,
                         error=error,
@@ -207,7 +208,7 @@ class LabelingAgent:
                 db_result = AnnotationModel.get_annotations_by_task_run_id(
                     self.db.session, self.task_run.id
                 )
-                llm_labels = [LLMAnnotation(**a.llm_annotation) for a in db_result]
+                llm_labels = [pickle.loads(a.llm_annotation) for a in db_result]
                 if dataset.gt_labels:
                     eval_result = self.task.eval(
                         llm_labels,
@@ -234,7 +235,7 @@ class LabelingAgent:
         db_result = AnnotationModel.get_annotations_by_task_run_id(
             self.db.session, self.task_run.id
         )
-        llm_labels = [LLMAnnotation(**a.llm_annotation) for a in db_result]
+        llm_labels = [pickle.loads(a.llm_annotation) for a in db_result]
         eval_result = None
         # if true labels are provided, evaluate accuracy of predictions
         if dataset.gt_labels:
@@ -389,7 +390,7 @@ class LabelingAgent:
         db_result = AnnotationModel.get_annotations_by_task_run_id(
             self.db.session, task_run.id
         )
-        llm_labels = [LLMAnnotation(**a.llm_annotation) for a in db_result]
+        llm_labels = [pickle.loads(a.llm_annotation) for a in db_result]
         if gt_labels and len(llm_labels) > 0:
             pprint("Evaluating the existing task...")
             gt_labels = gt_labels[: len(llm_labels)]
@@ -488,7 +489,6 @@ class LabelingAgent:
         Clears the generation and transformation cache from autolabel.
         Args:
             use_ttl: If true, only clears the cache if the ttl has expired.
-            If this is true, only the transform cache will be cleared (as the generation cache does not use ttl)
         """
         self.generation_cache.clear(use_ttl=use_ttl)
         self.transform_cache.clear(use_ttl=use_ttl)

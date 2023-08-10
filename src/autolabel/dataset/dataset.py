@@ -1,4 +1,4 @@
-from typing import Dict, List, Union
+from typing import Dict, List, Union, Callable
 import pandas as pd
 from autolabel.configs import AutolabelConfig
 from autolabel.dataset.validation import TaskDataValidation
@@ -8,6 +8,7 @@ import logging
 from autolabel.utils import print_table
 from rich.console import Console
 import json
+import pickle
 from autolabel.tasks import TaskFactory
 
 logger = logging.getLogger(__name__)
@@ -16,7 +17,7 @@ METRIC_TABLE_STYLE = "cyan bold"
 
 
 class AutolabelDataset:
-    """Data Attributes"""
+    """The dataset for handling all operations on the dataset."""
 
     inputs: List[Dict]
     df: pd.DataFrame
@@ -32,8 +33,17 @@ class AutolabelDataset:
         config: Union[AutolabelConfig, str, Dict],
         max_items: int = None,
         start_index: int = 0,
-        validate=False,
+        validate: bool = False,
     ) -> None:
+        """
+        Initializes the dataset.
+        Args:
+            dataset: The dataset to be used for labeling. Could be a path to a csv/jsonl file or a pandas dataframe.
+            config: The config to be used for labeling. Could be a path to a json file or a dictionary.
+            max_items: The maximum number of items to be parsed into the dataset object.
+            start_index: The index to start parsing the dataset from.
+            validate: Whether to validate the dataset or not.
+        """
         if isinstance(dataset, str):
             if dataset.endswith(".csv"):
                 delimiter = config.delimiter()
@@ -68,6 +78,9 @@ class AutolabelDataset:
             self._validate()
 
     def __repr__(self):
+        """
+        Returns the representation of the dataset. We currently represent the dataset as a pandas dataframe.
+        """
         if self.df is not None:
             return self.df.__repr__()
 
@@ -97,7 +110,9 @@ class AutolabelDataset:
             x.successfully_labeled for x in llm_labels
         ]
 
-        self.df[self.generate_label_name("annotation")] = [x.json() for x in llm_labels]
+        self.df[self.generate_label_name("annotation")] = [
+            pickle.dumps(x) for x in llm_labels
+        ]
 
         # Add row level LLM metrics to the dataframe
         if metrics is not None:
@@ -121,6 +136,11 @@ class AutolabelDataset:
             ]
 
     def save(self, output_file_name: str):
+        """
+        Saves the dataset to a file based on the file extension.
+        Args:
+            output_file_name: The name of the file to save the dataset to. Based on the extension we can save to a csv or jsonl file.
+        """
         if output_file_name.endswith(".csv"):
             self.df.to_csv(
                 str(output_file_name),
@@ -138,7 +158,18 @@ class AutolabelDataset:
         else:
             raise ValueError(f"Unsupported output file format: {output_file_name}")
 
-    def filter(self, label=None, ground_truth=None, filter_func=None):
+    def filter(
+        self, label: str = None, ground_truth: str = None, filter_func: Callable = None
+    ):
+        """
+        Filter the dataset based on the label, ground truth or a custom filter function.
+        In case multiple filters are applied, the filters are applied in the following order:
+            label -> ground_truth -> filter_func
+        Args:
+            label: The llm label to filter on.
+            ground_truth: The ground truth label to filter on.
+            filter_func: A custom filter function to filter on.
+        """
         filtered_df = self.df
 
         if label:
@@ -160,14 +191,30 @@ class AutolabelDataset:
         )
 
     def non_completed(self):
+        """
+        Filter the dataset to only include non completed items. This means the labels
+        where the llm was not able to generate a label or there was some error while
+        generating the label.
+        """
         filtered_df = self.df[self.df[self.generate_label_name("error")].notnull()]
         return AutolabelDataset(filtered_df, self.config)
 
     def completed(self):
+        """
+        Filter the dataset to only include completed items. This means the labels
+        where the llm was able to generate a label successfully.
+        """
         filtered_df = self.df[self.df[self.generate_label_name("error")].isnull()]
         return AutolabelDataset(filtered_df, self.config)
 
     def incorrect(self, label: str = None, ground_truth: str = None):
+        """
+        Filter the dataset to only include incorrect items. This means the labels
+        where the llm label was incorrect.
+        Args:
+            label: The llm label to filter on.
+            ground_truth: The ground truth label to filter on.
+        """
         gt_label_column = self.config.label_column()
 
         if gt_label_column is None:
@@ -190,6 +237,10 @@ class AutolabelDataset:
         return AutolabelDataset(filtered_df, self.config)
 
     def correct(self):
+        """
+        Filter the dataset to only include correct items. This means the labels
+        where the llm label was correct.
+        """
         gt_label_column = self.config.label_column()
 
         if gt_label_column is None:
@@ -201,6 +252,11 @@ class AutolabelDataset:
         return AutolabelDataset(filtered_df, self.config)
 
     def filter_by_confidence(self, threshold: float = 0.5):
+        """
+        Filter the dataset to only include items with confidence scores greater than the threshold.
+        Args:
+            threshold: The threshold to filter on. This means that only items with confidence scores greater than the threshold will be included.
+        """
         if not self.config.confidence():
             raise ValueError(
                 "Cannot compute correct and confident without confidence scores"
@@ -212,6 +268,10 @@ class AutolabelDataset:
         return AutolabelDataset(filtered_df, self.config)
 
     def eval(self):
+        """
+        Evaluate the dataset based on the task. We run the metrics that were
+        specified by the task being run.
+        """
         gt_label_column = self.config.label_column()
 
         if gt_label_column is None:
@@ -237,11 +297,16 @@ class AutolabelDataset:
         return metrics
 
     def columns(self):
-        """Return columns"""
+        """
+        Returns the columns in the dataframe.
+        """
         return self.df.columns.tolist()
 
     def _validate(self):
-        """Validate Data"""
+        """
+        Validate the dataset by looking at all rows and making sure
+        that they follow the schema.
+        """
         data_validation = TaskDataValidation(config=self.config)
 
         # Validate columns
@@ -267,7 +332,6 @@ class AutolabelDataset:
             )
 
     def generate_label_name(self, col_name: str):
-        """Generate label name"""
         return f"{self.config.task_name()}_{col_name}"
 
 

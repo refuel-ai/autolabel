@@ -1,9 +1,10 @@
 from .base import Base
 import logging
 from pydantic import BaseModel
-from sqlalchemy import Column, Integer, ForeignKey, JSON, DateTime
+from sqlalchemy import Column, Integer, ForeignKey, JSON, DateTime, TEXT
 from sqlalchemy.sql import func
 from sqlalchemy.orm import relationship
+import pickle
 import json
 
 from autolabel.schema import LLMAnnotation
@@ -17,7 +18,7 @@ class AnnotationModel(Base):
     id = Column(Integer, primary_key=True, autoincrement=True)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     index = Column(Integer)
-    llm_annotation = Column(JSON)
+    llm_annotation = Column(TEXT)
     task_run_id = Column(Integer, ForeignKey("task_runs.id"))
     task_runs = relationship("TaskRunModel", back_populates="annotations")
 
@@ -29,7 +30,7 @@ class AnnotationModel(Base):
         cls, db, llm_annotation: LLMAnnotation, index: int, task_run_id: int
     ):
         db_object = cls(
-            llm_annotation=json.loads(llm_annotation.json()),
+            llm_annotation=pickle.dumps(llm_annotation),
             index=index,
             task_run_id=task_run_id,
         )

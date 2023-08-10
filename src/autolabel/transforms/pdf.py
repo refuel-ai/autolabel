@@ -16,7 +16,7 @@ class PDFTransform(BaseTransform):
         page_sep: str = "\n\n",
     ) -> None:
         """The output columns for this class should be in the order: [content_column, num_pages_column]"""
-        super().__init__(output_columns, cache)
+        super().__init__(cache, output_columns)
         self.file_path_column = file_path_column
         self.ocr_enabled = ocr_enabled
         self.page_format = page_header

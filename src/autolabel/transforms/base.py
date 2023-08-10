@@ -9,7 +9,13 @@ class BaseTransform(ABC):
 
     TTL_MS = 60 * 60 * 24 * 7 * 1000  # 1 week
 
-    def __init__(self, output_columns: Dict[str, Any], cache: BaseCache) -> None:
+    def __init__(self, cache: BaseCache, output_columns: Dict[str, Any]) -> None:
+        """
+        Initialize a transform.
+        Args:
+            cache: A cache object to use for caching the results of this transform.
+            output_columns: A dictionary of output columns. The keys are the names of the output columns as expected by the transform. The values are the column names they should be mapped to in the dataset.
+        """
         super().__init__()
         self._output_columns = output_columns
         self.cache = cache
@@ -17,21 +23,38 @@ class BaseTransform(ABC):
     @staticmethod
     @abstractmethod
     def name() -> str:
+        """
+        Returns the name of the transform.
+        """
         pass
 
     @property
     @abstractmethod
     def output_columns(self) -> Dict[str, Any]:
+        """
+        Returns a dictionary of output columns. The keys are the names of the output columns
+        as expected by the transform. The values are the column names they should be mapped to in
+        the dataset.
+        """
         return self._output_columns
 
     @abstractmethod
     async def _apply(self, row: Dict[str, Any]) -> Dict[str, Any]:
+        """
+        Applies the transform to the given row.
+        Args:
+            row: A dictionary representing a row in the dataset. The keys are the column names and the values are the column values.
+        Returns:
+            A dictionary representing the transformed row. The keys are the column names and the values are the column values.
+        """
         pass
 
     @abstractmethod
     def params(self) -> Dict[str, Any]:
         """
         Returns a dictionary of parameters that can be used to uniquely identify this transform.
+        Returns:
+            A dictionary of parameters that can be used to uniquely identify this transform.
         """
         return {}
 
