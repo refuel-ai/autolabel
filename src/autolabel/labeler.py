@@ -15,7 +15,7 @@ from autolabel.configs import AutolabelConfig
 from autolabel.dataset import AutolabelDataset
 from autolabel.data_models import AnnotationModel, TaskRunModel
 from autolabel.database import StateManager
-from autolabel.few_shot import ExampleSelectorFactory
+from autolabel.few_shot import ExampleSelectorFactory, BaseExampleSelector
 from autolabel.models import BaseModel, ModelFactory
 from autolabel.metrics import BaseMetric
 from autolabel.transforms import BaseTransform, TransformFactory
@@ -52,6 +52,7 @@ class LabelingAgent:
         self,
         config: Union[AutolabelConfig, str, dict],
         cache: Optional[bool] = True,
+        example_selector: Optional[BaseExampleSelector] = None,
     ) -> None:
         self.db = StateManager()
         self.generation_cache = SQLAlchemyGenerationCache() if cache else None
@@ -67,6 +68,7 @@ class LabelingAgent:
         self.confidence = ConfidenceCalculator(
             score_type="logprob_average", llm=self.llm
         )
+        self.example_selector = example_selector
 
         if in_notebook():
             import nest_asyncio
@@ -139,12 +141,13 @@ class LabelingAgent:
                 f"Explanation column {self.config.explanation_column()} not found in dataset.\nMake sure that explanations were generated using labeler.generate_explanations(seed_file)."
             )
 
-        self.example_selector = ExampleSelectorFactory.initialize_selector(
-            self.config,
-            seed_examples,
-            dataset.df.keys().tolist(),
-            cache=self.generation_cache is not None,
-        )
+        if self.example_selector is None:
+            self.example_selector = ExampleSelectorFactory.initialize_selector(
+                self.config,
+                seed_examples,
+                dataset.df.keys().tolist(),
+                cache=self.generation_cache is not None,
+            )
 
         num_failures = 0
         current_index = self.task_run.current_index

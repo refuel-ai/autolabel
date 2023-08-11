@@ -1,6 +1,7 @@
 from typing import List
 
 from sklearn.metrics import roc_auc_score
+import numpy as np
 
 from autolabel.metrics import BaseMetric
 from autolabel.schema import LLMAnnotation, MetricResult, MetricType
@@ -26,7 +27,11 @@ class AUROCMetric(BaseMetric):
         ]
         confidence = [llm_label.confidence_score for llm_label in filtered_llm_labels]
 
-        auroc = roc_auc_score(match, confidence)
+        if np.unique(match).shape[0] == 1:
+            # all labels are the same
+            auroc = 1 if match[0] == 1 else 0
+        else:
+            auroc = roc_auc_score(match, confidence)
 
         value = [
             MetricResult(
