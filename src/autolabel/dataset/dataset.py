@@ -44,9 +44,14 @@ class AutolabelDataset:
             start_index: The index to start parsing the dataset from.
             validate: Whether to validate the dataset or not.
         """
+        if not (isinstance(config, AutolabelConfig)):
+            self.config = AutolabelConfig(config)
+        else:
+            self.config = config
+
         if isinstance(dataset, str):
             if dataset.endswith(".csv"):
-                delimiter = config.delimiter()
+                delimiter = self.config.delimiter()
                 df = pd.read_csv(dataset, sep=delimiter, dtype="str")
             elif dataset.endswith(".jsonl"):
                 df = pd.read_json(dataset, lines=True, dtype="str")
@@ -59,7 +64,7 @@ class AutolabelDataset:
             df = df[:max_items]
 
         inputs = df.to_dict(orient="records")
-        label_column = config.label_column()
+        label_column = self.config.label_column()
         gt_labels = (
             None
             if not label_column or not len(inputs) or label_column not in inputs[0]
@@ -69,10 +74,6 @@ class AutolabelDataset:
         self.df = df
         self.inputs = inputs
         self.gt_labels = gt_labels
-        if not (isinstance(config, AutolabelConfig)):
-            self.config = AutolabelConfig(config)
-        else:
-            self.config = config
 
         if validate:
             self._validate()
