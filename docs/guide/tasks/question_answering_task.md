@@ -112,10 +112,11 @@ Notice in this case we don't have the `context` and pass in the `options` as lis
 ### Run the task
 
 ```py
-from autolabel import LabelingAgent
+from autolabel import LabelingAgent, AutolabelDataset
 agent = LabelingAgent(config)
-agent.plan('data/squad_v2_test.csv')
-agent.run('data/squad_v2_test.csv', max_items = 100)
+ds = AutolabelDataset('data/squad_v2_test.csv', config = config)
+agent.plan(ds)
+agent.run(ds, max_items = 100)
 ```
 
 ### Evaluation metrics

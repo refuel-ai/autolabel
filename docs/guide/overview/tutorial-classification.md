@@ -77,10 +77,11 @@ config = {
 
 Now, we do the dry-run with `agent.plan`:
 ```python
-from autolabel import LabelingAgent
+from autolabel import LabelingAgent, AutolabelDataset
 
 agent = LabelingAgent(config)
-agent.plan('test.csv')
+ds = AutolabelDataset('test.csv', config = config)
+agent.plan(ds)
 ```
 
 Output:
@@ -103,7 +104,7 @@ Output:
 
 Finally, we run the data labeling:
 ```python
-labels, df, metrics = agent.run('test.csv', max_items=100)
+ds = agent.run(ds, max_items=100)
 ```
 
 ```
@@ -199,7 +200,7 @@ Output:
 With additional examples, the cost has gone up slightly. Now, we run the labeling with:
 
 ```python
-labels, df, metrics = agent.run('test.csv', max_items=100)`:
+labels, df, metrics = agent.run(ds, max_items=100)
 ```
 
 ```console

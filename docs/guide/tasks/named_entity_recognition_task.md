@@ -65,10 +65,11 @@ The `few_shot_examples` here is a path to a csv which defines a set of labeled e
 ### Run the task
 
 ```py
-from autolabel import LabelingAgent
+from autolabel import LabelingAgent, AutolabelDataset
 agent = LabelingAgent(config)
-agent.plan('examples/squad_v2/test.csv', max_items = 100)
-agent.run('examples/squad_v2/test.csv', max_items = 100)
+ds = AutolabelDataset('examples/squad_v2/test.csv', config = config)
+agent.plan(ds, max_items = 100)
+agent.run(ds, max_items = 100)
 ```
 
 ### Evaluation metrics
