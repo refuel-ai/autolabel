@@ -161,7 +161,7 @@ class AutolabelConfig(BaseConfig):
         return self._prompt_config.get(self.FEW_SHOT_NUM_KEY, 0)
 
     def vector_store_params(self) -> Dict:
-        """Returns how many examples should be given to the model in its instruction prompt"""
+        """Returns any parameters to be passed to the vector store"""
         return self._prompt_config.get(self.VECTOR_STORE_PARAMS_KEY, {})
 
     def example_template(self) -> str:
