@@ -67,7 +67,9 @@ class ExampleSelectorFactory:
             return None
 
         num_examples = config.few_shot_num_examples()
-        params = {"examples": examples, "k": num_examples}
+        params = config.vector_store_params()
+        params["examples"] = examples
+        params["k"] = num_examples
         if algorithm in [
             FewShotAlgorithm.SEMANTIC_SIMILARITY,
             FewShotAlgorithm.MAX_MARGINAL_RELEVANCE,
