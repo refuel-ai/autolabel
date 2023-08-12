@@ -53,8 +53,10 @@ class LabelingAgent:
         config: Union[AutolabelConfig, str, dict],
         cache: Optional[bool] = True,
         example_selector: Optional[BaseExampleSelector] = None,
+        create_task: Optional[bool] = True,
     ) -> None:
-        self.db = StateManager()
+        self.create_task = create_task
+        self.db = StateManager() if self.create_task else None
         self.generation_cache = SQLAlchemyGenerationCache() if cache else None
         self.transform_cache = SQLAlchemyTransformCache() if cache else None
 
@@ -69,6 +71,9 @@ class LabelingAgent:
             score_type="logprob_average", llm=self.llm
         )
         self.example_selector = example_selector
+
+        # Only used if we don't use task management
+        self.all_annotations = []
 
         if in_notebook():
             import nest_asyncio
@@ -95,9 +100,13 @@ class LabelingAgent:
 
         dataset = dataset.get_slice(max_items=max_items, start_index=start_index)
 
-        self.db.initialize()
-        self.dataset_obj = self.db.initialize_dataset(dataset.df, self.config)
-        self.task_object = self.db.initialize_task(self.config)
+        if self.create_task:
+            self.db.initialize()
+            self.dataset_obj = self.db.initialize_dataset(dataset.df, self.config)
+            self.task_object = self.db.initialize_task(self.config)
+        else:
+            self.all_annotations = []
+
         if isinstance(dataset, str):
             csv_file_name = (
                 output_name
@@ -107,21 +116,24 @@ class LabelingAgent:
         else:
             csv_file_name = f"{self.config.task_name()}_labeled.csv"
 
-        # Initialize task run and check if it already exists
-        self.task_run = self.db.get_task_run(self.task_object.id, self.dataset_obj.id)
-        # Resume/Delete the task if it already exists or create a new task run
-        if self.task_run:
-            logger.info("Task run already exists.")
-            self.task_run = self.handle_existing_task_run(
-                self.task_run,
-                csv_file_name,
-                gt_labels=dataset.gt_labels,
-                additional_metrics=additional_metrics,
+        if self.create_task:
+            # Initialize task run and check if it already exists
+            self.task_run = self.db.get_task_run(
+                self.task_object.id, self.dataset_obj.id
             )
-        else:
-            self.task_run = self.db.create_task_run(
-                csv_file_name, self.task_object.id, self.dataset_obj.id
-            )
+            # Resume/Delete the task if it already exists or create a new task run
+            if self.task_run:
+                logger.info("Task run already exists.")
+                self.task_run = self.handle_existing_task_run(
+                    self.task_run,
+                    csv_file_name,
+                    gt_labels=dataset.gt_labels,
+                    additional_metrics=additional_metrics,
+                )
+            else:
+                self.task_run = self.db.create_task_run(
+                    csv_file_name, self.task_object.id, self.dataset_obj.id
+                )
 
         # Get the seed examples from the dataset config
         seed_examples = self.config.few_shot_example_set()
@@ -149,8 +161,7 @@ class LabelingAgent:
                 cache=self.generation_cache is not None,
             )
 
-        num_failures = 0
-        current_index = self.task_run.current_index
+        current_index = self.task_run.current_index if self.create_task else 0
         cost = 0.0
         postfix_dict = {}
 
@@ -201,23 +212,15 @@ class LabelingAgent:
                         annotations.append(annotation)
                     annotation = self.majority_annotation(annotations)
 
-                # Store the annotation in the database
-                AnnotationModel.create_from_llm_annotation(
-                    self.db.session,
-                    annotation,
-                    current_index + i,
-                    self.task_run.id,
-                )
+                # Save the annotation in the database
+                self.save_annotation(annotation, current_index, i)
 
             cost += sum(response.costs)
             postfix_dict[self.COST_KEY] = f"{cost:.2f}"
 
             # Evaluate the task every eval_every examples
             if (current_index + 1) % eval_every == 0:
-                db_result = AnnotationModel.get_annotations_by_task_run_id(
-                    self.db.session, self.task_run.id
-                )
-                llm_labels = [pickle.loads(a.llm_annotation) for a in db_result]
+                llm_labels = self.get_all_annotations()
                 if dataset.gt_labels:
                     eval_result = self.task.eval(
                         llm_labels,
@@ -236,15 +239,13 @@ class LabelingAgent:
                                 else m.value
                             )
 
-            # Update task run state
-            self.task_run = self.save_task_run_state(
-                current_index=current_index + len(chunk)
-            )
+            if self.create_task:
+                # Update task run state
+                self.task_run = self.save_task_run_state(
+                    current_index=current_index + len(chunk)
+                )
 
-        db_result = AnnotationModel.get_annotations_by_task_run_id(
-            self.db.session, self.task_run.id
-        )
-        llm_labels = [pickle.loads(a.llm_annotation) for a in db_result]
+        llm_labels = self.get_all_annotations()
         eval_result = None
         # if true labels are provided, evaluate accuracy of predictions
         if dataset.gt_labels:
@@ -396,10 +397,7 @@ class LabelingAgent:
             gt_labels: If ground truth labels are provided, performance metrics will be displayed, such as label accuracy
         """
         pprint(f"There is an existing task with following details: {task_run}")
-        db_result = AnnotationModel.get_annotations_by_task_run_id(
-            self.db.session, task_run.id
-        )
-        llm_labels = [pickle.loads(a.llm_annotation) for a in db_result]
+        llm_labels = self.get_all_annotations()
         if gt_labels and len(llm_labels) > 0:
             pprint("Evaluating the existing task...")
             gt_labels = gt_labels[: len(llm_labels)]
@@ -501,3 +499,24 @@ class LabelingAgent:
         """
         self.generation_cache.clear(use_ttl=use_ttl)
         self.transform_cache.clear(use_ttl=use_ttl)
+
+    def save_annotation(self, annotation: LLMAnnotation, current_index: int, i: int):
+        if self.create_task:
+            # Store the annotation in the database
+            AnnotationModel.create_from_llm_annotation(
+                self.db.session,
+                annotation,
+                current_index + i,
+                self.task_run.id,
+            )
+        else:
+            self.all_annotations.append(annotation)
+
+    def get_all_annotations(self):
+        if self.create_task:
+            db_result = AnnotationModel.get_annotations_by_task_run_id(
+                self.db.session, self.task_run.id
+            )
+            return [pickle.loads(a.llm_annotation) for a in db_result]
+        else:
+            return self.all_annotations
