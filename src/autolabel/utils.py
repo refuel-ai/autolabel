@@ -65,7 +65,9 @@ def extract_valid_json_substring(string: str) -> str:
 def calculate_md5(input_data: Any) -> str:
     if isinstance(input_data, dict):
         # Convert dictionary to a JSON-formatted string
-        input_str = json.dumps(input_data, sort_keys=True).encode("utf-8")
+        input_str = json.dumps(input_data, sort_keys=True, skipkeys=True).encode(
+            "utf-8"
+        )
     elif hasattr(input_data, "read"):
         # Read binary data from file-like object
         md5_hash = hashlib.md5()
