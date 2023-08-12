@@ -111,10 +111,6 @@ class AutolabelDataset:
             x.successfully_labeled for x in llm_labels
         ]
 
-        self.df[self.generate_label_name("annotation")] = [
-            pickle.dumps(x) for x in llm_labels
-        ]
-
         # Add row level LLM metrics to the dataframe
         if metrics is not None:
             for metric in metrics:
