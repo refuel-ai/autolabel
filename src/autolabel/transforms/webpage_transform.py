@@ -19,6 +19,13 @@ HTML_PARSER = "html.parser"
 
 
 class WebpageTransform(BaseTransform):
+    COLUMN_NAMES = [
+        "content_column",
+        "content_in_bytes_column",
+        "soup_column",
+        "metadata_column",
+    ]
+
     def __init__(
         self,
         cache: BaseCache,
@@ -62,16 +69,6 @@ class WebpageTransform(BaseTransform):
 
     def name(self) -> str:
         return TransformType.WEBPAGE_TRANSFORM
-
-    @property
-    def output_columns(self) -> Dict[str, Any]:
-        COLUMN_NAMES = [
-            "content_column",
-            "content_in_bytes_column",
-            "soup_column",
-            "metadata_column",
-        ]
-        return {k: self._output_columns.get(k, k) for k in COLUMN_NAMES}
 
     def _load_metadata(self, url, soup) -> Dict[str, Any]:
         metadata = {"url": url}
@@ -138,7 +135,7 @@ class WebpageTransform(BaseTransform):
             self.output_columns["metadata_column"]: url_response_data.get("metadata"),
         }
 
-        return transformed_row
+        return self._return_output_row(transformed_row)
 
     def params(self):
         return {
