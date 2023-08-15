@@ -13,6 +13,7 @@ async def test_webpage_transform():
             "metadata_column": "metadata",
         },
         url_column="url",
+        cache=None,
     )
 
     # Create a mock row
@@ -20,9 +21,7 @@ async def test_webpage_transform():
     # Transform the row
     transformed_row = await transform.apply(row)
     # Check the output
-    assert set(transformed_row.keys()) == set(
-        ["webpage_content", "metadata", "content_in_bytes_column", "soup_column"]
-    )
+    assert set(transformed_row.keys()) == set(["webpage_content", "metadata"])
     assert isinstance(transformed_row["webpage_content"], str)
     assert isinstance(transformed_row["metadata"], dict)
     assert len(transformed_row["webpage_content"]) > 0

@@ -45,9 +45,13 @@ class PaLMLLM(BaseModel):
         cache: BaseCache = None,
     ) -> None:
         super().__init__(config, cache)
-
-        from langchain.chat_models import ChatVertexAI
-        from langchain.llms import VertexAI
+        try:
+            from langchain.chat_models import ChatVertexAI
+            from langchain.llms import VertexAI
+        except ImportError:
+            raise ImportError(
+                "palm is required to use the Palm LLM. Please install it with the following command: pip install 'refuel-autolabel[google]'"
+            )
 
         # populate model name
         self.model_name = config.model_name() or self.DEFAULT_MODEL

@@ -103,7 +103,7 @@ class LLMAnnotation(BaseModel):
 
     successfully_labeled: bool
     label: Any
-    curr_sample: Optional[str] = ""
+    curr_sample: Optional[bytes] = ""
     confidence_score: Optional[float] = None
     generation_info: Optional[Dict[str, Any]] = None
     raw_response: Optional[str] = ""
@@ -192,11 +192,13 @@ class Annotation(BaseModel):
         orm_mode = True
 
 
-class CacheEntry(BaseModel):
+class GenerationCacheEntry(BaseModel):
     model_name: str
     prompt: str
     model_params: str
     generations: Optional[List[Generation]] = None
+    creation_time_ms: Optional[int] = -1
+    ttl_ms: Optional[int] = -1
 
     class Config:
         orm_mode = True
@@ -221,3 +223,21 @@ class TransformType(str, Enum):
     WEBPAGE_TRANSFORM = "webpage_transform"
     PDF = "pdf"
     IMAGE = "image"
+
+
+class TransformCacheEntry(BaseModel):
+    transform_name: TransformType
+    transform_params: Dict[str, Any]
+    input: Dict[str, Any]
+    output: Optional[Dict[str, Any]] = None
+    creation_time_ms: Optional[int] = -1
+    ttl_ms: Optional[int] = -1
+
+    class Config:
+        orm_mode = True
+
+    def get_id(self) -> str:
+        """
+        Generates a unique ID for the given transform cache configuration
+        """
+        return calculate_md5([self.transform_name, self.transform_params, self.input])

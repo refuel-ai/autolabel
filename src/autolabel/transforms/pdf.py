@@ -2,13 +2,20 @@ from typing import List, Dict, Any
 
 from autolabel.schema import TransformType
 from autolabel.transforms import BaseTransform
+from autolabel.cache import BaseCache
 
 
 class PDFTransform(BaseTransform):
     """This class is used to extract text from PDFs. The output columns dictionary for this class should include the keys 'content_column' and 'metadata_column'"""
+    
+    COLUMN_NAMES = [
+        "content_column",
+        "metadata_column",
+    ]
 
     def __init__(
         self,
+        cache: BaseCache,
         output_columns: Dict[str, Any],
         file_path_column: str,
         ocr_enabled: bool = False,
@@ -51,14 +58,6 @@ class PDFTransform(BaseTransform):
     def name() -> str:
         return TransformType.PDF
 
-    @property
-    def output_columns(self) -> Dict[str, Any]:
-        COLUMN_NAMES = [
-            "content_column",
-            "metadata_column",
-        ]
-        return {k: self._output_columns.get(k, k) for k in COLUMN_NAMES}
-
     def get_page_texts(self, row: Dict[str, Any]) -> List[str]:
         """This function gets the text from each page of a PDF file.
         If OCR is enabled, it uses the pdf2image library to convert the PDF into images and then uses
@@ -96,4 +95,13 @@ class PDFTransform(BaseTransform):
             self.output_columns["content_column"]: output,
             self.output_columns["metadata_column"]: {"num_pages": len(texts)},
         }
-        return transformed_row
+        return self._return_output_row(transformed_row)
+
+    def params(self):
+        return {
+            "file_path_column": self.file_path_column,
+            "ocr_enabled": self.ocr_enabled,
+            "page_header": self.page_format,
+            "page_sep": self.page_sep,
+            "output_columns": self.output_columns,
+        }

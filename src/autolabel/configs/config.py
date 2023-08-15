@@ -41,6 +41,7 @@ class AutolabelConfig(BaseConfig):
     FEW_SHOT_EXAMPLE_SET_KEY = "few_shot_examples"
     FEW_SHOT_SELECTION_ALGORITHM_KEY = "few_shot_selection"
     FEW_SHOT_NUM_KEY = "few_shot_num"
+    VECTOR_STORE_PARAMS_KEY = "vector_store_params"
     EXAMPLE_TEMPLATE_KEY = "example_template"
     OUTPUT_GUIDELINE_KEY = "output_guidelines"
     OUTPUT_FORMAT_KEY = "output_format"
@@ -158,6 +159,10 @@ class AutolabelConfig(BaseConfig):
     def few_shot_num_examples(self) -> int:
         """Returns how many examples should be given to the model in its instruction prompt"""
         return self._prompt_config.get(self.FEW_SHOT_NUM_KEY, 0)
+
+    def vector_store_params(self) -> Dict:
+        """Returns any parameters to be passed to the vector store"""
+        return self._prompt_config.get(self.VECTOR_STORE_PARAMS_KEY, {})
 
     def example_template(self) -> str:
         """Returns a string containing a template for how examples will be formatted in the prompt"""

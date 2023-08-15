@@ -4,13 +4,20 @@ from abc import ABC, abstractmethod
 from typing import List, Optional
 
 from autolabel.configs import AutolabelConfig
-from autolabel.schema import CacheEntry, LabelingError, RefuelLLMResult, ErrorType
+from autolabel.schema import (
+    GenerationCacheEntry,
+    LabelingError,
+    RefuelLLMResult,
+    ErrorType,
+)
 from autolabel.cache import BaseCache
 
 from langchain.schema import Generation
 
 
 class BaseModel(ABC):
+    TTL_MS = 60 * 60 * 24 * 365 * 3 * 1000  # 3 years
+
     def __init__(self, config: AutolabelConfig, cache: BaseCache) -> None:
         self.config = config
         self.cache = cache
@@ -99,7 +106,7 @@ class BaseModel(ABC):
         missing_prompt_idxs = []
         existing_prompts = {}
         for i, prompt in enumerate(prompts):
-            cache_entry = CacheEntry(
+            cache_entry = GenerationCacheEntry(
                 prompt=prompt,
                 model_name=self.model_name,
                 model_params=model_params_string,
@@ -129,11 +136,12 @@ class BaseModel(ABC):
             if error is not None:
                 continue
 
-            cache_entry = CacheEntry(
+            cache_entry = GenerationCacheEntry(
                 prompt=prompts[i],
                 model_name=self.model_name,
                 model_params=model_params_string,
                 generations=result,
+                ttl_ms=self.TTL_MS,
             )
             self.cache.update(cache_entry)
 
