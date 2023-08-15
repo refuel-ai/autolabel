@@ -22,6 +22,7 @@ class TaskModel(Base):
     def create(cls, db, task: BaseModel):
         db_object = cls(**json.loads(task.json()))
         db.add(db_object)
+        db.commit()
         return db_object
 
     @classmethod
@@ -30,3 +31,4 @@ class TaskModel(Base):
 
     def delete(self, db):
         db.delete(self)
+        db.commit()

@@ -102,10 +102,11 @@ For the twitter dataset, we found `semantic_similarity` search to work really we
 ### Run the task
 
 ```py
-from autolabel import LabelingAgent
+from autolabel import LabelingAgent, AutolabelDataset
 agent = LabelingAgent(config)
-agent.plan('twitter_emotion_detection.csv')
-agent.run('twitter_emotion_detection.csv', max_items = 100)
+ds = AutolabelDataset('twitter_emotion_detection.csv', config = config)
+agent.plan(ds)
+agent.run(ds, max_items = 100)
 ```
 
 ### Evaluation metrics

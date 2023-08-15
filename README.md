@@ -78,7 +78,7 @@ Initialize the labeling agent and pass it the config:
 
 ```python
 
-from autolabel import LabelingAgent
+from autolabel import LabelingAgent, AutolabelDataset
 
 agent = LabelingAgent(config='config.json')
 ```
@@ -86,7 +86,8 @@ agent = LabelingAgent(config='config.json')
 Preview an example prompt that will be sent to the LLM:
 
 ```python
-agent.plan('dataset.csv')
+ds = AutolabelDataset('dataset.csv', config = config)
+agent.plan(ds)
 ```
 
 This prints:
@@ -128,13 +129,13 @@ Output:
 Finally, we can run the labeling on a subset or entirety of the dataset:
 
 ```python
-labels, output_df, metrics = agent.run('dataset.csv')
+ds = agent.run(ds)
 ```
 
 The output dataframe contains the label column:
 
 ```python
-output_df.head()
+ds.df.head()
                                                 text  ... MovieSentimentReview_llm_label
 0  I was very excited about seeing this film, ant...  ...                       negative
 1  Serum is about a crazy doctor that finds a ser...  ...                       negative

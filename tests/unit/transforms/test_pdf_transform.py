@@ -13,6 +13,7 @@ async def test_pdf_transform():
             "metadata_column": "metadata",
         },
         file_path_column="file_path",
+        cache=None,
     )
 
     # Create a mock row

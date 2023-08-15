@@ -1,12 +1,10 @@
 from typing import List, Optional
 
-from anthropic import tokenizer
 from autolabel.configs import AutolabelConfig
 from autolabel.models import BaseModel
 from autolabel.cache import BaseCache
-from langchain.chat_models import ChatAnthropic
-from langchain.schema import LLMResult, HumanMessage
 from autolabel.schema import RefuelLLMResult
+from langchain.schema import HumanMessage
 
 
 class AnthropicLLM(BaseModel):
@@ -30,6 +28,15 @@ class AnthropicLLM(BaseModel):
 
     def __init__(self, config: AutolabelConfig, cache: BaseCache = None) -> None:
         super().__init__(config, cache)
+
+        try:
+            from langchain.chat_models import ChatAnthropic
+            from anthropic import tokenizer
+        except ImportError:
+            raise ImportError(
+                "anthropic is required to use the anthropic LLM. Please install it with the following command: pip install 'refuel-autolabel[anthropic]'"
+            )
+
         # populate model name
         self.model_name = config.model_name() or self.DEFAULT_MODEL
         # populate model params
@@ -37,6 +44,8 @@ class AnthropicLLM(BaseModel):
         self.model_params = {**self.DEFAULT_PARAMS, **model_params}
         # initialize LLM
         self.llm = ChatAnthropic(model=self.model_name, **self.model_params)
+
+        self.tokenizer = tokenizer
 
     def _label(self, prompts: List[str]) -> RefuelLLMResult:
         prompts = [[HumanMessage(content=prompt)] for prompt in prompts]
@@ -49,9 +58,9 @@ class AnthropicLLM(BaseModel):
             return self._label_individually(prompts)
 
     def get_cost(self, prompt: str, label: Optional[str] = "") -> float:
-        num_prompt_toks = tokenizer.count_tokens(prompt)
+        num_prompt_toks = self.tokenizer.count_tokens(prompt)
         if label:
-            num_label_toks = tokenizer.count_tokens(label)
+            num_label_toks = self.tokenizer.count_tokens(label)
         else:
             # get an upper bound
             num_label_toks = self.model_params["max_tokens_to_sample"]

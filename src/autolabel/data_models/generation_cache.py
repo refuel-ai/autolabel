@@ -4,11 +4,12 @@ from sqlalchemy import Column, Integer, String, Text, JSON
 from sqlalchemy.orm import relationship
 from langchain.schema import Generation
 import json
+import time
 
-from autolabel.schema import CacheEntry
+from autolabel.schema import GenerationCacheEntry
 
 
-class CacheEntryModel(Base):
+class GenerationCacheEntryModel(Base):
     """an SQLAlchemy based Cache system for storing and retriving CacheEntries"""
 
     __tablename__ = "generation_cache"
@@ -18,12 +19,14 @@ class CacheEntryModel(Base):
     prompt = Column(Text)
     model_params = Column(Text)
     generations = Column(JSON)
+    creation_time_ms = Column(Integer)
+    ttl_ms = Column(Integer)
 
     def __repr__(self):
         return f"<Cache(model_name={self.model_name},prompt={self.prompt},model_params={self.model_params},generations={self.generations})>"
 
     @classmethod
-    def get(cls, db, cache_entry: CacheEntry):
+    def get(cls, db, cache_entry: GenerationCacheEntry):
         looked_up_entry = (
             db.query(cls)
             .filter(
@@ -40,11 +43,13 @@ class CacheEntryModel(Base):
         generations = json.loads(looked_up_entry.generations)["generations"]
         generations = [Generation(**gen) for gen in generations]
 
-        entry = CacheEntry(
+        entry = GenerationCacheEntry(
             model_name=looked_up_entry.model_name,
             prompt=looked_up_entry.prompt,
             model_params=looked_up_entry.model_params,
             generations=generations,
+            creation_time_ms=looked_up_entry.creation_time_ms,
+            ttl_ms=looked_up_entry.ttl_ms,
         )
         return entry
 
@@ -56,10 +61,20 @@ class CacheEntryModel(Base):
             prompt=cache_entry.prompt,
             model_params=cache_entry.model_params,
             generations=json.dumps(generations),
+            creation_time_ms=int(time.time() * 1000),
+            ttl_ms=cache_entry.ttl_ms,
         )
         db.add(db_object)
+        db.commit()
         return cache_entry
 
     @classmethod
-    def clear(cls, db):
-        db.query(cls).delete()
+    def clear(cls, db, use_ttl: bool = True) -> None:
+        if use_ttl:
+            current_time_ms = int(time.time() * 1000)
+            db.query(cls).filter(
+                current_time_ms - cls.creation_time_ms > cls.ttl_ms
+            ).delete()
+        else:
+            db.query(cls).delete()
+        db.commit()

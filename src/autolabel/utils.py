@@ -65,7 +65,9 @@ def extract_valid_json_substring(string: str) -> str:
 def calculate_md5(input_data: Any) -> str:
     if isinstance(input_data, dict):
         # Convert dictionary to a JSON-formatted string
-        input_str = json.dumps(input_data, sort_keys=True).encode("utf-8")
+        input_str = json.dumps(input_data, sort_keys=True, skipkeys=True).encode(
+            "utf-8"
+        )
     elif hasattr(input_data, "read"):
         # Read binary data from file-like object
         md5_hash = hashlib.md5()
@@ -364,3 +366,19 @@ def normalize_text(s: str) -> str:
         return text.lower()
 
     return white_space_fix(remove_articles(remove_punc(lower(s))))
+
+
+def in_notebook():
+    """
+    Check if we are in a notebook. Taken from https://stackoverflow.com/a/39662359/9263185
+    """
+    try:
+        from IPython import get_ipython
+
+        if "IPKernelApp" not in get_ipython().config:  # pragma: no cover
+            return False
+    except ImportError:
+        return False
+    except AttributeError:
+        return False
+    return True

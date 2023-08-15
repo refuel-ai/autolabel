@@ -100,8 +100,9 @@ For the banking dataset, we found `semantic_similarity` search to work really we
 ```py
 from autolabel import LabelingAgent
 agent = LabelingAgent(config)
-agent.plan('data/banking77.csv')
-agent.run('data/banking77.csv', max_items = 100)
+ds = AutolabelDataset('data/banking77.csv', config = config)
+agent.plan(ds)
+agent.run(ds, max_items = 100)
 ```
 
 ### Evaluation metrics

@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "refuel-autolabel"
-version = "0.0.10"
+version = "0.0.14"
 description = "Label, clean and enrich text datasets with LLMs"
 readme = "README.md"
 authors = [{ name = "Refuel.ai", email = "support@refuel.ai" }]
@@ -27,7 +27,7 @@ dependencies = [
     "pandas >= 1.3.0",
     "scikit-learn >= 1.0.0",
     "tenacity >= 8.2.2",
-    "SQLAlchemy == 1.4.47",
+    "SQLAlchemy >= 2.0.19",
     "regex >= 2023.6.3",
     "rich >= 13.3.5",
     "scipy >= 1.10.1",
@@ -96,7 +96,7 @@ all = [
     "pdfplumber >= 0.10.2",
     "pdf2image >= 1.16.3",
     "pytesseract >= 0.3.10",
-    "bs4",
+    "beautifulsoup4 >= 4.12.2",
     "httpx",
     "fake_useragent"
 ]

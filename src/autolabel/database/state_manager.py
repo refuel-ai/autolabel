@@ -22,7 +22,7 @@ class StateManager:
 
     def initialize(self):
         self.base.metadata.create_all(self.engine)
-        self.session = sessionmaker(bind=self.engine, autocommit=True)()
+        self.session = sessionmaker(bind=self.engine)()
 
     def initialize_dataset(
         self,
