@@ -5,7 +5,16 @@ pytest_plugins = ("pytest_asyncio",)
 
 
 @pytest.mark.asyncio
-async def test_image_transform():
+async def test_image_transform(mocker):
+    mocker.patch(
+        "subprocess.check_output",
+        return_value="5.3.2".encode("utf-8"),
+    )
+    mocker.patch(
+        "pytesseract.pytesseract.run_and_get_output",
+        return_value="This is a test",
+    )
+
     # Initialize the ImageTransform class
     transform = ImageTransform(
         output_columns={
@@ -21,7 +30,7 @@ async def test_image_transform():
     transformed_row = await transform.apply(row)
     # Check the output
     assert set(transformed_row.keys()) == set(["content", "metadata"])
-    assert isinstance(transformed_row["content"], str)
+    assert transformed_row["content"] == "This is a test"
     assert isinstance(transformed_row["metadata"], dict)
     assert len(transformed_row["content"]) > 0
     metadata = transformed_row["metadata"]
