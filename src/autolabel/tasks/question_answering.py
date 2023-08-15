@@ -99,6 +99,11 @@ class QuestionAnsweringTask(BaseTask):
             labeled_example=fmt_example,
         )
 
+    def get_generate_dataset_prompt(
+        self, label: str, num_rows: int, guidelines: str = None
+    ) -> str:
+        raise NotImplementedError("Dataset generation not implemented for this task")
+
     def eval(
         self,
         llm_labels: List[LLMAnnotation],
