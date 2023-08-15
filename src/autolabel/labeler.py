@@ -253,6 +253,8 @@ class LabelingAgent:
 
         llm_labels = self.get_all_annotations()
         eval_result = None
+        table = {}
+
         # if true labels are provided, evaluate accuracy of predictions
         if not skip_eval and dataset.gt_labels:
             eval_result = self.task.eval(
@@ -260,7 +262,6 @@ class LabelingAgent:
                 dataset.gt_labels[: len(llm_labels)],
                 additional_metrics=additional_metrics,
             )
-            table = {}
             # TODO: serialize and write to file
             for m in eval_result:
                 if isinstance(m.value, list):
