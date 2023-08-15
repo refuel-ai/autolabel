@@ -13,7 +13,6 @@ async def test_webpage_transform():
             "metadata_column": "metadata",
         },
         url_column="url",
-        cache=None,
     )
 
     # Create a mock row
