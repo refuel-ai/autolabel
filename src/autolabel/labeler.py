@@ -223,6 +223,28 @@ class LabelingAgent:
 
             cost += sum(response.costs)
             postfix_dict[self.COST_KEY] = f"{cost:.2f}"
+
+            # Evaluate the task every eval_every examples
+            if not skip_eval and (current_index + 1) % 100 == 0:
+                llm_labels = self.get_all_annotations()
+                if dataset.gt_labels:
+                    eval_result = self.task.eval(
+                        llm_labels,
+                        dataset.gt_labels[: len(llm_labels)],
+                        additional_metrics=additional_metrics,
+                    )
+
+                    for m in eval_result:
+                        # This is a row wise metric
+                        if isinstance(m.value, list):
+                            continue
+                        elif m.show_running:
+                            postfix_dict[m.name] = (
+                                f"{m.value:.4f}"
+                                if isinstance(m.value, float)
+                                else m.value
+                            )
+
             if self.create_task:
                 # Update task run state
                 self.task_run = self.save_task_run_state(
