@@ -1,7 +1,10 @@
 from abc import ABC, abstractmethod
-from typing import Dict, Any
 from autolabel.cache import BaseCache
 from autolabel.schema import TransformCacheEntry
+from typing import Dict, Any
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 class BaseTransform(ABC):
@@ -37,6 +40,13 @@ class BaseTransform(ABC):
         """
         return {k: self._output_columns.get(k, None) for k in self.COLUMN_NAMES}
 
+    @property
+    def transform_status_column(self) -> str:
+        """
+        Returns the name of the column that tracks if transform ran successfully.
+        """
+        return f"{self.name()}_applied_successfully"
+
     @abstractmethod
     async def _apply(self, row: Dict[str, Any]) -> Dict[str, Any]:
         """
@@ -71,7 +81,14 @@ class BaseTransform(ABC):
                 # Cache hit
                 return output
 
-        output = await self._apply(row)
+        try:
+            output = await self._apply(row)
+            output[self.transform_status_column] = True
+        except Exception as e:
+            logger.error(f"Error applying transform {self.name()}. Exception: {e}")
+            output = {k: None for k in self.output_columns.values() if k is not None}
+            output[self.transform_status_column] = False
+            return output
 
         if self.cache is not None:
             cache_entry.output = output

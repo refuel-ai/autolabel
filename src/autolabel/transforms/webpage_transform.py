@@ -116,7 +116,7 @@ class WebpageTransform(BaseTransform):
             )
         except Exception as e:
             logger.error(f"Error fetching content from URL: {url}. Exception: {e}")
-            return {}
+            raise e
 
     async def _apply(self, row: Dict[str, Any]) -> Dict[str, Any]:
         url = row[self.url_column]
