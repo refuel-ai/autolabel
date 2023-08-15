@@ -22,6 +22,7 @@ async def test_image_transform(mocker):
             "metadata_column": "metadata",
         },
         file_path_column="file_path",
+        cache=None,
     )
 
     # Create a mock row

@@ -13,6 +13,7 @@ async def test_pdf_transform():
             "metadata_column": "metadata",
         },
         file_path_column="file_path",
+        cache=None,
     )
 
     # Create a mock row
@@ -28,7 +29,7 @@ async def test_pdf_transform():
 
 
 @pytest.mark.asyncio
-async def test_pdf_transform(mocker):
+async def test_pdf_transform_ocr(mocker):
     mocker.patch(
         "subprocess.check_output",
         return_value="5.3.2".encode("utf-8"),
@@ -46,6 +47,7 @@ async def test_pdf_transform(mocker):
         },
         file_path_column="file_path",
         ocr_enabled=True,
+        cache=None,
     )
 
     # Create a mock row

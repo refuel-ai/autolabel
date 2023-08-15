@@ -21,12 +21,14 @@ class PDFTransform(BaseTransform):
         ocr_enabled: bool = False,
         page_format: str = "Page {page_num}: {page_content}",
         page_sep: str = "\n\n",
+        lang: str = None,
     ) -> None:
-        super().__init__(output_columns)
+        super().__init__(cache, output_columns)
         self.file_path_column = file_path_column
         self.ocr_enabled = ocr_enabled
         self.page_format = page_format
         self.page_sep = page_sep
+        self.lang = lang
 
         if self.ocr_enabled:
             try:
@@ -71,7 +73,9 @@ class PDFTransform(BaseTransform):
         """
         if self.ocr_enabled:
             pages = self.convert_from_path(row[self.file_path_column])
-            return [self.pytesseract.image_to_string(page) for page in pages]
+            return [
+                self.pytesseract.image_to_string(page, lang=self.lang) for page in pages
+            ]
         else:
             loader = self.PDFPlumberLoader(row[self.file_path_column])
             return [page.page_content for page in loader.load()]
@@ -104,4 +108,5 @@ class PDFTransform(BaseTransform):
             "page_header": self.page_format,
             "page_sep": self.page_sep,
             "output_columns": self.output_columns,
+            "lang": self.lang,
         }

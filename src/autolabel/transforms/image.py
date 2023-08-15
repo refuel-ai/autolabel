@@ -1,5 +1,6 @@
 from typing import Dict, Any
 
+from autolabel.cache import BaseCache
 from autolabel.schema import TransformType
 from autolabel.transforms import BaseTransform
 
@@ -10,10 +11,19 @@ class ImageTransform(BaseTransform):
     This transform supports the following image formats: PNG, JPEG, TIFF, JPEG 2000, GIF, WebP, BMP, and PNM
     """
 
+    COLUMN_NAMES = [
+        "content_column",
+        "metadata_column",
+    ]
+
     def __init__(
-        self, output_columns: Dict[str, Any], file_path_column: str, lang: str = None
+        self,
+        cache: BaseCache,
+        output_columns: Dict[str, Any],
+        file_path_column: str,
+        lang: str = None,
     ) -> None:
-        super().__init__(output_columns)
+        super().__init__(cache, output_columns)
         self.file_path_column = file_path_column
         self.lang = lang
 
@@ -36,14 +46,6 @@ class ImageTransform(BaseTransform):
     @staticmethod
     def name() -> str:
         return TransformType.IMAGE
-
-    @property
-    def output_columns(self) -> Dict[str, Any]:
-        COLUMN_NAMES = [
-            "content_column",
-            "metadata_column",
-        ]
-        return {k: self._output_columns.get(k, k) for k in COLUMN_NAMES}
 
     def get_image_metadata(self, file_path: str):
         try:
@@ -78,3 +80,10 @@ class ImageTransform(BaseTransform):
             self.output_columns["metadata_column"]: metadata,
         }
         return transformed_row
+
+    def params(self) -> Dict[str, Any]:
+        return {
+            "output_columns": self.output_columns,
+            "file_path_column": self.file_path_column,
+            "lang": self.lang,
+        }
