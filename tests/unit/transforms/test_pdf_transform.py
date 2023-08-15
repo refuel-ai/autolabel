@@ -35,8 +35,8 @@ async def test_pdf_transform_ocr(mocker):
         return_value="5.3.2".encode("utf-8"),
     )
     mocker.patch(
-        "pytesseract.pytesseract.run_and_get_output",
-        return_value="This is a test",
+        "autolabel.transforms.pdf.PDFTransform.get_page_texts",
+        return_value=["This is a test"],
     )
 
     # Initialize the PDFTransform class
