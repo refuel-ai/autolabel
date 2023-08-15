@@ -7,7 +7,7 @@ from autolabel.cache import BaseCache
 
 class PDFTransform(BaseTransform):
     """This class is used to extract text from PDFs. The output columns dictionary for this class should include the keys 'content_column' and 'metadata_column'"""
-    
+
     COLUMN_NAMES = [
         "content_column",
         "metadata_column",
