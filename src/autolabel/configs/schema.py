@@ -124,6 +124,13 @@ schema = {
             "required": ["task_guidelines"],
             "additionalProperties": False,
         },
+        "dataset_generation": {
+            "type": "object",
+            "properties": {
+                "num_rows": {"type": ["number", "null"]},
+                "guidelines": {"type": ["string", "null"]},
+            },
+        },
     },
     "required": [
         "task_name",

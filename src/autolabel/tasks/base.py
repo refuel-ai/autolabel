@@ -30,6 +30,7 @@ class BaseTask(ABC):
     NULL_LABEL_TOKEN = "NO_LABEL"
     DEFAULT_TASK_GUIDELINES = ""
     DEFAULT_OUTPUT_GUIDELINES = ""
+    DEFAULT_DATASET_GENERATION_GUIDELINES = ""
 
     def __init__(self, config: AutolabelConfig) -> None:
         self.config = config
@@ -52,6 +53,11 @@ class BaseTask(ABC):
                 input_variables=get_format_variables(self.ZERO_SHOT_TEMPLATE),
                 template=self.ZERO_SHOT_TEMPLATE,
             )
+
+        self.dataset_generation_guidelines = (
+            self.config.dataset_generation_guidelines()
+            or self.DEFAULT_DATASET_GENERATION_GUIDELINES
+        )
 
     def _is_few_shot_mode(self) -> bool:
         return self.config.few_shot_algorithm() in [x.value for x in FewShotAlgorithm]

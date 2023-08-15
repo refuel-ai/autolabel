@@ -27,7 +27,12 @@ class EntityMatchingTask(BaseTask):
     DEFAULT_TASK_GUIDELINES = "Your job is to tell if the two given entities are duplicates or not. You will return the answer from one of the choices. Choices:\n{labels}\n"
 
     GENERATE_EXPLANATION_PROMPT = "You are an expert at providing a well reasoned explanation for the output of a given task. \n\nBEGIN TASK DESCRIPTION\n{task_guidelines}\nEND TASK DESCRIPTION\nYou will be given an input example and the corresponding output. Your job is to provide an explanation for why the output is correct for the task above.\nThink step by step and generate an explanation. The last line of the explanation should be - So, the answer is <label>.\n{labeled_example}\nExplanation: "
-    GENERATE_DATASET_PROMPT = "{guidelines}\n\nThe inputs must be diverse, covering a wide range of scenarios. You will not generate duplicate inputs. These inputs should be organized in rows in csv format with the columns {columns}.\n\n{label_descriptions}\n\n{format_guidelines}\n\n{output_guidelines}"
+
+    GENERATE_DATASET_TEMPLATE = "{guidelines}\n\nThe inputs must be diverse, covering a wide range of scenarios. You will not generate duplicate inputs. These inputs should be organized in rows in csv format with the columns {columns}.\n\n{label_descriptions}\n\n{format_guidelines}\n\n{output_guidelines}\n\n```csv"
+    DEFAULT_DATASET_GENERATION_GUIDELINES = "You are an expert at generating plausible inputs for a given task.\n\nBEGIN TASK DESCRIPTION\n{task_guidelines}\nEND TASK DESCRIPTION"
+    LABEL_DESCRIPTIONS_PROMPT = "Each input should fall into one of these {num_labels} categories. These are the only categories that the inputs can belong to."
+    GENERATE_DATASET_FORMAT_GUIDELINES = "Your response should be in csv format with the following columns: {columns}.\n\nHere is a template you can follow for your output:\n```csv\n{columns}\n{example_rows}\n```\n\nMake sure to replace the placeholder variables with your own values."
+    GENERATE_DATASET_OUTPUT_GUIDELINES = 'Now I want you to generate {num_rows} excerpts that follow the guidelines and all belong to the "{label}" category. They should not belong to any of the other categories.'
 
     def __init__(self, config: AutolabelConfig) -> None:
         super().__init__(config)
@@ -111,51 +116,53 @@ class EntityMatchingTask(BaseTask):
             labeled_example=fmt_example,
         )
 
-    def get_generate_dataset_prompt(
-        self, label: str, num_rows: int, guidelines: str = None
-    ) -> str:
+    def get_generate_dataset_prompt(self, label: str) -> str:
         pt = PromptTemplate(
-            input_variables=get_format_variables(self.GENERATE_DATASET_PROMPT),
-            template=self.GENERATE_DATASET_PROMPT,
+            input_variables=get_format_variables(self.GENERATE_DATASET_TEMPLATE),
+            template=self.GENERATE_DATASET_TEMPLATE,
         )
 
         # prepare task guideline
-        if guidelines is None:
-            guidelines = "You are an expert at generating plausible inputs for a given task.\n\nBEGIN TASK DESCRIPTION\n{task_guidelines}\nEND TASK DESCRIPTION"
         labels_list = self.config.labels_list()
         num_labels = len(labels_list)
         fmt_task_guidelines = self.task_guidelines.format(
             num_labels=num_labels, labels="\n".join(labels_list)
         )
-        guidelines = guidelines.format(task_guidelines=fmt_task_guidelines)
+        fmt_guidelines = self.dataset_generation_guidelines.format(
+            task_guidelines=fmt_task_guidelines
+        )
 
         # prepare columns
         columns = get_format_variables(self.config.example_template())
         columns.remove(self.config.label_column())
 
         # prepare label descriptions
-        label_descriptions = f"Each input should fall into one of these {num_labels} categories. These are the only categories that the inputs can belong to."
+        fmt_label_descriptions = self.LABEL_DESCRIPTIONS_PROMPT.format(
+            num_labels=num_labels
+        )
+
         for i, l in enumerate(labels_list):
-            label_descriptions += f"\n{i+1}. {l}{': ' + self.config.label_descriptions()[l] if self.config.label_descriptions() is not None and l in self.config.label_descriptions() else ''}"
+            fmt_label_descriptions += f"\n{i+1}. {l}{': ' + self.config.label_descriptions()[l] if self.config.label_descriptions() is not None and l in self.config.label_descriptions() else ''}"
 
         # prepare format
         example_rows = "\n".join(
-            [
-                ",".join([f'"row_{i+1}_{column}"' for column in columns])
-                for i in range(3)
-            ]
+            [",".join([f'"{column}_{i+1}"' for column in columns]) for i in range(3)]
         )
-        format_guidelines = f"Your response should be in csv format with the following columns: {', '.join(columns)}.\n\nHere is a template you can follow for your output:\n{','.join(columns)}\n{example_rows}\n\nMake sure to replace the placeholder variables with your own values."
+        fmt_format_guidelines = self.GENERATE_DATASET_FORMAT_GUIDELINES.format(
+            columns=",".join(columns), example_rows=example_rows
+        )
 
         # prepare output guidelines
-        output_guidelines = f'Now I want you to generate {num_rows} excerpts that follow the guidelines and all belong to the "{label}" category. They should not belong to any of the other categories.'
+        fmt_output_guidelines = self.GENERATE_DATASET_OUTPUT_GUIDELINES.format(
+            num_rows=self.config.dataset_generation_num_rows(), label=label
+        )
 
         return pt.format(
-            guidelines=guidelines,
+            guidelines=fmt_guidelines,
             columns=columns,
-            label_descriptions=label_descriptions,
-            format_guidelines=format_guidelines,
-            output_guidelines=output_guidelines,
+            label_descriptions=fmt_label_descriptions,
+            format_guidelines=fmt_format_guidelines,
+            output_guidelines=fmt_output_guidelines,
         )
 
     def eval(
