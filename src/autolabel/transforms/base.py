@@ -29,14 +29,13 @@ class BaseTransform(ABC):
         pass
 
     @property
-    @abstractmethod
     def output_columns(self) -> Dict[str, Any]:
         """
         Returns a dictionary of output columns. The keys are the names of the output columns
         as expected by the transform. The values are the column names they should be mapped to in
         the dataset.
         """
-        return self._output_columns
+        return {k: self._output_columns.get(k, None) for k in self.COLUMN_NAMES}
 
     @abstractmethod
     async def _apply(self, row: Dict[str, Any]) -> Dict[str, Any]:
@@ -79,3 +78,15 @@ class BaseTransform(ABC):
             self.cache.update(cache_entry)
 
         return output
+
+    def _return_output_row(self, row: Dict[str, Any]) -> Dict[str, Any]:
+        """
+        Returns the output row with the correct column names.
+        Args:
+            row: The output row.
+        Returns:
+            The output row with the correct column names.
+        """
+        # remove null key
+        row.pop(None, None)
+        return row
