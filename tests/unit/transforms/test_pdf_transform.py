@@ -21,12 +21,15 @@ async def test_pdf_transform():
     # Transform the row
     transformed_row = await transform.apply(row)
     # Check the output
-    assert set(transformed_row.keys()) == set(["content", "metadata", "pdf_applied_successfully"])
+    assert set(transformed_row.keys()) == set(
+        ["content", "metadata", "pdf_applied_successfully"]
+    )
     assert isinstance(transformed_row["content"], str)
     assert isinstance(transformed_row["metadata"], dict)
     assert len(transformed_row["content"]) > 0
     assert transformed_row["pdf_applied_successfully"] == True
     assert transformed_row["metadata"]["num_pages"] == 1
+
 
 @pytest.mark.asyncio
 async def test_error_handling():
@@ -44,8 +47,6 @@ async def test_error_handling():
     # Transform the row
     transformed_row = await transform.apply(row)
     # Check the output
-    assert set(transformed_row.keys()) == set(
-        ["content", "pdf_applied_successfully"]
-    )
+    assert set(transformed_row.keys()) == set(["content", "pdf_applied_successfully"])
     assert transformed_row["content"] is None
     assert transformed_row["pdf_applied_successfully"] == False

@@ -21,7 +21,9 @@ async def test_webpage_transform():
     # Transform the row
     transformed_row = await transform.apply(row)
     # Check the output
-    assert set(transformed_row.keys()) == set(["webpage_content", "metadata", "webpage_transform_applied_successfully"])
+    assert set(transformed_row.keys()) == set(
+        ["webpage_content", "metadata", "webpage_transform_applied_successfully"]
+    )
     assert isinstance(transformed_row["webpage_content"], str)
     assert isinstance(transformed_row["metadata"], dict)
     assert transformed_row["webpage_transform_applied_successfully"] == True
