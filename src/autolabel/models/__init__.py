@@ -50,10 +50,13 @@ class ModelFactory:
             assert isinstance(
                 model_obj, BaseModel
             ), f"{model_obj} should inherit from autolabel.models.BaseModel"
-        except ValueError as e:
+        except KeyError as e:
+            # We should never get here as the config should have already
+            # been validated by the pydantic model.
             logger.error(
                 f"{config.provider()} is not in the list of supported providers: \
                 {list(ModelProvider.__members__.keys())}"
             )
-            return None
+            raise e
+
         return model_obj
