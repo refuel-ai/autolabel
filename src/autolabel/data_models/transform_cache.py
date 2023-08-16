@@ -3,7 +3,7 @@ from sqlalchemy import Column, String, TEXT, Integer
 import time
 import pickle
 
-from autolabel.schema import TransformCacheEntry
+from autolabel.transforms.schema import TransformCacheEntry
 
 
 class TransformCacheEntryModel(Base):

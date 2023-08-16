@@ -1,13 +1,17 @@
 from abc import ABC, abstractmethod
-from typing import Dict, Any
 from autolabel.cache import BaseCache
-from autolabel.schema import TransformCacheEntry
+from autolabel.transforms.schema import TransformCacheEntry, TransformError
+from typing import Dict, Any
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 class BaseTransform(ABC):
     """Base class for all transforms."""
 
     TTL_MS = 60 * 60 * 24 * 7 * 1000  # 1 week
+    NULL_TRANSFORM_TOKEN = "NO_TRANSFORM"
 
     def __init__(self, cache: BaseCache, output_columns: Dict[str, Any]) -> None:
         """
@@ -36,6 +40,13 @@ class BaseTransform(ABC):
         the dataset.
         """
         return {k: self._output_columns.get(k, None) for k in self.COLUMN_NAMES}
+
+    @property
+    def transform_error_column(self) -> str:
+        """
+        Returns the name of the column that stores the error if transformation fails.
+        """
+        return f"{self.name()}_error"
 
     @abstractmethod
     async def _apply(self, row: Dict[str, Any]) -> Dict[str, Any]:
@@ -71,7 +82,17 @@ class BaseTransform(ABC):
                 # Cache hit
                 return output
 
-        output = await self._apply(row)
+        try:
+            output = await self._apply(row)
+        except Exception as e:
+            logger.error(f"Error applying transform {self.name()}. Exception: {str(e)}")
+            output = {
+                k: self.NULL_TRANSFORM_TOKEN
+                for k in self.output_columns.values()
+                if k is not None
+            }
+            output[self.transform_error_column] = str(e)
+            return output
 
         if self.cache is not None:
             cache_entry.output = output
