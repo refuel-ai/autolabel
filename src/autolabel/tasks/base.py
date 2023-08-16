@@ -34,6 +34,7 @@ class BaseTask(ABC):
     NULL_LABEL_TOKEN = "NO_LABEL"
     DEFAULT_TASK_GUIDELINES = ""
     DEFAULT_OUTPUT_GUIDELINES = ""
+    DEFAULT_DATASET_GENERATION_GUIDELINES = ""
 
     def __init__(self, config: AutolabelConfig) -> None:
         self.config = config
@@ -57,6 +58,11 @@ class BaseTask(ABC):
                 template=self.ZERO_SHOT_TEMPLATE,
             )
 
+        self.dataset_generation_guidelines = (
+            self.config.dataset_generation_guidelines()
+            or self.DEFAULT_DATASET_GENERATION_GUIDELINES
+        )
+
     def _is_few_shot_mode(self) -> bool:
         return self.config.few_shot_algorithm() in [x.value for x in FewShotAlgorithm]
 
@@ -78,6 +84,12 @@ class BaseTask(ABC):
         raise NotImplementedError(
             "Explanation generation not implemented for this task"
         )
+
+    @abstractmethod
+    def get_generate_dataset_prompt(
+        self, label: str, num_rows: int, guidelines: str = None
+    ) -> str:
+        raise NotImplementedError("Dataset generation not implemented for this task")
 
     def parse_llm_response(
         self, response: Generation, curr_sample: Dict, prompt: str

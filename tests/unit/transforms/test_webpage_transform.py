@@ -25,3 +25,29 @@ async def test_webpage_transform():
     assert isinstance(transformed_row["webpage_content"], str)
     assert isinstance(transformed_row["metadata"], dict)
     assert len(transformed_row["webpage_content"]) > 0
+
+
+@pytest.mark.asyncio
+async def test_error_handling():
+    # Initialize the transform class
+    transform = WebpageTransform(
+        output_columns={
+            "content_column": "webpage_content",
+        },
+        url_column="url",
+        cache=None,
+    )
+
+    # Create a mock row
+    row = {"url": "bad_url"}
+    # Transform the row
+    transformed_row = await transform.apply(row)
+    # Check the output
+    assert set(transformed_row.keys()) == set(
+        ["webpage_content", "webpage_transform_error"]
+    )
+    assert transformed_row["webpage_content"] == "NO_TRANSFORM"
+    assert (
+        transformed_row["webpage_transform_error"]
+        == "Request URL is missing an 'http://' or 'https://' protocol."
+    )

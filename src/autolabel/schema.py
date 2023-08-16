@@ -215,29 +215,3 @@ class RefuelLLMResult(BaseModel):
 
     """Costs incurred during the labeling job"""
     costs: Optional[List[float]] = []
-
-
-class TransformType(str, Enum):
-    """Enum containing all Transforms supported by autolabel"""
-
-    WEBPAGE_TRANSFORM = "webpage_transform"
-    PDF = "pdf"
-    IMAGE = "image"
-
-
-class TransformCacheEntry(BaseModel):
-    transform_name: TransformType
-    transform_params: Dict[str, Any]
-    input: Dict[str, Any]
-    output: Optional[Dict[str, Any]] = None
-    creation_time_ms: Optional[int] = -1
-    ttl_ms: Optional[int] = -1
-
-    class Config:
-        orm_mode = True
-
-    def get_id(self) -> str:
-        """
-        Generates a unique ID for the given transform cache configuration
-        """
-        return calculate_md5([self.transform_name, self.transform_params, self.input])

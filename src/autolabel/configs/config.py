@@ -16,6 +16,7 @@ class AutolabelConfig(BaseConfig):
     MODEL_CONFIG_KEY = "model"
     EMBEDDING_CONFIG_KEY = "embedding"
     PROMPT_CONFIG_KEY = "prompt"
+    DATASET_GENERATION_CONFIG_KEY = "dataset_generation"
 
     # Dataset config keys (config["dataset"][<key>])
     LABEL_COLUMN_KEY = "label_column"
@@ -47,6 +48,10 @@ class AutolabelConfig(BaseConfig):
     OUTPUT_FORMAT_KEY = "output_format"
     CHAIN_OF_THOUGHT_KEY = "chain_of_thought"
     TRANSFORM_KEY = "transforms"
+
+    # Dataset generation config keys (config["dataset_generation"][<key>])
+    DATASET_GENERATION_GUIDELINES_KEY = "guidelines"
+    DATASET_GENERATION_NUM_ROWS_KEY = "num_rows"
 
     def __init__(self, config: Union[str, Dict], validate: bool = True) -> None:
         super().__init__(config, validate=validate)
@@ -80,6 +85,11 @@ class AutolabelConfig(BaseConfig):
     def _prompt_config(self) -> Dict:
         """Returns information about the prompt we are passing to the model (e.g. task guidelines, examples, output formatting)"""
         return self.config[self.PROMPT_CONFIG_KEY]
+
+    @cached_property
+    def _dataset_generation_config(self) -> Dict:
+        """Returns information about the prompt for synthetic dataset generation"""
+        return self.config.get(self.DATASET_GENERATION_CONFIG_KEY, {})
 
     # project and task definition config
     def task_name(self) -> str:
@@ -146,7 +156,17 @@ class AutolabelConfig(BaseConfig):
 
     def labels_list(self) -> List[str]:
         """Returns a list of valid labels"""
-        return self._prompt_config.get(self.VALID_LABELS_KEY, [])
+        if isinstance(self._prompt_config.get(self.VALID_LABELS_KEY, []), List):
+            return self._prompt_config.get(self.VALID_LABELS_KEY, [])
+        else:
+            return self._prompt_config.get(self.VALID_LABELS_KEY, {}).keys()
+
+    def label_descriptions(self) -> Dict[str, str]:
+        """Returns a dict of label descriptions"""
+        if isinstance(self._prompt_config.get(self.VALID_LABELS_KEY, []), List):
+            return {}
+        else:
+            return self._prompt_config.get(self.VALID_LABELS_KEY, {})
 
     def few_shot_example_set(self) -> Union[str, List]:
         """Returns examples of how data should be labeled, used to guide context to the model about the task it is performing"""
@@ -184,3 +204,15 @@ class AutolabelConfig(BaseConfig):
     def transforms(self) -> List[Dict]:
         """Returns a list of transforms to apply to the data before sending to the model."""
         return self.config.get(self.TRANSFORM_KEY, [])
+
+    def dataset_generation_guidelines(self) -> str:
+        """Returns a string containing guidelines for how to generate a synthetic dataset"""
+        return self._dataset_generation_config.get(
+            self.DATASET_GENERATION_GUIDELINES_KEY, ""
+        )
+
+    def dataset_generation_num_rows(self) -> int:
+        """Returns the number of rows to generate for the synthetic dataset"""
+        return self._dataset_generation_config.get(
+            self.DATASET_GENERATION_NUM_ROWS_KEY, 1
+        )

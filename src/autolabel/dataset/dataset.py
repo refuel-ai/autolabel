@@ -111,6 +111,9 @@ class AutolabelDataset:
             x.successfully_labeled for x in llm_labels
         ]
 
+        # Add the LLM annotations to the dataframe
+        self.df[self.generate_label_name("annotation")] = llm_labels
+
         # Add row level LLM metrics to the dataframe
         if metrics is not None:
             for metric in metrics:
@@ -275,10 +278,8 @@ class AutolabelDataset:
             raise ValueError("Cannot compute eval without ground truth label column")
 
         gt_labels = self.df[gt_label_column]
-        llm_labels = [
-            LLMAnnotation(**json.loads(x))
-            for x in self.df[self.generate_label_name("annotation")].tolist()
-        ]
+
+        llm_labels = self.df[self.generate_label_name("annotation")].tolist()
 
         task = TaskFactory.from_config(self.config)
 

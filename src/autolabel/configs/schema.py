@@ -96,8 +96,12 @@ schema = {
                 "task_guidelines": {"type": "string"},
                 "output_guidelines": {"type": "string"},
                 "labels": {
-                    "type": "array",
-                    "items": {"type": "string"}
+                    "anyOf": [
+                        {"type": "array", "items": {"type": "string"}},
+                        {
+                            "type": "object"
+                        },  # This is for when the labels are provided with descriptions
+                    ],
                     # "uniqueItems": True
                 },
                 "example_template": {"type": "string"},
@@ -119,6 +123,13 @@ schema = {
             },
             "required": ["task_guidelines"],
             "additionalProperties": False,
+        },
+        "dataset_generation": {
+            "type": "object",
+            "properties": {
+                "num_rows": {"type": ["number", "null"]},
+                "guidelines": {"type": ["string", "null"]},
+            },
         },
     },
     "required": [
