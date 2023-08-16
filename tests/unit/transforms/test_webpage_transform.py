@@ -21,12 +21,9 @@ async def test_webpage_transform():
     # Transform the row
     transformed_row = await transform.apply(row)
     # Check the output
-    assert set(transformed_row.keys()) == set(
-        ["webpage_content", "metadata", "webpage_transform_applied_successfully"]
-    )
+    assert set(transformed_row.keys()) == set(["webpage_content", "metadata"])
     assert isinstance(transformed_row["webpage_content"], str)
     assert isinstance(transformed_row["metadata"], dict)
-    assert transformed_row["webpage_transform_applied_successfully"] == True
     assert len(transformed_row["webpage_content"]) > 0
 
 
@@ -47,7 +44,10 @@ async def test_error_handling():
     transformed_row = await transform.apply(row)
     # Check the output
     assert set(transformed_row.keys()) == set(
-        ["webpage_content", "webpage_transform_applied_successfully"]
+        ["webpage_content", "webpage_transform_error"]
     )
-    assert transformed_row["webpage_content"] is None
-    assert transformed_row["webpage_transform_applied_successfully"] == False
+    assert transformed_row["webpage_content"] == "NO_TRANSFORM"
+    assert (
+        transformed_row["webpage_transform_error"]
+        == "Request URL is missing an 'http://' or 'https://' protocol."
+    )

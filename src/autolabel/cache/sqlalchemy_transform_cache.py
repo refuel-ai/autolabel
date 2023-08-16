@@ -1,6 +1,6 @@
 from sqlalchemy.orm import sessionmaker
 from typing import Dict, Any
-from autolabel.schema import TransformCacheEntry
+from autolabel.transforms.schema import TransformCacheEntry
 from autolabel.database import create_db_engine
 from autolabel.data_models import Base
 from typing import Optional

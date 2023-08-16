@@ -1,6 +1,6 @@
 from typing import List, Dict, Any
 
-from autolabel.schema import TransformType
+from autolabel.transforms.schema import TransformType
 from autolabel.transforms import BaseTransform
 from autolabel.cache import BaseCache
 

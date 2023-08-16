@@ -1,4 +1,8 @@
-from autolabel.schema import TransformType
+from autolabel.transforms.schema import (
+    TransformType,
+    TransformError,
+    TransformErrorType,
+)
 from autolabel.transforms import BaseTransform
 from typing import Dict, Any
 import asyncio
@@ -86,7 +90,9 @@ class WebpageTransform(BaseTransform):
     ) -> Dict[str, Any]:
         if retry_count >= self.max_retries:
             logger.warning(f"Max retries reached for URL: {url}")
-            return {}
+            raise TransformError(
+                TransformErrorType.MAX_RETRIES_REACHED, "Max retries reached"
+            )
 
         try:
             client = self.client
@@ -105,7 +111,10 @@ class WebpageTransform(BaseTransform):
             }
         except self.httpx.ConnectTimeout as e:
             logger.error(f"Timeout when fetching content from URL: {url}")
-            return {}
+            raise TransformError(
+                TransformErrorType.TRANSFORM_TIMEOUT,
+                "Timeout when fetching content from URL",
+            )
         except ssl.SSLCertVerificationError as e:
             logger.warning(
                 f"SSL verification error when fetching content from URL: {url}, retrying with verify=False"
