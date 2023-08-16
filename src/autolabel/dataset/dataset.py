@@ -53,6 +53,7 @@ class AutolabelDataset:
             if dataset.endswith(".csv"):
                 delimiter = self.config.delimiter()
                 df = pd.read_csv(dataset, sep=delimiter, dtype="str")
+                df = df.astype(str)
             elif dataset.endswith(".jsonl"):
                 df = pd.read_json(dataset, lines=True, dtype="str")
         elif isinstance(dataset, pd.DataFrame):
@@ -110,6 +111,9 @@ class AutolabelDataset:
         self.df[self.generate_label_name("successfully_labeled")] = [
             x.successfully_labeled for x in llm_labels
         ]
+
+        # Add the LLM annotations to the dataframe
+        self.df[self.generate_label_name("annotation")] = llm_labels
 
         # Add row level LLM metrics to the dataframe
         if metrics is not None:
@@ -275,10 +279,8 @@ class AutolabelDataset:
             raise ValueError("Cannot compute eval without ground truth label column")
 
         gt_labels = self.df[gt_label_column]
-        llm_labels = [
-            LLMAnnotation(**json.loads(x))
-            for x in self.df[self.generate_label_name("annotation")].tolist()
-        ]
+
+        llm_labels = self.df[self.generate_label_name("annotation")].tolist()
 
         task = TaskFactory.from_config(self.config)
 
