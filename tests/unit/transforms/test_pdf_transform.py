@@ -60,6 +60,7 @@ async def test_pdf_transform_ocr(mocker):
     assert transformed_row["metadata"]["num_pages"] == 1
 
 
+@pytest.mark.asyncio
 async def test_error_handling():
     # Initialize the PDFTransform class
     transform = PDFTransform(
