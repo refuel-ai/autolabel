@@ -41,3 +41,27 @@ async def test_image_transform(mocker):
     assert metadata["width"] == 1766
     assert metadata["height"] == 2257
     assert metadata["exif"] is None
+
+
+@pytest.mark.asyncio
+async def test_error_handling():
+    # Initialize the PDFTransform class
+    transform = ImageTransform(
+        output_columns={
+            "content_column": "content",
+        },
+        file_path_column="file_path",
+        cache=None,
+    )
+
+    # Create a mock row
+    row = {"file_path": "invalid_file.png"}
+    # Transform the row
+    transformed_row = await transform.apply(row)
+    # Check the output
+    assert set(transformed_row.keys()) == set(["content", "image_error"])
+    assert transformed_row["content"] == "NO_TRANSFORM"
+    assert (
+        transformed_row["image_error"]
+        == "tesseract is not installed or it's not in your PATH. See README file for more information."
+    )

@@ -66,7 +66,6 @@ async def test_error_handling():
     transform = PDFTransform(
         output_columns={
             "content_column": "content",
-            "metadata_column": "metadata",
         },
         file_path_column="file_path",
         cache=None,

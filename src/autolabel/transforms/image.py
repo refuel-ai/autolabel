@@ -1,8 +1,8 @@
 from typing import Dict, Any
 
-from autolabel.cache import BaseCache
-from autolabel.schema import TransformType
+from autolabel.transforms.schema import TransformType
 from autolabel.transforms import BaseTransform
+from autolabel.cache import BaseCache
 
 
 class ImageTransform(BaseTransform):
