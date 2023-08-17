@@ -521,7 +521,7 @@ class LabelingAgent:
     def generate_synthetic_dataset(self) -> AutolabelDataset:
         columns = get_format_variables(self.config.example_template())
         df = pd.DataFrame(columns=columns)
-        for label in track(self.config.labels_list()):
+        for label in self.config.labels_list():
             prompt = self.task.get_generate_dataset_prompt(label)
 
             result = self.llm.label([prompt])
