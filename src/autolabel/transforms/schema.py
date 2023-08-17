@@ -9,6 +9,7 @@ class TransformType(str, Enum):
 
     WEBPAGE_TRANSFORM = "webpage_transform"
     PDF = "pdf"
+    IMAGE = "image"
 
 
 class TransformCacheEntry(BaseModel):

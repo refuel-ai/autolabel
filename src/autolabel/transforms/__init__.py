@@ -3,6 +3,7 @@ import logging
 from .base import BaseTransform
 from .pdf import PDFTransform
 from .webpage_transform import WebpageTransform
+from .image import ImageTransform
 from typing import Dict
 from autolabel.transforms.schema import TransformType
 from autolabel.cache import BaseCache
@@ -12,6 +13,7 @@ logger = logging.getLogger(__name__)
 TRANSFORM_REGISTRY = {
     TransformType.PDF: PDFTransform,
     TransformType.WEBPAGE_TRANSFORM: WebpageTransform,
+    TransformType.IMAGE: ImageTransform,
 }
 
 

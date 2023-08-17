@@ -144,3 +144,6 @@ examples/*/*.csv
 
 # DB Files
 *.db
+
+# Image Files
+examples/**/*.png

@@ -14,6 +14,8 @@ For OCR text extraction, install the <code>pdf2image</code> and <code>pytesserac
 pip install pdf2image pytesseract
 ```
 
+The tesseract engine is also required for OCR text extraction. See the [tesseract docs](https://tesseract-ocr.github.io/tessdoc/Installation.html) for installation instructions.
+
 ## Parameters for this transform
 
 <ol>
@@ -22,9 +24,10 @@ pip install pdf2image pytesseract
 <li>page_format: a string containing the format to use for each page of the pdf file. The following fields can be used in the format string:
 <ul>
 <li>page_num: the page number of the page</li>
-<li>page_content: the content of the page</li></li>
-</ul>
-<li>page_sep: a string containing the separator to use between each page of the pdf file
+<li>page_content: the content of the page</li>
+</ul></li>
+<li>page_sep: a string containing the separator to use between each page of the pdf file</li>
+<li>lang: a string indicating the language of the text in the pdf file. See the [tesseract docs](https://tesseract-ocr.github.io/tessdoc/Data-Files-in-different-versions.html) for a full list of supported languages</li>
 </ol>
 
 ### Output Format
