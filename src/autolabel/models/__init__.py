@@ -1,11 +1,31 @@
 import logging
-
 from .base import BaseModel
 from autolabel.configs import AutolabelConfig
 from autolabel.schema import ModelProvider
 from autolabel.cache import BaseCache
 
 logger = logging.getLogger(__name__)
+
+from autolabel.models.openai import OpenAILLM
+from autolabel.models.anthropic import AnthropicLLM
+from autolabel.models.cohere import CohereLLM
+from autolabel.models.palm import PaLMLLM
+from autolabel.models.hf_pipeline import HFPipelineLLM
+from autolabel.models.refuel import RefuelLLM
+
+MODEL_REGISTRY = {
+    ModelProvider.OPENAI: OpenAILLM,
+    ModelProvider.ANTHROPIC: AnthropicLLM,
+    ModelProvider.COHERE: CohereLLM,
+    ModelProvider.HUGGINGFACE_PIPELINE: HFPipelineLLM,
+    ModelProvider.GOOGLE: PaLMLLM,
+    ModelProvider.REFUEL: RefuelLLM,
+}
+
+
+def register_model(name, model_cls):
+    """Register Model class"""
+    MODEL_REGISTRY[name] = model_cls
 
 
 class ModelFactory:
@@ -21,38 +41,22 @@ class ModelFactory:
         Returns:
             model: a fully configured BaseModel object
         """
-        model_provider = ModelProvider(config.provider())
+        provider = ModelProvider(config.provider())
         try:
-            if model_provider == ModelProvider.OPENAI:
-                from .openai import OpenAILLM
-
-                model_cls = OpenAILLM
-            elif model_provider == ModelProvider.ANTHROPIC:
-                from .anthropic import AnthropicLLM
-
-                model_cls = AnthropicLLM
-            elif model_provider == ModelProvider.HUGGINGFACE_PIPELINE:
-                from .hf_pipeline import HFPipelineLLM
-
-                model_cls = HFPipelineLLM
-            elif model_provider == ModelProvider.REFUEL:
-                from .refuel import RefuelLLM
-
-                model_cls = RefuelLLM
-            elif model_provider == ModelProvider.GOOGLE:
-                from .palm import PaLMLLM
-
-                model_cls = PaLMLLM
-            elif model_provider == ModelProvider.COHERE:
-                from .cohere import CohereLLM
-
-                model_cls = CohereLLM
-            else:
-                raise ValueError
-        except ValueError as e:
+            model_cls = MODEL_REGISTRY[provider]
+            model_obj = model_cls(config=config, cache=cache)
+            # The below ensures that users should based off of the BaseModel
+            # when creating/registering custom models.
+            assert isinstance(
+                model_obj, BaseModel
+            ), f"{model_obj} should inherit from autolabel.models.BaseModel"
+        except KeyError as e:
+            # We should never get here as the config should have already
+            # been validated by the pydantic model.
             logger.error(
                 f"{config.provider()} is not in the list of supported providers: \
                 {list(ModelProvider.__members__.keys())}"
             )
-            return None
-        return model_cls(config, cache)
+            raise e
+
+        return model_obj

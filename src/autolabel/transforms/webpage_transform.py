@@ -1,10 +1,16 @@
-from autolabel.schema import TransformType
+from autolabel.transforms.schema import (
+    TransformType,
+    TransformError,
+    TransformErrorType,
+)
 from autolabel.transforms import BaseTransform
 from typing import Dict, Any
 import asyncio
 import logging
 import pandas as pd
 import ssl
+
+from autolabel.cache import BaseCache
 
 logger = logging.getLogger(__name__)
 
@@ -17,14 +23,22 @@ HTML_PARSER = "html.parser"
 
 
 class WebpageTransform(BaseTransform):
+    COLUMN_NAMES = [
+        "content_column",
+        "content_in_bytes_column",
+        "soup_column",
+        "metadata_column",
+    ]
+
     def __init__(
         self,
-        url_column: str,
+        cache: BaseCache,
         output_columns: Dict[str, Any],
+        url_column: str,
         timeout: int = 5,
         headers: Dict[str, str] = HEADERS,
     ) -> None:
-        super().__init__(output_columns)
+        super().__init__(cache, output_columns)
         self.url_column = url_column
         self.headers = headers
         self.max_retries = MAX_RETRIES
@@ -38,6 +52,7 @@ class WebpageTransform(BaseTransform):
                 headers["User-Agent"] = UserAgent().random
 
             self.httpx = httpx
+            self.timeout_time = timeout
             self.timeout = httpx.Timeout(timeout)
             limits = httpx.Limits(
                 max_keepalive_connections=MAX_KEEPALIVE_CONNECTIONS,
@@ -53,21 +68,11 @@ class WebpageTransform(BaseTransform):
             self.beautiful_soup = BeautifulSoup
         except ImportError:
             raise ImportError(
-                "BeautifulSoup, httpx and fake_useragent are required to use the webpage transform. Please install them with the following command: pip install bs4 httpx fake_useragent"
+                "BeautifulSoup, httpx and fake_useragent are required to use the webpage transform. Please install them with the following command: pip install beautifulsoup4 httpx fake_useragent"
             )
 
     def name(self) -> str:
         return TransformType.WEBPAGE_TRANSFORM
-
-    @property
-    def output_columns(self) -> Dict[str, Any]:
-        COLUMN_NAMES = [
-            "content_column",
-            "content_in_bytes_column",
-            "soup_column",
-            "metadata_column",
-        ]
-        return {k: self._output_columns.get(k, k) for k in COLUMN_NAMES}
 
     def _load_metadata(self, url, soup) -> Dict[str, Any]:
         metadata = {"url": url}
@@ -85,7 +90,9 @@ class WebpageTransform(BaseTransform):
     ) -> Dict[str, Any]:
         if retry_count >= self.max_retries:
             logger.warning(f"Max retries reached for URL: {url}")
-            return {}
+            raise TransformError(
+                TransformErrorType.MAX_RETRIES_REACHED, "Max retries reached"
+            )
 
         try:
             client = self.client
@@ -104,7 +111,10 @@ class WebpageTransform(BaseTransform):
             }
         except self.httpx.ConnectTimeout as e:
             logger.error(f"Timeout when fetching content from URL: {url}")
-            return {}
+            raise TransformError(
+                TransformErrorType.TRANSFORM_TIMEOUT,
+                "Timeout when fetching content from URL",
+            )
         except ssl.SSLCertVerificationError as e:
             logger.warning(
                 f"SSL verification error when fetching content from URL: {url}, retrying with verify=False"
@@ -115,7 +125,7 @@ class WebpageTransform(BaseTransform):
             )
         except Exception as e:
             logger.error(f"Error fetching content from URL: {url}. Exception: {e}")
-            return {}
+            raise e
 
     async def _apply(self, row: Dict[str, Any]) -> Dict[str, Any]:
         url = row[self.url_column]
@@ -134,4 +144,11 @@ class WebpageTransform(BaseTransform):
             self.output_columns["metadata_column"]: url_response_data.get("metadata"),
         }
 
-        return transformed_row
+        return self._return_output_row(transformed_row)
+
+    def params(self):
+        return {
+            "url_column": self.url_column,
+            "output_columns": self.output_columns,
+            "timeout": self.timeout_time,
+        }

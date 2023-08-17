@@ -71,8 +71,10 @@ Once these explanations are generated, the dataset looks like
 Now to generate labels for this dataset, all we have to do is,
 
 ```py
-agent.plan('data/squad_v2_test.csv')
-agent.run('data/squad_v2_test.csv', max_items = 100)
+from autolabel import AutolabelDataset
+ds = AutolabelDatset('data/squad_v2_test.csv', config = config)
+agent.plan(ds)
+agent.run(ds, max_items = 100)
 ```
 
 Autolabel currently supports Chain-of-thought prompting for the following tasks:

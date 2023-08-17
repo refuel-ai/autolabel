@@ -116,10 +116,11 @@ config_zero_shot = {
 ```
 
 ```py
-from autolabel import LabelingAgent
+from autolabel import LabelingAgent, AutolabelDataset
 
 agent = LabelingAgent(config=config_zero_shot)
-labels, df, metrics_list = agent.run('../examples/banking/test.csv')
+ds = AutolabelDataset('../examples/banking/test.csv', config = config_zero_shot)
+labels, df, metrics_list = agent.run(ds)
 ```
 
 This zero-shot task execution results in an accuracy of 70.19%.
@@ -150,7 +151,8 @@ config_fixed_few_shot = {
 
 ```py
 agent = LabelingAgent(config=config_fixed_few_shot)
-labels, df, metrics_list = agent.run('../examples/banking/test.csv')
+ds = AutolabelDataset('../examples/banking/test.csv', config = config_fixed_few_shot)
+labels, df, metrics_list = agent.run(ds)
 ```
 
 This leads to an accuracy of 73.16%, an improvement of ~3% over the zero-shot baseline.
@@ -181,7 +183,8 @@ config_semantic_similarity = {
 
 ```py
 agent = LabelingAgent(config=config_semantic_similarity)
-labels, df, metrics_list = agent.run('../examples/banking/test.csv')
+ds = AutolabelDataset('../examples/banking/test.csv', config = config_semantic_similarity)
+labels, df, metrics_list = agent.run(ds)
 ```
 
 With semantic similarity example selection, we obtain a 79.02% accuracy, a significant increase of ~6% over the fixed-shot strategy.
@@ -212,7 +215,8 @@ config_label_diversity_random = {
 
 ```py
 agent = LabelingAgent(config=config_label_diversity_random)
-labels, df, metrics_list = agent.run('../examples/civil_comments/test.csv', max_items=200)
+ds = AutolabelDataset('../examples/civil_comments/test.csv', config = config_label_diversity_random)
+labels, df, metrics_list = agent.run(ds, max_items=200)
 ```
 
 ```py
@@ -239,7 +243,8 @@ config_label_diversity_similarity = {
 
 ```py
 agent = LabelingAgent(config=config_label_diversity_similarity)
-labels, df, metrics_list = agent.run('../examples/civil_comments/test.csv', max_items=200)
+ds = AutolabelDataset('../examples/civil_comments/test.csv', config = config_label_diversity_similarity)
+labels, df, metrics_list = agent.run(ds, max_items=200)
 ```
 
 For this run on the civil comments dataset, label diversity at random achieved 80% accuracy and label diversity with semantic similarity achieved 78% accuracy. For the same subset of data, the use of regular semantic similarity example selection obtained 72% accuracy, making for a significant improvement by using label diversity. 

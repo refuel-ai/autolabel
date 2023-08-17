@@ -1,16 +1,13 @@
 import json
 import os
 import requests
-from langchain.schema import LLMResult, Generation
 import logging
 from typing import List, Optional
-
 
 from autolabel.models import BaseModel
 from autolabel.configs import AutolabelConfig
 from autolabel.cache import BaseCache
 from autolabel.schema import LabelingError, ErrorType, RefuelLLMResult
-
 
 from tenacity import (
     before_sleep_log,
@@ -18,6 +15,7 @@ from tenacity import (
     stop_after_attempt,
     wait_exponential,
 )
+from langchain.schema import Generation
 
 logger = logging.getLogger(__name__)
 
@@ -28,8 +26,13 @@ class RefuelLLM(BaseModel):
         "temperature": 0.0,
     }
 
-    def __init__(self, config: AutolabelConfig, cache: BaseCache = None) -> None:
+    def __init__(
+        self,
+        config: AutolabelConfig,
+        cache: BaseCache = None,
+    ) -> None:
         super().__init__(config, cache)
+
         # populate model name
         # This is unused today, but in the future could
         # be used to decide which refuel model is queried

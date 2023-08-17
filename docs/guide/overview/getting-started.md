@@ -96,11 +96,12 @@ config = {
 First import `autolabel`, create a `LabelingAgent` object and then run the `plan` command against the dataset (available [here](https://docs.refuel.ai/guide/resources/refuel_datasets/) and can be downloaded through the `autolabel.get_data` function):
 
 ```python
-from autolabel import LabelingAgent, get_data
+from autolabel import LabelingAgent, AutolabelDataset, get_data
 get_data('movie_reviews')
 
 agent = LabelingAgent(config)
-agent.plan('test.csv')
+ds = AutolabelDataset('test.csv', config = config)
+agent.plan(ds)
 ```
 
 This produces:
@@ -136,15 +137,14 @@ Having previewed the labeling, we are ready to start labeling.
 Now, you can use the `run` command to label:
 
 ```python
-labels, output_df, metrics = agent.run('docs/assets/movie_reviews.csv')
-
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 200/200 0:04:01 0:00:00
+ds = AutolabelDataset('docs/assets/movie_reviews.csv', config = config)
+ds = agent.run(ds)
 ```
 
-This takes just a few minutes to run, and returns the labeled data as a Pandas DataFrame (`output_df` here). We can explore this by running:
+This takes just a few minutes to run, and returns the labeled data as an Autolabel Dataset. We can explore this by running:
 
 ```python
-output_df.head()
+ds.df.head()
 >
                                                 text  ... MovieSentimentReview_llm_label
 0  I was very excited about seeing this film, ant...  ...                       negative

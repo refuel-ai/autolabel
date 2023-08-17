@@ -1,11 +1,5 @@
-from functools import cached_property
 from typing import List, Optional
 import os
-
-import cohere
-from langchain.llms import Cohere
-from langchain.schema import LLMResult
-from langchain import PromptTemplate, LLMChain
 
 from autolabel.models import BaseModel
 from autolabel.configs import AutolabelConfig
@@ -26,6 +20,14 @@ class CohereLLM(BaseModel):
 
     def __init__(self, config: AutolabelConfig, cache: BaseCache = None) -> None:
         super().__init__(config, cache)
+        try:
+            import cohere
+            from langchain.llms import Cohere
+        except ImportError:
+            raise ImportError(
+                "cohere is required to use the cohere LLM. Please install it with the following command: pip install 'refuel-autolabel[cohere]'"
+            )
+
         # populate model name
         self.model_name = config.model_name() or self.DEFAULT_MODEL
 

@@ -19,6 +19,7 @@ class ModelProvider(str, Enum):
     REFUEL = "refuel"
     GOOGLE = "google"
     COHERE = "cohere"
+    CUSTOM = "custom"
 
 
 class TaskType(str, Enum):
@@ -104,7 +105,7 @@ class LLMAnnotation(BaseModel):
 
     successfully_labeled: bool
     label: Any
-    curr_sample: Optional[str] = ""
+    curr_sample: Optional[bytes] = ""
     confidence_score: Optional[float] = None
     generation_info: Optional[Dict[str, Any]] = None
     raw_response: Optional[str] = ""
@@ -193,11 +194,13 @@ class Annotation(BaseModel):
         orm_mode = True
 
 
-class CacheEntry(BaseModel):
+class GenerationCacheEntry(BaseModel):
     model_name: str
     prompt: str
     model_params: str
     generations: Optional[List[Generation]] = None
+    creation_time_ms: Optional[int] = -1
+    ttl_ms: Optional[int] = -1
 
     class Config:
         orm_mode = True
@@ -214,10 +217,3 @@ class RefuelLLMResult(BaseModel):
 
     """Costs incurred during the labeling job"""
     costs: Optional[List[float]] = []
-
-
-class TransformType(str, Enum):
-    """Enum containing all Transforms supported by autolabel"""
-
-    WEBPAGE_TRANSFORM = "webpage_transform"
-    PDF = "pdf"
