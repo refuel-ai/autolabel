@@ -533,7 +533,7 @@ class LabelingAgent:
                 response = io.StringIO(response)
                 label_df = pd.read_csv(response, sep=self.config.delimiter())
                 label_df[self.config.label_column()] = label
-                df = pd.concat([df, label_df], axis=0, ignore_index=True)
+                df = pd.concat([df, label_df], axis=0)
         return AutolabelDataset(df, self.config)
 
     def clear_cache(self, use_ttl: bool = True):
