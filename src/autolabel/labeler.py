@@ -61,7 +61,7 @@ class LabelingAgent:
         self.db = StateManager() if self.create_task else None
         self.generation_cache = SQLAlchemyGenerationCache() if cache else None
         self.transform_cache = SQLAlchemyTransformCache() if cache else None
-        self.console = Console() if console_output else Console(quiet=True)
+        self.console = Console(quiet=not console_output)
 
         self.config = (
             config if isinstance(config, AutolabelConfig) else AutolabelConfig(config)
