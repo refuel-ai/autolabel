@@ -240,10 +240,11 @@ def track_with_stats(
     )
     stats_progress = Progress(
         TextColumn("{task.fields[stats]}"),
+        console=console,
     )
 
     group = Group(progress, stats_progress)
-    live = Live(group)
+    live = Live(group, console=console)
 
     if total is None:
         total = len(sequence)
