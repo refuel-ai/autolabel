@@ -43,9 +43,6 @@ class AttributeExtractionTask(BaseTask):
             AccuracyMetric(),
             SupportMetric(),
             CompletionRateMetric(),
-            F1Metric(
-                type=F1Type.ATTRIBUTE_EXTRACTION,
-            ),
         ]
 
         if self.config.confidence():
