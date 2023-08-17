@@ -161,6 +161,11 @@ class AttributeExtractionTask(BaseTask):
             labeled_example=fmt_example,
         )
 
+    def get_generate_dataset_prompt(
+        self, label: str, num_rows: int, guidelines: str = None
+    ) -> str:
+        raise NotImplementedError("Dataset generation not implemented for this task")
+
     def parse_llm_response(
         self, response: Generation, curr_sample: Dict, prompt: str
     ) -> LLMAnnotation:
@@ -195,7 +200,6 @@ class AttributeExtractionTask(BaseTask):
         additional_metrics: List[BaseMetric] = [],
     ) -> List[MetricResult]:
         """Evaluate the LLM generated labels by comparing them against ground truth"""
-
         # Conver gt_labels to list of dictionaries, llm_labels is already a list of dictionaries
         gt_labels = [json.loads(gt_label) for gt_label in gt_labels]
         # Convert llm_labels and gt_labels to dictionary of lists
