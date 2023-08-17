@@ -29,11 +29,12 @@ config = {
   "prompt": {
     "task_guidelines": "You are an expert at understanding bank customers support complaints and queries.\nYour job is to correctly classify the provided input example into one of the following categories.\nCategories:\n{labels}",
     "output_guidelines": "You will answer with just the the correct output label and nothing else.",
-    "labels": [
-      "activate_my_card",
-      ..., # other labels
-      "wrong_exchange_rate_for_cash_withdrawal"
-    ],
+    "labels": {
+        "activate_my_card": "the customer cannot activate their credit or debit card",
+        "age_limit": "the customer is under the age limit",
+        "apple_pay_or_google_pay": "the customer is having trouble using apple pay or google pay",
+        ... # more labels
+    },
     "example_template": "Input: {example}\nOutput: {label}"
   },
   "dataset_generation": {
@@ -43,16 +44,7 @@ config = {
 }
 ```
 
-If you want to provide label descriptions to further help the LLM understand what each label means, you can change the label list to a dictionary as shown below:
-
-```python
-"labels": {
-    "activate_my_card": "the customer cannot activate their credit or debit card",
-    "age_limit": "the customer is under the age limit",
-    "apple_pay_or_google_pay": "the customer is having trouble using apple pay or google pay",
-    ...
-}
-```
+Note that here, we defined <code>labels</code> as a dictionary where the keys are the valid labels and the values are descriptions for those labels. This helps the LLM understand what each label means and can result in a higher quality dataset.
 
 </li>
 <li>Now all that's left is to run the code that generates the dataset!
