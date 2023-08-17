@@ -77,7 +77,6 @@ class MetricType(str, Enum):
 
 class F1Type(str, Enum):
     MULTI_LABEL = "multi_label"
-    ATTRIBUTE_EXTRACTION = "attribute_extraction"
     TEXT = "text"
 
 

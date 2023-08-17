@@ -1,10 +1,8 @@
-from typing import List, Optional, Union, Dict
-from collections import defaultdict
-import json
+from typing import List, Optional
 
 from autolabel.metrics import BaseMetric
 from autolabel.schema import LLMAnnotation, MetricResult, MetricType, F1Type
-from sklearn.preprocessing import MultiLabelBinarizer, LabelEncoder
+from sklearn.preprocessing import MultiLabelBinarizer
 from sklearn.metrics import f1_score
 from autolabel.utils import normalize_text
 
@@ -98,39 +96,10 @@ class F1Metric(BaseMetric):
 
         return values
 
-    def attribute_extraction_compute(
-        self, llm_labels: List[LLMAnnotation], gt_labels: List[Dict]
-    ) -> List[MetricResult]:
-        # compute f1 score for each attribute
-        f1_scores = defaultdict(list)
-        for llm_label, gt_label in zip(llm_labels, gt_labels):
-            for attribute in gt_label.keys():
-                if llm_label.error is not None:
-                    continue
-                # compute f1 score
-                f1 = f1_score(
-                    [gt_label[attribute]],
-                    [llm_label.label.get(attribute, None)],
-                    average="micro",
-                )
-                f1_scores[attribute].append(f1)
-
-        # compute average f1 score
-        values = [
-            MetricResult(
-                name=f"{MetricType.F1} ({attribute})", value=sum(scores) / len(scores)
-            )
-            for attribute, scores in f1_scores.items()
-        ]
-
-        return values
-
     def compute(
-        self, llm_labels: List[LLMAnnotation], gt_labels: List[Union[str, Dict]]
+        self, llm_labels: List[LLMAnnotation], gt_labels: List[str]
     ) -> List[MetricResult]:
         if self.type == F1Type.MULTI_LABEL:
             return self.multi_label_compute(llm_labels, gt_labels)
-        elif self.type == F1Type.ATTRIBUTE_EXTRACTION:
-            return self.attribute_extraction_compute(llm_labels, gt_labels)
         else:
             return self.text_compute(llm_labels, gt_labels)

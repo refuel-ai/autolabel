@@ -1,38 +1,53 @@
 {
-    "task_name": "SupremeCourtAttributeExtraction",
-    "task_type": "attribute_extraction",
-    "dataset": {
-        "label_column": "output_dict",
-        "text_column": "text",
-        "delimiter": ","
-    },
-    "model": {
-        "provider": "openai",
-        "name": "gpt-3.5-turbo"
-    },
-    "prompt": {
-        "task_guidelines": "You are an expert at reading supreme court opinions. Given a supreme court decision, extract the {num_output_attributes} required attributes. The attributes you need to extract are listed below:\n\n{output_attributes}",
-        "output_guidelines": "You will return the answer as a json in the following format:\n{{\n\t\"decision_direction\": \"whether the decision was liberal or conservative, i.e one label from the following options: {decision_direction_options}\",\n\t\"subject_matter\": \"the subject matter of the decision, i.e one label from the following options: {subject_matter_options}\",\n\t\"respondent_type\": \"the type of respondent i.e one label from the following options: {respondent_type_options}\"\n}}",
-        "output_attributes": [
-            {
-                "name": "decision_direction",
-                "type": "multi_class",
-                "options": ["liberal", "conservative"]
-            },
-            {
-                "name": "subject_matter",
-                "type": "multi_class",
-                "options": ["Criminal Procedure", "Civil Rights", "First Amendment", "Due Process", "Privacy", "Attorneys", "Unions", "Economic Activity", "Judicial Power", "Federalism", "Federal Taxation"]
-            },
-            {
-                "name": "respondent_type",
-                "type": "multi_class",
-                "options": ["other", "person", "organization", "public entity", "facility"]
-            }
-        ],
-        "few_shot_examples": "seed.csv",
-        "few_shot_selection": "fixed",
-        "few_shot_num": 5,
-        "example_template": "Text: {text}\nOutput: {output_dict}"
-    }
+  "task_name": "SupremeCourtAttributeExtraction",
+  "task_type": "attribute_extraction",
+  "dataset": {
+    "label_column": "output_dict",
+    "text_column": "text",
+    "delimiter": ","
+  },
+  "model": {
+    "provider": "openai",
+    "name": "gpt-3.5-turbo"
+  },
+  "prompt": {
+    "task_guidelines": "You are an expert at reading supreme court opinions. Given a supreme court decision, extract the {num_output_attributes} required attributes. The attributes you need to extract are listed below:\n\n{output_attributes}",
+    "output_guidelines": "You will return the answer as a json in the following format:\n{{\n\t\"decision_direction\": \"whether the decision was liberal or conservative, i.e one label from the following options: {decision_direction_options}\",\n\t\"subject_matter\": \"the subject matter of the decision, i.e one label from the following options: {subject_matter_options}\",\n\t\"respondent_type\": \"the type of respondent i.e one label from the following options: {respondent_type_options}\"\n}}",
+    "output_attributes": [
+      {
+        "name": "decision_direction",
+        "options": ["liberal", "conservative"]
+      },
+      {
+        "name": "subject_matter",
+        "options": [
+          "Criminal Procedure",
+          "Civil Rights",
+          "First Amendment",
+          "Due Process",
+          "Privacy",
+          "Attorneys",
+          "Unions",
+          "Economic Activity",
+          "Judicial Power",
+          "Federalism",
+          "Federal Taxation"
+        ]
+      },
+      {
+        "name": "respondent_type",
+        "options": [
+          "other",
+          "person",
+          "organization",
+          "public entity",
+          "facility"
+        ]
+      }
+    ],
+    "few_shot_examples": "seed.csv",
+    "few_shot_selection": "fixed",
+    "few_shot_num": 5,
+    "example_template": "Text: {text}\nOutput: {output_dict}"
+  }
 }
