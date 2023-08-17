@@ -16,11 +16,14 @@
     "output_attributes": [
       {
         "name": "decision_direction",
-        "options": ["liberal", "conservative"]
+        "type": "classification",
+        "labels": ["liberal", "conservative"]
       },
       {
         "name": "subject_matter",
-        "options": [
+        "type": "multilabel_classification",
+        "sep": ";",
+        "labels": [
           "Criminal Procedure",
           "Civil Rights",
           "First Amendment",
@@ -36,7 +39,8 @@
       },
       {
         "name": "respondent_type",
-        "options": [
+        "type": "classification",
+        "labels": [
           "other",
           "person",
           "organization",

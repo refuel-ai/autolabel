@@ -14,6 +14,8 @@ from autolabel.schema import (
     F1Type,
     LabelingError,
     ErrorType,
+    TaskType,
+    MetricType,
 )
 from autolabel.utils import get_format_variables
 from autolabel.metrics import (
@@ -37,10 +39,28 @@ class AttributeExtractionTask(BaseTask):
 
     OUTPUT_DICT_KEY = "output_dict"
 
+    # dict of dicts of metrics
+    # task_type -> metric -> metric_kwargs
+    TYPE_TO_METRICS = {
+        TaskType.CLASSIFICATION: {
+            AccuracyMetric: {},
+        },
+        TaskType.MULTILABEL_CLASSIFICATION: {
+            AccuracyMetric: {},
+            F1Metric: {
+                "type": F1Type.MULTI_LABEL,
+                "average": [MetricType.F1_MACRO, MetricType.F1_WEIGHTED],
+            },
+        },
+        TaskType.QUESTION_ANSWERING: {
+            AccuracyMetric: {},
+            F1Metric: {"type": F1Type.TEXT},
+        },
+    }
+
     def __init__(self, config: AutolabelConfig) -> None:
         super().__init__(config)
         self.metrics = [
-            AccuracyMetric(),
             SupportMetric(),
             CompletionRateMetric(),
         ]
@@ -51,7 +71,7 @@ class AttributeExtractionTask(BaseTask):
     def _construct_output_attributes(self) -> str:
         """Construct the output attributes from the config file
 
-        This assumes that each dict has a "name" and will include the "description" or "options" if it exists.
+        This assumes that each dict has a "name" and will include the "description" or "labels" if it exists.
 
         Args:
             output_attributes (List[Dict]): A list of dictionaries containing the output attributes.
@@ -66,9 +86,9 @@ class AttributeExtractionTask(BaseTask):
                 attribute_str += f'Type: {attribute["type"]}\n'
             if "description" in attribute:
                 attribute_str += f'Description: {attribute["description"]}\n'
-            if "options" in attribute:
-                options = "\n".join(attribute["options"])
-                attribute_str += f"Options:\n{options}\n"
+            if "labels" in attribute:
+                labels = "\n".join(attribute["labels"])
+                attribute_str += f"Options:\n{labels}\n"
             output_list.append(attribute_str)
         return "\n".join(output_list)
 
@@ -223,20 +243,29 @@ class AttributeExtractionTask(BaseTask):
         eval_metrics = []
 
         for metric in self.metrics + additional_metrics:
-            if isinstance(metric, AccuracyMetric):
-                for output_attribute in self.config.output_attributes():
-                    metrics = metric.compute(
-                        llm_labels_dict[output_attribute["name"]],
-                        gt_labels_dict[output_attribute["name"]],
-                    )
-                    for m in metrics:
-                        eval_metrics.append(
-                            MetricResult(
-                                name=f'{m.name} ({output_attribute["name"]})',
-                                value=m.value,
-                            )
+            eval_metrics.extend(metric.compute(llm_labels, gt_labels))
+
+        for attribute in self.config.output_attributes():
+            metrics_list = self.TYPE_TO_METRICS[attribute["type"]]
+            for metric, metric_kwargs in metrics_list.items():
+                if (
+                    metric == F1Metric
+                    and attribute["type"] == TaskType.MULTILABEL_CLASSIFICATION
+                ):
+                    metric_kwargs["labels"] = attribute["labels"]
+                    metric_kwargs["sep"] = attribute["sep"]
+                print(metric_kwargs)
+                metric = metric(**metric_kwargs)
+                computed_metrics = metric.compute(
+                    llm_labels_dict[attribute["name"]],
+                    gt_labels_dict[attribute["name"]],
+                )
+                for m in computed_metrics:
+                    eval_metrics.append(
+                        MetricResult(
+                            name=f'{m.name} ({attribute["name"]})',
+                            value=m.value,
                         )
-            else:
-                eval_metrics.extend(metric.compute(llm_labels, gt_labels))
+                    )
 
         return eval_metrics
