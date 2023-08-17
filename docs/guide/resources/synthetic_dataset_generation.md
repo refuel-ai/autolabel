@@ -43,6 +43,17 @@ config = {
 }
 ```
 
+If you want to provide label descriptions to further help the LLM understand what each label means, you can change the label list to a dictionary as shown below:
+
+```python
+"labels": {
+    "activate_my_card": "the customer cannot activate their credit or debit card",
+    "age_limit": "the customer is under the age limit",
+    "apple_pay_or_google_pay": "the customer is having trouble using apple pay or google pay",
+    ...
+}
+```
+
 </li>
 <li>Now all that's left is to run the code that generates the dataset!
 
