@@ -36,6 +36,7 @@ nav:
           - AutolabelDataset: guide/resources/autolabel_dataset.md
           - CLI: guide/resources/CLI.md
           - Refuel-provided Datasets: guide/resources/refuel_datasets.md
+          - Synthetic Dataset Generation: guide/resources/synthetic_dataset_generation.md
   #- Concepts: concepts/concepts.md
   # remove for now
   - Reference:
