@@ -254,7 +254,6 @@ class AttributeExtractionTask(BaseTask):
                 ):
                     metric_kwargs["labels"] = attribute["labels"]
                     metric_kwargs["sep"] = attribute["sep"]
-                print(metric_kwargs)
                 metric = metric(**metric_kwargs)
                 computed_metrics = metric.compute(
                     llm_labels_dict[attribute["name"]],
