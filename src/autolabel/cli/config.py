@@ -8,10 +8,10 @@ from simple_term_menu import TerminalMenu
 
 import pandas as pd
 
+from autolabel import AutolabelDataset
 from autolabel.configs import AutolabelConfig as ALC
 from autolabel.configs.schema import schema
 from autolabel.schema import TaskType, FewShotAlgorithm, ModelProvider
-from autolabel.data_loaders import DatasetLoader
 from autolabel.tasks import TASK_TYPE_TO_IMPLEMENTATION
 
 from autolabel.cli.template import (
@@ -297,7 +297,7 @@ def _create_prompt_config_wizard(config: Dict, seed: Optional[str] = None) -> Di
 
     if seed:
         unvalidated_config = ALC(config, validate=False)
-        dataset_loader = DatasetLoader(seed, unvalidated_config, validate=False)
+        dataset = AutolabelDataset(seed, unvalidated_config, validate=False)
 
     prompt_config[ALC.TASK_GUIDELINE_KEY] = Prompt.ask(
         "Enter the task guidelines",
@@ -307,9 +307,7 @@ def _create_prompt_config_wizard(config: Dict, seed: Optional[str] = None) -> Di
     ).replace("\\n", "\n")
 
     seed_labels = (
-        dataset_loader.dat[unvalidated_config.label_column()].unique().tolist()
-        if seed
-        else []
+        dataset.df[unvalidated_config.label_column()].unique().tolist() if seed else []
     )
     if seed_labels and Confirm.ask(
         f"Detected {len(seed_labels)} unique labels in seed dataset. Use these labels?"
@@ -358,7 +356,7 @@ def _create_prompt_config_wizard(config: Dict, seed: Optional[str] = None) -> Di
         while example:
             example_dict = {}
             if seed and example.isdigit():
-                example_dict = dataset_loader.dat.iloc[int(example)].to_dict()
+                example_dict = dataset.df.iloc[int(example)].to_dict()
                 print(example_dict)
             else:
                 example_dict[example_template_variables[0]] = example
