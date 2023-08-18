@@ -61,7 +61,7 @@ class LabelingAgent:
         self.db = StateManager() if self.create_task else None
         self.generation_cache = SQLAlchemyGenerationCache() if cache else None
         self.transform_cache = SQLAlchemyTransformCache() if cache else None
-        self.console = Console() if console_output else None
+        self.console = Console(quiet=not console_output)
 
         self.config = (
             config if isinstance(config, AutolabelConfig) else AutolabelConfig(config)
@@ -170,17 +170,12 @@ class LabelingAgent:
 
         indices = range(current_index, len(dataset.inputs))
 
-        if self.console:
-            tracker = track_with_stats(
-                indices,
-                postfix_dict,
-                total=len(dataset.inputs) - current_index,
-                console=self.console,
-            )
-        else:
-            tracker = indices
-
-        for current_index in tracker:
+        for current_index in track_with_stats(
+            indices,
+            postfix_dict,
+            total=len(dataset.inputs) - current_index,
+            console=self.console,
+        ):
             chunk = dataset.inputs[current_index]
 
             if self.example_selector:
@@ -271,12 +266,11 @@ class LabelingAgent:
                 elif m.show_running:
                     table[m.name] = m.value
                 else:
-                    print(f"{m.name}:\n{m.value}")
+                    self.console.print(f"{m.name}:\n{m.value}")
 
         # print cost
-        if self.console:
-            print(f"Actual Cost: {maybe_round(cost)}")
-            print_table(table, console=self.console, default_style=METRIC_TABLE_STYLE)
+        self.console.print(f"Actual Cost: {maybe_round(cost)}")
+        print_table(table, console=self.console, default_style=METRIC_TABLE_STYLE)
 
         dataset.process_labels(llm_labels, eval_result)
         # Only save to csv if output_name is provided or dataset is a string
@@ -337,16 +331,11 @@ class LabelingAgent:
 
         input_limit = min(len(dataset.inputs), 100)
 
-        if self.console:
-            tracker = track(
-                dataset.inputs[:input_limit],
-                description="Generating Prompts...",
-                console=self.console,
-            )
-        else:
-            tracker = dataset.inputs[:input_limit]
-
-        for input_i in tracker:
+        for input_i in track(
+            dataset.inputs[:input_limit],
+            description="Generating Prompts...",
+            console=self.console,
+        ):
             # TODO: Check if this needs to use the example selector
             if self.example_selector:
                 examples = self.example_selector.select_examples(input_i)
@@ -367,13 +356,12 @@ class LabelingAgent:
         }
         table = {"parameter": list(table.keys()), "value": list(table.values())}
 
-        if self.console:
-            print_table(
-                table, show_header=False, console=self.console, styles=COST_TABLE_STYLES
-            )
-            self.console.rule("Prompt Example")
-            print(f"{prompt_list[0]}")
-            self.console.rule()
+        print_table(
+            table, show_header=False, console=self.console, styles=COST_TABLE_STYLES
+        )
+        self.console.rule("Prompt Example")
+        self.console.print(f"{prompt_list[0]}")
+        self.console.rule()
 
     async def async_run_transform(
         self, transform: BaseTransform, dataset: AutolabelDataset
@@ -382,15 +370,11 @@ class LabelingAgent:
             transform.apply(input_dict) for input_dict in dataset.inputs
         ]
 
-        if self.console:
-            outputs = await gather_async_tasks_with_progress(
-                transform_outputs,
-                description=f"Running transform {transform.name()}...",
-                console=self.console,
-            )
-        else:
-            outputs = await asyncio.gather(*transform_outputs)
-
+        outputs = await gather_async_tasks_with_progress(
+            transform_outputs,
+            description=f"Running transform {transform.name()}...",
+            console=self.console,
+        )
         output_df = pd.DataFrame.from_records(outputs)
         final_df = pd.concat([dataset.df, output_df], axis=1)
         dataset = AutolabelDataset(final_df, self.config)
@@ -421,10 +405,12 @@ class LabelingAgent:
             csv_file_name: path to the dataset we wish to label (only used if user chooses to restart the task)
             gt_labels: If ground truth labels are provided, performance metrics will be displayed, such as label accuracy
         """
-        pprint(f"There is an existing task with following details: {task_run}")
+        self.console.print(
+            f"There is an existing task with following details: {task_run}"
+        )
         llm_labels = self.get_all_annotations()
         if gt_labels and len(llm_labels) > 0:
-            pprint("Evaluating the existing task...")
+            self.console.print("Evaluating the existing task...")
             gt_labels = gt_labels[: len(llm_labels)]
             eval_result = self.task.eval(
                 llm_labels, gt_labels, additional_metrics=additional_metrics
@@ -436,16 +422,13 @@ class LabelingAgent:
                 elif m.show_running:
                     table[m.name] = m.value
                 else:
-                    print(f"{m.name}:\n{m.value}")
+                    self.console.print(f"{m.name}:\n{m.value}")
 
-            if self.console:
-                print_table(
-                    table, console=self.console, default_style=METRIC_TABLE_STYLE
-                )
-        pprint(f"{task_run.current_index} examples labeled so far.")
+            print_table(table, console=self.console, default_style=METRIC_TABLE_STYLE)
+        self.console.print(f"{task_run.current_index} examples labeled so far.")
         if not Confirm.ask("Do you want to resume the task?"):
             TaskRunModel.delete_by_id(self.db.session, task_run.id)
-            pprint("Deleted the existing task and starting a new one...")
+            self.console.print("Deleted the existing task and starting a new one...")
             task_run = self.db.create_task_run(
                 csv_file_name, self.task_object.id, self.dataset_obj.id
             )
@@ -497,16 +480,11 @@ class LabelingAgent:
                 "The explanation column needs to be specified in the dataset config."
             )
 
-        if self.console:
-            tracker = track(
-                seed_examples,
-                description="Generating explanations",
-                console=self.console,
-            )
-        else:
-            tracker = seed_examples
-
-        for seed_example in tracker:
+        for seed_example in track(
+            seed_examples,
+            description="Generating explanations",
+            console=self.console,
+        ):
             explanation_prompt = self.task.get_explanation_prompt(seed_example)
             explanation = self.llm.label([explanation_prompt])
             explanation = explanation.generations[0][0].text
@@ -521,19 +499,25 @@ class LabelingAgent:
     def generate_synthetic_dataset(self) -> AutolabelDataset:
         columns = get_format_variables(self.config.example_template())
         df = pd.DataFrame(columns=columns)
-        for label in self.config.labels_list():
+        for label in track(
+            self.config.labels_list(),
+            description="Generating dataset",
+            console=self.console,
+        ):
             prompt = self.task.get_generate_dataset_prompt(label)
 
             result = self.llm.label([prompt])
             if result.errors[0] is not None:
-                print(f"Error generating rows for label {label}: {result.errors[0]}")
+                self.console.print(
+                    f"Error generating rows for label {label}: {result.errors[0]}"
+                )
             else:
                 response = result.generations[0][0].text.strip()
 
                 response = io.StringIO(response)
                 label_df = pd.read_csv(response, sep=self.config.delimiter())
                 label_df[self.config.label_column()] = label
-                df = pd.concat([df, label_df], axis=0)
+                df = pd.concat([df, label_df], axis=0, ignore_index=True)
         return AutolabelDataset(df, self.config)
 
     def clear_cache(self, use_ttl: bool = True):

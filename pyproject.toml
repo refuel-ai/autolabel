@@ -98,7 +98,8 @@ all = [
     "pytesseract >= 0.3.10",
     "beautifulsoup4 >= 4.12.2",
     "httpx",
-    "fake_useragent"
+    "fake_useragent",
+    "pillow >= 9.5.0"
 ]
 
 [project.urls]

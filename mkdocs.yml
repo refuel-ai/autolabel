@@ -22,6 +22,7 @@ nav:
           - Introduction: guide/transforms/introduction.md
           - Webpage Transform: guide/transforms/webpage_transform.md
           - PDF Transform: guide/transforms/pdf_transform.md
+          - Image Transform: guide/transforms/image_transform.md
       - Improving Labeling Accuracy:
           - Prompting Better: guide/accuracy/prompting-better.md
           - Few-shot Prompting: guide/accuracy/few-shot.md
