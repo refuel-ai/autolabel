@@ -1,4 +1,4 @@
-Few shot learning is one of the most powerful tools that autolabel offers to improve the accuracy of LLM generated labels. However, curating a seed dataset to use for few shot learning can be a time consuming and tedious process. To make this process easier, autolabel's LabelingAgent provides a method to generate synthetic datasets. These datasets can be used as seed datasets for few shot learning or for any other purpose. This guide will walk you through the process of generating a synthetic dataset using autolabel.
+Few shot learning is one of the most powerful tools that autolabel offers to improve the accuracy of LLM generated labels. However, curating a seed dataset to use for few shot learning can be a time consuming and tedious process. To make this process easier, autolabel's LabelingAgent provides a method to generate synthetic datasets. These datasets can be used as seed datasets for few shot learning or any other purpose. This guide will walk you through the process of generating a synthetic dataset using autolabel.
 
 Currently, autolabel supports synthetic dataset generation for classification and entity matching tasks. We plan to add support for other task types in the future.
 
@@ -60,7 +60,7 @@ ds = agent.generate_synthetic_dataset()
 That's it! You now have a synthetic dataset that you can use for few shot learning or for any other purpose. You can save the dataset to a csv file using the following code:
 
 ```python
-ds.df.to_csv('synthetic_dataset.csv', index=False)
+ds.save("synthetic_dataset.csv")
 ```
 
 ### Model and Model Parameters
