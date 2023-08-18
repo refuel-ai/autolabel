@@ -307,9 +307,7 @@ def _create_prompt_config_wizard(config: Dict, seed: Optional[str] = None) -> Di
     ).replace("\\n", "\n")
 
     seed_labels = (
-        dataset.df[unvalidated_config.label_column()].unique().tolist()
-        if seed
-        else []
+        dataset.df[unvalidated_config.label_column()].unique().tolist() if seed else []
     )
     if seed_labels and Confirm.ask(
         f"Detected {len(seed_labels)} unique labels in seed dataset. Use these labels?"
