@@ -91,6 +91,7 @@ all = [
     "anthropic == 0.2.6",
     "transformers >= 4.25.0",
     "google-cloud-aiplatform>=1.25.0",
+    "google-search-results>=2.4.2",
     "cohere>=4.11.2",
     "sentence_transformers",
     "pdfplumber >= 0.10.2",
