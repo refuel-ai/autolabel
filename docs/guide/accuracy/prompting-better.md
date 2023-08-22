@@ -33,10 +33,11 @@ config = {
 ```
 
 ```py
-from autolabel import LabelingAgent
+from autolabel import LabelingAgent, AutolabelDataset
 
 agent = LabelingAgent(config=config)
-labels, df, metrics_list = agent.run('../examples/civil_comments/test.csv', max_items = 100)
+dataset = AutolabelDataset('../examples/civil_comments/test.csv', config=config)
+labeled_dataset = agent.run(dataset, max_items = 100)
 ```
 
 Accuracy: 68%
@@ -65,8 +66,11 @@ We can replace the prompt in the above config with the following updated guideli
 ```
 
 ```py
+from autolabel import LabelingAgent, AutolabelDataset
+
 agent = LabelingAgent(config=config)
-labels, df, metrics_list = agent.run('../examples/civil_comments/test.csv', max_items = 100)
+dataset = AutolabelDataset('../examples/civil_comments/test.csv', config=config)
+labeled_dataset = agent.run(dataset, max_items = 100)
 ```
 
 Accuracy: 74%
