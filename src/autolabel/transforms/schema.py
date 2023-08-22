@@ -10,6 +10,7 @@ class TransformType(str, Enum):
     WEBPAGE_TRANSFORM = "webpage_transform"
     PDF = "pdf"
     IMAGE = "image"
+    SERP_API = "serp_api"
 
 
 class TransformCacheEntry(BaseModel):
@@ -36,6 +37,7 @@ class TransformErrorType(str, Enum):
     TRANSFORM_ERROR = "TRANSFORM_ERROR"
     TRANSFORM_TIMEOUT = "TRANSFORM_TIMEOUT"
     MAX_RETRIES_REACHED = "MAX_RETRIES_REACHED"
+    SERP_API_ERROR = "SERP_API_ERROR"
 
 
 class TransformError(Exception):
