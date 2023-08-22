@@ -106,6 +106,9 @@ class AutolabelDataset:
         # Add the LLM errors to the dataframe
         self.df[self.generate_label_name("error")] = [x.error for x in llm_labels]
 
+        # Add the LLM prompts to the dataframe
+        self.df[self.generate_label_name("prompt")] = [x.prompt for x in llm_labels]
+
         # Add labeled success column to the dataframe
         self.df[self.generate_label_name("successfully_labeled")] = [
             x.successfully_labeled for x in llm_labels

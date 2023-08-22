@@ -17,5 +17,5 @@ DB_PATH = ".autolabel.v15.db"
 def create_db_engine(db_path: Optional[str] = DB_PATH) -> Engine:
     global DB_ENGINE
     if DB_ENGINE is None:
-        DB_ENGINE = create_engine(f"sqlite:///{db_path}")
+        DB_ENGINE = create_engine(f"sqlite:///{db_path}", pool_size=0)
     return DB_ENGINE
