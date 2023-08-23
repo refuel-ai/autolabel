@@ -11,7 +11,7 @@ DB_ENGINE = None
 # several different labeling jobs going on).
 # DB_PATH = join(expanduser("~"), ".autolabel.db")
 
-DB_PATH = ".autolabel.db"
+DB_PATH = ".autolabel.v15.db"
 
 
 def create_db_engine(db_path: Optional[str] = DB_PATH) -> Engine:
