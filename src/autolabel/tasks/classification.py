@@ -55,9 +55,8 @@ class ClassificationTask(BaseTask):
         # prepare task guideline
         labels_list = self.config.labels_list()
         num_labels = len(labels_list)
-        fmt_task_guidelines = self.task_guidelines.format(
-            num_labels=num_labels, labels="\n".join(labels_list)
-        )
+        labels = ", ".join([f'\\"{i}\\"' for i in labels_list[:-1]]) + " or " + f'\\"{labels_list[-1]}\\"'
+        fmt_task_guidelines = self.task_guidelines.format(num_labels=num_labels, labels=labels)
 
         # prepare seed examples
         example_template = self.config.example_template()
@@ -86,7 +85,7 @@ class ClassificationTask(BaseTask):
             return self.prompt_template.format(
                 task_guidelines=fmt_task_guidelines,
                 output_guidelines=self.output_guidelines,
-                seed_examples="\n\n".join(fmt_examples),
+                seed_examples="\n".join(fmt_examples),
                 current_example=current_example,
             )
         else:

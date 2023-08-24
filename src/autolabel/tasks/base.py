@@ -28,7 +28,11 @@ logger = logging.getLogger(__name__)
 
 class BaseTask(ABC):
     ZERO_SHOT_TEMPLATE = "{task_guidelines}\n\n{output_guidelines}\n\nNow I want you to label the following example:\n{current_example}"
-    FEW_SHOT_TEMPLATE = "{task_guidelines}\n\n{output_guidelines}\n\nSome examples with their output answers are provided below:\n\n{seed_examples}\n\nNow I want you to label the following example:\n{current_example}"
+    FEW_SHOT_TEMPLATE = """
+    <s>[INST] <<SYS>>
+    {task_guidelines}{output_guidelines}\n{seed_examples}
+    <<SYS>>
+    {current_example}[/INST]"""
 
     # Downstream classes should override these
     NULL_LABEL_TOKEN = "NO_LABEL"

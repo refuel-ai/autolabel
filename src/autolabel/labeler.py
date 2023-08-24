@@ -360,7 +360,7 @@ class LabelingAgent:
             table, show_header=False, console=self.console, styles=COST_TABLE_STYLES
         )
         self.console.rule("Prompt Example")
-        self.console.print(f"{prompt_list[0]}")
+        self.console.print(f"{prompt_list[0]}", markup=False)
         self.console.rule()
 
     async def async_run_transform(
