@@ -61,9 +61,12 @@ class SerpApi(BaseTransform):
 
     async def _apply(self, row: Dict[str, Any]) -> Dict[str, Any]:
         query = row[self.query_column]
-        search_result = {}
-        if pd.isna(query):
-            logger.warning(f"Empty query in row {row}")
+        search_result = self.NULL_TRANSFORM_TOKEN
+        if pd.isna(query) or query == self.NULL_TRANSFORM_TOKEN:
+            raise TransformError(
+                TransformErrorType.INVALID_INPUT,
+                f"Empty query in row {row}",
+            )
         else:
             search_result = await self._get_result(query)
 

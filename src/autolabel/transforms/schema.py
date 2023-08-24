@@ -34,6 +34,7 @@ class TransformCacheEntry(BaseModel):
 class TransformErrorType(str, Enum):
     """Transform error types"""
 
+    INVALID_INPUT = "INVALID_INPUT"
     TRANSFORM_ERROR = "TRANSFORM_ERROR"
     TRANSFORM_TIMEOUT = "TRANSFORM_TIMEOUT"
     MAX_RETRIES_REACHED = "MAX_RETRIES_REACHED"
