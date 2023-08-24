@@ -51,3 +51,29 @@ async def test_error_handling():
         transformed_row["webpage_transform_error"]
         == "Request URL is missing an 'http://' or 'https://' protocol."
     )
+
+
+@pytest.mark.asyncio
+async def test_empty_url():
+    # Initialize the transform class
+    transform = WebpageTransform(
+        output_columns={
+            "content_column": "webpage_content",
+        },
+        url_column="url",
+        cache=None,
+    )
+
+    # Create a mock row
+    row = {"url": transform.NULL_TRANSFORM_TOKEN}
+    # Transform the row
+    transformed_row = await transform.apply(row)
+    # Check the output
+    assert set(transformed_row.keys()) == set(
+        ["webpage_content", "webpage_transform_error"]
+    )
+    assert transformed_row["webpage_content"] == "NO_TRANSFORM"
+    assert (
+        transformed_row["webpage_transform_error"]
+        == "INVALID_INPUT: Empty url in row {'url': 'NO_TRANSFORM'}"
+    )

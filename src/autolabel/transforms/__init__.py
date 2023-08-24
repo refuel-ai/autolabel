@@ -2,6 +2,7 @@ import logging
 
 from .base import BaseTransform
 from .pdf import PDFTransform
+from .serp_api import SerpApi
 from .webpage_transform import WebpageTransform
 from .image import ImageTransform
 from typing import Dict
@@ -14,6 +15,7 @@ TRANSFORM_REGISTRY = {
     TransformType.PDF: PDFTransform,
     TransformType.WEBPAGE_TRANSFORM: WebpageTransform,
     TransformType.IMAGE: ImageTransform,
+    TransformType.SERP_API: SerpApi,
 }
 
 

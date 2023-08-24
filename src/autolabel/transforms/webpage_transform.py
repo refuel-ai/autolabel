@@ -130,8 +130,11 @@ class WebpageTransform(BaseTransform):
     async def _apply(self, row: Dict[str, Any]) -> Dict[str, Any]:
         url = row[self.url_column]
         url_response_data = {}
-        if pd.isna(url):
-            logger.warning(f"Empty url in row {row}")
+        if pd.isna(url) or url == self.NULL_TRANSFORM_TOKEN:
+            raise TransformError(
+                TransformErrorType.INVALID_INPUT,
+                f"Empty url in row {row}",
+            )
         else:
             url_response_data = await self._load_url(url)
 
