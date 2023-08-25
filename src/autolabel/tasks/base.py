@@ -32,7 +32,7 @@ class BaseTask(ABC):
     <s>[INST] <<SYS>>
     {task_guidelines}{output_guidelines}\n{seed_examples}
     <<SYS>>
-    {current_example}[/INST]"""
+    {current_example}[/INST]\n"""
 
     # Downstream classes should override these
     NULL_LABEL_TOKEN = "NO_LABEL"

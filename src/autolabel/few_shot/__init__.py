@@ -35,7 +35,6 @@ DEFAULT_EMBEDDING_PROVIDER = OpenAIEmbeddings
 
 PROVIDER_TO_MODEL: Dict[ModelProvider, Embeddings] = {
     ModelProvider.OPENAI: OpenAIEmbeddings,
-    ModelProvider.LLAMA: OpenAIEmbeddings,
     ModelProvider.GOOGLE: VertexAIEmbeddings,
     ModelProvider.HUGGINGFACE_PIPELINE: HuggingFaceEmbeddings,
     ModelProvider.COHERE: CohereEmbeddings,

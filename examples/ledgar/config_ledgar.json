@@ -6,11 +6,15 @@
         "delimiter": ","
     },
     "model": {
-        "provider": "openai",
-        "name": "gpt-3.5-turbo"
+        "provider": "llama",
+        "name": "/workspace/hf-trained-nonchat"
+    },
+    "embedding": {
+        "provider": "openai"
     },
     "prompt": {
-        "task_guidelines": "You are an expert at understanding legal contracts. Your job is to correctly classify legal provisions in contracts into one of the following categories.\nCategories:{labels}\n",
+        "task_guidelines": "Your job is to correctly label the following into one of the following categories {labels}",
+        "output_guidelines": "\\n",
         "labels": [
             "Agreements",
             "Amendments",
@@ -113,9 +117,9 @@
             "Warranties",
             "Withholdings"
         ],
-        "example_template": "Example: {example}\nOutput: {label}",
+        "example_template": "{example}{label}",
         "few_shot_examples": "seed.csv",
         "few_shot_selection": "semantic_similarity",
-        "few_shot_num": 4
+        "few_shot_num": 3
     }
 }

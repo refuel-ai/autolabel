@@ -56,33 +56,27 @@ class Llama(BaseModel):
 
         self.labeling_model = LLM(self.model_name, tensor_parallel_size=1)
 
-    @retry(
-        reraise=True,
-        stop=stop_after_attempt(5),
-        wait=wait_exponential(multiplier=1, min=2, max=10),
-        before_sleep=before_sleep_log(logger, logging.WARNING),
-    )
-    def _label_with_retry(self, prompt: str) -> requests.Response:
-        sampling_param = SamplingParams(top_p=self.model_params["top_p"], temperature=self.model_params["temperature"], max_tokens=self.model_params["max_new_tokens"])
-        outputs = self.labeling_model.generate(prompt, sampling_params=sampling_param)
-        return outputs[0].outputs[0].text
-
     def _label(self, prompts: List[str]) -> RefuelLLMResult:
         generations = []
         errors = []
+        prompt_file = open("prompts.txt", "a")
         for prompt in prompts:
             try:
-                response = self._label_with_retry(prompt)
-                generations.append([Generation(text=response)])
+                sampling_param = SamplingParams(top_p=0.9, temperature=0.05, max_tokens=100)
+                outputs = self.labeling_model.generate(prompt, sampling_params=sampling_param, use_tqdm=False)
+                prompt_file.write(prompt)
+                prompt_file.write("\n============\n")
+                generations.append([Generation(text=outputs[0].outputs[0].text)])
                 errors.append(None)
             except Exception as e:
                 # This signifies an error in generating the response using RefuelLLm
+                print("Error: ", e)
                 logger.error(
                     f"Unable to generate prediction: {e}",
                 )
                 generations.append([Generation(text="")])
                 errors.append(
-                    LabelingError(error_type=ErrorType.LLM_PROVIDER_ERROR, error=e)
+                    LabelingError(error_type=ErrorType.LLM_PROVIDER_ERROR, error_message=str(e))
                 )
         return RefuelLLMResult(generations=generations, errors=errors)
 

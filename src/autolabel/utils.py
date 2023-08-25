@@ -303,7 +303,7 @@ def print_table(
     for i, row in enumerate(zip(*data.values())):
         table.add_row(*row)
     console = console or Console()
-    console.print(table)
+    console.print(table, markup=False)
 
 
 def get_data(dataset_name: str, force: bool = False):

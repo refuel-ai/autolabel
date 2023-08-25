@@ -1,0 +1,1700 @@
+
+    <s>[INST] <<SYS>>
+    Your job is to correctly label the following into one of the following categories duplicate
+not duplicate\n
+Title of entity1: lexmark extra high yield return pgm print cartridge - magenta; category of entity1: printers; brand of entity1: lexmark; model number of entity1: c782u1mg; price of entity1: 214.88
+Title of entity2: lexmark 18c1428 return program print cartridge black; category of entity2: inkjet printer ink; brand of entity2: lexmark; model number of entity2: 18c1428; price of entity2: 19.97
+Duplicate or not: not duplicate
+
+Title of entity1: edge tech proshot 4gb sdhc class 6 memory card; category of entity1: usb drives; brand of entity1: edge tech; model number of entity1: pe209780; price of entity1: 10.88
+Title of entity2: 4gb edge proshot sdhc memory card class6; category of entity2: computers accessories; brand of entity2: edge; model number of entity2: nan; price of entity2: 17.83
+Duplicate or not: duplicate
+    <<SYS>>
+    Title of entity1: sony 16gb class 4 sd memory card; category of entity1: usb drives; brand of entity1: sony; model number of entity1: sf16n4/tqp; price of entity1: 0.0
+Title of entity2: pny 4gb class 4 navy sd card; category of entity2: car audio video; brand of entity2: pny; model number of entity2: p-sdhc4g4-ef / navy; price of entity2: 11.18
+Duplicate or not: [/INST]
+
+============
+
+    <s>[INST] <<SYS>>
+    Your job is to correctly label the following into one of the following categories duplicate
+not duplicate\n
+Title of entity1: lexmark extra high yield return pgm print cartridge - magenta; category of entity1: printers; brand of entity1: lexmark; model number of entity1: c782u1mg; price of entity1: 214.88
+Title of entity2: lexmark 18c1428 return program print cartridge black; category of entity2: inkjet printer ink; brand of entity2: lexmark; model number of entity2: 18c1428; price of entity2: 19.97
+Duplicate or not: not duplicate
+
+Title of entity1: edge tech proshot 4gb sdhc class 6 memory card; category of entity1: usb drives; brand of entity1: edge tech; model number of entity1: pe209780; price of entity1: 10.88
+Title of entity2: 4gb edge proshot sdhc memory card class6; category of entity2: computers accessories; brand of entity2: edge; model number of entity2: nan; price of entity2: 17.83
+Duplicate or not: duplicate
+    <<SYS>>
+    Title of entity1: zotac geforce gt430 1gb ddr3 pci-express 2.0 graphics card; category of entity1: electronics - general; brand of entity1: zotac; model number of entity1: zt-40604-10l; price of entity1: 88.88
+Title of entity2: evga geforce gts450 superclocked 1 gb gddr5 pci-express 2.0 graphics card 01g-p3-1452-tr; category of entity2: graphics cards; brand of entity2: evga; model number of entity2: 01g-p3-1452-tr; price of entity2: 119.88
+Duplicate or not: [/INST]
+
+============
+
+    <s>[INST] <<SYS>>
+    Your job is to correctly label the following into one of the following categories duplicate
+not duplicate\n
+Title of entity1: lexmark extra high yield return pgm print cartridge - magenta; category of entity1: printers; brand of entity1: lexmark; model number of entity1: c782u1mg; price of entity1: 214.88
+Title of entity2: lexmark 18c1428 return program print cartridge black; category of entity2: inkjet printer ink; brand of entity2: lexmark; model number of entity2: 18c1428; price of entity2: 19.97
+Duplicate or not: not duplicate
+
+Title of entity1: edge tech proshot 4gb sdhc class 6 memory card; category of entity1: usb drives; brand of entity1: edge tech; model number of entity1: pe209780; price of entity1: 10.88
+Title of entity2: 4gb edge proshot sdhc memory card class6; category of entity2: computers accessories; brand of entity2: edge; model number of entity2: nan; price of entity2: 17.83
+Duplicate or not: duplicate
+    <<SYS>>
+    Title of entity1: da-lite high power model b manual screen with csr - 84 x 84 av format; category of entity1: electronics - general; brand of entity1: da-lite; model number of entity1: 85303; price of entity1: 372.99
+Title of entity2: da-lite advantage manual with csr - projection screen - 133 in - 16 9 - high power; category of entity2: home audio theater; brand of entity2: da-lite; model number of entity2: nan; price of entity2: 904.95
+Duplicate or not: [/INST]
+
+============
+
+    <s>[INST] <<SYS>>
+    Your job is to correctly label the following into one of the following categories duplicate
+not duplicate\n
+Title of entity1: lexmark extra high yield return pgm print cartridge - magenta; category of entity1: printers; brand of entity1: lexmark; model number of entity1: c782u1mg; price of entity1: 214.88
+Title of entity2: lexmark 18c1428 return program print cartridge black; category of entity2: inkjet printer ink; brand of entity2: lexmark; model number of entity2: 18c1428; price of entity2: 19.97
+Duplicate or not: not duplicate
+
+Title of entity1: edge tech proshot 4gb sdhc class 6 memory card; category of entity1: usb drives; brand of entity1: edge tech; model number of entity1: pe209780; price of entity1: 10.88
+Title of entity2: 4gb edge proshot sdhc memory card class6; category of entity2: computers accessories; brand of entity2: edge; model number of entity2: nan; price of entity2: 17.83
+Duplicate or not: duplicate
+    <<SYS>>
+    Title of entity1: da-lite hc cinema vision tensioned advantage electrol - av format 8 x 8 diagonal; category of entity1: electronics - general; brand of entity1: da-lite; model number of entity1: 89939; price of entity1: 2595.0
+Title of entity2: hc da-mat tensioned advantage electrol - av format 50 x 50; category of entity2: projection screens; brand of entity2: da-lite; model number of entity2: nan; price of entity2: nan
+Duplicate or not: [/INST]
+
+============
+
+    <s>[INST] <<SYS>>
+    Your job is to correctly label the following into one of the following categories duplicate
+not duplicate\n
+Title of entity1: lexmark extra high yield return pgm print cartridge - magenta; category of entity1: printers; brand of entity1: lexmark; model number of entity1: c782u1mg; price of entity1: 214.88
+Title of entity2: lexmark 18c1428 return program print cartridge black; category of entity2: inkjet printer ink; brand of entity2: lexmark; model number of entity2: 18c1428; price of entity2: 19.97
+Duplicate or not: not duplicate
+
+Title of entity1: edge tech proshot 4gb sdhc class 6 memory card; category of entity1: usb drives; brand of entity1: edge tech; model number of entity1: pe209780; price of entity1: 10.88
+Title of entity2: 4gb edge proshot sdhc memory card class6; category of entity2: computers accessories; brand of entity2: edge; model number of entity2: nan; price of entity2: 17.83
+Duplicate or not: duplicate
+    <<SYS>>
+    Title of entity1: verbatim 4gb tuff - n - tiny usb 2.0 flash drive green; category of entity1: usb drives; brand of entity1: verbatim; model number of entity1: nan; price of entity1: 11.98
+Title of entity2: verbatim clip-it 4 gb usb 2.0 flash drive 97556 green; category of entity2: usb flash drives; brand of entity2: verbatim; model number of entity2: 97556; price of entity2: 10.98
+Duplicate or not: [/INST]
+
+============
+
+    <s>[INST] <<SYS>>
+    Your job is to correctly label the following into one of the following categories duplicate
+not duplicate\n
+Title of entity1: lexmark extra high yield return pgm print cartridge - magenta; category of entity1: printers; brand of entity1: lexmark; model number of entity1: c782u1mg; price of entity1: 214.88
+Title of entity2: lexmark 18c1428 return program print cartridge black; category of entity2: inkjet printer ink; brand of entity2: lexmark; model number of entity2: 18c1428; price of entity2: 19.97
+Duplicate or not: not duplicate
+
+Title of entity1: edge tech proshot 4gb sdhc class 6 memory card; category of entity1: usb drives; brand of entity1: edge tech; model number of entity1: pe209780; price of entity1: 10.88
+Title of entity2: 4gb edge proshot sdhc memory card class6; category of entity2: computers accessories; brand of entity2: edge; model number of entity2: nan; price of entity2: 17.83
+Duplicate or not: duplicate
+    <<SYS>>
+    Title of entity1: clickfree c2 500gb usb 3.0 portable external hard drive; category of entity1: hard drives; brand of entity1: clickfree; model number of entity1: hd527b3; price of entity1: 84.98
+Title of entity2: iomega skin 500 gb usb 2.0 portable external hard drive 35106 black; category of entity2: computers accessories; brand of entity2: iomega; model number of entity2: 35106; price of entity2: 94.49
+Duplicate or not: [/INST]
+
+============
+
+    <s>[INST] <<SYS>>
+    Your job is to correctly label the following into one of the following categories duplicate
+not duplicate\n
+Title of entity1: lexmark extra high yield return pgm print cartridge - magenta; category of entity1: printers; brand of entity1: lexmark; model number of entity1: c782u1mg; price of entity1: 214.88
+Title of entity2: lexmark 18c1428 return program print cartridge black; category of entity2: inkjet printer ink; brand of entity2: lexmark; model number of entity2: 18c1428; price of entity2: 19.97
+Duplicate or not: not duplicate
+
+Title of entity1: edge tech proshot 4gb sdhc class 6 memory card; category of entity1: usb drives; brand of entity1: edge tech; model number of entity1: pe209780; price of entity1: 10.88
+Title of entity2: 4gb edge proshot sdhc memory card class6; category of entity2: computers accessories; brand of entity2: edge; model number of entity2: nan; price of entity2: 17.83
+Duplicate or not: duplicate
+    <<SYS>>
+    Title of entity1: apc battery backup 750va back-ups es 120v 10 outlet power supply power-saving ups be750g; category of entity1: electronics - general; brand of entity1: apc; model number of entity1: be750g; price of entity1: 95.88
+Title of entity2: apc be450g back-ups es 8-outlet 450va 120v uninterrupted power supply; category of entity2: batteries chargers accessories; brand of entity2: apc; model number of entity2: be450g; price of entity2: 55.99
+Duplicate or not: [/INST]
+
+============
+
+    <s>[INST] <<SYS>>
+    Your job is to correctly label the following into one of the following categories duplicate
+not duplicate\n
+Title of entity1: lexmark extra high yield return pgm print cartridge - magenta; category of entity1: printers; brand of entity1: lexmark; model number of entity1: c782u1mg; price of entity1: 214.88
+Title of entity2: lexmark 18c1428 return program print cartridge black; category of entity2: inkjet printer ink; brand of entity2: lexmark; model number of entity2: 18c1428; price of entity2: 19.97
+Duplicate or not: not duplicate
+
+Title of entity1: edge tech proshot 4gb sdhc class 6 memory card; category of entity1: usb drives; brand of entity1: edge tech; model number of entity1: pe209780; price of entity1: 10.88
+Title of entity2: 4gb edge proshot sdhc memory card class6; category of entity2: computers accessories; brand of entity2: edge; model number of entity2: nan; price of entity2: 17.83
+Duplicate or not: duplicate
+    <<SYS>>
+    Title of entity1: balt wheasel easel adjustable melamine dry erase board white; category of entity1: stationery & office machinery; brand of entity1: balt; model number of entity1: 33250; price of entity1: 239.88
+Title of entity2: balt inc. wheasel easel adjustable melamine dry erase board 28 3 4 x 59 1 2 white; category of entity2: laminating supplies; brand of entity2: mayline; model number of entity2: nan; price of entity2: 134.45
+Duplicate or not: [/INST]
+
+============
+
+    <s>[INST] <<SYS>>
+    Your job is to correctly label the following into one of the following categories duplicate
+not duplicate\n
+Title of entity1: lexmark extra high yield return pgm print cartridge - magenta; category of entity1: printers; brand of entity1: lexmark; model number of entity1: c782u1mg; price of entity1: 214.88
+Title of entity2: lexmark 18c1428 return program print cartridge black; category of entity2: inkjet printer ink; brand of entity2: lexmark; model number of entity2: 18c1428; price of entity2: 19.97
+Duplicate or not: not duplicate
+
+Title of entity1: edge tech proshot 4gb sdhc class 6 memory card; category of entity1: usb drives; brand of entity1: edge tech; model number of entity1: pe209780; price of entity1: 10.88
+Title of entity2: 4gb edge proshot sdhc memory card class6; category of entity2: computers accessories; brand of entity2: edge; model number of entity2: nan; price of entity2: 17.83
+Duplicate or not: duplicate
+    <<SYS>>
+    Title of entity1: kodak esp 3250 all-in-one printer value bundle; category of entity1: printers; brand of entity1: nan; model number of entity1: nan; price of entity1: 58.0
+Title of entity2: kodak esp 7 all-in-one printer; category of entity2: all-in-one printers; brand of entity2: kodak; model number of entity2: 1252972; price of entity2: 149.29
+Duplicate or not: [/INST]
+
+============
+
+    <s>[INST] <<SYS>>
+    Your job is to correctly label the following into one of the following categories duplicate
+not duplicate\n
+Title of entity1: lexmark extra high yield return pgm print cartridge - magenta; category of entity1: printers; brand of entity1: lexmark; model number of entity1: c782u1mg; price of entity1: 214.88
+Title of entity2: lexmark 18c1428 return program print cartridge black; category of entity2: inkjet printer ink; brand of entity2: lexmark; model number of entity2: 18c1428; price of entity2: 19.97
+Duplicate or not: not duplicate
+
+Title of entity1: edge tech proshot 4gb sdhc class 6 memory card; category of entity1: usb drives; brand of entity1: edge tech; model number of entity1: pe209780; price of entity1: 10.88
+Title of entity2: 4gb edge proshot sdhc memory card class6; category of entity2: computers accessories; brand of entity2: edge; model number of entity2: nan; price of entity2: 17.83
+Duplicate or not: duplicate
+    <<SYS>>
+    Title of entity1: hp q3675a image transfer kit; category of entity1: printers; brand of entity1: hp; model number of entity1: q3675a; price of entity1: 194.84
+Title of entity2: hewlett packard q3675a image transfer kit for hp color laserjet 4650; category of entity2: cleaning repair; brand of entity2: hp; model number of entity2: q3675a; price of entity2: nan
+Duplicate or not: [/INST]
+
+============
+
+    <s>[INST] <<SYS>>
+    Your job is to correctly label the following into one of the following categories duplicate
+not duplicate\n
+Title of entity1: lexmark extra high yield return pgm print cartridge - magenta; category of entity1: printers; brand of entity1: lexmark; model number of entity1: c782u1mg; price of entity1: 214.88
+Title of entity2: lexmark 18c1428 return program print cartridge black; category of entity2: inkjet printer ink; brand of entity2: lexmark; model number of entity2: 18c1428; price of entity2: 19.97
+Duplicate or not: not duplicate
+
+Title of entity1: edge tech proshot 4gb sdhc class 6 memory card; category of entity1: usb drives; brand of entity1: edge tech; model number of entity1: pe209780; price of entity1: 10.88
+Title of entity2: 4gb edge proshot sdhc memory card class6; category of entity2: computers accessories; brand of entity2: edge; model number of entity2: nan; price of entity2: 17.83
+Duplicate or not: duplicate
+    <<SYS>>
+    Title of entity1: atrend-bbox a361-12cp b box series speaker; category of entity1: car stereos; brand of entity1: atrend; model number of entity1: a361-12cp; price of entity1: 56.88
+Title of entity2: atrend-bbox a362-12cp b box series dual speakers for ford f150 super crew cab 2009 and up 12-inch; category of entity2: coaxial speakers; brand of entity2: atrend-bbox; model number of entity2: a362-12cp; price of entity2: 88.85
+Duplicate or not: [/INST]
+
+============
+
+    <s>[INST] <<SYS>>
+    Your job is to correctly label the following into one of the following categories duplicate
+not duplicate\n
+Title of entity1: lexmark extra high yield return pgm print cartridge - magenta; category of entity1: printers; brand of entity1: lexmark; model number of entity1: c782u1mg; price of entity1: 214.88
+Title of entity2: lexmark 18c1428 return program print cartridge black; category of entity2: inkjet printer ink; brand of entity2: lexmark; model number of entity2: 18c1428; price of entity2: 19.97
+Duplicate or not: not duplicate
+
+Title of entity1: edge tech proshot 4gb sdhc class 6 memory card; category of entity1: usb drives; brand of entity1: edge tech; model number of entity1: pe209780; price of entity1: 10.88
+Title of entity2: 4gb edge proshot sdhc memory card class6; category of entity2: computers accessories; brand of entity2: edge; model number of entity2: nan; price of entity2: 17.83
+Duplicate or not: duplicate
+    <<SYS>>
+    Title of entity1: accell ultraav displayport multi-monitor adapter; category of entity1: electronics - general; brand of entity1: accell; model number of entity1: k087b-005b; price of entity1: 198.35
+Title of entity2: accell ultraav b101b-003b display port with vga active adapter; category of entity2: nan; brand of entity2: accell; model number of entity2: b101b-003b; price of entity2: 24.99
+Duplicate or not: [/INST]
+
+============
+
+    <s>[INST] <<SYS>>
+    Your job is to correctly label the following into one of the following categories duplicate
+not duplicate\n
+Title of entity1: lexmark extra high yield return pgm print cartridge - magenta; category of entity1: printers; brand of entity1: lexmark; model number of entity1: c782u1mg; price of entity1: 214.88
+Title of entity2: lexmark 18c1428 return program print cartridge black; category of entity2: inkjet printer ink; brand of entity2: lexmark; model number of entity2: 18c1428; price of entity2: 19.97
+Duplicate or not: not duplicate
+
+Title of entity1: edge tech proshot 4gb sdhc class 6 memory card; category of entity1: usb drives; brand of entity1: edge tech; model number of entity1: pe209780; price of entity1: 10.88
+Title of entity2: 4gb edge proshot sdhc memory card class6; category of entity2: computers accessories; brand of entity2: edge; model number of entity2: nan; price of entity2: 17.83
+Duplicate or not: duplicate
+    <<SYS>>
+    Title of entity1: ifrogz ipod touch 4 luxe lean case white; category of entity1: mp3 accessories; brand of entity1: ifrogz; model number of entity1: it4ll-wht; price of entity1: 24.99
+Title of entity2: ifrogz luxe lean case for ipod touch 4g gun metal; category of entity2: cases; brand of entity2: ifrogz; model number of entity2: it4ll-gmt; price of entity2: 11.99
+Duplicate or not: [/INST]
+
+============
+
+    <s>[INST] <<SYS>>
+    Your job is to correctly label the following into one of the following categories duplicate
+not duplicate\n
+Title of entity1: lexmark extra high yield return pgm print cartridge - magenta; category of entity1: printers; brand of entity1: lexmark; model number of entity1: c782u1mg; price of entity1: 214.88
+Title of entity2: lexmark 18c1428 return program print cartridge black; category of entity2: inkjet printer ink; brand of entity2: lexmark; model number of entity2: 18c1428; price of entity2: 19.97
+Duplicate or not: not duplicate
+
+Title of entity1: edge tech proshot 4gb sdhc class 6 memory card; category of entity1: usb drives; brand of entity1: edge tech; model number of entity1: pe209780; price of entity1: 10.88
+Title of entity2: 4gb edge proshot sdhc memory card class6; category of entity2: computers accessories; brand of entity2: edge; model number of entity2: nan; price of entity2: 17.83
+Duplicate or not: duplicate
+    <<SYS>>
+    Title of entity1: iogear gbu421w6 bluetooth usb micro adapter; category of entity1: networking; brand of entity1: iogear; model number of entity1: gbu421w6; price of entity1: 14.84
+Title of entity2: iogear bluetooth usb 2.1 micro adapter with tri-language package black; category of entity2: computers accessories; brand of entity2: iogear; model number of entity2: gbu421w6; price of entity2: 15.17
+Duplicate or not: [/INST]
+
+============
+
+    <s>[INST] <<SYS>>
+    Your job is to correctly label the following into one of the following categories duplicate
+not duplicate\n
+Title of entity1: lexmark extra high yield return pgm print cartridge - magenta; category of entity1: printers; brand of entity1: lexmark; model number of entity1: c782u1mg; price of entity1: 214.88
+Title of entity2: lexmark 18c1428 return program print cartridge black; category of entity2: inkjet printer ink; brand of entity2: lexmark; model number of entity2: 18c1428; price of entity2: 19.97
+Duplicate or not: not duplicate
+
+Title of entity1: edge tech proshot 4gb sdhc class 6 memory card; category of entity1: usb drives; brand of entity1: edge tech; model number of entity1: pe209780; price of entity1: 10.88
+Title of entity2: 4gb edge proshot sdhc memory card class6; category of entity2: computers accessories; brand of entity2: edge; model number of entity2: nan; price of entity2: 17.83
+Duplicate or not: duplicate
+    <<SYS>>
+    Title of entity1: da-lite matte white gray carpeted picture king w keystone eliminator - hdtv format 92 diagonal; category of entity1: electronics - general; brand of entity1: da-lite; model number of entity1: 87062; price of entity1: 343.99
+Title of entity2: da-lite carpeted picture king with keystone eliminator - projection screen with tripod - 1 1 - matte white - black; category of entity2: projection screens; brand of entity2: da-lite; model number of entity2: with keystone eliminator; price of entity2: 203.95
+Duplicate or not: [/INST]
+
+============
+
+    <s>[INST] <<SYS>>
+    Your job is to correctly label the following into one of the following categories duplicate
+not duplicate\n
+Title of entity1: lexmark extra high yield return pgm print cartridge - magenta; category of entity1: printers; brand of entity1: lexmark; model number of entity1: c782u1mg; price of entity1: 214.88
+Title of entity2: lexmark 18c1428 return program print cartridge black; category of entity2: inkjet printer ink; brand of entity2: lexmark; model number of entity2: 18c1428; price of entity2: 19.97
+Duplicate or not: not duplicate
+
+Title of entity1: edge tech proshot 4gb sdhc class 6 memory card; category of entity1: usb drives; brand of entity1: edge tech; model number of entity1: pe209780; price of entity1: 10.88
+Title of entity2: 4gb edge proshot sdhc memory card class6; category of entity2: computers accessories; brand of entity2: edge; model number of entity2: nan; price of entity2: 17.83
+Duplicate or not: duplicate
+    <<SYS>>
+    Title of entity1: uniden d1680 dect 6.0 with caller id and call waiting; category of entity1: electronics - general; brand of entity1: uniden; model number of entity1: d1680; price of entity1: 33.84
+Title of entity2: new-uniden d1660 dect 6.0 cordless phone system with call waiting caller id single-handset system - unnd1660; category of entity2: cordless telephones; brand of entity2: uniden; model number of entity2: nan; price of entity2: 24.09
+Duplicate or not: [/INST]
+
+============
+
+    <s>[INST] <<SYS>>
+    Your job is to correctly label the following into one of the following categories duplicate
+not duplicate\n
+Title of entity1: lexmark extra high yield return pgm print cartridge - magenta; category of entity1: printers; brand of entity1: lexmark; model number of entity1: c782u1mg; price of entity1: 214.88
+Title of entity2: lexmark 18c1428 return program print cartridge black; category of entity2: inkjet printer ink; brand of entity2: lexmark; model number of entity2: 18c1428; price of entity2: 19.97
+Duplicate or not: not duplicate
+
+Title of entity1: edge tech proshot 4gb sdhc class 6 memory card; category of entity1: usb drives; brand of entity1: edge tech; model number of entity1: pe209780; price of entity1: 10.88
+Title of entity2: 4gb edge proshot sdhc memory card class6; category of entity2: computers accessories; brand of entity2: edge; model number of entity2: nan; price of entity2: 17.83
+Duplicate or not: duplicate
+    <<SYS>>
+    Title of entity1: elite screens cinegray prime vision series fixed frame screen - 135 diagonal; category of entity1: electronics - general; brand of entity1: elite screens; model number of entity1: pvr135h1; price of entity1: 1069.0
+Title of entity2: cinegray ezframe series fixed frame screen - 150 diagonal; category of entity2: projection screens; brand of entity2: elite; model number of entity2: nan; price of entity2: 879.0
+Duplicate or not: [/INST]
+
+============
+
+    <s>[INST] <<SYS>>
+    Your job is to correctly label the following into one of the following categories duplicate
+not duplicate\n
+Title of entity1: lexmark extra high yield return pgm print cartridge - magenta; category of entity1: printers; brand of entity1: lexmark; model number of entity1: c782u1mg; price of entity1: 214.88
+Title of entity2: lexmark 18c1428 return program print cartridge black; category of entity2: inkjet printer ink; brand of entity2: lexmark; model number of entity2: 18c1428; price of entity2: 19.97
+Duplicate or not: not duplicate
+
+Title of entity1: edge tech proshot 4gb sdhc class 6 memory card; category of entity1: usb drives; brand of entity1: edge tech; model number of entity1: pe209780; price of entity1: 10.88
+Title of entity2: 4gb edge proshot sdhc memory card class6; category of entity2: computers accessories; brand of entity2: edge; model number of entity2: nan; price of entity2: 17.83
+Duplicate or not: duplicate
+    <<SYS>>
+    Title of entity1: netgear prosafe gs716t 16-port ethernet switch; category of entity1: networking; brand of entity1: netgear; model number of entity1: gs716t-200nas; price of entity1: 238.0
+Title of entity2: netgear fs605na 5-port fast ethernet switch; category of entity2: switches; brand of entity2: netgear; model number of entity2: fs605na; price of entity2: 21.99
+Duplicate or not: [/INST]
+
+============
+
+    <s>[INST] <<SYS>>
+    Your job is to correctly label the following into one of the following categories duplicate
+not duplicate\n
+Title of entity1: lexmark extra high yield return pgm print cartridge - magenta; category of entity1: printers; brand of entity1: lexmark; model number of entity1: c782u1mg; price of entity1: 214.88
+Title of entity2: lexmark 18c1428 return program print cartridge black; category of entity2: inkjet printer ink; brand of entity2: lexmark; model number of entity2: 18c1428; price of entity2: 19.97
+Duplicate or not: not duplicate
+
+Title of entity1: edge tech proshot 4gb sdhc class 6 memory card; category of entity1: usb drives; brand of entity1: edge tech; model number of entity1: pe209780; price of entity1: 10.88
+Title of entity2: 4gb edge proshot sdhc memory card class6; category of entity2: computers accessories; brand of entity2: edge; model number of entity2: nan; price of entity2: 17.83
+Duplicate or not: duplicate
+    <<SYS>>
+    Title of entity1: da-lite da-plex deluxe rear projection screen - 96 x 96 av format; category of entity1: electronics - general; brand of entity1: da-lite; model number of entity1: 27557; price of entity1: 6426.99
+Title of entity2: da-lite 27651 da-glas deluxe rear projection screen - 96 x 96 av format; category of entity2: projection screens; brand of entity2: da-lite; model number of entity2: nan; price of entity2: nan
+Duplicate or not: [/INST]
+
+============
+
+    <s>[INST] <<SYS>>
+    Your job is to correctly label the following into one of the following categories duplicate
+not duplicate\n
+Title of entity1: lexmark extra high yield return pgm print cartridge - magenta; category of entity1: printers; brand of entity1: lexmark; model number of entity1: c782u1mg; price of entity1: 214.88
+Title of entity2: lexmark 18c1428 return program print cartridge black; category of entity2: inkjet printer ink; brand of entity2: lexmark; model number of entity2: 18c1428; price of entity2: 19.97
+Duplicate or not: not duplicate
+
+Title of entity1: edge tech proshot 4gb sdhc class 6 memory card; category of entity1: usb drives; brand of entity1: edge tech; model number of entity1: pe209780; price of entity1: 10.88
+Title of entity2: 4gb edge proshot sdhc memory card class6; category of entity2: computers accessories; brand of entity2: edge; model number of entity2: nan; price of entity2: 17.83
+Duplicate or not: duplicate
+    <<SYS>>
+    Title of entity1: hp ce505xd black laserjet print cartridges 2pk; category of entity1: printers; brand of entity1: hp; model number of entity1: hp ce505xd; price of entity1: 258.84
+Title of entity2: hp 85a laserjet black toner print cartridge - retail packaging ce285a; category of entity2: laser printer toner; brand of entity2: hp; model number of entity2: ce285a; price of entity2: nan
+Duplicate or not: [/INST]
+
+============
+
+    <s>[INST] <<SYS>>
+    Your job is to correctly label the following into one of the following categories duplicate
+not duplicate\n
+Title of entity1: lexmark extra high yield return pgm print cartridge - magenta; category of entity1: printers; brand of entity1: lexmark; model number of entity1: c782u1mg; price of entity1: 214.88
+Title of entity2: lexmark 18c1428 return program print cartridge black; category of entity2: inkjet printer ink; brand of entity2: lexmark; model number of entity2: 18c1428; price of entity2: 19.97
+Duplicate or not: not duplicate
+
+Title of entity1: edge tech proshot 4gb sdhc class 6 memory card; category of entity1: usb drives; brand of entity1: edge tech; model number of entity1: pe209780; price of entity1: 10.88
+Title of entity2: 4gb edge proshot sdhc memory card class6; category of entity2: computers accessories; brand of entity2: edge; model number of entity2: nan; price of entity2: 17.83
+Duplicate or not: duplicate
+    <<SYS>>
+    Title of entity1: arrowmounts cantilever retractable wall mount for flat panel tvs up to 27; category of entity1: tv accessories; brand of entity1: arrowmounts; model number of entity1: am-p16b; price of entity1: 39.99
+Title of entity2: arrowmounts universal tilting wall mount for flat panel tvs from 23 to 37 inches am-t2337b; category of entity2: tv mounts; brand of entity2: arrowmounts; model number of entity2: nan; price of entity2: nan
+Duplicate or not: [/INST]
+
+============
+
+    <s>[INST] <<SYS>>
+    Your job is to correctly label the following into one of the following categories duplicate
+not duplicate\n
+Title of entity1: lexmark extra high yield return pgm print cartridge - magenta; category of entity1: printers; brand of entity1: lexmark; model number of entity1: c782u1mg; price of entity1: 214.88
+Title of entity2: lexmark 18c1428 return program print cartridge black; category of entity2: inkjet printer ink; brand of entity2: lexmark; model number of entity2: 18c1428; price of entity2: 19.97
+Duplicate or not: not duplicate
+
+Title of entity1: edge tech proshot 4gb sdhc class 6 memory card; category of entity1: usb drives; brand of entity1: edge tech; model number of entity1: pe209780; price of entity1: 10.88
+Title of entity2: 4gb edge proshot sdhc memory card class6; category of entity2: computers accessories; brand of entity2: edge; model number of entity2: nan; price of entity2: 17.83
+Duplicate or not: duplicate
+    <<SYS>>
+    Title of entity1: samsung s2 640gb usb 3.0 portable external hard drive red; category of entity1: hard drives; brand of entity1: samsung; model number of entity1: hx-mta64da / g42; price of entity1: 78.88
+Title of entity2: samsung s2 portable hard drive 640 gb usb 3.0 external hard drive hx-mta64da g32 snow white; category of entity2: external hard drives; brand of entity2: samsung; model number of entity2: hx-mta64da / g32; price of entity2: 84.99
+Duplicate or not: [/INST]
+
+============
+
+    <s>[INST] <<SYS>>
+    Your job is to correctly label the following into one of the following categories duplicate
+not duplicate\n
+Title of entity1: lexmark extra high yield return pgm print cartridge - magenta; category of entity1: printers; brand of entity1: lexmark; model number of entity1: c782u1mg; price of entity1: 214.88
+Title of entity2: lexmark 18c1428 return program print cartridge black; category of entity2: inkjet printer ink; brand of entity2: lexmark; model number of entity2: 18c1428; price of entity2: 19.97
+Duplicate or not: not duplicate
+
+Title of entity1: edge tech proshot 4gb sdhc class 6 memory card; category of entity1: usb drives; brand of entity1: edge tech; model number of entity1: pe209780; price of entity1: 10.88
+Title of entity2: 4gb edge proshot sdhc memory card class6; category of entity2: computers accessories; brand of entity2: edge; model number of entity2: nan; price of entity2: 17.83
+Duplicate or not: duplicate
+    <<SYS>>
+    Title of entity1: griffin ipod touch 4g formfit case pink clear; category of entity1: mp3 accessories; brand of entity1: arkon; model number of entity1: gb01959; price of entity1: 17.13
+Title of entity2: griffin technology formfit for ipod touch 4g pink clear; category of entity2: cases; brand of entity2: griffin technology; model number of entity2: gb01959; price of entity2: 7.53
+Duplicate or not: [/INST]
+
+============
+
+    <s>[INST] <<SYS>>
+    Your job is to correctly label the following into one of the following categories duplicate
+not duplicate\n
+Title of entity1: lexmark extra high yield return pgm print cartridge - magenta; category of entity1: printers; brand of entity1: lexmark; model number of entity1: c782u1mg; price of entity1: 214.88
+Title of entity2: lexmark 18c1428 return program print cartridge black; category of entity2: inkjet printer ink; brand of entity2: lexmark; model number of entity2: 18c1428; price of entity2: 19.97
+Duplicate or not: not duplicate
+
+Title of entity1: edge tech proshot 4gb sdhc class 6 memory card; category of entity1: usb drives; brand of entity1: edge tech; model number of entity1: pe209780; price of entity1: 10.88
+Title of entity2: 4gb edge proshot sdhc memory card class6; category of entity2: computers accessories; brand of entity2: edge; model number of entity2: nan; price of entity2: 17.83
+Duplicate or not: duplicate
+    <<SYS>>
+    Title of entity1: antec tricool 92mm double ball bearing case fan; category of entity1: electronics - general; brand of entity1: antec; model number of entity1: tricool 92mm dbb; price of entity1: 8.25
+Title of entity2: antec tricool case fan tricool 120mm; category of entity2: nan; brand of entity2: antec; model number of entity2: tricool 120mm; price of entity2: 11.19
+Duplicate or not: [/INST]
+
+============
+
+    <s>[INST] <<SYS>>
+    Your job is to correctly label the following into one of the following categories duplicate
+not duplicate\n
+Title of entity1: lexmark extra high yield return pgm print cartridge - magenta; category of entity1: printers; brand of entity1: lexmark; model number of entity1: c782u1mg; price of entity1: 214.88
+Title of entity2: lexmark 18c1428 return program print cartridge black; category of entity2: inkjet printer ink; brand of entity2: lexmark; model number of entity2: 18c1428; price of entity2: 19.97
+Duplicate or not: not duplicate
+
+Title of entity1: edge tech proshot 4gb sdhc class 6 memory card; category of entity1: usb drives; brand of entity1: edge tech; model number of entity1: pe209780; price of entity1: 10.88
+Title of entity2: 4gb edge proshot sdhc memory card class6; category of entity2: computers accessories; brand of entity2: edge; model number of entity2: nan; price of entity2: 17.83
+Duplicate or not: duplicate
+    <<SYS>>
+    Title of entity1: canon imageformula dr-2010c compact color scanner; category of entity1: electronics - general; brand of entity1: canon; model number of entity1: dr-2010c; price of entity1: 479.98
+Title of entity2: canon 2455b002 imageformula dr-2510c compact color scanner; category of entity2: scanners; brand of entity2: canon; model number of entity2: 2455b002; price of entity2: 617.99
+Duplicate or not: [/INST]
+
+============
+
+    <s>[INST] <<SYS>>
+    Your job is to correctly label the following into one of the following categories duplicate
+not duplicate\n
+Title of entity1: lexmark extra high yield return pgm print cartridge - magenta; category of entity1: printers; brand of entity1: lexmark; model number of entity1: c782u1mg; price of entity1: 214.88
+Title of entity2: lexmark 18c1428 return program print cartridge black; category of entity2: inkjet printer ink; brand of entity2: lexmark; model number of entity2: 18c1428; price of entity2: 19.97
+Duplicate or not: not duplicate
+
+Title of entity1: edge tech proshot 4gb sdhc class 6 memory card; category of entity1: usb drives; brand of entity1: edge tech; model number of entity1: pe209780; price of entity1: 10.88
+Title of entity2: 4gb edge proshot sdhc memory card class6; category of entity2: computers accessories; brand of entity2: edge; model number of entity2: nan; price of entity2: 17.83
+Duplicate or not: duplicate
+    <<SYS>>
+    Title of entity1: da-lite da-plex standard rear projection screen - 60 x 80 video format; category of entity1: electronics - general; brand of entity1: da-lite; model number of entity1: 27544; price of entity1: 2931.99
+Title of entity2: da-lite da-glas thru-the-wall rear projection screen - 90 x 120 video format; category of entity2: projection screens; brand of entity2: da-lite; model number of entity2: 23056; price of entity2: 8729.48
+Duplicate or not: [/INST]
+
+============
+
+    <s>[INST] <<SYS>>
+    Your job is to correctly label the following into one of the following categories duplicate
+not duplicate\n
+Title of entity1: lexmark extra high yield return pgm print cartridge - magenta; category of entity1: printers; brand of entity1: lexmark; model number of entity1: c782u1mg; price of entity1: 214.88
+Title of entity2: lexmark 18c1428 return program print cartridge black; category of entity2: inkjet printer ink; brand of entity2: lexmark; model number of entity2: 18c1428; price of entity2: 19.97
+Duplicate or not: not duplicate
+
+Title of entity1: edge tech proshot 4gb sdhc class 6 memory card; category of entity1: usb drives; brand of entity1: edge tech; model number of entity1: pe209780; price of entity1: 10.88
+Title of entity2: 4gb edge proshot sdhc memory card class6; category of entity2: computers accessories; brand of entity2: edge; model number of entity2: nan; price of entity2: 17.83
+Duplicate or not: duplicate
+    <<SYS>>
+    Title of entity1: boss audio bv9958b - single-din in-dash dvd mp3 cd am fm receiver with full detachable 7 widescreen touchscreen tft monitor usb and sd memory card ports and front panel aux input; category of entity1: car stereos; brand of entity1: boss; model number of entity1: bv9958b; price of entity1: 180.0
+Title of entity2: boss bv8966b in-dash 7 dvd mp3 cd receiver with usb sd card bluetooth and front panel aux input; category of entity2: accessories supplies; brand of entity2: boss; model number of entity2: bv8966b; price of entity2: 180.95
+Duplicate or not: [/INST]
+
+============
+
+    <s>[INST] <<SYS>>
+    Your job is to correctly label the following into one of the following categories duplicate
+not duplicate\n
+Title of entity1: lexmark extra high yield return pgm print cartridge - magenta; category of entity1: printers; brand of entity1: lexmark; model number of entity1: c782u1mg; price of entity1: 214.88
+Title of entity2: lexmark 18c1428 return program print cartridge black; category of entity2: inkjet printer ink; brand of entity2: lexmark; model number of entity2: 18c1428; price of entity2: 19.97
+Duplicate or not: not duplicate
+
+Title of entity1: edge tech proshot 4gb sdhc class 6 memory card; category of entity1: usb drives; brand of entity1: edge tech; model number of entity1: pe209780; price of entity1: 10.88
+Title of entity2: 4gb edge proshot sdhc memory card class6; category of entity2: computers accessories; brand of entity2: edge; model number of entity2: nan; price of entity2: 17.83
+Duplicate or not: duplicate
+    <<SYS>>
+    Title of entity1: tops second nature subject wire notebook college rule 6 x 9-1 2 we 80 sheets; category of entity1: stationery & office machinery; brand of entity1: tops business forms; model number of entity1: 74109; price of entity1: 5.54
+Title of entity2: tops 74111 - second nature subject wirebound notebook college rule ltr we 80 sheets; category of entity2: printers; brand of entity2: tops; model number of entity2: nan; price of entity2: 24.3
+Duplicate or not: [/INST]
+
+============
+
+    <s>[INST] <<SYS>>
+    Your job is to correctly label the following into one of the following categories duplicate
+not duplicate\n
+Title of entity1: lexmark extra high yield return pgm print cartridge - magenta; category of entity1: printers; brand of entity1: lexmark; model number of entity1: c782u1mg; price of entity1: 214.88
+Title of entity2: lexmark 18c1428 return program print cartridge black; category of entity2: inkjet printer ink; brand of entity2: lexmark; model number of entity2: 18c1428; price of entity2: 19.97
+Duplicate or not: not duplicate
+
+Title of entity1: edge tech proshot 4gb sdhc class 6 memory card; category of entity1: usb drives; brand of entity1: edge tech; model number of entity1: pe209780; price of entity1: 10.88
+Title of entity2: 4gb edge proshot sdhc memory card class6; category of entity2: computers accessories; brand of entity2: edge; model number of entity2: nan; price of entity2: 17.83
+Duplicate or not: duplicate
+    <<SYS>>
+    Title of entity1: belkin 10.2 netbook neoprene sleeve - black; category of entity1: electronics - general; brand of entity1: belkin; model number of entity1: f8n132-blk; price of entity1: 8.88
+Title of entity2: icon-icon4-blk neoprene notebook sleeve black; category of entity2: bags cases; brand of entity2: motion systems; model number of entity2: icon4-blk; price of entity2: 9.99
+Duplicate or not: [/INST]
+
+============
+
+    <s>[INST] <<SYS>>
+    Your job is to correctly label the following into one of the following categories duplicate
+not duplicate\n
+Title of entity1: lexmark extra high yield return pgm print cartridge - magenta; category of entity1: printers; brand of entity1: lexmark; model number of entity1: c782u1mg; price of entity1: 214.88
+Title of entity2: lexmark 18c1428 return program print cartridge black; category of entity2: inkjet printer ink; brand of entity2: lexmark; model number of entity2: 18c1428; price of entity2: 19.97
+Duplicate or not: not duplicate
+
+Title of entity1: edge tech proshot 4gb sdhc class 6 memory card; category of entity1: usb drives; brand of entity1: edge tech; model number of entity1: pe209780; price of entity1: 10.88
+Title of entity2: 4gb edge proshot sdhc memory card class6; category of entity2: computers accessories; brand of entity2: edge; model number of entity2: nan; price of entity2: 17.83
+Duplicate or not: duplicate
+    <<SYS>>
+    Title of entity1: da-lite da-tex rear tensioned advantage electrol - hdtv format 184 diagonal; category of entity1: electronics - general; brand of entity1: da-lite; model number of entity1: 35199; price of entity1: 4612.99
+Title of entity2: da-lite 98813 hc da-mat tensioned cosmopolitan electrol - av format 10 6 x 14 diagonal; category of entity2: nan; brand of entity2: da-lite; model number of entity2: nan; price of entity2: nan
+Duplicate or not: [/INST]
+
+============
+
+    <s>[INST] <<SYS>>
+    Your job is to correctly label the following into one of the following categories duplicate
+not duplicate\n
+Title of entity1: lexmark extra high yield return pgm print cartridge - magenta; category of entity1: printers; brand of entity1: lexmark; model number of entity1: c782u1mg; price of entity1: 214.88
+Title of entity2: lexmark 18c1428 return program print cartridge black; category of entity2: inkjet printer ink; brand of entity2: lexmark; model number of entity2: 18c1428; price of entity2: 19.97
+Duplicate or not: not duplicate
+
+Title of entity1: edge tech proshot 4gb sdhc class 6 memory card; category of entity1: usb drives; brand of entity1: edge tech; model number of entity1: pe209780; price of entity1: 10.88
+Title of entity2: 4gb edge proshot sdhc memory card class6; category of entity2: computers accessories; brand of entity2: edge; model number of entity2: nan; price of entity2: 17.83
+Duplicate or not: duplicate
+    <<SYS>>
+    Title of entity1: tops classified colors notebook narrow rule 5-1 2 x 8-1 2 orchid 100 sheets; category of entity1: stationery & office machinery; brand of entity1: tops business forms; model number of entity1: 99712; price of entity1: 11.58
+Title of entity2: new-tops 73505 - notebook w red cover narrow rule 5-1 2 x 8-1 2 white 100 sheets pad - top73505; category of entity2: storage presentation materials; brand of entity2: tops; model number of entity2: nan; price of entity2: 19.0
+Duplicate or not: [/INST]
+
+============
+
+    <s>[INST] <<SYS>>
+    Your job is to correctly label the following into one of the following categories duplicate
+not duplicate\n
+Title of entity1: lexmark extra high yield return pgm print cartridge - magenta; category of entity1: printers; brand of entity1: lexmark; model number of entity1: c782u1mg; price of entity1: 214.88
+Title of entity2: lexmark 18c1428 return program print cartridge black; category of entity2: inkjet printer ink; brand of entity2: lexmark; model number of entity2: 18c1428; price of entity2: 19.97
+Duplicate or not: not duplicate
+
+Title of entity1: edge tech proshot 4gb sdhc class 6 memory card; category of entity1: usb drives; brand of entity1: edge tech; model number of entity1: pe209780; price of entity1: 10.88
+Title of entity2: 4gb edge proshot sdhc memory card class6; category of entity2: computers accessories; brand of entity2: edge; model number of entity2: nan; price of entity2: 17.83
+Duplicate or not: duplicate
+    <<SYS>>
+    Title of entity1: lexmark e450h11a toner 11000 page-yield black; category of entity1: printers; brand of entity1: lexmark; model number of entity1: e450h11a; price of entity1: 248.27
+Title of entity2: oki 52117101 - 52117101 toner 33000 page-yield black; category of entity2: cables interconnects; brand of entity2: oki; model number of entity2: nan; price of entity2: nan
+Duplicate or not: [/INST]
+
+============
+
+    <s>[INST] <<SYS>>
+    Your job is to correctly label the following into one of the following categories duplicate
+not duplicate\n
+Title of entity1: lexmark extra high yield return pgm print cartridge - magenta; category of entity1: printers; brand of entity1: lexmark; model number of entity1: c782u1mg; price of entity1: 214.88
+Title of entity2: lexmark 18c1428 return program print cartridge black; category of entity2: inkjet printer ink; brand of entity2: lexmark; model number of entity2: 18c1428; price of entity2: 19.97
+Duplicate or not: not duplicate
+
+Title of entity1: edge tech proshot 4gb sdhc class 6 memory card; category of entity1: usb drives; brand of entity1: edge tech; model number of entity1: pe209780; price of entity1: 10.88
+Title of entity2: 4gb edge proshot sdhc memory card class6; category of entity2: computers accessories; brand of entity2: edge; model number of entity2: nan; price of entity2: 17.83
+Duplicate or not: duplicate
+    <<SYS>>
+    Title of entity1: san francisco 49ers camera case; category of entity1: electronics - general; brand of entity1: tribeca; model number of entity1: fva2773; price of entity1: 19.99
+Title of entity2: san francisco 49ers ipod touch 4g hard case; category of entity2: computers accessories; brand of entity2: tribeca; model number of entity2: nan; price of entity2: 29.99
+Duplicate or not: [/INST]
+
+============
+
+    <s>[INST] <<SYS>>
+    Your job is to correctly label the following into one of the following categories duplicate
+not duplicate\n
+Title of entity1: lexmark extra high yield return pgm print cartridge - magenta; category of entity1: printers; brand of entity1: lexmark; model number of entity1: c782u1mg; price of entity1: 214.88
+Title of entity2: lexmark 18c1428 return program print cartridge black; category of entity2: inkjet printer ink; brand of entity2: lexmark; model number of entity2: 18c1428; price of entity2: 19.97
+Duplicate or not: not duplicate
+
+Title of entity1: edge tech proshot 4gb sdhc class 6 memory card; category of entity1: usb drives; brand of entity1: edge tech; model number of entity1: pe209780; price of entity1: 10.88
+Title of entity2: 4gb edge proshot sdhc memory card class6; category of entity2: computers accessories; brand of entity2: edge; model number of entity2: nan; price of entity2: 17.83
+Duplicate or not: duplicate
+    <<SYS>>
+    Title of entity1: birdhouse tony hawk 2gb full skull skatedrive usb flash drive; category of entity1: usb drives; brand of entity1: ep memory; model number of entity1: bh-skthfs/2g; price of entity1: 9.84
+Title of entity2: birdhouse tony hawk 16gb ptero skatedrive usb flash drive; category of entity2: usb flash drives; brand of entity2: action; model number of entity2: nan; price of entity2: nan
+Duplicate or not: [/INST]
+
+============
+
+    <s>[INST] <<SYS>>
+    Your job is to correctly label the following into one of the following categories duplicate
+not duplicate\n
+Title of entity1: lexmark extra high yield return pgm print cartridge - magenta; category of entity1: printers; brand of entity1: lexmark; model number of entity1: c782u1mg; price of entity1: 214.88
+Title of entity2: lexmark 18c1428 return program print cartridge black; category of entity2: inkjet printer ink; brand of entity2: lexmark; model number of entity2: 18c1428; price of entity2: 19.97
+Duplicate or not: not duplicate
+
+Title of entity1: edge tech proshot 4gb sdhc class 6 memory card; category of entity1: usb drives; brand of entity1: edge tech; model number of entity1: pe209780; price of entity1: 10.88
+Title of entity2: 4gb edge proshot sdhc memory card class6; category of entity2: computers accessories; brand of entity2: edge; model number of entity2: nan; price of entity2: 17.83
+Duplicate or not: duplicate
+    <<SYS>>
+    Title of entity1: pny 4gb sdhc memory card class 4; category of entity1: usb drives; brand of entity1: pny; model number of entity1: p-sdhc4g4-ef; price of entity1: 8.98
+Title of entity2: pny 4 gb sdhc class 2 flash memory card p-sdhc4g2-ef purple purple; category of entity2: blank media; brand of entity2: pny; model number of entity2: p-sdhc4g2-ef / purple; price of entity2: 12.71
+Duplicate or not: [/INST]
+
+============
+
+    <s>[INST] <<SYS>>
+    Your job is to correctly label the following into one of the following categories duplicate
+not duplicate\n
+Title of entity1: lexmark extra high yield return pgm print cartridge - magenta; category of entity1: printers; brand of entity1: lexmark; model number of entity1: c782u1mg; price of entity1: 214.88
+Title of entity2: lexmark 18c1428 return program print cartridge black; category of entity2: inkjet printer ink; brand of entity2: lexmark; model number of entity2: 18c1428; price of entity2: 19.97
+Duplicate or not: not duplicate
+
+Title of entity1: edge tech proshot 4gb sdhc class 6 memory card; category of entity1: usb drives; brand of entity1: edge tech; model number of entity1: pe209780; price of entity1: 10.88
+Title of entity2: 4gb edge proshot sdhc memory card class6; category of entity2: computers accessories; brand of entity2: edge; model number of entity2: nan; price of entity2: 17.83
+Duplicate or not: duplicate
+    <<SYS>>
+    Title of entity1: pendaflex 2 reinforced hanging file folder standard green 25 box; category of entity1: stationery & office machinery; brand of entity1: nan; model number of entity1: 4152x2; price of entity1: 24.94
+Title of entity2: pendaflex rcy415215sgr - reinforced hanging file folders kraft letter standard green 25 box; category of entity2: printers; brand of entity2: pendaflex; model number of entity2: nan; price of entity2: nan
+Duplicate or not: [/INST]
+
+============
+
+    <s>[INST] <<SYS>>
+    Your job is to correctly label the following into one of the following categories duplicate
+not duplicate\n
+Title of entity1: lexmark extra high yield return pgm print cartridge - magenta; category of entity1: printers; brand of entity1: lexmark; model number of entity1: c782u1mg; price of entity1: 214.88
+Title of entity2: lexmark 18c1428 return program print cartridge black; category of entity2: inkjet printer ink; brand of entity2: lexmark; model number of entity2: 18c1428; price of entity2: 19.97
+Duplicate or not: not duplicate
+
+Title of entity1: edge tech proshot 4gb sdhc class 6 memory card; category of entity1: usb drives; brand of entity1: edge tech; model number of entity1: pe209780; price of entity1: 10.88
+Title of entity2: 4gb edge proshot sdhc memory card class6; category of entity2: computers accessories; brand of entity2: edge; model number of entity2: nan; price of entity2: 17.83
+Duplicate or not: duplicate
+    <<SYS>>
+    Title of entity1: uniden 1360bk desktop corded phone with caller id black; category of entity1: electronics - general; brand of entity1: uniden; model number of entity1: 1360bk; price of entity1: 23.98
+Title of entity2: uniden slimline corded phone with cid cw - un-1260bk; category of entity2: corded telephones; brand of entity2: uniden; model number of entity2: nan; price of entity2: 16.87
+Duplicate or not: [/INST]
+
+============
+
+    <s>[INST] <<SYS>>
+    Your job is to correctly label the following into one of the following categories duplicate
+not duplicate\n
+Title of entity1: lexmark extra high yield return pgm print cartridge - magenta; category of entity1: printers; brand of entity1: lexmark; model number of entity1: c782u1mg; price of entity1: 214.88
+Title of entity2: lexmark 18c1428 return program print cartridge black; category of entity2: inkjet printer ink; brand of entity2: lexmark; model number of entity2: 18c1428; price of entity2: 19.97
+Duplicate or not: not duplicate
+
+Title of entity1: edge tech proshot 4gb sdhc class 6 memory card; category of entity1: usb drives; brand of entity1: edge tech; model number of entity1: pe209780; price of entity1: 10.88
+Title of entity2: 4gb edge proshot sdhc memory card class6; category of entity2: computers accessories; brand of entity2: edge; model number of entity2: nan; price of entity2: 17.83
+Duplicate or not: duplicate
+    <<SYS>>
+    Title of entity1: da-lite da-glas unframed rear projection screen - 57 3 4 x 77 video format; category of entity1: electronics - general; brand of entity1: da-lite; model number of entity1: 27604; price of entity1: 1609.99
+Title of entity2: da-plex base rear projection screen - 57 3 4 x 77 video format; category of entity2: projection screens; brand of entity2: da-lite; model number of entity2: nan; price of entity2: 2608.99
+Duplicate or not: [/INST]
+
+============
+
+    <s>[INST] <<SYS>>
+    Your job is to correctly label the following into one of the following categories duplicate
+not duplicate\n
+Title of entity1: lexmark extra high yield return pgm print cartridge - magenta; category of entity1: printers; brand of entity1: lexmark; model number of entity1: c782u1mg; price of entity1: 214.88
+Title of entity2: lexmark 18c1428 return program print cartridge black; category of entity2: inkjet printer ink; brand of entity2: lexmark; model number of entity2: 18c1428; price of entity2: 19.97
+Duplicate or not: not duplicate
+
+Title of entity1: edge tech proshot 4gb sdhc class 6 memory card; category of entity1: usb drives; brand of entity1: edge tech; model number of entity1: pe209780; price of entity1: 10.88
+Title of entity2: 4gb edge proshot sdhc memory card class6; category of entity2: computers accessories; brand of entity2: edge; model number of entity2: nan; price of entity2: 17.83
+Duplicate or not: duplicate
+    <<SYS>>
+    Title of entity1: epson t068120-d2 dual black ink cartridge; category of entity1: printers; brand of entity1: epson; model number of entity1: epson t068120-d2; price of entity1: 39.84
+Title of entity2: epson t048220 cyan ink cartridge; category of entity2: inkjet printer ink; brand of entity2: epson; model number of entity2: t048220; price of entity2: 9.99
+Duplicate or not: [/INST]
+
+============
+
+    <s>[INST] <<SYS>>
+    Your job is to correctly label the following into one of the following categories duplicate
+not duplicate\n
+Title of entity1: lexmark extra high yield return pgm print cartridge - magenta; category of entity1: printers; brand of entity1: lexmark; model number of entity1: c782u1mg; price of entity1: 214.88
+Title of entity2: lexmark 18c1428 return program print cartridge black; category of entity2: inkjet printer ink; brand of entity2: lexmark; model number of entity2: 18c1428; price of entity2: 19.97
+Duplicate or not: not duplicate
+
+Title of entity1: edge tech proshot 4gb sdhc class 6 memory card; category of entity1: usb drives; brand of entity1: edge tech; model number of entity1: pe209780; price of entity1: 10.88
+Title of entity2: 4gb edge proshot sdhc memory card class6; category of entity2: computers accessories; brand of entity2: edge; model number of entity2: nan; price of entity2: 17.83
+Duplicate or not: duplicate
+    <<SYS>>
+    Title of entity1: los angeles lakers ipod touch 4g hard case; category of entity1: electronics - general; brand of entity1: tribeca; model number of entity1: fva4614; price of entity1: 29.99
+Title of entity2: san francisco 49ers ipod touch 4g hard case; category of entity2: computers accessories; brand of entity2: tribeca; model number of entity2: nan; price of entity2: 29.99
+Duplicate or not: [/INST]
+
+============
+
+    <s>[INST] <<SYS>>
+    Your job is to correctly label the following into one of the following categories duplicate
+not duplicate\n
+Title of entity1: lexmark extra high yield return pgm print cartridge - magenta; category of entity1: printers; brand of entity1: lexmark; model number of entity1: c782u1mg; price of entity1: 214.88
+Title of entity2: lexmark 18c1428 return program print cartridge black; category of entity2: inkjet printer ink; brand of entity2: lexmark; model number of entity2: 18c1428; price of entity2: 19.97
+Duplicate or not: not duplicate
+
+Title of entity1: edge tech proshot 4gb sdhc class 6 memory card; category of entity1: usb drives; brand of entity1: edge tech; model number of entity1: pe209780; price of entity1: 10.88
+Title of entity2: 4gb edge proshot sdhc memory card class6; category of entity2: computers accessories; brand of entity2: edge; model number of entity2: nan; price of entity2: 17.83
+Duplicate or not: duplicate
+    <<SYS>>
+    Title of entity1: evga geforce 210 512mb ddr3 pci express graphics card; category of entity1: electronics - general; brand of entity1: evga; model number of entity1: 512p31310lr; price of entity1: 32.88
+Title of entity2: evga geforce 8400 gs passive 512mb ddr3 pci-express 2.0 graphics card - 3 year limited warranty 512-p3-1301-kr; category of entity2: graphics cards; brand of entity2: evga; model number of entity2: 512-p3-1301-kr; price of entity2: 34.99
+Duplicate or not: [/INST]
+
+============
+
+    <s>[INST] <<SYS>>
+    Your job is to correctly label the following into one of the following categories duplicate
+not duplicate\n
+Title of entity1: lexmark extra high yield return pgm print cartridge - magenta; category of entity1: printers; brand of entity1: lexmark; model number of entity1: c782u1mg; price of entity1: 214.88
+Title of entity2: lexmark 18c1428 return program print cartridge black; category of entity2: inkjet printer ink; brand of entity2: lexmark; model number of entity2: 18c1428; price of entity2: 19.97
+Duplicate or not: not duplicate
+
+Title of entity1: edge tech proshot 4gb sdhc class 6 memory card; category of entity1: usb drives; brand of entity1: edge tech; model number of entity1: pe209780; price of entity1: 10.88
+Title of entity2: 4gb edge proshot sdhc memory card class6; category of entity2: computers accessories; brand of entity2: edge; model number of entity2: nan; price of entity2: 17.83
+Duplicate or not: duplicate
+    <<SYS>>
+    Title of entity1: evga geforce 210 512mb ddr3 pci express graphics card; category of entity1: electronics - general; brand of entity1: evga; model number of entity1: 512p31310lr; price of entity1: 32.88
+Title of entity2: nvidia geforce 310 dms59 pcie16 512mb 2port vga dvi graphics card; category of entity2: nan; brand of entity2: lenovo; model number of entity2: 57y4167; price of entity2: 102.24
+Duplicate or not: [/INST]
+
+============
+
+    <s>[INST] <<SYS>>
+    Your job is to correctly label the following into one of the following categories duplicate
+not duplicate\n
+Title of entity1: lexmark extra high yield return pgm print cartridge - magenta; category of entity1: printers; brand of entity1: lexmark; model number of entity1: c782u1mg; price of entity1: 214.88
+Title of entity2: lexmark 18c1428 return program print cartridge black; category of entity2: inkjet printer ink; brand of entity2: lexmark; model number of entity2: 18c1428; price of entity2: 19.97
+Duplicate or not: not duplicate
+
+Title of entity1: edge tech proshot 4gb sdhc class 6 memory card; category of entity1: usb drives; brand of entity1: edge tech; model number of entity1: pe209780; price of entity1: 10.88
+Title of entity2: 4gb edge proshot sdhc memory card class6; category of entity2: computers accessories; brand of entity2: edge; model number of entity2: nan; price of entity2: 17.83
+Duplicate or not: duplicate
+    <<SYS>>
+    Title of entity1: srs labs analog rca volume leveler; category of entity1: tv accessories; brand of entity1: srs labs; model number of entity1: dct6s; price of entity1: 59.99
+Title of entity2: new-analog rca volume leveler - dct6s; category of entity2: accessories; brand of entity2: srs; model number of entity2: nan; price of entity2: 65.0
+Duplicate or not: [/INST]
+
+============
+
+    <s>[INST] <<SYS>>
+    Your job is to correctly label the following into one of the following categories duplicate
+not duplicate\n
+Title of entity1: lexmark extra high yield return pgm print cartridge - magenta; category of entity1: printers; brand of entity1: lexmark; model number of entity1: c782u1mg; price of entity1: 214.88
+Title of entity2: lexmark 18c1428 return program print cartridge black; category of entity2: inkjet printer ink; brand of entity2: lexmark; model number of entity2: 18c1428; price of entity2: 19.97
+Duplicate or not: not duplicate
+
+Title of entity1: edge tech proshot 4gb sdhc class 6 memory card; category of entity1: usb drives; brand of entity1: edge tech; model number of entity1: pe209780; price of entity1: 10.88
+Title of entity2: 4gb edge proshot sdhc memory card class6; category of entity2: computers accessories; brand of entity2: edge; model number of entity2: nan; price of entity2: 17.83
+Duplicate or not: duplicate
+    <<SYS>>
+    Title of entity1: da-lite da-glas self trimming rear projection screen - 96 x 120 av format; category of entity1: electronics - general; brand of entity1: da-lite; model number of entity1: 27915; price of entity1: 7443.99
+Title of entity2: da-glas base rear projection screen - 70 x 70 av format; category of entity2: projection screens; brand of entity2: da-lite; model number of entity2: nan; price of entity2: 2622.99
+Duplicate or not: [/INST]
+
+============
+
+    <s>[INST] <<SYS>>
+    Your job is to correctly label the following into one of the following categories duplicate
+not duplicate\n
+Title of entity1: lexmark extra high yield return pgm print cartridge - magenta; category of entity1: printers; brand of entity1: lexmark; model number of entity1: c782u1mg; price of entity1: 214.88
+Title of entity2: lexmark 18c1428 return program print cartridge black; category of entity2: inkjet printer ink; brand of entity2: lexmark; model number of entity2: 18c1428; price of entity2: 19.97
+Duplicate or not: not duplicate
+
+Title of entity1: edge tech proshot 4gb sdhc class 6 memory card; category of entity1: usb drives; brand of entity1: edge tech; model number of entity1: pe209780; price of entity1: 10.88
+Title of entity2: 4gb edge proshot sdhc memory card class6; category of entity2: computers accessories; brand of entity2: edge; model number of entity2: nan; price of entity2: 17.83
+Duplicate or not: duplicate
+    <<SYS>>
+    Title of entity1: iosafe rugged 250gb usb 3.0 portable external hard drive; category of entity1: hard drives; brand of entity1: iosafe; model number of entity1: pa50250u5yr; price of entity1: 249.99
+Title of entity2: lacie rikiki 320 gb usb 2.0 portable external hard drive 301908; category of entity2: external hard drives; brand of entity2: lacie; model number of entity2: 301908; price of entity2: 64.24
+Duplicate or not: [/INST]
+
+============
+
+    <s>[INST] <<SYS>>
+    Your job is to correctly label the following into one of the following categories duplicate
+not duplicate\n
+Title of entity1: lexmark extra high yield return pgm print cartridge - magenta; category of entity1: printers; brand of entity1: lexmark; model number of entity1: c782u1mg; price of entity1: 214.88
+Title of entity2: lexmark 18c1428 return program print cartridge black; category of entity2: inkjet printer ink; brand of entity2: lexmark; model number of entity2: 18c1428; price of entity2: 19.97
+Duplicate or not: not duplicate
+
+Title of entity1: edge tech proshot 4gb sdhc class 6 memory card; category of entity1: usb drives; brand of entity1: edge tech; model number of entity1: pe209780; price of entity1: 10.88
+Title of entity2: 4gb edge proshot sdhc memory card class6; category of entity2: computers accessories; brand of entity2: edge; model number of entity2: nan; price of entity2: 17.83
+Duplicate or not: duplicate
+    <<SYS>>
+    Title of entity1: orbital tilt and turn tv wall mount with glass shelving for 25-40 tvs; category of entity1: tv accessories; brand of entity1: orbital; model number of entity1: resl422b-e; price of entity1: 0.0
+Title of entity2: avf resl422b-f orbital tilt and turn tv mount with av shelving for 25 to 40-inch flat panel tv screens black; category of entity2: tv mounts; brand of entity2: avf; model number of entity2: resl422b-f; price of entity2: 125.99
+Duplicate or not: [/INST]
+
+============
+
+    <s>[INST] <<SYS>>
+    Your job is to correctly label the following into one of the following categories duplicate
+not duplicate\n
+Title of entity1: lexmark extra high yield return pgm print cartridge - magenta; category of entity1: printers; brand of entity1: lexmark; model number of entity1: c782u1mg; price of entity1: 214.88
+Title of entity2: lexmark 18c1428 return program print cartridge black; category of entity2: inkjet printer ink; brand of entity2: lexmark; model number of entity2: 18c1428; price of entity2: 19.97
+Duplicate or not: not duplicate
+
+Title of entity1: edge tech proshot 4gb sdhc class 6 memory card; category of entity1: usb drives; brand of entity1: edge tech; model number of entity1: pe209780; price of entity1: 10.88
+Title of entity2: 4gb edge proshot sdhc memory card class6; category of entity2: computers accessories; brand of entity2: edge; model number of entity2: nan; price of entity2: 17.83
+Duplicate or not: duplicate
+    <<SYS>>
+    Title of entity1: kodak easyshare m552 dark pink 14mp digital camera w 5x optical zoom 2.7 lcd display w 50 bonus prints; category of entity1: digital cameras; brand of entity1: kodak; model number of entity1: m552pink; price of entity1: 94.54
+Title of entity2: kodak easyshare m531 14mp 3x optical 5x digital zoom hd camera red black; category of entity2: digital cameras; brand of entity2: kodak; model number of entity2: nan; price of entity2: 104.95
+Duplicate or not: [/INST]
+
+============
+
+    <s>[INST] <<SYS>>
+    Your job is to correctly label the following into one of the following categories duplicate
+not duplicate\n
+Title of entity1: lexmark extra high yield return pgm print cartridge - magenta; category of entity1: printers; brand of entity1: lexmark; model number of entity1: c782u1mg; price of entity1: 214.88
+Title of entity2: lexmark 18c1428 return program print cartridge black; category of entity2: inkjet printer ink; brand of entity2: lexmark; model number of entity2: 18c1428; price of entity2: 19.97
+Duplicate or not: not duplicate
+
+Title of entity1: edge tech proshot 4gb sdhc class 6 memory card; category of entity1: usb drives; brand of entity1: edge tech; model number of entity1: pe209780; price of entity1: 10.88
+Title of entity2: 4gb edge proshot sdhc memory card class6; category of entity2: computers accessories; brand of entity2: edge; model number of entity2: nan; price of entity2: 17.83
+Duplicate or not: duplicate
+    <<SYS>>
+    Title of entity1: kingston ktd-dm8400a 1g 1gb ddr2 sdram memory module; category of entity1: memory; brand of entity1: kingston; model number of entity1: ktd-dm8400a / 1g; price of entity1: 22.92
+Title of entity2: kingston 8 gb ddr2 sdram memory module 8 gb 2 x 4 gb 667mhz ddr2 sdram ktd-ws667 8g; category of entity2: memory; brand of entity2: kingston; model number of entity2: ktd-ws667 / 8g; price of entity2: 230.74
+Duplicate or not: [/INST]
+
+============
+
+    <s>[INST] <<SYS>>
+    Your job is to correctly label the following into one of the following categories duplicate
+not duplicate\n
+Title of entity1: lexmark extra high yield return pgm print cartridge - magenta; category of entity1: printers; brand of entity1: lexmark; model number of entity1: c782u1mg; price of entity1: 214.88
+Title of entity2: lexmark 18c1428 return program print cartridge black; category of entity2: inkjet printer ink; brand of entity2: lexmark; model number of entity2: 18c1428; price of entity2: 19.97
+Duplicate or not: not duplicate
+
+Title of entity1: edge tech proshot 4gb sdhc class 6 memory card; category of entity1: usb drives; brand of entity1: edge tech; model number of entity1: pe209780; price of entity1: 10.88
+Title of entity2: 4gb edge proshot sdhc memory card class6; category of entity2: computers accessories; brand of entity2: edge; model number of entity2: nan; price of entity2: 17.83
+Duplicate or not: duplicate
+    <<SYS>>
+    Title of entity1: paper mate mechanical pencil starter set; category of entity1: stationery & office machinery; brand of entity1: paper mate; model number of entity1: 1739312; price of entity1: 4.87
+Title of entity2: paper mate 1739311 - megalead mechanical pencil starter set 0.5 mm 2 erasure refills red barrel; category of entity2: printer accessories; brand of entity2: paper mate; model number of entity2: nan; price of entity2: 23.96
+Duplicate or not: [/INST]
+
+============
+
+    <s>[INST] <<SYS>>
+    Your job is to correctly label the following into one of the following categories duplicate
+not duplicate\n
+Title of entity1: lexmark extra high yield return pgm print cartridge - magenta; category of entity1: printers; brand of entity1: lexmark; model number of entity1: c782u1mg; price of entity1: 214.88
+Title of entity2: lexmark 18c1428 return program print cartridge black; category of entity2: inkjet printer ink; brand of entity2: lexmark; model number of entity2: 18c1428; price of entity2: 19.97
+Duplicate or not: not duplicate
+
+Title of entity1: edge tech proshot 4gb sdhc class 6 memory card; category of entity1: usb drives; brand of entity1: edge tech; model number of entity1: pe209780; price of entity1: 10.88
+Title of entity2: 4gb edge proshot sdhc memory card class6; category of entity2: computers accessories; brand of entity2: edge; model number of entity2: nan; price of entity2: 17.83
+Duplicate or not: duplicate
+    <<SYS>>
+    Title of entity1: pioneer 6.5 3-way speakers 300w; category of entity1: car stereos; brand of entity1: pioneer; model number of entity1: ts-a1674r; price of entity1: 90.88
+Title of entity2: pioneer ts-a1683r 6.5-inch 280-watt 4-way speakers; category of entity2: coaxial speakers; brand of entity2: pioneer; model number of entity2: ts-a1683r; price of entity2: 46.99
+Duplicate or not: [/INST]
+
+============
+
+    <s>[INST] <<SYS>>
+    Your job is to correctly label the following into one of the following categories duplicate
+not duplicate\n
+Title of entity1: lexmark extra high yield return pgm print cartridge - magenta; category of entity1: printers; brand of entity1: lexmark; model number of entity1: c782u1mg; price of entity1: 214.88
+Title of entity2: lexmark 18c1428 return program print cartridge black; category of entity2: inkjet printer ink; brand of entity2: lexmark; model number of entity2: 18c1428; price of entity2: 19.97
+Duplicate or not: not duplicate
+
+Title of entity1: edge tech proshot 4gb sdhc class 6 memory card; category of entity1: usb drives; brand of entity1: edge tech; model number of entity1: pe209780; price of entity1: 10.88
+Title of entity2: 4gb edge proshot sdhc memory card class6; category of entity2: computers accessories; brand of entity2: edge; model number of entity2: nan; price of entity2: 17.83
+Duplicate or not: duplicate
+    <<SYS>>
+    Title of entity1: viewsonic value 19 lcd monitor va1932wm; category of entity1: monitors; brand of entity1: viewsonic; model number of entity1: va1932wm; price of entity1: 149.0
+Title of entity2: viewsonic va705b 17-inch lcd monitor; category of entity2: monitors; brand of entity2: viewsonic; model number of entity2: va705b; price of entity2: 126.99
+Duplicate or not: [/INST]
+
+============
+
+    <s>[INST] <<SYS>>
+    Your job is to correctly label the following into one of the following categories duplicate
+not duplicate\n
+Title of entity1: lexmark extra high yield return pgm print cartridge - magenta; category of entity1: printers; brand of entity1: lexmark; model number of entity1: c782u1mg; price of entity1: 214.88
+Title of entity2: lexmark 18c1428 return program print cartridge black; category of entity2: inkjet printer ink; brand of entity2: lexmark; model number of entity2: 18c1428; price of entity2: 19.97
+Duplicate or not: not duplicate
+
+Title of entity1: edge tech proshot 4gb sdhc class 6 memory card; category of entity1: usb drives; brand of entity1: edge tech; model number of entity1: pe209780; price of entity1: 10.88
+Title of entity2: 4gb edge proshot sdhc memory card class6; category of entity2: computers accessories; brand of entity2: edge; model number of entity2: nan; price of entity2: 17.83
+Duplicate or not: duplicate
+    <<SYS>>
+    Title of entity1: da-lite video spectra 1.5 model b manual screen with csr - 69 x 92 video format; category of entity1: electronics - general; brand of entity1: da-lite; model number of entity1: 85322; price of entity1: 429.99
+Title of entity2: da-lite manual 92 diagonal hdtv format home theater wall screen with video spectra 1.5 fabric; category of entity2: projection screens; brand of entity2: da-lite; model number of entity2: nan; price of entity2: 254.95
+Duplicate or not: [/INST]
+
+============
+
+    <s>[INST] <<SYS>>
+    Your job is to correctly label the following into one of the following categories duplicate
+not duplicate\n
+Title of entity1: lexmark extra high yield return pgm print cartridge - magenta; category of entity1: printers; brand of entity1: lexmark; model number of entity1: c782u1mg; price of entity1: 214.88
+Title of entity2: lexmark 18c1428 return program print cartridge black; category of entity2: inkjet printer ink; brand of entity2: lexmark; model number of entity2: 18c1428; price of entity2: 19.97
+Duplicate or not: not duplicate
+
+Title of entity1: edge tech proshot 4gb sdhc class 6 memory card; category of entity1: usb drives; brand of entity1: edge tech; model number of entity1: pe209780; price of entity1: 10.88
+Title of entity2: 4gb edge proshot sdhc memory card class6; category of entity2: computers accessories; brand of entity2: edge; model number of entity2: nan; price of entity2: 17.83
+Duplicate or not: duplicate
+    <<SYS>>
+    Title of entity1: lexmark 1382920 toner 3000 page-yield black; category of entity1: stationery & office machinery; brand of entity1: lexmark; model number of entity1: 1382920; price of entity1: 270.9
+Title of entity2: 64015sa toner 6000 page-yield black; category of entity2: printer ink toner; brand of entity2: lexmark; model number of entity2: nan; price of entity2: 131.8
+Duplicate or not: [/INST]
+
+============
+
+    <s>[INST] <<SYS>>
+    Your job is to correctly label the following into one of the following categories duplicate
+not duplicate\n
+Title of entity1: lexmark extra high yield return pgm print cartridge - magenta; category of entity1: printers; brand of entity1: lexmark; model number of entity1: c782u1mg; price of entity1: 214.88
+Title of entity2: lexmark 18c1428 return program print cartridge black; category of entity2: inkjet printer ink; brand of entity2: lexmark; model number of entity2: 18c1428; price of entity2: 19.97
+Duplicate or not: not duplicate
+
+Title of entity1: edge tech proshot 4gb sdhc class 6 memory card; category of entity1: usb drives; brand of entity1: edge tech; model number of entity1: pe209780; price of entity1: 10.88
+Title of entity2: 4gb edge proshot sdhc memory card class6; category of entity2: computers accessories; brand of entity2: edge; model number of entity2: nan; price of entity2: 17.83
+Duplicate or not: duplicate
+    <<SYS>>
+    Title of entity1: scosche 1993-up select subaru power 4-speaker connector; category of entity1: car stereos; brand of entity1: scosche; model number of entity1: su03b; price of entity1: 9.88
+Title of entity2: scosche su03rb 1993-up select subaru power 4-speaker connector; category of entity2: speaker connectors; brand of entity2: scosche; model number of entity2: su03rb; price of entity2: 15.18
+Duplicate or not: [/INST]
+
+============
+
+    <s>[INST] <<SYS>>
+    Your job is to correctly label the following into one of the following categories duplicate
+not duplicate\n
+Title of entity1: lexmark extra high yield return pgm print cartridge - magenta; category of entity1: printers; brand of entity1: lexmark; model number of entity1: c782u1mg; price of entity1: 214.88
+Title of entity2: lexmark 18c1428 return program print cartridge black; category of entity2: inkjet printer ink; brand of entity2: lexmark; model number of entity2: 18c1428; price of entity2: 19.97
+Duplicate or not: not duplicate
+
+Title of entity1: edge tech proshot 4gb sdhc class 6 memory card; category of entity1: usb drives; brand of entity1: edge tech; model number of entity1: pe209780; price of entity1: 10.88
+Title of entity2: 4gb edge proshot sdhc memory card class6; category of entity2: computers accessories; brand of entity2: edge; model number of entity2: nan; price of entity2: 17.83
+Duplicate or not: duplicate
+    <<SYS>>
+    Title of entity1: rayovac 6v rechargeable battery; category of entity1: electronics - general; brand of entity1: rayovac; model number of entity1: rvla; price of entity1: 0.0
+Title of entity2: dual 1200 rechargeable backup battery; category of entity2: audio video accessories; brand of entity2: powermat; model number of entity2: nan; price of entity2: 39.99
+Duplicate or not: [/INST]
+
+============
+
+    <s>[INST] <<SYS>>
+    Your job is to correctly label the following into one of the following categories duplicate
+not duplicate\n
+Title of entity1: lexmark extra high yield return pgm print cartridge - magenta; category of entity1: printers; brand of entity1: lexmark; model number of entity1: c782u1mg; price of entity1: 214.88
+Title of entity2: lexmark 18c1428 return program print cartridge black; category of entity2: inkjet printer ink; brand of entity2: lexmark; model number of entity2: 18c1428; price of entity2: 19.97
+Duplicate or not: not duplicate
+
+Title of entity1: edge tech proshot 4gb sdhc class 6 memory card; category of entity1: usb drives; brand of entity1: edge tech; model number of entity1: pe209780; price of entity1: 10.88
+Title of entity2: 4gb edge proshot sdhc memory card class6; category of entity2: computers accessories; brand of entity2: edge; model number of entity2: nan; price of entity2: 17.83
+Duplicate or not: duplicate
+    <<SYS>>
+    Title of entity1: energizer max aaa 6pk; category of entity1: electronics - general; brand of entity1: energizer; model number of entity1: e92bp-6r; price of entity1: 0.0
+Title of entity2: energizer max alkaline batteries; category of entity2: c; brand of entity2: energizer; model number of entity2: e93bp-4; price of entity2: 6.95
+Duplicate or not: [/INST]
+
+============
+
+    <s>[INST] <<SYS>>
+    Your job is to correctly label the following into one of the following categories duplicate
+not duplicate\n
+Title of entity1: lexmark extra high yield return pgm print cartridge - magenta; category of entity1: printers; brand of entity1: lexmark; model number of entity1: c782u1mg; price of entity1: 214.88
+Title of entity2: lexmark 18c1428 return program print cartridge black; category of entity2: inkjet printer ink; brand of entity2: lexmark; model number of entity2: 18c1428; price of entity2: 19.97
+Duplicate or not: not duplicate
+
+Title of entity1: edge tech proshot 4gb sdhc class 6 memory card; category of entity1: usb drives; brand of entity1: edge tech; model number of entity1: pe209780; price of entity1: 10.88
+Title of entity2: 4gb edge proshot sdhc memory card class6; category of entity2: computers accessories; brand of entity2: edge; model number of entity2: nan; price of entity2: 17.83
+Duplicate or not: duplicate
+    <<SYS>>
+    Title of entity1: adobe software photoshop premiere element bd version 8; category of entity1: software; brand of entity1: adobe; model number of entity1: 65045677; price of entity1: 149.99
+Title of entity2: adobe photoshop elements 5.0 premier elements 3.0 lb old version; category of entity2: photo editing; brand of entity2: adobe; model number of entity2: 29180251; price of entity2: 111.99
+Duplicate or not: [/INST]
+
+============
+
+    <s>[INST] <<SYS>>
+    Your job is to correctly label the following into one of the following categories duplicate
+not duplicate\n
+Title of entity1: lexmark extra high yield return pgm print cartridge - magenta; category of entity1: printers; brand of entity1: lexmark; model number of entity1: c782u1mg; price of entity1: 214.88
+Title of entity2: lexmark 18c1428 return program print cartridge black; category of entity2: inkjet printer ink; brand of entity2: lexmark; model number of entity2: 18c1428; price of entity2: 19.97
+Duplicate or not: not duplicate
+
+Title of entity1: edge tech proshot 4gb sdhc class 6 memory card; category of entity1: usb drives; brand of entity1: edge tech; model number of entity1: pe209780; price of entity1: 10.88
+Title of entity2: 4gb edge proshot sdhc memory card class6; category of entity2: computers accessories; brand of entity2: edge; model number of entity2: nan; price of entity2: 17.83
+Duplicate or not: duplicate
+    <<SYS>>
+    Title of entity1: static cling screen protector kit for apple ipad 2; category of entity1: electronics - general; brand of entity1: writeright; model number of entity1: 9227801; price of entity1: 0.0
+Title of entity2: fellowes writeright static cling screen protector for apple ipad 2 pack; category of entity2: touch screen tablet accessories; brand of entity2: fellowes; model number of entity2: 9205701; price of entity2: 5.95
+Duplicate or not: [/INST]
+
+============
+
+    <s>[INST] <<SYS>>
+    Your job is to correctly label the following into one of the following categories duplicate
+not duplicate\n
+Title of entity1: lexmark extra high yield return pgm print cartridge - magenta; category of entity1: printers; brand of entity1: lexmark; model number of entity1: c782u1mg; price of entity1: 214.88
+Title of entity2: lexmark 18c1428 return program print cartridge black; category of entity2: inkjet printer ink; brand of entity2: lexmark; model number of entity2: 18c1428; price of entity2: 19.97
+Duplicate or not: not duplicate
+
+Title of entity1: edge tech proshot 4gb sdhc class 6 memory card; category of entity1: usb drives; brand of entity1: edge tech; model number of entity1: pe209780; price of entity1: 10.88
+Title of entity2: 4gb edge proshot sdhc memory card class6; category of entity2: computers accessories; brand of entity2: edge; model number of entity2: nan; price of entity2: 17.83
+Duplicate or not: duplicate
+    <<SYS>>
+    Title of entity1: sharpie retractable permanent markers fine point set of 12 black; category of entity1: stationery & office machinery; brand of entity1: sharpie; model number of entity1: 32701; price of entity1: 13.64
+Title of entity2: san36703 - permanent marker retractable fine point blue; category of entity2: printer ink toner; brand of entity2: sanford; model number of entity2: nan; price of entity2: 2.39
+Duplicate or not: [/INST]
+
+============
+
+    <s>[INST] <<SYS>>
+    Your job is to correctly label the following into one of the following categories duplicate
+not duplicate\n
+Title of entity1: lexmark extra high yield return pgm print cartridge - magenta; category of entity1: printers; brand of entity1: lexmark; model number of entity1: c782u1mg; price of entity1: 214.88
+Title of entity2: lexmark 18c1428 return program print cartridge black; category of entity2: inkjet printer ink; brand of entity2: lexmark; model number of entity2: 18c1428; price of entity2: 19.97
+Duplicate or not: not duplicate
+
+Title of entity1: edge tech proshot 4gb sdhc class 6 memory card; category of entity1: usb drives; brand of entity1: edge tech; model number of entity1: pe209780; price of entity1: 10.88
+Title of entity2: 4gb edge proshot sdhc memory card class6; category of entity2: computers accessories; brand of entity2: edge; model number of entity2: nan; price of entity2: 17.83
+Duplicate or not: duplicate
+    <<SYS>>
+    Title of entity1: da-lite da-glas self trimming rear projection screen - 96 x 120 av format; category of entity1: electronics - general; brand of entity1: da-lite; model number of entity1: 27915; price of entity1: 7443.99
+Title of entity2: da-lite da-view thru-the-wall rear projection screen - 45 x 80 hdtv format; category of entity2: projection screens; brand of entity2: da-lite; model number of entity2: 23065; price of entity2: 12909.87
+Duplicate or not: [/INST]
+
+============
+
+    <s>[INST] <<SYS>>
+    Your job is to correctly label the following into one of the following categories duplicate
+not duplicate\n
+Title of entity1: lexmark extra high yield return pgm print cartridge - magenta; category of entity1: printers; brand of entity1: lexmark; model number of entity1: c782u1mg; price of entity1: 214.88
+Title of entity2: lexmark 18c1428 return program print cartridge black; category of entity2: inkjet printer ink; brand of entity2: lexmark; model number of entity2: 18c1428; price of entity2: 19.97
+Duplicate or not: not duplicate
+
+Title of entity1: edge tech proshot 4gb sdhc class 6 memory card; category of entity1: usb drives; brand of entity1: edge tech; model number of entity1: pe209780; price of entity1: 10.88
+Title of entity2: 4gb edge proshot sdhc memory card class6; category of entity2: computers accessories; brand of entity2: edge; model number of entity2: nan; price of entity2: 17.83
+Duplicate or not: duplicate
+    <<SYS>>
+    Title of entity1: quantum mr-s4mqn-01 dlttape s4 cartridge; category of entity1: mp3 accessories; brand of entity1: quantum; model number of entity1: mr-s4mqn-01; price of entity1: 97.88
+Title of entity2: quantum super dlttape ii 300 600gb tape cartridge; category of entity2: data cartridges; brand of entity2: quantum; model number of entity2: mr-s2mqn-01; price of entity2: 75.33
+Duplicate or not: [/INST]
+
+============
+
+    <s>[INST] <<SYS>>
+    Your job is to correctly label the following into one of the following categories duplicate
+not duplicate\n
+Title of entity1: lexmark extra high yield return pgm print cartridge - magenta; category of entity1: printers; brand of entity1: lexmark; model number of entity1: c782u1mg; price of entity1: 214.88
+Title of entity2: lexmark 18c1428 return program print cartridge black; category of entity2: inkjet printer ink; brand of entity2: lexmark; model number of entity2: 18c1428; price of entity2: 19.97
+Duplicate or not: not duplicate
+
+Title of entity1: edge tech proshot 4gb sdhc class 6 memory card; category of entity1: usb drives; brand of entity1: edge tech; model number of entity1: pe209780; price of entity1: 10.88
+Title of entity2: 4gb edge proshot sdhc memory card class6; category of entity2: computers accessories; brand of entity2: edge; model number of entity2: nan; price of entity2: 17.83
+Duplicate or not: duplicate
+    <<SYS>>
+    Title of entity1: panasonic kx-tga6645b dect 6.0 plus expandable digital cordless answering system with 5 handsets; category of entity1: electronics - general; brand of entity1: panasonic; model number of entity1: kx-tg6645b; price of entity1: 150.0
+Title of entity2: panasonic kx-tg7642m dect 6.0 link-to-cell via bluetooth cordless phone with answering system metallic gray 2 handsets; category of entity2: cordless telephones; brand of entity2: panasonic; model number of entity2: kx-tg7642m; price of entity2: 89.69
+Duplicate or not: [/INST]
+
+============
+
+    <s>[INST] <<SYS>>
+    Your job is to correctly label the following into one of the following categories duplicate
+not duplicate\n
+Title of entity1: lexmark extra high yield return pgm print cartridge - magenta; category of entity1: printers; brand of entity1: lexmark; model number of entity1: c782u1mg; price of entity1: 214.88
+Title of entity2: lexmark 18c1428 return program print cartridge black; category of entity2: inkjet printer ink; brand of entity2: lexmark; model number of entity2: 18c1428; price of entity2: 19.97
+Duplicate or not: not duplicate
+
+Title of entity1: edge tech proshot 4gb sdhc class 6 memory card; category of entity1: usb drives; brand of entity1: edge tech; model number of entity1: pe209780; price of entity1: 10.88
+Title of entity2: 4gb edge proshot sdhc memory card class6; category of entity2: computers accessories; brand of entity2: edge; model number of entity2: nan; price of entity2: 17.83
+Duplicate or not: duplicate
+    <<SYS>>
+    Title of entity1: philips usa 2 silicone cases for iphone 4 black white; category of entity1: electronics - general; brand of entity1: philips; model number of entity1: dlm4313/17; price of entity1: 16.88
+Title of entity2: philips silicone bumper case for iphone 4 clear black; category of entity2: cases; brand of entity2: philips; model number of entity2: dlm4347/17; price of entity2: 21.98
+Duplicate or not: [/INST]
+
+============
+
+    <s>[INST] <<SYS>>
+    Your job is to correctly label the following into one of the following categories duplicate
+not duplicate\n
+Title of entity1: lexmark extra high yield return pgm print cartridge - magenta; category of entity1: printers; brand of entity1: lexmark; model number of entity1: c782u1mg; price of entity1: 214.88
+Title of entity2: lexmark 18c1428 return program print cartridge black; category of entity2: inkjet printer ink; brand of entity2: lexmark; model number of entity2: 18c1428; price of entity2: 19.97
+Duplicate or not: not duplicate
+
+Title of entity1: edge tech proshot 4gb sdhc class 6 memory card; category of entity1: usb drives; brand of entity1: edge tech; model number of entity1: pe209780; price of entity1: 10.88
+Title of entity2: 4gb edge proshot sdhc memory card class6; category of entity2: computers accessories; brand of entity2: edge; model number of entity2: nan; price of entity2: 17.83
+Duplicate or not: duplicate
+    <<SYS>>
+    Title of entity1: hp ce250a black toner cartridge; category of entity1: printers; brand of entity1: hp; model number of entity1: ce250a; price of entity1: 187.04
+Title of entity2: canon l50 toner cartridge; category of entity2: laser printer toner; brand of entity2: canon; model number of entity2: l50; price of entity2: 127.0
+Duplicate or not: [/INST]
+
+============
+
+    <s>[INST] <<SYS>>
+    Your job is to correctly label the following into one of the following categories duplicate
+not duplicate\n
+Title of entity1: lexmark extra high yield return pgm print cartridge - magenta; category of entity1: printers; brand of entity1: lexmark; model number of entity1: c782u1mg; price of entity1: 214.88
+Title of entity2: lexmark 18c1428 return program print cartridge black; category of entity2: inkjet printer ink; brand of entity2: lexmark; model number of entity2: 18c1428; price of entity2: 19.97
+Duplicate or not: not duplicate
+
+Title of entity1: edge tech proshot 4gb sdhc class 6 memory card; category of entity1: usb drives; brand of entity1: edge tech; model number of entity1: pe209780; price of entity1: 10.88
+Title of entity2: 4gb edge proshot sdhc memory card class6; category of entity2: computers accessories; brand of entity2: edge; model number of entity2: nan; price of entity2: 17.83
+Duplicate or not: duplicate
+    <<SYS>>
+    Title of entity1: da-lite hc cinema vision tensioned cosmopolitan electrol - av format 7 x 9 diagonal; category of entity1: electronics - general; brand of entity1: da-lite; model number of entity1: 89892; price of entity1: 2240.0
+Title of entity2: da-lite 98814 pearlescent tensioned cosmopolitan electrol - av format 10 6 x 14 diagonal; category of entity2: nan; brand of entity2: da-lite; model number of entity2: nan; price of entity2: nan
+Duplicate or not: [/INST]
+
+============
+
+    <s>[INST] <<SYS>>
+    Your job is to correctly label the following into one of the following categories duplicate
+not duplicate\n
+Title of entity1: lexmark extra high yield return pgm print cartridge - magenta; category of entity1: printers; brand of entity1: lexmark; model number of entity1: c782u1mg; price of entity1: 214.88
+Title of entity2: lexmark 18c1428 return program print cartridge black; category of entity2: inkjet printer ink; brand of entity2: lexmark; model number of entity2: 18c1428; price of entity2: 19.97
+Duplicate or not: not duplicate
+
+Title of entity1: edge tech proshot 4gb sdhc class 6 memory card; category of entity1: usb drives; brand of entity1: edge tech; model number of entity1: pe209780; price of entity1: 10.88
+Title of entity2: 4gb edge proshot sdhc memory card class6; category of entity2: computers accessories; brand of entity2: edge; model number of entity2: nan; price of entity2: 17.83
+Duplicate or not: duplicate
+    <<SYS>>
+    Title of entity1: da-lite da-plex thru-the-wall rear projection screen - 78 x 139 hdtv format; category of entity1: electronics - general; brand of entity1: da-lite; model number of entity1: 23077; price of entity1: 11385.99
+Title of entity2: da-plex deluxe rear projection screen - 108 x 108 av format; category of entity2: projection screens; brand of entity2: da-lite; model number of entity2: nan; price of entity2: 7950.0
+Duplicate or not: [/INST]
+
+============
+
+    <s>[INST] <<SYS>>
+    Your job is to correctly label the following into one of the following categories duplicate
+not duplicate\n
+Title of entity1: lexmark extra high yield return pgm print cartridge - magenta; category of entity1: printers; brand of entity1: lexmark; model number of entity1: c782u1mg; price of entity1: 214.88
+Title of entity2: lexmark 18c1428 return program print cartridge black; category of entity2: inkjet printer ink; brand of entity2: lexmark; model number of entity2: 18c1428; price of entity2: 19.97
+Duplicate or not: not duplicate
+
+Title of entity1: edge tech proshot 4gb sdhc class 6 memory card; category of entity1: usb drives; brand of entity1: edge tech; model number of entity1: pe209780; price of entity1: 10.88
+Title of entity2: 4gb edge proshot sdhc memory card class6; category of entity2: computers accessories; brand of entity2: edge; model number of entity2: nan; price of entity2: 17.83
+Duplicate or not: duplicate
+    <<SYS>>
+    Title of entity1: sharpie permanent markers fine point - black - 12 count; category of entity1: stationery & office machinery; brand of entity1: sharpie; model number of entity1: 30001wm; price of entity1: 8.24
+Title of entity2: sharpie fine tip permanent marker - black - 5 pack; category of entity2: nan; brand of entity2: smartbuy; model number of entity2: nan; price of entity2: 5.84
+Duplicate or not: [/INST]
+
+============
+
+    <s>[INST] <<SYS>>
+    Your job is to correctly label the following into one of the following categories duplicate
+not duplicate\n
+Title of entity1: lexmark extra high yield return pgm print cartridge - magenta; category of entity1: printers; brand of entity1: lexmark; model number of entity1: c782u1mg; price of entity1: 214.88
+Title of entity2: lexmark 18c1428 return program print cartridge black; category of entity2: inkjet printer ink; brand of entity2: lexmark; model number of entity2: 18c1428; price of entity2: 19.97
+Duplicate or not: not duplicate
+
+Title of entity1: edge tech proshot 4gb sdhc class 6 memory card; category of entity1: usb drives; brand of entity1: edge tech; model number of entity1: pe209780; price of entity1: 10.88
+Title of entity2: 4gb edge proshot sdhc memory card class6; category of entity2: computers accessories; brand of entity2: edge; model number of entity2: nan; price of entity2: 17.83
+Duplicate or not: duplicate
+    <<SYS>>
+    Title of entity1: los angeles lakers ipod touch 4g hard case; category of entity1: electronics - general; brand of entity1: tribeca; model number of entity1: fva4614; price of entity1: 29.99
+Title of entity2: los angeles dodgers ipod touch silicone skin; category of entity2: computers accessories; brand of entity2: tribeca; model number of entity2: nan; price of entity2: 9.99
+Duplicate or not: [/INST]
+
+============
+
+    <s>[INST] <<SYS>>
+    Your job is to correctly label the following into one of the following categories duplicate
+not duplicate\n
+Title of entity1: lexmark extra high yield return pgm print cartridge - magenta; category of entity1: printers; brand of entity1: lexmark; model number of entity1: c782u1mg; price of entity1: 214.88
+Title of entity2: lexmark 18c1428 return program print cartridge black; category of entity2: inkjet printer ink; brand of entity2: lexmark; model number of entity2: 18c1428; price of entity2: 19.97
+Duplicate or not: not duplicate
+
+Title of entity1: edge tech proshot 4gb sdhc class 6 memory card; category of entity1: usb drives; brand of entity1: edge tech; model number of entity1: pe209780; price of entity1: 10.88
+Title of entity2: 4gb edge proshot sdhc memory card class6; category of entity2: computers accessories; brand of entity2: edge; model number of entity2: nan; price of entity2: 17.83
+Duplicate or not: duplicate
+    <<SYS>>
+    Title of entity1: da-lite natural walnut veneer model b manual screen with matte white fabric - 64 x 84 diagonal video format; category of entity1: electronics - general; brand of entity1: da-lite; model number of entity1: 73197; price of entity1: 261.99
+Title of entity2: da-lite veneer model b high power fabric 120 diag . natural walnut; category of entity2: projection screens; brand of entity2: da-lite; model number of entity2: nan; price of entity2: nan
+Duplicate or not: [/INST]
+
+============
+
+    <s>[INST] <<SYS>>
+    Your job is to correctly label the following into one of the following categories duplicate
+not duplicate\n
+Title of entity1: lexmark extra high yield return pgm print cartridge - magenta; category of entity1: printers; brand of entity1: lexmark; model number of entity1: c782u1mg; price of entity1: 214.88
+Title of entity2: lexmark 18c1428 return program print cartridge black; category of entity2: inkjet printer ink; brand of entity2: lexmark; model number of entity2: 18c1428; price of entity2: 19.97
+Duplicate or not: not duplicate
+
+Title of entity1: edge tech proshot 4gb sdhc class 6 memory card; category of entity1: usb drives; brand of entity1: edge tech; model number of entity1: pe209780; price of entity1: 10.88
+Title of entity2: 4gb edge proshot sdhc memory card class6; category of entity2: computers accessories; brand of entity2: edge; model number of entity2: nan; price of entity2: 17.83
+Duplicate or not: duplicate
+    <<SYS>>
+    Title of entity1: lexmark 12a8425 black high-yield toner print cartridge; category of entity1: printers; brand of entity1: lexmark; model number of entity1: 12a8425; price of entity1: 302.4
+Title of entity2: lexmark 32 black print cartridge twin pack 18c0533; category of entity2: inkjet printer ink; brand of entity2: lexmark; model number of entity2: 18c0532; price of entity2: 39.12
+Duplicate or not: [/INST]
+
+============
+
+    <s>[INST] <<SYS>>
+    Your job is to correctly label the following into one of the following categories duplicate
+not duplicate\n
+Title of entity1: lexmark extra high yield return pgm print cartridge - magenta; category of entity1: printers; brand of entity1: lexmark; model number of entity1: c782u1mg; price of entity1: 214.88
+Title of entity2: lexmark 18c1428 return program print cartridge black; category of entity2: inkjet printer ink; brand of entity2: lexmark; model number of entity2: 18c1428; price of entity2: 19.97
+Duplicate or not: not duplicate
+
+Title of entity1: edge tech proshot 4gb sdhc class 6 memory card; category of entity1: usb drives; brand of entity1: edge tech; model number of entity1: pe209780; price of entity1: 10.88
+Title of entity2: 4gb edge proshot sdhc memory card class6; category of entity2: computers accessories; brand of entity2: edge; model number of entity2: nan; price of entity2: 17.83
+Duplicate or not: duplicate
+    <<SYS>>
+    Title of entity1: vantec 3.5 ide to usb 2.0 nexstar 3 hard drive enclosure onyx black; category of entity1: electronics - general; brand of entity1: vantec; model number of entity1: nst-360u2-bk; price of entity1: 30.23
+Title of entity2: vantec nexstar mx nst-400mx-sr dual 3.5-inch sata to usb 2.0 and esata with jbod raid 0 1 external hard drive enclosure black; category of entity2: hard drive enclosures; brand of entity2: vantec; model number of entity2: nst-400mx-sr; price of entity2: 91.99
+Duplicate or not: [/INST]
+
+============
+
+    <s>[INST] <<SYS>>
+    Your job is to correctly label the following into one of the following categories duplicate
+not duplicate\n
+Title of entity1: lexmark extra high yield return pgm print cartridge - magenta; category of entity1: printers; brand of entity1: lexmark; model number of entity1: c782u1mg; price of entity1: 214.88
+Title of entity2: lexmark 18c1428 return program print cartridge black; category of entity2: inkjet printer ink; brand of entity2: lexmark; model number of entity2: 18c1428; price of entity2: 19.97
+Duplicate or not: not duplicate
+
+Title of entity1: edge tech proshot 4gb sdhc class 6 memory card; category of entity1: usb drives; brand of entity1: edge tech; model number of entity1: pe209780; price of entity1: 10.88
+Title of entity2: 4gb edge proshot sdhc memory card class6; category of entity2: computers accessories; brand of entity2: edge; model number of entity2: nan; price of entity2: 17.83
+Duplicate or not: duplicate
+    <<SYS>>
+    Title of entity1: hp laserjet 53x black print cartridge; category of entity1: printers; brand of entity1: hp; model number of entity1: q7553x; price of entity1: 164.84
+Title of entity2: hp laserjet 42a black print cartridge in retail packaging; category of entity2: laser printer toner; brand of entity2: hp; model number of entity2: q5942a; price of entity2: 125.0
+Duplicate or not: [/INST]
+
+============
+
+    <s>[INST] <<SYS>>
+    Your job is to correctly label the following into one of the following categories duplicate
+not duplicate\n
+Title of entity1: lexmark extra high yield return pgm print cartridge - magenta; category of entity1: printers; brand of entity1: lexmark; model number of entity1: c782u1mg; price of entity1: 214.88
+Title of entity2: lexmark 18c1428 return program print cartridge black; category of entity2: inkjet printer ink; brand of entity2: lexmark; model number of entity2: 18c1428; price of entity2: 19.97
+Duplicate or not: not duplicate
+
+Title of entity1: edge tech proshot 4gb sdhc class 6 memory card; category of entity1: usb drives; brand of entity1: edge tech; model number of entity1: pe209780; price of entity1: 10.88
+Title of entity2: 4gb edge proshot sdhc memory card class6; category of entity2: computers accessories; brand of entity2: edge; model number of entity2: nan; price of entity2: 17.83
+Duplicate or not: duplicate
+    <<SYS>>
+    Title of entity1: gear head 2.4 ghz wireless optical nano mouse black; category of entity1: mice; brand of entity1: gear head; model number of entity1: mp2800blk; price of entity1: 15.82
+Title of entity2: gear head 2.4 ghz wireless optical nano mouse - purple black usb mp2950pur-cp10; category of entity2: mice; brand of entity2: gear head; model number of entity2: mp2950pur-cp10; price of entity2: 14.99
+Duplicate or not: [/INST]
+
+============
+
+    <s>[INST] <<SYS>>
+    Your job is to correctly label the following into one of the following categories duplicate
+not duplicate\n
+Title of entity1: lexmark extra high yield return pgm print cartridge - magenta; category of entity1: printers; brand of entity1: lexmark; model number of entity1: c782u1mg; price of entity1: 214.88
+Title of entity2: lexmark 18c1428 return program print cartridge black; category of entity2: inkjet printer ink; brand of entity2: lexmark; model number of entity2: 18c1428; price of entity2: 19.97
+Duplicate or not: not duplicate
+
+Title of entity1: edge tech proshot 4gb sdhc class 6 memory card; category of entity1: usb drives; brand of entity1: edge tech; model number of entity1: pe209780; price of entity1: 10.88
+Title of entity2: 4gb edge proshot sdhc memory card class6; category of entity2: computers accessories; brand of entity2: edge; model number of entity2: nan; price of entity2: 17.83
+Duplicate or not: duplicate
+    <<SYS>>
+    Title of entity1: canon cli-226 black ink tank; category of entity1: printers; brand of entity1: canon; model number of entity1: nan; price of entity1: 0.0
+Title of entity2: canon cli-221 ink tank yellow; category of entity2: inkjet printer ink; brand of entity2: canon; model number of entity2: 2949b001; price of entity2: 12.99
+Duplicate or not: [/INST]
+
+============
+
+    <s>[INST] <<SYS>>
+    Your job is to correctly label the following into one of the following categories duplicate
+not duplicate\n
+Title of entity1: lexmark extra high yield return pgm print cartridge - magenta; category of entity1: printers; brand of entity1: lexmark; model number of entity1: c782u1mg; price of entity1: 214.88
+Title of entity2: lexmark 18c1428 return program print cartridge black; category of entity2: inkjet printer ink; brand of entity2: lexmark; model number of entity2: 18c1428; price of entity2: 19.97
+Duplicate or not: not duplicate
+
+Title of entity1: edge tech proshot 4gb sdhc class 6 memory card; category of entity1: usb drives; brand of entity1: edge tech; model number of entity1: pe209780; price of entity1: 10.88
+Title of entity2: 4gb edge proshot sdhc memory card class6; category of entity2: computers accessories; brand of entity2: edge; model number of entity2: nan; price of entity2: 17.83
+Duplicate or not: duplicate
+    <<SYS>>
+    Title of entity1: iosafe rugged 750gb usb 3.0 portable external hard drive; category of entity1: hard drives; brand of entity1: iosafe; model number of entity1: pa70750u1yr; price of entity1: 139.98
+Title of entity2: iomega ego 500 gb usb 2.0 portable external hard drive 34619 ruby red; category of entity2: external hard drives; brand of entity2: iomega; model number of entity2: 34619; price of entity2: 92.0
+Duplicate or not: [/INST]
+
+============
+
+    <s>[INST] <<SYS>>
+    Your job is to correctly label the following into one of the following categories duplicate
+not duplicate\n
+Title of entity1: lexmark extra high yield return pgm print cartridge - magenta; category of entity1: printers; brand of entity1: lexmark; model number of entity1: c782u1mg; price of entity1: 214.88
+Title of entity2: lexmark 18c1428 return program print cartridge black; category of entity2: inkjet printer ink; brand of entity2: lexmark; model number of entity2: 18c1428; price of entity2: 19.97
+Duplicate or not: not duplicate
+
+Title of entity1: edge tech proshot 4gb sdhc class 6 memory card; category of entity1: usb drives; brand of entity1: edge tech; model number of entity1: pe209780; price of entity1: 10.88
+Title of entity2: 4gb edge proshot sdhc memory card class6; category of entity2: computers accessories; brand of entity2: edge; model number of entity2: nan; price of entity2: 17.83
+Duplicate or not: duplicate
+    <<SYS>>
+    Title of entity1: da-lite dual vision tensioned cosmopolitan electrol - av format 7 x 9 diagonal; category of entity1: electronics - general; brand of entity1: da-lite; model number of entity1: 84986; price of entity1: 2346.99
+Title of entity2: da-lite 97989 da-tex rear tensioned cosmopolitan electrol - av format 10 6 x 14 diagonal; category of entity2: projection screens; brand of entity2: da-lite; model number of entity2: nan; price of entity2: nan
+Duplicate or not: [/INST]
+
+============
+
+    <s>[INST] <<SYS>>
+    Your job is to correctly label the following into one of the following categories duplicate
+not duplicate\n
+Title of entity1: lexmark extra high yield return pgm print cartridge - magenta; category of entity1: printers; brand of entity1: lexmark; model number of entity1: c782u1mg; price of entity1: 214.88
+Title of entity2: lexmark 18c1428 return program print cartridge black; category of entity2: inkjet printer ink; brand of entity2: lexmark; model number of entity2: 18c1428; price of entity2: 19.97
+Duplicate or not: not duplicate
+
+Title of entity1: edge tech proshot 4gb sdhc class 6 memory card; category of entity1: usb drives; brand of entity1: edge tech; model number of entity1: pe209780; price of entity1: 10.88
+Title of entity2: 4gb edge proshot sdhc memory card class6; category of entity2: computers accessories; brand of entity2: edge; model number of entity2: nan; price of entity2: 17.83
+Duplicate or not: duplicate
+    <<SYS>>
+    Title of entity1: belkin 3 cat-5e snagless patch cable blue; category of entity1: electronics - general; brand of entity1: belkin; model number of entity1: a3l791-03-blu-s; price of entity1: 4.35
+Title of entity2: belkin a3l791-14-blu-s rj45m rj45m 14-feet 10 100bt cat5e snagless patch cable blue; category of entity2: ethernet cables; brand of entity2: belkin; model number of entity2: a3l791-14-blu-s; price of entity2: 5.11
+Duplicate or not: [/INST]
+
+============
+
+    <s>[INST] <<SYS>>
+    Your job is to correctly label the following into one of the following categories duplicate
+not duplicate\n
+Title of entity1: lexmark extra high yield return pgm print cartridge - magenta; category of entity1: printers; brand of entity1: lexmark; model number of entity1: c782u1mg; price of entity1: 214.88
+Title of entity2: lexmark 18c1428 return program print cartridge black; category of entity2: inkjet printer ink; brand of entity2: lexmark; model number of entity2: 18c1428; price of entity2: 19.97
+Duplicate or not: not duplicate
+
+Title of entity1: edge tech proshot 4gb sdhc class 6 memory card; category of entity1: usb drives; brand of entity1: edge tech; model number of entity1: pe209780; price of entity1: 10.88
+Title of entity2: 4gb edge proshot sdhc memory card class6; category of entity2: computers accessories; brand of entity2: edge; model number of entity2: nan; price of entity2: 17.83
+Duplicate or not: duplicate
+    <<SYS>>
+    Title of entity1: iosafe rugged 500gb usb 3.0 portable external hard drive; category of entity1: hard drives; brand of entity1: iosafe; model number of entity1: pa50500u5yr; price of entity1: 299.98
+Title of entity2: lacie rikiki superspeed 750 gb usb 3.0 portable external hard drive 301950 - black; category of entity2: external hard drives; brand of entity2: lacie; model number of entity2: 301950; price of entity2: 100.24
+Duplicate or not: [/INST]
+
+============
+
+    <s>[INST] <<SYS>>
+    Your job is to correctly label the following into one of the following categories duplicate
+not duplicate\n
+Title of entity1: lexmark extra high yield return pgm print cartridge - magenta; category of entity1: printers; brand of entity1: lexmark; model number of entity1: c782u1mg; price of entity1: 214.88
+Title of entity2: lexmark 18c1428 return program print cartridge black; category of entity2: inkjet printer ink; brand of entity2: lexmark; model number of entity2: 18c1428; price of entity2: 19.97
+Duplicate or not: not duplicate
+
+Title of entity1: edge tech proshot 4gb sdhc class 6 memory card; category of entity1: usb drives; brand of entity1: edge tech; model number of entity1: pe209780; price of entity1: 10.88
+Title of entity2: 4gb edge proshot sdhc memory card class6; category of entity2: computers accessories; brand of entity2: edge; model number of entity2: nan; price of entity2: 17.83
+Duplicate or not: duplicate
+    <<SYS>>
+    Title of entity1: corsair builder series cx v2 500w 80 plus certified power supply; category of entity1: electronics - general; brand of entity1: corsair; model number of entity1: cmpsu-500cxv2; price of entity1: 67.88
+Title of entity2: corsair builder series cx600 600 watt 80 plus certified power supply compatible with intel and amd platforms atx 700 cmpsu-600cxv2; category of entity2: power supplies; brand of entity2: corsair; model number of entity2: cmpsu-600cxv2; price of entity2: 65.84
+Duplicate or not: [/INST]
+
+============
+
+    <s>[INST] <<SYS>>
+    Your job is to correctly label the following into one of the following categories duplicate
+not duplicate\n
+Title of entity1: lexmark extra high yield return pgm print cartridge - magenta; category of entity1: printers; brand of entity1: lexmark; model number of entity1: c782u1mg; price of entity1: 214.88
+Title of entity2: lexmark 18c1428 return program print cartridge black; category of entity2: inkjet printer ink; brand of entity2: lexmark; model number of entity2: 18c1428; price of entity2: 19.97
+Duplicate or not: not duplicate
+
+Title of entity1: edge tech proshot 4gb sdhc class 6 memory card; category of entity1: usb drives; brand of entity1: edge tech; model number of entity1: pe209780; price of entity1: 10.88
+Title of entity2: 4gb edge proshot sdhc memory card class6; category of entity2: computers accessories; brand of entity2: edge; model number of entity2: nan; price of entity2: 17.83
+Duplicate or not: duplicate
+    <<SYS>>
+    Title of entity1: vantec nexstar3 2.5 sata to usb 2.0 and esata external hard drive enclosure midnight blue; category of entity1: electronics - general; brand of entity1: vantec; model number of entity1: nst-260su-bl; price of entity1: 23.0
+Title of entity2: kingwin 2.5-inch and 3.5-inch sata hard drive docking station with usb 2.0 and esata external hard drive enclosure ezd-2535 black; category of entity2: hard drive enclosures; brand of entity2: kingwin; model number of entity2: ezd-2535; price of entity2: 21.99
+Duplicate or not: [/INST]
+
+============
+
+    <s>[INST] <<SYS>>
+    Your job is to correctly label the following into one of the following categories duplicate
+not duplicate\n
+Title of entity1: lexmark extra high yield return pgm print cartridge - magenta; category of entity1: printers; brand of entity1: lexmark; model number of entity1: c782u1mg; price of entity1: 214.88
+Title of entity2: lexmark 18c1428 return program print cartridge black; category of entity2: inkjet printer ink; brand of entity2: lexmark; model number of entity2: 18c1428; price of entity2: 19.97
+Duplicate or not: not duplicate
+
+Title of entity1: edge tech proshot 4gb sdhc class 6 memory card; category of entity1: usb drives; brand of entity1: edge tech; model number of entity1: pe209780; price of entity1: 10.88
+Title of entity2: 4gb edge proshot sdhc memory card class6; category of entity2: computers accessories; brand of entity2: edge; model number of entity2: nan; price of entity2: 17.83
+Duplicate or not: duplicate
+    <<SYS>>
+    Title of entity1: cables unlimited - 1 port db25 parallel pci ecp epp spp port i o card; category of entity1: electronics - general; brand of entity1: cables unlimited; model number of entity1: ioc-1000; price of entity1: 16.88
+Title of entity2: cables unlimited 1 - port parallel pci express card ioc1700; category of entity2: computers accessories; brand of entity2: cables unlimited; model number of entity2: ioc1700; price of entity2: 46.88
+Duplicate or not: [/INST]
+
+============
+
+    <s>[INST] <<SYS>>
+    Your job is to correctly label the following into one of the following categories duplicate
+not duplicate\n
+Title of entity1: lexmark extra high yield return pgm print cartridge - magenta; category of entity1: printers; brand of entity1: lexmark; model number of entity1: c782u1mg; price of entity1: 214.88
+Title of entity2: lexmark 18c1428 return program print cartridge black; category of entity2: inkjet printer ink; brand of entity2: lexmark; model number of entity2: 18c1428; price of entity2: 19.97
+Duplicate or not: not duplicate
+
+Title of entity1: edge tech proshot 4gb sdhc class 6 memory card; category of entity1: usb drives; brand of entity1: edge tech; model number of entity1: pe209780; price of entity1: 10.88
+Title of entity2: 4gb edge proshot sdhc memory card class6; category of entity2: computers accessories; brand of entity2: edge; model number of entity2: nan; price of entity2: 17.83
+Duplicate or not: duplicate
+    <<SYS>>
+    Title of entity1: hp ce278a black laserjet print cartridge; category of entity1: printers; brand of entity1: hp; model number of entity1: hp ce278a; price of entity1: 69.84
+Title of entity2: hp laserjet 05a black cartridge in retail packaging ce505a; category of entity2: laser printer toner; brand of entity2: hp; model number of entity2: ce505a; price of entity2: 68.82
+Duplicate or not: [/INST]
+
+============
+
+    <s>[INST] <<SYS>>
+    Your job is to correctly label the following into one of the following categories duplicate
+not duplicate\n
+Title of entity1: lexmark extra high yield return pgm print cartridge - magenta; category of entity1: printers; brand of entity1: lexmark; model number of entity1: c782u1mg; price of entity1: 214.88
+Title of entity2: lexmark 18c1428 return program print cartridge black; category of entity2: inkjet printer ink; brand of entity2: lexmark; model number of entity2: 18c1428; price of entity2: 19.97
+Duplicate or not: not duplicate
+
+Title of entity1: edge tech proshot 4gb sdhc class 6 memory card; category of entity1: usb drives; brand of entity1: edge tech; model number of entity1: pe209780; price of entity1: 10.88
+Title of entity2: 4gb edge proshot sdhc memory card class6; category of entity2: computers accessories; brand of entity2: edge; model number of entity2: nan; price of entity2: 17.83
+Duplicate or not: duplicate
+    <<SYS>>
+    Title of entity1: da-lite video spectra 1.5 deluxe model b manual screen - 50 x 67 video format; category of entity1: electronics - general; brand of entity1: da-lite; model number of entity1: 73639; price of entity1: 181.99
+Title of entity2: da-lite manual 92 diagonal hdtv format home theater wall screen with video spectra 1.5 fabric; category of entity2: projection screens; brand of entity2: da-lite; model number of entity2: nan; price of entity2: 254.95
+Duplicate or not: [/INST]
+
+============
+
+    <s>[INST] <<SYS>>
+    Your job is to correctly label the following into one of the following categories duplicate
+not duplicate\n
+Title of entity1: lexmark extra high yield return pgm print cartridge - magenta; category of entity1: printers; brand of entity1: lexmark; model number of entity1: c782u1mg; price of entity1: 214.88
+Title of entity2: lexmark 18c1428 return program print cartridge black; category of entity2: inkjet printer ink; brand of entity2: lexmark; model number of entity2: 18c1428; price of entity2: 19.97
+Duplicate or not: not duplicate
+
+Title of entity1: edge tech proshot 4gb sdhc class 6 memory card; category of entity1: usb drives; brand of entity1: edge tech; model number of entity1: pe209780; price of entity1: 10.88
+Title of entity2: 4gb edge proshot sdhc memory card class6; category of entity2: computers accessories; brand of entity2: edge; model number of entity2: nan; price of entity2: 17.83
+Duplicate or not: duplicate
+    <<SYS>>
+    Title of entity1: epson s041667 premium glossy photo paper; category of entity1: photography - general; brand of entity1: epson; model number of entity1: s041667; price of entity1: 45.2
+Title of entity2: hp q1989a premium glossy photo paper 60 sheets; category of entity2: photo paper; brand of entity2: hp; model number of entity2: q1989a; price of entity2: 4.24
+Duplicate or not: [/INST]
+
+============
+
+    <s>[INST] <<SYS>>
+    Your job is to correctly label the following into one of the following categories duplicate
+not duplicate\n
+Title of entity1: lexmark extra high yield return pgm print cartridge - magenta; category of entity1: printers; brand of entity1: lexmark; model number of entity1: c782u1mg; price of entity1: 214.88
+Title of entity2: lexmark 18c1428 return program print cartridge black; category of entity2: inkjet printer ink; brand of entity2: lexmark; model number of entity2: 18c1428; price of entity2: 19.97
+Duplicate or not: not duplicate
+
+Title of entity1: edge tech proshot 4gb sdhc class 6 memory card; category of entity1: usb drives; brand of entity1: edge tech; model number of entity1: pe209780; price of entity1: 10.88
+Title of entity2: 4gb edge proshot sdhc memory card class6; category of entity2: computers accessories; brand of entity2: edge; model number of entity2: nan; price of entity2: 17.83
+Duplicate or not: duplicate
+    <<SYS>>
+    Title of entity1: canon powershot sx130-is black 12.1 mp digital camera w 12x optical zoom 3.0 lcd display w 50 bonus prints; category of entity1: digital cameras; brand of entity1: canon; model number of entity1: sx130; price of entity1: 191.99
+Title of entity2: canon powershot a800 10 mp digital camera with 3.3 x optical zoom silver; category of entity2: point shoot digital cameras; brand of entity2: canon; model number of entity2: a800 ( silver ); price of entity2: 89.0
+Duplicate or not: [/INST]
+
+============
+
+    <s>[INST] <<SYS>>
+    Your job is to correctly label the following into one of the following categories duplicate
+not duplicate\n
+Title of entity1: lexmark extra high yield return pgm print cartridge - magenta; category of entity1: printers; brand of entity1: lexmark; model number of entity1: c782u1mg; price of entity1: 214.88
+Title of entity2: lexmark 18c1428 return program print cartridge black; category of entity2: inkjet printer ink; brand of entity2: lexmark; model number of entity2: 18c1428; price of entity2: 19.97
+Duplicate or not: not duplicate
+
+Title of entity1: edge tech proshot 4gb sdhc class 6 memory card; category of entity1: usb drives; brand of entity1: edge tech; model number of entity1: pe209780; price of entity1: 10.88
+Title of entity2: 4gb edge proshot sdhc memory card class6; category of entity2: computers accessories; brand of entity2: edge; model number of entity2: nan; price of entity2: 17.83
+Duplicate or not: duplicate
+    <<SYS>>
+    Title of entity1: pc treasures wireless optical mouse 2.4 ghz purple; category of entity1: mice; brand of entity1: pc treasures; model number of entity1: 07227; price of entity1: 17.82
+Title of entity2: wireless optical mouse; category of entity2: mice; brand of entity2: micro innovations; model number of entity2: pdopt15w; price of entity2: 18.92
+Duplicate or not: [/INST]
+
+============
+
+    <s>[INST] <<SYS>>
+    Your job is to correctly label the following into one of the following categories duplicate
+not duplicate\n
+Title of entity1: lexmark extra high yield return pgm print cartridge - magenta; category of entity1: printers; brand of entity1: lexmark; model number of entity1: c782u1mg; price of entity1: 214.88
+Title of entity2: lexmark 18c1428 return program print cartridge black; category of entity2: inkjet printer ink; brand of entity2: lexmark; model number of entity2: 18c1428; price of entity2: 19.97
+Duplicate or not: not duplicate
+
+Title of entity1: edge tech proshot 4gb sdhc class 6 memory card; category of entity1: usb drives; brand of entity1: edge tech; model number of entity1: pe209780; price of entity1: 10.88
+Title of entity2: 4gb edge proshot sdhc memory card class6; category of entity2: computers accessories; brand of entity2: edge; model number of entity2: nan; price of entity2: 17.83
+Duplicate or not: duplicate
+    <<SYS>>
+    Title of entity1: canon powershot a3300 is black 16.0 mp digital camera with 5x optical zoom 3.0 lcd 720p video w 50 bonus prints; category of entity1: digital cameras; brand of entity1: canon; model number of entity1: 5035b001aa; price of entity1: 156.54
+Title of entity2: canon powershot a3300 16 mp digital camera with 5x optical zoom black; category of entity2: point shoot digital cameras; brand of entity2: canon; model number of entity2: 5035b001; price of entity2: 159.0
+Duplicate or not: [/INST]
+
+============
+
+    <s>[INST] <<SYS>>
+    Your job is to correctly label the following into one of the following categories duplicate
+not duplicate\n
+Title of entity1: lexmark extra high yield return pgm print cartridge - magenta; category of entity1: printers; brand of entity1: lexmark; model number of entity1: c782u1mg; price of entity1: 214.88
+Title of entity2: lexmark 18c1428 return program print cartridge black; category of entity2: inkjet printer ink; brand of entity2: lexmark; model number of entity2: 18c1428; price of entity2: 19.97
+Duplicate or not: not duplicate
+
+Title of entity1: edge tech proshot 4gb sdhc class 6 memory card; category of entity1: usb drives; brand of entity1: edge tech; model number of entity1: pe209780; price of entity1: 10.88
+Title of entity2: 4gb edge proshot sdhc memory card class6; category of entity2: computers accessories; brand of entity2: edge; model number of entity2: nan; price of entity2: 17.83
+Duplicate or not: duplicate
+    <<SYS>>
+    Title of entity1: eveready gold alkaline aa batteries 24-pack; category of entity1: electronics - general; brand of entity1: eveready; model number of entity1: a91bp-24ht; price of entity1: 15.82
+Title of entity2: gold peak - 23a alkaline batteries - 5 pack; category of entity2: 12v; brand of entity2: alkaline; model number of entity2: 23ae; price of entity2: 3.26
+Duplicate or not: [/INST]
+
+============
+
+    <s>[INST] <<SYS>>
+    Your job is to correctly label the following into one of the following categories duplicate
+not duplicate\n
+Title of entity1: lexmark extra high yield return pgm print cartridge - magenta; category of entity1: printers; brand of entity1: lexmark; model number of entity1: c782u1mg; price of entity1: 214.88
+Title of entity2: lexmark 18c1428 return program print cartridge black; category of entity2: inkjet printer ink; brand of entity2: lexmark; model number of entity2: 18c1428; price of entity2: 19.97
+Duplicate or not: not duplicate
+
+Title of entity1: edge tech proshot 4gb sdhc class 6 memory card; category of entity1: usb drives; brand of entity1: edge tech; model number of entity1: pe209780; price of entity1: 10.88
+Title of entity2: 4gb edge proshot sdhc memory card class6; category of entity2: computers accessories; brand of entity2: edge; model number of entity2: nan; price of entity2: 17.83
+Duplicate or not: duplicate
+    <<SYS>>
+    Title of entity1: da-lite video spectra 1.5 model c manual screen - 69 x 92 video format; category of entity1: electronics - general; brand of entity1: da-lite; model number of entity1: 82969; price of entity1: 472.99
+Title of entity2: da-lite deluxe model b video spectra 1.5 - projection screen; category of entity2: projection screens; brand of entity2: da-lite; model number of entity2: model b video spectra 1.5; price of entity2: 125.95
+Duplicate or not: [/INST]
+
+============
+
+    <s>[INST] <<SYS>>
+    Your job is to correctly label the following into one of the following categories duplicate
+not duplicate\n
+Title of entity1: lexmark extra high yield return pgm print cartridge - magenta; category of entity1: printers; brand of entity1: lexmark; model number of entity1: c782u1mg; price of entity1: 214.88
+Title of entity2: lexmark 18c1428 return program print cartridge black; category of entity2: inkjet printer ink; brand of entity2: lexmark; model number of entity2: 18c1428; price of entity2: 19.97
+Duplicate or not: not duplicate
+
+Title of entity1: edge tech proshot 4gb sdhc class 6 memory card; category of entity1: usb drives; brand of entity1: edge tech; model number of entity1: pe209780; price of entity1: 10.88
+Title of entity2: 4gb edge proshot sdhc memory card class6; category of entity2: computers accessories; brand of entity2: edge; model number of entity2: nan; price of entity2: 17.83
+Duplicate or not: duplicate
+    <<SYS>>
+    Title of entity1: panasonic stereo earbud headphones rp-hv21 green; category of entity1: electronics - general; brand of entity1: panasonic; model number of entity1: rphv21g; price of entity1: 10.49
+Title of entity2: panasonic rp-hje350-s slimz in-ear earbud headphones silver; category of entity2: headphones; brand of entity2: panasonic; model number of entity2: rp-hje350-s; price of entity2: 21.91
+Duplicate or not: [/INST]
+
+============
+
+    <s>[INST] <<SYS>>
+    Your job is to correctly label the following into one of the following categories duplicate
+not duplicate\n
+Title of entity1: lexmark extra high yield return pgm print cartridge - magenta; category of entity1: printers; brand of entity1: lexmark; model number of entity1: c782u1mg; price of entity1: 214.88
+Title of entity2: lexmark 18c1428 return program print cartridge black; category of entity2: inkjet printer ink; brand of entity2: lexmark; model number of entity2: 18c1428; price of entity2: 19.97
+Duplicate or not: not duplicate
+
+Title of entity1: edge tech proshot 4gb sdhc class 6 memory card; category of entity1: usb drives; brand of entity1: edge tech; model number of entity1: pe209780; price of entity1: 10.88
+Title of entity2: 4gb edge proshot sdhc memory card class6; category of entity2: computers accessories; brand of entity2: edge; model number of entity2: nan; price of entity2: 17.83
+Duplicate or not: duplicate
+    <<SYS>>
+    Title of entity1: da-lite da-glas deluxe rear projection screen - 96 x 96 av format; category of entity1: electronics - general; brand of entity1: da-lite; model number of entity1: 27651; price of entity1: 6128.99
+Title of entity2: da-lite da-view thru-the-wall rear projection screen - 50 1 2 x 67 1 4 video format; category of entity2: projection screens; brand of entity2: da-lite; model number of entity2: 23034; price of entity2: 9739.76
+Duplicate or not: [/INST]
+
+============
+
+    <s>[INST] <<SYS>>
+    Your job is to correctly label the following into one of the following categories duplicate
+not duplicate\n
+Title of entity1: lexmark extra high yield return pgm print cartridge - magenta; category of entity1: printers; brand of entity1: lexmark; model number of entity1: c782u1mg; price of entity1: 214.88
+Title of entity2: lexmark 18c1428 return program print cartridge black; category of entity2: inkjet printer ink; brand of entity2: lexmark; model number of entity2: 18c1428; price of entity2: 19.97
+Duplicate or not: not duplicate
+
+Title of entity1: edge tech proshot 4gb sdhc class 6 memory card; category of entity1: usb drives; brand of entity1: edge tech; model number of entity1: pe209780; price of entity1: 10.88
+Title of entity2: 4gb edge proshot sdhc memory card class6; category of entity2: computers accessories; brand of entity2: edge; model number of entity2: nan; price of entity2: 17.83
+Duplicate or not: duplicate
+    <<SYS>>
+    Title of entity1: optoma bl-fp230c replacement projector lamp for optoma ep749 projector; category of entity1: monitors; brand of entity1: optoma; model number of entity1: bl-fp230c; price of entity1: 294.84
+Title of entity2: electrified bl-fp230c sp .85 r01gc01 replacement lamp with housing for optoma projectors; category of entity2: nan; brand of entity2: electrified; model number of entity2: bl-fp230c; price of entity2: 134.44
+Duplicate or not: [/INST]
+
+============
+
+    <s>[INST] <<SYS>>
+    Your job is to correctly label the following into one of the following categories duplicate
+not duplicate\n
+Title of entity1: lexmark extra high yield return pgm print cartridge - magenta; category of entity1: printers; brand of entity1: lexmark; model number of entity1: c782u1mg; price of entity1: 214.88
+Title of entity2: lexmark 18c1428 return program print cartridge black; category of entity2: inkjet printer ink; brand of entity2: lexmark; model number of entity2: 18c1428; price of entity2: 19.97
+Duplicate or not: not duplicate
+
+Title of entity1: edge tech proshot 4gb sdhc class 6 memory card; category of entity1: usb drives; brand of entity1: edge tech; model number of entity1: pe209780; price of entity1: 10.88
+Title of entity2: 4gb edge proshot sdhc memory card class6; category of entity2: computers accessories; brand of entity2: edge; model number of entity2: nan; price of entity2: 17.83
+Duplicate or not: duplicate
+    <<SYS>>
+    Title of entity1: sharpie stainless steel permanent marker fine tip black; category of entity1: stationery & office machinery; brand of entity1: sharpie; model number of entity1: 1747388; price of entity1: 7.94
+Title of entity2: sharpie 32701 - retractable permanent marker fine point black; category of entity2: accessory kits; brand of entity2: sharpie; model number of entity2: nan; price of entity2: 20.92
+Duplicate or not: [/INST]
+
+============
+
+    <s>[INST] <<SYS>>
+    Your job is to correctly label the following into one of the following categories duplicate
+not duplicate\n
+Title of entity1: lexmark extra high yield return pgm print cartridge - magenta; category of entity1: printers; brand of entity1: lexmark; model number of entity1: c782u1mg; price of entity1: 214.88
+Title of entity2: lexmark 18c1428 return program print cartridge black; category of entity2: inkjet printer ink; brand of entity2: lexmark; model number of entity2: 18c1428; price of entity2: 19.97
+Duplicate or not: not duplicate
+
+Title of entity1: edge tech proshot 4gb sdhc class 6 memory card; category of entity1: usb drives; brand of entity1: edge tech; model number of entity1: pe209780; price of entity1: 10.88
+Title of entity2: 4gb edge proshot sdhc memory card class6; category of entity2: computers accessories; brand of entity2: edge; model number of entity2: nan; price of entity2: 17.83
+Duplicate or not: duplicate
+    <<SYS>>
+    Title of entity1: alera valencia series reversible return bridge shell; category of entity1: furniture; brand of entity1: alera; model number of entity1: va354824my; price of entity1: 109.0
+Title of entity2: alera tm va353624mc - valencia series reversible return bridge shell 36w x 24d x 29.5 h med cy; category of entity2: nan; brand of entity2: dealz4real; model number of entity2: nan; price of entity2: 123.26
+Duplicate or not: [/INST]
+
+============
+
+    <s>[INST] <<SYS>>
+    Your job is to correctly label the following into one of the following categories duplicate
+not duplicate\n
+Title of entity1: lexmark extra high yield return pgm print cartridge - magenta; category of entity1: printers; brand of entity1: lexmark; model number of entity1: c782u1mg; price of entity1: 214.88
+Title of entity2: lexmark 18c1428 return program print cartridge black; category of entity2: inkjet printer ink; brand of entity2: lexmark; model number of entity2: 18c1428; price of entity2: 19.97
+Duplicate or not: not duplicate
+
+Title of entity1: edge tech proshot 4gb sdhc class 6 memory card; category of entity1: usb drives; brand of entity1: edge tech; model number of entity1: pe209780; price of entity1: 10.88
+Title of entity2: 4gb edge proshot sdhc memory card class6; category of entity2: computers accessories; brand of entity2: edge; model number of entity2: nan; price of entity2: 17.83
+Duplicate or not: duplicate
+    <<SYS>>
+    Title of entity1: elite screens cinewhite cinema235 series fixed frame wide screen - 85 diagonal; category of entity1: electronics - general; brand of entity1: elite screens; model number of entity1: r85wh1-wide; price of entity1: 409.0
+Title of entity2: powergain prime vision series fixed frame screen - 120 diagonal; category of entity2: projection screens; brand of entity2: elite; model number of entity2: nan; price of entity2: 929.0
+Duplicate or not: [/INST]
+
+============
+
+    <s>[INST] <<SYS>>
+    Your job is to correctly label the following into one of the following categories duplicate
+not duplicate\n
+Title of entity1: lexmark extra high yield return pgm print cartridge - magenta; category of entity1: printers; brand of entity1: lexmark; model number of entity1: c782u1mg; price of entity1: 214.88
+Title of entity2: lexmark 18c1428 return program print cartridge black; category of entity2: inkjet printer ink; brand of entity2: lexmark; model number of entity2: 18c1428; price of entity2: 19.97
+Duplicate or not: not duplicate
+
+Title of entity1: edge tech proshot 4gb sdhc class 6 memory card; category of entity1: usb drives; brand of entity1: edge tech; model number of entity1: pe209780; price of entity1: 10.88
+Title of entity2: 4gb edge proshot sdhc memory card class6; category of entity2: computers accessories; brand of entity2: edge; model number of entity2: nan; price of entity2: 17.83
+Duplicate or not: duplicate
+    <<SYS>>
+    Title of entity1: los angeles lakers ipod touch 4g hard case; category of entity1: electronics - general; brand of entity1: tribeca; model number of entity1: fva4614; price of entity1: 29.99
+Title of entity2: minnesota vikings ipod touch 4g hard case; category of entity2: computers accessories; brand of entity2: tribeca; model number of entity2: nan; price of entity2: 29.99
+Duplicate or not: [/INST]
+
+============
+
+    <s>[INST] <<SYS>>
+    Your job is to correctly label the following into one of the following categories duplicate
+not duplicate\n
+Title of entity1: lexmark extra high yield return pgm print cartridge - magenta; category of entity1: printers; brand of entity1: lexmark; model number of entity1: c782u1mg; price of entity1: 214.88
+Title of entity2: lexmark 18c1428 return program print cartridge black; category of entity2: inkjet printer ink; brand of entity2: lexmark; model number of entity2: 18c1428; price of entity2: 19.97
+Duplicate or not: not duplicate
+
+Title of entity1: edge tech proshot 4gb sdhc class 6 memory card; category of entity1: usb drives; brand of entity1: edge tech; model number of entity1: pe209780; price of entity1: 10.88
+Title of entity2: 4gb edge proshot sdhc memory card class6; category of entity2: computers accessories; brand of entity2: edge; model number of entity2: nan; price of entity2: 17.83
+Duplicate or not: duplicate
+    <<SYS>>
+    Title of entity1: smead acid-free poly folder 2 fasteners 1 3 cut top tab letter manila 24 box; category of entity1: stationery & office machinery; brand of entity1: nan; model number of entity1: 10545; price of entity1: 42.94
+Title of entity2: smead 10235 - interior file folders 1 3 cut top tab letter aqua 100 box; category of entity2: printer accessories; brand of entity2: smead; model number of entity2: nan; price of entity2: nan
+Duplicate or not: [/INST]
+
+============
+
+    <s>[INST] <<SYS>>
+    Your job is to correctly label the following into one of the following categories duplicate
+not duplicate\n
+Title of entity1: lexmark extra high yield return pgm print cartridge - magenta; category of entity1: printers; brand of entity1: lexmark; model number of entity1: c782u1mg; price of entity1: 214.88
+Title of entity2: lexmark 18c1428 return program print cartridge black; category of entity2: inkjet printer ink; brand of entity2: lexmark; model number of entity2: 18c1428; price of entity2: 19.97
+Duplicate or not: not duplicate
+
+Title of entity1: edge tech proshot 4gb sdhc class 6 memory card; category of entity1: usb drives; brand of entity1: edge tech; model number of entity1: pe209780; price of entity1: 10.88
+Title of entity2: 4gb edge proshot sdhc memory card class6; category of entity2: computers accessories; brand of entity2: edge; model number of entity2: nan; price of entity2: 17.83
+Duplicate or not: duplicate
+    <<SYS>>
+    Title of entity1: pioneer cd player with mp3 wma playback; category of entity1: car stereos; brand of entity1: pioneer; model number of entity1: deh-3300ub; price of entity1: 123.0
+Title of entity2: pioneer deh-1300mp cd receiver with mp3 wma playback and remote control; category of entity2: cd-mp3 players; brand of entity2: pioneer; model number of entity2: deh-1300mp; price of entity2: nan
+Duplicate or not: [/INST]
+
+============
+
+    <s>[INST] <<SYS>>
+    Your job is to correctly label the following into one of the following categories duplicate
+not duplicate\n
+Title of entity1: lexmark extra high yield return pgm print cartridge - magenta; category of entity1: printers; brand of entity1: lexmark; model number of entity1: c782u1mg; price of entity1: 214.88
+Title of entity2: lexmark 18c1428 return program print cartridge black; category of entity2: inkjet printer ink; brand of entity2: lexmark; model number of entity2: 18c1428; price of entity2: 19.97
+Duplicate or not: not duplicate
+
+Title of entity1: edge tech proshot 4gb sdhc class 6 memory card; category of entity1: usb drives; brand of entity1: edge tech; model number of entity1: pe209780; price of entity1: 10.88
+Title of entity2: 4gb edge proshot sdhc memory card class6; category of entity2: computers accessories; brand of entity2: edge; model number of entity2: nan; price of entity2: 17.83
+Duplicate or not: duplicate
+    <<SYS>>
+    Title of entity1: edge tech diskgo 160gb portable usb hard drive; category of entity1: hard drives; brand of entity1: edge tech; model number of entity1: pe222710; price of entity1: 60.98
+Title of entity2: 500 gb portable hard drive; category of entity2: external hard drives; brand of entity2: western digital; model number of entity2: wdme5000tn; price of entity2: 140.27
+Duplicate or not: [/INST]
+
+============
+
+    <s>[INST] <<SYS>>
+    Your job is to correctly label the following into one of the following categories duplicate
+not duplicate\n
+Title of entity1: lexmark extra high yield return pgm print cartridge - magenta; category of entity1: printers; brand of entity1: lexmark; model number of entity1: c782u1mg; price of entity1: 214.88
+Title of entity2: lexmark 18c1428 return program print cartridge black; category of entity2: inkjet printer ink; brand of entity2: lexmark; model number of entity2: 18c1428; price of entity2: 19.97
+Duplicate or not: not duplicate
+
+Title of entity1: edge tech proshot 4gb sdhc class 6 memory card; category of entity1: usb drives; brand of entity1: edge tech; model number of entity1: pe209780; price of entity1: 10.88
+Title of entity2: 4gb edge proshot sdhc memory card class6; category of entity2: computers accessories; brand of entity2: edge; model number of entity2: nan; price of entity2: 17.83
+Duplicate or not: duplicate
+    <<SYS>>
+    Title of entity1: sony 4gb flash memory card black; category of entity1: usb drives; brand of entity1: sony; model number of entity1: sf4n4/tq; price of entity1: 10.88
+Title of entity2: sony 2 gb memory stick pro duo flash memory card msmt2g; category of entity2: memory cards; brand of entity2: sony; model number of entity2: msmt2g; price of entity2: 10.56
+Duplicate or not: [/INST]
+
+============

@@ -509,7 +509,8 @@ class LabelingAgent:
             result = self.llm.label([prompt])
             if result.errors[0] is not None:
                 self.console.print(
-                    f"Error generating rows for label {label}: {result.errors[0]}"
+                    f"Error generating rows for label {label}: {result.errors[0]}",
+                    markup=False
                 )
             else:
                 response = result.generations[0][0].text.strip()
