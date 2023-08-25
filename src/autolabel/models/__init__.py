@@ -12,6 +12,7 @@ from autolabel.models.cohere import CohereLLM
 from autolabel.models.palm import PaLMLLM
 from autolabel.models.hf_pipeline import HFPipelineLLM
 from autolabel.models.refuel import RefuelLLM
+from autolabel.models.llama import Llama
 
 MODEL_REGISTRY = {
     ModelProvider.OPENAI: OpenAILLM,
@@ -20,6 +21,7 @@ MODEL_REGISTRY = {
     ModelProvider.HUGGINGFACE_PIPELINE: HFPipelineLLM,
     ModelProvider.GOOGLE: PaLMLLM,
     ModelProvider.REFUEL: RefuelLLM,
+    ModelProvider.LLAMA: Llama,
 }
 
 
