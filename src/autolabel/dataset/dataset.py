@@ -58,7 +58,7 @@ class AutolabelDataset:
         elif isinstance(dataset, pd.DataFrame):
             df = dataset.copy()
 
-        df = df[start_index:]
+        df = df[start_index:].astype(str)
         if max_items and max_items > 0:
             max_items = min(max_items, len(df))
             df = df[:max_items]
