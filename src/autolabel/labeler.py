@@ -35,6 +35,7 @@ from autolabel.utils import (
     gather_async_tasks_with_progress,
     get_format_variables,
     in_notebook,
+    try_convert_values_to_strings,
 )
 
 logger = logging.getLogger(__name__)
@@ -159,7 +160,7 @@ class LabelingAgent:
         if self.example_selector is None:
             self.example_selector = ExampleSelectorFactory.initialize_selector(
                 self.config,
-                seed_examples,
+                [try_convert_values_to_strings(example) for example in seed_examples],
                 dataset.df.keys().tolist(),
                 cache=self.generation_cache is not None,
             )
@@ -179,7 +180,9 @@ class LabelingAgent:
             chunk = dataset.inputs[current_index]
 
             if self.example_selector:
-                examples = self.example_selector.select_examples(chunk)
+                examples = self.example_selector.select_examples(
+                    try_convert_values_to_strings(chunk)
+                )
             else:
                 examples = []
                 # Construct Prompt to pass to LLM
@@ -324,7 +327,7 @@ class LabelingAgent:
 
         self.example_selector = ExampleSelectorFactory.initialize_selector(
             self.config,
-            seed_examples,
+            [try_convert_values_to_strings(example) for example in seed_examples],
             dataset.df.keys().tolist(),
             cache=self.generation_cache is not None,
         )
@@ -338,7 +341,9 @@ class LabelingAgent:
         ):
             # TODO: Check if this needs to use the example selector
             if self.example_selector:
-                examples = self.example_selector.select_examples(input_i)
+                examples = self.example_selector.select_examples(
+                    try_convert_values_to_strings(input_i)
+                )
             else:
                 examples = []
             final_prompt = self.task.construct_prompt(input_i, examples)

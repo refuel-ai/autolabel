@@ -383,3 +383,14 @@ def in_notebook():
     except AttributeError:
         return False
     return True
+
+
+def try_convert_values_to_strings(data: Dict) -> Dict:
+    """Convert all values in a dictionary to strings. Try convetring to string first, otherwise return empty string."""
+    ret = {}
+    for k, v in data.items():
+        try:
+            ret[k] = str(v)
+        except Exception:
+            ret[k] = ""
+    return ret
