@@ -61,6 +61,11 @@ class MetricType(str, Enum):
     F1_MACRO = "f1_macro"
     F1_WEIGHTED = "f1_weighted"
     TEXT_PARTIAL_MATCH = "text_partial_match"
+    #Token Classification metrics
+    F1_STRICT = "f1_strict"
+    F1_EXACT = "f1_exact"
+    F1_PARTIAL = "f1_partial"
+    F1_ENT_TYPE = "f1_ent_type"
     # Confidence metrics
     AUROC = "auroc"
     THRESHOLD = "threshold"
