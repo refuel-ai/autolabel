@@ -35,7 +35,7 @@ from autolabel.utils import (
     gather_async_tasks_with_progress,
     get_format_variables,
     in_notebook,
-    try_convert_values_to_strings,
+    safe_serialize_to_string,
 )
 
 logger = logging.getLogger(__name__)
@@ -160,7 +160,7 @@ class LabelingAgent:
         if self.example_selector is None:
             self.example_selector = ExampleSelectorFactory.initialize_selector(
                 self.config,
-                [try_convert_values_to_strings(example) for example in seed_examples],
+                [safe_serialize_to_string(example) for example in seed_examples],
                 dataset.df.keys().tolist(),
                 cache=self.generation_cache is not None,
             )
@@ -181,7 +181,7 @@ class LabelingAgent:
 
             if self.example_selector:
                 examples = self.example_selector.select_examples(
-                    try_convert_values_to_strings(chunk)
+                    safe_serialize_to_string(chunk)
                 )
             else:
                 examples = []
@@ -327,7 +327,7 @@ class LabelingAgent:
 
         self.example_selector = ExampleSelectorFactory.initialize_selector(
             self.config,
-            [try_convert_values_to_strings(example) for example in seed_examples],
+            [safe_serialize_to_string(example) for example in seed_examples],
             dataset.df.keys().tolist(),
             cache=self.generation_cache is not None,
         )
@@ -342,7 +342,7 @@ class LabelingAgent:
             # TODO: Check if this needs to use the example selector
             if self.example_selector:
                 examples = self.example_selector.select_examples(
-                    try_convert_values_to_strings(input_i)
+                    safe_serialize_to_string(input_i)
                 )
             else:
                 examples = []

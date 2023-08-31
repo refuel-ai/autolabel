@@ -385,7 +385,7 @@ def in_notebook():
     return True
 
 
-def try_convert_values_to_strings(data: Dict) -> Dict:
+def safe_serialize_to_string(data: Dict) -> Dict:
     """Convert all values in a dictionary to strings. Try convetring to string first, otherwise return empty string."""
     ret = {}
     for k, v in data.items():
