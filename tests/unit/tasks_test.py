@@ -502,7 +502,7 @@ def test_classification_labels_not_in_labels_list():
     label = "This is the thing we want to test.\nnot-in-labels-list"
     response = Generation(text=label)
     parsed = task.parse_llm_response(response, input, prompt)
-    assert parsed.label == "not-in-labels-list"
+    assert parsed.label == task.NULL_LABEL_TOKEN
     assert parsed.successfully_labeled == False
     assert parsed.raw_response == label
 
@@ -529,7 +529,7 @@ def test_entity_matching_label_not_in_labels_list():
     label = "This is the thing we want to test.\nnot-in-labels-list"
     response = Generation(text=label)
     parsed = task.parse_llm_response(response, input, prompt)
-    assert parsed.label == "not-in-labels-list"
+    assert parsed.label == task.NULL_LABEL_TOKEN
     assert parsed.successfully_labeled == False
     assert parsed.raw_response == label
 
