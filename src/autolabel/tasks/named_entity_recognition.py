@@ -241,8 +241,8 @@ class NamedEntityRecognitionTask(BaseTask):
         # f1 score for exact match
         eval_metrics.append(
             MetricResult(
-                name=MetricType.F1_EXACT,
-                value=results["partial"]["f1"],
+                name=MetricType.F1,
+                value=results["exact"]["f1"],
             )
         )
 
@@ -257,7 +257,7 @@ class NamedEntityRecognitionTask(BaseTask):
         # f1 score entity type match
         eval_metrics.append(
             MetricResult(
-                name=MetricType.F1_ENT_TYPEgit,
+                name=MetricType.F1_ENT_TYPE,
                 value=results["ent_type"]["f1"],
             )
         )
