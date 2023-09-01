@@ -55,6 +55,45 @@ class ClassificationTask(BaseTask):
         # prepare task guideline
         labels_list = self.config.labels_list()
         num_labels = len(labels_list)
+
+        # if large number of labels, filter by similarity to input
+        if num_labels >= 50:
+            from langchain.prompts.example_selector import SemanticSimilarityExampleSelector
+            from langchain.vectorstores import Chroma
+            from langchain.embeddings import OpenAIEmbeddings
+            from langchain.prompts import FewShotPromptTemplate, PromptTemplate
+            print(f"PC_DEBUG :: input = {input}")
+            example_prompt = PromptTemplate(
+                input_variables=["input"],
+                template="{input}",
+            )
+            examples = [{"input":label} for label in labels_list]
+
+            example_selector = SemanticSimilarityExampleSelector.from_examples(
+                # This is the list of examples available to select from.
+                examples,
+                # This is the embedding class used to produce embeddings which are used to measure semantic similarity.
+                OpenAIEmbeddings(),
+                # This is the VectorStore class that is used to store the embeddings and do a similarity search over.
+                Chroma,
+                # This is the number of examples to produce.
+                k=5
+            )
+            similar_prompt = FewShotPromptTemplate(
+                # We provide an ExampleSelector instead of examples.
+                example_selector=example_selector,
+                example_prompt=example_prompt,
+                prefix="Input: {example}\n",
+                suffix="",
+                input_variables=["example"],
+            )
+            print(similar_prompt.format(example=input["example"]))
+            #sampled_labels = similar_prompt.format(example=input["example"])
+            #print(sampled_labels)
+            #print(type(sampled_labels))
+            #print(len(sampled_labels))
+            exit()
+
         fmt_task_guidelines = self.task_guidelines.format(
             num_labels=num_labels, labels="\n".join(labels_list)
         )
