@@ -7,7 +7,7 @@
     },
     "model": {
         "provider": "llama",
-        "name": "/workspace/hf-trained-nonchat"
+        "name": "/workspace/hf-trained-all-ds"
     },
     "embedding": {
         "provider": "openai"
@@ -32,7 +32,7 @@
                 "label": "not duplicate"
             }
         ],
-        "few_shot_selection": "fixed",
-        "few_shot_num": 2
+        "few_shot_selection": "semantic_similarity",
+        "few_shot_num": 4
     }
 }

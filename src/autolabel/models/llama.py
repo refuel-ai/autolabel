@@ -35,7 +35,7 @@ logger = logging.getLogger(__name__)
 
 class Llama(BaseModel):
     DEFAULT_PARAMS = {
-        "max_new_tokens": 128,
+        "max_new_tokens": 1024,
         "temperature": 0.05,
         "top_p": 0.9,
     }

@@ -7,7 +7,7 @@
     },
     "model": {
         "provider": "llama",
-        "name": "/workspace/hf-trained-nonchat"
+        "name": "/workspace/hf-trained-all-ds"
     },
     "embedding": {
         "provider": "openai"
@@ -20,8 +20,8 @@
             "not toxic"
         ],
         "few_shot_examples": "seed.csv",
-        "few_shot_selection": "label_diversity_random",
-        "few_shot_num": 5,
+        "few_shot_selection": "semantic_similarity",
+        "few_shot_num": 0,
         "example_template": "{example}{label}"
     }
 }

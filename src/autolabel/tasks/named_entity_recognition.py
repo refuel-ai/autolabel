@@ -1,4 +1,5 @@
 import json
+import ast
 import re
 from collections import defaultdict
 from typing import Dict, List, Tuple, Optional
@@ -24,8 +25,8 @@ logger = logging.getLogger(__name__)
 
 
 class NamedEntityRecognitionTask(BaseTask):
-    DEFAULT_OUTPUT_GUIDELINES = "You will return the answer in CSV format, with two columns seperated by the % character. First column is the extracted entity and second column is the category. Rows in the CSV are separated by new line character."
-    DEFAULT_TASK_GUIDELINES = "Your job is to extract named entities mentioned in text, and classify them into one of the following {num_labels} categories.\nCategories:\n{labels}\n "
+    DEFAULT_OUTPUT_GUIDELINES = "You will return the answer in JSON format, where keys are the above categories and values is a list of substrings corresponding to that category."
+    DEFAULT_TASK_GUIDELINES = "Your job is to extract named entities mentioned in text, and classify them into one of the following categories.\nCategories:\n{labels}\n "
     NULL_LABEL = {}
 
     def __init__(self, config: AutolabelConfig) -> None:
@@ -33,41 +34,50 @@ class NamedEntityRecognitionTask(BaseTask):
 
     def _json_to_llm_format(self, input_label: str) -> str:
         # `label` format: {"entity type": [list of entities of this type]}
-        try:
-            labels = json.loads(input_label)
-            rows = []
-            for entity_type, detected_entites in labels.items():
-                for e in detected_entites:
-                    row = "%".join([e, entity_type])
-                    rows.append(row)
-            llm_formatted_label = "\n".join(rows)
-            return llm_formatted_label
-        except json.JSONDecodeError as e:
-            logger.error(
-                f"Could not parse label: {input_label}. Few-shot examples might be formatted incorrectly"
-            )
-            return input_label
+        # try:
+        #     labels = json.loads(input_label)
+        #     rows = []
+        #     for entity_type, detected_entites in labels.items():
+        #         for e in detected_entites:
+        #             row = "%".join([e, entity_type])
+        #             rows.append(row)
+        #     llm_formatted_label = "\n".join(rows)
+        #     return llm_formatted_label
+        # except json.JSONDecodeError as e:
+        #     logger.error(
+        #         f"Could not parse label: {input_label}. Few-shot examples might be formatted incorrectly"
+        #     )
+        #     return input_label
+        return input_label
 
     def _llm_to_json_format(self, response: str):
-        split_response = response.split("\n")
-        json_output = {i: [] for i in self.config.labels_list()}
+        try:
+            return ast.literal_eval(response)
+        except Exception as e:
+            logger.error(
+                f"Could not parse LLM output: {response}"
+            )
+            logger.error(e)
+            return {i: [] for i in self.config.labels_list()}
+        # split_response = response.split("\n")
+        # json_output = {i: [] for i in self.config.labels_list()}
 
-        for row in split_response:
-            parts = row.split("%")
-            if len(parts) != 2 or parts[1] not in json_output.keys():
-                logger.debug(f"Malformed LLM response: {row}")
-                continue
-            named_entity = parts[0]
-            category = parts[1]
-            json_output[category].append(named_entity)
-        return json_output
+        # for row in split_response:
+        #     parts = row.split("%")
+        #     if len(parts) != 2 or parts[1] not in json_output.keys():
+        #         logger.debug(f"Malformed LLM response: {row}")
+        #         continue
+        #     named_entity = parts[0]
+        #     category = parts[1]
+        #     json_output[category].append(named_entity)
+        # return json_output
 
     def construct_prompt(self, input: Dict, examples: List) -> str:
         # prepare task guideline
         labels_list = self.config.labels_list()
         num_labels = len(labels_list)
         fmt_task_guidelines = self.task_guidelines.format(
-            num_labels=num_labels, labels="\n".join(labels_list)
+            num_labels=num_labels, labels="\\n".join(labels_list)
         )
 
         # prepare seed examples
@@ -121,7 +131,6 @@ class NamedEntityRecognitionTask(BaseTask):
         for entity_type in raw_output:
             for curr_entity in raw_output[entity_type]:
                 processed_output.append({"type": entity_type, "text": curr_entity})
-
         # create a frequency dict of each named entity in the input to determine text spans for repeated entities
         frequency_count = {label["text"]: 0 for label in processed_output}
 
@@ -141,6 +150,7 @@ class NamedEntityRecognitionTask(BaseTask):
                 label["start"] = matches[count]
                 label["end"] = matches[count] + len(text)
             frequency_count[text] += 1
+        print("Input = ", input, "Processed output = ", processed_output)
         return processed_output
 
     def parse_llm_response(
@@ -150,7 +160,7 @@ class NamedEntityRecognitionTask(BaseTask):
         successfully_labeled = False
         error = None
         text_column = self.config.text_column()
-        input_str = curr_sample[text_column]
+        input_str = str(curr_sample[text_column])
         try:
             completion_text = response.text
             output = self._llm_to_json_format(completion_text.strip())
@@ -284,7 +294,7 @@ class NamedEntityRecognitionTask(BaseTask):
 
         gt_labels = [
             self.add_text_spans(
-                json.loads(gt_labels[index]), llm_labels[index].curr_sample
+                json.loads(gt_labels[index]), str(llm_labels[index].curr_sample)[2:]
             )
             for index in range(len(gt_labels))
         ]

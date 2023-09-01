@@ -6,12 +6,12 @@
         "delimiter": ","
     },
     "model": {
-        "provider": "openai",
-        "name": "gpt-3.5-turbo"
+        "provider": "llama",
+        "name": "/workspace/hf-trained-all-ds"
     },
     "prompt": {
-        "task_guidelines": "You are an expert at answer science questions. Your job is to answer the given question, using the options provided for each question. Choose the best answer for the question from among the options provided",
-        "example_template": "Question: {question}\nOptions: {options}\nAnswer: {answer}",
+        "task_guidelines": "Your job is to answer the given question, using the options provided for each question.",
+        "example_template": "Q: {question} Choices: {options} A: {answer}",
         "few_shot_examples": "seed.csv",
         "few_shot_selection": "semantic_similarity",
         "few_shot_num": 10

@@ -1,0 +1,2700 @@
+
+    <s>[INST] <<SYS>>
+    Your job is to answer the given question, using the options provided for each question.You will return the answer one element: "the correct label"
+
+Q: What do you call health-promoting molecules that inhibit the oxidation of other molecules? Choices: ['nutrients', 'antioxidants', 'neurotransmitters', 'hormones'] A: antioxidants
+
+Q: Highly reactive nonmetals, which only accept electrons and do not give them up, make poor what? Choices: ['electricity conductors', 'insulators', 'electromagnets', 'alloys'] A: electricity conductors
+
+Q: The majority of elements, including iron and copper, are of what type? Choices: ['oils', 'metals', 'minerals', 'acids'] A: metals
+
+Q: A hydrogen atom with one neutron is called what? Choices: ['magnesium', 'deuterium', 'covalent', 'ionic'] A: deuterium
+
+Q: A fuel cell is a galvanic cell that requires a constant external supply of what? Choices: ['reactants', 'complexes', 'generators', 'electricity'] A: reactants
+
+Q: What is the third class of elements after metals and nonmetals? Choices: ['metalloids', 'halogens', 'synthetics', 'noble gases'] A: metalloids
+
+Q: What compounds form crystals instead of molecules? Choices: ['magnetic compounds', 'soluble compounds', 'metallic compounds', 'ionic compounds'] A: ionic compounds
+
+Q: Solid carbon dioxide is called what? Choices: ['carbohydrate', 'dry ice', 'blue ice', 'liquid nitrogen'] A: dry ice
+
+Q: What acids are the structural components of many lipids and may be saturated or unsaturated? Choices: ['fatty acids', 'carbonic acids', 'fundamental acids', 'ionic acids'] A: fatty acids
+
+Q: The name of a simple covalent compound can be determined from its chemical this? Choices: ['formula', 'models', 'map', 'configuration'] A: formula
+    <<SYS>>
+    Q: Compounds that are capable of accepting electrons, such as o 2 or f2, are called what? Choices: ['Oxygen', 'antioxidants', 'residues', 'oxidants'] A: [/INST]
+
+============
+
+    <s>[INST] <<SYS>>
+    Your job is to answer the given question, using the options provided for each question.You will return the answer one element: "the correct label"
+
+Q: What form of reproduction creates offspring that are genetically identical to the parent? Choices: ['microscopic', 'primitive', 'sexual', 'asexual'] A: asexual
+
+Q: What is an individual with more than the correct number of chromosome sets called? Choices: ['polyploid', 'autotrophs', 'diploid', 'autosome'] A: polyploid
+
+Q: What is the process in which unspecialized cells become specialized in structure and function to perform certain tasks in the body? Choices: ['differentiation', 'transcription', 'mutation', 'speciation'] A: differentiation
+
+Q: What is the passing of traits from parents to offspring called? Choices: ['variability', 'cell division', 'heredity', 'mutation'] A: heredity
+
+Q: What term describes reproducing by external fertilization after the female sheds large numbers of small eggs? Choices: ['homozygous', 'oviparous', 'glandular', 'glaucous'] A: oviparous
+
+Q: What is the science of classifying living things called? Choices: ['terminology', 'methodology', 'botany', 'taxonomy'] A: taxonomy
+
+Q: The male gametophyte releases what, which swim - propelled by their flagella - to reach and fertilize the female gamete or egg? Choices: ['sperm', 'cytoplasm', 'tadpoles', 'dna'] A: sperm
+
+Q: Only after implantation can an embryo develop into a what? Choices: ['living thing', 'mammal', 'humans', 'fetus'] A: fetus
+
+Q: When a species changes in small ways over time, what is it called? Choices: ['small evolution', 'microevolution', 'nanoevolution', 'minievolution'] A: microevolution
+
+Q: What is needed for a person to be affected by an autosomal dominant disorder? Choices: ['one mutated allele', 'one less chromosome', 'extra alleles', 'one isolated allele'] A: one mutated allele
+    <<SYS>>
+    Q: What term in biotechnology means a genetically exact copy of an organism? Choices: ['phenotype', 'adult', 'clone', 'male'] A: [/INST]
+
+============
+
+    <s>[INST] <<SYS>>
+    Your job is to answer the given question, using the options provided for each question.You will return the answer one element: "the correct label"
+
+Q: What do mammals have under the skin to help insulate the body? Choices: ['cartilage', 'nerve cells', 'bone', 'a layer of fat'] A: a layer of fat
+
+Q: Birds are thought to have evolved from a group of bipedal dinosaurs called what? Choices: ['staurikosaurus', 'sporozoans', 'pteradactyls', 'therapods'] A: therapods
+
+Q: A series of arches that support the gills of aquatic amphibians and fish are known as what? Choices: ['aquatic arches', 'cochlear arches', 'scythian arches', 'branchial arches'] A: branchial arches
+
+Q: Illustrating how form follows function, long, slender protein strands that make up what tissue are essential for contracting and relaxing? Choices: ['muscle', 'veins', 'tendons', 'ligaments'] A: muscle
+
+Q: In multicellular organisms, essential biological functions are carried out by what? Choices: ['cells', 'organs', 'atoms', 'molecules'] A: organs
+
+Q: The bilaterians are divided into deuterostomes and what else? Choices: ['gymnosperms', 'progestins', 'protostomes', 'protozoa'] A: protostomes
+
+Q: Sounds are produced when muscles in what organ are tensed, stretching the cords so they vibrate? Choices: ['larnyx', 'thorax', 'diaphragm', 'throat'] A: larnyx
+
+Q: Which is one of the most frequently studied cartilaginous fish? Choices: ['sharks', 'whales', 'manatees', 'dolphins'] A: sharks
+
+Q: What kind of muscle is the heart mainly composed of? Choices: ['respiratory muscle', 'idealized muscle', 'cardiac muscle', 'nerve muscle'] A: cardiac muscle
+
+Q: What part of the neuron is a large structure with a central nucleus? Choices: ['Eye body', 'cell body', 'proteins body', 'Environmental'] A: cell body
+    <<SYS>>
+    Q: Vertebrata are characterized by the presence of what? Choices: ['Muscles', 'backbone', 'Thumbs', 'Bones'] A: [/INST]
+
+============
+
+    <s>[INST] <<SYS>>
+    Your job is to answer the given question, using the options provided for each question.You will return the answer one element: "the correct label"
+
+Q: What term describes the distance between two corresponding points on adjacent waves? Choices: ['wavelength', 'threshold', 'frequency', 'variation'] A: wavelength
+
+Q: What separates one river system's basin from another river system's basin? Choices: ['a sink', 'a bend', 'a divide', 'a divert'] A: a divide
+
+Q: Do most waves strike the shore head on or at an angle? Choices: ['side on', 'head on', 'at an angle', 'at a distance'] A: at an angle
+
+Q: Most of the fresh water on earth is tied up in a solid form. what are they called? Choices: ['oceans', 'lakes', 'glaciers', 'sediments'] A: glaciers
+
+Q: What is the term for the ability of a fluid to exert an upward force on any object placed in it? Choices: ['resonance', 'buoyancy', 'viscosity', 'density'] A: buoyancy
+
+Q: Fahrenheit, celsius, and kelvin are all units which measure what? Choices: ['precipitation', 'brightness', 'radiation', 'temperature'] A: temperature
+
+Q: What is the term for a measure of both speed and direction? Choices: ['velocity', 'acceleration', 'momentum', 'intensity'] A: velocity
+
+Q: What are located along convergent and divergent plate boundaries? Choices: ['mezas', 'megaliths', 'dunes', 'volcanoes'] A: volcanoes
+
+Q: What is the term for something changing from water to ice? Choices: ['melting', 'freezing', 'evaporation', 'boiling'] A: freezing
+
+Q: What do we call the visible part of the electromagnetic spectrum? Choices: ['electricity', 'weight', 'radio', 'light'] A: light
+    <<SYS>>
+    Q: What is the height above or below sea level called? Choices: ['elevation', 'variation', 'latitude', 'depth'] A: [/INST]
+
+============
+
+    <s>[INST] <<SYS>>
+    Your job is to answer the given question, using the options provided for each question.You will return the answer one element: "the correct label"
+
+Q: What record provides evidence that new species develop to fill the habitats where old species lived following a mass extinction? Choices: ['fossil fuels', 'erosion record', 'fossil record', 'climate record'] A: fossil record
+
+Q: What do you call the ancient cores of continents, where the earliest continental crust is now found? Choices: ['craters', 'mantles', 'cratons', 'escarpments'] A: cratons
+
+Q: Where do extrusive igneous rocks cool at? Choices: ['underground', 'in water', 'surface', 'in volcanoes'] A: surface
+
+Q: What substance, which forms igneous rock, flows out in rivers of lava when it reaches the surface? Choices: ['fertilizer', 'soil', 'magma', 'granite'] A: magma
+
+Q: Melting ice is drastically impacting the number of what at glacier national park? Choices: ['icebergs', 'gaisers', 'active glaciers', 'trees'] A: active glaciers
+
+Q: What are located along convergent and divergent plate boundaries? Choices: ['mezas', 'megaliths', 'dunes', 'volcanoes'] A: volcanoes
+
+Q: What were the first plants to evolve? Choices: ['trees', 'photoreactive plants', 'nonvascular plants', 'fungi'] A: nonvascular plants
+
+Q: Temperature and precipitation determine the types of what that can grow in an area, in turn affecting the animals that live there? Choices: ['plants', 'roots', 'building', 'birds'] A: plants
+
+Q: Which part of the atmosphere do greenhouse gasses trap heat in? Choices: ['stratosphere', 'troposphere', 'lithosphere', 'thermosphere'] A: troposphere
+
+Q: What absorbs, scatters, or reflects most incoming solar radiation in the atmosphere? Choices: ['clouds and sand', 'clouds and dust', 'ice and dust', 'coulds and minerals'] A: clouds and dust
+    <<SYS>>
+    Q: Ice cores, varves and what else indicate the environmental conditions at the time of their creation? Choices: ['mountain ranges', 'magma', 'tree rings', 'fossils'] A: [/INST]
+
+============
+
+    <s>[INST] <<SYS>>
+    Your job is to answer the given question, using the options provided for each question.You will return the answer one element: "the correct label"
+
+Q: Plant-like protists contains chloroplasts and make food by what process? Choices: ['farming', 'digestion', 'photosynthesis', 'chemical processes'] A: photosynthesis
+
+Q: Oxygen, carbon dioxide, atp, and nadph are reactants in what process that plants use to produce food? Choices: ['photosynthesis', 'absorbtion', 'chlorophyll', 'glycolysis'] A: photosynthesis
+
+Q: What do you call health-promoting molecules that inhibit the oxidation of other molecules? Choices: ['nutrients', 'antioxidants', 'neurotransmitters', 'hormones'] A: antioxidants
+
+Q: What is the process in which unspecialized cells become specialized in structure and function to perform certain tasks in the body? Choices: ['differentiation', 'transcription', 'mutation', 'speciation'] A: differentiation
+
+Q: Small nonprotein, water-soluble molecules or ions called second messengers often play a role in what kind of pathways? Choices: ['creating', 'inhibiting', 'signaling', 'creating'] A: signaling
+
+Q: What were the first plants to evolve? Choices: ['trees', 'photoreactive plants', 'nonvascular plants', 'fungi'] A: nonvascular plants
+
+Q: What is the basic unit of the structure and function of living things? Choices: ['nucleus', 'atom', 'molecule', 'cell'] A: cell
+
+Q: How do animals obtain nitrogen? Choices: ['eating plants other animals', 'eating plants or bugs', 'eating plants or organisms', 'eating plants or sediments'] A: eating plants or organisms
+
+Q: What neurons carry nerve impulses from sense organs and internal organs to the central nervous system? Choices: ['vascular', 'axons', 'autonomic', 'sensory'] A: sensory
+
+Q: When a nerve impulse reaches the end of an axon, what are the chemicals released by the axon called? Choices: ['receptors', 'neurons', 'electrolytes', 'neurotransmitters'] A: neurotransmitters
+    <<SYS>>
+    Q: What chemical signals in plants control different processes? Choices: ['Human Hormones', 'produce hormones', 'nitrogen hormones', 'plant hormones'] A: [/INST]
+
+============
+
+    <s>[INST] <<SYS>>
+    Your job is to answer the given question, using the options provided for each question.You will return the answer one element: "the correct label"
+
+Q: The male gametophyte releases what, which swim - propelled by their flagella - to reach and fertilize the female gamete or egg? Choices: ['sperm', 'cytoplasm', 'tadpoles', 'dna'] A: sperm
+
+Q: What form of reproduction creates offspring that are genetically identical to the parent? Choices: ['microscopic', 'primitive', 'sexual', 'asexual'] A: asexual
+
+Q: Vivipary refers to the development and nourishment of a what? Choices: ['embryo', 'seed', 'egg', 'nucleus'] A: embryo
+
+Q: What term describes reproducing by external fertilization after the female sheds large numbers of small eggs? Choices: ['homozygous', 'oviparous', 'glandular', 'glaucous'] A: oviparous
+
+Q: In humans, fertilization occurs soon after the oocyte leaves this? Choices: ['placenta', 'testes', 'ovary', 'egg'] A: ovary
+
+Q: Prophase is preceded by a preprophase stage in what type of cells? Choices: ['hair and nail cells', 'plant cells', 'egg cells', 'brain cells'] A: plant cells
+
+Q: The bilaterians are divided into deuterostomes and what else? Choices: ['gymnosperms', 'progestins', 'protostomes', 'protozoa'] A: protostomes
+
+Q: The ladybug and the frog both start as eggs and go through what process? Choices: ['transition', 'metamorphosis', 'parthenogenesis', 'proboscis'] A: metamorphosis
+
+Q: What is an individual with more than the correct number of chromosome sets called? Choices: ['polyploid', 'autotrophs', 'diploid', 'autosome'] A: polyploid
+
+Q: What is the passing of traits from parents to offspring called? Choices: ['variability', 'cell division', 'heredity', 'mutation'] A: heredity
+    <<SYS>>
+    Q: Meiosis is part of the process of gametogenesis, which is the production of what? Choices: ['sperm and eggs', 'egg only', 'chromosomes', 'sperm only'] A: [/INST]
+
+============
+
+    <s>[INST] <<SYS>>
+    Your job is to answer the given question, using the options provided for each question.You will return the answer one element: "the correct label"
+
+Q: What were the first plants to evolve? Choices: ['trees', 'photoreactive plants', 'nonvascular plants', 'fungi'] A: nonvascular plants
+
+Q: Temperature and precipitation determine the types of what that can grow in an area, in turn affecting the animals that live there? Choices: ['plants', 'roots', 'building', 'birds'] A: plants
+
+Q: Many species of flowering plants have coevolved with specific what? Choices: ['predators', 'spores', 'climates', 'pollinators'] A: pollinators
+
+Q: What are plants that are adapted to very dry environments called? Choices: ['succulents', 'sporozoans', 'xerophytes', 'pores'] A: xerophytes
+
+Q: Above the meristem, the rest of the root is covered with a single layer of what type of cells, which may have root hairs? Choices: ['single celled', 'vegetative', 'dermal', 'epidermal'] A: epidermal
+
+Q: Many plants respond to the days growing shorter in the fall by doing what? Choices: ['migrating', 'turning to liquid', 'growing faster', 'going dormant'] A: going dormant
+
+Q: What is the science of classifying living things called? Choices: ['terminology', 'methodology', 'botany', 'taxonomy'] A: taxonomy
+
+Q: Melting ice is drastically impacting the number of what at glacier national park? Choices: ['icebergs', 'gaisers', 'active glaciers', 'trees'] A: active glaciers
+
+Q: Candida and trichophyton are examples of disease-causing types of what organisms, which become parasitic? Choices: ['viruses', 'bacteria', 'yeast', 'fungi'] A: fungi
+
+Q: Carnivores that eat herbivores are what kind of consumers? Choices: ['primary', 'quaternary', 'secondary', 'tertiary'] A: secondary
+    <<SYS>>
+    Q: Which type of tree is dominant in temperate forests? Choices: ['vines', 'deciduous', 'shrubs', 'fungus'] A: [/INST]
+
+============
+
+    <s>[INST] <<SYS>>
+    Your job is to answer the given question, using the options provided for each question.You will return the answer one element: "the correct label"
+
+Q: Proteins are categorized according to shape and what property, which correlates with it? Choices: ['size', 'viscosity', 'salinity', 'solubility'] A: solubility
+
+Q: What acids are the structural components of many lipids and may be saturated or unsaturated? Choices: ['fatty acids', 'carbonic acids', 'fundamental acids', 'ionic acids'] A: fatty acids
+
+Q: Hydrophilic molecules generally avoid what other kinds of molecules? Choices: ['lipophilic', 'aqueous', 'neutral', 'hydrophobic'] A: hydrophobic
+
+Q: What is the term for the ability of a fluid to exert an upward force on any object placed in it? Choices: ['resonance', 'buoyancy', 'viscosity', 'density'] A: buoyancy
+
+Q: Solid carbon dioxide is called what? Choices: ['carbohydrate', 'dry ice', 'blue ice', 'liquid nitrogen'] A: dry ice
+
+Q: What theory states that there is no interaction between individual gas particles? Choices: ['vortex theory', 'Avoidance theory', 'kinetic theory', 'viscosity theory'] A: kinetic theory
+
+Q: What happens to water vapor as it rises? Choices: ['it cools', 'it warms', 'it vibrates', 'it disperses'] A: it cools
+
+Q: When present in large volumes, what color hue can water emit? Choices: ['white', 'pink', 'yellow', 'blue'] A: blue
+
+Q: Most mercury compounds decompose when they are? Choices: ['filled', 'mixed', 'cooled', 'heated'] A: heated
+
+Q: The behavior of ideal gases is explained by what theory of gases? Choices: ['molecular theory', 'kinetic theory', "Charles's Law", 'kinetic molecular theory'] A: kinetic molecular theory
+    <<SYS>>
+    Q: What kind of viscosity is found in long-chain hydrocarbons? Choices: ['intense viscosity', 'increased viscosity', 'low viscosity', 'highly viscous'] A: [/INST]
+
+============
+
+    <s>[INST] <<SYS>>
+    Your job is to answer the given question, using the options provided for each question.You will return the answer one element: "the correct label"
+
+Q: What happens when ionic compounds are dissolved in water? Choices: ['deflect electricity', 'repel electricity', 'conduct electricity', 'magnetize electricity'] A: conduct electricity
+
+Q: What compounds form crystals instead of molecules? Choices: ['magnetic compounds', 'soluble compounds', 'metallic compounds', 'ionic compounds'] A: ionic compounds
+
+Q: What bond is the force of attraction that holds together two atoms that share a pair of valence electrons? Choices: ['covalent', 'metallic', 'polar', 'hydrogen'] A: covalent
+
+Q: The name of a simple covalent compound can be determined from its chemical this? Choices: ['formula', 'models', 'map', 'configuration'] A: formula
+
+Q: A hydrogen atom with one neutron is called what? Choices: ['magnesium', 'deuterium', 'covalent', 'ionic'] A: deuterium
+
+Q: Electricity consists of a constant stream of what tiny particles? Choices: ['ions', 'quarks', 'atoms', 'electrons'] A: electrons
+
+Q: What are the two terms that designate how well aqueous solutions conduct electricity? Choices: ['secular and nonpolar', 'filter and nonpolar', 'hot and nonpolar', 'polar and nonpolar'] A: polar and nonpolar
+
+Q: What are the smallest particles of matter? Choices: ['molecules', 'atoms', 'electrons', 'ions'] A: atoms
+
+Q: What is citrate an ionized form of? Choices: ['protein', 'carbonic acid', 'hydrochloric acid', 'citric acid'] A: citric acid
+
+Q: The majority of elements, including iron and copper, are of what type? Choices: ['oils', 'metals', 'minerals', 'acids'] A: metals
+    <<SYS>>
+    Q: Ionic compounds have strong electrostatic attractions between oppositely charged ions in this? Choices: ['normal array', 'occasional array', 'regular array', 'incorrect array'] A: [/INST]
+
+============
+
+    <s>[INST] <<SYS>>
+    Your job is to answer the given question, using the options provided for each question.You will return the answer one element: "the correct label"
+
+Q: What type of crust is made of basalt lavas that flow onto the seafloor? Choices: ['warm', 'endotopic', 'exotic', 'oceanic'] A: oceanic
+
+Q: Do most waves strike the shore head on or at an angle? Choices: ['side on', 'head on', 'at an angle', 'at a distance'] A: at an angle
+
+Q: What are located along convergent and divergent plate boundaries? Choices: ['mezas', 'megaliths', 'dunes', 'volcanoes'] A: volcanoes
+
+Q: The rocks athe mid-ocean ridge are nearly free of what? Choices: ['scratches', 'minerals', 'metals', 'sediment'] A: sediment
+
+Q: Where do extrusive igneous rocks cool at? Choices: ['underground', 'in water', 'surface', 'in volcanoes'] A: surface
+
+Q: What separates one river system's basin from another river system's basin? Choices: ['a sink', 'a bend', 'a divide', 'a divert'] A: a divide
+
+Q: What term describes the distance between two corresponding points on adjacent waves? Choices: ['wavelength', 'threshold', 'frequency', 'variation'] A: wavelength
+
+Q: What do you call the ancient cores of continents, where the earliest continental crust is now found? Choices: ['craters', 'mantles', 'cratons', 'escarpments'] A: cratons
+
+Q: Where do short period comets come from? Choices: ['vesta belt', 'kuiper belt', 'photon belt', 'milky way'] A: kuiper belt
+
+Q: How many mass extinctions have occurred throughout earth's history? Choices: ['three', 'four', 'six', 'five'] A: five
+    <<SYS>>
+    Q: About how tall can mid-ocean ridges be? Choices: ['about 2 km', '2 inches', 'about 2 meters', 'about 2 feet'] A: [/INST]
+
+============
+
+    <s>[INST] <<SYS>>
+    Your job is to answer the given question, using the options provided for each question.You will return the answer one element: "the correct label"
+
+Q: Which is one of the most frequently studied cartilaginous fish? Choices: ['sharks', 'whales', 'manatees', 'dolphins'] A: sharks
+
+Q: What do you call the ancient cores of continents, where the earliest continental crust is now found? Choices: ['craters', 'mantles', 'cratons', 'escarpments'] A: cratons
+
+Q: What were the first plants to evolve? Choices: ['trees', 'photoreactive plants', 'nonvascular plants', 'fungi'] A: nonvascular plants
+
+Q: The bilaterians are divided into deuterostomes and what else? Choices: ['gymnosperms', 'progestins', 'protostomes', 'protozoa'] A: protostomes
+
+Q: Birds are thought to have evolved from a group of bipedal dinosaurs called what? Choices: ['staurikosaurus', 'sporozoans', 'pteradactyls', 'therapods'] A: therapods
+
+Q: Carnivores that eat herbivores are what kind of consumers? Choices: ['primary', 'quaternary', 'secondary', 'tertiary'] A: secondary
+
+Q: Temperature and precipitation determine the types of what that can grow in an area, in turn affecting the animals that live there? Choices: ['plants', 'roots', 'building', 'birds'] A: plants
+
+Q: Many species of flowering plants have coevolved with specific what? Choices: ['predators', 'spores', 'climates', 'pollinators'] A: pollinators
+
+Q: What break down dead organisms and other organic waste and release inorganic molecules back to the environment called? Choices: ['detritivores', 'carnivores', 'decomposers', 'nematodes'] A: decomposers
+
+Q: The rocks athe mid-ocean ridge are nearly free of what? Choices: ['scratches', 'minerals', 'metals', 'sediment'] A: sediment
+    <<SYS>>
+    Q: What are by far the most common type of invertebrate? Choices: ['insects', 'crustaceans', 'spiders', 'corals'] A: [/INST]
+
+============
+
+    <s>[INST] <<SYS>>
+    Your job is to answer the given question, using the options provided for each question.You will return the answer one element: "the correct label"
+
+Q: What are located along convergent and divergent plate boundaries? Choices: ['mezas', 'megaliths', 'dunes', 'volcanoes'] A: volcanoes
+
+Q: Most of the fresh water on earth is tied up in a solid form. what are they called? Choices: ['oceans', 'lakes', 'glaciers', 'sediments'] A: glaciers
+
+Q: What substance, which forms igneous rock, flows out in rivers of lava when it reaches the surface? Choices: ['fertilizer', 'soil', 'magma', 'granite'] A: magma
+
+Q: What absorbs, scatters, or reflects most incoming solar radiation in the atmosphere? Choices: ['clouds and sand', 'clouds and dust', 'ice and dust', 'coulds and minerals'] A: clouds and dust
+
+Q: What type of crust is made of basalt lavas that flow onto the seafloor? Choices: ['warm', 'endotopic', 'exotic', 'oceanic'] A: oceanic
+
+Q: The rocks athe mid-ocean ridge are nearly free of what? Choices: ['scratches', 'minerals', 'metals', 'sediment'] A: sediment
+
+Q: What do you call the ancient cores of continents, where the earliest continental crust is now found? Choices: ['craters', 'mantles', 'cratons', 'escarpments'] A: cratons
+
+Q: What leaves behind crescent-shaped scars on a hillside and  may be caused by a layer of slippery, wet clay underneath the rock and soil on a hillside? Choices: ['slide', 'creep', 'shearing', 'slump'] A: slump
+
+Q: Do most waves strike the shore head on or at an angle? Choices: ['side on', 'head on', 'at an angle', 'at a distance'] A: at an angle
+
+Q: What separates one river system's basin from another river system's basin? Choices: ['a sink', 'a bend', 'a divide', 'a divert'] A: a divide
+    <<SYS>>
+    Q: What do waves deposit to form sandbars and barrier islands? Choices: ['sediments', 'magma', 'glaciers', 'organisms'] A: [/INST]
+
+============
+
+    <s>[INST] <<SYS>>
+    Your job is to answer the given question, using the options provided for each question.You will return the answer one element: "the correct label"
+
+Q: Which body system breaks down food and absorbs nutrients? Choices: ['circulation system', 'digestive system', 'skeletal system', 'hormonal system'] A: digestive system
+
+Q: What is the organ system that brings oxygen into the body and releases carbon dioxide? Choices: ['lungs', 'kidneys', 'brain', 'liver'] A: lungs
+
+Q: The male gametophyte releases what, which swim - propelled by their flagella - to reach and fertilize the female gamete or egg? Choices: ['sperm', 'cytoplasm', 'tadpoles', 'dna'] A: sperm
+
+Q: In humans, fertilization occurs soon after the oocyte leaves this? Choices: ['placenta', 'testes', 'ovary', 'egg'] A: ovary
+
+Q: What system does addictive drugs affect? Choices: ['reward system', 'checks and balances', 'digestive system', 'honor system'] A: reward system
+
+Q: What system possesses a memory component that allows for an efficient and dramatic response upon reinvasion of the same pathogen? Choices: ['societal immune system', 'suggestive immune system', 'adaptive immune system', 'incorporate immune system'] A: adaptive immune system
+
+Q: What glands remove water, salts and other wastes from skin? Choices: ['sweat glands', 'push glands', 'water glands', 'sex glands'] A: sweat glands
+
+Q: The hypothalamus in vertebrates integrates what two systems? Choices: ['endocrine and nervous', 'Pathway and nervous', 'marrow and nervous', 'connectors and nervous'] A: endocrine and nervous
+
+Q: The bilaterians are divided into deuterostomes and what else? Choices: ['gymnosperms', 'progestins', 'protostomes', 'protozoa'] A: protostomes
+
+Q: Where do t cells mature? Choices: ['liver', 'thymus gland', 'pituitary gland', 'bone marrow'] A: thymus gland
+    <<SYS>>
+    Q: Penis, testes, and epididymis are organs in what system? Choices: ['female reproductive system\u200b', 'virus reproductive system\u200b', 'plant reproductive system\u200b', 'male reproductive system'] A: [/INST]
+
+============
+
+    <s>[INST] <<SYS>>
+    Your job is to answer the given question, using the options provided for each question.You will return the answer one element: "the correct label"
+
+Q: Oxygen, carbon dioxide, atp, and nadph are reactants in what process that plants use to produce food? Choices: ['photosynthesis', 'absorbtion', 'chlorophyll', 'glycolysis'] A: photosynthesis
+
+Q: What were the first plants to evolve? Choices: ['trees', 'photoreactive plants', 'nonvascular plants', 'fungi'] A: nonvascular plants
+
+Q: Plant-like protists contains chloroplasts and make food by what process? Choices: ['farming', 'digestion', 'photosynthesis', 'chemical processes'] A: photosynthesis
+
+Q: Many plants respond to the days growing shorter in the fall by doing what? Choices: ['migrating', 'turning to liquid', 'growing faster', 'going dormant'] A: going dormant
+
+Q: Many species of flowering plants have coevolved with specific what? Choices: ['predators', 'spores', 'climates', 'pollinators'] A: pollinators
+
+Q: Temperature and precipitation determine the types of what that can grow in an area, in turn affecting the animals that live there? Choices: ['plants', 'roots', 'building', 'birds'] A: plants
+
+Q: What is the process by which plants make the simple sugar glucose from carbon dioxide and water is called? Choices: ['glycolysis', 'osmosis', 'metamorphosis', 'photosynthesis'] A: photosynthesis
+
+Q: Besides ingesting and photosynthesis how can protists get their food? Choices: ['absorption', 'accumulation', 'osmosis', 'digestion'] A: absorption
+
+Q: While ecosystems need a constant input of energy for their organisms, what do ecosystems recycle? Choices: ['light', 'water', 'food', 'matter'] A: matter
+
+Q: Above the meristem, the rest of the root is covered with a single layer of what type of cells, which may have root hairs? Choices: ['single celled', 'vegetative', 'dermal', 'epidermal'] A: epidermal
+    <<SYS>>
+    Q: Only about one percent of plants have lost what ability, turning them into consumers and even predators, instead of producers? Choices: ['flowering', 'photosynthesis', 'growth', 'rooting'] A: [/INST]
+
+============
+
+    <s>[INST] <<SYS>>
+    Your job is to answer the given question, using the options provided for each question.You will return the answer one element: "the correct label"
+
+Q: A vapor light produces visible light by what process? Choices: ['Solar Energy', 'electroluminescence', 'solutes', 'luminescent'] A: electroluminescence
+
+Q: What do we call the visible part of the electromagnetic spectrum? Choices: ['electricity', 'weight', 'radio', 'light'] A: light
+
+Q: When present in large volumes, what color hue can water emit? Choices: ['white', 'pink', 'yellow', 'blue'] A: blue
+
+Q: While ecosystems need a constant input of energy for their organisms, what do ecosystems recycle? Choices: ['light', 'water', 'food', 'matter'] A: matter
+
+Q: Oxygen, carbon dioxide, atp, and nadph are reactants in what process that plants use to produce food? Choices: ['photosynthesis', 'absorbtion', 'chlorophyll', 'glycolysis'] A: photosynthesis
+
+Q: What happens when ionic compounds are dissolved in water? Choices: ['deflect electricity', 'repel electricity', 'conduct electricity', 'magnetize electricity'] A: conduct electricity
+
+Q: What are the smallest particles of matter? Choices: ['molecules', 'atoms', 'electrons', 'ions'] A: atoms
+
+Q: What is matter in the universe that does not emit light called? Choices: ['cold matter', 'black matter', 'dark matter', 'hidden matter'] A: dark matter
+
+Q: Electricity consists of a constant stream of what tiny particles? Choices: ['ions', 'quarks', 'atoms', 'electrons'] A: electrons
+
+Q: What is the process by which plants make the simple sugar glucose from carbon dioxide and water is called? Choices: ['glycolysis', 'osmosis', 'metamorphosis', 'photosynthesis'] A: photosynthesis
+    <<SYS>>
+    Q: How does a neon light produce visible light? Choices: ['mitosis', 'electroluminescence', 'radiation', 'luminescence'] A: [/INST]
+
+============
+
+    <s>[INST] <<SYS>>
+    Your job is to answer the given question, using the options provided for each question.You will return the answer one element: "the correct label"
+
+Q: Birds are thought to have evolved from a group of bipedal dinosaurs called what? Choices: ['staurikosaurus', 'sporozoans', 'pteradactyls', 'therapods'] A: therapods
+
+Q: What were the first plants to evolve? Choices: ['trees', 'photoreactive plants', 'nonvascular plants', 'fungi'] A: nonvascular plants
+
+Q: Many species of flowering plants have coevolved with specific what? Choices: ['predators', 'spores', 'climates', 'pollinators'] A: pollinators
+
+Q: Temperature and precipitation determine the types of what that can grow in an area, in turn affecting the animals that live there? Choices: ['plants', 'roots', 'building', 'birds'] A: plants
+
+Q: What is it called when birds keep their eggs warm while the embryos inside develop? Choices: ['spawning', 'incubation', 'fertilization', 'insulation'] A: incubation
+
+Q: A series of arches that support the gills of aquatic amphibians and fish are known as what? Choices: ['aquatic arches', 'cochlear arches', 'scythian arches', 'branchial arches'] A: branchial arches
+
+Q: What is the purpose of a bird using flashy displays? Choices: ['to protect their territory', 'to signal feeding', 'to dissuade predators', 'to attract mates'] A: to attract mates
+
+Q: What 3 things do animals need to live and survive? Choices: ['water, food, and an ecosystem', 'sex, water, and sleep', 'air, water, and socialization', 'air, water, and food'] A: air, water, and food
+
+Q: The ladybug and the frog both start as eggs and go through what process? Choices: ['transition', 'metamorphosis', 'parthenogenesis', 'proboscis'] A: metamorphosis
+
+Q: The bilaterians are divided into deuterostomes and what else? Choices: ['gymnosperms', 'progestins', 'protostomes', 'protozoa'] A: protostomes
+    <<SYS>>
+    Q: The bird ancestor that lived in trees developed what feature commonly associated with birds? Choices: ['wings', 'webbed feet', 'beaks', 'tails'] A: [/INST]
+
+============
+
+    <s>[INST] <<SYS>>
+    Your job is to answer the given question, using the options provided for each question.You will return the answer one element: "the correct label"
+
+Q: Oxygen, carbon dioxide, atp, and nadph are reactants in what process that plants use to produce food? Choices: ['photosynthesis', 'absorbtion', 'chlorophyll', 'glycolysis'] A: photosynthesis
+
+Q: Most of the energy used by living things comes either directly or indirectly from where? Choices: ['earth', 'horizon', 'sun', 'water'] A: sun
+
+Q: What is the process by which plants make the simple sugar glucose from carbon dioxide and water is called? Choices: ['glycolysis', 'osmosis', 'metamorphosis', 'photosynthesis'] A: photosynthesis
+
+Q: What refers to the ability to change or move matter and is required by all life processes and living things? Choices: ['enthalpy', 'fuel', 'energy', 'gravity'] A: energy
+
+Q: What is the most important function of enzymes in animals? Choices: ['help digest food', 'carry oxygen', 'excrete waste', 'transport messages'] A: help digest food
+
+Q: What is the basic unit of the structure and function of living things? Choices: ['nucleus', 'atom', 'molecule', 'cell'] A: cell
+
+Q: What do ecosystems absorb on the earth? Choices: ['hydrogen', 'fuel', 'water', 'energy'] A: energy
+
+Q: What element is present in all organic molecules? Choices: ['sodium', 'hydrogen', 'carbon', 'oxygen'] A: carbon
+
+Q: While ecosystems need a constant input of energy for their organisms, what do ecosystems recycle? Choices: ['light', 'water', 'food', 'matter'] A: matter
+
+Q: What is the resultant waste product of photosynthesis? Choices: ['argon', 'carbon', 'oxygen', 'sulfur'] A: oxygen
+    <<SYS>>
+    Q: What do most living things use to make atp from glucose? Choices: ['enzymes', 'carbon', 'oxygen', 'nitrogen'] A: [/INST]
+
+============
+
+    <s>[INST] <<SYS>>
+    Your job is to answer the given question, using the options provided for each question.You will return the answer one element: "the correct label"
+
+Q: What absorbs, scatters, or reflects most incoming solar radiation in the atmosphere? Choices: ['clouds and sand', 'clouds and dust', 'ice and dust', 'coulds and minerals'] A: clouds and dust
+
+Q: What substance, which forms igneous rock, flows out in rivers of lava when it reaches the surface? Choices: ['fertilizer', 'soil', 'magma', 'granite'] A: magma
+
+Q: What compounds form crystals instead of molecules? Choices: ['magnetic compounds', 'soluble compounds', 'metallic compounds', 'ionic compounds'] A: ionic compounds
+
+Q: The majority of elements, including iron and copper, are of what type? Choices: ['oils', 'metals', 'minerals', 'acids'] A: metals
+
+Q: What are the two terms that designate how well aqueous solutions conduct electricity? Choices: ['secular and nonpolar', 'filter and nonpolar', 'hot and nonpolar', 'polar and nonpolar'] A: polar and nonpolar
+
+Q: What are located along convergent and divergent plate boundaries? Choices: ['mezas', 'megaliths', 'dunes', 'volcanoes'] A: volcanoes
+
+Q: What are the two main types of star clusters? Choices: ['open and globular', 'closed and spherical', 'open and elliptical', 'open and supergiant'] A: open and globular
+
+Q: What do you call the ancient cores of continents, where the earliest continental crust is now found? Choices: ['craters', 'mantles', 'cratons', 'escarpments'] A: cratons
+
+Q: The rocks athe mid-ocean ridge are nearly free of what? Choices: ['scratches', 'minerals', 'metals', 'sediment'] A: sediment
+
+Q: What are the smallest particles of matter? Choices: ['molecules', 'atoms', 'electrons', 'ions'] A: atoms
+    <<SYS>>
+    Q: What are the two most common silicates? Choices: ['Micas\t and quartz', 'Olivine and quartz', 'Micas\t and feldspar', 'feldspar and quartz'] A: [/INST]
+
+============
+
+    <s>[INST] <<SYS>>
+    Your job is to answer the given question, using the options provided for each question.You will return the answer one element: "the correct label"
+
+Q: Fahrenheit, celsius, and kelvin are all units which measure what? Choices: ['precipitation', 'brightness', 'radiation', 'temperature'] A: temperature
+
+Q: What is most energy that is lost to the environment lost as? Choices: ['heat', 'gravity', 'vapor', 'precipitation'] A: heat
+
+Q: The three units of kpa, atm or mmhg commonly measure what? Choices: ['weight', 'pressure', 'energy', 'resistance'] A: pressure
+
+Q: What is the term for a measure of both speed and direction? Choices: ['velocity', 'acceleration', 'momentum', 'intensity'] A: velocity
+
+Q: Certain air pollutants form which liquid when dissolved in water droplets in the air? Choices: ['water', 'base', 'citrus', 'acid'] A: acid
+
+Q: What happens to water vapor as it rises? Choices: ['it cools', 'it warms', 'it vibrates', 'it disperses'] A: it cools
+
+Q: What refers to the ability to change or move matter and is required by all life processes and living things? Choices: ['enthalpy', 'fuel', 'energy', 'gravity'] A: energy
+
+Q: What is the term for something changing from water to ice? Choices: ['melting', 'freezing', 'evaporation', 'boiling'] A: freezing
+
+Q: What is the term for the ability of a fluid to exert an upward force on any object placed in it? Choices: ['resonance', 'buoyancy', 'viscosity', 'density'] A: buoyancy
+
+Q: What do ecosystems absorb on the earth? Choices: ['hydrogen', 'fuel', 'water', 'energy'] A: energy
+    <<SYS>>
+    Q: What term means the amount of water vapor in the air? Choices: ['temperature', 'pressure', 'humidity', 'ambient'] A: [/INST]
+
+============
+
+    <s>[INST] <<SYS>>
+    Your job is to answer the given question, using the options provided for each question.You will return the answer one element: "the correct label"
+
+Q: Small nonprotein, water-soluble molecules or ions called second messengers often play a role in what kind of pathways? Choices: ['creating', 'inhibiting', 'signaling', 'creating'] A: signaling
+
+Q: What is the transfer of heat by physical contact? Choices: ['diffusion', 'inhibition', 'oxidation', 'conduction'] A: conduction
+
+Q: What allows some things to enter the cell while keeping other things out? Choices: ['cell center', 'cell vacuum', 'cell substrate', 'cell membrane'] A: cell membrane
+
+Q: Besides ingesting and photosynthesis how can protists get their food? Choices: ['absorption', 'accumulation', 'osmosis', 'digestion'] A: absorption
+
+Q: What is the process in which unspecialized cells become specialized in structure and function to perform certain tasks in the body? Choices: ['differentiation', 'transcription', 'mutation', 'speciation'] A: differentiation
+
+Q: Assume a molecule must cross the plasma membrane into what? Choices: ['atom', 'shell', 'circle', 'cell'] A: cell
+
+Q: After coming apart from the crystal, the individual ions are then surrounded by solvent particles in a process called what? Choices: ['osmosis', 'ionization', 'solvation', 'hydrolysis'] A: solvation
+
+Q: All types of cells are enclosed by what? Choices: ['substrate', 'stoma', 'cell wall', 'membrane'] A: membrane
+
+Q: What is the passing of traits from parents to offspring called? Choices: ['variability', 'cell division', 'heredity', 'mutation'] A: heredity
+
+Q: What is the process of filtering waste from the kidneys? Choices: ['inflammation', 'dialysis', 'virus', 'stones'] A: dialysis
+    <<SYS>>
+    Q: Paracrine signals move by what method through the extracellular matrix? Choices: ['transfusion', 'diffusion', 'deposition', 'osmosis'] A: [/INST]
+
+============
+
+    <s>[INST] <<SYS>>
+    Your job is to answer the given question, using the options provided for each question.You will return the answer one element: "the correct label"
+
+Q: All types of cells are enclosed by what? Choices: ['substrate', 'stoma', 'cell wall', 'membrane'] A: membrane
+
+Q: The variety of cell shapes seen in prokaryotes and eukaryotes reflects the functions that each what has? Choices: ['cell', 'life', 'organ', 'proteins'] A: cell
+
+Q: Above the meristem, the rest of the root is covered with a single layer of what type of cells, which may have root hairs? Choices: ['single celled', 'vegetative', 'dermal', 'epidermal'] A: epidermal
+
+Q: Prophase is preceded by a preprophase stage in what type of cells? Choices: ['hair and nail cells', 'plant cells', 'egg cells', 'brain cells'] A: plant cells
+
+Q: Plant-like protists contains chloroplasts and make food by what process? Choices: ['farming', 'digestion', 'photosynthesis', 'chemical processes'] A: photosynthesis
+
+Q: In multicellular organisms, essential biological functions are carried out by what? Choices: ['cells', 'organs', 'atoms', 'molecules'] A: organs
+
+Q: What allows some things to enter the cell while keeping other things out? Choices: ['cell center', 'cell vacuum', 'cell substrate', 'cell membrane'] A: cell membrane
+
+Q: The cultivated forms of wheat, cotton, and tobacco plants are all what? Choices: ['sporozoans', 'allopolyploids', 'pores', 'bales'] A: allopolyploids
+
+Q: What were the first plants to evolve? Choices: ['trees', 'photoreactive plants', 'nonvascular plants', 'fungi'] A: nonvascular plants
+
+Q: The bilaterians are divided into deuterostomes and what else? Choices: ['gymnosperms', 'progestins', 'protostomes', 'protozoa'] A: protostomes
+    <<SYS>>
+    Q: Presence of a cell wall, large central vacuole, and organelles called plastids distinguish what type of cell? Choices: ['animal', 'heterotroph', 'reproductive', 'plant'] A: [/INST]
+
+============
+
+    <s>[INST] <<SYS>>
+    Your job is to answer the given question, using the options provided for each question.You will return the answer one element: "the correct label"
+
+Q: What do mammals have under the skin to help insulate the body? Choices: ['cartilage', 'nerve cells', 'bone', 'a layer of fat'] A: a layer of fat
+
+Q: How do many mammals control their body temperature? Choices: ['itching', 'dieting', 'sweating', 'homeostasis'] A: sweating
+
+Q: Associated with hair follicles, what type of oil gland is found all over the body and helps to lubricate and waterproof the skin and hair? Choices: ['gametes gland', 'melanin gland', 'sebaceous gland', 'sweat gland'] A: sebaceous gland
+
+Q: What are reptiles unable to absorb through their skin because of scales? Choices: ['carbon', 'oxygen', 'water', 'food'] A: oxygen
+
+Q: What is it called when birds keep their eggs warm while the embryos inside develop? Choices: ['spawning', 'incubation', 'fertilization', 'insulation'] A: incubation
+
+Q: What glands remove water, salts and other wastes from skin? Choices: ['sweat glands', 'push glands', 'water glands', 'sex glands'] A: sweat glands
+
+Q: What type of cells detect stimuli? Choices: ['sensory nerve cells', 'grid nerve cells', 'muscle cells', 'expressive nerve cells'] A: sensory nerve cells
+
+Q: How are the fetuses of eutherian mammals connected to their mothers during gestation? Choices: ['altered placenta', 'visual placenta', 'complex placenta', 'Movement Placenta'] A: complex placenta
+
+Q: What leaves behind crescent-shaped scars on a hillside and  may be caused by a layer of slippery, wet clay underneath the rock and soil on a hillside? Choices: ['slide', 'creep', 'shearing', 'slump'] A: slump
+
+Q: Only after implantation can an embryo develop into a what? Choices: ['living thing', 'mammal', 'humans', 'fetus'] A: fetus
+    <<SYS>>
+    Q: What happens when mammals raise their hair with tiny muscles in the skin? Choices: ['goosebumps', 'bruising', 'balding', 'bleeding'] A: [/INST]
+
+============
+
+    <s>[INST] <<SYS>>
+    Your job is to answer the given question, using the options provided for each question.You will return the answer one element: "the correct label"
+
+Q: What prevents new ovarian follicles from developing and suppresses uterine contractility? Choices: ['glucose', 'estrogen', 'progesterone', 'germination'] A: progesterone
+
+Q: What causes symptoms associated with sickle-cell disease? Choices: ['genetic drift', 'spontaneous mutation', 'pleiotropic effects', 'transgene effects'] A: pleiotropic effects
+
+Q: What disease is unpreventable in the type one form but may be prevented by diet if it is of the second type? Choices: ['TB', 'diabetes', 'Cancer', 'Obesity'] A: diabetes
+
+Q: How many bones does an adult skeleton have? Choices: ['192', '208', '206', '196'] A: 206
+
+Q: Where do t cells mature? Choices: ['liver', 'thymus gland', 'pituitary gland', 'bone marrow'] A: thymus gland
+
+Q: What is the process of filtering waste from the kidneys? Choices: ['inflammation', 'dialysis', 'virus', 'stones'] A: dialysis
+
+Q: What is needed for a person to be affected by an autosomal dominant disorder? Choices: ['one mutated allele', 'one less chromosome', 'extra alleles', 'one isolated allele'] A: one mutated allele
+
+Q: The rocks athe mid-ocean ridge are nearly free of what? Choices: ['scratches', 'minerals', 'metals', 'sediment'] A: sediment
+
+Q: What leaves behind crescent-shaped scars on a hillside and  may be caused by a layer of slippery, wet clay underneath the rock and soil on a hillside? Choices: ['slide', 'creep', 'shearing', 'slump'] A: slump
+
+Q: What do mammals have under the skin to help insulate the body? Choices: ['cartilage', 'nerve cells', 'bone', 'a layer of fat'] A: a layer of fat
+    <<SYS>>
+    Q: What are people with osteoporosis at increased risk of? Choices: ['senility', 'growth spurt', 'bone fractures', 'epilepsy'] A: [/INST]
+
+============
+
+    <s>[INST] <<SYS>>
+    Your job is to answer the given question, using the options provided for each question.You will return the answer one element: "the correct label"
+
+Q: What are the smallest particles of matter? Choices: ['molecules', 'atoms', 'electrons', 'ions'] A: atoms
+
+Q: What refers to the ability to change or move matter and is required by all life processes and living things? Choices: ['enthalpy', 'fuel', 'energy', 'gravity'] A: energy
+
+Q: What is most energy that is lost to the environment lost as? Choices: ['heat', 'gravity', 'vapor', 'precipitation'] A: heat
+
+Q: Most of the energy used by living things comes either directly or indirectly from where? Choices: ['earth', 'horizon', 'sun', 'water'] A: sun
+
+Q: What is the basic unit of the structure and function of living things? Choices: ['nucleus', 'atom', 'molecule', 'cell'] A: cell
+
+Q: What do ecosystems absorb on the earth? Choices: ['hydrogen', 'fuel', 'water', 'energy'] A: energy
+
+Q: A sample of matter that has the same physical and chemical properties throughout itself is known as what? Choices: ['molecule', 'antimatter', 'essence', 'substance'] A: substance
+
+Q: Which part of the atmosphere do greenhouse gasses trap heat in? Choices: ['stratosphere', 'troposphere', 'lithosphere', 'thermosphere'] A: troposphere
+
+Q: Assume a molecule must cross the plasma membrane into what? Choices: ['atom', 'shell', 'circle', 'cell'] A: cell
+
+Q: What bond is the force of attraction that holds together two atoms that share a pair of valence electrons? Choices: ['covalent', 'metallic', 'polar', 'hydrogen'] A: covalent
+    <<SYS>>
+    Q: Where is energy stored in a chemical substance? Choices: ['in molecules', 'inside atoms', 'on the surface', 'between atoms'] A: [/INST]
+
+============
+
+    <s>[INST] <<SYS>>
+    Your job is to answer the given question, using the options provided for each question.You will return the answer one element: "the correct label"
+
+Q: Which body system breaks down food and absorbs nutrients? Choices: ['circulation system', 'digestive system', 'skeletal system', 'hormonal system'] A: digestive system
+
+Q: What is the organ system that brings oxygen into the body and releases carbon dioxide? Choices: ['lungs', 'kidneys', 'brain', 'liver'] A: lungs
+
+Q: What system possesses a memory component that allows for an efficient and dramatic response upon reinvasion of the same pathogen? Choices: ['societal immune system', 'suggestive immune system', 'adaptive immune system', 'incorporate immune system'] A: adaptive immune system
+
+Q: What disease is unpreventable in the type one form but may be prevented by diet if it is of the second type? Choices: ['TB', 'diabetes', 'Cancer', 'Obesity'] A: diabetes
+
+Q: Specific antigens on the surface of red blood cells determine what, which is important in cases of transfusion? Choices: ['blood count', 'blood type', 'blood amount', 'blood form'] A: blood type
+
+Q: Where do t cells mature? Choices: ['liver', 'thymus gland', 'pituitary gland', 'bone marrow'] A: thymus gland
+
+Q: What term, calculated by multiplying heart contractions by stroke volume, means the volume of blood pumped by the heart in one minute? Choices: ['cardiac output', 'blood output', 'liver output', 'respiratory output'] A: cardiac output
+
+Q: What system does addictive drugs affect? Choices: ['reward system', 'checks and balances', 'digestive system', 'honor system'] A: reward system
+
+Q: The hypothalamus in vertebrates integrates what two systems? Choices: ['endocrine and nervous', 'Pathway and nervous', 'marrow and nervous', 'connectors and nervous'] A: endocrine and nervous
+
+Q: What causes symptoms associated with sickle-cell disease? Choices: ['genetic drift', 'spontaneous mutation', 'pleiotropic effects', 'transgene effects'] A: pleiotropic effects
+    <<SYS>>
+    Q: By the year 2050, 25 percent of the population of the united states will be 60 years of age or older. the cdc estimates that 80 percent of those 60 years and older have one or more chronic disease associated with deficiencies of this? Choices: ['immune system', 'cardiovascular system', 'blood vessels', 'respiratory system'] A: [/INST]
+
+============
+
+    <s>[INST] <<SYS>>
+    Your job is to answer the given question, using the options provided for each question.You will return the answer one element: "the correct label"
+
+Q: What break down dead organisms and other organic waste and release inorganic molecules back to the environment called? Choices: ['detritivores', 'carnivores', 'decomposers', 'nematodes'] A: decomposers
+
+Q: What element is present in all organic molecules? Choices: ['sodium', 'hydrogen', 'carbon', 'oxygen'] A: carbon
+
+Q: How do animals obtain nitrogen? Choices: ['eating plants other animals', 'eating plants or bugs', 'eating plants or organisms', 'eating plants or sediments'] A: eating plants or organisms
+
+Q: What substance, which forms igneous rock, flows out in rivers of lava when it reaches the surface? Choices: ['fertilizer', 'soil', 'magma', 'granite'] A: magma
+
+Q: What do ecosystems absorb on the earth? Choices: ['hydrogen', 'fuel', 'water', 'energy'] A: energy
+
+Q: What is the resultant waste product of photosynthesis? Choices: ['argon', 'carbon', 'oxygen', 'sulfur'] A: oxygen
+
+Q: What is citrate an ionized form of? Choices: ['protein', 'carbonic acid', 'hydrochloric acid', 'citric acid'] A: citric acid
+
+Q: What element is the most abundant in the universe? Choices: ['helium', 'carbon', 'oxygen', 'hydrogen'] A: hydrogen
+
+Q: What is the electron domain geometry of ammonia? Choices: ['atoms', 'membranes', 'neurons', 'tetrahedral'] A: tetrahedral
+
+Q: In what form is atmospheric sulfur found? Choices: ['sulfuric acid', 'sulfur monoxide', 'formaldehyde', 'sulfur dioxide (so2)'] A: sulfur dioxide (so2)
+    <<SYS>>
+    Q: Upon death of an organism, during composition, what returns to the soil as ammonium ions? Choices: ['nitrogen', 'potasium', 'hydrogen', 'calcium'] A: [/INST]
+
+============
+
+    <s>[INST] <<SYS>>
+    Your job is to answer the given question, using the options provided for each question.You will return the answer one element: "the correct label"
+
+Q: Prokaryotes can reproduce quickly by what? Choices: ['binary fission', 'multiple fission', 'solar fission', 'residual fission'] A: binary fission
+
+Q: What form of reproduction creates offspring that are genetically identical to the parent? Choices: ['microscopic', 'primitive', 'sexual', 'asexual'] A: asexual
+
+Q: The ladybug and the frog both start as eggs and go through what process? Choices: ['transition', 'metamorphosis', 'parthenogenesis', 'proboscis'] A: metamorphosis
+
+Q: Many species of flowering plants have coevolved with specific what? Choices: ['predators', 'spores', 'climates', 'pollinators'] A: pollinators
+
+Q: What term describes reproducing by external fertilization after the female sheds large numbers of small eggs? Choices: ['homozygous', 'oviparous', 'glandular', 'glaucous'] A: oviparous
+
+Q: What were the first plants to evolve? Choices: ['trees', 'photoreactive plants', 'nonvascular plants', 'fungi'] A: nonvascular plants
+
+Q: The male gametophyte releases what, which swim - propelled by their flagella - to reach and fertilize the female gamete or egg? Choices: ['sperm', 'cytoplasm', 'tadpoles', 'dna'] A: sperm
+
+Q: Plant-like protists contains chloroplasts and make food by what process? Choices: ['farming', 'digestion', 'photosynthesis', 'chemical processes'] A: photosynthesis
+
+Q: Oxygen, carbon dioxide, atp, and nadph are reactants in what process that plants use to produce food? Choices: ['photosynthesis', 'absorbtion', 'chlorophyll', 'glycolysis'] A: photosynthesis
+
+Q: Temperature and precipitation determine the types of what that can grow in an area, in turn affecting the animals that live there? Choices: ['plants', 'roots', 'building', 'birds'] A: plants
+    <<SYS>>
+    Q: Most insects reproduce quickly and through what type of reproduction? Choices: ['asexual reproduction', 'photosynthesis', 'sexual reproduction', 'spores'] A: [/INST]
+
+============
+
+    <s>[INST] <<SYS>>
+    Your job is to answer the given question, using the options provided for each question.You will return the answer one element: "the correct label"
+
+Q: Hepatitis b is inflammation of which organ? Choices: ['the kidney', 'the brain', 'the colon', 'the liver'] A: the liver
+
+Q: What is the organ system that brings oxygen into the body and releases carbon dioxide? Choices: ['lungs', 'kidneys', 'brain', 'liver'] A: lungs
+
+Q: Which body system breaks down food and absorbs nutrients? Choices: ['circulation system', 'digestive system', 'skeletal system', 'hormonal system'] A: digestive system
+
+Q: The three parts of the human small intestine is the duodenum, jejunum, and what? Choices: ['cecum', 'colon', 'ileum', 'appendix'] A: ileum
+
+Q: Where do t cells mature? Choices: ['liver', 'thymus gland', 'pituitary gland', 'bone marrow'] A: thymus gland
+
+Q: What is citrate an ionized form of? Choices: ['protein', 'carbonic acid', 'hydrochloric acid', 'citric acid'] A: citric acid
+
+Q: In multicellular organisms, essential biological functions are carried out by what? Choices: ['cells', 'organs', 'atoms', 'molecules'] A: organs
+
+Q: What is the most important function of enzymes in animals? Choices: ['help digest food', 'carry oxygen', 'excrete waste', 'transport messages'] A: help digest food
+
+Q: What is defined by its sequence of nucleotides? Choices: ['amino acids', 'proteins acids', 'structural acids', 'nucleic acids'] A: nucleic acids
+
+Q: Plant-like protists contains chloroplasts and make food by what process? Choices: ['farming', 'digestion', 'photosynthesis', 'chemical processes'] A: photosynthesis
+    <<SYS>>
+    Q: Digestion of proteins begins with acids in what organ? Choices: ['colon', 'brain', 'liver', 'stomach'] A: [/INST]
+
+============
+
+    <s>[INST] <<SYS>>
+    Your job is to answer the given question, using the options provided for each question.You will return the answer one element: "the correct label"
+
+Q: What term describes reproducing by external fertilization after the female sheds large numbers of small eggs? Choices: ['homozygous', 'oviparous', 'glandular', 'glaucous'] A: oviparous
+
+Q: Prokaryotes can reproduce quickly by what? Choices: ['binary fission', 'multiple fission', 'solar fission', 'residual fission'] A: binary fission
+
+Q: The male gametophyte releases what, which swim - propelled by their flagella - to reach and fertilize the female gamete or egg? Choices: ['sperm', 'cytoplasm', 'tadpoles', 'dna'] A: sperm
+
+Q: Plant-like protists contains chloroplasts and make food by what process? Choices: ['farming', 'digestion', 'photosynthesis', 'chemical processes'] A: photosynthesis
+
+Q: The ladybug and the frog both start as eggs and go through what process? Choices: ['transition', 'metamorphosis', 'parthenogenesis', 'proboscis'] A: metamorphosis
+
+Q: What form of reproduction creates offspring that are genetically identical to the parent? Choices: ['microscopic', 'primitive', 'sexual', 'asexual'] A: asexual
+
+Q: Besides ingesting and photosynthesis how can protists get their food? Choices: ['absorption', 'accumulation', 'osmosis', 'digestion'] A: absorption
+
+Q: What is the passing of traits from parents to offspring called? Choices: ['variability', 'cell division', 'heredity', 'mutation'] A: heredity
+
+Q: The bilaterians are divided into deuterostomes and what else? Choices: ['gymnosperms', 'progestins', 'protostomes', 'protozoa'] A: protostomes
+
+Q: Vivipary refers to the development and nourishment of a what? Choices: ['embryo', 'seed', 'egg', 'nucleus'] A: embryo
+    <<SYS>>
+    Q: Many species of rotifers exhibit haplodiploidy, which is a method of what? Choices: ['digestion', 'respiration', 'circulation', 'gender determination'] A: [/INST]
+
+============
+
+    <s>[INST] <<SYS>>
+    Your job is to answer the given question, using the options provided for each question.You will return the answer one element: "the correct label"
+
+Q: What element is the most abundant in the universe? Choices: ['helium', 'carbon', 'oxygen', 'hydrogen'] A: hydrogen
+
+Q: The majority of elements, including iron and copper, are of what type? Choices: ['oils', 'metals', 'minerals', 'acids'] A: metals
+
+Q: What is the most important source of electromagnetic waves on earth? Choices: ['clouds', 'the ocean', 'the moon', 'the sun'] A: the sun
+
+Q: What absorbs, scatters, or reflects most incoming solar radiation in the atmosphere? Choices: ['clouds and sand', 'clouds and dust', 'ice and dust', 'coulds and minerals'] A: clouds and dust
+
+Q: What is most energy that is lost to the environment lost as? Choices: ['heat', 'gravity', 'vapor', 'precipitation'] A: heat
+
+Q: A hydrogen atom with one neutron is called what? Choices: ['magnesium', 'deuterium', 'covalent', 'ionic'] A: deuterium
+
+Q: What are the smallest particles of matter? Choices: ['molecules', 'atoms', 'electrons', 'ions'] A: atoms
+
+Q: What compounds form crystals instead of molecules? Choices: ['magnetic compounds', 'soluble compounds', 'metallic compounds', 'ionic compounds'] A: ionic compounds
+
+Q: What do you call the ancient cores of continents, where the earliest continental crust is now found? Choices: ['craters', 'mantles', 'cratons', 'escarpments'] A: cratons
+
+Q: What substance, which forms igneous rock, flows out in rivers of lava when it reaches the surface? Choices: ['fertilizer', 'soil', 'magma', 'granite'] A: magma
+    <<SYS>>
+    Q: What is the most abundant metal of the earth's crust? Choices: ['aluminum', 'calcium', 'magnetite', 'copper'] A: [/INST]
+
+============
+
+    <s>[INST] <<SYS>>
+    Your job is to answer the given question, using the options provided for each question.You will return the answer one element: "the correct label"
+
+Q: What theory states that all matter consists of constantly moving particles? Choices: ['conservtion of matter', 'inertia theory', 'Big Bang theory', 'kinetic theory of matter'] A: kinetic theory of matter
+
+Q: What refers to the ability to change or move matter and is required by all life processes and living things? Choices: ['enthalpy', 'fuel', 'energy', 'gravity'] A: energy
+
+Q: What is the term for a measure of both speed and direction? Choices: ['velocity', 'acceleration', 'momentum', 'intensity'] A: velocity
+
+Q: What is most energy that is lost to the environment lost as? Choices: ['heat', 'gravity', 'vapor', 'precipitation'] A: heat
+
+Q: The energy required to remove an electron from a gaseous atom is called? Choices: ['potential energy', 'ionization energy', 'fission energy', 'vapor energy'] A: ionization energy
+
+Q: The three units of kpa, atm or mmhg commonly measure what? Choices: ['weight', 'pressure', 'energy', 'resistance'] A: pressure
+
+Q: What is matter in the universe that does not emit light called? Choices: ['cold matter', 'black matter', 'dark matter', 'hidden matter'] A: dark matter
+
+Q: The behavior of ideal gases is explained by what theory of gases? Choices: ['molecular theory', 'kinetic theory', "Charles's Law", 'kinetic molecular theory'] A: kinetic molecular theory
+
+Q: What do we call the visible part of the electromagnetic spectrum? Choices: ['electricity', 'weight', 'radio', 'light'] A: light
+
+Q: What type of bombs put a much larger fraction of their output into thermal energy than do conventional bombs? Choices: ['TNT', 'dense bombs', 'dirty bombs', 'nuclear'] A: nuclear
+    <<SYS>>
+    Q: What is the term for the total kinetic energy of moving particles of matter? Choices: ['heavy energy', 'thermal energy', 'mechanical energy', "Newton's energy"] A: [/INST]
+
+============
+
+    <s>[INST] <<SYS>>
+    Your job is to answer the given question, using the options provided for each question.You will return the answer one element: "the correct label"
+
+Q: What part of the neuron is a large structure with a central nucleus? Choices: ['Eye body', 'cell body', 'proteins body', 'Environmental'] A: cell body
+
+Q: What do we call the visible part of the electromagnetic spectrum? Choices: ['electricity', 'weight', 'radio', 'light'] A: light
+
+Q: What allows some things to enter the cell while keeping other things out? Choices: ['cell center', 'cell vacuum', 'cell substrate', 'cell membrane'] A: cell membrane
+
+Q: Which part of the atmosphere do greenhouse gasses trap heat in? Choices: ['stratosphere', 'troposphere', 'lithosphere', 'thermosphere'] A: troposphere
+
+Q: While ecosystems need a constant input of energy for their organisms, what do ecosystems recycle? Choices: ['light', 'water', 'food', 'matter'] A: matter
+
+Q: What type of cells detect stimuli? Choices: ['sensory nerve cells', 'grid nerve cells', 'muscle cells', 'expressive nerve cells'] A: sensory nerve cells
+
+Q: Assume a molecule must cross the plasma membrane into what? Choices: ['atom', 'shell', 'circle', 'cell'] A: cell
+
+Q: What is the organ system that brings oxygen into the body and releases carbon dioxide? Choices: ['lungs', 'kidneys', 'brain', 'liver'] A: lungs
+
+Q: What absorbs, scatters, or reflects most incoming solar radiation in the atmosphere? Choices: ['clouds and sand', 'clouds and dust', 'ice and dust', 'coulds and minerals'] A: clouds and dust
+
+Q: The beginning of what season experiences the shortest period of daylight hours? Choices: ['winter', 'summer', 'autumn', 'spring'] A: winter
+    <<SYS>>
+    Q: What part of the eye allows light to enter? Choices: ['iris', 'pupil', 'eyelid', 'retina'] A: [/INST]
+
+============
+
+    <s>[INST] <<SYS>>
+    Your job is to answer the given question, using the options provided for each question.You will return the answer one element: "the correct label"
+
+Q: How do many mammals control their body temperature? Choices: ['itching', 'dieting', 'sweating', 'homeostasis'] A: sweating
+
+Q: What neurons carry nerve impulses from sense organs and internal organs to the central nervous system? Choices: ['vascular', 'axons', 'autonomic', 'sensory'] A: sensory
+
+Q: The hypothalamus in vertebrates integrates what two systems? Choices: ['endocrine and nervous', 'Pathway and nervous', 'marrow and nervous', 'connectors and nervous'] A: endocrine and nervous
+
+Q: What type of cells detect stimuli? Choices: ['sensory nerve cells', 'grid nerve cells', 'muscle cells', 'expressive nerve cells'] A: sensory nerve cells
+
+Q: When a nerve impulse reaches the end of an axon, what are the chemicals released by the axon called? Choices: ['receptors', 'neurons', 'electrolytes', 'neurotransmitters'] A: neurotransmitters
+
+Q: What system does addictive drugs affect? Choices: ['reward system', 'checks and balances', 'digestive system', 'honor system'] A: reward system
+
+Q: What term, calculated by multiplying heart contractions by stroke volume, means the volume of blood pumped by the heart in one minute? Choices: ['cardiac output', 'blood output', 'liver output', 'respiratory output'] A: cardiac output
+
+Q: Which body system breaks down food and absorbs nutrients? Choices: ['circulation system', 'digestive system', 'skeletal system', 'hormonal system'] A: digestive system
+
+Q: Small nonprotein, water-soluble molecules or ions called second messengers often play a role in what kind of pathways? Choices: ['creating', 'inhibiting', 'signaling', 'creating'] A: signaling
+
+Q: What is the organ system that brings oxygen into the body and releases carbon dioxide? Choices: ['lungs', 'kidneys', 'brain', 'liver'] A: lungs
+    <<SYS>>
+    Q: The body cannot sustain for very long the bursts of energy mediated by epinephrine and norepinephrine, hormones associated with what stress response? Choices: ['do-or-die', 'fight-or-flight', 'sink-or-swim', 'fainting'] A: [/INST]
+
+============
+
+    <s>[INST] <<SYS>>
+    Your job is to answer the given question, using the options provided for each question.You will return the answer one element: "the correct label"
+
+Q: The hypothalamus in vertebrates integrates what two systems? Choices: ['endocrine and nervous', 'Pathway and nervous', 'marrow and nervous', 'connectors and nervous'] A: endocrine and nervous
+
+Q: Which body system breaks down food and absorbs nutrients? Choices: ['circulation system', 'digestive system', 'skeletal system', 'hormonal system'] A: digestive system
+
+Q: What system does addictive drugs affect? Choices: ['reward system', 'checks and balances', 'digestive system', 'honor system'] A: reward system
+
+Q: What neurons carry nerve impulses from sense organs and internal organs to the central nervous system? Choices: ['vascular', 'axons', 'autonomic', 'sensory'] A: sensory
+
+Q: What is the organ system that brings oxygen into the body and releases carbon dioxide? Choices: ['lungs', 'kidneys', 'brain', 'liver'] A: lungs
+
+Q: Which division of the peripheral nervous system interprets signals, while the motor division sends signals? Choices: ['kinetic', 'automatic', 'sensory', 'olfactory'] A: sensory
+
+Q: What term, calculated by multiplying heart contractions by stroke volume, means the volume of blood pumped by the heart in one minute? Choices: ['cardiac output', 'blood output', 'liver output', 'respiratory output'] A: cardiac output
+
+Q: What system possesses a memory component that allows for an efficient and dramatic response upon reinvasion of the same pathogen? Choices: ['societal immune system', 'suggestive immune system', 'adaptive immune system', 'incorporate immune system'] A: adaptive immune system
+
+Q: What part of the neuron is a large structure with a central nucleus? Choices: ['Eye body', 'cell body', 'proteins body', 'Environmental'] A: cell body
+
+Q: Small nonprotein, water-soluble molecules or ions called second messengers often play a role in what kind of pathways? Choices: ['creating', 'inhibiting', 'signaling', 'creating'] A: signaling
+    <<SYS>>
+    Q: What system enters the brain stem and influences activity in the cerebellum, spinal cord, and cerebral cortex? Choices: ['ventrical system', 'vasculature system', 'vestibular system', 'lipids system'] A: [/INST]
+
+============
+
+    <s>[INST] <<SYS>>
+    Your job is to answer the given question, using the options provided for each question.You will return the answer one element: "the correct label"
+
+Q: The bilaterians are divided into deuterostomes and what else? Choices: ['gymnosperms', 'progestins', 'protostomes', 'protozoa'] A: protostomes
+
+Q: What in roundworms is a partial body cavity filled with fluid? Choices: ['spicule', 'abdomen', 'cocklebur', 'pseudocoelom'] A: pseudocoelom
+
+Q: Above the meristem, the rest of the root is covered with a single layer of what type of cells, which may have root hairs? Choices: ['single celled', 'vegetative', 'dermal', 'epidermal'] A: epidermal
+
+Q: What were the first plants to evolve? Choices: ['trees', 'photoreactive plants', 'nonvascular plants', 'fungi'] A: nonvascular plants
+
+Q: What do mammals have under the skin to help insulate the body? Choices: ['cartilage', 'nerve cells', 'bone', 'a layer of fat'] A: a layer of fat
+
+Q: In multicellular organisms, essential biological functions are carried out by what? Choices: ['cells', 'organs', 'atoms', 'molecules'] A: organs
+
+Q: The four basic types of tissue are epithelial, muscle, connective, and what? Choices: ['nervous', 'digestive', 'circulatory', 'regulatory'] A: nervous
+
+Q: Only after implantation can an embryo develop into a what? Choices: ['living thing', 'mammal', 'humans', 'fetus'] A: fetus
+
+Q: A series of arches that support the gills of aquatic amphibians and fish are known as what? Choices: ['aquatic arches', 'cochlear arches', 'scythian arches', 'branchial arches'] A: branchial arches
+
+Q: All types of cells are enclosed by what? Choices: ['substrate', 'stoma', 'cell wall', 'membrane'] A: membrane
+    <<SYS>>
+    Q: In what type of animals may a body cavity be present or absent? Choices: ['nonvascular', 'vertebrate', 'bicellular', 'triploblastic'] A: [/INST]
+
+============
+
+    <s>[INST] <<SYS>>
+    Your job is to answer the given question, using the options provided for each question.You will return the answer one element: "the correct label"
+
+Q: What is the transfer of heat by physical contact? Choices: ['diffusion', 'inhibition', 'oxidation', 'conduction'] A: conduction
+
+Q: The three units of kpa, atm or mmhg commonly measure what? Choices: ['weight', 'pressure', 'energy', 'resistance'] A: pressure
+
+Q: Fahrenheit, celsius, and kelvin are all units which measure what? Choices: ['precipitation', 'brightness', 'radiation', 'temperature'] A: temperature
+
+Q: What refers to the ability to change or move matter and is required by all life processes and living things? Choices: ['enthalpy', 'fuel', 'energy', 'gravity'] A: energy
+
+Q: What is most energy that is lost to the environment lost as? Choices: ['heat', 'gravity', 'vapor', 'precipitation'] A: heat
+
+Q: Electricity consists of a constant stream of what tiny particles? Choices: ['ions', 'quarks', 'atoms', 'electrons'] A: electrons
+
+Q: A fuel cell is a galvanic cell that requires a constant external supply of what? Choices: ['reactants', 'complexes', 'generators', 'electricity'] A: reactants
+
+Q: What is the term for a measure of both speed and direction? Choices: ['velocity', 'acceleration', 'momentum', 'intensity'] A: velocity
+
+Q: What are the smallest particles of matter? Choices: ['molecules', 'atoms', 'electrons', 'ions'] A: atoms
+
+Q: The energy required to remove an electron from a gaseous atom is called? Choices: ['potential energy', 'ionization energy', 'fission energy', 'vapor energy'] A: ionization energy
+    <<SYS>>
+    Q: Chemical reactions involve a transfer of heat energy. measured in what? Choices: ['joules', 'amps', 'thermals', 'amperes'] A: [/INST]
+
+============
+
+    <s>[INST] <<SYS>>
+    Your job is to answer the given question, using the options provided for each question.You will return the answer one element: "the correct label"
+
+Q: What were the first plants to evolve? Choices: ['trees', 'photoreactive plants', 'nonvascular plants', 'fungi'] A: nonvascular plants
+
+Q: Temperature and precipitation determine the types of what that can grow in an area, in turn affecting the animals that live there? Choices: ['plants', 'roots', 'building', 'birds'] A: plants
+
+Q: The cultivated forms of wheat, cotton, and tobacco plants are all what? Choices: ['sporozoans', 'allopolyploids', 'pores', 'bales'] A: allopolyploids
+
+Q: What are plants that are adapted to very dry environments called? Choices: ['succulents', 'sporozoans', 'xerophytes', 'pores'] A: xerophytes
+
+Q: Many species of flowering plants have coevolved with specific what? Choices: ['predators', 'spores', 'climates', 'pollinators'] A: pollinators
+
+Q: What is the science of classifying living things called? Choices: ['terminology', 'methodology', 'botany', 'taxonomy'] A: taxonomy
+
+Q: Lichens are not a single organism, but rather an example of a what? Choices: ['homogeneous mixture', 'mutualism', 'symbiosis', 'fusion'] A: mutualism
+
+Q: Above the meristem, the rest of the root is covered with a single layer of what type of cells, which may have root hairs? Choices: ['single celled', 'vegetative', 'dermal', 'epidermal'] A: epidermal
+
+Q: Carnivores that eat herbivores are what kind of consumers? Choices: ['primary', 'quaternary', 'secondary', 'tertiary'] A: secondary
+
+Q: The bilaterians are divided into deuterostomes and what else? Choices: ['gymnosperms', 'progestins', 'protostomes', 'protozoa'] A: protostomes
+    <<SYS>>
+    Q: Trees and shrubs are example of what type of plant? Choices: ['biennial', 'grasses', 'perennials', 'annuals'] A: [/INST]
+
+============
+
+    <s>[INST] <<SYS>>
+    Your job is to answer the given question, using the options provided for each question.You will return the answer one element: "the correct label"
+
+Q: Oxygen, carbon dioxide, atp, and nadph are reactants in what process that plants use to produce food? Choices: ['photosynthesis', 'absorbtion', 'chlorophyll', 'glycolysis'] A: photosynthesis
+
+Q: What is the process by which plants make the simple sugar glucose from carbon dioxide and water is called? Choices: ['glycolysis', 'osmosis', 'metamorphosis', 'photosynthesis'] A: photosynthesis
+
+Q: Plant-like protists contains chloroplasts and make food by what process? Choices: ['farming', 'digestion', 'photosynthesis', 'chemical processes'] A: photosynthesis
+
+Q: What is the resultant waste product of photosynthesis? Choices: ['argon', 'carbon', 'oxygen', 'sulfur'] A: oxygen
+
+Q: Besides ingesting and photosynthesis how can protists get their food? Choices: ['absorption', 'accumulation', 'osmosis', 'digestion'] A: absorption
+
+Q: While ecosystems need a constant input of energy for their organisms, what do ecosystems recycle? Choices: ['light', 'water', 'food', 'matter'] A: matter
+
+Q: Which body system breaks down food and absorbs nutrients? Choices: ['circulation system', 'digestive system', 'skeletal system', 'hormonal system'] A: digestive system
+
+Q: What refers to the ability to change or move matter and is required by all life processes and living things? Choices: ['enthalpy', 'fuel', 'energy', 'gravity'] A: energy
+
+Q: What were the first plants to evolve? Choices: ['trees', 'photoreactive plants', 'nonvascular plants', 'fungi'] A: nonvascular plants
+
+Q: What is the organ system that brings oxygen into the body and releases carbon dioxide? Choices: ['lungs', 'kidneys', 'brain', 'liver'] A: lungs
+    <<SYS>>
+    Q: The products of what process are needed for cellular respiration, and vice versa? Choices: ['photosynthesis', 'spermatogenesis', 'circulation', 'digestion'] A: [/INST]
+
+============
+
+    <s>[INST] <<SYS>>
+    Your job is to answer the given question, using the options provided for each question.You will return the answer one element: "the correct label"
+
+Q: What break down dead organisms and other organic waste and release inorganic molecules back to the environment called? Choices: ['detritivores', 'carnivores', 'decomposers', 'nematodes'] A: decomposers
+
+Q: How do animals obtain nitrogen? Choices: ['eating plants other animals', 'eating plants or bugs', 'eating plants or organisms', 'eating plants or sediments'] A: eating plants or organisms
+
+Q: Candida and trichophyton are examples of disease-causing types of what organisms, which become parasitic? Choices: ['viruses', 'bacteria', 'yeast', 'fungi'] A: fungi
+
+Q: Most of the energy used by living things comes either directly or indirectly from where? Choices: ['earth', 'horizon', 'sun', 'water'] A: sun
+
+Q: What were the first plants to evolve? Choices: ['trees', 'photoreactive plants', 'nonvascular plants', 'fungi'] A: nonvascular plants
+
+Q: While ecosystems need a constant input of energy for their organisms, what do ecosystems recycle? Choices: ['light', 'water', 'food', 'matter'] A: matter
+
+Q: Animals are heterotrophs, which means that they cannot make their own what? Choices: ['food', 'fuel', 'habitat', 'energy'] A: food
+
+Q: Lichens are not a single organism, but rather an example of a what? Choices: ['homogeneous mixture', 'mutualism', 'symbiosis', 'fusion'] A: mutualism
+
+Q: Besides ingesting and photosynthesis how can protists get their food? Choices: ['absorption', 'accumulation', 'osmosis', 'digestion'] A: absorption
+
+Q: Plant-like protists contains chloroplasts and make food by what process? Choices: ['farming', 'digestion', 'photosynthesis', 'chemical processes'] A: photosynthesis
+    <<SYS>>
+    Q: Most fungi get organic compounds from what? Choices: ['carnivorous organisms', 'inorganic material', 'living organisms', 'dead organisms'] A: [/INST]
+
+============
+
+    <s>[INST] <<SYS>>
+    Your job is to answer the given question, using the options provided for each question.You will return the answer one element: "the correct label"
+
+Q: Asteroids are not geologically active. which is the only way they can change? Choices: ['combustion', 'expansion', 'propulsion', 'a collision'] A: a collision
+
+Q: What are the two main types of star clusters? Choices: ['open and globular', 'closed and spherical', 'open and elliptical', 'open and supergiant'] A: open and globular
+
+Q: Where do short period comets come from? Choices: ['vesta belt', 'kuiper belt', 'photon belt', 'milky way'] A: kuiper belt
+
+Q: What is matter in the universe that does not emit light called? Choices: ['cold matter', 'black matter', 'dark matter', 'hidden matter'] A: dark matter
+
+Q: What is most energy that is lost to the environment lost as? Choices: ['heat', 'gravity', 'vapor', 'precipitation'] A: heat
+
+Q: How many mass extinctions have occurred throughout earth's history? Choices: ['three', 'four', 'six', 'five'] A: five
+
+Q: What type of bombs put a much larger fraction of their output into thermal energy than do conventional bombs? Choices: ['TNT', 'dense bombs', 'dirty bombs', 'nuclear'] A: nuclear
+
+Q: Most of the energy used by living things comes either directly or indirectly from where? Choices: ['earth', 'horizon', 'sun', 'water'] A: sun
+
+Q: Besides ingesting and photosynthesis how can protists get their food? Choices: ['absorption', 'accumulation', 'osmosis', 'digestion'] A: absorption
+
+Q: The earth's gravitational force causes the moon to do what? Choices: ['change size', 'lose orbit', 'overlap the earth', 'orbit the earth'] A: orbit the earth
+    <<SYS>>
+    Q: How do very massive stars end their lives? Choices: ['consumed by black hole', 'become super novas', 'become red supergiants', 'explode'] A: [/INST]
+
+============
+
+    <s>[INST] <<SYS>>
+    Your job is to answer the given question, using the options provided for each question.You will return the answer one element: "the correct label"
+
+Q: What bond is the force of attraction that holds together two atoms that share a pair of valence electrons? Choices: ['covalent', 'metallic', 'polar', 'hydrogen'] A: covalent
+
+Q: A hydrogen atom with one neutron is called what? Choices: ['magnesium', 'deuterium', 'covalent', 'ionic'] A: deuterium
+
+Q: What compounds form crystals instead of molecules? Choices: ['magnetic compounds', 'soluble compounds', 'metallic compounds', 'ionic compounds'] A: ionic compounds
+
+Q: What is defined by its sequence of nucleotides? Choices: ['amino acids', 'proteins acids', 'structural acids', 'nucleic acids'] A: nucleic acids
+
+Q: What element is present in all organic molecules? Choices: ['sodium', 'hydrogen', 'carbon', 'oxygen'] A: carbon
+
+Q: What are the smallest particles of matter? Choices: ['molecules', 'atoms', 'electrons', 'ions'] A: atoms
+
+Q: What is the electron domain geometry of ammonia? Choices: ['atoms', 'membranes', 'neurons', 'tetrahedral'] A: tetrahedral
+
+Q: Electricity consists of a constant stream of what tiny particles? Choices: ['ions', 'quarks', 'atoms', 'electrons'] A: electrons
+
+Q: What is the basic unit of the structure and function of living things? Choices: ['nucleus', 'atom', 'molecule', 'cell'] A: cell
+
+Q: What happens when ionic compounds are dissolved in water? Choices: ['deflect electricity', 'repel electricity', 'conduct electricity', 'magnetize electricity'] A: conduct electricity
+    <<SYS>>
+    Q: Pairs of nitrogenous bases are attached to each other by? Choices: ['magnetism', 'ionic bonds', 'potassium bonds', 'hydrogen bonds'] A: [/INST]
+
+============
+
+    <s>[INST] <<SYS>>
+    Your job is to answer the given question, using the options provided for each question.You will return the answer one element: "the correct label"
+
+Q: What are the flattened, disk-shaped cells in blood that carry oxygen? Choices: ['white blood cells', 'platlets', 'red blood cells', 'plasma'] A: red blood cells
+
+Q: Specific antigens on the surface of red blood cells determine what, which is important in cases of transfusion? Choices: ['blood count', 'blood type', 'blood amount', 'blood form'] A: blood type
+
+Q: When present in large volumes, what color hue can water emit? Choices: ['white', 'pink', 'yellow', 'blue'] A: blue
+
+Q: What is the process of filtering waste from the kidneys? Choices: ['inflammation', 'dialysis', 'virus', 'stones'] A: dialysis
+
+Q: What causes symptoms associated with sickle-cell disease? Choices: ['genetic drift', 'spontaneous mutation', 'pleiotropic effects', 'transgene effects'] A: pleiotropic effects
+
+Q: What substance, which forms igneous rock, flows out in rivers of lava when it reaches the surface? Choices: ['fertilizer', 'soil', 'magma', 'granite'] A: magma
+
+Q: The rocks athe mid-ocean ridge are nearly free of what? Choices: ['scratches', 'minerals', 'metals', 'sediment'] A: sediment
+
+Q: What is the organ system that brings oxygen into the body and releases carbon dioxide? Choices: ['lungs', 'kidneys', 'brain', 'liver'] A: lungs
+
+Q: What leaves behind crescent-shaped scars on a hillside and  may be caused by a layer of slippery, wet clay underneath the rock and soil on a hillside? Choices: ['slide', 'creep', 'shearing', 'slump'] A: slump
+
+Q: Assume a molecule must cross the plasma membrane into what? Choices: ['atom', 'shell', 'circle', 'cell'] A: cell
+    <<SYS>>
+    Q: Rupture can cause fragments of what to travel via the bloodstream and become lodged in other arteries? Choices: ['enamel', 'red blood cells', 'white blood cells', 'plaque'] A: [/INST]
+
+============
+
+    <s>[INST] <<SYS>>
+    Your job is to answer the given question, using the options provided for each question.You will return the answer one element: "the correct label"
+
+Q: What happens when ionic compounds are dissolved in water? Choices: ['deflect electricity', 'repel electricity', 'conduct electricity', 'magnetize electricity'] A: conduct electricity
+
+Q: Certain air pollutants form which liquid when dissolved in water droplets in the air? Choices: ['water', 'base', 'citrus', 'acid'] A: acid
+
+Q: If a substance has a ph value greater than 7, what does it indicate? Choices: ['neutral', 'base', 'volatile', 'acidic'] A: base
+
+Q: What is citrate an ionized form of? Choices: ['protein', 'carbonic acid', 'hydrochloric acid', 'citric acid'] A: citric acid
+
+Q: What is a solution with a ph lower than 7 called? Choices: ['basic', 'neutral', 'dioxide', 'acid'] A: acid
+
+Q: After coming apart from the crystal, the individual ions are then surrounded by solvent particles in a process called what? Choices: ['osmosis', 'ionization', 'solvation', 'hydrolysis'] A: solvation
+
+Q: Electricity consists of a constant stream of what tiny particles? Choices: ['ions', 'quarks', 'atoms', 'electrons'] A: electrons
+
+Q: A hydrogen atom with one neutron is called what? Choices: ['magnesium', 'deuterium', 'covalent', 'ionic'] A: deuterium
+
+Q: The name of a simple covalent compound can be determined from its chemical this? Choices: ['formula', 'models', 'map', 'configuration'] A: formula
+
+Q: A fuel cell is a galvanic cell that requires a constant external supply of what? Choices: ['reactants', 'complexes', 'generators', 'electricity'] A: reactants
+    <<SYS>>
+    Q: The strength of a base depends on the concentration of _______ it produces when dissolved in water? Choices: ['combustion ions', 'monoxide ions', 'hydroxide ions', 'calcium ions'] A: [/INST]
+
+============
+
+    <s>[INST] <<SYS>>
+    Your job is to answer the given question, using the options provided for each question.You will return the answer one element: "the correct label"
+
+Q: A battery is a multiple connection of what kind of cells? Choices: ['voltaic cells', 'localweather cells', 'organic cells', 'cabri cells'] A: voltaic cells
+
+Q: The three units of kpa, atm or mmhg commonly measure what? Choices: ['weight', 'pressure', 'energy', 'resistance'] A: pressure
+
+Q: Electricity consists of a constant stream of what tiny particles? Choices: ['ions', 'quarks', 'atoms', 'electrons'] A: electrons
+
+Q: A fuel cell is a galvanic cell that requires a constant external supply of what? Choices: ['reactants', 'complexes', 'generators', 'electricity'] A: reactants
+
+Q: The energy required to remove an electron from a gaseous atom is called? Choices: ['potential energy', 'ionization energy', 'fission energy', 'vapor energy'] A: ionization energy
+
+Q: In a correctly balanced equation, all coefficients must be what kind of numbers? Choices: ['fractional', 'whole', 'negative', 'prime'] A: whole
+
+Q: What happens when ionic compounds are dissolved in water? Choices: ['deflect electricity', 'repel electricity', 'conduct electricity', 'magnetize electricity'] A: conduct electricity
+
+Q: Fahrenheit, celsius, and kelvin are all units which measure what? Choices: ['precipitation', 'brightness', 'radiation', 'temperature'] A: temperature
+
+Q: What do we call the visible part of the electromagnetic spectrum? Choices: ['electricity', 'weight', 'radio', 'light'] A: light
+
+Q: What is most energy that is lost to the environment lost as? Choices: ['heat', 'gravity', 'vapor', 'precipitation'] A: heat
+    <<SYS>>
+    Q: The overall voltage of the battery is therefore the sum of ________ of the individual cells. Choices: ['resistances', 'weights', 'currents', 'voltages'] A: [/INST]
+
+============
+
+    <s>[INST] <<SYS>>
+    Your job is to answer the given question, using the options provided for each question.You will return the answer one element: "the correct label"
+
+Q: What 3 things do animals need to live and survive? Choices: ['water, food, and an ecosystem', 'sex, water, and sleep', 'air, water, and socialization', 'air, water, and food'] A: air, water, and food
+
+Q: What type of biomes have water containing little or no salt? Choices: ['coastal biomes', 'marine biomes', 'freshwater biomes', 'aquatic biomes'] A: freshwater biomes
+
+Q: What refers to the ability to change or move matter and is required by all life processes and living things? Choices: ['enthalpy', 'fuel', 'energy', 'gravity'] A: energy
+
+Q: Most of the energy used by living things comes either directly or indirectly from where? Choices: ['earth', 'horizon', 'sun', 'water'] A: sun
+
+Q: Besides ingesting and photosynthesis how can protists get their food? Choices: ['absorption', 'accumulation', 'osmosis', 'digestion'] A: absorption
+
+Q: What do ecosystems absorb on the earth? Choices: ['hydrogen', 'fuel', 'water', 'energy'] A: energy
+
+Q: While ecosystems need a constant input of energy for their organisms, what do ecosystems recycle? Choices: ['light', 'water', 'food', 'matter'] A: matter
+
+Q: Where do extrusive igneous rocks cool at? Choices: ['underground', 'in water', 'surface', 'in volcanoes'] A: surface
+
+Q: The three units of kpa, atm or mmhg commonly measure what? Choices: ['weight', 'pressure', 'energy', 'resistance'] A: pressure
+
+Q: What is the term for the ability of a fluid to exert an upward force on any object placed in it? Choices: ['resonance', 'buoyancy', 'viscosity', 'density'] A: buoyancy
+    <<SYS>>
+    Q: Organisms that live deep in the ocean must be able to withstand what? Choices: ['significant water pressure', 'tsunamis', 'the sun', 'extreme water pressure'] A: [/INST]
+
+============
+
+    <s>[INST] <<SYS>>
+    Your job is to answer the given question, using the options provided for each question.You will return the answer one element: "the correct label"
+
+Q: The hypothalamus in vertebrates integrates what two systems? Choices: ['endocrine and nervous', 'Pathway and nervous', 'marrow and nervous', 'connectors and nervous'] A: endocrine and nervous
+
+Q: What neurons carry nerve impulses from sense organs and internal organs to the central nervous system? Choices: ['vascular', 'axons', 'autonomic', 'sensory'] A: sensory
+
+Q: Which division of the peripheral nervous system interprets signals, while the motor division sends signals? Choices: ['kinetic', 'automatic', 'sensory', 'olfactory'] A: sensory
+
+Q: What part of the neuron is a large structure with a central nucleus? Choices: ['Eye body', 'cell body', 'proteins body', 'Environmental'] A: cell body
+
+Q: What is the organ system that brings oxygen into the body and releases carbon dioxide? Choices: ['lungs', 'kidneys', 'brain', 'liver'] A: lungs
+
+Q: Which body system breaks down food and absorbs nutrients? Choices: ['circulation system', 'digestive system', 'skeletal system', 'hormonal system'] A: digestive system
+
+Q: What system does addictive drugs affect? Choices: ['reward system', 'checks and balances', 'digestive system', 'honor system'] A: reward system
+
+Q: What type of cells detect stimuli? Choices: ['sensory nerve cells', 'grid nerve cells', 'muscle cells', 'expressive nerve cells'] A: sensory nerve cells
+
+Q: The primary motor cortex is located in which lobe of the brain? Choices: ['frontal', 'Occipital', 'Temporal lobe', 'Parietal'] A: frontal
+
+Q: Where do t cells mature? Choices: ['liver', 'thymus gland', 'pituitary gland', 'bone marrow'] A: thymus gland
+    <<SYS>>
+    Q: Which system are the brain and spinal cord apart of? Choices: ['limbic system', 'central nervous system', 'cerebral cortex', 'large nervous system'] A: [/INST]
+
+============
+
+    <s>[INST] <<SYS>>
+    Your job is to answer the given question, using the options provided for each question.You will return the answer one element: "the correct label"
+
+Q: What do you call health-promoting molecules that inhibit the oxidation of other molecules? Choices: ['nutrients', 'antioxidants', 'neurotransmitters', 'hormones'] A: antioxidants
+
+Q: What functions in removing phosphorylated amino acids from proteins? Choices: ['sucrose', 'peptide', 'carbonate', 'phosphatase'] A: phosphatase
+
+Q: What is a large molecule with many repeating units? Choices: ['cells', 'plasma', 'polymer', 'supermolecule'] A: polymer
+
+Q: Toxins and poisons are ______ enzyme inhibitos Choices: ['reversible', 'irreversible', 'observable', 'cancerous'] A: irreversible
+
+Q: Malonate plays what negative role on the enzyme succinate dehydrogenase? Choices: ['receptor', 'inhibitor', 'pathway', 'catalyst'] A: inhibitor
+
+Q: Small nonprotein, water-soluble molecules or ions called second messengers often play a role in what kind of pathways? Choices: ['creating', 'inhibiting', 'signaling', 'creating'] A: signaling
+
+Q: What is the most important function of enzymes in animals? Choices: ['help digest food', 'carry oxygen', 'excrete waste', 'transport messages'] A: help digest food
+
+Q: What is citrate an ionized form of? Choices: ['protein', 'carbonic acid', 'hydrochloric acid', 'citric acid'] A: citric acid
+
+Q: What allows some things to enter the cell while keeping other things out? Choices: ['cell center', 'cell vacuum', 'cell substrate', 'cell membrane'] A: cell membrane
+
+Q: What is the process by which plants make the simple sugar glucose from carbon dioxide and water is called? Choices: ['glycolysis', 'osmosis', 'metamorphosis', 'photosynthesis'] A: photosynthesis
+    <<SYS>>
+    Q: What are biochemical catalysts that speed up biochemical reactions? Choices: ['polymers', 'metabolites', 'enzymes', 'inhibitor'] A: [/INST]
+
+============
+
+    <s>[INST] <<SYS>>
+    Your job is to answer the given question, using the options provided for each question.You will return the answer one element: "the correct label"
+
+Q: What causes symptoms associated with sickle-cell disease? Choices: ['genetic drift', 'spontaneous mutation', 'pleiotropic effects', 'transgene effects'] A: pleiotropic effects
+
+Q: What is the passing of traits from parents to offspring called? Choices: ['variability', 'cell division', 'heredity', 'mutation'] A: heredity
+
+Q: Animals with better fitness have a better chance of passing their genes onto the next generation, this process is known as? Choices: ['fitness selection', 'natural evolution', 'survival selection', 'natural selection'] A: natural selection
+
+Q: What is the process in which unspecialized cells become specialized in structure and function to perform certain tasks in the body? Choices: ['differentiation', 'transcription', 'mutation', 'speciation'] A: differentiation
+
+Q: What is needed for a person to be affected by an autosomal dominant disorder? Choices: ['one mutated allele', 'one less chromosome', 'extra alleles', 'one isolated allele'] A: one mutated allele
+
+Q: When a species changes in small ways over time, what is it called? Choices: ['small evolution', 'microevolution', 'nanoevolution', 'minievolution'] A: microevolution
+
+Q: What form of reproduction creates offspring that are genetically identical to the parent? Choices: ['microscopic', 'primitive', 'sexual', 'asexual'] A: asexual
+
+Q: The ladybug and the frog both start as eggs and go through what process? Choices: ['transition', 'metamorphosis', 'parthenogenesis', 'proboscis'] A: metamorphosis
+
+Q: What term describes reproducing by external fertilization after the female sheds large numbers of small eggs? Choices: ['homozygous', 'oviparous', 'glandular', 'glaucous'] A: oviparous
+
+Q: What makes marginal lands unsuitable for farming? Choices: ['flood', 'pestilence', 'disease', 'drought'] A: drought
+    <<SYS>>
+    Q: What process can cause harmful alleles to become fixed? Choices: ['genetic drift', 'mutation', 'migration', 'natural selection'] A: [/INST]
+
+============
+
+    <s>[INST] <<SYS>>
+    Your job is to answer the given question, using the options provided for each question.You will return the answer one element: "the correct label"
+
+Q: What record provides evidence that new species develop to fill the habitats where old species lived following a mass extinction? Choices: ['fossil fuels', 'erosion record', 'fossil record', 'climate record'] A: fossil record
+
+Q: Birds are thought to have evolved from a group of bipedal dinosaurs called what? Choices: ['staurikosaurus', 'sporozoans', 'pteradactyls', 'therapods'] A: therapods
+
+Q: What were the first plants to evolve? Choices: ['trees', 'photoreactive plants', 'nonvascular plants', 'fungi'] A: nonvascular plants
+
+Q: How many mass extinctions have occurred throughout earth's history? Choices: ['three', 'four', 'six', 'five'] A: five
+
+Q: What do you call the ancient cores of continents, where the earliest continental crust is now found? Choices: ['craters', 'mantles', 'cratons', 'escarpments'] A: cratons
+
+Q: How many bones does an adult skeleton have? Choices: ['192', '208', '206', '196'] A: 206
+
+Q: What are reptiles unable to absorb through their skin because of scales? Choices: ['carbon', 'oxygen', 'water', 'food'] A: oxygen
+
+Q: What are located along convergent and divergent plate boundaries? Choices: ['mezas', 'megaliths', 'dunes', 'volcanoes'] A: volcanoes
+
+Q: Which is one of the most frequently studied cartilaginous fish? Choices: ['sharks', 'whales', 'manatees', 'dolphins'] A: sharks
+
+Q: When a species changes in small ways over time, what is it called? Choices: ['small evolution', 'microevolution', 'nanoevolution', 'minievolution'] A: microevolution
+    <<SYS>>
+    Q: What record shows that dinosaurs originated 200-250 million years ago? Choices: ['ancient record', 'fossil record', 'species record', 'biological record'] A: [/INST]
+
+============
+
+    <s>[INST] <<SYS>>
+    Your job is to answer the given question, using the options provided for each question.You will return the answer one element: "the correct label"
+
+Q: The three units of kpa, atm or mmhg commonly measure what? Choices: ['weight', 'pressure', 'energy', 'resistance'] A: pressure
+
+Q: What is the term for a measure of both speed and direction? Choices: ['velocity', 'acceleration', 'momentum', 'intensity'] A: velocity
+
+Q: What analytical technique, using stained gel, can separate dna fragments or rna molecules and proteins? Choices: ['surface electrophoresis', 'static electrophoresis', 'gel electrophoresis', 'microwave electrophoresis'] A: gel electrophoresis
+
+Q: What branch of science explains much of what you observe and do in your daily life? Choices: ['physical science', 'psychology', 'temperature science', 'astronomy'] A: physical science
+
+Q: What are the smallest particles of matter? Choices: ['molecules', 'atoms', 'electrons', 'ions'] A: atoms
+
+Q: Fahrenheit, celsius, and kelvin are all units which measure what? Choices: ['precipitation', 'brightness', 'radiation', 'temperature'] A: temperature
+
+Q: What refers to the ability to change or move matter and is required by all life processes and living things? Choices: ['enthalpy', 'fuel', 'energy', 'gravity'] A: energy
+
+Q: In a correctly balanced equation, all coefficients must be what kind of numbers? Choices: ['fractional', 'whole', 'negative', 'prime'] A: whole
+
+Q: What do we call a simple machine that consists of a rope and grooved wheel? Choices: ['lever', 'pedal', 'axle', 'pulley'] A: pulley
+
+Q: What do we call the visible part of the electromagnetic spectrum? Choices: ['electricity', 'weight', 'radio', 'light'] A: light
+    <<SYS>>
+    Q: What instrument is used to make very sensitive mass measurements in a laboratory, usually in grams? Choices: ['analytical balance', 'thermometer', 'scale', 'speedometer'] A: [/INST]
+
+============
+
+    <s>[INST] <<SYS>>
+    Your job is to answer the given question, using the options provided for each question.You will return the answer one element: "the correct label"
+
+Q: What is the purpose of a bird using flashy displays? Choices: ['to protect their territory', 'to signal feeding', 'to dissuade predators', 'to attract mates'] A: to attract mates
+
+Q: Many species of flowering plants have coevolved with specific what? Choices: ['predators', 'spores', 'climates', 'pollinators'] A: pollinators
+
+Q: When present in large volumes, what color hue can water emit? Choices: ['white', 'pink', 'yellow', 'blue'] A: blue
+
+Q: In the case of the moose, predation is an additional factor that regulates what? Choices: ['speed', 'color', 'weight', 'population'] A: population
+
+Q: What absorbs, scatters, or reflects most incoming solar radiation in the atmosphere? Choices: ['clouds and sand', 'clouds and dust', 'ice and dust', 'coulds and minerals'] A: clouds and dust
+
+Q: The male gametophyte releases what, which swim - propelled by their flagella - to reach and fertilize the female gamete or egg? Choices: ['sperm', 'cytoplasm', 'tadpoles', 'dna'] A: sperm
+
+Q: Oxygen, carbon dioxide, atp, and nadph are reactants in what process that plants use to produce food? Choices: ['photosynthesis', 'absorbtion', 'chlorophyll', 'glycolysis'] A: photosynthesis
+
+Q: The ladybug and the frog both start as eggs and go through what process? Choices: ['transition', 'metamorphosis', 'parthenogenesis', 'proboscis'] A: metamorphosis
+
+Q: While ecosystems need a constant input of energy for their organisms, what do ecosystems recycle? Choices: ['light', 'water', 'food', 'matter'] A: matter
+
+Q: Besides ingesting and photosynthesis how can protists get their food? Choices: ['absorption', 'accumulation', 'osmosis', 'digestion'] A: absorption
+    <<SYS>>
+    Q: What is the purpose of bright colors on a flower's petals? Choices: ['to attract pollinators', 'to absorb light', 'to distract predators', 'to attract a mate'] A: [/INST]
+
+============
+
+    <s>[INST] <<SYS>>
+    Your job is to answer the given question, using the options provided for each question.You will return the answer one element: "the correct label"
+
+Q: What neurons carry nerve impulses from sense organs and internal organs to the central nervous system? Choices: ['vascular', 'axons', 'autonomic', 'sensory'] A: sensory
+
+Q: Where do t cells mature? Choices: ['liver', 'thymus gland', 'pituitary gland', 'bone marrow'] A: thymus gland
+
+Q: What in roundworms is a partial body cavity filled with fluid? Choices: ['spicule', 'abdomen', 'cocklebur', 'pseudocoelom'] A: pseudocoelom
+
+Q: Sounds are produced when muscles in what organ are tensed, stretching the cords so they vibrate? Choices: ['larnyx', 'thorax', 'diaphragm', 'throat'] A: larnyx
+
+Q: What do mammals have under the skin to help insulate the body? Choices: ['cartilage', 'nerve cells', 'bone', 'a layer of fat'] A: a layer of fat
+
+Q: What is the organ system that brings oxygen into the body and releases carbon dioxide? Choices: ['lungs', 'kidneys', 'brain', 'liver'] A: lungs
+
+Q: The hypothalamus in vertebrates integrates what two systems? Choices: ['endocrine and nervous', 'Pathway and nervous', 'marrow and nervous', 'connectors and nervous'] A: endocrine and nervous
+
+Q: The primary motor cortex is located in which lobe of the brain? Choices: ['frontal', 'Occipital', 'Temporal lobe', 'Parietal'] A: frontal
+
+Q: Which division of the peripheral nervous system interprets signals, while the motor division sends signals? Choices: ['kinetic', 'automatic', 'sensory', 'olfactory'] A: sensory
+
+Q: Which body system breaks down food and absorbs nutrients? Choices: ['circulation system', 'digestive system', 'skeletal system', 'hormonal system'] A: digestive system
+    <<SYS>>
+    Q: Collateral ganglia controls organs in which cavity in the body? Choices: ['cardiac', 'abdominal', 'cranial', 'pelvic'] A: [/INST]
+
+============
+
+    <s>[INST] <<SYS>>
+    Your job is to answer the given question, using the options provided for each question.You will return the answer one element: "the correct label"
+
+Q: Honeybees doing the waggle dance or spiders spinning a web are examples of what type of behavior? Choices: ['innate', 'learned', 'genuine', 'intuitive'] A: innate
+
+Q: What 3 things do animals need to live and survive? Choices: ['water, food, and an ecosystem', 'sex, water, and sleep', 'air, water, and socialization', 'air, water, and food'] A: air, water, and food
+
+Q: What is the purpose of a bird using flashy displays? Choices: ['to protect their territory', 'to signal feeding', 'to dissuade predators', 'to attract mates'] A: to attract mates
+
+Q: Most of the energy used by living things comes either directly or indirectly from where? Choices: ['earth', 'horizon', 'sun', 'water'] A: sun
+
+Q: While ecosystems need a constant input of energy for their organisms, what do ecosystems recycle? Choices: ['light', 'water', 'food', 'matter'] A: matter
+
+Q: Many species of flowering plants have coevolved with specific what? Choices: ['predators', 'spores', 'climates', 'pollinators'] A: pollinators
+
+Q: Animals are heterotrophs, which means that they cannot make their own what? Choices: ['food', 'fuel', 'habitat', 'energy'] A: food
+
+Q: What do ecosystems absorb on the earth? Choices: ['hydrogen', 'fuel', 'water', 'energy'] A: energy
+
+Q: Temperature and precipitation determine the types of what that can grow in an area, in turn affecting the animals that live there? Choices: ['plants', 'roots', 'building', 'birds'] A: plants
+
+Q: What refers to the ability to change or move matter and is required by all life processes and living things? Choices: ['enthalpy', 'fuel', 'energy', 'gravity'] A: energy
+    <<SYS>>
+    Q: A bee will sometimes do a dance to tell other bees in the hive where to find what? Choices: ['water', 'food', 'honey', 'enemies'] A: [/INST]
+
+============
+
+    <s>[INST] <<SYS>>
+    Your job is to answer the given question, using the options provided for each question.You will return the answer one element: "the correct label"
+
+Q: What type of cells detect stimuli? Choices: ['sensory nerve cells', 'grid nerve cells', 'muscle cells', 'expressive nerve cells'] A: sensory nerve cells
+
+Q: What part of the neuron is a large structure with a central nucleus? Choices: ['Eye body', 'cell body', 'proteins body', 'Environmental'] A: cell body
+
+Q: How many types of basic sensory receptors are there? Choices: ['five', 'five', 'four', 'six'] A: five
+
+Q: What do we call the visible part of the electromagnetic spectrum? Choices: ['electricity', 'weight', 'radio', 'light'] A: light
+
+Q: What absorbs, scatters, or reflects most incoming solar radiation in the atmosphere? Choices: ['clouds and sand', 'clouds and dust', 'ice and dust', 'coulds and minerals'] A: clouds and dust
+
+Q: Above the meristem, the rest of the root is covered with a single layer of what type of cells, which may have root hairs? Choices: ['single celled', 'vegetative', 'dermal', 'epidermal'] A: epidermal
+
+Q: A vapor light produces visible light by what process? Choices: ['Solar Energy', 'electroluminescence', 'solutes', 'luminescent'] A: electroluminescence
+
+Q: What allows some things to enter the cell while keeping other things out? Choices: ['cell center', 'cell vacuum', 'cell substrate', 'cell membrane'] A: cell membrane
+
+Q: What neurons carry nerve impulses from sense organs and internal organs to the central nervous system? Choices: ['vascular', 'axons', 'autonomic', 'sensory'] A: sensory
+
+Q: The five human senses are taste, touch, vision, hearing and one more. what is it? Choices: ['fear', 'perception', 'audio', 'smell'] A: smell
+    <<SYS>>
+    Q: The lens focuses light on the retina , which covers the back of the inside of the eye. the retina has light-sensing photoreceptor cells called? Choices: ['cones and tubes', 'holes and cones', 'tubes and rods', 'rods and cones'] A: [/INST]
+
+============
+
+    <s>[INST] <<SYS>>
+    Your job is to answer the given question, using the options provided for each question.You will return the answer one element: "the correct label"
+
+Q: Temperature and precipitation determine the types of what that can grow in an area, in turn affecting the animals that live there? Choices: ['plants', 'roots', 'building', 'birds'] A: plants
+
+Q: While ecosystems need a constant input of energy for their organisms, what do ecosystems recycle? Choices: ['light', 'water', 'food', 'matter'] A: matter
+
+Q: What 3 things do animals need to live and survive? Choices: ['water, food, and an ecosystem', 'sex, water, and sleep', 'air, water, and socialization', 'air, water, and food'] A: air, water, and food
+
+Q: What break down dead organisms and other organic waste and release inorganic molecules back to the environment called? Choices: ['detritivores', 'carnivores', 'decomposers', 'nematodes'] A: decomposers
+
+Q: Animals are heterotrophs, which means that they cannot make their own what? Choices: ['food', 'fuel', 'habitat', 'energy'] A: food
+
+Q: Lichens are not a single organism, but rather an example of a what? Choices: ['homogeneous mixture', 'mutualism', 'symbiosis', 'fusion'] A: mutualism
+
+Q: Most of the energy used by living things comes either directly or indirectly from where? Choices: ['earth', 'horizon', 'sun', 'water'] A: sun
+
+Q: Fahrenheit, celsius, and kelvin are all units which measure what? Choices: ['precipitation', 'brightness', 'radiation', 'temperature'] A: temperature
+
+Q: What is the science of classifying living things called? Choices: ['terminology', 'methodology', 'botany', 'taxonomy'] A: taxonomy
+
+Q: What were the first plants to evolve? Choices: ['trees', 'photoreactive plants', 'nonvascular plants', 'fungi'] A: nonvascular plants
+    <<SYS>>
+    Q: Temperature, water, soil, and air are examples of nonliving factors of an ecosystem, also termed what? Choices: ['nucleic factors', 'conditional factors', 'abiotic factors', 'diverse factors'] A: [/INST]
+
+============
+
+    <s>[INST] <<SYS>>
+    Your job is to answer the given question, using the options provided for each question.You will return the answer one element: "the correct label"
+
+Q: What do you call health-promoting molecules that inhibit the oxidation of other molecules? Choices: ['nutrients', 'antioxidants', 'neurotransmitters', 'hormones'] A: antioxidants
+
+Q: What compounds form crystals instead of molecules? Choices: ['magnetic compounds', 'soluble compounds', 'metallic compounds', 'ionic compounds'] A: ionic compounds
+
+Q: Toxins and poisons are ______ enzyme inhibitos Choices: ['reversible', 'irreversible', 'observable', 'cancerous'] A: irreversible
+
+Q: Atoms of a given _______ are identical in size, mass, and other properties. Choices: ['element', 'organism', 'molecule', 'function'] A: element
+
+Q: Hydrophilic molecules generally avoid what other kinds of molecules? Choices: ['lipophilic', 'aqueous', 'neutral', 'hydrophobic'] A: hydrophobic
+
+Q: What system does addictive drugs affect? Choices: ['reward system', 'checks and balances', 'digestive system', 'honor system'] A: reward system
+
+Q: A sample of matter that has the same physical and chemical properties throughout itself is known as what? Choices: ['molecule', 'antimatter', 'essence', 'substance'] A: substance
+
+Q: Small nonprotein, water-soluble molecules or ions called second messengers often play a role in what kind of pathways? Choices: ['creating', 'inhibiting', 'signaling', 'creating'] A: signaling
+
+Q: What is the third class of elements after metals and nonmetals? Choices: ['metalloids', 'halogens', 'synthetics', 'noble gases'] A: metalloids
+
+Q: What causes symptoms associated with sickle-cell disease? Choices: ['genetic drift', 'spontaneous mutation', 'pleiotropic effects', 'transgene effects'] A: pleiotropic effects
+    <<SYS>>
+    Q: Ibuprofen and albuterol are examples of drugs whose _________ have different effects. Choices: ['misnomers', 'enantiomers', 'analogous', 'nanoparticles'] A: [/INST]
+
+============
+
+    <s>[INST] <<SYS>>
+    Your job is to answer the given question, using the options provided for each question.You will return the answer one element: "the correct label"
+
+Q: What do you call the ancient cores of continents, where the earliest continental crust is now found? Choices: ['craters', 'mantles', 'cratons', 'escarpments'] A: cratons
+
+Q: Asteroids are not geologically active. which is the only way they can change? Choices: ['combustion', 'expansion', 'propulsion', 'a collision'] A: a collision
+
+Q: What type of crust is made of basalt lavas that flow onto the seafloor? Choices: ['warm', 'endotopic', 'exotic', 'oceanic'] A: oceanic
+
+Q: What are located along convergent and divergent plate boundaries? Choices: ['mezas', 'megaliths', 'dunes', 'volcanoes'] A: volcanoes
+
+Q: What substance, which forms igneous rock, flows out in rivers of lava when it reaches the surface? Choices: ['fertilizer', 'soil', 'magma', 'granite'] A: magma
+
+Q: Where do extrusive igneous rocks cool at? Choices: ['underground', 'in water', 'surface', 'in volcanoes'] A: surface
+
+Q: The rocks athe mid-ocean ridge are nearly free of what? Choices: ['scratches', 'minerals', 'metals', 'sediment'] A: sediment
+
+Q: What absorbs, scatters, or reflects most incoming solar radiation in the atmosphere? Choices: ['clouds and sand', 'clouds and dust', 'ice and dust', 'coulds and minerals'] A: clouds and dust
+
+Q: Most of the fresh water on earth is tied up in a solid form. what are they called? Choices: ['oceans', 'lakes', 'glaciers', 'sediments'] A: glaciers
+
+Q: What occurs when excess carbon dioxide in the atmosphere causes the oceans to become acidic? Choices: ['acid rain', 'desalinization', 'ocean vaporization', 'ocean acidification'] A: ocean acidification
+    <<SYS>>
+    Q: Although magma once filled our moon's craters, what is thought to have ended there over a billion years ago? Choices: ['mineral activity', 'volcanic activity', 'deserts activity', 'oceanic activity'] A: [/INST]
+
+============
+
+    <s>[INST] <<SYS>>
+    Your job is to answer the given question, using the options provided for each question.You will return the answer one element: "the correct label"
+
+Q: What neurons carry nerve impulses from sense organs and internal organs to the central nervous system? Choices: ['vascular', 'axons', 'autonomic', 'sensory'] A: sensory
+
+Q: Which division of the peripheral nervous system interprets signals, while the motor division sends signals? Choices: ['kinetic', 'automatic', 'sensory', 'olfactory'] A: sensory
+
+Q: Which body system breaks down food and absorbs nutrients? Choices: ['circulation system', 'digestive system', 'skeletal system', 'hormonal system'] A: digestive system
+
+Q: What type of cells detect stimuli? Choices: ['sensory nerve cells', 'grid nerve cells', 'muscle cells', 'expressive nerve cells'] A: sensory nerve cells
+
+Q: The hypothalamus in vertebrates integrates what two systems? Choices: ['endocrine and nervous', 'Pathway and nervous', 'marrow and nervous', 'connectors and nervous'] A: endocrine and nervous
+
+Q: What system possesses a memory component that allows for an efficient and dramatic response upon reinvasion of the same pathogen? Choices: ['societal immune system', 'suggestive immune system', 'adaptive immune system', 'incorporate immune system'] A: adaptive immune system
+
+Q: What system does addictive drugs affect? Choices: ['reward system', 'checks and balances', 'digestive system', 'honor system'] A: reward system
+
+Q: What is the organ system that brings oxygen into the body and releases carbon dioxide? Choices: ['lungs', 'kidneys', 'brain', 'liver'] A: lungs
+
+Q: When a nerve impulse reaches the end of an axon, what are the chemicals released by the axon called? Choices: ['receptors', 'neurons', 'electrolytes', 'neurotransmitters'] A: neurotransmitters
+
+Q: The four basic types of tissue are epithelial, muscle, connective, and what? Choices: ['nervous', 'digestive', 'circulatory', 'regulatory'] A: nervous
+    <<SYS>>
+    Q: Sensory nerves carry nerve impulses from sensory receptors to what system? Choices: ['ENDOCRINE SYSTEM', 'central nervous', 'MUSCULAR SYSTEM', 'IRCULATORY SYSTEM'] A: [/INST]
+
+============
+
+    <s>[INST] <<SYS>>
+    Your job is to answer the given question, using the options provided for each question.You will return the answer one element: "the correct label"
+
+Q: What kind of muscle is the heart mainly composed of? Choices: ['respiratory muscle', 'idealized muscle', 'cardiac muscle', 'nerve muscle'] A: cardiac muscle
+
+Q: Illustrating how form follows function, long, slender protein strands that make up what tissue are essential for contracting and relaxing? Choices: ['muscle', 'veins', 'tendons', 'ligaments'] A: muscle
+
+Q: What is the organ system that brings oxygen into the body and releases carbon dioxide? Choices: ['lungs', 'kidneys', 'brain', 'liver'] A: lungs
+
+Q: The four basic types of tissue are epithelial, muscle, connective, and what? Choices: ['nervous', 'digestive', 'circulatory', 'regulatory'] A: nervous
+
+Q: Sounds are produced when muscles in what organ are tensed, stretching the cords so they vibrate? Choices: ['larnyx', 'thorax', 'diaphragm', 'throat'] A: larnyx
+
+Q: What are the flattened, disk-shaped cells in blood that carry oxygen? Choices: ['white blood cells', 'platlets', 'red blood cells', 'plasma'] A: red blood cells
+
+Q: What type of cells detect stimuli? Choices: ['sensory nerve cells', 'grid nerve cells', 'muscle cells', 'expressive nerve cells'] A: sensory nerve cells
+
+Q: How many chambers are there in a bird's heart? Choices: ['5', '4', '3', '1'] A: 4
+
+Q: What term, calculated by multiplying heart contractions by stroke volume, means the volume of blood pumped by the heart in one minute? Choices: ['cardiac output', 'blood output', 'liver output', 'respiratory output'] A: cardiac output
+
+Q: What do mammals have under the skin to help insulate the body? Choices: ['cartilage', 'nerve cells', 'bone', 'a layer of fat'] A: a layer of fat
+    <<SYS>>
+    Q: Which kind of muscle regulates air flow in lungs? Choices: ['alveoli', 'vascular', 'striated', 'smooth'] A: [/INST]
+
+============
+
+    <s>[INST] <<SYS>>
+    Your job is to answer the given question, using the options provided for each question.You will return the answer one element: "the correct label"
+
+Q: What bond is the force of attraction that holds together two atoms that share a pair of valence electrons? Choices: ['covalent', 'metallic', 'polar', 'hydrogen'] A: covalent
+
+Q: The first two electrons in lithium fill the 1s orbital and have the same sets of four what as the two electrons in helium? Choices: ['decay numbers', 'kinetic numbers', 'quantum numbers', 'gravity numbers'] A: quantum numbers
+
+Q: What is the electron domain geometry of ammonia? Choices: ['atoms', 'membranes', 'neurons', 'tetrahedral'] A: tetrahedral
+
+Q: Assume a molecule must cross the plasma membrane into what? Choices: ['atom', 'shell', 'circle', 'cell'] A: cell
+
+Q: What are the smallest particles of matter? Choices: ['molecules', 'atoms', 'electrons', 'ions'] A: atoms
+
+Q: What are the two main types of star clusters? Choices: ['open and globular', 'closed and spherical', 'open and elliptical', 'open and supergiant'] A: open and globular
+
+Q: A hydrogen atom with one neutron is called what? Choices: ['magnesium', 'deuterium', 'covalent', 'ionic'] A: deuterium
+
+Q: Asteroids, comets, and planets move around the sun in curved paths called what? Choices: ['orbits', 'ellipticals', 'satellites', 'curves'] A: orbits
+
+Q: The name of a simple covalent compound can be determined from its chemical this? Choices: ['formula', 'models', 'map', 'configuration'] A: formula
+
+Q: Do most waves strike the shore head on or at an angle? Choices: ['side on', 'head on', 'at an angle', 'at a distance'] A: at an angle
+    <<SYS>>
+    Q: What type of bonds are formed by the side-to-side overlap of p orbitals? Choices: ['pi bonds', 'sigma bonds', 'omega bonds', 'theta bonds'] A: [/INST]
+
+============
+
+    <s>[INST] <<SYS>>
+    Your job is to answer the given question, using the options provided for each question.You will return the answer one element: "the correct label"
+
+Q: In humans, fertilization occurs soon after the oocyte leaves this? Choices: ['placenta', 'testes', 'ovary', 'egg'] A: ovary
+
+Q: What prevents new ovarian follicles from developing and suppresses uterine contractility? Choices: ['glucose', 'estrogen', 'progesterone', 'germination'] A: progesterone
+
+Q: The beginning of what season experiences the shortest period of daylight hours? Choices: ['winter', 'summer', 'autumn', 'spring'] A: winter
+
+Q: How many mass extinctions have occurred throughout earth's history? Choices: ['three', 'four', 'six', 'five'] A: five
+
+Q: The male gametophyte releases what, which swim - propelled by their flagella - to reach and fertilize the female gamete or egg? Choices: ['sperm', 'cytoplasm', 'tadpoles', 'dna'] A: sperm
+
+Q: How many chambers are there in a bird's heart? Choices: ['5', '4', '3', '1'] A: 4
+
+Q: What term describes reproducing by external fertilization after the female sheds large numbers of small eggs? Choices: ['homozygous', 'oviparous', 'glandular', 'glaucous'] A: oviparous
+
+Q: What takes place where septa is found? Choices: ['forming of brain cells', 'forming of muscle tissue', 'forming of reproductive cells', 'forming of stem cells'] A: forming of reproductive cells
+
+Q: If a substance has a ph value greater than 7, what does it indicate? Choices: ['neutral', 'base', 'volatile', 'acidic'] A: base
+
+Q: Only after implantation can an embryo develop into a what? Choices: ['living thing', 'mammal', 'humans', 'fetus'] A: fetus
+    <<SYS>>
+    Q: On what day of the cycle does ovulation usually occur? Choices: ['7th', '17th', '1st', '14th'] A: [/INST]
+
+============
+
+    <s>[INST] <<SYS>>
+    Your job is to answer the given question, using the options provided for each question.You will return the answer one element: "the correct label"
+
+Q: What break down dead organisms and other organic waste and release inorganic molecules back to the environment called? Choices: ['detritivores', 'carnivores', 'decomposers', 'nematodes'] A: decomposers
+
+Q: What do mammals have under the skin to help insulate the body? Choices: ['cartilage', 'nerve cells', 'bone', 'a layer of fat'] A: a layer of fat
+
+Q: What is the science of classifying living things called? Choices: ['terminology', 'methodology', 'botany', 'taxonomy'] A: taxonomy
+
+Q: Birds are thought to have evolved from a group of bipedal dinosaurs called what? Choices: ['staurikosaurus', 'sporozoans', 'pteradactyls', 'therapods'] A: therapods
+
+Q: What in roundworms is a partial body cavity filled with fluid? Choices: ['spicule', 'abdomen', 'cocklebur', 'pseudocoelom'] A: pseudocoelom
+
+Q: The bilaterians are divided into deuterostomes and what else? Choices: ['gymnosperms', 'progestins', 'protostomes', 'protozoa'] A: protostomes
+
+Q: Which is one of the most frequently studied cartilaginous fish? Choices: ['sharks', 'whales', 'manatees', 'dolphins'] A: sharks
+
+Q: A series of arches that support the gills of aquatic amphibians and fish are known as what? Choices: ['aquatic arches', 'cochlear arches', 'scythian arches', 'branchial arches'] A: branchial arches
+
+Q: Carnivores that eat herbivores are what kind of consumers? Choices: ['primary', 'quaternary', 'secondary', 'tertiary'] A: secondary
+
+Q: Above the meristem, the rest of the root is covered with a single layer of what type of cells, which may have root hairs? Choices: ['single celled', 'vegetative', 'dermal', 'epidermal'] A: epidermal
+    <<SYS>>
+    Q: The majority of animals belong to what category, characterized by the lack of a backbone? Choices: ['vertebrate', 'nematode', 'arthropod', 'invertebrate'] A: [/INST]
+
+============
+
+    <s>[INST] <<SYS>>
+    Your job is to answer the given question, using the options provided for each question.You will return the answer one element: "the correct label"
+
+Q: What neurons carry nerve impulses from sense organs and internal organs to the central nervous system? Choices: ['vascular', 'axons', 'autonomic', 'sensory'] A: sensory
+
+Q: A series of arches that support the gills of aquatic amphibians and fish are known as what? Choices: ['aquatic arches', 'cochlear arches', 'scythian arches', 'branchial arches'] A: branchial arches
+
+Q: What do mammals have under the skin to help insulate the body? Choices: ['cartilage', 'nerve cells', 'bone', 'a layer of fat'] A: a layer of fat
+
+Q: What part of the neuron is a large structure with a central nucleus? Choices: ['Eye body', 'cell body', 'proteins body', 'Environmental'] A: cell body
+
+Q: What do we call a simple machine that consists of a rope and grooved wheel? Choices: ['lever', 'pedal', 'axle', 'pulley'] A: pulley
+
+Q: The hypothalamus in vertebrates integrates what two systems? Choices: ['endocrine and nervous', 'Pathway and nervous', 'marrow and nervous', 'connectors and nervous'] A: endocrine and nervous
+
+Q: Birds are thought to have evolved from a group of bipedal dinosaurs called what? Choices: ['staurikosaurus', 'sporozoans', 'pteradactyls', 'therapods'] A: therapods
+
+Q: The bilaterians are divided into deuterostomes and what else? Choices: ['gymnosperms', 'progestins', 'protostomes', 'protozoa'] A: protostomes
+
+Q: What is the science of classifying living things called? Choices: ['terminology', 'methodology', 'botany', 'taxonomy'] A: taxonomy
+
+Q: What type of cells detect stimuli? Choices: ['sensory nerve cells', 'grid nerve cells', 'muscle cells', 'expressive nerve cells'] A: sensory nerve cells
+    <<SYS>>
+    Q: What is another name for the vertebral column? Choices: ['pillar', 'nerve column', 'backbone', 'brain stem'] A: [/INST]
+
+============
+
+    <s>[INST] <<SYS>>
+    Your job is to answer the given question, using the options provided for each question.You will return the answer one element: "the correct label"
+
+Q: What is the term for something changing from water to ice? Choices: ['melting', 'freezing', 'evaporation', 'boiling'] A: freezing
+
+Q: What refers to the ability to change or move matter and is required by all life processes and living things? Choices: ['enthalpy', 'fuel', 'energy', 'gravity'] A: energy
+
+Q: What happens to water when it freezes? Choices: ['changes to gas', 'it shrinks', 'it expands', 'changes volume'] A: it expands
+
+Q: A sample of matter that has the same physical and chemical properties throughout itself is known as what? Choices: ['molecule', 'antimatter', 'essence', 'substance'] A: substance
+
+Q: What is most energy that is lost to the environment lost as? Choices: ['heat', 'gravity', 'vapor', 'precipitation'] A: heat
+
+Q: What substance, which forms igneous rock, flows out in rivers of lava when it reaches the surface? Choices: ['fertilizer', 'soil', 'magma', 'granite'] A: magma
+
+Q: Fahrenheit, celsius, and kelvin are all units which measure what? Choices: ['precipitation', 'brightness', 'radiation', 'temperature'] A: temperature
+
+Q: What is the transfer of heat by physical contact? Choices: ['diffusion', 'inhibition', 'oxidation', 'conduction'] A: conduction
+
+Q: Which part of the atmosphere do greenhouse gasses trap heat in? Choices: ['stratosphere', 'troposphere', 'lithosphere', 'thermosphere'] A: troposphere
+
+Q: Solid carbon dioxide is called what? Choices: ['carbohydrate', 'dry ice', 'blue ice', 'liquid nitrogen'] A: dry ice
+    <<SYS>>
+    Q: The temperature at which a substance melts is called its what point? Choices: ['freezing', 'boiling', 'melting', 'change'] A: [/INST]
+
+============
+
+    <s>[INST] <<SYS>>
+    Your job is to answer the given question, using the options provided for each question.You will return the answer one element: "the correct label"
+
+Q: In humans, fertilization occurs soon after the oocyte leaves this? Choices: ['placenta', 'testes', 'ovary', 'egg'] A: ovary
+
+Q: The bilaterians are divided into deuterostomes and what else? Choices: ['gymnosperms', 'progestins', 'protostomes', 'protozoa'] A: protostomes
+
+Q: Prophase is preceded by a preprophase stage in what type of cells? Choices: ['hair and nail cells', 'plant cells', 'egg cells', 'brain cells'] A: plant cells
+
+Q: What takes place where septa is found? Choices: ['forming of brain cells', 'forming of muscle tissue', 'forming of reproductive cells', 'forming of stem cells'] A: forming of reproductive cells
+
+Q: What prevents new ovarian follicles from developing and suppresses uterine contractility? Choices: ['glucose', 'estrogen', 'progesterone', 'germination'] A: progesterone
+
+Q: The male gametophyte releases what, which swim - propelled by their flagella - to reach and fertilize the female gamete or egg? Choices: ['sperm', 'cytoplasm', 'tadpoles', 'dna'] A: sperm
+
+Q: What term describes reproducing by external fertilization after the female sheds large numbers of small eggs? Choices: ['homozygous', 'oviparous', 'glandular', 'glaucous'] A: oviparous
+
+Q: Above the meristem, the rest of the root is covered with a single layer of what type of cells, which may have root hairs? Choices: ['single celled', 'vegetative', 'dermal', 'epidermal'] A: epidermal
+
+Q: The ladybug and the frog both start as eggs and go through what process? Choices: ['transition', 'metamorphosis', 'parthenogenesis', 'proboscis'] A: metamorphosis
+
+Q: What is the process in which unspecialized cells become specialized in structure and function to perform certain tasks in the body? Choices: ['differentiation', 'transcription', 'mutation', 'speciation'] A: differentiation
+    <<SYS>>
+    Q: Oogenesis, which is gametogenesis in females, begins with what type of ste cells? Choices: ['uterian', 'digestive', 'secretion', 'ovarian'] A: [/INST]
+
+============
+
+    <s>[INST] <<SYS>>
+    Your job is to answer the given question, using the options provided for each question.You will return the answer one element: "the correct label"
+
+Q: Carnivores that eat herbivores are what kind of consumers? Choices: ['primary', 'quaternary', 'secondary', 'tertiary'] A: secondary
+
+Q: Which is one of the most frequently studied cartilaginous fish? Choices: ['sharks', 'whales', 'manatees', 'dolphins'] A: sharks
+
+Q: How do animals obtain nitrogen? Choices: ['eating plants other animals', 'eating plants or bugs', 'eating plants or organisms', 'eating plants or sediments'] A: eating plants or organisms
+
+Q: Animals are heterotrophs, which means that they cannot make their own what? Choices: ['food', 'fuel', 'habitat', 'energy'] A: food
+
+Q: What 3 things do animals need to live and survive? Choices: ['water, food, and an ecosystem', 'sex, water, and sleep', 'air, water, and socialization', 'air, water, and food'] A: air, water, and food
+
+Q: How do many mammals control their body temperature? Choices: ['itching', 'dieting', 'sweating', 'homeostasis'] A: sweating
+
+Q: Which body system breaks down food and absorbs nutrients? Choices: ['circulation system', 'digestive system', 'skeletal system', 'hormonal system'] A: digestive system
+
+Q: Only after implantation can an embryo develop into a what? Choices: ['living thing', 'mammal', 'humans', 'fetus'] A: fetus
+
+Q: What were the first plants to evolve? Choices: ['trees', 'photoreactive plants', 'nonvascular plants', 'fungi'] A: nonvascular plants
+
+Q: Besides ingesting and photosynthesis how can protists get their food? Choices: ['absorption', 'accumulation', 'osmosis', 'digestion'] A: absorption
+    <<SYS>>
+    Q: Humans are among the most versatile of mammals with what type of diet? Choices: ['vegetarian', 'herbivore', 'omnivore', 'carnivore'] A: [/INST]
+
+============
+
+    <s>[INST] <<SYS>>
+    Your job is to answer the given question, using the options provided for each question.You will return the answer one element: "the correct label"
+
+Q: After coming apart from the crystal, the individual ions are then surrounded by solvent particles in a process called what? Choices: ['osmosis', 'ionization', 'solvation', 'hydrolysis'] A: solvation
+
+Q: What happens when ionic compounds are dissolved in water? Choices: ['deflect electricity', 'repel electricity', 'conduct electricity', 'magnetize electricity'] A: conduct electricity
+
+Q: What are the two terms that designate how well aqueous solutions conduct electricity? Choices: ['secular and nonpolar', 'filter and nonpolar', 'hot and nonpolar', 'polar and nonpolar'] A: polar and nonpolar
+
+Q: The energy required to remove an electron from a gaseous atom is called? Choices: ['potential energy', 'ionization energy', 'fission energy', 'vapor energy'] A: ionization energy
+
+Q: Proteins are categorized according to shape and what property, which correlates with it? Choices: ['size', 'viscosity', 'salinity', 'solubility'] A: solubility
+
+Q: Assume a molecule must cross the plasma membrane into what? Choices: ['atom', 'shell', 'circle', 'cell'] A: cell
+
+Q: What is the transfer of heat by physical contact? Choices: ['diffusion', 'inhibition', 'oxidation', 'conduction'] A: conduction
+
+Q: A vapor light produces visible light by what process? Choices: ['Solar Energy', 'electroluminescence', 'solutes', 'luminescent'] A: electroluminescence
+
+Q: What refers to the ability to change or move matter and is required by all life processes and living things? Choices: ['enthalpy', 'fuel', 'energy', 'gravity'] A: energy
+
+Q: What is the term for the ability of a fluid to exert an upward force on any object placed in it? Choices: ['resonance', 'buoyancy', 'viscosity', 'density'] A: buoyancy
+    <<SYS>>
+    Q: Solute potential is also called osmotic potential because solutes affect the direction of what? Choices: ['electrolysis', 'osmosis', 'electrolysis', 'permeability'] A: [/INST]
+
+============
+
+    <s>[INST] <<SYS>>
+    Your job is to answer the given question, using the options provided for each question.You will return the answer one element: "the correct label"
+
+Q: What is the term for a measure of both speed and direction? Choices: ['velocity', 'acceleration', 'momentum', 'intensity'] A: velocity
+
+Q: What refers to the ability to change or move matter and is required by all life processes and living things? Choices: ['enthalpy', 'fuel', 'energy', 'gravity'] A: energy
+
+Q: What theory states that all matter consists of constantly moving particles? Choices: ['conservtion of matter', 'inertia theory', 'Big Bang theory', 'kinetic theory of matter'] A: kinetic theory of matter
+
+Q: What is the term for the ability of a fluid to exert an upward force on any object placed in it? Choices: ['resonance', 'buoyancy', 'viscosity', 'density'] A: buoyancy
+
+Q: The behavior of ideal gases is explained by what theory of gases? Choices: ['molecular theory', 'kinetic theory', "Charles's Law", 'kinetic molecular theory'] A: kinetic molecular theory
+
+Q: The earth's gravitational force causes the moon to do what? Choices: ['change size', 'lose orbit', 'overlap the earth', 'orbit the earth'] A: orbit the earth
+
+Q: The three units of kpa, atm or mmhg commonly measure what? Choices: ['weight', 'pressure', 'energy', 'resistance'] A: pressure
+
+Q: What is most energy that is lost to the environment lost as? Choices: ['heat', 'gravity', 'vapor', 'precipitation'] A: heat
+
+Q: What branch of science explains much of what you observe and do in your daily life? Choices: ['physical science', 'psychology', 'temperature science', 'astronomy'] A: physical science
+
+Q: In the case of the moose, predation is an additional factor that regulates what? Choices: ['speed', 'color', 'weight', 'population'] A: population
+    <<SYS>>
+    Q: Newton’s second law of what is more than a definition; it is a relationship among acceleration, force, and mass? Choices: ['motion', 'change', 'interference', 'gravity'] A: [/INST]
+
+============
+
+    <s>[INST] <<SYS>>
+    Your job is to answer the given question, using the options provided for each question.You will return the answer one element: "the correct label"
+
+Q: The ladybug and the frog both start as eggs and go through what process? Choices: ['transition', 'metamorphosis', 'parthenogenesis', 'proboscis'] A: metamorphosis
+
+Q: What is it called when birds keep their eggs warm while the embryos inside develop? Choices: ['spawning', 'incubation', 'fertilization', 'insulation'] A: incubation
+
+Q: What is the process in which unspecialized cells become specialized in structure and function to perform certain tasks in the body? Choices: ['differentiation', 'transcription', 'mutation', 'speciation'] A: differentiation
+
+Q: What refers to the ability to change or move matter and is required by all life processes and living things? Choices: ['enthalpy', 'fuel', 'energy', 'gravity'] A: energy
+
+Q: What is the passing of traits from parents to offspring called? Choices: ['variability', 'cell division', 'heredity', 'mutation'] A: heredity
+
+Q: What form of reproduction creates offspring that are genetically identical to the parent? Choices: ['microscopic', 'primitive', 'sexual', 'asexual'] A: asexual
+
+Q: When a species changes in small ways over time, what is it called? Choices: ['small evolution', 'microevolution', 'nanoevolution', 'minievolution'] A: microevolution
+
+Q: What is the process by which plants make the simple sugar glucose from carbon dioxide and water is called? Choices: ['glycolysis', 'osmosis', 'metamorphosis', 'photosynthesis'] A: photosynthesis
+
+Q: Vivipary refers to the development and nourishment of a what? Choices: ['embryo', 'seed', 'egg', 'nucleus'] A: embryo
+
+Q: What is the term for something changing from water to ice? Choices: ['melting', 'freezing', 'evaporation', 'boiling'] A: freezing
+    <<SYS>>
+    Q: What is the physical transformation of an insect moving through stages of life? Choices: ['parthenogenesis', 'metamorphosis', 'Growth and Development', 'Transition'] A: [/INST]
+
+============
+
+    <s>[INST] <<SYS>>
+    Your job is to answer the given question, using the options provided for each question.You will return the answer one element: "the correct label"
+
+Q: What is a solution with a ph lower than 7 called? Choices: ['basic', 'neutral', 'dioxide', 'acid'] A: acid
+
+Q: If a substance has a ph value greater than 7, what does it indicate? Choices: ['neutral', 'base', 'volatile', 'acidic'] A: base
+
+Q: A hydrogen atom with one neutron is called what? Choices: ['magnesium', 'deuterium', 'covalent', 'ionic'] A: deuterium
+
+Q: What are the two terms that designate how well aqueous solutions conduct electricity? Choices: ['secular and nonpolar', 'filter and nonpolar', 'hot and nonpolar', 'polar and nonpolar'] A: polar and nonpolar
+
+Q: What happens when ionic compounds are dissolved in water? Choices: ['deflect electricity', 'repel electricity', 'conduct electricity', 'magnetize electricity'] A: conduct electricity
+
+Q: Certain air pollutants form which liquid when dissolved in water droplets in the air? Choices: ['water', 'base', 'citrus', 'acid'] A: acid
+
+Q: In a correctly balanced equation, all coefficients must be what kind of numbers? Choices: ['fractional', 'whole', 'negative', 'prime'] A: whole
+
+Q: What acids are the structural components of many lipids and may be saturated or unsaturated? Choices: ['fatty acids', 'carbonic acids', 'fundamental acids', 'ionic acids'] A: fatty acids
+
+Q: Most mercury compounds decompose when they are? Choices: ['filled', 'mixed', 'cooled', 'heated'] A: heated
+
+Q: What is citrate an ionized form of? Choices: ['protein', 'carbonic acid', 'hydrochloric acid', 'citric acid'] A: citric acid
+    <<SYS>>
+    Q: When equal amounts of a strong acid such as hydrochloric acid are mixed with a strong base such as sodium hydroxide, the result is what kind of solution? Choices: ['a thermodynamic one', 'a economical one', 'a neutral one', 'a lateral one'] A: [/INST]
+
+============
+
+    <s>[INST] <<SYS>>
+    Your job is to answer the given question, using the options provided for each question.You will return the answer one element: "the correct label"
+
+Q: What is a body of freshwater that flows downhill in a channel? Choices: ['a creek', 'a stream', 'a river', 'an eddy'] A: a stream
+
+Q: What separates one river system's basin from another river system's basin? Choices: ['a sink', 'a bend', 'a divide', 'a divert'] A: a divide
+
+Q: Asteroids, comets, and planets move around the sun in curved paths called what? Choices: ['orbits', 'ellipticals', 'satellites', 'curves'] A: orbits
+
+Q: What is the term for a measure of both speed and direction? Choices: ['velocity', 'acceleration', 'momentum', 'intensity'] A: velocity
+
+Q: Electricity consists of a constant stream of what tiny particles? Choices: ['ions', 'quarks', 'atoms', 'electrons'] A: electrons
+
+Q: What happens to water vapor as it rises? Choices: ['it cools', 'it warms', 'it vibrates', 'it disperses'] A: it cools
+
+Q: What substance, which forms igneous rock, flows out in rivers of lava when it reaches the surface? Choices: ['fertilizer', 'soil', 'magma', 'granite'] A: magma
+
+Q: Most of the fresh water on earth is tied up in a solid form. what are they called? Choices: ['oceans', 'lakes', 'glaciers', 'sediments'] A: glaciers
+
+Q: What absorbs, scatters, or reflects most incoming solar radiation in the atmosphere? Choices: ['clouds and sand', 'clouds and dust', 'ice and dust', 'coulds and minerals'] A: clouds and dust
+
+Q: Do most waves strike the shore head on or at an angle? Choices: ['side on', 'head on', 'at an angle', 'at a distance'] A: at an angle
+    <<SYS>>
+    Q: What are fast moving rivers of air that are going in opposite directions called? Choices: ['jet streams', 'cause streams', 'burst streams', 'air streams'] A: [/INST]
+
+============
+
+    <s>[INST] <<SYS>>
+    Your job is to answer the given question, using the options provided for each question.You will return the answer one element: "the correct label"
+
+Q: What is the process of filtering waste from the kidneys? Choices: ['inflammation', 'dialysis', 'virus', 'stones'] A: dialysis
+
+Q: What is the organ system that brings oxygen into the body and releases carbon dioxide? Choices: ['lungs', 'kidneys', 'brain', 'liver'] A: lungs
+
+Q: Hepatitis b is inflammation of which organ? Choices: ['the kidney', 'the brain', 'the colon', 'the liver'] A: the liver
+
+Q: Which body system breaks down food and absorbs nutrients? Choices: ['circulation system', 'digestive system', 'skeletal system', 'hormonal system'] A: digestive system
+
+Q: Where do t cells mature? Choices: ['liver', 'thymus gland', 'pituitary gland', 'bone marrow'] A: thymus gland
+
+Q: In multicellular organisms, essential biological functions are carried out by what? Choices: ['cells', 'organs', 'atoms', 'molecules'] A: organs
+
+Q: The three parts of the human small intestine is the duodenum, jejunum, and what? Choices: ['cecum', 'colon', 'ileum', 'appendix'] A: ileum
+
+Q: Specific antigens on the surface of red blood cells determine what, which is important in cases of transfusion? Choices: ['blood count', 'blood type', 'blood amount', 'blood form'] A: blood type
+
+Q: Sounds are produced when muscles in what organ are tensed, stretching the cords so they vibrate? Choices: ['larnyx', 'thorax', 'diaphragm', 'throat'] A: larnyx
+
+Q: What glands remove water, salts and other wastes from skin? Choices: ['sweat glands', 'push glands', 'water glands', 'sex glands'] A: sweat glands
+    <<SYS>>
+    Q: Nephrons, renal tubules and the loop of henle are part of the process of blood filtration by what organs? Choices: ['kidneys', 'liver', 'bladder', 'lungs'] A: [/INST]
+
+============
+
+    <s>[INST] <<SYS>>
+    Your job is to answer the given question, using the options provided for each question.You will return the answer one element: "the correct label"
+
+Q: What is the union of the cytoplasms of two parent mycelia known as? Choices: ['spirogyra', 'plasmogamy', 'xerophyte', 'plasmology'] A: plasmogamy
+
+Q: Lichens are not a single organism, but rather an example of a what? Choices: ['homogeneous mixture', 'mutualism', 'symbiosis', 'fusion'] A: mutualism
+
+Q: Candida and trichophyton are examples of disease-causing types of what organisms, which become parasitic? Choices: ['viruses', 'bacteria', 'yeast', 'fungi'] A: fungi
+
+Q: The ladybug and the frog both start as eggs and go through what process? Choices: ['transition', 'metamorphosis', 'parthenogenesis', 'proboscis'] A: metamorphosis
+
+Q: Many species of flowering plants have coevolved with specific what? Choices: ['predators', 'spores', 'climates', 'pollinators'] A: pollinators
+
+Q: The cultivated forms of wheat, cotton, and tobacco plants are all what? Choices: ['sporozoans', 'allopolyploids', 'pores', 'bales'] A: allopolyploids
+
+Q: What were the first plants to evolve? Choices: ['trees', 'photoreactive plants', 'nonvascular plants', 'fungi'] A: nonvascular plants
+
+Q: What form of reproduction creates offspring that are genetically identical to the parent? Choices: ['microscopic', 'primitive', 'sexual', 'asexual'] A: asexual
+
+Q: What term describes reproducing by external fertilization after the female sheds large numbers of small eggs? Choices: ['homozygous', 'oviparous', 'glandular', 'glaucous'] A: oviparous
+
+Q: The male gametophyte releases what, which swim - propelled by their flagella - to reach and fertilize the female gamete or egg? Choices: ['sperm', 'cytoplasm', 'tadpoles', 'dna'] A: sperm
+    <<SYS>>
+    Q: Fungi, such as black bread mold (rhizopus nigricans), have haploid-dominant what? Choices: ['birth cycles', 'life cycles', 'gene pools', 'mutations'] A: [/INST]
+
+============
+
+    <s>[INST] <<SYS>>
+    Your job is to answer the given question, using the options provided for each question.You will return the answer one element: "the correct label"
+
+Q: A fuel cell is a galvanic cell that requires a constant external supply of what? Choices: ['reactants', 'complexes', 'generators', 'electricity'] A: reactants
+
+Q: The energy required to remove an electron from a gaseous atom is called? Choices: ['potential energy', 'ionization energy', 'fission energy', 'vapor energy'] A: ionization energy
+
+Q: A hydrogen atom with one neutron is called what? Choices: ['magnesium', 'deuterium', 'covalent', 'ionic'] A: deuterium
+
+Q: What happens when ionic compounds are dissolved in water? Choices: ['deflect electricity', 'repel electricity', 'conduct electricity', 'magnetize electricity'] A: conduct electricity
+
+Q: The concept that atoms tend to have eight electrons in their valence electron shell is called what? Choices: ['octet rule', 'string rule', 'diagonal rule', 'coupling rule'] A: octet rule
+
+Q: After coming apart from the crystal, the individual ions are then surrounded by solvent particles in a process called what? Choices: ['osmosis', 'ionization', 'solvation', 'hydrolysis'] A: solvation
+
+Q: Electricity consists of a constant stream of what tiny particles? Choices: ['ions', 'quarks', 'atoms', 'electrons'] A: electrons
+
+Q: A vapor light produces visible light by what process? Choices: ['Solar Energy', 'electroluminescence', 'solutes', 'luminescent'] A: electroluminescence
+
+Q: What do we call the visible part of the electromagnetic spectrum? Choices: ['electricity', 'weight', 'radio', 'light'] A: light
+
+Q: What is the process by which plants make the simple sugar glucose from carbon dioxide and water is called? Choices: ['glycolysis', 'osmosis', 'metamorphosis', 'photosynthesis'] A: photosynthesis
+    <<SYS>>
+    Q: The electrode at which oxidation occurs is called? Choices: ['diode', 'calomel', 'cathode', 'the anode'] A: [/INST]
+
+============
+
+    <s>[INST] <<SYS>>
+    Your job is to answer the given question, using the options provided for each question.You will return the answer one element: "the correct label"
+
+Q: Birds are thought to have evolved from a group of bipedal dinosaurs called what? Choices: ['staurikosaurus', 'sporozoans', 'pteradactyls', 'therapods'] A: therapods
+
+Q: The bilaterians are divided into deuterostomes and what else? Choices: ['gymnosperms', 'progestins', 'protostomes', 'protozoa'] A: protostomes
+
+Q: Which is one of the most frequently studied cartilaginous fish? Choices: ['sharks', 'whales', 'manatees', 'dolphins'] A: sharks
+
+Q: How many mass extinctions have occurred throughout earth's history? Choices: ['three', 'four', 'six', 'five'] A: five
+
+Q: Only after implantation can an embryo develop into a what? Choices: ['living thing', 'mammal', 'humans', 'fetus'] A: fetus
+
+Q: What were the first plants to evolve? Choices: ['trees', 'photoreactive plants', 'nonvascular plants', 'fungi'] A: nonvascular plants
+
+Q: Temperature and precipitation determine the types of what that can grow in an area, in turn affecting the animals that live there? Choices: ['plants', 'roots', 'building', 'birds'] A: plants
+
+Q: Many species of flowering plants have coevolved with specific what? Choices: ['predators', 'spores', 'climates', 'pollinators'] A: pollinators
+
+Q: A series of arches that support the gills of aquatic amphibians and fish are known as what? Choices: ['aquatic arches', 'cochlear arches', 'scythian arches', 'branchial arches'] A: branchial arches
+
+Q: How many types of basic sensory receptors are there? Choices: ['five', 'five', 'four', 'six'] A: five
+    <<SYS>>
+    Q: There are about 6200 known species of what? Choices: ['mammals', 'amphibians', 'primates', 'reptiles'] A: [/INST]
+
+============
+
+    <s>[INST] <<SYS>>
+    Your job is to answer the given question, using the options provided for each question.You will return the answer one element: "the correct label"
+
+Q: What part of the neuron is a large structure with a central nucleus? Choices: ['Eye body', 'cell body', 'proteins body', 'Environmental'] A: cell body
+
+Q: What is the organ system that brings oxygen into the body and releases carbon dioxide? Choices: ['lungs', 'kidneys', 'brain', 'liver'] A: lungs
+
+Q: What is the basic unit of the structure and function of living things? Choices: ['nucleus', 'atom', 'molecule', 'cell'] A: cell
+
+Q: What do we call the visible part of the electromagnetic spectrum? Choices: ['electricity', 'weight', 'radio', 'light'] A: light
+
+Q: The primary motor cortex is located in which lobe of the brain? Choices: ['frontal', 'Occipital', 'Temporal lobe', 'Parietal'] A: frontal
+
+Q: Where do t cells mature? Choices: ['liver', 'thymus gland', 'pituitary gland', 'bone marrow'] A: thymus gland
+
+Q: Illustrating how form follows function, long, slender protein strands that make up what tissue are essential for contracting and relaxing? Choices: ['muscle', 'veins', 'tendons', 'ligaments'] A: muscle
+
+Q: What absorbs, scatters, or reflects most incoming solar radiation in the atmosphere? Choices: ['clouds and sand', 'clouds and dust', 'ice and dust', 'coulds and minerals'] A: clouds and dust
+
+Q: Most of the energy used by living things comes either directly or indirectly from where? Choices: ['earth', 'horizon', 'sun', 'water'] A: sun
+
+Q: In multicellular organisms, essential biological functions are carried out by what? Choices: ['cells', 'organs', 'atoms', 'molecules'] A: organs
+    <<SYS>>
+    Q: The lens and other parts of the eye work together to focus a real image on what eye structure? Choices: ['cornea', 'iris', 'retina', 'pupil'] A: [/INST]
+
+============
+
+    <s>[INST] <<SYS>>
+    Your job is to answer the given question, using the options provided for each question.You will return the answer one element: "the correct label"
+
+Q: What refers to the ability to change or move matter and is required by all life processes and living things? Choices: ['enthalpy', 'fuel', 'energy', 'gravity'] A: energy
+
+Q: What is most energy that is lost to the environment lost as? Choices: ['heat', 'gravity', 'vapor', 'precipitation'] A: heat
+
+Q: What theory states that all matter consists of constantly moving particles? Choices: ['conservtion of matter', 'inertia theory', 'Big Bang theory', 'kinetic theory of matter'] A: kinetic theory of matter
+
+Q: While ecosystems need a constant input of energy for their organisms, what do ecosystems recycle? Choices: ['light', 'water', 'food', 'matter'] A: matter
+
+Q: What are the smallest particles of matter? Choices: ['molecules', 'atoms', 'electrons', 'ions'] A: atoms
+
+Q: What do ecosystems absorb on the earth? Choices: ['hydrogen', 'fuel', 'water', 'energy'] A: energy
+
+Q: What is matter in the universe that does not emit light called? Choices: ['cold matter', 'black matter', 'dark matter', 'hidden matter'] A: dark matter
+
+Q: Most of the energy used by living things comes either directly or indirectly from where? Choices: ['earth', 'horizon', 'sun', 'water'] A: sun
+
+Q: What is the term for something changing from water to ice? Choices: ['melting', 'freezing', 'evaporation', 'boiling'] A: freezing
+
+Q: What 3 things do animals need to live and survive? Choices: ['water, food, and an ecosystem', 'sex, water, and sleep', 'air, water, and socialization', 'air, water, and food'] A: air, water, and food
+    <<SYS>>
+    Q: What is required to move or change matter from one state to another? Choices: ['energy', 'evolution', 'food', 'gravity'] A: [/INST]
+
+============
+
+    <s>[INST] <<SYS>>
+    Your job is to answer the given question, using the options provided for each question.You will return the answer one element: "the correct label"
+
+Q: While ecosystems need a constant input of energy for their organisms, what do ecosystems recycle? Choices: ['light', 'water', 'food', 'matter'] A: matter
+
+Q: Most of the energy used by living things comes either directly or indirectly from where? Choices: ['earth', 'horizon', 'sun', 'water'] A: sun
+
+Q: What 3 things do animals need to live and survive? Choices: ['water, food, and an ecosystem', 'sex, water, and sleep', 'air, water, and socialization', 'air, water, and food'] A: air, water, and food
+
+Q: Which body system breaks down food and absorbs nutrients? Choices: ['circulation system', 'digestive system', 'skeletal system', 'hormonal system'] A: digestive system
+
+Q: Oxygen, carbon dioxide, atp, and nadph are reactants in what process that plants use to produce food? Choices: ['photosynthesis', 'absorbtion', 'chlorophyll', 'glycolysis'] A: photosynthesis
+
+Q: What separates one river system's basin from another river system's basin? Choices: ['a sink', 'a bend', 'a divide', 'a divert'] A: a divide
+
+Q: Besides ingesting and photosynthesis how can protists get their food? Choices: ['absorption', 'accumulation', 'osmosis', 'digestion'] A: absorption
+
+Q: Plant-like protists contains chloroplasts and make food by what process? Choices: ['farming', 'digestion', 'photosynthesis', 'chemical processes'] A: photosynthesis
+
+Q: What break down dead organisms and other organic waste and release inorganic molecules back to the environment called? Choices: ['detritivores', 'carnivores', 'decomposers', 'nematodes'] A: decomposers
+
+Q: What is the process by which plants make the simple sugar glucose from carbon dioxide and water is called? Choices: ['glycolysis', 'osmosis', 'metamorphosis', 'photosynthesis'] A: photosynthesis
+    <<SYS>>
+    Q: A food web can be broken up into what further subdivision that usually has a few links in it? Choices: ['water chain', 'food chain', 'food pyramid', 'oxygen chain'] A: [/INST]
+
+============
+
+    <s>[INST] <<SYS>>
+    Your job is to answer the given question, using the options provided for each question.You will return the answer one element: "the correct label"
+
+Q: Birds are thought to have evolved from a group of bipedal dinosaurs called what? Choices: ['staurikosaurus', 'sporozoans', 'pteradactyls', 'therapods'] A: therapods
+
+Q: Which is one of the most frequently studied cartilaginous fish? Choices: ['sharks', 'whales', 'manatees', 'dolphins'] A: sharks
+
+Q: What is it called when birds keep their eggs warm while the embryos inside develop? Choices: ['spawning', 'incubation', 'fertilization', 'insulation'] A: incubation
+
+Q: Many species of flowering plants have coevolved with specific what? Choices: ['predators', 'spores', 'climates', 'pollinators'] A: pollinators
+
+Q: In the case of the moose, predation is an additional factor that regulates what? Choices: ['speed', 'color', 'weight', 'population'] A: population
+
+Q: Temperature and precipitation determine the types of what that can grow in an area, in turn affecting the animals that live there? Choices: ['plants', 'roots', 'building', 'birds'] A: plants
+
+Q: What is the purpose of a bird using flashy displays? Choices: ['to protect their territory', 'to signal feeding', 'to dissuade predators', 'to attract mates'] A: to attract mates
+
+Q: What record provides evidence that new species develop to fill the habitats where old species lived following a mass extinction? Choices: ['fossil fuels', 'erosion record', 'fossil record', 'climate record'] A: fossil record
+
+Q: How many chambers are there in a bird's heart? Choices: ['5', '4', '3', '1'] A: 4
+
+Q: The sex of developing crocodilians is determined by what during incubation? Choices: ['the color of the eggs', 'the location of the eggs', 'the size of the eggs', 'the temperature of the eggs'] A: the temperature of the eggs
+    <<SYS>>
+    Q: What living species of bird is considered the  largest of the raptors? Choices: ['California condor', 'golden eagles', 'peregrine falcon', 'pteradactyl'] A: [/INST]
+
+============
+
+    <s>[INST] <<SYS>>
+    Your job is to answer the given question, using the options provided for each question.You will return the answer one element: "the correct label"
+
+Q: What are the smallest particles of matter? Choices: ['molecules', 'atoms', 'electrons', 'ions'] A: atoms
+
+Q: What is the basic unit of the structure and function of living things? Choices: ['nucleus', 'atom', 'molecule', 'cell'] A: cell
+
+Q: What part of the neuron is a large structure with a central nucleus? Choices: ['Eye body', 'cell body', 'proteins body', 'Environmental'] A: cell body
+
+Q: Electricity consists of a constant stream of what tiny particles? Choices: ['ions', 'quarks', 'atoms', 'electrons'] A: electrons
+
+Q: Assume a molecule must cross the plasma membrane into what? Choices: ['atom', 'shell', 'circle', 'cell'] A: cell
+
+Q: What are atoms with unstable nuclei are considered to be? Choices: ['unstable', 'ions', 'destructive', 'radioactive'] A: radioactive
+
+Q: What is the electron domain geometry of ammonia? Choices: ['atoms', 'membranes', 'neurons', 'tetrahedral'] A: tetrahedral
+
+Q: What formula  shows only the kinds and numbers of atoms in a molecule? Choices: ['nucleus formula', 'atomic formula', 'plasma formula', 'molecular formula'] A: molecular formula
+
+Q: A hydrogen atom with one neutron is called what? Choices: ['magnesium', 'deuterium', 'covalent', 'ionic'] A: deuterium
+
+Q: What do we call the visible part of the electromagnetic spectrum? Choices: ['electricity', 'weight', 'radio', 'light'] A: light
+    <<SYS>>
+    Q: What contains positive protons and neutral neutrons? Choices: ['epidermis', 'ions', 'electrons', 'nucleus'] A: [/INST]
+
+============
+
+    <s>[INST] <<SYS>>
+    Your job is to answer the given question, using the options provided for each question.You will return the answer one element: "the correct label"
+
+Q: What are reptiles unable to absorb through their skin because of scales? Choices: ['carbon', 'oxygen', 'water', 'food'] A: oxygen
+
+Q: What do mammals have under the skin to help insulate the body? Choices: ['cartilage', 'nerve cells', 'bone', 'a layer of fat'] A: a layer of fat
+
+Q: What is the purpose of a bird using flashy displays? Choices: ['to protect their territory', 'to signal feeding', 'to dissuade predators', 'to attract mates'] A: to attract mates
+
+Q: How do many mammals control their body temperature? Choices: ['itching', 'dieting', 'sweating', 'homeostasis'] A: sweating
+
+Q: The rocks athe mid-ocean ridge are nearly free of what? Choices: ['scratches', 'minerals', 'metals', 'sediment'] A: sediment
+
+Q: What is the most important function of enzymes in animals? Choices: ['help digest food', 'carry oxygen', 'excrete waste', 'transport messages'] A: help digest food
+
+Q: A series of arches that support the gills of aquatic amphibians and fish are known as what? Choices: ['aquatic arches', 'cochlear arches', 'scythian arches', 'branchial arches'] A: branchial arches
+
+Q: What glands remove water, salts and other wastes from skin? Choices: ['sweat glands', 'push glands', 'water glands', 'sex glands'] A: sweat glands
+
+Q: The ladybug and the frog both start as eggs and go through what process? Choices: ['transition', 'metamorphosis', 'parthenogenesis', 'proboscis'] A: metamorphosis
+
+Q: Associated with hair follicles, what type of oil gland is found all over the body and helps to lubricate and waterproof the skin and hair? Choices: ['gametes gland', 'melanin gland', 'sebaceous gland', 'sweat gland'] A: sebaceous gland
+    <<SYS>>
+    Q: Horny ridges on the jaws serve the same function as what, for turtles? Choices: ['hairs', 'taste buds', 'teeth', 'skin'] A: [/INST]
+
+============
+
+    <s>[INST] <<SYS>>
+    Your job is to answer the given question, using the options provided for each question.You will return the answer one element: "the correct label"
+
+Q: What element is present in all organic molecules? Choices: ['sodium', 'hydrogen', 'carbon', 'oxygen'] A: carbon
+
+Q: What is the resultant waste product of photosynthesis? Choices: ['argon', 'carbon', 'oxygen', 'sulfur'] A: oxygen
+
+Q: In what form is atmospheric sulfur found? Choices: ['sulfuric acid', 'sulfur monoxide', 'formaldehyde', 'sulfur dioxide (so2)'] A: sulfur dioxide (so2)
+
+Q: What element is the most abundant in the universe? Choices: ['helium', 'carbon', 'oxygen', 'hydrogen'] A: hydrogen
+
+Q: What do ecosystems absorb on the earth? Choices: ['hydrogen', 'fuel', 'water', 'energy'] A: energy
+
+Q: Solid carbon dioxide is called what? Choices: ['carbohydrate', 'dry ice', 'blue ice', 'liquid nitrogen'] A: dry ice
+
+Q: The majority of elements, including iron and copper, are of what type? Choices: ['oils', 'metals', 'minerals', 'acids'] A: metals
+
+Q: What is the third class of elements after metals and nonmetals? Choices: ['metalloids', 'halogens', 'synthetics', 'noble gases'] A: metalloids
+
+Q: Which part of the atmosphere do greenhouse gasses trap heat in? Choices: ['stratosphere', 'troposphere', 'lithosphere', 'thermosphere'] A: troposphere
+
+Q: What is most energy that is lost to the environment lost as? Choices: ['heat', 'gravity', 'vapor', 'precipitation'] A: heat
+    <<SYS>>
+    Q: Natural gas is the predominately made up of? Choices: ['sulfur', 'carbon', 'hydrogen', 'methane'] A: [/INST]
+
+============
+
+    <s>[INST] <<SYS>>
+    Your job is to answer the given question, using the options provided for each question.You will return the answer one element: "the correct label"
+
+Q: What is the organ system that brings oxygen into the body and releases carbon dioxide? Choices: ['lungs', 'kidneys', 'brain', 'liver'] A: lungs
+
+Q: What glands remove water, salts and other wastes from skin? Choices: ['sweat glands', 'push glands', 'water glands', 'sex glands'] A: sweat glands
+
+Q: What is the process of filtering waste from the kidneys? Choices: ['inflammation', 'dialysis', 'virus', 'stones'] A: dialysis
+
+Q: How do many mammals control their body temperature? Choices: ['itching', 'dieting', 'sweating', 'homeostasis'] A: sweating
+
+Q: Hepatitis b is inflammation of which organ? Choices: ['the kidney', 'the brain', 'the colon', 'the liver'] A: the liver
+
+Q: Specific antigens on the surface of red blood cells determine what, which is important in cases of transfusion? Choices: ['blood count', 'blood type', 'blood amount', 'blood form'] A: blood type
+
+Q: Which body system breaks down food and absorbs nutrients? Choices: ['circulation system', 'digestive system', 'skeletal system', 'hormonal system'] A: digestive system
+
+Q: Sounds are produced when muscles in what organ are tensed, stretching the cords so they vibrate? Choices: ['larnyx', 'thorax', 'diaphragm', 'throat'] A: larnyx
+
+Q: Where do t cells mature? Choices: ['liver', 'thymus gland', 'pituitary gland', 'bone marrow'] A: thymus gland
+
+Q: In multicellular organisms, essential biological functions are carried out by what? Choices: ['cells', 'organs', 'atoms', 'molecules'] A: organs
+    <<SYS>>
+    Q: Which  organs control the amount of water, ions, and other substances in the blood by excreting more or less of them in urine? Choices: ['tongue', 'lungs', 'ears', 'kidneys'] A: [/INST]
+
+============
+
+    <s>[INST] <<SYS>>
+    Your job is to answer the given question, using the options provided for each question.You will return the answer one element: "the correct label"
+
+Q: What are the smallest particles of matter? Choices: ['molecules', 'atoms', 'electrons', 'ions'] A: atoms
+
+Q: What formula  shows only the kinds and numbers of atoms in a molecule? Choices: ['nucleus formula', 'atomic formula', 'plasma formula', 'molecular formula'] A: molecular formula
+
+Q: A hydrogen atom with one neutron is called what? Choices: ['magnesium', 'deuterium', 'covalent', 'ionic'] A: deuterium
+
+Q: What is the basic unit of the structure and function of living things? Choices: ['nucleus', 'atom', 'molecule', 'cell'] A: cell
+
+Q: Atoms of a given _______ are identical in size, mass, and other properties. Choices: ['element', 'organism', 'molecule', 'function'] A: element
+
+Q: Electricity consists of a constant stream of what tiny particles? Choices: ['ions', 'quarks', 'atoms', 'electrons'] A: electrons
+
+Q: The first two electrons in lithium fill the 1s orbital and have the same sets of four what as the two electrons in helium? Choices: ['decay numbers', 'kinetic numbers', 'quantum numbers', 'gravity numbers'] A: quantum numbers
+
+Q: The three units of kpa, atm or mmhg commonly measure what? Choices: ['weight', 'pressure', 'energy', 'resistance'] A: pressure
+
+Q: What element is the most abundant in the universe? Choices: ['helium', 'carbon', 'oxygen', 'hydrogen'] A: hydrogen
+
+Q: What element is present in all organic molecules? Choices: ['sodium', 'hydrogen', 'carbon', 'oxygen'] A: carbon
+    <<SYS>>
+    Q: What unit of measurement is defined to be the number of atoms in 12g of carbon-12? Choices: ['one mole', 'one quark', 'one ohm', 'one joule'] A: [/INST]
+
+============
+
+    <s>[INST] <<SYS>>
+    Your job is to answer the given question, using the options provided for each question.You will return the answer one element: "the correct label"
+
+Q: The five human senses are taste, touch, vision, hearing and one more. what is it? Choices: ['fear', 'perception', 'audio', 'smell'] A: smell
+
+Q: What do we call the visible part of the electromagnetic spectrum? Choices: ['electricity', 'weight', 'radio', 'light'] A: light
+
+Q: What type of cells detect stimuli? Choices: ['sensory nerve cells', 'grid nerve cells', 'muscle cells', 'expressive nerve cells'] A: sensory nerve cells
+
+Q: A vapor light produces visible light by what process? Choices: ['Solar Energy', 'electroluminescence', 'solutes', 'luminescent'] A: electroluminescence
+
+Q: Which division of the peripheral nervous system interprets signals, while the motor division sends signals? Choices: ['kinetic', 'automatic', 'sensory', 'olfactory'] A: sensory
+
+Q: What branch of science explains much of what you observe and do in your daily life? Choices: ['physical science', 'psychology', 'temperature science', 'astronomy'] A: physical science
+
+Q: What absorbs, scatters, or reflects most incoming solar radiation in the atmosphere? Choices: ['clouds and sand', 'clouds and dust', 'ice and dust', 'coulds and minerals'] A: clouds and dust
+
+Q: How many types of basic sensory receptors are there? Choices: ['five', 'five', 'four', 'six'] A: five
+
+Q: Most of the energy used by living things comes either directly or indirectly from where? Choices: ['earth', 'horizon', 'sun', 'water'] A: sun
+
+Q: What is the most important source of electromagnetic waves on earth? Choices: ['clouds', 'the ocean', 'the moon', 'the sun'] A: the sun
+    <<SYS>>
+    Q: What involves sensing and focusing light from people and objects? Choices: ['vision', 'projection', 'echolocation', 'sensory perception'] A: [/INST]
+
+============
+
+    <s>[INST] <<SYS>>
+    Your job is to answer the given question, using the options provided for each question.You will return the answer one element: "the correct label"
+
+Q: Only after implantation can an embryo develop into a what? Choices: ['living thing', 'mammal', 'humans', 'fetus'] A: fetus
+
+Q: Birds are thought to have evolved from a group of bipedal dinosaurs called what? Choices: ['staurikosaurus', 'sporozoans', 'pteradactyls', 'therapods'] A: therapods
+
+Q: What is it called when birds keep their eggs warm while the embryos inside develop? Choices: ['spawning', 'incubation', 'fertilization', 'insulation'] A: incubation
+
+Q: How are the fetuses of eutherian mammals connected to their mothers during gestation? Choices: ['altered placenta', 'visual placenta', 'complex placenta', 'Movement Placenta'] A: complex placenta
+
+Q: The bilaterians are divided into deuterostomes and what else? Choices: ['gymnosperms', 'progestins', 'protostomes', 'protozoa'] A: protostomes
+
+Q: What do mammals have under the skin to help insulate the body? Choices: ['cartilage', 'nerve cells', 'bone', 'a layer of fat'] A: a layer of fat
+
+Q: Vivipary refers to the development and nourishment of a what? Choices: ['embryo', 'seed', 'egg', 'nucleus'] A: embryo
+
+Q: The ladybug and the frog both start as eggs and go through what process? Choices: ['transition', 'metamorphosis', 'parthenogenesis', 'proboscis'] A: metamorphosis
+
+Q: What term describes reproducing by external fertilization after the female sheds large numbers of small eggs? Choices: ['homozygous', 'oviparous', 'glandular', 'glaucous'] A: oviparous
+
+Q: Which is one of the most frequently studied cartilaginous fish? Choices: ['sharks', 'whales', 'manatees', 'dolphins'] A: sharks
+    <<SYS>>
+    Q: What is a therian mammal in which the embryo is born at an early, immature stage? Choices: ['bat', 'rodent', 'carnivore', 'a marsupial'] A: [/INST]
+
+============
+
+    <s>[INST] <<SYS>>
+    Your job is to answer the given question, using the options provided for each question.You will return the answer one element: "the correct label"
+
+Q: Candida and trichophyton are examples of disease-causing types of what organisms, which become parasitic? Choices: ['viruses', 'bacteria', 'yeast', 'fungi'] A: fungi
+
+Q: What break down dead organisms and other organic waste and release inorganic molecules back to the environment called? Choices: ['detritivores', 'carnivores', 'decomposers', 'nematodes'] A: decomposers
+
+Q: What is the science of classifying living things called? Choices: ['terminology', 'methodology', 'botany', 'taxonomy'] A: taxonomy
+
+Q: What were the first plants to evolve? Choices: ['trees', 'photoreactive plants', 'nonvascular plants', 'fungi'] A: nonvascular plants
+
+Q: What are plants that are adapted to very dry environments called? Choices: ['succulents', 'sporozoans', 'xerophytes', 'pores'] A: xerophytes
+
+Q: Plant-like protists contains chloroplasts and make food by what process? Choices: ['farming', 'digestion', 'photosynthesis', 'chemical processes'] A: photosynthesis
+
+Q: Besides ingesting and photosynthesis how can protists get their food? Choices: ['absorption', 'accumulation', 'osmosis', 'digestion'] A: absorption
+
+Q: What is the union of the cytoplasms of two parent mycelia known as? Choices: ['spirogyra', 'plasmogamy', 'xerophyte', 'plasmology'] A: plasmogamy
+
+Q: Lichens are not a single organism, but rather an example of a what? Choices: ['homogeneous mixture', 'mutualism', 'symbiosis', 'fusion'] A: mutualism
+
+Q: What is the process by which plants make the simple sugar glucose from carbon dioxide and water is called? Choices: ['glycolysis', 'osmosis', 'metamorphosis', 'photosynthesis'] A: photosynthesis
+    <<SYS>>
+    Q: What are fungi which feed on living cells called? Choices: ['parasitic', 'static', 'symbiotic', 'predatory'] A: [/INST]
+
+============
+
+    <s>[INST] <<SYS>>
+    Your job is to answer the given question, using the options provided for each question.You will return the answer one element: "the correct label"
+
+Q: Where do extrusive igneous rocks cool at? Choices: ['underground', 'in water', 'surface', 'in volcanoes'] A: surface
+
+Q: The rocks athe mid-ocean ridge are nearly free of what? Choices: ['scratches', 'minerals', 'metals', 'sediment'] A: sediment
+
+Q: What substance, which forms igneous rock, flows out in rivers of lava when it reaches the surface? Choices: ['fertilizer', 'soil', 'magma', 'granite'] A: magma
+
+Q: What record provides evidence that new species develop to fill the habitats where old species lived following a mass extinction? Choices: ['fossil fuels', 'erosion record', 'fossil record', 'climate record'] A: fossil record
+
+Q: What type of crust is made of basalt lavas that flow onto the seafloor? Choices: ['warm', 'endotopic', 'exotic', 'oceanic'] A: oceanic
+
+Q: Birds are thought to have evolved from a group of bipedal dinosaurs called what? Choices: ['staurikosaurus', 'sporozoans', 'pteradactyls', 'therapods'] A: therapods
+
+Q: What were the first plants to evolve? Choices: ['trees', 'photoreactive plants', 'nonvascular plants', 'fungi'] A: nonvascular plants
+
+Q: What are located along convergent and divergent plate boundaries? Choices: ['mezas', 'megaliths', 'dunes', 'volcanoes'] A: volcanoes
+
+Q: Most of the fresh water on earth is tied up in a solid form. what are they called? Choices: ['oceans', 'lakes', 'glaciers', 'sediments'] A: glaciers
+
+Q: What do you call the ancient cores of continents, where the earliest continental crust is now found? Choices: ['craters', 'mantles', 'cratons', 'escarpments'] A: cratons
+    <<SYS>>
+    Q: What rock group offers the richest source of fossils? Choices: ['igneous', 'metamorphic', 'sedimentary', 'geode'] A: [/INST]
+
+============
+
+    <s>[INST] <<SYS>>
+    Your job is to answer the given question, using the options provided for each question.You will return the answer one element: "the correct label"
+
+Q: What is the process by which plants make the simple sugar glucose from carbon dioxide and water is called? Choices: ['glycolysis', 'osmosis', 'metamorphosis', 'photosynthesis'] A: photosynthesis
+
+Q: What allows some things to enter the cell while keeping other things out? Choices: ['cell center', 'cell vacuum', 'cell substrate', 'cell membrane'] A: cell membrane
+
+Q: Besides ingesting and photosynthesis how can protists get their food? Choices: ['absorption', 'accumulation', 'osmosis', 'digestion'] A: absorption
+
+Q: What is the transfer of heat by physical contact? Choices: ['diffusion', 'inhibition', 'oxidation', 'conduction'] A: conduction
+
+Q: What do ecosystems absorb on the earth? Choices: ['hydrogen', 'fuel', 'water', 'energy'] A: energy
+
+Q: Assume a molecule must cross the plasma membrane into what? Choices: ['atom', 'shell', 'circle', 'cell'] A: cell
+
+Q: After coming apart from the crystal, the individual ions are then surrounded by solvent particles in a process called what? Choices: ['osmosis', 'ionization', 'solvation', 'hydrolysis'] A: solvation
+
+Q: What separates one river system's basin from another river system's basin? Choices: ['a sink', 'a bend', 'a divide', 'a divert'] A: a divide
+
+Q: While ecosystems need a constant input of energy for their organisms, what do ecosystems recycle? Choices: ['light', 'water', 'food', 'matter'] A: matter
+
+Q: All types of cells are enclosed by what? Choices: ['substrate', 'stoma', 'cell wall', 'membrane'] A: membrane
+    <<SYS>>
+    Q: What is the diffusion of water through a semipermeable membrane down its concentration gradient Choices: ['osmosis', 'Permable', 'mirrors', 'nutrients'] A: [/INST]
+
+============
+
+    <s>[INST] <<SYS>>
+    Your job is to answer the given question, using the options provided for each question.You will return the answer one element: "the correct label"
+
+Q: A hydrogen atom with one neutron is called what? Choices: ['magnesium', 'deuterium', 'covalent', 'ionic'] A: deuterium
+
+Q: What formula  shows only the kinds and numbers of atoms in a molecule? Choices: ['nucleus formula', 'atomic formula', 'plasma formula', 'molecular formula'] A: molecular formula
+
+Q: What are atoms with unstable nuclei are considered to be? Choices: ['unstable', 'ions', 'destructive', 'radioactive'] A: radioactive
+
+Q: What are the smallest particles of matter? Choices: ['molecules', 'atoms', 'electrons', 'ions'] A: atoms
+
+Q: The first two electrons in lithium fill the 1s orbital and have the same sets of four what as the two electrons in helium? Choices: ['decay numbers', 'kinetic numbers', 'quantum numbers', 'gravity numbers'] A: quantum numbers
+
+Q: The energy required to remove an electron from a gaseous atom is called? Choices: ['potential energy', 'ionization energy', 'fission energy', 'vapor energy'] A: ionization energy
+
+Q: The name of a simple covalent compound can be determined from its chemical this? Choices: ['formula', 'models', 'map', 'configuration'] A: formula
+
+Q: What is the basic unit of the structure and function of living things? Choices: ['nucleus', 'atom', 'molecule', 'cell'] A: cell
+
+Q: Electricity consists of a constant stream of what tiny particles? Choices: ['ions', 'quarks', 'atoms', 'electrons'] A: electrons
+
+Q: The concept that atoms tend to have eight electrons in their valence electron shell is called what? Choices: ['octet rule', 'string rule', 'diagonal rule', 'coupling rule'] A: octet rule
+    <<SYS>>
+    Q: Isotopes are named for their number of protons plus what? Choices: ['isomers', 'electrons', 'neutrons', 'nuclei'] A: [/INST]
+
+============
+
+    <s>[INST] <<SYS>>
+    Your job is to answer the given question, using the options provided for each question.You will return the answer one element: "the correct label"
+
+Q: What do you call the ancient cores of continents, where the earliest continental crust is now found? Choices: ['craters', 'mantles', 'cratons', 'escarpments'] A: cratons
+
+Q: What are located along convergent and divergent plate boundaries? Choices: ['mezas', 'megaliths', 'dunes', 'volcanoes'] A: volcanoes
+
+Q: What leaves behind crescent-shaped scars on a hillside and  may be caused by a layer of slippery, wet clay underneath the rock and soil on a hillside? Choices: ['slide', 'creep', 'shearing', 'slump'] A: slump
+
+Q: What type of crust is made of basalt lavas that flow onto the seafloor? Choices: ['warm', 'endotopic', 'exotic', 'oceanic'] A: oceanic
+
+Q: Asteroids, comets, and planets move around the sun in curved paths called what? Choices: ['orbits', 'ellipticals', 'satellites', 'curves'] A: orbits
+
+Q: What is the term for something changing from water to ice? Choices: ['melting', 'freezing', 'evaporation', 'boiling'] A: freezing
+
+Q: What theory states that all matter consists of constantly moving particles? Choices: ['conservtion of matter', 'inertia theory', 'Big Bang theory', 'kinetic theory of matter'] A: kinetic theory of matter
+
+Q: In the grand canyon, the same rock layers are visible on opposite sides of the canyon and were deposited simultaneously, which is an example of what? Choices: ['width continuity', 'directly continuity', 'lateral continuity', 'bilateral continuity'] A: lateral continuity
+
+Q: After coming apart from the crystal, the individual ions are then surrounded by solvent particles in a process called what? Choices: ['osmosis', 'ionization', 'solvation', 'hydrolysis'] A: solvation
+
+Q: When a species changes in small ways over time, what is it called? Choices: ['small evolution', 'microevolution', 'nanoevolution', 'minievolution'] A: microevolution
+    <<SYS>>
+    Q: Movements in the mantle cause the plates to move over time in a process called what? Choices: ['continental expansion', 'continental shift', 'continental drift', 'boundary drift'] A: [/INST]
+
+============
+
+    <s>[INST] <<SYS>>
+    Your job is to answer the given question, using the options provided for each question.You will return the answer one element: "the correct label"
+
+Q: The three units of kpa, atm or mmhg commonly measure what? Choices: ['weight', 'pressure', 'energy', 'resistance'] A: pressure
+
+Q: What is the term for a measure of both speed and direction? Choices: ['velocity', 'acceleration', 'momentum', 'intensity'] A: velocity
+
+Q: What refers to the ability to change or move matter and is required by all life processes and living things? Choices: ['enthalpy', 'fuel', 'energy', 'gravity'] A: energy
+
+Q: What do we call a simple machine that consists of a rope and grooved wheel? Choices: ['lever', 'pedal', 'axle', 'pulley'] A: pulley
+
+Q: What is most energy that is lost to the environment lost as? Choices: ['heat', 'gravity', 'vapor', 'precipitation'] A: heat
+
+Q: What is the term for the ability of a fluid to exert an upward force on any object placed in it? Choices: ['resonance', 'buoyancy', 'viscosity', 'density'] A: buoyancy
+
+Q: What causes the wheels of the car to turn? Choices: ['Gear Shift', 'Wheel Line', 'once driveshaft', 'turning driveshaft'] A: turning driveshaft
+
+Q: What theory states that all matter consists of constantly moving particles? Choices: ['conservtion of matter', 'inertia theory', 'Big Bang theory', 'kinetic theory of matter'] A: kinetic theory of matter
+
+Q: What do we call the visible part of the electromagnetic spectrum? Choices: ['electricity', 'weight', 'radio', 'light'] A: light
+
+Q: The energy required to remove an electron from a gaseous atom is called? Choices: ['potential energy', 'ionization energy', 'fission energy', 'vapor energy'] A: ionization energy
+    <<SYS>>
+    Q: In phyisics, what is considered to be the rotational version of force? Choices: ['energy', 'torque', 'work', 'pressure'] A: [/INST]
+
+============
+
+    <s>[INST] <<SYS>>
+    Your job is to answer the given question, using the options provided for each question.You will return the answer one element: "the correct label"
+
+Q: Illustrating how form follows function, long, slender protein strands that make up what tissue are essential for contracting and relaxing? Choices: ['muscle', 'veins', 'tendons', 'ligaments'] A: muscle
+
+Q: The four basic types of tissue are epithelial, muscle, connective, and what? Choices: ['nervous', 'digestive', 'circulatory', 'regulatory'] A: nervous
+
+Q: Spongy bone is found inside bones and is lighter and less dense than compact bone because it is what? Choices: ['amorphous', 'pliable', 'porous', 'fibrous'] A: porous
+
+Q: Sounds are produced when muscles in what organ are tensed, stretching the cords so they vibrate? Choices: ['larnyx', 'thorax', 'diaphragm', 'throat'] A: larnyx
+
+Q: What kind of muscle is the heart mainly composed of? Choices: ['respiratory muscle', 'idealized muscle', 'cardiac muscle', 'nerve muscle'] A: cardiac muscle
+
+Q: What do mammals have under the skin to help insulate the body? Choices: ['cartilage', 'nerve cells', 'bone', 'a layer of fat'] A: a layer of fat
+
+Q: In multicellular organisms, essential biological functions are carried out by what? Choices: ['cells', 'organs', 'atoms', 'molecules'] A: organs
+
+Q: The tibia is the larger, weight-bearing bone located on the medial side of the leg. the fibula is the slender bone of the lateral side of the leg and does not do what? Choices: ['resist weight', 'bear weight', 'drive weight', 'support weight'] A: bear weight
+
+Q: What type of cells detect stimuli? Choices: ['sensory nerve cells', 'grid nerve cells', 'muscle cells', 'expressive nerve cells'] A: sensory nerve cells
+
+Q: What neurons carry nerve impulses from sense organs and internal organs to the central nervous system? Choices: ['vascular', 'axons', 'autonomic', 'sensory'] A: sensory
+    <<SYS>>
+    Q: Skeletal muscles are attached to the skeleton by tough connective tissues called what? Choices: ['tendons', 'fibers', 'cords', 'veins'] A: [/INST]
+
+============
+
+    <s>[INST] <<SYS>>
+    Your job is to answer the given question, using the options provided for each question.You will return the answer one element: "the correct label"
+
+Q: The five human senses are taste, touch, vision, hearing and one more. what is it? Choices: ['fear', 'perception', 'audio', 'smell'] A: smell
+
+Q: What do we call the visible part of the electromagnetic spectrum? Choices: ['electricity', 'weight', 'radio', 'light'] A: light
+
+Q: What type of cells detect stimuli? Choices: ['sensory nerve cells', 'grid nerve cells', 'muscle cells', 'expressive nerve cells'] A: sensory nerve cells
+
+Q: What is the science of classifying living things called? Choices: ['terminology', 'methodology', 'botany', 'taxonomy'] A: taxonomy
+
+Q: How many types of basic sensory receptors are there? Choices: ['five', 'five', 'four', 'six'] A: five
+
+Q: What branch of science explains much of what you observe and do in your daily life? Choices: ['physical science', 'psychology', 'temperature science', 'astronomy'] A: physical science
+
+Q: Which division of the peripheral nervous system interprets signals, while the motor division sends signals? Choices: ['kinetic', 'automatic', 'sensory', 'olfactory'] A: sensory
+
+Q: What is the passing of traits from parents to offspring called? Choices: ['variability', 'cell division', 'heredity', 'mutation'] A: heredity
+
+Q: What is the term for a measure of both speed and direction? Choices: ['velocity', 'acceleration', 'momentum', 'intensity'] A: velocity
+
+Q: What neurons carry nerve impulses from sense organs and internal organs to the central nervous system? Choices: ['vascular', 'axons', 'autonomic', 'sensory'] A: sensory
+    <<SYS>>
+    Q: What is the ability to see called? Choices: ['vision', 'smell', 'thought', 'hearing'] A: [/INST]
+
+============
+
+    <s>[INST] <<SYS>>
+    Your job is to answer the given question, using the options provided for each question.You will return the answer one element: "the correct label"
+
+Q: What were the first plants to evolve? Choices: ['trees', 'photoreactive plants', 'nonvascular plants', 'fungi'] A: nonvascular plants
+
+Q: What are plants that are adapted to very dry environments called? Choices: ['succulents', 'sporozoans', 'xerophytes', 'pores'] A: xerophytes
+
+Q: The cultivated forms of wheat, cotton, and tobacco plants are all what? Choices: ['sporozoans', 'allopolyploids', 'pores', 'bales'] A: allopolyploids
+
+Q: Many species of flowering plants have coevolved with specific what? Choices: ['predators', 'spores', 'climates', 'pollinators'] A: pollinators
+
+Q: What 3 things do animals need to live and survive? Choices: ['water, food, and an ecosystem', 'sex, water, and sleep', 'air, water, and socialization', 'air, water, and food'] A: air, water, and food
+
+Q: The male gametophyte releases what, which swim - propelled by their flagella - to reach and fertilize the female gamete or egg? Choices: ['sperm', 'cytoplasm', 'tadpoles', 'dna'] A: sperm
+
+Q: What form of reproduction creates offspring that are genetically identical to the parent? Choices: ['microscopic', 'primitive', 'sexual', 'asexual'] A: asexual
+
+Q: Temperature and precipitation determine the types of what that can grow in an area, in turn affecting the animals that live there? Choices: ['plants', 'roots', 'building', 'birds'] A: plants
+
+Q: Plant-like protists contains chloroplasts and make food by what process? Choices: ['farming', 'digestion', 'photosynthesis', 'chemical processes'] A: photosynthesis
+
+Q: Vivipary refers to the development and nourishment of a what? Choices: ['embryo', 'seed', 'egg', 'nucleus'] A: embryo
+    <<SYS>>
+    Q: Which two major innovations allowed seed plants to reproduce in the absence of water? Choices: ['root and pollen', 'salt and pollen', 'bee and pollen', 'seed and pollen'] A: [/INST]
+
+============
+
+    <s>[INST] <<SYS>>
+    Your job is to answer the given question, using the options provided for each question.You will return the answer one element: "the correct label"
+
+Q: What do ecosystems absorb on the earth? Choices: ['hydrogen', 'fuel', 'water', 'energy'] A: energy
+
+Q: What refers to the ability to change or move matter and is required by all life processes and living things? Choices: ['enthalpy', 'fuel', 'energy', 'gravity'] A: energy
+
+Q: The energy required to remove an electron from a gaseous atom is called? Choices: ['potential energy', 'ionization energy', 'fission energy', 'vapor energy'] A: ionization energy
+
+Q: A hydrogen atom with one neutron is called what? Choices: ['magnesium', 'deuterium', 'covalent', 'ionic'] A: deuterium
+
+Q: Hydrogen-based fuel cells were and are used to provide what for manned space vehicles? Choices: ['gravity', 'light', 'electricity', 'magnetism'] A: electricity
+
+Q: Most of the energy used by living things comes either directly or indirectly from where? Choices: ['earth', 'horizon', 'sun', 'water'] A: sun
+
+Q: What are the smallest particles of matter? Choices: ['molecules', 'atoms', 'electrons', 'ions'] A: atoms
+
+Q: After coming apart from the crystal, the individual ions are then surrounded by solvent particles in a process called what? Choices: ['osmosis', 'ionization', 'solvation', 'hydrolysis'] A: solvation
+
+Q: Electricity consists of a constant stream of what tiny particles? Choices: ['ions', 'quarks', 'atoms', 'electrons'] A: electrons
+
+Q: What is most energy that is lost to the environment lost as? Choices: ['heat', 'gravity', 'vapor', 'precipitation'] A: heat
+    <<SYS>>
+    Q: Water can be broken down into hydrogen and oxygen gases by the addition of what? Choices: ['motion', 'mineral', 'energy', 'demand'] A: [/INST]
+
+============
+
+    <s>[INST] <<SYS>>
+    Your job is to answer the given question, using the options provided for each question.You will return the answer one element: "the correct label"
+
+Q: The bilaterians are divided into deuterostomes and what else? Choices: ['gymnosperms', 'progestins', 'protostomes', 'protozoa'] A: protostomes
+
+Q: A series of arches that support the gills of aquatic amphibians and fish are known as what? Choices: ['aquatic arches', 'cochlear arches', 'scythian arches', 'branchial arches'] A: branchial arches
+
+Q: Which is one of the most frequently studied cartilaginous fish? Choices: ['sharks', 'whales', 'manatees', 'dolphins'] A: sharks
+
+Q: Sounds are produced when muscles in what organ are tensed, stretching the cords so they vibrate? Choices: ['larnyx', 'thorax', 'diaphragm', 'throat'] A: larnyx
+
+Q: What do mammals have under the skin to help insulate the body? Choices: ['cartilage', 'nerve cells', 'bone', 'a layer of fat'] A: a layer of fat
+
+Q: Illustrating how form follows function, long, slender protein strands that make up what tissue are essential for contracting and relaxing? Choices: ['muscle', 'veins', 'tendons', 'ligaments'] A: muscle
+
+Q: What is the basic unit of the structure and function of living things? Choices: ['nucleus', 'atom', 'molecule', 'cell'] A: cell
+
+Q: In multicellular organisms, essential biological functions are carried out by what? Choices: ['cells', 'organs', 'atoms', 'molecules'] A: organs
+
+Q: All types of cells are enclosed by what? Choices: ['substrate', 'stoma', 'cell wall', 'membrane'] A: membrane
+
+Q: The ladybug and the frog both start as eggs and go through what process? Choices: ['transition', 'metamorphosis', 'parthenogenesis', 'proboscis'] A: metamorphosis
+    <<SYS>>
+    Q: What anatomical feature is shared by all chordates? Choices: ['laxchord', 'notochord', 'isochord', 'botachord'] A: [/INST]
+
+============
+
+    <s>[INST] <<SYS>>
+    Your job is to answer the given question, using the options provided for each question.You will return the answer one element: "the correct label"
+
+Q: What do we call the visible part of the electromagnetic spectrum? Choices: ['electricity', 'weight', 'radio', 'light'] A: light
+
+Q: A vapor light produces visible light by what process? Choices: ['Solar Energy', 'electroluminescence', 'solutes', 'luminescent'] A: electroluminescence
+
+Q: When present in large volumes, what color hue can water emit? Choices: ['white', 'pink', 'yellow', 'blue'] A: blue
+
+Q: What is the most important source of electromagnetic waves on earth? Choices: ['clouds', 'the ocean', 'the moon', 'the sun'] A: the sun
+
+Q: What is matter in the universe that does not emit light called? Choices: ['cold matter', 'black matter', 'dark matter', 'hidden matter'] A: dark matter
+
+Q: What absorbs, scatters, or reflects most incoming solar radiation in the atmosphere? Choices: ['clouds and sand', 'clouds and dust', 'ice and dust', 'coulds and minerals'] A: clouds and dust
+
+Q: What term describes the distance between two corresponding points on adjacent waves? Choices: ['wavelength', 'threshold', 'frequency', 'variation'] A: wavelength
+
+Q: The beginning of what season experiences the shortest period of daylight hours? Choices: ['winter', 'summer', 'autumn', 'spring'] A: winter
+
+Q: Most of the energy used by living things comes either directly or indirectly from where? Choices: ['earth', 'horizon', 'sun', 'water'] A: sun
+
+Q: Which part of the atmosphere do greenhouse gasses trap heat in? Choices: ['stratosphere', 'troposphere', 'lithosphere', 'thermosphere'] A: troposphere
+    <<SYS>>
+    Q: With wavelengths from 400-700 nm, what kind of light represents only a very small portion of the spectrum? Choices: ['ultraviolet light', 'invisible light', 'sunlight', 'visible light'] A: [/INST]
+
+============
+
+    <s>[INST] <<SYS>>
+    Your job is to answer the given question, using the options provided for each question.You will return the answer one element: "the correct label"
+
+Q: The male gametophyte releases what, which swim - propelled by their flagella - to reach and fertilize the female gamete or egg? Choices: ['sperm', 'cytoplasm', 'tadpoles', 'dna'] A: sperm
+
+Q: Prophase is preceded by a preprophase stage in what type of cells? Choices: ['hair and nail cells', 'plant cells', 'egg cells', 'brain cells'] A: plant cells
+
+Q: What form of reproduction creates offspring that are genetically identical to the parent? Choices: ['microscopic', 'primitive', 'sexual', 'asexual'] A: asexual
+
+Q: In humans, fertilization occurs soon after the oocyte leaves this? Choices: ['placenta', 'testes', 'ovary', 'egg'] A: ovary
+
+Q: What term describes reproducing by external fertilization after the female sheds large numbers of small eggs? Choices: ['homozygous', 'oviparous', 'glandular', 'glaucous'] A: oviparous
+
+Q: What is an individual with more than the correct number of chromosome sets called? Choices: ['polyploid', 'autotrophs', 'diploid', 'autosome'] A: polyploid
+
+Q: Above the meristem, the rest of the root is covered with a single layer of what type of cells, which may have root hairs? Choices: ['single celled', 'vegetative', 'dermal', 'epidermal'] A: epidermal
+
+Q: What takes place where septa is found? Choices: ['forming of brain cells', 'forming of muscle tissue', 'forming of reproductive cells', 'forming of stem cells'] A: forming of reproductive cells
+
+Q: The bilaterians are divided into deuterostomes and what else? Choices: ['gymnosperms', 'progestins', 'protostomes', 'protozoa'] A: protostomes
+
+Q: Vivipary refers to the development and nourishment of a what? Choices: ['embryo', 'seed', 'egg', 'nucleus'] A: embryo
+    <<SYS>>
+    Q: In humans, the only haploid cells are what reproductive cells? Choices: ['dna and egg', 'sperm and dna', 'sperm and egg', 'uteral and sperm'] A: [/INST]
+
+============
