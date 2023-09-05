@@ -237,7 +237,27 @@ class NamedEntityRecognitionTask(BaseTask):
                 value=results["exact"]["f1"],
             )
         )
-
+        # f1 score for strict match
+        eval_metrics.append(
+            MetricResult(
+                name=MetricType.F1_STRICT,
+                value=results["strict"]["f1"],
+            )
+        )
+        # f1 score for partial match
+        eval_metrics.append(
+            MetricResult(
+                name=MetricType.F1_PARTIAL,
+                value=results["partial"]["f1"],
+            )
+        )
+        # f1 score for entity type match
+        eval_metrics.append(
+            MetricResult(
+                name=MetricType.F1_ENT_TYPE,
+                value=results["ent_type"]["f1"],
+            )
+        )
         # accuracy
         accuracy = (
             results.get("strict").get("correct")
@@ -289,10 +309,7 @@ class NamedEntityRecognitionTask(BaseTask):
             for index in range(len(gt_labels))
         ]
 
-        (
-            curr_gt_labels,
-            curr_llm_labels,
-        ) = self.get_labels_predictions_with_threshold(
+        (curr_gt_labels, curr_llm_labels,) = self.get_labels_predictions_with_threshold(
             gt_labels, llm_labels, float("-inf")
         )
 
