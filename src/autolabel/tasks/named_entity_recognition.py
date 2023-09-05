@@ -230,11 +230,35 @@ class NamedEntityRecognitionTask(BaseTask):
         )
 
         results, _ = evaluator.evaluate()
-        # f1 score
+        # f1 score for strict match
+        eval_metrics.append(
+            MetricResult(
+                name=MetricType.F1_STRICT,
+                value=results["strict"]["f1"],
+            )
+        )
+
+        # f1 score for exact match
         eval_metrics.append(
             MetricResult(
                 name=MetricType.F1,
                 value=results["exact"]["f1"],
+            )
+        )
+
+        # f1 score partial match
+        eval_metrics.append(
+            MetricResult(
+                name=MetricType.F1_PARTIAL,
+                value=results["partial"]["f1"],
+            )
+        )
+
+        # f1 score entity type match
+        eval_metrics.append(
+            MetricResult(
+                name=MetricType.F1_ENT_TYPE,
+                value=results["ent_type"]["f1"],
             )
         )
 
