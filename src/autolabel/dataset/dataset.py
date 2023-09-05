@@ -52,7 +52,10 @@ class AutolabelDataset:
         if isinstance(dataset, str):
             if dataset.endswith(".csv"):
                 delimiter = self.config.delimiter()
-                df = pd.read_csv(dataset, sep=delimiter, dtype="str")
+                quoting = 0
+                if self.config.disable_quoting():
+                    quoting = 3
+                df = pd.read_csv(dataset, sep=delimiter, dtype="str", quoting=quoting)
             elif dataset.endswith(".jsonl"):
                 df = pd.read_json(dataset, lines=True, dtype="str")
         elif isinstance(dataset, pd.DataFrame):

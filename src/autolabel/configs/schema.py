@@ -56,6 +56,7 @@ schema = {
                 "text_column": {"type": ["string", "null"]},
                 "delimiter": {"type": ["string", "null"]},
                 "explanation_column": {"type": ["string", "null"]},
+                "disable_quoting": {"type": ["boolean", "null"]},
             },
             "additionalProperties": False,
         },
