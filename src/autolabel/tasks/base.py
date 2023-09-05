@@ -134,6 +134,7 @@ class BaseTask(ABC):
                     successfully_labeled = True
                 else:
                     logger.warning(f"LLM response is not in the labels list")
+                    llm_label = self.NULL_LABEL_TOKEN
                     successfully_labeled = False
                     error = LabelingError(
                         error_type=ErrorType.OUTPUT_GUIDELINES_NOT_FOLLOWED_ERROR,
