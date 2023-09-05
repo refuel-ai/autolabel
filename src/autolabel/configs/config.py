@@ -24,6 +24,7 @@ class AutolabelConfig(BaseConfig):
     EXPLANATION_COLUMN_KEY = "explanation_column"
     TEXT_COLUMN_KEY = "text_column"
     DELIMITER_KEY = "delimiter"
+    DISABLE_QUOTING = "disable_quoting"
 
     # Model config keys (config["model"][<key>])
     PROVIDER_KEY = "provider"
@@ -119,6 +120,10 @@ class AutolabelConfig(BaseConfig):
     def delimiter(self) -> str:
         """Returns the token used to seperate cells in the dataset. Defaults to a comma ','"""
         return self._dataset_config.get(self.DELIMITER_KEY, ",")
+
+    def disable_quoting(self) -> bool:
+        """Returns true if quoting is disabled. Defaults to false"""
+        return self._dataset_config.get(self.DISABLE_QUOTING, False)
 
     # Model config
     def provider(self) -> str:
