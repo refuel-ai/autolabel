@@ -230,10 +230,10 @@ class NamedEntityRecognitionTask(BaseTask):
         )
 
         results, _ = evaluator.evaluate()
-        # f1 score
+        # f1 score for exact match
         eval_metrics.append(
             MetricResult(
-                name=MetricType.F1,
+                name=MetricType.F1_EXACT,
                 value=results["exact"]["f1"],
             )
         )
