@@ -53,46 +53,17 @@ class ClassificationTask(BaseTask):
         if self.config.confidence():
             self.metrics.append(AUROCMetric())
 
-    def construct_prompt(self, input: Dict, examples: List) -> str:
+    def construct_prompt(
+        self, input: Dict, examples: List, selected_labels: List[str] = None
+    ) -> str:
         # Copy over the input so that we can modify it
         input = input.copy()
 
         # prepare task guideline
-        labels_list = self.config.labels_list()
+        labels_list = (
+            self.config.labels_list() if not selected_labels else selected_labels
+        )
         num_labels = len(labels_list)
-
-        # if large number of labels, filter labels_list by similarity of labels to input
-        if num_labels >= 50:
-            example_prompt = PromptTemplate(
-                input_variables=["input"],
-                template="{input}",
-            )
-            label_examples = [{"input": label} for label in labels_list]
-
-            example_selector = SemanticSimilarityExampleSelector.from_examples(
-                # This is the list of labels available to select from.
-                label_examples,
-                # This is the embedding class used to produce embeddings which are used to measure semantic similarity.
-                OpenAIEmbeddings(),
-                # This is the VectorStore class that is used to store the embeddings and do a similarity search over.
-                VectorStoreWrapper(cache=False),
-                # This is the number of examples to produce.
-                k=10,
-            )
-            similar_prompt = FewShotPromptTemplate(
-                example_selector=example_selector,
-                example_prompt=example_prompt,
-                prefix="Input: {example}",
-                suffix="",
-                input_variables=["example"],
-            )
-            sampled_labels = similar_prompt.format(example=input["example"])
-            split_lines = sampled_labels.split("\n")
-            labels_list = []
-            for i in range(1, len(split_lines)):
-                if split_lines[i]:
-                    labels_list.append(split_lines[i])
-            num_labels = len(labels_list)
 
         fmt_task_guidelines = self.task_guidelines.format(
             num_labels=num_labels, labels="\n".join(labels_list)
