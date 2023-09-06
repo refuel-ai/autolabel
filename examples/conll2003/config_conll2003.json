@@ -8,10 +8,10 @@
     },
     "model": {
         "provider": "llama",
-        "name": "/workspace/hf-trained-all-ds"
+        "name": "/workspace/hf-trained-log-inverse-all-ds-flan-undersampled"
     },
     "prompt": {
-        "task_guidelines": "Your job is to extract named entities mentioned in text, and classify them into one of the following categories.\nCategories:\n{labels}\n ",
+        "task_guidelines": "Your job is to extract named entities mentioned in text, and classify them into categories.\nCategories:\n{labels}\n ",
         "labels": [
             "Location",
             "Organization",

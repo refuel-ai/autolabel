@@ -1,0 +1,27 @@
+{
+    "task_name": "CompanyEntityMatch",
+    "task_type": "entity_matching",
+    "dataset": {
+        "label_column": "label",
+        "delimiter": ","
+    },
+    "model": {
+        "provider": "llama",
+        "name": "/workspace/hf-trained-log-inverse-all-ds-flan-undersampled"
+    },
+    "embedding": {
+        "provider": "openai"
+    },
+    "prompt": {
+        "task_guidelines": "Given information about Company 1 and Company 2, your job is to correctly tell me whether they are the same (duplicate) or not (not duplicate). Output either duplicate or not duplicate only.",
+        "output_guidelines": "",
+        "labels": [
+            "not duplicate",
+            "duplicate"
+        ],
+        "example_template": "\\nInput: Company 1 description: {entity1} Company 2 description: {entity2}.\\nOutput: {label}",
+        "few_shot_examples": "seed.csv",
+        "few_shot_selection": "label_diversity_similarity",
+        "few_shot_num": 4
+    }
+}

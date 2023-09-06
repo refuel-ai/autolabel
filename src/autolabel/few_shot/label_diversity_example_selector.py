@@ -106,7 +106,7 @@ class LabelDiversitySimilarityExampleSelector(BaseExampleSelector, BaseModel):
         """Select which examples to use based on label diversity and semantic similarity."""
         # Get the docs with the highest similarity for each label.
         if self.input_keys:
-            input_variables = {key: input_variables[key] for key in self.input_keys}
+            input_variables = {str(key): str(input_variables[key]) for key in self.input_keys}
         query = " ".join(sorted_values(input_variables))
         num_examples_per_label = math.ceil(self.k / self.num_labels)
         example_docs = self.vectorstore.label_diversity_similarity_search(
@@ -146,7 +146,7 @@ class LabelDiversitySimilarityExampleSelector(BaseExampleSelector, BaseModel):
         """
         if input_keys:
             string_examples = [
-                " ".join(sorted_values({k: eg[k] for k in input_keys}))
+                " ".join(sorted_values({str(k): str(eg[k]) for k in input_keys}))
                 for eg in examples
             ]
         else:

@@ -7,7 +7,7 @@
     },
     "model": {
         "provider": "llama",
-        "name": "/workspace/hf-trained-all-ds"
+        "name": "/workspace/hf-trained-log-inverse-all-ds-flan-undersampled"
     },
     "prompt": {
         "task_guidelines": "Your job is to answer the following questions using the context provided with the question. If the question cannot be answered using the context and the context alone without any outside knowledge, answer the question as unanswerable.",

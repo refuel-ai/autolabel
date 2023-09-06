@@ -7,21 +7,21 @@
     },
     "model": {
         "provider": "llama",
-        "name": "/workspace/hf-trained-all-ds"
+        "name": "/workspace/hf-trained-log-inverse-all-ds-flan-undersampled"
     },
     "embedding": {
         "provider": "openai"
     },
     "prompt": {
-        "task_guidelines": "Your job is to correctly label the following into one of the following categories {labels}",
-        "output_guidelines": "\\n",
+        "task_guidelines": "Categorize the comment on the basis of toxicity. If the comment is toxic (harmful, malicious, derogatory, threat, insult, identity attck, etc.) output Yes, otherwise output No.",
+        "output_guidelines": "",
         "labels": [
-            "toxic",
-            "not toxic"
+            "Yes",
+            "No"
         ],
         "few_shot_examples": "seed.csv",
         "few_shot_selection": "semantic_similarity",
         "few_shot_num": 0,
-        "example_template": "{example}{label}"
+        "example_template": "\\nInput: {example}.\\nOutput: {label}"
     }
 }

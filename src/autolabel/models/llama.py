@@ -54,7 +54,7 @@ class Llama(BaseModel):
         model_params = config.model_params()
         self.model_params = {**self.DEFAULT_PARAMS, **model_params}
 
-        self.labeling_model = LLM(self.model_name, tensor_parallel_size=1)
+        self.labeling_model = LLM(self.model_name, tensor_parallel_size=1, max_num_batched_tokens=4096)
 
     def _label(self, prompts: List[str]) -> RefuelLLMResult:
         generations = []

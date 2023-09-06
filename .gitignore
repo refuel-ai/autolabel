@@ -147,3 +147,4 @@ examples/*/*.csv
 
 # Image Files
 examples/**/*.png
+*.txt

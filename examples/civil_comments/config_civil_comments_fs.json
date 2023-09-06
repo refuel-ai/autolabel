@@ -1,0 +1,27 @@
+{
+    "task_name": "ToxicCommentClassification",
+    "task_type": "classification",
+    "dataset": {
+        "label_column": "label",
+        "delimiter": ","
+    },
+    "model": {
+        "provider": "llama",
+        "name": "/workspace/hf-trained-log-inverse-all-ds-flan-undersampled"
+    },
+    "embedding": {
+        "provider": "openai"
+    },
+    "prompt": {
+        "task_guidelines": "Categorize the comment on the basis of toxicity. If the comment is toxic (harmful, malicious, derogatory, threat, insult, identity attck, etc.) output Yes, otherwise output No.",
+        "output_guidelines": "",
+        "labels": [
+            "Yes",
+            "No"
+        ],
+        "few_shot_examples": "seed.csv",
+        "few_shot_selection": "label_diversity_similarity",
+        "few_shot_num": 4,
+        "example_template": "\\nInput: {example}.\\nOutput: {label}"
+    }
+}

@@ -7,19 +7,19 @@
     },
     "model": {
         "provider": "llama",
-        "name": "/workspace/hf-trained-all-ds"
+        "name": "/workspace/hf-trained-log-inverse-all-ds-flan-undersampled"
     },
     "embedding": {
         "provider": "openai"
     },
     "prompt": {
-        "task_guidelines": "Your job is to correctly label the following into one of the following categories {labels}",
-        "output_guidelines": "\\n",
+        "task_guidelines": "Given information about Company 1 and Company 2, your job is to correctly tell me whether they are the same (duplicate) or not (not duplicate). Output either duplicate or not duplicate only.",
+        "output_guidelines": "",
         "labels": [
             "duplicate",
             "not duplicate"
         ],
-        "example_template": "Input: Company 1 description: {entity1}\nCompany 2 description: {entity2}. Output: {label}",
+        "example_template": "\\nInput: Company 1 description: {entity1} Company 2 description: {entity2}.\\nOutput: {label}",
         "few_shot_examples": [
             {
                 "entity1": "lac wisconsin branding 95 1 & 96 1 the rock frequency 96.1 mhz translator s 95.1 w236ag fond du lac first air date 1965 as wcwc fm at 95.9 format mainstream rock erp 4 000 watts haat 123 meters 404 ft class a facility id 54510 transmitter coordinates 43 49 10.00 n 88 43 20.00 w 43.8194444 n 88.7222222 w 43.8194444 ; 88.7222222 coordinates 43 49 10.00 n 88 43 20.00 w 43.8194444 n 88.7222222 w 43.8194444 ; 88.7222222 former callsigns wcwc fm 1965 1980 wyur 1980 1994 former frequencies 95.9 mhz 1965 affiliations cbs radio network westwood one premiere radio networks owner radio plus inc. sister stations wfdl wfdl fm wmdc webcast listen live website 961tcx . com studios in fond du lac wtcx 96.1 fm 95 1 & 96 1 the rock is a radio station broadcasting a mainstream rock music format . 1 licensed to ripon wisconsin usa the station is currently owned by radio plus inc. and features programing from cbs radio network dial global and premiere radio networks . 2 wtcx was originally on 95.9 mhz . be",
@@ -32,7 +32,7 @@
                 "label": "not duplicate"
             }
         ],
-        "few_shot_selection": "semantic_similarity",
-        "few_shot_num": 4
+        "few_shot_selection": "fixed",
+        "few_shot_num": 2
     }
 }

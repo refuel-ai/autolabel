@@ -7,13 +7,13 @@
     },
     "model": {
         "provider": "llama",
-        "name": "/workspace/hf-trained-all-ds"
+        "name": "/workspace/hf-trained-log-inverse-all-ds-flan-undersampled"
     },
     "embedding": {
         "provider": "openai"
     },
     "prompt": {
-        "task_guidelines": "Your job is to correctly label the following into one of the following categories {labels}",
+        "task_guidelines": "Given information about two entities, your job is to correctly label the given pair of entities as duplicates or not duplicates.",
         "output_guidelines": "\\n",
         "labels": [
             "duplicate",
