@@ -48,6 +48,7 @@ class AutolabelConfig(BaseConfig):
     OUTPUT_FORMAT_KEY = "output_format"
     CHAIN_OF_THOUGHT_KEY = "chain_of_thought"
     LABEL_SELECTION_KEY = "label_selection"
+    LABEL_SELECTION_COUNT_KEY = "label_selection_count"
     TRANSFORM_KEY = "transforms"
 
     # Dataset generation config keys (config["dataset_generation"][<key>])
@@ -207,6 +208,10 @@ class AutolabelConfig(BaseConfig):
         narrowing down the list of legal labels by similarity to a given input. Useful for
         classification tasks with a large number of possible classes."""
         return self._prompt_config.get(self.LABEL_SELECTION_KEY, False)
+
+    def label_selection_count(self) -> int:
+        """Returns the number of labels to select in LabelSelector"""
+        return self._prompt_config.get(self.LABEL_SELECTION_COUNT_KEY, 10)
 
     def transforms(self) -> List[Dict]:
         """Returns a list of transforms to apply to the data before sending to the model."""

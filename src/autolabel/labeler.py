@@ -16,7 +16,12 @@ from autolabel.configs import AutolabelConfig
 from autolabel.dataset import AutolabelDataset
 from autolabel.data_models import AnnotationModel, TaskRunModel
 from autolabel.database import StateManager
-from autolabel.few_shot import ExampleSelectorFactory, BaseExampleSelector
+from autolabel.few_shot import (
+    ExampleSelectorFactory,
+    BaseExampleSelector,
+    DEFAULT_EMBEDDING_PROVIDER,
+    PROVIDER_TO_MODEL,
+)
 from autolabel.few_shot.label_selector import LabelSelector
 from autolabel.models import BaseModel, ModelFactory
 from autolabel.metrics import BaseMetric
@@ -168,7 +173,11 @@ class LabelingAgent:
 
         if self.config.label_selection():
             self.label_selector = LabelSelector.from_examples(
-                labels=self.config.labels_list()
+                labels=self.config.labels_list(),
+                k=self.config.label_selection_count(),
+                embedding_func=PROVIDER_TO_MODEL.get(
+                    self.config.embedding_provider(), DEFAULT_EMBEDDING_PROVIDER
+                )(),
             )
 
         current_index = self.task_run.current_index if self.create_task else 0
@@ -346,7 +355,11 @@ class LabelingAgent:
 
         if self.config.label_selection():
             self.label_selector = LabelSelector.from_examples(
-                labels=self.config.labels_list()
+                labels=self.config.labels_list(),
+                k=self.config.label_selection_count(),
+                embedding_func=PROVIDER_TO_MODEL.get(
+                    self.config.embedding_provider(), DEFAULT_EMBEDDING_PROVIDER
+                )(),
             )
 
         input_limit = min(len(dataset.inputs), 100)
