@@ -205,7 +205,7 @@ class AutolabelConfig(BaseConfig):
 
     def label_selection(self) -> bool:
         """Returns true if label selection is enabled. Label selection is the process of
-        narrowing down the list of legal labels by similarity to a given input. Useful for
+        narrowing down the list of possible labels by similarity to a given input. Useful for
         classification tasks with a large number of possible classes."""
         return self._prompt_config.get(self.LABEL_SELECTION_KEY, False)
 
