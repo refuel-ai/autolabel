@@ -21,11 +21,6 @@ from autolabel.metrics import (
 
 import json
 
-from langchain.prompts.example_selector import SemanticSimilarityExampleSelector
-from langchain.embeddings import OpenAIEmbeddings
-from langchain.prompts import FewShotPromptTemplate, PromptTemplate
-from autolabel.few_shot.vector_store import VectorStoreWrapper
-
 
 class ClassificationTask(BaseTask):
     DEFAULT_OUTPUT_GUIDELINES = (
