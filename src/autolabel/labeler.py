@@ -174,10 +174,10 @@ class LabelingAgent:
         if self.config.label_selection():
             self.label_selector = LabelSelector.from_examples(
                 labels=self.config.labels_list(),
-                k=self.config.label_selection_count(),
                 embedding_func=PROVIDER_TO_MODEL.get(
                     self.config.embedding_provider(), DEFAULT_EMBEDDING_PROVIDER
                 )(),
+                k=self.config.label_selection_count(),
             )
 
         current_index = self.task_run.current_index if self.create_task else 0
@@ -356,10 +356,10 @@ class LabelingAgent:
         if self.config.label_selection():
             self.label_selector = LabelSelector.from_examples(
                 labels=self.config.labels_list(),
-                k=self.config.label_selection_count(),
                 embedding_func=PROVIDER_TO_MODEL.get(
                     self.config.embedding_provider(), DEFAULT_EMBEDDING_PROVIDER
                 )(),
+                k=self.config.label_selection_count(),
             )
 
         input_limit = min(len(dataset.inputs), 100)

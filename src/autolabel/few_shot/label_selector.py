@@ -1,11 +1,9 @@
 from __future__ import annotations
-
+from collections.abc import Callable
 from typing import Dict, List
 import bisect
 
 from autolabel.few_shot.vector_store import cos_sim
-
-from langchain.embeddings.openai import OpenAIEmbeddings
 
 
 class LabelSelector:
@@ -18,14 +16,14 @@ class LabelSelector:
     k: int = 10
     """Number of labels to select"""
 
-    embedding_func = OpenAIEmbeddings()
+    embedding_func: Callable = None
     """Function used to generate embeddings of labels/input"""
 
     labels_embeddings: Dict = {}
     """Dict used to store embeddings of each label"""
 
     def __init__(
-        self, labels: List[str], k: int = 10, embedding_func=OpenAIEmbeddings()
+        self, labels: List[str], embedding_func: Callable, k: int = 10
     ) -> None:
         self.labels = labels
         self.k = min(k, len(labels))
@@ -48,8 +46,8 @@ class LabelSelector:
     def from_examples(
         cls,
         labels: List[str],
+        embedding_func,
         k: int = 10,
-        embedding_func=OpenAIEmbeddings(),
     ) -> LabelSelector:
         """Create pass-through label selector using given list of labels
 
