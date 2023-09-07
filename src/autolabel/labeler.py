@@ -31,6 +31,7 @@ from autolabel.schema import (
     MetricResult,
     TaskRun,
     TaskStatus,
+    TaskType,
 )
 from autolabel.tasks import TaskFactory
 from autolabel.utils import (
@@ -172,13 +173,18 @@ class LabelingAgent:
             )
 
         if self.config.label_selection():
-            self.label_selector = LabelSelector.from_examples(
-                labels=self.config.labels_list(),
-                embedding_func=PROVIDER_TO_MODEL.get(
-                    self.config.embedding_provider(), DEFAULT_EMBEDDING_PROVIDER
-                )(),
-                k=self.config.label_selection_count(),
-            )
+            if self.config.task_type() != TaskType.CLASSIFICATION:
+                self.console.print(
+                    "Warning: label_selection only supported for classification tasks!"
+                )
+            else:
+                self.label_selector = LabelSelector.from_examples(
+                    labels=self.config.labels_list(),
+                    embedding_func=PROVIDER_TO_MODEL.get(
+                        self.config.embedding_provider(), DEFAULT_EMBEDDING_PROVIDER
+                    )(),
+                    k=self.config.label_selection_count(),
+                )
 
         current_index = self.task_run.current_index if self.create_task else 0
         cost = 0.0
@@ -201,7 +207,10 @@ class LabelingAgent:
             else:
                 examples = []
             # Construct Prompt to pass to LLM
-            if self.config.label_selection():
+            if (
+                self.config.label_selection()
+                and self.config.task_type() == TaskType.CLASSIFICATION
+            ):
                 selected_labels = self.label_selector.select_labels(chunk["example"])
                 final_prompt = self.task.construct_prompt(
                     chunk, examples, selected_labels
@@ -354,13 +363,18 @@ class LabelingAgent:
         )
 
         if self.config.label_selection():
-            self.label_selector = LabelSelector.from_examples(
-                labels=self.config.labels_list(),
-                embedding_func=PROVIDER_TO_MODEL.get(
-                    self.config.embedding_provider(), DEFAULT_EMBEDDING_PROVIDER
-                )(),
-                k=self.config.label_selection_count(),
-            )
+            if self.config.task_type() != TaskType.CLASSIFICATION:
+                self.console.print(
+                    "Warning: label_selection only supported for classification tasks!"
+                )
+            else:
+                self.label_selector = LabelSelector.from_examples(
+                    labels=self.config.labels_list(),
+                    embedding_func=PROVIDER_TO_MODEL.get(
+                        self.config.embedding_provider(), DEFAULT_EMBEDDING_PROVIDER
+                    )(),
+                    k=self.config.label_selection_count(),
+                )
 
         input_limit = min(len(dataset.inputs), 100)
 
@@ -376,7 +390,10 @@ class LabelingAgent:
                 )
             else:
                 examples = []
-            if self.config.label_selection():
+            if (
+                self.config.label_selection()
+                and self.config.task_type() == TaskType.CLASSIFICATION
+            ):
                 selected_labels = self.label_selector.select_labels(input_i["example"])
                 final_prompt = self.task.construct_prompt(
                     input_i, examples, selected_labels
