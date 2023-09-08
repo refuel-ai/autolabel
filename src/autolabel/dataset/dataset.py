@@ -10,6 +10,7 @@ from rich.console import Console
 import json
 import pickle
 from autolabel.tasks import TaskFactory
+from autolabel.schema import TaskType
 
 logger = logging.getLogger(__name__)
 
@@ -68,11 +69,18 @@ class AutolabelDataset:
 
         inputs = df.to_dict(orient="records")
         label_column = self.config.label_column()
-        gt_labels = (
-            None
-            if not label_column or not len(inputs) or label_column not in inputs[0]
-            else df[label_column].tolist()
-        )
+        if not self.config.task_type() == TaskType.ATTRIBUTE_EXTRACTION:
+            gt_labels = (
+                None
+                if not label_column or not len(inputs) or label_column not in inputs[0]
+                else df[label_column].tolist()
+            )
+        else:
+            attributes = [attr["name"] for attr in self.config.attributes()]
+            gt_labels = {
+                name: df[name].tolist() if name in df.keys() else None
+                for name in attributes
+            }
 
         self.df = df
         self.inputs = inputs
@@ -105,6 +113,12 @@ class AutolabelDataset:
     ):
         # Add the LLM labels to the dataframe
         self.df[self.generate_label_name("label")] = [x.label for x in llm_labels]
+
+        if self.config.task_type() == TaskType.ATTRIBUTE_EXTRACTION:
+            for attr in self.config.attributes():
+                self.df[f'{attr["name"]}_label'] = [
+                    x.label[attr["name"]] for x in llm_labels
+                ]
 
         # Add the LLM errors to the dataframe
         self.df[self.generate_label_name("error")] = [x.error for x in llm_labels]
@@ -278,18 +292,11 @@ class AutolabelDataset:
         Evaluate the dataset based on the task. We run the metrics that were
         specified by the task being run.
         """
-        gt_label_column = self.config.label_column()
-
-        if gt_label_column is None:
-            raise ValueError("Cannot compute eval without ground truth label column")
-
-        gt_labels = self.df[gt_label_column]
-
         llm_labels = self.df[self.generate_label_name("annotation")].tolist()
 
         task = TaskFactory.from_config(self.config)
 
-        metrics = task.eval(llm_labels, gt_labels)
+        metrics = task.eval(llm_labels, self.gt_labels)
 
         table = {}
         for metric in metrics:

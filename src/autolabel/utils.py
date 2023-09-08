@@ -38,6 +38,7 @@ EXAMPLE_DATASETS = [
     "conll2003",
     "movie_reviews",
     "twitter_emotion_detection",
+    "ethos",
 ]
 
 NO_SEED_DATASET = [

@@ -1,0 +1,43 @@
+{
+  "task_name": "EthosAttributeExtraction",
+  "task_type": "attribute_extraction",
+  "dataset": {
+    "label_column": "output_dict",
+    "text_column": "text",
+    "delimiter": ","
+  },
+  "model": {
+    "provider": "openai",
+    "name": "gpt-3.5-turbo"
+  },
+  "prompt": {
+    "task_guidelines": "You are an expert at classifying hate speech and identifying the type of hate speech. Read the following tweets and extract the following attributes from the text.",
+    "attributes": [
+      {
+        "name": "violence",
+        "options": ["not_violent", "violent"],
+        "description": "If the tweet mentions violence towards a person or a group."
+      },
+      {
+        "name": "directed_vs_generalized",
+        "options": [
+          "generalized",
+          "directed"
+        ],
+        "description": "If the hate speech is generalized towards a group or directed towards a specific person."
+      },
+      {
+        "name": "gender",
+        "options": [
+          "true",
+          "false"
+        ],
+        "description": "If the hate speech uses gendered language and attacks a particular gender."
+      }
+    ],
+    "few_shot_examples": "seed.csv",
+    "few_shot_selection": "fixed",
+    "few_shot_num": 5,
+    "example_template": "Text: {text}\nOutput: {output_dict}"
+  }
+}

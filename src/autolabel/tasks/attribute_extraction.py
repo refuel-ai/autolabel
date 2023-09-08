@@ -2,6 +2,7 @@ from typing import List, Dict
 from collections import defaultdict
 import logging
 import json
+import pickle
 
 from langchain.prompts.prompt import PromptTemplate
 from langchain.schema import Generation
@@ -20,11 +21,9 @@ from autolabel.schema import (
 from autolabel.utils import get_format_variables
 from autolabel.metrics import (
     AccuracyMetric,
-    AUROCMetric,
     SupportMetric,
     CompletionRateMetric,
     BaseMetric,
-    F1Metric,
 )
 
 logger = logging.getLogger(__name__)
@@ -32,65 +31,43 @@ logger = logging.getLogger(__name__)
 
 class AttributeExtractionTask(BaseTask):
     NULL_LABEL = {}
-    DEFAULT_TASK_GUIDELINES = "You are an expert at extracting attributes from text. Given a piece of text, extract the {num_output_attributes} required attributes. The attributes you need to extract are listed below:\n\n{output_attributes}"
-    DEFAULT_OUTPUT_GUIDELINES = 'You will return the answer as a json in the following format:\n{\n\t"attribute_1": "label for attribute 1",\n\t"attribute_2": "label for attribute 2",\n\t...\n\t"attribute_n": "label for attribute n"\n}'
-
-    GENERATE_EXPLANATION_PROMPT = "Given the text and the extracted attributes, explain why you chose these specific attributes. The text is:\n{text}\nThe extracted attributes are:\n{attributes}"
+    DEFAULT_TASK_GUIDELINES = "You are an expert at extracting attributes from text. Given a piece of text, extract the required attributes."
+    DEFAULT_OUTPUT_GUIDELINES = "You will return the extracted attributes as a json with the following keys:\n{attribute_json}"
 
     OUTPUT_DICT_KEY = "output_dict"
 
-    # dict of dicts of metrics
-    # task_type -> metric -> metric_kwargs
-    TYPE_TO_METRICS = {
-        TaskType.CLASSIFICATION: {
-            AccuracyMetric: {},
-        },
-        TaskType.MULTILABEL_CLASSIFICATION: {
-            AccuracyMetric: {},
-            F1Metric: {
-                "type": F1Type.MULTI_LABEL,
-                "average": [MetricType.F1_MACRO, MetricType.F1_WEIGHTED],
-            },
-        },
-        TaskType.QUESTION_ANSWERING: {
-            AccuracyMetric: {},
-            F1Metric: {"type": F1Type.TEXT},
-        },
-    }
-
     def __init__(self, config: AutolabelConfig) -> None:
         super().__init__(config)
+
         self.metrics = [
             SupportMetric(),
             CompletionRateMetric(),
+            AccuracyMetric(),
         ]
 
-        if self.config.confidence():
-            self.metrics.append(AUROCMetric())
-
-    def _construct_output_attributes(self) -> str:
-        """Construct the output attributes from the config file
-
-        This assumes that each dict has a "name" and will include the "description" or "labels" if it exists.
-
+    def _construct_attribute_json(self) -> str:
+        """This function is used to construct the attribute json string for the output guidelines.
         Args:
-            output_attributes (List[Dict]): A list of dictionaries containing the output attributes.
+            attributes (List[Dict]): A list of dictionaries containing the output attributes.
 
         Returns:
             str: A string containing the output attributes.
         """
-        output_list = []
-        for attribute in self.config.output_attributes():
-            attribute_str = f'Attribute Name: {attribute["name"]}\n'
-            if "type" in attribute:
-                attribute_str += f'Type: {attribute["type"]}\n'
-            if "description" in attribute:
-                attribute_str += f'Description: {attribute["description"]}\n'
-            if "labels" in attribute:
-                labels = "\n".join(attribute["labels"])
-                attribute_str += f"Options:\n{labels}\n"
-            output_list.append(attribute_str)
-        return "\n".join(output_list)
+        output_json = {}
+        for attribute_dict in self.config.attributes():
+            if "name" not in attribute_dict or "description" not in attribute_dict:
+                raise ValueError(
+                    "Attribute dictionary must contain 'name' and 'description' keys"
+                )
+
+            attribute_name = attribute_dict["name"]
+            attribute_desc = attribute_dict["description"]
+            if "options" in attribute_dict:
+                attribute_options = attribute_dict["options"]
+                attribute_desc += f"\nOptions:\n{','.join(attribute_options)}"
+
+            output_json[attribute_name] = attribute_desc
+        return json.dumps(output_json, indent=4)
 
     def _generate_output_dict(self, input: Dict) -> Dict:
         """Generate the output dictionary from the input
@@ -102,26 +79,17 @@ class AttributeExtractionTask(BaseTask):
             Dict: The output dictionary
         """
         output_dict = {}
-        for attribute in self.config.output_attributes():
+        for attribute in self.config.attributes():
             attribute_name = attribute["name"]
             output_dict[attribute_name] = input[attribute_name]
         return json.dumps(output_dict)
 
     def construct_prompt(self, input: Dict, examples: List) -> str:
-        num_output_attributes = len(self.config.output_attributes())
-        output_attributes = self._construct_output_attributes()
-        fmt_task_guidelines = self.task_guidelines.format(
-            num_output_attributes=num_output_attributes,
-            output_attributes=output_attributes,
-        )
+        fmt_task_guidelines = self.task_guidelines
 
-        output_attributes_dict = {
-            attribute["name"] + "_" + key: value
-            for attribute in self.config.output_attributes()
-            for key, value in attribute.items()
-        }
-        fmt_output_guidelines = self.output_guidelines.format_map(
-            defaultdict(str, output_attributes_dict)
+        attribute_json = self._construct_attribute_json()
+        fmt_output_guidelines = self.output_guidelines.format(
+            attribute_json=attribute_json
         )
 
         # prepare seed examples
@@ -131,12 +99,6 @@ class AttributeExtractionTask(BaseTask):
             output_dict = self._generate_output_dict(eg)
             eg.update({self.OUTPUT_DICT_KEY: output_dict})
             fmt_examples.append(example_template.format_map(defaultdict(str, eg)))
-
-        if self.config.label_column():
-            input[self.config.label_column()] = ""
-
-        if self.config.explanation_column():
-            input[self.config.explanation_column()] = ""
 
         input[self.OUTPUT_DICT_KEY] = ""
 
@@ -158,24 +120,8 @@ class AttributeExtractionTask(BaseTask):
             )
 
     def get_explanation_prompt(self, example: Dict) -> str:
-        pt = PromptTemplate(
-            input_variables=get_format_variables(self.GENERATE_EXPLANATION_PROMPT),
-            template=self.GENERATE_EXPLANATION_PROMPT,
-        )
-
-        # prepare task guideline
-        output_attributes = self.config.output_attributes()
-        fmt_task_guidelines = self.task_guidelines.format_map(
-            defaultdict(str, output_attributes)
-        )
-
-        # prepare labeled example
-        example_template = self.config.example_template()
-        fmt_example = example_template.format_map(defaultdict(str, example))
-
-        return pt.format(
-            task_guidelines=fmt_task_guidelines,
-            labeled_example=fmt_example,
+        raise NotImplementedError(
+            "Explanation generation not implemented for this task"
         )
 
     def get_generate_dataset_prompt(
@@ -188,20 +134,19 @@ class AttributeExtractionTask(BaseTask):
     ) -> LLMAnnotation:
         successfully_labeled = False
         error = None
-        text_column = self.config.text_column()
-        input_str = curr_sample[text_column]
         try:
             completion_text = response.text
             llm_label = json.loads(completion_text)
+            successfully_labeled = True
         except Exception as e:
             logger.error(f"Error parsing LLM response: {response.text}, Error: {e}")
             llm_label = self.NULL_LABEL
             error = LabelingError(error_type=ErrorType.PARSING_ERROR, error_msg=str(e))
 
-        successfully_labeled = False if llm_label == self.NULL_LABEL else True
+        # TODO(rajas): Handle output guidelines not followed error (for options case)
 
         return LLMAnnotation(
-            curr_sample=input_str,
+            curr_sample=pickle.dumps(curr_sample),
             successfully_labeled=successfully_labeled,
             label=llm_label,
             generation_info=response.generation_info,
@@ -217,12 +162,10 @@ class AttributeExtractionTask(BaseTask):
         additional_metrics: List[BaseMetric] = [],
     ) -> List[MetricResult]:
         """Evaluate the LLM generated labels by comparing them against ground truth"""
-        # Conver gt_labels to list of dictionaries, llm_labels is already a list of dictionaries
-        gt_labels = [json.loads(gt_label) for gt_label in gt_labels]
-        # Convert llm_labels and gt_labels to dictionary of lists
-        llm_labels_dict = defaultdict(list)
-        gt_labels_dict = defaultdict(list)
 
+        # Convert the llm labels into a mapping from
+        # name -> List[LLMAnnotation]
+        llm_labels_dict = defaultdict(list)
         for llm_label in llm_labels:
             for attribute, value in llm_label.label.items():
                 llm_labels_dict[attribute].append(
@@ -236,33 +179,21 @@ class AttributeExtractionTask(BaseTask):
                     )
                 )
 
-        for gt_label in gt_labels:
-            for attribute, value in gt_label.items():
-                gt_labels_dict[attribute].append(value)
-
         eval_metrics = []
 
-        for metric in self.metrics + additional_metrics:
-            eval_metrics.extend(metric.compute(llm_labels, gt_labels))
+        for attribute in llm_labels_dict.keys():
+            for metric in self.metrics + additional_metrics:
+                if gt_labels[attribute] is None:
+                    continue
 
-        for attribute in self.config.output_attributes():
-            metrics_list = self.TYPE_TO_METRICS[attribute["type"]]
-            for metric, metric_kwargs in metrics_list.items():
-                if (
-                    metric == F1Metric
-                    and attribute["type"] == TaskType.MULTILABEL_CLASSIFICATION
-                ):
-                    metric_kwargs["labels"] = attribute["labels"]
-                    metric_kwargs["sep"] = attribute["sep"]
-                metric = metric(**metric_kwargs)
                 computed_metrics = metric.compute(
-                    llm_labels_dict[attribute["name"]],
-                    gt_labels_dict[attribute["name"]],
+                    llm_labels_dict[attribute],
+                    gt_labels[attribute],
                 )
                 for m in computed_metrics:
                     eval_metrics.append(
                         MetricResult(
-                            name=f'{m.name} ({attribute["name"]})',
+                            name=f"{attribute}:{m.name}",
                             value=m.value,
                         )
                     )

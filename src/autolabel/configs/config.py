@@ -48,7 +48,7 @@ class AutolabelConfig(BaseConfig):
     OUTPUT_GUIDELINE_KEY = "output_guidelines"
     OUTPUT_FORMAT_KEY = "output_format"
     CHAIN_OF_THOUGHT_KEY = "chain_of_thought"
-    OUTPUT_ATTRIBUTES_KEY = "output_attributes"
+    ATTRIBUTES_KEY = "attributes"
 
     TRANSFORM_KEY = "transforms"
 
@@ -208,9 +208,9 @@ class AutolabelConfig(BaseConfig):
         """Returns true if the model is able to perform chain of thought reasoning."""
         return self._prompt_config.get(self.CHAIN_OF_THOUGHT_KEY, False)
 
-    def output_attributes(self) -> List[Dict]:
+    def attributes(self) -> List[Dict]:
         """Returns a list of attributes to extract from the text."""
-        return self._prompt_config.get(self.OUTPUT_ATTRIBUTES_KEY, [])
+        return self._prompt_config.get(self.ATTRIBUTES_KEY, [])
 
     def transforms(self) -> List[Dict]:
         """Returns a list of transforms to apply to the data before sending to the model."""

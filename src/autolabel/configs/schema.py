@@ -121,7 +121,7 @@ schema = {
                 },
                 "few_shot_num": {"type": ["number", "null"]},
                 "chain_of_thought": {"type": ["boolean", "null"]},
-                "output_attributes": {
+                "attributes": {
                     "anyOf": [
                         {"type": "array", "items": {"type": "object"}},
                         {"type": "null"},
