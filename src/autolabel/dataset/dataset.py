@@ -116,7 +116,7 @@ class AutolabelDataset:
 
         if self.config.task_type() == TaskType.ATTRIBUTE_EXTRACTION:
             for attr in self.config.attributes():
-                self.df[f'{attr["name"]}_label'] = [
+                self.df[self.generate_label_name("label", attr["name"])] = [
                     x.label[attr["name"]] for x in llm_labels
                 ]
 
@@ -179,7 +179,11 @@ class AutolabelDataset:
             raise ValueError(f"Unsupported output file format: {output_file_name}")
 
     def filter(
-        self, label: str = None, ground_truth: str = None, filter_func: Callable = None
+        self,
+        label: str = None,
+        ground_truth: str = None,
+        filter_func: Callable = None,
+        label_column: str = None,
     ):
         """
         Filter the dataset based on the label, ground truth or a custom filter function.
@@ -189,17 +193,19 @@ class AutolabelDataset:
             label: The llm label to filter on.
             ground_truth: The ground truth label to filter on.
             filter_func: A custom filter function to filter on.
+            label_column: The column to filter on. This is only used for attribute extraction tasks.
         """
         filtered_df = self.df
 
         if label:
             filtered_df = filtered_df[
-                filtered_df[self.generate_label_name("label")] == label
+                filtered_df[self.generate_label_name("label", label_column)] == label
             ]
 
         if ground_truth:
             filtered_df = filtered_df[
-                filtered_df[self.config.label_column()] == ground_truth
+                filtered_df[(label_column or self.config.label_column())]
+                == ground_truth
             ]
 
         if filter_func:
@@ -227,15 +233,18 @@ class AutolabelDataset:
         filtered_df = self.df[self.df[self.generate_label_name("error")].isnull()]
         return AutolabelDataset(filtered_df, self.config)
 
-    def incorrect(self, label: str = None, ground_truth: str = None):
+    def incorrect(
+        self, label: str = None, ground_truth: str = None, label_column: str = None
+    ):
         """
         Filter the dataset to only include incorrect items. This means the labels
         where the llm label was incorrect.
         Args:
             label: The llm label to filter on.
             ground_truth: The ground truth label to filter on.
+            label_column: The column to filter on. This is only used for attribute extraction tasks.
         """
-        gt_label_column = self.config.label_column()
+        gt_label_column = label_column or self.config.label_column()
 
         if gt_label_column is None:
             raise ValueError(
@@ -243,12 +252,13 @@ class AutolabelDataset:
             )
 
         filtered_df = self.df[
-            self.df[self.generate_label_name("label")] != self.df[gt_label_column]
+            self.df[self.generate_label_name("label", label_column)]
+            != self.df[gt_label_column]
         ]
 
         if label:
             filtered_df = filtered_df[
-                filtered_df[self.generate_label_name("label")] == label
+                filtered_df[self.generate_label_name("label", label_column)] == label
             ]
 
         if ground_truth:
@@ -256,18 +266,21 @@ class AutolabelDataset:
 
         return AutolabelDataset(filtered_df, self.config)
 
-    def correct(self):
+    def correct(self, label_column: str = None):
         """
         Filter the dataset to only include correct items. This means the labels
         where the llm label was correct.
+        Args:
+            label_column: The column to filter on. This is only used for attribute extraction tasks.
         """
-        gt_label_column = self.config.label_column()
+        gt_label_column = label_column or self.config.label_column()
 
         if gt_label_column is None:
             raise ValueError("Cannot compute correct without ground truth label column")
 
         filtered_df = self.df[
-            self.df[self.generate_label_name("label")] == self.df[gt_label_column]
+            self.df[self.generate_label_name("label", label_column)]
+            == self.df[gt_label_column]
         ]
         return AutolabelDataset(filtered_df, self.config)
 
@@ -342,8 +355,11 @@ class AutolabelDataset:
                 f"Validation failed for {len(self.__malformed_records)} rows."
             )
 
-    def generate_label_name(self, col_name: str):
-        return f"{self.config.task_name()}_{col_name}"
+    def generate_label_name(self, col_name: str, label_column: str = None):
+        label_column = (
+            label_column or self.config.label_column() or self.config.task_name()
+        )
+        return f"{label_column}_{col_name}"
 
 
 class DataValidationFailed(Exception):
