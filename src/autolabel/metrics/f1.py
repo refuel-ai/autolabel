@@ -1,10 +1,13 @@
 from typing import List, Optional
+import logging
 
 from autolabel.metrics import BaseMetric
 from autolabel.schema import LLMAnnotation, MetricResult, MetricType, F1Type
 from sklearn.preprocessing import MultiLabelBinarizer
 from sklearn.metrics import f1_score
 from autolabel.utils import normalize_text
+
+logger = logging.getLogger(__name__)
 
 
 class F1Metric(BaseMetric):
@@ -99,6 +102,11 @@ class F1Metric(BaseMetric):
     def compute(
         self, llm_labels: List[LLMAnnotation], gt_labels: List[str]
     ) -> List[MetricResult]:
+        # If there are not ground truth labels, return an empty list
+        if not gt_labels:
+            logger.warning("No ground truth labels were provided. Skipping f1 metric.")
+            return []
+
         if self.type == F1Type.MULTI_LABEL:
             return self.multi_label_compute(llm_labels, gt_labels)
         else:
