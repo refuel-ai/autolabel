@@ -121,6 +121,12 @@ schema = {
                 },
                 "few_shot_num": {"type": ["number", "null"]},
                 "chain_of_thought": {"type": ["boolean", "null"]},
+                "attributes": {
+                    "anyOf": [
+                        {"type": "array", "items": {"type": "object"}},
+                        {"type": "null"},
+                    ]
+                },
             },
             "required": ["task_guidelines"],
             "additionalProperties": False,

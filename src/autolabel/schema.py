@@ -30,6 +30,7 @@ class TaskType(str, Enum):
     QUESTION_ANSWERING = "question_answering"
     ENTITY_MATCHING = "entity_matching"
     MULTILABEL_CLASSIFICATION = "multilabel_classification"
+    ATTRIBUTE_EXTRACTION = "attribute_extraction"
 
 
 class FewShotAlgorithm(str, Enum):

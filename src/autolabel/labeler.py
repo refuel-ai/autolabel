@@ -230,7 +230,12 @@ class LabelingAgent:
                 if dataset.gt_labels:
                     eval_result = self.task.eval(
                         llm_labels,
-                        dataset.gt_labels[: len(llm_labels)],
+                        dataset.gt_labels[: len(llm_labels)]
+                        if isinstance(dataset.gt_labels, list)
+                        else {
+                            k: v[: len(llm_labels)]
+                            for k, v in dataset.gt_labels.items()
+                        },
                         additional_metrics=additional_metrics,
                     )
 
@@ -259,7 +264,9 @@ class LabelingAgent:
         if not skip_eval and dataset.gt_labels:
             eval_result = self.task.eval(
                 llm_labels,
-                dataset.gt_labels[: len(llm_labels)],
+                dataset.gt_labels[: len(llm_labels)]
+                if isinstance(dataset.gt_labels, list)
+                else {k: v[: len(llm_labels)] for k, v in dataset.gt_labels.items()},
                 additional_metrics=additional_metrics,
             )
             # TODO: serialize and write to file
@@ -415,8 +422,12 @@ class LabelingAgent:
         )
         llm_labels = self.get_all_annotations()
         if gt_labels and len(llm_labels) > 0:
-            self.console.print("Evaluating the existing task...")
-            gt_labels = gt_labels[: len(llm_labels)]
+            pprint("Evaluating the existing task...")
+            gt_labels = (
+                gt_labels[: len(llm_labels)]
+                if isinstance(gt_labels, list)
+                else {k: v[: len(llm_labels)] for k, v in gt_labels.items()}
+            )
             eval_result = self.task.eval(
                 llm_labels, gt_labels, additional_metrics=additional_metrics
             )
