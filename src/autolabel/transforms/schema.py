@@ -2,6 +2,7 @@ from autolabel.utils import calculate_md5
 from enum import Enum
 from pydantic import BaseModel
 from typing import Any, Dict, Optional
+import json
 
 
 class TransformType(str, Enum):
@@ -29,6 +30,19 @@ class TransformCacheEntry(BaseModel):
         Generates a unique ID for the given transform cache configuration
         """
         return calculate_md5([self.transform_name, self.transform_params, self.input])
+
+    def get_serialized_output(self) -> str:
+        """
+        Returns the serialized cache entry output
+        """
+        return json.dumps(self.output)
+
+    @classmethod
+    def deserialize_output(cls, output: str) -> Dict[str, Any]:
+        """
+        Deserializes the cache entry output
+        """
+        return json.loads(output)
 
 
 class TransformErrorType(str, Enum):

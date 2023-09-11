@@ -2,6 +2,7 @@ from datetime import datetime
 from enum import Enum
 from typing import Any, Dict, List, Optional, Union
 
+import json
 import pandas as pd
 from langchain.schema import Generation
 from pydantic import BaseModel
@@ -208,6 +209,24 @@ class GenerationCacheEntry(BaseModel):
 
     class Config:
         orm_mode = True
+
+    def get_id(self) -> str:
+        """
+        Generates a unique ID for the given generation cache configuration
+        """
+        return calculate_md5([self.model_name, self.model_params, self.prompt])
+
+    def get_serialized_output(self) -> str:
+        """
+        Returns the serialized cache entry output
+        """
+        return json.dumps([gen.dict() for gen in self.generations])
+
+    def deserialize_output(self, output: str) -> List[Generation]:
+        """
+        Deserializes the cache entry output
+        """
+        return [Generation(**gen) for gen in json.loads(output)]
 
 
 class RefuelLLMResult(BaseModel):
