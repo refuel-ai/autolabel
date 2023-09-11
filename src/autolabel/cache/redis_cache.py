@@ -1,17 +1,24 @@
-import hashlib
-import json
-from typing import Any, List
-
 from autolabel.cache import BaseCache
 from langchain.schema import Generation
-from redis import Redis
+from typing import Any, List
+import hashlib
+import json
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 class RedisCache(BaseCache):
     """A cache system implemented with Redis"""
 
     def __init__(self, endpoint: str, db: int = 0):
-        self.redis = Redis.from_url(endpoint, db=db)
+        try:
+            from redis import Redis
+            self.redis = Redis.from_url(endpoint, db=db)
+        except ImportError:
+            raise ImportError(
+                "redis is required to use the Redis Cache. Please install it with the following command: pip install redis"
+            )
 
     def lookup(self, entry: Any) -> List[Generation]:
         """Retrieves an entry from the Cache. Returns an empty list [] if not found.
@@ -38,7 +45,6 @@ class RedisCache(BaseCache):
         """
         redis_key = entry.get_id()
         redis_value = entry.get_serialized_output()
-        print(redis_key, redis_value)
         with self.redis.pipeline() as pipe:
             pipe.set(redis_key, redis_value)
             pipe.expire(redis_key, entry.ttl_ms // 1000)
