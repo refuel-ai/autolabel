@@ -10,7 +10,11 @@ from rich import print as pprint
 from rich.console import Console
 from rich.prompt import Confirm
 
-from autolabel.cache import BaseCache, SQLAlchemyGenerationCache, SQLAlchemyTransformCache
+from autolabel.cache import (
+    BaseCache,
+    SQLAlchemyGenerationCache,
+    SQLAlchemyTransformCache,
+)
 from autolabel.confidence import ConfidenceCalculator
 from autolabel.configs import AutolabelConfig
 from autolabel.dataset import AutolabelDataset
@@ -65,9 +69,15 @@ class LabelingAgent:
         self.generation_cache = generation_cache
         self.transform_cache = transform_cache
         if cache:
-            logger.warning(f"cache parameter is deprecated and will be removed soon. Please use generation_cache and transform_cache instead.")
-            self.generation_cache = generation_cache if generation_cache else SQLAlchemyGenerationCache()
-            self.transform_cache = transform_cache if transform_cache else SQLAlchemyTransformCache()
+            logger.warning(
+                f"cache parameter is deprecated and will be removed soon. Please use generation_cache and transform_cache instead."
+            )
+            self.generation_cache = (
+                generation_cache if generation_cache else SQLAlchemyGenerationCache()
+            )
+            self.transform_cache = (
+                transform_cache if transform_cache else SQLAlchemyTransformCache()
+            )
 
         self.console = Console(quiet=not console_output)
 

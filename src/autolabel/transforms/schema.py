@@ -30,7 +30,7 @@ class TransformCacheEntry(BaseModel):
         Generates a unique ID for the given transform cache configuration
         """
         return calculate_md5([self.transform_name, self.transform_params, self.input])
-    
+
     def get_serialized_output(self) -> str:
         """
         Returns the serialized cache entry output

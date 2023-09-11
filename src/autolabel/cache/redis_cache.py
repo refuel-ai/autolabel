@@ -27,7 +27,7 @@ class RedisCache(BaseCache):
                 self.redis.get(redis_key).decode("utf-8")
             )
             return generations
-        
+
         logger.debug("Cache miss")
         return None
 

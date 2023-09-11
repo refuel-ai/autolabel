@@ -214,10 +214,8 @@ class GenerationCacheEntry(BaseModel):
         """
         Generates a unique ID for the given generation cache configuration
         """
-        return calculate_md5(
-            [self.model_name, self.model_params, self.prompt]
-        )
-    
+        return calculate_md5([self.model_name, self.model_params, self.prompt])
+
     def get_serialized_output(self) -> str:
         """
         Returns the serialized cache entry output
@@ -229,8 +227,6 @@ class GenerationCacheEntry(BaseModel):
         Deserializes the cache entry output
         """
         return [Generation(**gen) for gen in json.loads(output)]
-    
-
 
 
 class RefuelLLMResult(BaseModel):
