@@ -14,6 +14,7 @@ class RedisCache(BaseCache):
     def __init__(self, endpoint: str, db: int = 0):
         try:
             from redis import Redis
+
             self.redis = Redis.from_url(endpoint, db=db)
         except ImportError:
             raise ImportError(
