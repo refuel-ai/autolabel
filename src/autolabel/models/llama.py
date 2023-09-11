@@ -62,7 +62,7 @@ class Llama(BaseModel):
         prompt_file = open("prompts.txt", "a")
         for prompt in prompts:
             try:
-                sampling_param = SamplingParams(top_p=0.9, temperature=0.05, max_tokens=100)
+                sampling_param = SamplingParams(top_p=0.9, temperature=0.05, max_tokens=1024)
                 outputs = self.labeling_model.generate(prompt, sampling_params=sampling_param, use_tqdm=False)
                 prompt_file.write(prompt)
                 prompt_file.write("\n============\n")

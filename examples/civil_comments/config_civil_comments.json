@@ -14,7 +14,7 @@
     },
     "prompt": {
         "task_guidelines": "Categorize the comment on the basis of toxicity. If the comment is toxic (harmful, malicious, derogatory, threat, insult, identity attck, etc.) output Yes, otherwise output No.",
-        "output_guidelines": "",
+        "output_guidelines": "\\n",
         "labels": [
             "Yes",
             "No"

@@ -7,7 +7,7 @@
     },
     "model": {
         "provider": "llama",
-        "name": "/workspace/hf-trained-log-inverse-all-ds-flan-undersampled"
+        "name": "/workspace/hf-10x-90p"
     },
     "embedding": {
         "provider": "openai"
