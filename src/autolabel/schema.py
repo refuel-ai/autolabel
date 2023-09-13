@@ -229,6 +229,17 @@ class GenerationCacheEntry(BaseModel):
         return [Generation(**gen) for gen in json.loads(output)]
 
 
+class ConfidenceCacheEntry(BaseModel):
+    prompt: Optional[str] = ""
+    raw_response: Optional[str] = ""
+    confidence_score: Optional[float] = None
+    creation_time_ms: Optional[int] = -1
+    ttl_ms: Optional[int] = -1
+
+    class Config:
+        orm_mode = True
+
+
 class RefuelLLMResult(BaseModel):
     """List of generated outputs. This is a List[List[]] because
     each input could have multiple candidate generations."""

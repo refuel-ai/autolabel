@@ -8,8 +8,9 @@ import scipy.stats as stats
 import os
 import logging
 
-from autolabel.schema import LLMAnnotation
+from autolabel.schema import LLMAnnotation, ConfidenceCacheEntry
 from autolabel.models import BaseModel
+from autolabel.cache import BaseCache, SQLAlchemyConfidenceCache
 
 from tenacity import (
     before_sleep_log,
@@ -23,10 +24,14 @@ logger = logging.getLogger(__name__)
 
 class ConfidenceCalculator:
     def __init__(
-        self, score_type: str = "logprob_average", llm: Optional[BaseModel] = None
+        self,
+        score_type: str = "logprob_average",
+        llm: Optional[BaseModel] = None,
+        cache: Optional[BaseCache] = None,
     ) -> None:
         self.score_type = score_type
         self.llm = llm
+        self.cache = cache
         self.tokens_to_ignore = {"<unk>"}
         self.SUPPORTED_CALCULATORS = {
             "logprob_average": self.logprob_average,
@@ -94,7 +99,11 @@ class ConfidenceCalculator:
         if not self.llm.returns_token_probs():
             if model_generation.raw_response == "":
                 model_generation.confidence_score = 0
-                return model_generation
+                return model_generation.confidence_score
+            if self.cache:
+                confidence = self.get_cached_confidence(model_generation)
+                if confidence:
+                    return confidence
             logprobs = self.compute_confidence(
                 model_generation.prompt, model_generation.raw_response
             )
@@ -110,6 +119,9 @@ class ConfidenceCalculator:
             logprobs=logprobs,
             **kwargs,
         )
+        model_generation.confidence_score = confidence
+        if self.cache:
+            self.update_cache(model_generation)
         return confidence
 
     @retry(
@@ -148,6 +160,21 @@ class ConfidenceCalculator:
                 f"Unable to compute confidence score: {e}",
             )
             return [{"": 0.5}]
+
+    def get_cached_confidence(self, model_generation: LLMAnnotation) -> Optional[float]:
+        cache_entry = ConfidenceCacheEntry(
+            prompt=model_generation.prompt, raw_response=model_generation.raw_response
+        )
+        confidence = self.cache.lookup(cache_entry)
+        return confidence
+
+    def update_cache(self, model_generation: LLMAnnotation):
+        cache_entry = ConfidenceCacheEntry(
+            prompt=model_generation.prompt,
+            raw_response=model_generation.raw_response,
+            confidence_score=model_generation.confidence_score,
+        )
+        self.cache.update(cache_entry)
 
     @classmethod
     def compute_completion(cls, confidence: List[float], threshold: float) -> float:

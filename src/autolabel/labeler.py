@@ -14,6 +14,7 @@ from autolabel.cache import (
     BaseCache,
     SQLAlchemyGenerationCache,
     SQLAlchemyTransformCache,
+    SQLAlchemyConfidenceCache,
 )
 from autolabel.confidence import ConfidenceCalculator
 from autolabel.configs import AutolabelConfig
@@ -63,11 +64,13 @@ class LabelingAgent:
         console_output: Optional[bool] = True,
         generation_cache: Optional[BaseCache] = None,
         transform_cache: Optional[BaseCache] = None,
+        confidence_cache: Optional[BaseCache] = None,
     ) -> None:
         self.create_task = create_task
         self.db = StateManager() if self.create_task else None
         self.generation_cache = generation_cache
         self.transform_cache = transform_cache
+        self.confidence_cache = confidence_cache
         if cache:
             logger.warning(
                 f"cache parameter is deprecated and will be removed soon. Please use generation_cache and transform_cache instead."
@@ -77,6 +80,9 @@ class LabelingAgent:
             )
             self.transform_cache = (
                 transform_cache if transform_cache else SQLAlchemyTransformCache()
+            )
+            self.confidence_cache = (
+                confidence_cache if confidence_cache else SQLAlchemyConfidenceCache()
             )
 
         self.console = Console(quiet=not console_output)
@@ -89,7 +95,7 @@ class LabelingAgent:
             self.config, cache=self.generation_cache
         )
         self.confidence = ConfidenceCalculator(
-            score_type="logprob_average", llm=self.llm
+            score_type="logprob_average", llm=self.llm, cache=self.confidence_cache
         )
         self.example_selector = example_selector
 

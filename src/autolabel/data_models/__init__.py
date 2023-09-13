@@ -5,3 +5,4 @@ from .task import TaskModel
 from .task_run import TaskRunModel
 from .generation_cache import GenerationCacheEntryModel
 from .transform_cache import TransformCacheEntryModel
+from .confidence_cache import ConfidenceCacheEntryModel
