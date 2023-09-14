@@ -232,7 +232,7 @@ class GenerationCacheEntry(BaseModel):
 class ConfidenceCacheEntry(BaseModel):
     prompt: Optional[str] = ""
     raw_response: Optional[str] = ""
-    confidence_score: Optional[float] = None
+    confidence_score: Optional[str] = None
     creation_time_ms: Optional[int] = -1
     ttl_ms: Optional[int] = -1
 

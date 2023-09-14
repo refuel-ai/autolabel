@@ -235,7 +235,6 @@ class LabelingAgent:
                         if self.config.confidence():
                             annotation.confidence_score = self.confidence.calculate(
                                 model_generation=annotation,
-                                prompt=final_prompt,
                             )
 
                         annotations.append(annotation)

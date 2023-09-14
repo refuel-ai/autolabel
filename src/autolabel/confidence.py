@@ -166,13 +166,23 @@ class ConfidenceCalculator:
             prompt=model_generation.prompt, raw_response=model_generation.raw_response
         )
         confidence = self.cache.lookup(cache_entry)
+        if confidence:
+            confidence = json.loads(confidence)
+            if self.score_type == "logprob_average":
+                confidence = confidence[model_generation.raw_response]
         return confidence
 
     def update_cache(self, model_generation: LLMAnnotation):
+        confidence = model_generation.confidence_score
+        if self.score_type == "logprob_average":
+            confidence = {
+                model_generation.raw_response: model_generation.confidence_score
+            }
+        confidence = json.dumps(confidence)
         cache_entry = ConfidenceCacheEntry(
             prompt=model_generation.prompt,
             raw_response=model_generation.raw_response,
-            confidence_score=model_generation.confidence_score,
+            confidence_score=confidence,
         )
         self.cache.update(cache_entry)
 

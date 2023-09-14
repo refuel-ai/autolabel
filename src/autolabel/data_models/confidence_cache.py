@@ -1,6 +1,6 @@
 from .base import Base
 from pydantic import BaseModel
-from sqlalchemy import Column, Integer, Float, Text
+from sqlalchemy import Column, Integer, Float, Text, JSON
 from sqlalchemy.orm import relationship
 import json
 import time
@@ -16,7 +16,7 @@ class ConfidenceCacheEntryModel(Base):
     id = Column(Integer, primary_key=True)
     prompt = Column(Text)
     raw_response = Column(Text)
-    confidence_score = Column(Float)
+    confidence_score = Column(JSON)
     creation_time_ms = Column(Integer)
     ttl_ms = Column(Integer)
 
