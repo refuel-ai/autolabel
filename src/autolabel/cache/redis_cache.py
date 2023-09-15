@@ -26,7 +26,7 @@ class RedisCache(BaseCache):
         Args:
             entry: Entry we wish to retrieve from the Cache
         Returns:
-            result: A list of langchain Generation objects, containing the results of the labeling run for this CacheEntry. Empty list [] if not found.
+            result: Deserialized cache entry. None if not found.
         """
         redis_key = entry.get_id()
         if self.redis.exists(redis_key):

@@ -23,6 +23,8 @@ logger = logging.getLogger(__name__)
 
 
 class ConfidenceCalculator:
+    TTL_MS = 60 * 60 * 24 * 365 * 3 * 1000  # 3 years
+
     def __init__(
         self,
         score_type: str = "logprob_average",
@@ -167,7 +169,6 @@ class ConfidenceCalculator:
         )
         confidence = self.cache.lookup(cache_entry)
         if confidence:
-            confidence = json.loads(confidence)
             if self.score_type == "logprob_average":
                 confidence = confidence[model_generation.raw_response]
         return confidence
@@ -178,11 +179,11 @@ class ConfidenceCalculator:
             confidence = {
                 model_generation.raw_response: model_generation.confidence_score
             }
-        confidence = json.dumps(confidence)
         cache_entry = ConfidenceCacheEntry(
             prompt=model_generation.prompt,
             raw_response=model_generation.raw_response,
             confidence_score=confidence,
+            ttl_ms=self.TTL_MS,
         )
         self.cache.update(cache_entry)
 

@@ -232,12 +232,30 @@ class GenerationCacheEntry(BaseModel):
 class ConfidenceCacheEntry(BaseModel):
     prompt: Optional[str] = ""
     raw_response: Optional[str] = ""
-    confidence_score: Optional[str] = None
+    confidence_score: Optional[dict] = None
     creation_time_ms: Optional[int] = -1
     ttl_ms: Optional[int] = -1
 
     class Config:
         orm_mode = True
+
+    def get_id(self) -> str:
+        """
+        Generates a unique ID for the given confidence cache configuration
+        """
+        return calculate_md5([self.prompt, self.raw_response])
+
+    def get_serialized_output(self) -> str:
+        """
+        Returns the serialized cache entry output
+        """
+        return json.dumps(self.confidence_score)
+
+    def deserialize_output(self, output: str) -> Dict[str, float]:
+        """
+        Deserializes the cache entry output
+        """
+        return json.loads(output)
 
 
 class RefuelLLMResult(BaseModel):

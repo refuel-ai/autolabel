@@ -40,7 +40,7 @@ class ConfidenceCacheEntryModel(Base):
         entry = ConfidenceCacheEntry(
             prompt=looked_up_entry.prompt,
             raw_response=looked_up_entry.raw_response,
-            confidence_score=looked_up_entry.confidence_score,
+            confidence_score=json.loads(looked_up_entry.confidence_score),
             creation_time_ms=looked_up_entry.creation_time_ms,
             ttl_ms=looked_up_entry.ttl_ms,
         )
@@ -51,7 +51,7 @@ class ConfidenceCacheEntryModel(Base):
         db_object = cls(
             prompt=cache_entry.prompt,
             raw_response=cache_entry.raw_response,
-            confidence_score=cache_entry.confidence_score,
+            confidence_score=json.dumps(cache_entry.confidence_score),
             creation_time_ms=int(time.time() * 1000),
             ttl_ms=cache_entry.ttl_ms,
         )
