@@ -233,6 +233,7 @@ class ConfidenceCacheEntry(BaseModel):
     prompt: Optional[str] = ""
     raw_response: Optional[str] = ""
     confidence_score: Optional[dict] = None
+    score_type: Optional[str] = "logprob_average"
     creation_time_ms: Optional[int] = -1
     ttl_ms: Optional[int] = -1
 
@@ -243,7 +244,7 @@ class ConfidenceCacheEntry(BaseModel):
         """
         Generates a unique ID for the given confidence cache configuration
         """
-        return calculate_md5([self.prompt, self.raw_response])
+        return calculate_md5([self.prompt, self.raw_response, self.score_type])
 
     def get_serialized_output(self) -> str:
         """

@@ -1,7 +1,6 @@
 from .base import Base
 from pydantic import BaseModel
-from sqlalchemy import Column, Integer, Float, Text, JSON
-from sqlalchemy.orm import relationship
+from sqlalchemy import Column, Integer, String, Text, JSON
 import json
 import time
 
@@ -17,6 +16,7 @@ class ConfidenceCacheEntryModel(Base):
     prompt = Column(Text)
     raw_response = Column(Text)
     confidence_score = Column(JSON)
+    score_type = Column(String)
     creation_time_ms = Column(Integer)
     ttl_ms = Column(Integer)
 
@@ -30,6 +30,7 @@ class ConfidenceCacheEntryModel(Base):
             .filter(
                 cls.prompt == cache_entry.prompt,
                 cls.raw_response == cache_entry.raw_response,
+                cls.score_type == cache_entry.score_type,
             )
             .first()
         )
@@ -41,6 +42,7 @@ class ConfidenceCacheEntryModel(Base):
             prompt=looked_up_entry.prompt,
             raw_response=looked_up_entry.raw_response,
             confidence_score=json.loads(looked_up_entry.confidence_score),
+            score_type=looked_up_entry.score_type,
             creation_time_ms=looked_up_entry.creation_time_ms,
             ttl_ms=looked_up_entry.ttl_ms,
         )
@@ -52,6 +54,7 @@ class ConfidenceCacheEntryModel(Base):
             prompt=cache_entry.prompt,
             raw_response=cache_entry.raw_response,
             confidence_score=json.dumps(cache_entry.confidence_score),
+            score_type=cache_entry.score_type,
             creation_time_ms=int(time.time() * 1000),
             ttl_ms=cache_entry.ttl_ms,
         )

@@ -69,8 +69,8 @@ class ConfidenceCalculator:
                 count += 1
         return logprob_cumulative / count if count > 0 else 0
 
-    def p_true(self, model_generation: LLMAnnotation, prompt: str, **kwargs) -> float:
-        p_true_prompt = f"{prompt}{model_generation.raw_response} \n Is the answer to the last example correct? Answer in one word on the same line [Yes/No]: "
+    def p_true(self, model_generation: LLMAnnotation, **kwargs) -> float:
+        p_true_prompt = f"{model_generation.prompt}{model_generation.raw_response} \n Is the answer to the last example correct? Answer in one word on the same line [Yes/No]: "
 
         if self.llm.returns_token_probs():
             response = self.llm.label([p_true_prompt])
@@ -165,17 +165,19 @@ class ConfidenceCalculator:
 
     def get_cached_confidence(self, model_generation: LLMAnnotation) -> Optional[float]:
         cache_entry = ConfidenceCacheEntry(
-            prompt=model_generation.prompt, raw_response=model_generation.raw_response
+            prompt=model_generation.prompt,
+            raw_response=model_generation.raw_response,
+            score_type=self.score_type,
         )
         confidence = self.cache.lookup(cache_entry)
         if confidence:
-            if self.score_type == "logprob_average":
+            if self.score_type == "logprob_average" or "p_true":
                 confidence = confidence[model_generation.raw_response]
         return confidence
 
     def update_cache(self, model_generation: LLMAnnotation):
         confidence = model_generation.confidence_score
-        if self.score_type == "logprob_average":
+        if self.score_type == "logprob_average" or "p_true":
             confidence = {
                 model_generation.raw_response: model_generation.confidence_score
             }
@@ -183,6 +185,7 @@ class ConfidenceCalculator:
             prompt=model_generation.prompt,
             raw_response=model_generation.raw_response,
             confidence_score=confidence,
+            score_type=self.score_type,
             ttl_ms=self.TTL_MS,
         )
         self.cache.update(cache_entry)
