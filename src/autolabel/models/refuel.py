@@ -96,7 +96,9 @@ class RefuelLLM(BaseModel):
                 )
                 generations.append([Generation(text="")])
                 errors.append(
-                    LabelingError(error_type=ErrorType.LLM_PROVIDER_ERROR, error=e)
+                    LabelingError(
+                        error_type=ErrorType.LLM_PROVIDER_ERROR, error_message=str(e)
+                    )
                 )
         return RefuelLLMResult(generations=generations, errors=errors)
 
