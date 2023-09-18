@@ -6,8 +6,8 @@
     "delimiter": ","
   },
   "model": {
-    "provider": "openai",
-    "name": "gpt-3.5-turbo"
+    "provider": "huggingface_pipeline",
+    "name": "google/flan-t5-xxl"
   },
   "prompt": {
     "task_guidelines": "You are an expert at classifying hate speech and identifying the type of hate speech. Read the following tweets and extract the following attributes from the text.",
@@ -37,6 +37,6 @@
     "few_shot_examples": "seed.csv",
     "few_shot_selection": "fixed",
     "few_shot_num": 5,
-    "example_template": "Text: {text}\nOutput: {output_dict}"
+    "example_template": "Text: {text}\nOutput: {output_str}"
   }
 }
