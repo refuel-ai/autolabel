@@ -1,9 +1,12 @@
 from typing import List
+import logging
 
 from sklearn.metrics import classification_report
 
 from autolabel.metrics import BaseMetric
 from autolabel.schema import LLMAnnotation, MetricResult, MetricType
+
+logger = logging.getLogger(__name__)
 
 
 class ClassificationReportMetric(BaseMetric):
@@ -13,6 +16,13 @@ class ClassificationReportMetric(BaseMetric):
     def compute(
         self, llm_labels: List[LLMAnnotation], gt_labels: List[str]
     ) -> List[MetricResult]:
+        # If there are not ground truth labels, return an empty list
+        if not gt_labels:
+            logger.warning(
+                "No ground truth labels were provided. Skipping classification report metric."
+            )
+            return []
+
         filtered_llm_labels = []
         filtered_gt_labels = []
         for llm_label, gt_label in zip(llm_labels, gt_labels):

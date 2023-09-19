@@ -24,6 +24,7 @@ class AutolabelConfig(BaseConfig):
     EXPLANATION_COLUMN_KEY = "explanation_column"
     TEXT_COLUMN_KEY = "text_column"
     DELIMITER_KEY = "delimiter"
+    DISABLE_QUOTING = "disable_quoting"
 
     # Model config keys (config["model"][<key>])
     PROVIDER_KEY = "provider"
@@ -49,6 +50,7 @@ class AutolabelConfig(BaseConfig):
     CHAIN_OF_THOUGHT_KEY = "chain_of_thought"
     LABEL_SELECTION_KEY = "label_selection"
     LABEL_SELECTION_COUNT_KEY = "label_selection_count"
+    ATTRIBUTES_KEY = "attributes"
     TRANSFORM_KEY = "transforms"
 
     # Dataset generation config keys (config["dataset_generation"][<key>])
@@ -121,6 +123,10 @@ class AutolabelConfig(BaseConfig):
     def delimiter(self) -> str:
         """Returns the token used to seperate cells in the dataset. Defaults to a comma ','"""
         return self._dataset_config.get(self.DELIMITER_KEY, ",")
+
+    def disable_quoting(self) -> bool:
+        """Returns true if quoting is disabled. Defaults to false"""
+        return self._dataset_config.get(self.DISABLE_QUOTING, False)
 
     # Model config
     def provider(self) -> str:
@@ -212,6 +218,10 @@ class AutolabelConfig(BaseConfig):
     def label_selection_count(self) -> int:
         """Returns the number of labels to select in LabelSelector"""
         return self._prompt_config.get(self.LABEL_SELECTION_COUNT_KEY, 10)
+
+    def attributes(self) -> List[Dict]:
+        """Returns a list of attributes to extract from the text."""
+        return self._prompt_config.get(self.ATTRIBUTES_KEY, [])
 
     def transforms(self) -> List[Dict]:
         """Returns a list of transforms to apply to the data before sending to the model."""

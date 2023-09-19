@@ -2,6 +2,7 @@ from datetime import datetime
 from enum import Enum
 from typing import Any, Dict, List, Optional, Union
 
+import json
 import pandas as pd
 from langchain.schema import Generation
 from pydantic import BaseModel
@@ -30,6 +31,7 @@ class TaskType(str, Enum):
     QUESTION_ANSWERING = "question_answering"
     ENTITY_MATCHING = "entity_matching"
     MULTILABEL_CLASSIFICATION = "multilabel_classification"
+    ATTRIBUTE_EXTRACTION = "attribute_extraction"
 
 
 class FewShotAlgorithm(str, Enum):
@@ -61,6 +63,11 @@ class MetricType(str, Enum):
     F1_MACRO = "f1_macro"
     F1_WEIGHTED = "f1_weighted"
     TEXT_PARTIAL_MATCH = "text_partial_match"
+    # Token Classification metrics
+    F1_EXACT = "f1_exact"
+    F1_STRICT = "f1_strict"
+    F1_PARTIAL = "f1_partial"
+    F1_ENT_TYPE = "f1_ent_type"
     # Confidence metrics
     AUROC = "auroc"
     THRESHOLD = "threshold"
@@ -202,6 +209,24 @@ class GenerationCacheEntry(BaseModel):
 
     class Config:
         orm_mode = True
+
+    def get_id(self) -> str:
+        """
+        Generates a unique ID for the given generation cache configuration
+        """
+        return calculate_md5([self.model_name, self.model_params, self.prompt])
+
+    def get_serialized_output(self) -> str:
+        """
+        Returns the serialized cache entry output
+        """
+        return json.dumps([gen.dict() for gen in self.generations])
+
+    def deserialize_output(self, output: str) -> List[Generation]:
+        """
+        Deserializes the cache entry output
+        """
+        return [Generation(**gen) for gen in json.loads(output)]
 
 
 class RefuelLLMResult(BaseModel):

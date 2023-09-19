@@ -10,7 +10,11 @@ from rich import print as pprint
 from rich.console import Console
 from rich.prompt import Confirm
 
-from autolabel.cache import SQLAlchemyGenerationCache, SQLAlchemyTransformCache
+from autolabel.cache import (
+    BaseCache,
+    SQLAlchemyGenerationCache,
+    SQLAlchemyTransformCache,
+)
 from autolabel.confidence import ConfidenceCalculator
 from autolabel.configs import AutolabelConfig
 from autolabel.dataset import AutolabelDataset
@@ -60,15 +64,28 @@ class LabelingAgent:
     def __init__(
         self,
         config: Union[AutolabelConfig, str, dict],
-        cache: Optional[bool] = True,
+        cache: Optional[bool] = False,
         example_selector: Optional[BaseExampleSelector] = None,
         create_task: Optional[bool] = True,
         console_output: Optional[bool] = True,
+        generation_cache: Optional[BaseCache] = None,
+        transform_cache: Optional[BaseCache] = None,
     ) -> None:
         self.create_task = create_task
         self.db = StateManager() if self.create_task else None
-        self.generation_cache = SQLAlchemyGenerationCache() if cache else None
-        self.transform_cache = SQLAlchemyTransformCache() if cache else None
+        self.generation_cache = generation_cache
+        self.transform_cache = transform_cache
+        if cache:
+            logger.warning(
+                f"cache parameter is deprecated and will be removed soon. Please use generation_cache and transform_cache instead."
+            )
+            self.generation_cache = (
+                generation_cache if generation_cache else SQLAlchemyGenerationCache()
+            )
+            self.transform_cache = (
+                transform_cache if transform_cache else SQLAlchemyTransformCache()
+            )
+
         self.console = Console(quiet=not console_output)
 
         self.config = (
@@ -260,7 +277,12 @@ class LabelingAgent:
                 if dataset.gt_labels:
                     eval_result = self.task.eval(
                         llm_labels,
-                        dataset.gt_labels[: len(llm_labels)],
+                        dataset.gt_labels[: len(llm_labels)]
+                        if isinstance(dataset.gt_labels, list)
+                        else {
+                            k: v[: len(llm_labels)]
+                            for k, v in dataset.gt_labels.items()
+                        },
                         additional_metrics=additional_metrics,
                     )
 
@@ -289,7 +311,9 @@ class LabelingAgent:
         if not skip_eval and dataset.gt_labels:
             eval_result = self.task.eval(
                 llm_labels,
-                dataset.gt_labels[: len(llm_labels)],
+                dataset.gt_labels[: len(llm_labels)]
+                if isinstance(dataset.gt_labels, list)
+                else {k: v[: len(llm_labels)] for k, v in dataset.gt_labels.items()},
                 additional_metrics=additional_metrics,
             )
             # TODO: serialize and write to file
@@ -468,8 +492,12 @@ class LabelingAgent:
         )
         llm_labels = self.get_all_annotations()
         if gt_labels and len(llm_labels) > 0:
-            self.console.print("Evaluating the existing task...")
-            gt_labels = gt_labels[: len(llm_labels)]
+            pprint("Evaluating the existing task...")
+            gt_labels = (
+                gt_labels[: len(llm_labels)]
+                if isinstance(gt_labels, list)
+                else {k: v[: len(llm_labels)] for k, v in gt_labels.items()}
+            )
             eval_result = self.task.eval(
                 llm_labels, gt_labels, additional_metrics=additional_metrics
             )
