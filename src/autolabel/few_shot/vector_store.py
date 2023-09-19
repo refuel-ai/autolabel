@@ -180,7 +180,7 @@ class VectorStoreWrapper(VectorStore):
                     params = {
                         "x": self._embedding_function.model
                         if self._embedding_function.__class__.__name__
-                        != "HuggingFaceEmbeddings"
+                        not in ["HuggingFaceEmbeddings", "VertexAIEmbeddings"]
                         else self._embedding_function.model_name,
                         "y": text,
                     }
@@ -220,7 +220,7 @@ class VectorStoreWrapper(VectorStore):
                     params = {
                         "x": self._embedding_function.model
                         if self._embedding_function.__class__.__name__
-                        != "HuggingFaceEmbeddings"
+                        not in ["HuggingFaceEmbeddings", "VertexAIEmbeddings"]
                         else self._embedding_function.model_name,
                         "y": text,
                         "z": pickle.dumps(embedding),
