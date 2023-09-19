@@ -20,7 +20,13 @@ from autolabel.configs import AutolabelConfig
 from autolabel.dataset import AutolabelDataset
 from autolabel.data_models import AnnotationModel, TaskRunModel
 from autolabel.database import StateManager
-from autolabel.few_shot import ExampleSelectorFactory, BaseExampleSelector
+from autolabel.few_shot import (
+    ExampleSelectorFactory,
+    BaseExampleSelector,
+    DEFAULT_EMBEDDING_PROVIDER,
+    PROVIDER_TO_MODEL,
+)
+from autolabel.few_shot.label_selector import LabelSelector
 from autolabel.models import BaseModel, ModelFactory
 from autolabel.metrics import BaseMetric
 from autolabel.transforms import BaseTransform, TransformFactory
@@ -29,6 +35,7 @@ from autolabel.schema import (
     MetricResult,
     TaskRun,
     TaskStatus,
+    TaskType,
 )
 from autolabel.tasks import TaskFactory
 from autolabel.utils import (
@@ -182,6 +189,20 @@ class LabelingAgent:
                 cache=self.generation_cache is not None,
             )
 
+        if self.config.label_selection():
+            if self.config.task_type() != TaskType.CLASSIFICATION:
+                self.console.print(
+                    "Warning: label_selection only supported for classification tasks!"
+                )
+            else:
+                self.label_selector = LabelSelector.from_examples(
+                    labels=self.config.labels_list(),
+                    embedding_func=PROVIDER_TO_MODEL.get(
+                        self.config.embedding_provider(), DEFAULT_EMBEDDING_PROVIDER
+                    )(),
+                    k=self.config.label_selection_count(),
+                )
+
         current_index = self.task_run.current_index if self.create_task else 0
         cost = 0.0
         postfix_dict = {}
@@ -202,8 +223,17 @@ class LabelingAgent:
                 )
             else:
                 examples = []
-                # Construct Prompt to pass to LLM
-            final_prompt = self.task.construct_prompt(chunk, examples)
+            # Construct Prompt to pass to LLM
+            if (
+                self.config.label_selection()
+                and self.config.task_type() == TaskType.CLASSIFICATION
+            ):
+                selected_labels = self.label_selector.select_labels(chunk["example"])
+                final_prompt = self.task.construct_prompt(
+                    chunk, examples, selected_labels
+                )
+            else:
+                final_prompt = self.task.construct_prompt(chunk, examples)
 
             response = self.llm.label([final_prompt])
             for i, generations, error in zip(
@@ -356,6 +386,20 @@ class LabelingAgent:
             cache=self.generation_cache is not None,
         )
 
+        if self.config.label_selection():
+            if self.config.task_type() != TaskType.CLASSIFICATION:
+                self.console.print(
+                    "Warning: label_selection only supported for classification tasks!"
+                )
+            else:
+                self.label_selector = LabelSelector.from_examples(
+                    labels=self.config.labels_list(),
+                    embedding_func=PROVIDER_TO_MODEL.get(
+                        self.config.embedding_provider(), DEFAULT_EMBEDDING_PROVIDER
+                    )(),
+                    k=self.config.label_selection_count(),
+                )
+
         input_limit = min(len(dataset.inputs), 100)
 
         for input_i in track(
@@ -370,7 +414,16 @@ class LabelingAgent:
                 )
             else:
                 examples = []
-            final_prompt = self.task.construct_prompt(input_i, examples)
+            if (
+                self.config.label_selection()
+                and self.config.task_type() == TaskType.CLASSIFICATION
+            ):
+                selected_labels = self.label_selector.select_labels(input_i["example"])
+                final_prompt = self.task.construct_prompt(
+                    input_i, examples, selected_labels
+                )
+            else:
+                final_prompt = self.task.construct_prompt(input_i, examples)
             prompt_list.append(final_prompt)
 
             # Calculate the number of tokens

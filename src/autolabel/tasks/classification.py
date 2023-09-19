@@ -48,13 +48,18 @@ class ClassificationTask(BaseTask):
         if self.config.confidence():
             self.metrics.append(AUROCMetric())
 
-    def construct_prompt(self, input: Dict, examples: List) -> str:
+    def construct_prompt(
+        self, input: Dict, examples: List, selected_labels: List[str] = None
+    ) -> str:
         # Copy over the input so that we can modify it
         input = input.copy()
 
         # prepare task guideline
-        labels_list = self.config.labels_list()
+        labels_list = (
+            self.config.labels_list() if not selected_labels else selected_labels
+        )
         num_labels = len(labels_list)
+
         fmt_task_guidelines = self.task_guidelines.format(
             num_labels=num_labels, labels="\n".join(labels_list)
         )
