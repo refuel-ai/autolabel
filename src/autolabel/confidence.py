@@ -70,7 +70,6 @@ class ConfidenceCalculator:
                 count += 1
         return logprob_cumulative / count if count > 0 else 0
 
-
     def logprob_average_per_key(
         self,
         logprobs: list,

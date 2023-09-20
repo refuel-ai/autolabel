@@ -105,7 +105,9 @@ class LabelingAgent:
         score_type = "logprob_average"
         if self.config.task_type() == TaskType.ATTRIBUTE_EXTRACTION:
             score_type = "logprob_average_per_key"
-        self.confidence = ConfidenceCalculator(score_type=score_type, llm=self.llm, cache=self.confidence_cache)
+        self.confidence = ConfidenceCalculator(
+            score_type=score_type, llm=self.llm, cache=self.confidence_cache
+        )
 
         self.example_selector = example_selector
 
