@@ -76,11 +76,13 @@ class AutolabelDataset:
                 else df[label_column].tolist()
             )
         else:
-            attributes = [attr["name"] for attr in self.config.attributes()]
-            gt_labels = {
-                name: df[name].tolist() if name in df.keys() else None
-                for name in attributes
-            }
+            gt_labels = {}
+            for attr in self.config.attributes():
+                name = attr["name"]
+                column_name = attr["label_column"] if "label_column" in attr else name
+                gt_labels[name] = (
+                    df[column_name].tolist() if column_name in df.keys() else None
+                )
 
         self.df = df
         self.inputs = inputs
@@ -148,6 +150,11 @@ class AutolabelDataset:
             self.df[self.generate_label_name("confidence")] = [
                 x.confidence_score for x in llm_labels
             ]
+            if self.config.task_type() == TaskType.ATTRIBUTE_EXTRACTION:
+                for attr in self.config.attributes():
+                    self.df[self.generate_label_name("confidence", attr["name"])] = [
+                        x.confidence_score[attr["name"]] for x in llm_labels
+                    ]
 
         # Add the LLM explanations to the dataframe if chain of thought is set in config
         if self.config.chain_of_thought():

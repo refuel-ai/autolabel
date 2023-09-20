@@ -95,9 +95,10 @@ class LabelingAgent:
         self.llm: BaseModel = ModelFactory.from_config(
             self.config, cache=self.generation_cache
         )
-        self.confidence = ConfidenceCalculator(
-            score_type="logprob_average", llm=self.llm
-        )
+        score_type = "logprob_average"
+        if self.config.task_type() == TaskType.ATTRIBUTE_EXTRACTION:
+            score_type = "logprob_average_per_key"
+        self.confidence = ConfidenceCalculator(score_type=score_type, llm=self.llm)
         self.example_selector = example_selector
 
         # Only used if we don't use task management
