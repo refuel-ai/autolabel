@@ -106,9 +106,10 @@ class ConfidenceCalculator:
                 confidence = self.get_cached_confidence(model_generation)
                 if confidence:
                     return confidence
-            logprobs = self.compute_confidence(
-                model_generation.prompt, model_generation.raw_response
-            )
+            if self.score_type != "p_true":
+                logprobs = self.compute_confidence(
+                    model_generation.prompt, model_generation.raw_response
+                )
         else:
             if model_generation.generation_info is None:
                 logger.debug("No generation info found")
