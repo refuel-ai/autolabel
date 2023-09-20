@@ -48,8 +48,9 @@ class AutolabelConfig(BaseConfig):
     OUTPUT_GUIDELINE_KEY = "output_guidelines"
     OUTPUT_FORMAT_KEY = "output_format"
     CHAIN_OF_THOUGHT_KEY = "chain_of_thought"
+    LABEL_SELECTION_KEY = "label_selection"
+    LABEL_SELECTION_COUNT_KEY = "label_selection_count"
     ATTRIBUTES_KEY = "attributes"
-
     TRANSFORM_KEY = "transforms"
 
     # Dataset generation config keys (config["dataset_generation"][<key>])
@@ -207,6 +208,16 @@ class AutolabelConfig(BaseConfig):
     def chain_of_thought(self) -> bool:
         """Returns true if the model is able to perform chain of thought reasoning."""
         return self._prompt_config.get(self.CHAIN_OF_THOUGHT_KEY, False)
+
+    def label_selection(self) -> bool:
+        """Returns true if label selection is enabled. Label selection is the process of
+        narrowing down the list of possible labels by similarity to a given input. Useful for
+        classification tasks with a large number of possible classes."""
+        return self._prompt_config.get(self.LABEL_SELECTION_KEY, False)
+
+    def label_selection_count(self) -> int:
+        """Returns the number of labels to select in LabelSelector"""
+        return self._prompt_config.get(self.LABEL_SELECTION_COUNT_KEY, 10)
 
     def attributes(self) -> List[Dict]:
         """Returns a list of attributes to extract from the text."""

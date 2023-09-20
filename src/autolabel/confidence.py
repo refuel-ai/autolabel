@@ -38,6 +38,7 @@ class ConfidenceCalculator:
         self.SUPPORTED_CALCULATORS = {
             "logprob_average": self.logprob_average,
             "p_true": self.p_true,
+            "logprob_average_per_key": self.logprob_average_per_key,
         }
         self.BASE_API = "https://refuel-llm.refuel.ai/"
         self.REFUEL_API_ENV = "REFUEL_API_KEY"
@@ -68,6 +69,37 @@ class ConfidenceCalculator:
                 )
                 count += 1
         return logprob_cumulative / count if count > 0 else 0
+
+
+    def logprob_average_per_key(
+        self,
+        logprobs: list,
+        keys: list,
+        **kwargs,
+    ):
+        """
+        This function calculates the confidence score per key. This will return
+        a confidence score per key.
+        """
+
+        # Find all '"' and '",'
+        # This is a hacky way to find all the keys in the prompt
+        indices = []
+        for ind, logprob in enumerate(logprobs):
+            key = list(logprob.keys())[0]
+            if key == '"' or key == '",':
+                indices.append(ind)
+        if len(indices) != 4 * len(keys):
+            logger.error("Unable to find all keys in prompt")
+            return {key: 0 for key in keys}
+
+        # Find the logprob for each key
+        logprob_per_key = {}
+        for i, key in enumerate(keys):
+            logprob_per_key[key] = self.logprob_average(
+                logprobs[indices[4 * i + 2] + 1 : indices[4 * i + 3]]
+            )
+        return logprob_per_key
 
     def p_true(self, model_generation: LLMAnnotation, **kwargs) -> float:
         p_true_prompt = f"{model_generation.prompt}{model_generation.raw_response} \n Is the answer to the last example correct? Answer in one word on the same line [Yes/No]: "
@@ -117,9 +149,17 @@ class ConfidenceCalculator:
                 return model_generation
             logprobs = model_generation.generation_info["logprobs"]["top_logprobs"]
 
+        keys = None
+        if self.score_type == "logprob_average_per_key":
+            assert isinstance(
+                model_generation.label, dict
+            ), "logprob_average_per_key requires a dict label from attribute extraction"
+            keys = model_generation.label.keys()
+
         confidence = self.SUPPORTED_CALCULATORS[self.score_type](
             model_generation=model_generation,
             logprobs=logprobs,
+            keys=keys,
             **kwargs,
         )
         model_generation.confidence_score = confidence
