@@ -7,13 +7,13 @@
     },
     "model": {
         "provider": "llama",
-        "name": "/workspace/hf-10x-90p"
+        "name": "/workspace/hf-grouped-sampling-sqrt-scaling-33p"
     },
     "embedding": {
         "provider": "openai"
     },
     "prompt": {
-        "task_guidelines": "Categorize the comment on the basis of toxicity. If the comment is toxic (harmful, malicious, derogatory, threat, insult, identity attck, etc.) output Yes, otherwise output No.",
+        "task_guidelines": "Output Yes if the input is toxic (harmful, malicious, derogatory, threat, insult, identity attck, etc.). Output No if the input is not toxic.",
         "output_guidelines": "",
         "labels": [
             "Yes",

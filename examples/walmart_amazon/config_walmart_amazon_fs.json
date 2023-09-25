@@ -7,7 +7,7 @@
     },
     "model": {
         "provider": "llama",
-        "name": "/workspace/hf-10x-90p"
+        "name": "/workspace/hf-grouped-sampling-sqrt-scaling-33p"
     },
     "embedding": {
         "provider": "openai"
@@ -22,6 +22,6 @@
         "example_template": "Title of entity1: {Title_entity1}; category of entity1: {Category_entity1}; brand of entity1: {Brand_entity1}; model number of entity1: {ModelNo_entity1}; price of entity1: {Price_entity1}\\nTitle of entity2: {Title_entity2}; category of entity2: {Category_entity2}; brand of entity2: {Brand_entity2}; model number of entity2: {ModelNo_entity2}; price of entity2: {Price_entity2}\\nDuplicate or not: {label}",
         "few_shot_examples": "seed.csv",
         "few_shot_selection": "label_diversity_similarity",
-        "few_shot_num": 4
+        "few_shot_num": 6
     }
 }

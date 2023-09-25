@@ -7,13 +7,13 @@
     },
     "model": {
         "provider": "llama",
-        "name": "/workspace/hf-10x-90p"
+        "name": "/workspace/hf-grouped-sampling-sqrt-scaling-33p"
     },
     "embedding": {
         "provider": "openai"
     },
     "prompt": {
-        "task_guidelines": "Your job is to correctly label the following into one of the following categories {labels}",
+        "task_guidelines": "Your job is to correctly output the label for the last input from one of the following categories {labels}",
         "output_guidelines": "\\n",
         "labels": [
             "activate_my_card",
@@ -97,6 +97,6 @@
         "few_shot_examples": "seed.csv",
         "few_shot_selection": "semantic_similarity",
         "few_shot_num": 10,
-        "example_template": "{example}{label}"
+        "example_template": "Input: {example}\\nOutput: {label}"
     }
 }

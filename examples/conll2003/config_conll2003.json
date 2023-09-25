@@ -8,7 +8,7 @@
     },
     "model": {
         "provider": "llama",
-        "name": "/workspace/hf-10x-90p"
+        "name": "/workspace/hf-grouped-sampling-sqrt-scaling-16p"
     },
     "prompt": {
         "task_guidelines": "Your job is to extract named entities mentioned in text exactly as they appear, and classify them into categories.\nCategories:\n{labels}\n",

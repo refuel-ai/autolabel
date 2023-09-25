@@ -1,0 +1,27 @@
+{
+    "task_name": "CompanyEntityMatch",
+    "task_type": "entity_matching",
+    "dataset": {
+        "label_column": "label",
+        "delimiter": ","
+    },
+    "model": {
+        "provider": "llama",
+        "name": "/workspace/hf-grouped-sampling-sqrt-scaling-50p"
+    },
+    "embedding": {
+        "provider": "openai"
+    },
+    "prompt": {
+        "task_guidelines": "Given the description of two entities, correctly tell me whether they are the same company (duplicate) or not (not duplicate). Names of the two entities are required to match in order for them to be duplicates. Atleast one address should be common between two entities if they are the same. If Person names are mentioned, atleast one person's name should be shared. Output either \"duplicate\" or \"not duplicate\" only.",
+        "output_guidelines": "",
+        "labels": [
+            "not duplicate",
+            "duplicate"
+        ],
+        "example_template": "\\nInput: Entity 1 description: {entity1} Entity 2 description: {entity2}.\\nOutput: {label}",
+        "few_shot_examples": "seed.csv",
+        "few_shot_selection": "label_diversity_similarity",
+        "few_shot_num": 10
+    }
+}

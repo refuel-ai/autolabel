@@ -7,14 +7,14 @@
     },
     "model": {
         "provider": "llama",
-        "name": "/workspace/hf-10x-90p"
+        "name": "/workspace/hf-grouped-sampling-sqrt-scaling-66p"
     },
     "prompt": {
         "task_guidelines": "Your job is to answer the following questions using the context provided with the question. If the question cannot be answered using the context and the context alone without any outside knowledge, answer the question as unanswerable.",
         "output_guidelines": "You will return the answer one element: \"the correct answer\". If the question is unanswerable, return the answer as \"unanswerable\"\n",
         "few_shot_examples": "seed.csv",
         "few_shot_selection": "semantic_similarity",
-        "few_shot_num": 4,
-        "example_template": "Context: {context}\nQuestion: {question}\nAnswer: {answer}"
+        "few_shot_num": 9,
+        "example_template": "Context: {context}\\nQuestion: {question}\\nAnswer: {answer}"
     }
 }

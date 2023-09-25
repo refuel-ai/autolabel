@@ -7,13 +7,13 @@
     },
     "model": {
         "provider": "llama",
-        "name": "/workspace/hf-10x-90p"
+        "name": "/workspace/hf-grouped-sampling-sqrt-scaling-100p"
     },
     "prompt": {
-        "task_guidelines": "Your job is to answer the given question, using the options provided for each question.",
-        "example_template": "Q: {question} Choices: {options} A: {answer}",
+        "task_guidelines": "Choose the option from the choices provided that best answers the question at the end.",
+        "example_template": "Q: {question} Choices:{options} A: {answer}",
         "few_shot_examples": "seed.csv",
         "few_shot_selection": "semantic_similarity",
-        "few_shot_num": 10
+        "few_shot_num": 8
     }
 }
