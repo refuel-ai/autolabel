@@ -40,6 +40,7 @@ EXAMPLE_DATASETS = [
     "twitter_emotion_detection",
     "ethos",
     "craigslist",
+    "math",
 ]
 
 NO_SEED_DATASET = [
