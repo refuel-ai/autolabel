@@ -41,6 +41,7 @@ EXAMPLE_DATASETS = [
     "ethos",
     "craigslist",
     "math",
+    "lexical_relation",
 ]
 
 NO_SEED_DATASET = [
