@@ -42,6 +42,7 @@ EXAMPLE_DATASETS = [
     "craigslist",
     "math",
     "lexical_relation",
+    "quoref",
 ]
 
 NO_SEED_DATASET = [
