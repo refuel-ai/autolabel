@@ -38,6 +38,10 @@ EXAMPLE_DATASETS = [
     "conll2003",
     "movie_reviews",
     "twitter_emotion_detection",
+    "craigslist",
+    "math",
+    "lexical_relation",
+    "quoref",
 ]
 
 NO_SEED_DATASET = [

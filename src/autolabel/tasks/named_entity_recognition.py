@@ -294,7 +294,7 @@ class NamedEntityRecognitionTask(BaseTask):
 
         gt_labels = [
             self.add_text_spans(
-                json.loads(gt_labels[index]), str(llm_labels[index].curr_sample)[2:]
+                json.loads(gt_labels[index]), llm_labels[index].curr_sample.decode()
             )
             for index in range(len(gt_labels))
         ]
