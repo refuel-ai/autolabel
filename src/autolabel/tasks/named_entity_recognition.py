@@ -301,10 +301,9 @@ class NamedEntityRecognitionTask(BaseTask):
         Returns:
             List[MetricResult]: list of metrics and corresponding values
         """
-
         gt_labels = [
             self.add_text_spans(
-                json.loads(gt_labels[index]), llm_labels[index].curr_sample
+                json.loads(gt_labels[index]), llm_labels[index].curr_sample.decode()
             )
             for index in range(len(gt_labels))
         ]
