@@ -127,7 +127,7 @@ class NamedEntityRecognitionTask(BaseTask):
 
         for label in processed_output:
             text = label["text"]
-            matches = [i.start() for i in re.finditer(text, input)]
+            matches = [i.start() for i in re.finditer(re.escape(text), input)]
             count = frequency_count[text]
             # if count of the named entity is greater than the number of matches, default to last found match
             if count >= len(matches):
