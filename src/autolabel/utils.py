@@ -43,6 +43,9 @@ EXAMPLE_DATASETS = [
     "math",
     "lexical_relation",
     "quoref",
+    "quail",
+    "acronym",
+    "numeric",
 ]
 
 NO_SEED_DATASET = [
