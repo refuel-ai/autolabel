@@ -7,13 +7,13 @@
     },
     "model": {
         "provider": "llama",
-        "name": "/workspace/hf-grouped-sampling-sqrt-scaling-33p"
+        "name": "/workspace/hf-relevant-sampling-2483"
     },
     "embedding": {
         "provider": "openai"
     },
     "prompt": {
-        "task_guidelines": "Output Yes if the input is toxic (harmful, malicious, derogatory, threat, insult, identity attck, etc.). Output No if the input is not toxic.",
+        "task_guidelines": "Output Yes if the input contains any toxicity (harmful, malicious, derogatory, threat, insult, identity attck, etc.). Output No if the input is not toxic at all. If you aren't sure about the label, output not sure",
         "output_guidelines": "",
         "labels": [
             "Yes",

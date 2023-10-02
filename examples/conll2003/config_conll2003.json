@@ -8,10 +8,10 @@
     },
     "model": {
         "provider": "llama",
-        "name": "/workspace/hf-grouped-sampling-sqrt-scaling-16p"
+        "name": "NousResearch/Llama-2-13b-chat-hf"
     },
     "prompt": {
-        "task_guidelines": "Your job is to extract named entities mentioned in text exactly as they appear, and classify them into categories.\nCategories:\n{labels}\n",
+        "task_guidelines": "Your job is to extract named entities mentioned in text exactly as they appear, and classify them into categories. Ensure that the output is in a JSON format, where keys are categories and values is a list of substrings corresponding to that category. Output only the JSON object and nothing else. \nCategories:\n{labels}\n",
         "labels": [
             "Location",
             "Organization",

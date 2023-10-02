@@ -7,32 +7,21 @@
     },
     "model": {
         "provider": "llama",
-        "name": "/workspace/hf-grouped-sampling-sqrt-scaling-33p"
+        "name": "/workspace/hf-relevant-sampling-2483"
     },
     "embedding": {
         "provider": "openai"
     },
     "prompt": {
-        "task_guidelines": "Given information about Company 1 and Company 2, your job is to correctly tell me whether they are the same (duplicate) or not (not duplicate). Output either duplicate or not duplicate only.",
+        "task_guidelines": "Given the description of two entities, correctly tell me whether they are the same entity (duplicate) or not (not duplicate). If any of the following conditions are violated, the two entities not duplicates: Atleast one of the listed names for both entities should match. The city of one of the addresses listed for entity 1 should match exactly with the city of one of the addresses listed for entity 2. If Person names are mentioned in both entities, atleast one person's name should be common. Entity types should also match exactly, unless they are nan, in which case it is not required to match. Output either \"duplicate\" or \"not duplicate\" only.",
         "output_guidelines": "",
         "labels": [
-            "duplicate",
-            "not duplicate"
+            "not duplicate",
+            "duplicate"
         ],
-        "example_template": "\\nInput: Company 1 description: {entity1} Company 2 description: {entity2}.\\nOutput: {label}",
-        "few_shot_examples": [
-            {
-                "entity1": "lac wisconsin branding 95 1 & 96 1 the rock frequency 96.1 mhz translator s 95.1 w236ag fond du lac first air date 1965 as wcwc fm at 95.9 format mainstream rock erp 4 000 watts haat 123 meters 404 ft class a facility id 54510 transmitter coordinates 43 49 10.00 n 88 43 20.00 w 43.8194444 n 88.7222222 w 43.8194444 ; 88.7222222 coordinates 43 49 10.00 n 88 43 20.00 w 43.8194444 n 88.7222222 w 43.8194444 ; 88.7222222 former callsigns wcwc fm 1965 1980 wyur 1980 1994 former frequencies 95.9 mhz 1965 affiliations cbs radio network westwood one premiere radio networks owner radio plus inc. sister stations wfdl wfdl fm wmdc webcast listen live website 961tcx . com studios in fond du lac wtcx 96.1 fm 95 1 & 96 1 the rock is a radio station broadcasting a mainstream rock music format . 1 licensed to ripon wisconsin usa the station is currently owned by radio plus inc. and features programing from cbs radio network dial global and premiere radio networks . 2 wtcx was originally on 95.9 mhz . be",
-                "entity2": "closings contact next racing rocks local news breaking wiaa releases football playoffs matchups and brackets october 15 2016 local news here are the full brackets for the state of wisconsin division 1 2 seed fond du lac hosts 7 seed milwaukee washington friday october 21 at 7pm division 5 3 seed wla hosts 6 seed ... read more 10 15 16 fdl man injured in hit and run car vs. bike crash october 15 2016 local news a fond du lac man received non life threatening injuries in a car versus bicycle hit and run crash in dodge county . the dodge county sheriff s office says shortly after 8pm friday a car ... read more 10 15 16 ripon woman remains in critical condition following one vehicle crash october 15 2016 local news a ripon woman injured in a one vehicle crash after apparently falling asleep at the wheel remains in critical condition . the fond du lac county sheriff s office says 29 year old raquel amador ... read more wiaa releases football groupings october 15 2016 local news 2016 wiaa fo",
-                "label": "duplicate"
-            },
-            {
-                "entity1": "stacy spikes hamet watt headquarters new york city united states website http www.moviepass.com moviepass is a subscription based service for going to movie theaters available in the united states . the service gives members across the country the ability to see up to one 2d movie every 24 hours for a fixed monthly fee . members may choose which theaters they wish to attend and there are no blackout dates . moviepass works in nearly all movie theaters that accept the mastercard credit card making it one of the largest subscription based theater networks in america . prices vary by local market and start at 30 per month . moviepass was launched in february 2011 and is headquartered in new york city . 1 contents 1 service 2 purchasing a ticket 3 history 4 media coverage 5 references service edit the moviepass service works via a smartphone app iphone android and a specially designed reloadable debit card which is mailed to new subscribers when they sign up . purchasing a ticket edit in o",
-                "entity2": "repair buy warranty get service buy warranty home warranty pricing & plans planning on moving home matters blog what s covered service professionals customer reviews benefits faqs appliance discount contract policies decor cost savers lawn & garden lifestyle quick tips real estate repair & maintenance tech close home warranty learn more what s covered service professionals faqs pricing and plans get a quote see plans planning on moving real estate plans buying a home selling a home home matters blog decor cost savers lawn & garden lifestyle quick tips real estate repair & maintenance tech our partner sites real estate professionals contractors 888 429 8247 email us log in back to top get a personalized quote explore plans in your area get covered in 3 easy steps . please correct highlighted fields request service log in create account oven on the fritz appliance breakdowns happen . get covered . get a personalized quote explore plans in your area get covered in 3 easy steps . please co",
-                "label": "not duplicate"
-            }
-        ],
-        "few_shot_selection": "fixed",
-        "few_shot_num": 2
+        "example_template": "\\nInput: Entity 1 description: {entity1} \\nEntity 2 description: {entity2}.\\nOutput: {label}",
+        "few_shot_examples": "seed.csv",
+        "few_shot_selection": "label_diversity_similarity",
+        "few_shot_num": 7
     }
 }

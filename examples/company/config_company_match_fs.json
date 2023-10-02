@@ -7,13 +7,13 @@
     },
     "model": {
         "provider": "llama",
-        "name": "/workspace/hf-grouped-sampling-sqrt-scaling-16p"
+        "name": "/workspace/hf-relevant-sampling-2483"
     },
     "embedding": {
         "provider": "openai"
     },
     "prompt": {
-        "task_guidelines": "Given information about Company 1 and Company 2, your job is to correctly tell me whether they are the same (duplicate) or not (not duplicate). Output either duplicate or not duplicate only.",
+        "task_guidelines": "Given information about two companies, your job is to correctly tell me whether they are the same (duplicate) or not (not duplicate). Output either duplicate or not duplicate only. If you aren't sure about the label, output not sure",
         "output_guidelines": "",
         "labels": [
             "not duplicate",

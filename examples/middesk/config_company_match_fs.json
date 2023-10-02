@@ -7,13 +7,13 @@
     },
     "model": {
         "provider": "llama",
-        "name": "/workspace/hf-grouped-sampling-sqrt-scaling-50p"
+        "name": "/workspace/hf-relevant-sampling-2483"
     },
     "embedding": {
         "provider": "openai"
     },
     "prompt": {
-        "task_guidelines": "Given the description of two entities, correctly tell me whether they are the same company (duplicate) or not (not duplicate). Names of the two entities are required to match in order for them to be duplicates. Atleast one address should be common between two entities if they are the same. If Person names are mentioned, atleast one person's name should be shared. Output either \"duplicate\" or \"not duplicate\" only.",
+        "task_guidelines": "Given the description of two entities, correctly tell me whether they are the same company (duplicate) or not (not duplicate). Atleast one of the provided names of the two entities are required to match in order for them to be duplicates. Atleast one address should be common between two entities if they are the same. If Person names are mentioned, atleast one person's name should be shared. Output either \"duplicate\" or \"not duplicate\" only.",
         "output_guidelines": "",
         "labels": [
             "not duplicate",

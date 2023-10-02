@@ -7,13 +7,13 @@
     },
     "model": {
         "provider": "llama",
-        "name": "/workspace/hf-grouped-sampling-sqrt-scaling-33p"
+        "name": "/workspace/hf-relevant-sampling-2483"
     },
     "embedding": {
         "provider": "openai"
     },
     "prompt": {
-        "task_guidelines": "Given information about two entities, your job is to correctly label the given pair of entities as duplicates or not duplicates.",
+        "task_guidelines": "Given information about two entities, your job is to correctly label the given pair of entities as \"duplicate\" or \"not duplicate\". If you aren't sure whether they are duplicates or not, output not sure",
         "output_guidelines": "\\n",
         "labels": [
             "duplicate",
