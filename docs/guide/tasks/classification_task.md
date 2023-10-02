@@ -124,3 +124,47 @@ Actual Cost: 0.0058579999999999995
 
 ### Notebook
 You can find a Jupyter notebook with code that you can run on your own [here](https://github.com/refuel-ai/autolabel/blob/main/examples/banking/example_banking.ipynb)
+
+## Classification Tasks with a Large Number of Classes
+
+For classification tasks with a wide variety of possible classes, it is beneficial to run autolabel with `label_selection` turned on. In this mode, Autolabel will prune the list of possible classes to only include those that are similar to the example being labeled. This not only helps improve accuracy, but also substantially reduces labeling costs, as the size of the prompt decreases when classes are pruned.
+
+To enable label_selection, simply set `label_selection` to `true` in your config file. Similarly, you can choose how many classes to select in the similarity search by setting `label_selection_count` to a value of your choosing.
+
+```json
+    "label_selection": true,
+    "label_selection_count": 10
+```
+
+In this example, the list of classes will be reduced to only the 10 classes most similar to the example being labeled.
+
+```json
+config = {
+    "task_name": "BankingClassification",
+    "task_type": "classification",
+    "dataset": {
+        "label_column": "label",
+        "delimiter": ","
+    },
+    "model": {
+        "provider": "openai",
+        "name": "gpt-3.5-turbo"
+    },
+    "prompt": {
+        "task_guidelines": """You are an expert at understanding banking transaction complaints.\nYour job is to correctly label the provided input example into one of the following {num_labels} categories:\n{labels}""",
+        "output_guidelines": "You will just return one line consisting of the label for the given example.",
+        "labels": [
+            "activate_my_card",
+            "age_limit",
+            "apple_pay_or_google_pay",
+            ...
+        ],
+        "few_shot_examples": "../examples/banking/seed.csv",
+        "few_shot_selection": "semantic_similarity",
+        "few_shot_num": 5,
+        "example_template": "Example: {example}\nOutput: {label}",
+        "label_selection": true,
+        "label_selection_count": 10
+    }
+}
+```
