@@ -31,8 +31,6 @@ def populate_few_shot_selection() -> List[str]:
 
 
 # Schema definition for Autolabel API/ calls
-# 'additionalProperties' is set to False for al properties to handle typos
-# for not required properties/fields.
 schema = {
     "$schema": "http://json-schema.org/draft-04/schema#",
     "title": "Label Config",
@@ -58,12 +56,12 @@ schema = {
                 "explanation_column": {"type": ["string", "null"]},
                 "disable_quoting": {"type": ["boolean", "null"]},
             },
-            "additionalProperties": False,
+            "additionalProperties": True,
         },
         "transforms": {
             "type": "array",
             "items": {"type": "object"},
-            "additionalProperties": False,
+            "additionalProperties": True,
         },
         "model": {
             "type": "object",
@@ -78,7 +76,7 @@ schema = {
                 "params": {"type": ["object", "null"]},
             },
             "required": ["provider", "name"],
-            "additionalProperties": False,
+            "additionalProperties": True,
         },
         "embedding": {
             "type": "object",
@@ -89,7 +87,7 @@ schema = {
                 },
                 "model": {"type": "string"},
             },
-            "additionalProperties": False,
+            "additionalProperties": True,
         },
         "prompt": {
             "type": "object",
@@ -131,7 +129,7 @@ schema = {
                 },
             },
             "required": ["task_guidelines"],
-            "additionalProperties": False,
+            "additionalProperties": True,
         },
         "dataset_generation": {
             "type": "object",
@@ -147,5 +145,5 @@ schema = {
         "model",
         "prompt",
     ],
-    "additionalProperties": False,
+    "additionalProperties": True,
 }
