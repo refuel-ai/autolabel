@@ -1,0 +1,23 @@
+{
+    "task_name": "ExtractNumericSubstring",
+    "task_type": "named_entity_recognition",
+    "dataset": {
+        "label_column": "CategorizedLabels",
+        "text_column": "example",
+        "delimiter": ","
+    },
+    "model": {
+        "provider": "openai",
+        "name": "gpt-3.5-turbo"
+    },
+    "prompt": {
+        "task_guidelines": "Extract the last instance of a number being mentioned in the input text. The only category in this task is {labels}",
+        "labels": [
+            "Number"
+        ],
+        "example_template": "Example: {example}\nOutput:\n{CategorizedLabels}",
+        "few_shot_examples": "seed.csv",
+        "few_shot_selection": "semantic_similarity",
+        "few_shot_num": 7
+    }
+}
