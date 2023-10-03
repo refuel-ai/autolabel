@@ -55,9 +55,8 @@ class NamedEntityRecognitionTask(BaseTask):
             return ast.literal_eval(response)
         except Exception as e:
             logger.error(
-                f"Could not parse LLM output: {response}"
+                f"{e}. Could not parse LLM output: {response}"
             )
-            logger.error(e)
             return {i: [] for i in self.config.labels_list()}
         # split_response = response.split("\n")
         # json_output = {i: [] for i in self.config.labels_list()}
@@ -150,7 +149,6 @@ class NamedEntityRecognitionTask(BaseTask):
                 label["start"] = matches[count]
                 label["end"] = matches[count] + len(text)
             frequency_count[text] += 1
-        print("Input = ", input, "Processed output = ", processed_output)
         return processed_output
 
     def parse_llm_response(

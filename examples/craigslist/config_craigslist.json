@@ -7,17 +7,17 @@
     },
     "model": {
         "provider": "llama",
-        "name": "/workspace/hf-refuel-llm"
+        "name": "/workspace/hf-relevant-sampling-2483"
     },
     "prompt": {
-        "task_guidelines": "Given a text passage as input comprising of dialogue of negotiations between a seller and a buyer about the sale of an item, your task is to correctly classify the item being sold into one of the following categories: {labels}",
+        "task_guidelines": "Given as input negotiations between a seller and a buyer about the sale of an item, correctly output the category of the item being sold from one of the following categories: {labels}. If the item definitely doesn't fit into any category, output \"not sure\". ",
         "output_guidelines": "\\n",
         "labels": [
             "housing", "furniture", "bike", "phone", "car", "electronics"
         ],
         "few_shot_examples": "seed.csv",
         "few_shot_selection": "semantic_similarity",
-        "few_shot_num": 9,
-        "example_template": "Input: {example}.\nOutput: {label}"
+        "few_shot_num": 6,
+        "example_template": "{example}. Category: {label}"
     }
 }

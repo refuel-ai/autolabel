@@ -6,18 +6,18 @@
         "delimiter": ","
     },
     "model": {
-        "provider": "openai",
-        "name": "gpt-3.5-turbo"
+        "provider": "llama",
+        "name": "/workspace/hf-relevant-sampling-2483"
     },
     "prompt": {
-        "task_guidelines": "You are an expert at understanding math questions. You are supposed to identify the category of a high-school level math question. There are five possible categories (1) algebra (2) arithmetic (3) measurement (4) numbers, and (5) probability. Use the following guidelines: (1) 'algebra' questions will typically contain letter variables and will ask you to find the value of a variable (2) 'arithmetic' questions will ask the sum, difference, multiplication, division, power, square root or value of expressions involving brackets (3) 'measurement' questions are questions that ask to convert a quantity from some unit to some other unit (4) 'numbers' questions will be about bases, remainders, divisors, GCD, LCM etc. (5) 'probability' questions will ask about the probability of the occurrence of something. Make sure you output only one of the following categories: {labels}",
-        "output_guidelines": "You will answer with just the the correct output label and nothing else.",
+        "task_guidelines": "Your job is to output the category of the math question in the input. There are five possible categories: algebra, arithmetic, measurement, numbers, and probability. 'algebra' questions will typically contain letter variables and will ask you to find the value of a variable. 'arithmetic' questions will ask the sum, difference, multiplication, division, power, square root or value of expressions involving brackets. 'measurement' questions are questions that ask to convert a quantity from some unit to some other unit. 'numbers' questions will be about bases, remainders, divisors, GCD, LCM etc. 'probability' questions will ask about the probability of the occurrence of something. If you aren't sure about the class, output \"not sure\". ",
+        "output_guidelines": "\\n",
         "labels": [
             "algebra", "arithmetic", "measurement", "numbers", "probability"
         ],
         "few_shot_examples": "seed.csv",
         "few_shot_selection": "semantic_similarity",
-        "few_shot_num": 10,
+        "few_shot_num": 5,
         "example_template": "Input: {example}\nOutput: {label}"
     }
 }
