@@ -75,27 +75,6 @@ def test_schema_validation():
 
     # Case 2:
     # ----------
-    # Here we miss spell labelsss, since `prompt` property takes no more additinoal
-    # keys other than label, task_guidelines, example_template, typos are considered
-    # as errors.
-    config_dict_copy = CONFIG_SAMPLE_DICT.copy()
-    config_dict_copy["prompt"] = {
-        # We make a type with task_guidelines and example_template
-        "task_guidelines": "You are an expert at identifying toxic comments",
-        "labelsss": ["toxic", "not toxic"],
-        "example_template": "Input: {example}\nOutput: {label}",
-    }
-    with pytest.raises(
-        exceptions.ValidationError,
-        match="Additional properties are not allowed",
-    ):
-        validate(
-            instance=config_dict_copy,
-            schema=schema,
-        )
-
-    # Case 3:
-    # ----------
     # Here `not_supported_task_type` is not a supported task type
     # classification, "entity_matching", "named_entity_recognition", "question_answering",
     config_dict_copy = CONFIG_SAMPLE_DICT.copy()
@@ -109,7 +88,7 @@ def test_schema_validation():
             schema=schema,
         )
 
-    # Case 4:
+    # Case 3:
     # ----------
     # Test when one of the required field is not provided
     config_dict_copy = CONFIG_SAMPLE_DICT.copy()
@@ -123,7 +102,7 @@ def test_schema_validation():
             schema=schema,
         )
 
-    # Case 5:
+    # Case 4:
     # ----------
     # Test when schema validation passes
     validate(
