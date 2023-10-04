@@ -46,6 +46,7 @@ EXAMPLE_DATASETS = [
     "quail",
     "acronym",
     "numeric",
+    "diagnosis",
 ]
 
 NO_SEED_DATASET = [
