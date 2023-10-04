@@ -47,6 +47,7 @@ EXAMPLE_DATASETS = [
     "acronym",
     "numeric",
     "diagnosis",
+    "tweebank",
 ]
 
 NO_SEED_DATASET = [
