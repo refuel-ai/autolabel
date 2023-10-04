@@ -1,0 +1,23 @@
+{
+    "task_name": "ExtractNumericSubstring",
+    "task_type": "named_entity_recognition",
+    "dataset": {
+        "label_column": "CategorizedLabels",
+        "text_column": "example",
+        "delimiter": ","
+    },
+    "model": {
+        "provider": "llama",
+        "name": "/workspace/hf-relevant-sampling-2483"
+    },
+    "prompt": {
+        "task_guidelines": "Extract the last instance of a number being mentioned in the input text. The only category in this task is {labels}. Ensure that the output is in a JSON format, where the key is \"Number\" and the value is a list of one string corresponding to that. Note that you must answer with one (the last) instance of a number. Output only the JSON object and nothing else.",
+        "labels": [
+            "Number"
+        ],
+        "example_template": "Example: {example}\nOutput:\n{CategorizedLabels}",
+        "few_shot_examples": "seed.csv",
+        "few_shot_selection": "semantic_similarity",
+        "few_shot_num": 12
+    }
+}

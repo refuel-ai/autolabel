@@ -64,9 +64,13 @@ class Llama(BaseModel):
             try:
                 sampling_param = SamplingParams(top_p=0.9, temperature=0.05, max_tokens=1024)
                 outputs = self.labeling_model.generate(prompt, sampling_params=sampling_param, use_tqdm=False)
+                response = outputs[0].outputs[0].text.strip()
                 prompt_file.write(prompt)
+                prompt_file.write("Response: ")
+                prompt_file.write(response)
                 prompt_file.write("\n============\n")
-                generations.append([Generation(text=outputs[0].outputs[0].text)])
+                
+                generations.append([Generation(text=response)])
                 errors.append(None)
             except Exception as e:
                 # This signifies an error in generating the response using RefuelLLm

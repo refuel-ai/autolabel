@@ -1,0 +1,24 @@
+{
+    "task_name": "AcronymExtraction",
+    "task_type": "named_entity_recognition",
+    "dataset": {
+        "label_column": "CategorizedLabels",
+        "text_column": "example",
+        "delimiter": ","
+    },
+    "model": {
+        "provider": "llama",
+        "name": "/workspace/hf-relevant-sampling-2483"
+    },
+    "prompt": {
+        "task_guidelines": "Your job is to extract all short and long forms of acronyms mentioned in text, and classify them into one of Long and Short. Long refers to substrings that correspond to expanded (long) forms of acronyms while Short refers to substrings that correspond to the shortened acronyms. Output a JSON with keys \"Long\" and \"Short\", and values containing a list with all such strings.",
+        "labels": [
+            "Long",
+            "Short"
+        ],
+        "example_template": "Example: {example}\nOutput:\n{CategorizedLabels}",
+        "few_shot_examples": "seed.csv",
+        "few_shot_selection": "semantic_similarity",
+        "few_shot_num": 10
+    }
+}
