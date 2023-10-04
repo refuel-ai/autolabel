@@ -38,13 +38,17 @@ EXAMPLE_DATASETS = [
     "conll2003",
     "movie_reviews",
     "twitter_emotion_detection",
+    "ethos",
     "craigslist",
     "math",
     "lexical_relation",
     "quoref",
     "quail",
     "acronym",
-    "numeric"
+    "numeric",
+    "diagnosis",
+    "tweebank",
+    "belebele",
 ]
 
 NO_SEED_DATASET = [
@@ -310,7 +314,7 @@ def print_table(
     for i, row in enumerate(zip(*data.values())):
         table.add_row(*row)
     console = console or Console()
-    console.print(table, markup=False)
+    console.print(table)
 
 
 def get_data(dataset_name: str, force: bool = False):
@@ -390,3 +394,14 @@ def in_notebook():
     except AttributeError:
         return False
     return True
+
+
+def safe_serialize_to_string(data: Dict) -> Dict:
+    """Convert all values in a dictionary to strings. Try convetring to string first, otherwise return empty string."""
+    ret = {}
+    for k, v in data.items():
+        try:
+            ret[k] = str(v)
+        except Exception:
+            ret[k] = ""
+    return ret
