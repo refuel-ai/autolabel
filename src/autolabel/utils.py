@@ -47,7 +47,7 @@ EXAMPLE_DATASETS = [
     "acronym",
     "numeric",
     "diagnosis",
-    "tweebank",
+    "slue",
     "belebele",
 ]
 
