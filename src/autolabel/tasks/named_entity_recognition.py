@@ -150,7 +150,7 @@ class NamedEntityRecognitionTask(BaseTask):
         successfully_labeled = False
         error = None
         text_column = self.config.text_column()
-        input_str = curr_sample[text_column]
+        input_str = str(curr_sample[text_column])
         try:
             completion_text = response.text
             output = self._llm_to_json_format(completion_text.strip())
@@ -304,7 +304,7 @@ class NamedEntityRecognitionTask(BaseTask):
 
         gt_labels = [
             self.add_text_spans(
-                json.loads(gt_labels[index]), llm_labels[index].curr_sample
+                json.loads(gt_labels[index]), str(llm_labels[index].curr_sample)[2:]
             )
             for index in range(len(gt_labels))
         ]

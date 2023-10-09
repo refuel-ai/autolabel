@@ -98,6 +98,7 @@ class ErrorType(str, Enum):
     EMPTY_RESPONSE_ERROR = "empty_response_error"
 
 
+
 class LabelingError(BaseModel):
     """Contains information about an error that occurred during the labeling process"""
 

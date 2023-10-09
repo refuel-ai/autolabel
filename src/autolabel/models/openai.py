@@ -35,7 +35,6 @@ class OpenAILLM(BaseModel):
     DEFAULT_PARAMS_COMPLETION_ENGINE = {
         "max_tokens": 1000,
         "temperature": 0.0,
-        "model_kwargs": {"logprobs": 1},
     }
     DEFAULT_PARAMS_CHAT_ENGINE = {
         "max_tokens": 1000,
@@ -49,6 +48,7 @@ class OpenAILLM(BaseModel):
         "gpt-3.5-turbo": 0.0015 / 1000,
         "gpt-3.5-turbo-0301": 0.0015 / 1000,
         "gpt-3.5-turbo-0613": 0.0015 / 1000,
+        "gpt-3.5-turbo-instruct": 0.0015 / 1000,
         "gpt-3.5-turbo-16k": 0.003 / 1000,
         "gpt-3.5-turbo-16k-0613": 0.003 / 1000,
         "gpt-4": 0.03 / 1000,
@@ -64,6 +64,7 @@ class OpenAILLM(BaseModel):
         "gpt-3.5-turbo": 0.002 / 1000,
         "gpt-3.5-turbo-0301": 0.002 / 1000,
         "gpt-3.5-turbo-0613": 0.002 / 1000,
+        "gpt-3.5-turbo-instruct": 0.002 / 1000,
         "gpt-3.5-turbo-16k": 0.004 / 1000,
         "gpt-3.5-turbo-16k-0613": 0.004 / 1000,
         "gpt-4": 0.06 / 1000,
@@ -105,17 +106,11 @@ class OpenAILLM(BaseModel):
                 **self._generate_logit_bias(),
                 **model_params,
             }
-
-        if self._engine == "chat":
-            self.model_params = {**self.DEFAULT_PARAMS_CHAT_ENGINE, **model_params}
-            self.llm = ChatOpenAI(model_name=self.model_name, **self.model_params)
-        else:
-            self.model_params = {
-                **self.DEFAULT_PARAMS_COMPLETION_ENGINE,
-                **model_params,
-            }
-            self.llm = OpenAI(model_name=self.model_name, **self.model_params)
-
+        self.model_params = {**model_params, **self.DEFAULT_PARAMS_COMPLETION_ENGINE}
+        logger.warning(f"Current engine: {self._engine}")
+        self.llm = OpenAI(
+            model_name="gpt-3.5-turbo-instruct", max_tokens=1000, temperature=0.0
+        )
         self.tiktoken = tiktoken
 
     def _generate_logit_bias(self) -> None:

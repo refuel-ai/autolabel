@@ -7,7 +7,7 @@
     },
     "model": {
         "provider": "openai",
-        "name": "gpt-3.5-turbo"
+        "name": "gpt-3.5-turbo-instruct"
     },
     "prompt": {
         "task_guidelines": "You are an expert at understanding legal contracts. Your job is to correctly classify legal provisions in contracts into one of the following categories.\nCategories:{labels}\n",

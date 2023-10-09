@@ -8,7 +8,7 @@
     },
     "model": {
         "provider": "openai",
-        "name": "gpt-3.5-turbo"
+        "name": "gpt-3.5-turbo-instruct"
     },
     "prompt": {
         "task_guidelines": "You are an expert at extracting Person, Organization, Location, and Miscellaneous entities from text. Your job is to extract named entities mentioned in text, and classify them into one of the following categories.\nCategories:\n{labels}\n ",
