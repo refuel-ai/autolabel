@@ -1,0 +1,27 @@
+{
+    "task_name": "FaireDressesClassification",
+    "task_type": "classification",
+    "dataset": {
+        "label_column": "label",
+        "delimiter": ","
+    },
+    "model": {
+        "provider": "openai",
+        "name": "gpt-4"
+    },
+    "prompt": {
+        "task_guidelines": "Given an online product title and description, predict the Dress or Skirt length of the Apparel product. Provide an answer ONLY from the following options: Mini, Knee-length, Midi, Maxi, Hi-Low. If you cannot determine the Dress or Skirt length from the product title or description, output N/A as the answer. Use the following format: answer. Categories: {labels}",
+        "output_guidelines": "You will answer with just the the correct output label and nothing else.",
+        "labels": [
+            "Mini",
+            "Knee-length",
+            "Midi",
+            "Maxi",
+            "Hi-Low"
+        ],
+        "few_shot_examples": "seed.csv",
+        "few_shot_selection": "semantic_similarity",
+        "few_shot_num": 10,
+        "example_template": "Input: {input}\nOutput: {label}"
+    }
+}

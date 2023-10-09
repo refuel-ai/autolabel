@@ -1,0 +1,56 @@
+{
+    "task_name": "FaireThemesClassification",
+    "task_type": "classification",
+    "dataset": {
+        "label_column": "label",
+        "delimiter": ","
+    },
+    "model": {
+        "provider": "openai",
+        "name": "gpt-4"
+    },
+    "prompt": {
+        "task_guidelines": "Given an online product title and description, predict the stationary theme of the product. If you cannot infer the theme from the product title and product description, select N/A as the answer. Provide ONLY one CONCISE answer WITHOUT explanation. If there are multiple possible answers, choose the one that is most closely associated with the given product. If none of the options apply, output N/A. Categories: {labels}.",
+        "output_guidelines": "You will answer with just the the correct output label and nothing else.",
+        "labels": [
+            "Abstract & Geometric",
+            "Alphabet, Dates & Numbers",
+            "Animals",
+            "Art & Music",
+            "Beach & Coastal",
+            "Books & Reading",
+            "Busy Scenes",
+            "Cats, Dogs & Other Pets",
+            "Family & Friendship",
+            "Fashion",
+            "Female Empowerment",
+            "Food & Drink",
+            "Geography & Hometown",
+            "Gothic",
+            "Gratitude",
+            "Health & Wellness",
+            "History",
+            "Holiday Season",
+            "LGBTQ+",
+            "Love",
+            "Military Appreciation",
+            "Nature",
+            "Patriotic",
+            "Plants & Floral",
+            "Politics",
+            "Pop Culture",
+            "Sci-Fi & Fantasy",
+            "Space",
+            "Sports",
+            "Teacher Appreciation",
+            "Transportation",
+            "Travel & Adventure",
+            "Zodiac & Birth Month",
+            "N/A"
+        ],
+        "few_shot_examples": "complete_seed_processed.csv",
+        "few_shot_selection": "semantic_similarity",
+        "few_shot_num": 10,
+        "example_template": "Input: {input} \n Output: {label}"
+    }
+}
