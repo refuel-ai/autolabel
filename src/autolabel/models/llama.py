@@ -29,6 +29,7 @@ from transformers import (
 )
 from vllm import LLM
 from vllm import LLM, SamplingParams
+from transformers import AutoModelForCausalLM, AutoTokenizer
 
 logger = logging.getLogger(__name__)
 
@@ -54,7 +55,8 @@ class Llama(BaseModel):
         model_params = config.model_params()
         self.model_params = {**self.DEFAULT_PARAMS, **model_params}
 
-        self.labeling_model = LLM(self.model_name, tensor_parallel_size=1, max_num_batched_tokens=4096)
+        self.tokenizer = AutoTokenizer.from_pretrained("NousResearch/Llama-2-13b-hf")
+        self.labeling_model = AutoModelForCausalLM.from_pretrained("/workspace/refuel-llm-hf", device_map = "auto", torch_dtype = torch.bfloat16)
 
     def _label(self, prompts: List[str]) -> RefuelLLMResult:
         generations = []
@@ -62,9 +64,9 @@ class Llama(BaseModel):
         prompt_file = open("prompts.txt", "a")
         for prompt in prompts:
             try:
-                sampling_param = SamplingParams(top_p=0.9, temperature=0.05, max_tokens=1024)
-                outputs = self.labeling_model.generate(prompt, sampling_params=sampling_param, use_tqdm=False)
-                response = outputs[0].outputs[0].text.strip()
+                input_ids = self.tokenizer(prompt, return_tensors="pt").input_ids.cuda()
+                outputs = self.labeling_model.generate(input_ids, top_p=0.9, temperature=0.05, max_new_tokens=1024, do_sample = True)
+                response = self.tokenizer.decode(outputs[0][input_ids.shape[1]:], skip_special_tokens=True).strip()
                 prompt_file.write(prompt)
                 prompt_file.write("Response: ")
                 prompt_file.write(response)
