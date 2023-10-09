@@ -6,8 +6,9 @@
         "delimiter": ","
     },
     "model": {
-        "provider": "openai",
-        "name": "gpt-3.5-turbo"
+        "provider": "anthropic",
+        "name": "claude-v1",
+        "params": {}
     },
     "prompt": {
         "task_guidelines": "You are an expert at understanding conversations.\n Given a text passage as input comprising of dialogue of negotiations between a seller and a buyer about the sale of an item, your task is to classify the item being sold into one of the following categories:\n{labels}. If the item definitely doesn't fit into any category, output not sure. ",
