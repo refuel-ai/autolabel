@@ -1,0 +1,25 @@
+{
+    "task_name": "PersonLocationOrgMiscNER",
+    "task_type": "named_entity_recognition",
+    "dataset": {
+        "label_column": "CategorizedLabels",
+        "text_column": "example",
+        "delimiter": ","
+    },
+    "model": {
+        "provider": "llama",
+        "name": "/workspace/hf-relevant-sampling-2483"
+    },
+    "prompt": {
+        "task_guidelines": "Your job is to extract all named entities mentioned in text exactly as they appear, and classify them into the following categories: . Ensure that the output is in a JSON format, where keys are categories and values is a list of substrings corresponding to that category. Output only the JSON object and nothing else. \nCategories:\n{labels}\n",
+        "labels": [
+            "Location",
+            "Corporation",
+            "Person"
+        ],
+        "example_template": "\nInput: {example}\nOutput: {CategorizedLabels}",
+        "few_shot_examples": "seed.csv",
+        "few_shot_selection": "semantic_similarity",
+        "few_shot_num": 20
+    }
+}

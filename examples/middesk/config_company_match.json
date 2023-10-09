@@ -21,7 +21,7 @@
         ],
         "example_template": "\\nInput: Entity 1 description: {entity1} \\nEntity 2 description: {entity2}.\\nOutput: {label}",
         "few_shot_examples": "seed.csv",
-        "few_shot_selection": "label_diversity_similarity",
-        "few_shot_num": 7
+        "few_shot_selection": "semantic_similarity",
+        "few_shot_num": 6
     }
 }

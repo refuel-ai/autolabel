@@ -7,20 +7,20 @@
         "delimiter": ","
     },
     "model": {
-        "provider": "openai",
-        "name": "gpt-3.5-turbo"
+        "provider": "llama",
+        "name": "/workspace/hf-relevant-sampling-2483"
     },
     "prompt": {
-        "task_guidelines": "You are an expert at extracting Person, Organization, Location, and Miscellaneous entities from text. Your job is to extract named entities mentioned in text, and classify them into one of the following categories.\nCategories:\n{labels}\n ",
+        "task_guidelines": "Your job is to extract all the named entities mentioned in text exactly as they appear, and classify them into the following categories: {labels}. Ensure that the output is in a JSON format, where keys are categories and values is a list of substrings corresponding to that category. Output only the JSON object and nothing else.\\n",
         "labels": [
             "Location",
             "Organization",
             "Person",
             "Miscellaneous"
         ],
-        "example_template": "Example: {example}\nOutput:\n{CategorizedLabels}",
+        "example_template": "Input: {example}\nOutput:\n{CategorizedLabels}",
         "few_shot_examples": "seed.csv",
         "few_shot_selection": "semantic_similarity",
-        "few_shot_num": 10
+        "few_shot_num": 0
     }
 }

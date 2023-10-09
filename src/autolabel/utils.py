@@ -49,6 +49,7 @@ EXAMPLE_DATASETS = [
     "diagnosis",
     "tweebank",
     "belebele",
+    "multiconer",
 ]
 
 NO_SEED_DATASET = [
