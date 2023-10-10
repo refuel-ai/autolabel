@@ -7,13 +7,13 @@
     },
     "model": {
         "provider": "llama",
-        "name": "/workspace/hf-relevant-sampling-2483"
+        "name": "/workspace/hf-refuel-llm"
     },
     "prompt": {
-        "task_guidelines": "Choose the option from the choices provided that is the best answer to the question at the end.",
-        "example_template": "Q: {question} Choices:{options} A: {answer}",
+        "task_guidelines": "Your job is to answer the given question, using the options provided for each question.",
+        "example_template": "Q: {question} Choices: {options} A: {answer}",
         "few_shot_examples": "seed.csv",
         "few_shot_selection": "semantic_similarity",
-        "few_shot_num": 8
+        "few_shot_num": 9
     }
 }
