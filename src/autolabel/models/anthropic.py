@@ -31,7 +31,7 @@ class AnthropicLLM(BaseModel):
 
         try:
             from langchain.chat_models import ChatAnthropic
-            from anthropic import tokenizer
+            # from anthropic import Anthropic
         except ImportError:
             raise ImportError(
                 "anthropic is required to use the anthropic LLM. Please install it with the following command: pip install 'refuel-autolabel[anthropic]'"
@@ -45,7 +45,7 @@ class AnthropicLLM(BaseModel):
         # initialize LLM
         self.llm = ChatAnthropic(model=self.model_name, **self.model_params)
 
-        self.tokenizer = tokenizer
+        # self.tokenizer = Anthropic()
 
     def _label(self, prompts: List[str]) -> RefuelLLMResult:
         prompts = [[HumanMessage(content=prompt)] for prompt in prompts]
@@ -58,18 +58,19 @@ class AnthropicLLM(BaseModel):
             return self._label_individually(prompts)
 
     def get_cost(self, prompt: str, label: Optional[str] = "") -> float:
-        num_prompt_toks = self.tokenizer.count_tokens(prompt)
-        if label:
-            num_label_toks = self.tokenizer.count_tokens(label)
-        else:
-            # get an upper bound
-            num_label_toks = self.model_params["max_tokens_to_sample"]
+        return 0
+        # num_prompt_toks = self.tokenizer.count_tokens(prompt)
+        # if label:
+        #     num_label_toks = self.tokenizer.count_tokens(label)
+        # else:
+        #     # get an upper bound
+        #     num_label_toks = self.model_params["max_tokens_to_sample"]
 
-        cost_per_prompt_token = self.COST_PER_PROMPT_TOKEN[self.model_name]
-        cost_per_completion_token = self.COST_PER_COMPLETION_TOKEN[self.model_name]
-        return (num_prompt_toks * cost_per_prompt_token) + (
-            num_label_toks * cost_per_completion_token
-        )
+        # cost_per_prompt_token = self.COST_PER_PROMPT_TOKEN[self.model_name]
+        # cost_per_completion_token = self.COST_PER_COMPLETION_TOKEN[self.model_name]
+        # return (num_prompt_toks * cost_per_prompt_token) + (
+        #     num_label_toks * cost_per_completion_token
+        # )
 
     def returns_token_probs(self) -> bool:
         return False
