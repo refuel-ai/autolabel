@@ -64,27 +64,23 @@ class LabelingAgent:
     def __init__(
         self,
         config: Union[AutolabelConfig, str, dict],
-        cache: Optional[bool] = False,
+        cache: Optional[bool] = True,
         example_selector: Optional[BaseExampleSelector] = None,
-        create_task: Optional[bool] = True,
+        create_task: Optional[bool] = False,
         console_output: Optional[bool] = True,
-        generation_cache: Optional[BaseCache] = None,
-        transform_cache: Optional[BaseCache] = None,
+        generation_cache: Optional[BaseCache] = SQLAlchemyGenerationCache(),
+        transform_cache: Optional[BaseCache] = SQLAlchemyTransformCache(),
     ) -> None:
         self.create_task = create_task
         self.db = StateManager() if self.create_task else None
         self.generation_cache = generation_cache
         self.transform_cache = transform_cache
-        if cache:
+        if not cache:
             logger.warning(
                 f"cache parameter is deprecated and will be removed soon. Please use generation_cache and transform_cache instead."
             )
-            self.generation_cache = (
-                generation_cache if generation_cache else SQLAlchemyGenerationCache()
-            )
-            self.transform_cache = (
-                transform_cache if transform_cache else SQLAlchemyTransformCache()
-            )
+            self.generation_cache = None
+            self.transform_cache = None
 
         self.console = Console(quiet=not console_output)
 
@@ -103,6 +99,11 @@ class LabelingAgent:
 
         # Only used if we don't use task management
         self.all_annotations = []
+
+        if self.create_task:
+            logger.warning(
+                f"create_task parameter is deprecated and will be removed soon. The LLM calls are getting cached and should handle most use cases."
+            )
 
         if in_notebook():
             import nest_asyncio

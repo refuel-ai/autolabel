@@ -36,10 +36,12 @@ class OpenAILLM(BaseModel):
         "max_tokens": 1000,
         "temperature": 0.0,
         "model_kwargs": {"logprobs": 1},
+        "request_timeout": 30,
     }
     DEFAULT_PARAMS_CHAT_ENGINE = {
         "max_tokens": 1000,
         "temperature": 0.0,
+        "request_timeout": 30,
     }
 
     # Reference: https://openai.com/pricing

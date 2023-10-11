@@ -1,6 +1,7 @@
 from collections import defaultdict
 from typing import List, Dict, Tuple
 import json
+import logging
 
 from langchain.prompts.prompt import PromptTemplate
 from sklearn.metrics import accuracy_score
@@ -18,6 +19,8 @@ from autolabel.metrics import (
     ClassificationReportMetric,
     BaseMetric,
 )
+
+logger = logging.getLogger(__name__)
 
 
 class EntityMatchingTask(BaseTask):
@@ -45,6 +48,12 @@ class EntityMatchingTask(BaseTask):
 
         if self.config.confidence():
             self.metrics.append(AUROCMetric())
+
+        for label in self.config.labels_list():
+            if "\n" in label:
+                logger.warning(
+                    "Label contains newline character. This can have output guidine issues."
+                )
 
     def construct_prompt(self, input: Dict, examples: List[Dict]) -> str:
         # Copy over the input so that we can modify it
