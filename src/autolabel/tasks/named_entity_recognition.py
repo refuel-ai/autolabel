@@ -161,7 +161,8 @@ class NamedEntityRecognitionTask(BaseTask):
         input_str = str(curr_sample[text_column])
         try:
             completion_text = response.text
-            output = self._llm_to_json_format(completion_text.strip())
+            parsable_llm_output = completion_text.strip().replace("\\\\'", "\\'")
+            output = self._llm_to_json_format(parsable_llm_output)
             llm_label = self.add_text_spans(output, input_str)
         except Exception as e:
             logger.error(f"Error parsing LLM response: {response.text}, Error: {e}")

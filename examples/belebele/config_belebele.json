@@ -11,7 +11,7 @@
     },
     "prompt": {
         "task_guidelines": "Choose the option from the choices provided that is the best answer to the question at the end.",
-        "example_template": "Q: {question} Choices:{options} A: {answer}",
+        "example_template": "{question} Choices:{options} Answer: {answer}",
         "few_shot_examples": "seed.csv",
         "few_shot_selection": "semantic_similarity",
         "few_shot_num": 5
