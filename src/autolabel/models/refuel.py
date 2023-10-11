@@ -23,7 +23,6 @@ logger = logging.getLogger(__name__)
 class RefuelLLM(BaseModel):
     DEFAULT_PARAMS = {
         "max_new_tokens": 128,
-        "temperature": 0.0,
     }
 
     def __init__(
@@ -41,8 +40,7 @@ class RefuelLLM(BaseModel):
         self.model_params = {**self.DEFAULT_PARAMS, **model_params}
 
         # initialize runtime
-        self.BASE_API = "https://refuel-llm.refuel.ai/"
-        self.SEP_REPLACEMENT_TOKEN = "@@"
+        self.BASE_API = "https://llm.refuel.ai/models/refuelllm/generate"
         self.REFUEL_API_ENV = "REFUEL_API_KEY"
         if self.REFUEL_API_ENV in os.environ and os.environ[self.REFUEL_API_ENV]:
             self.REFUEL_API_KEY = os.environ[self.REFUEL_API_ENV]
@@ -60,8 +58,9 @@ class RefuelLLM(BaseModel):
     )
     def _label_with_retry(self, prompt: str) -> requests.Response:
         payload = {
-            "data": {"model_input": prompt, "model_params": {**self.model_params}},
-            "task": "generate",
+            "input": prompt,
+            "params": {**self.model_params},
+            "confidence": self.config.confidence(),
         }
         headers = {"refuel_api_key": self.REFUEL_API_KEY}
         response = requests.post(self.BASE_API, json=payload, headers=headers)
@@ -74,20 +73,20 @@ class RefuelLLM(BaseModel):
         errors = []
         for prompt in prompts:
             try:
-                if self.SEP_REPLACEMENT_TOKEN in prompt:
-                    logger.warning(
-                        f"""Current prompt contains {self.SEP_REPLACEMENT_TOKEN} 
-                            which is currently used as a separator token by refuel
-                            llm. It is highly recommended to avoid having any
-                            occurences of this substring in the prompt.
-                        """
-                    )
-                separated_prompt = prompt.replace("\n", self.SEP_REPLACEMENT_TOKEN)
-                response = self._label_with_retry(separated_prompt)
-                response = json.loads(response.json()["body"]).replace(
-                    self.SEP_REPLACEMENT_TOKEN, "\n"
+                response = self._label_with_retry(prompt)
+                response = json.loads(response.json())
+                generations.append(
+                    [
+                        Generation(
+                            text=response["generated_text"],
+                            generation_info={
+                                "logprobs": {"top_logprobs": response["logprobs"]}
+                            }
+                            if self.config.confidence()
+                            else None,
+                        )
+                    ]
                 )
-                generations.append([Generation(text=response)])
                 errors.append(None)
             except Exception as e:
                 # This signifies an error in generating the response using RefuelLLm
@@ -96,7 +95,9 @@ class RefuelLLM(BaseModel):
                 )
                 generations.append([Generation(text="")])
                 errors.append(
-                    LabelingError(error_type=ErrorType.LLM_PROVIDER_ERROR, error=e)
+                    LabelingError(
+                        error_type=ErrorType.LLM_PROVIDER_ERROR, error_message=e
+                    )
                 )
         return RefuelLLMResult(generations=generations, errors=errors)
 
@@ -104,4 +105,4 @@ class RefuelLLM(BaseModel):
         return 0
 
     def returns_token_probs(self) -> bool:
-        return False
+        return True
