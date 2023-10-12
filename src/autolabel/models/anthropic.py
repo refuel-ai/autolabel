@@ -31,7 +31,7 @@ class AnthropicLLM(BaseModel):
 
         try:
             from langchain.chat_models import ChatAnthropic
-            from anthropic import tokenizer
+            from anthropic._tokenizers import sync_get_tokenizer
         except ImportError:
             raise ImportError(
                 "anthropic is required to use the anthropic LLM. Please install it with the following command: pip install 'refuel-autolabel[anthropic]'"
@@ -45,7 +45,7 @@ class AnthropicLLM(BaseModel):
         # initialize LLM
         self.llm = ChatAnthropic(model=self.model_name, **self.model_params)
 
-        self.tokenizer = tokenizer
+        self.tokenizer = sync_get_tokenizer()
 
     def _label(self, prompts: List[str]) -> RefuelLLMResult:
         prompts = [[HumanMessage(content=prompt)] for prompt in prompts]
@@ -58,9 +58,9 @@ class AnthropicLLM(BaseModel):
             return self._label_individually(prompts)
 
     def get_cost(self, prompt: str, label: Optional[str] = "") -> float:
-        num_prompt_toks = self.tokenizer.count_tokens(prompt)
+        num_prompt_toks = len(self.tokenizer.encode(prompt).ids)
         if label:
-            num_label_toks = self.tokenizer.count_tokens(label)
+            num_label_toks = len(self.tokenizer.encode(label).ids)
         else:
             # get an upper bound
             num_label_toks = self.model_params["max_tokens_to_sample"]
