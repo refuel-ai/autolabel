@@ -102,7 +102,7 @@ class ClassificationTask(BaseTask):
             return self.prompt_template.format(
                 task_guidelines=fmt_task_guidelines,
                 output_guidelines=self.output_guidelines,
-                seed_examples=("\n" if is_refuel_llm else "\n\n").join(fmt_examples),
+                seed_examples="\n".join(fmt_examples),
                 current_example=current_example,
             )
         else:

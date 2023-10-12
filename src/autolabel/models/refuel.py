@@ -40,7 +40,7 @@ class RefuelLLM(BaseModel):
         self.model_params = {**self.DEFAULT_PARAMS, **model_params}
 
         # initialize runtime
-        self.BASE_API = "https://llm.refuel.ai/models/refuelllm/generate"
+        self.BASE_API = f"https://llm.refuel.ai/models/{self.model_name}/generate"
         self.REFUEL_API_ENV = "REFUEL_API_KEY"
         if self.REFUEL_API_ENV in os.environ and os.environ[self.REFUEL_API_ENV]:
             self.REFUEL_API_KEY = os.environ[self.REFUEL_API_ENV]
@@ -105,4 +105,4 @@ class RefuelLLM(BaseModel):
         return 0
 
     def returns_token_probs(self) -> bool:
-        return True
+        return False
