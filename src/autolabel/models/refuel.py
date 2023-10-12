@@ -105,4 +105,4 @@ class RefuelLLM(BaseModel):
         return 0
 
     def returns_token_probs(self) -> bool:
-        return False
+        return True
