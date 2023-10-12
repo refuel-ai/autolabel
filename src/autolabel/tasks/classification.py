@@ -54,7 +54,7 @@ class ClassificationTask(BaseTask):
         for label in self.config.labels_list():
             if "\n" in label:
                 logger.warning(
-                    "Label contains newline character. This can have output guidine issues."
+                    "Label contains newline character. This can have output guideline issues."
                 )
 
     def construct_prompt(
