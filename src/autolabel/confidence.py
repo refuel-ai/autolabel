@@ -134,13 +134,20 @@ class ConfidenceCalculator:
                 model_generation.confidence_score = 0
                 return model_generation.confidence_score
             if self.cache:
-                confidence = self.get_cached_confidence(model_generation)
-                if confidence:
-                    return confidence
-            if self.score_type != "p_true":
-                logprobs = self.compute_confidence(
-                    model_generation.prompt, model_generation.raw_response
+                cache_entry = ConfidenceCacheEntry(
+                    prompt=model_generation.prompt,
+                    raw_response=model_generation.raw_response,
+                    score_type=self.score_type,
                 )
+                logprobs = self.cache.lookup(cache_entry)
+                cache_miss = False
+
+                # On cache miss, compute confidence using API call
+                if logprobs == None:
+                    cache_miss = True
+                    logprobs = self.compute_confidence(
+                        model_generation.prompt, model_generation.raw_response
+                    )
         else:
             if model_generation.generation_info is None:
                 logger.debug("No generation info found")
@@ -162,8 +169,17 @@ class ConfidenceCalculator:
             **kwargs,
         )
         model_generation.confidence_score = confidence
-        if self.cache:
-            self.update_cache(model_generation)
+
+        # On cache miss, update cache
+        if self.cache and cache_miss:
+            cache_entry = ConfidenceCacheEntry(
+                prompt=model_generation.prompt,
+                raw_response=model_generation.raw_response,
+                logprobs=logprobs,
+                score_type=self.score_type,
+                ttl_ms=self.TTL_MS,
+            )
+            self.cache.update(cache_entry)
         return confidence
 
     @retry(
@@ -202,33 +218,6 @@ class ConfidenceCalculator:
                 f"Unable to compute confidence score: {e}",
             )
             return [{"": 0.5}]
-
-    def get_cached_confidence(self, model_generation: LLMAnnotation) -> Optional[float]:
-        cache_entry = ConfidenceCacheEntry(
-            prompt=model_generation.prompt,
-            raw_response=model_generation.raw_response,
-            score_type=self.score_type,
-        )
-        confidence = self.cache.lookup(cache_entry)
-        if confidence:
-            if self.score_type == "logprob_average" or "p_true":
-                confidence = confidence[model_generation.raw_response]
-        return confidence
-
-    def update_cache(self, model_generation: LLMAnnotation):
-        confidence = model_generation.confidence_score
-        if self.score_type == "logprob_average" or "p_true":
-            confidence = {
-                model_generation.raw_response: model_generation.confidence_score
-            }
-        cache_entry = ConfidenceCacheEntry(
-            prompt=model_generation.prompt,
-            raw_response=model_generation.raw_response,
-            confidence_score=confidence,
-            score_type=self.score_type,
-            ttl_ms=self.TTL_MS,
-        )
-        self.cache.update(cache_entry)
 
     @classmethod
     def compute_completion(cls, confidence: List[float], threshold: float) -> float:

@@ -232,7 +232,7 @@ class GenerationCacheEntry(BaseModel):
 class ConfidenceCacheEntry(BaseModel):
     prompt: Optional[str] = ""
     raw_response: Optional[str] = ""
-    confidence_score: Optional[dict] = None
+    logprobs: Optional[list] = None
     score_type: Optional[str] = "logprob_average"
     creation_time_ms: Optional[int] = -1
     ttl_ms: Optional[int] = -1
@@ -250,7 +250,7 @@ class ConfidenceCacheEntry(BaseModel):
         """
         Returns the serialized cache entry output
         """
-        return json.dumps(self.confidence_score)
+        return json.dumps(self.logprobs)
 
     def deserialize_output(self, output: str) -> Dict[str, float]:
         """

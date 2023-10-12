@@ -33,10 +33,10 @@ class SQLAlchemyConfidenceCache(BaseCache):
         cache_entry = ConfidenceCacheEntryModel.get(self.session, entry)
         if cache_entry is None:
             logger.debug("Cache miss")
-            return []
+            return None
 
         logger.debug("Cache hit")
-        return cache_entry.confidence_score
+        return cache_entry.logprobs
 
     def update(self, entry: ConfidenceCacheEntry) -> None:
         """Inserts the provided ConfidenceCacheEntry into the Cache, overriding it if it already exists

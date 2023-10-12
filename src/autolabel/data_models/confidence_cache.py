@@ -15,13 +15,13 @@ class ConfidenceCacheEntryModel(Base):
     id = Column(Integer, primary_key=True)
     prompt = Column(Text)
     raw_response = Column(Text)
-    confidence_score = Column(JSON)
+    logprobs = Column(JSON)
     score_type = Column(String)
     creation_time_ms = Column(Integer)
     ttl_ms = Column(Integer)
 
     def __repr__(self):
-        return f"<Cache(prompt={self.prompt},raw_response={self.raw_response},confidence_score={self.confidence_score})>"
+        return f"<Cache(prompt={self.prompt},raw_response={self.raw_response},logprobs={self.logprobs})>"
 
     @classmethod
     def get(cls, db, cache_entry: ConfidenceCacheEntry):
@@ -41,7 +41,7 @@ class ConfidenceCacheEntryModel(Base):
         entry = ConfidenceCacheEntry(
             prompt=looked_up_entry.prompt,
             raw_response=looked_up_entry.raw_response,
-            confidence_score=json.loads(looked_up_entry.confidence_score),
+            logprobs=json.loads(looked_up_entry.logprobs),
             score_type=looked_up_entry.score_type,
             creation_time_ms=looked_up_entry.creation_time_ms,
             ttl_ms=looked_up_entry.ttl_ms,
@@ -53,7 +53,7 @@ class ConfidenceCacheEntryModel(Base):
         db_object = cls(
             prompt=cache_entry.prompt,
             raw_response=cache_entry.raw_response,
-            confidence_score=json.dumps(cache_entry.confidence_score),
+            logprobs=json.dumps(cache_entry.logprobs),
             score_type=cache_entry.score_type,
             creation_time_ms=int(time.time() * 1000),
             ttl_ms=cache_entry.ttl_ms,
