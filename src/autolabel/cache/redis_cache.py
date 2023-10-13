@@ -12,10 +12,14 @@ class RedisCache(BaseCache):
     """A cache system implemented with Redis"""
 
     def __init__(self, endpoint: str, db: int = 0):
+        self.endpoint = endpoint
+        self.db = db
+
+    def initialize(self):
         try:
             from redis import Redis
 
-            self.redis = Redis.from_url(endpoint, db=db)
+            self.redis = Redis.from_url(self.endpoint, db=self.db)
         except ImportError:
             raise ImportError(
                 "redis is required to use the Redis Cache. Please install it with the following command: pip install redis"
