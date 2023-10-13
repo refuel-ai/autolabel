@@ -1,12 +1,13 @@
 from collections import defaultdict
 from typing import List, Dict, Tuple
+import logging
 
 from langchain.prompts.prompt import PromptTemplate
 from sklearn.metrics import accuracy_score
 
 from autolabel.confidence import ConfidenceCalculator
 from autolabel.configs import AutolabelConfig
-from autolabel.schema import LLMAnnotation, MetricType, MetricResult
+from autolabel.schema import LLMAnnotation, MetricType, MetricResult, ModelProvider
 from autolabel.tasks import BaseTask
 from autolabel.utils import get_format_variables
 from autolabel.tasks.utils import filter_unlabeled_examples
@@ -20,6 +21,8 @@ from autolabel.metrics import (
 )
 
 import json
+
+logger = logging.getLogger(__name__)
 
 
 class ClassificationTask(BaseTask):
@@ -48,6 +51,12 @@ class ClassificationTask(BaseTask):
         if self.config.confidence():
             self.metrics.append(AUROCMetric())
 
+        for label in self.config.labels_list():
+            if "\n" in label:
+                logger.warning(
+                    "Label contains newline character. This can have output guideline issues."
+                )
+
     def construct_prompt(
         self, input: Dict, examples: List, selected_labels: List[str] = None
     ) -> str:
@@ -60,8 +69,19 @@ class ClassificationTask(BaseTask):
         )
         num_labels = len(labels_list)
 
+        is_refuel_llm = self.config.provider() == ModelProvider.REFUEL
+
+        if is_refuel_llm:
+            labels = (
+                ", ".join([f'\\"{i}\\"' for i in labels_list[:-1]])
+                + " or "
+                + f'\\"{labels_list[-1]}\\"'
+            )
+        else:
+            labels = "\n".join(labels_list)
+
         fmt_task_guidelines = self.task_guidelines.format(
-            num_labels=num_labels, labels="\n".join(labels_list)
+            num_labels=num_labels, labels=labels
         )
 
         # prepare seed examples
@@ -91,7 +111,7 @@ class ClassificationTask(BaseTask):
             return self.prompt_template.format(
                 task_guidelines=fmt_task_guidelines,
                 output_guidelines=self.output_guidelines,
-                seed_examples="\n\n".join(fmt_examples),
+                seed_examples="\n".join(fmt_examples),
                 current_example=current_example,
             )
         else:

@@ -16,6 +16,7 @@ from autolabel.schema import (
     TaskType,
     LabelingError,
     ErrorType,
+    ModelProvider,
 )
 from autolabel.utils import (
     get_format_variables,
@@ -30,6 +31,17 @@ class BaseTask(ABC):
     ZERO_SHOT_TEMPLATE = "{task_guidelines}\n\n{output_guidelines}\n\nNow I want you to label the following example:\n{current_example}"
     FEW_SHOT_TEMPLATE = "{task_guidelines}\n\n{output_guidelines}\n\nSome examples with their output answers are provided below:\n\n{seed_examples}\n\nNow I want you to label the following example:\n{current_example}"
 
+    ZERO_SHOT_TEMPLATE_REFUEL_LLM = """
+    <s>[INST] <<SYS>>
+    {task_guidelines}{output_guidelines}
+    <<SYS>>
+    {current_example}[/INST]\n"""
+    FEW_SHOT_TEMPLATE_REFUEL_LLM = """
+    <s>[INST] <<SYS>>
+    {task_guidelines}{output_guidelines}\n{seed_examples}
+    <<SYS>>
+    {current_example}[/INST]\n"""
+
     # Downstream classes should override these
     NULL_LABEL_TOKEN = "NO_LABEL"
     DEFAULT_TASK_GUIDELINES = ""
@@ -38,6 +50,8 @@ class BaseTask(ABC):
 
     def __init__(self, config: AutolabelConfig) -> None:
         self.config = config
+
+        is_refuel_llm = self.config.provider() == ModelProvider.REFUEL
 
         # Update the default prompt template with the prompt template from the config
         self.task_guidelines = (
@@ -48,14 +62,24 @@ class BaseTask(ABC):
         )
 
         if self._is_few_shot_mode():
+            few_shot_template = (
+                self.FEW_SHOT_TEMPLATE_REFUEL_LLM
+                if is_refuel_llm
+                else self.FEW_SHOT_TEMPLATE
+            )
             self.prompt_template = PromptTemplate(
-                input_variables=get_format_variables(self.FEW_SHOT_TEMPLATE),
-                template=self.FEW_SHOT_TEMPLATE,
+                input_variables=get_format_variables(few_shot_template),
+                template=few_shot_template,
             )
         else:
+            zero_shot_template = (
+                self.ZERO_SHOT_TEMPLATE_REFUEL_LLM
+                if is_refuel_llm
+                else self.ZERO_SHOT_TEMPLATE
+            )
             self.prompt_template = PromptTemplate(
-                input_variables=get_format_variables(self.ZERO_SHOT_TEMPLATE),
-                template=self.ZERO_SHOT_TEMPLATE,
+                input_variables=get_format_variables(zero_shot_template),
+                template=zero_shot_template,
             )
 
         self.dataset_generation_guidelines = (

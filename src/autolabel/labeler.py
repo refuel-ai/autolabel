@@ -65,32 +65,33 @@ class LabelingAgent:
     def __init__(
         self,
         config: Union[AutolabelConfig, str, dict],
-        cache: Optional[bool] = False,
+        cache: Optional[bool] = True,
         example_selector: Optional[BaseExampleSelector] = None,
-        create_task: Optional[bool] = True,
+        create_task: Optional[bool] = False,
         console_output: Optional[bool] = True,
-        generation_cache: Optional[BaseCache] = None,
-        transform_cache: Optional[BaseCache] = None,
-        confidence_cache: Optional[BaseCache] = None,
+        generation_cache: Optional[BaseCache] = SQLAlchemyGenerationCache(),
+        transform_cache: Optional[BaseCache] = SQLAlchemyTransformCache(),
+        confidence_cache: Optional[BaseCache] = SQLAlchemyConfidenceCache(),
     ) -> None:
         self.create_task = create_task
         self.db = StateManager() if self.create_task else None
         self.generation_cache = generation_cache
         self.transform_cache = transform_cache
         self.confidence_cache = confidence_cache
-        if cache:
+        if not cache:
             logger.warning(
-                f"cache parameter is deprecated and will be removed soon. Please use generation_cache and transform_cache instead."
+                f"cache parameter is deprecated and will be removed soon. Please use generation_cache, transform_cache and confidence_cache instead."
             )
-            self.generation_cache = (
-                generation_cache if generation_cache else SQLAlchemyGenerationCache()
-            )
-            self.transform_cache = (
-                transform_cache if transform_cache else SQLAlchemyTransformCache()
-            )
-            self.confidence_cache = (
-                confidence_cache if confidence_cache else SQLAlchemyConfidenceCache()
-            )
+            self.generation_cache = None
+            self.transform_cache = None
+            self.confidence_cache = None
+
+        if self.generation_cache is not None:
+            self.generation_cache.initialize()
+        if self.transform_cache is not None:
+            self.transform_cache.initialize()
+        if self.confidence_cache is not None:
+            self.confidence_cache.initialize()
 
         self.console = Console(quiet=not console_output)
 
@@ -113,6 +114,11 @@ class LabelingAgent:
 
         # Only used if we don't use task management
         self.all_annotations = []
+
+        if self.create_task:
+            logger.warning(
+                f"create_task parameter is deprecated and will be removed soon. The LLM calls are getting cached and should handle most use cases."
+            )
 
         if in_notebook():
             import nest_asyncio
@@ -452,7 +458,7 @@ class LabelingAgent:
             table, show_header=False, console=self.console, styles=COST_TABLE_STYLES
         )
         self.console.rule("Prompt Example")
-        self.console.print(f"{prompt_list[0]}")
+        self.console.print(f"{prompt_list[0]}", markup=False)
         self.console.rule()
 
     async def async_run_transform(

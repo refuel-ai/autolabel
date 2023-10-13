@@ -1,3 +1,4 @@
+import json
 from autolabel.configs import AutolabelConfig
 from autolabel.models.anthropic import AnthropicLLM
 from autolabel.models.openai import OpenAILLM
@@ -211,7 +212,7 @@ def test_refuel_label(mocker):
             self.resp = resp
 
         def json(self):
-            return {"body": self.resp}
+            return self.resp
 
         def raise_for_status(self):
             pass
@@ -222,7 +223,7 @@ def test_refuel_label(mocker):
     prompts = ["test1", "test2"]
     mocker.patch(
         "requests.post",
-        return_value=PostRequestMockResponse(resp='"Answers"'),
+        return_value=PostRequestMockResponse(resp='{"generated_text": "Answers"}'),
     )
     x = model.label(prompts)
     assert [i[0].text for i in x.generations] == ["Answers", "Answers"]
@@ -242,7 +243,7 @@ def test_refuel_return_probs():
     model = RefuelLLM(
         config=AutolabelConfig(config="tests/assets/banking/config_banking_refuel.json")
     )
-    assert model.returns_token_probs() is False
+    assert model.returns_token_probs() is True
 
 
 ################### REFUEL TESTS #######################

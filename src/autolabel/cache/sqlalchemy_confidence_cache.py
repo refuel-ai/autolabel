@@ -17,7 +17,6 @@ class SQLAlchemyConfidenceCache(BaseCache):
         self.engine = create_db_engine()
         self.base = Base
         self.session = None
-        self.initialize()
 
     def initialize(self):
         self.base.metadata.create_all(self.engine)

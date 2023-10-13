@@ -34,7 +34,7 @@ class ConfidenceCalculator:
         self.score_type = score_type
         self.llm = llm
         self.cache = cache
-        self.tokens_to_ignore = {"<unk>"}
+        self.tokens_to_ignore = {"<unk>", "", "\\n"}
         self.SUPPORTED_CALCULATORS = {
             "logprob_average": self.logprob_average,
             "p_true": self.p_true,
@@ -61,7 +61,7 @@ class ConfidenceCalculator:
         logprob_cumulative, count = 0, 0
         for token in logprobs:
             token_str = list(token.keys())[0]
-            if token_str not in self.tokens_to_ignore:
+            if token_str.strip() not in self.tokens_to_ignore:
                 logprob_cumulative += (
                     token[token_str]
                     if token[token_str] >= 0

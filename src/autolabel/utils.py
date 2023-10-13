@@ -39,6 +39,10 @@ EXAMPLE_DATASETS = [
     "movie_reviews",
     "twitter_emotion_detection",
     "ethos",
+    "craigslist",
+    "math",
+    "lexical_relation",
+    "quoref",
 ]
 
 NO_SEED_DATASET = [

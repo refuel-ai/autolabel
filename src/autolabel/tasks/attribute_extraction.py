@@ -23,6 +23,7 @@ from autolabel.metrics import (
     AccuracyMetric,
     SupportMetric,
     CompletionRateMetric,
+    AUROCMetric,
     BaseMetric,
 )
 
@@ -44,6 +45,9 @@ class AttributeExtractionTask(BaseTask):
             CompletionRateMetric(),
             AccuracyMetric(),
         ]
+
+        if self.config.confidence():
+            self.metrics.append(AUROCMetric())
 
     def _construct_attribute_json(self) -> str:
         """This function is used to construct the attribute json string for the output guidelines.
@@ -176,6 +180,7 @@ class AttributeExtractionTask(BaseTask):
                         curr_sample=llm_label.curr_sample,
                         prompt=llm_label.prompt,
                         error=llm_label.error,
+                        confidence_score=llm_label.confidence_score[attribute],
                     )
                 )
 
