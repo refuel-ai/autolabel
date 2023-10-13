@@ -81,6 +81,9 @@ class LabelingAgent:
             )
             self.generation_cache = None
             self.transform_cache = None
+        else:
+            self.generation_cache.initialize()
+            self.transform_cache.initialize()
 
         self.console = Console(quiet=not console_output)
 

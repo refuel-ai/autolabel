@@ -16,12 +16,12 @@ class SQLAlchemyGenerationCache(BaseCache):
     """A cache system implemented with SQL Alchemy"""
 
     def __init__(self):
-        self.engine = create_db_engine()
+        self.engine = None
         self.base = Base
         self.session = None
-        self.initialize()
 
     def initialize(self):
+        self.engine = create_db_engine()
         self.base.metadata.create_all(self.engine)
         self.session = sessionmaker(bind=self.engine)()
 

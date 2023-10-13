@@ -10,6 +10,11 @@ class BaseCache(ABC):
         super().__init__()
 
     @abstractmethod
+    def initialize():
+        """initialize the cache. Must be implemented by classes derived from BaseCache."""
+        pass
+
+    @abstractmethod
     def lookup(self, entry):
         """abstract method to retrieve a cached entry. Must be implemented by classes derived from BaseCache."""
         pass
