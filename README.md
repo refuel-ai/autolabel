@@ -10,6 +10,7 @@
 <div align="center" style="width:800px">
 
 [![lint](https://github.com/refuel-ai/autolabel/actions/workflows/black.yaml/badge.svg)](https://github.com/refuel-ai/autolabel/actions/workflows/black.yaml/badge.svg) ![Tests](https://github.com/refuel-ai/autolabel/actions/workflows/test.yaml/badge.svg) ![Commit Activity](https://img.shields.io/github/commit-activity/m/refuel-ai/autolabel) [![Discord](https://img.shields.io/discord/1098746693152931901)](https://discord.gg/fweVnRx6CU) [![open in colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/1t-9vNLkyoyySAG_0w3eR98biBOXlMO-E?usp=sharing)
+
 </div>
 
 ## ⚡ Quick Install
@@ -25,6 +26,11 @@
 Access to [large, clean and diverse](https://twitter.com/karpathy/status/1528443124577513472?lang=en) labeled datasets is a critical component for any machine learning effort to be successful. State-of-the-art LLMs like GPT-4 are able to [automatically label data](https://arxiv.org/abs/2303.15056) with [high accuracy](https://arxiv.org/abs/2303.16854), and at a fraction of the cost and time compared to manual labeling.
 
 Autolabel is a Python library to label, clean and enrich text datasets with any Large Language Models (LLM) of your choice.
+
+## 🌟 (New!) Access RefuelLLM through Autolabel
+
+TODO: Add blog post
+In order to use Refuel hosted LLMs, you can request access [here](https://refuel-ai.typeform.com/llm-access).
 
 ## 🚀 Getting started
 
