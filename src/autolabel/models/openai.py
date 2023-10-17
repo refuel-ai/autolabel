@@ -91,7 +91,7 @@ class OpenAILLM(BaseModel):
             import tiktoken
         except ImportError:
             raise ImportError(
-                "anthropic is required to use the anthropic LLM. Please install it with the following command: pip install 'refuel-autolabel[openai]'"
+                "openai is required to use the openai LLM. Please install it with the following command: pip install 'refuel-autolabel[openai]'"
             )
 
         # populate model name

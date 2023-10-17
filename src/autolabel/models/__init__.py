@@ -6,6 +6,7 @@ from autolabel.cache import BaseCache
 
 logger = logging.getLogger(__name__)
 
+from autolabel.models.litellm import LiteLLM
 from autolabel.models.openai import OpenAILLM
 from autolabel.models.anthropic import AnthropicLLM
 from autolabel.models.cohere import CohereLLM
@@ -14,11 +15,11 @@ from autolabel.models.hf_pipeline import HFPipelineLLM
 from autolabel.models.refuel import RefuelLLM
 
 MODEL_REGISTRY = {
-    ModelProvider.OPENAI: OpenAILLM,
-    ModelProvider.ANTHROPIC: AnthropicLLM,
-    ModelProvider.COHERE: CohereLLM,
+    ModelProvider.OPENAI: LiteLLM,
+    ModelProvider.ANTHROPIC: LiteLLM,
+    ModelProvider.COHERE: LiteLLM,
     ModelProvider.HUGGINGFACE_PIPELINE: HFPipelineLLM,
-    ModelProvider.GOOGLE: PaLMLLM,
+    ModelProvider.GOOGLE: LiteLLM,
     ModelProvider.REFUEL: RefuelLLM,
 }
 

@@ -55,6 +55,9 @@ coverage.xml
 *.mo
 *.pot
 
+# Litellm stuff
+litellm_uuid.txt
+
 # Django stuff:
 *.log
 local_settings.py
