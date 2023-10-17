@@ -5,7 +5,9 @@
 
 ## 🌟 (New!) Access RefuelLLM through Autolabel
 
-You can access RefuelLLM, our recently announced LLM purpose built for data labeling, through Autolabel (Read more about it in this [blog post](http://www.refuel.ai/blog-posts/announcing-refuel-llm)). Refuel LLM is a Llama-v2-13b base model, instruction tuned on over 2500 unique (5.24B tokens) labeling tasks spanning categories such as classification, entity resolution, matching, reading comprehension and information extraction.
+You can access RefuelLLM, our recently announced LLM purpose built for data labeling, through Autolabel (Read more about it in this [blog post](http://www.refuel.ai/blog-posts/announcing-refuel-llm)). Refuel LLM is a Llama-v2-13b base model, instruction tuned on over 2500 unique (5.24B tokens) labeling tasks spanning categories such as classification, entity resolution, matching, reading comprehension and information extraction. You can experiment with the model in the playground [here](https://app.refuel.ai/playground).
+
+<img alt="Refuel Performance" src="/assets/refuel_llm_performance.png" width="100%">
 
 You can request access to Refuel LLM [here](https://refuel-ai.typeform.com/llm-access). Read the docs about using RefuelLLM in autolabel [here](https://docs.refuel.ai/guide/llms/llms/#refuel).
 
