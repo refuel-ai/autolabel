@@ -29,9 +29,11 @@ Autolabel is a Python library to label, clean and enrich text datasets with any 
 
 ## 🌟 (New!) Access RefuelLLM through Autolabel
 
-TODO: Add blog post
+RefuelLLM is a Llama-v2-13b base model instruction tuned on over 2500 unique (5.24B tokens) labeling tasks spanning categories such as classification, entity resolution, matching, reading comprehension and information extraction. Averaged across 15 datasets, RefuelLLM performs higher than various LLMs like OpenAI's ChatGPT, Google's Bison and Anthropic's Claude. Read more about Refuel LLM in this [blog post](www.refuel.ai/blog-posts/announcing-refuel-llm).
 
-In order to use Refuel hosted LLMs, you can request access [here](https://refuel-ai.typeform.com/llm-access).
+In order to use Refuel hosted LLMs (including RefuelLLM), you can request access [here](https://refuel-ai.typeform.com/llm-access).
+
+Read the docs about using RefuelLLM in autolabel [here](https://docs.refuel.ai/guide/llms/llms/#refuel).
 
 ## 🚀 Getting started
 
