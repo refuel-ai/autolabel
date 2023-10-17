@@ -10,6 +10,7 @@
 <div align="center" style="width:800px">
 
 [![lint](https://github.com/refuel-ai/autolabel/actions/workflows/black.yaml/badge.svg)](https://github.com/refuel-ai/autolabel/actions/workflows/black.yaml/badge.svg) ![Tests](https://github.com/refuel-ai/autolabel/actions/workflows/test.yaml/badge.svg) ![Commit Activity](https://img.shields.io/github/commit-activity/m/refuel-ai/autolabel) [![Discord](https://img.shields.io/discord/1098746693152931901)](https://discord.gg/fweVnRx6CU) [![open in colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/1t-9vNLkyoyySAG_0w3eR98biBOXlMO-E?usp=sharing)
+
 </div>
 
 ## ⚡ Quick Install
@@ -25,6 +26,14 @@
 Access to [large, clean and diverse](https://twitter.com/karpathy/status/1528443124577513472?lang=en) labeled datasets is a critical component for any machine learning effort to be successful. State-of-the-art LLMs like GPT-4 are able to [automatically label data](https://arxiv.org/abs/2303.15056) with [high accuracy](https://arxiv.org/abs/2303.16854), and at a fraction of the cost and time compared to manual labeling.
 
 Autolabel is a Python library to label, clean and enrich text datasets with any Large Language Models (LLM) of your choice.
+
+## 🌟 (New!) Access RefuelLLM through Autolabel
+
+You can access RefuelLLM, our recently announced LLM purpose built for data labeling, through Autolabel (Read more about it in this [blog post](http://www.refuel.ai/blog-posts/announcing-refuel-llm)). RefuelLLM is a Llama-v2-13b base model, instruction tuned on over 2500 unique (5.24B tokens) labeling tasks spanning categories such as classification, entity resolution, matching, reading comprehension and information extraction. You can experiment with the model in the playground [here](https://app.refuel.ai/playground).
+
+<img alt="Refuel Performance" src="https://raw.githubusercontent.com/refuel-ai/autolabel/main/docs/assets/refuel_llm_performance.png">
+
+You can request access to RefuelLLM [here](https://refuel-ai.typeform.com/llm-access). Read the docs about using RefuelLLM in autolabel [here](https://docs.refuel.ai/guide/llms/llms/#refuel).
 
 ## 🚀 Getting started
 
