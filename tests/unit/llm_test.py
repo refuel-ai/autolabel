@@ -208,8 +208,9 @@ def test_refuel_initialization():
 
 def test_refuel_label(mocker):
     class PostRequestMockResponse:
-        def __init__(self, resp):
+        def __init__(self, resp, status_code):
             self.resp = resp
+            self.status_code = status_code
 
         def json(self):
             return self.resp
@@ -223,7 +224,9 @@ def test_refuel_label(mocker):
     prompts = ["test1", "test2"]
     mocker.patch(
         "requests.post",
-        return_value=PostRequestMockResponse(resp='{"generated_text": "Answers"}'),
+        return_value=PostRequestMockResponse(
+            resp='{"generated_text": "Answers"}', status_code=200
+        ),
     )
     x = model.label(prompts)
     assert [i[0].text for i in x.generations] == ["Answers", "Answers"]
