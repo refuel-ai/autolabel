@@ -14,10 +14,16 @@ from tenacity import (
     retry,
     stop_after_attempt,
     wait_exponential,
+    retry_if_not_exception_type,
 )
 from langchain.schema import Generation
 
+UNRETRYABLE_ERROR_CODES = [400, 422]
 logger = logging.getLogger(__name__)
+
+
+class UnretryableError(Exception):
+    """This is an error which is unretriable from autolabel."""
 
 
 class RefuelLLM(BaseModel):
@@ -55,6 +61,7 @@ class RefuelLLM(BaseModel):
         stop=stop_after_attempt(5),
         wait=wait_exponential(multiplier=1, min=2, max=10),
         before_sleep=before_sleep_log(logger, logging.WARNING),
+        retry=retry_if_not_exception_type(UnretryableError),
     )
     def _label_with_retry(self, prompt: str) -> requests.Response:
         payload = {
@@ -65,7 +72,17 @@ class RefuelLLM(BaseModel):
         headers = {"refuel_api_key": self.REFUEL_API_KEY}
         response = requests.post(self.BASE_API, json=payload, headers=headers)
         # raise Exception if status != 200
-        response.raise_for_status()
+        if response.status_code != 200:
+            if response.status_code in UNRETRYABLE_ERROR_CODES:
+                # This is a bad request, and we should not retry
+                raise UnretryableError(
+                    f"NonRetryable Error: Received status code {response.status_code} from Refuel API. Response: {response.text}"
+                )
+
+            logger.warning(
+                f"Received status code {response.status_code} from Refuel API. Response: {response.text}"
+            )
+            response.raise_for_status()
         return response
 
     def _label(self, prompts: List[str]) -> RefuelLLMResult:
