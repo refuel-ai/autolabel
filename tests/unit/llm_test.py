@@ -233,6 +233,66 @@ def test_refuel_label(mocker):
     assert sum(x.costs) == 0
 
 
+def test_refuel_label_non_retryable(mocker):
+    class PostRequestMockResponse:
+        def __init__(self, resp, status_code):
+            self.resp = resp
+            self.status_code = status_code
+            self.text = resp
+
+        def json(self):
+            return self.resp
+
+        def raise_for_status(self):
+            pass
+
+    model = RefuelLLM(
+        config=AutolabelConfig(config="tests/assets/banking/config_banking_refuel.json")
+    )
+    prompts = ["test1", "test2"]
+    mocker.patch(
+        "requests.post",
+        return_value=PostRequestMockResponse(
+            resp='{"error_message": "Error123"}', status_code=422
+        ),
+    )
+    x = model.label(prompts)
+    assert [i[0].text for i in x.generations] == ["", ""]
+    for error in x.errors:
+        assert "NonRetryable Error:" in error.error_message
+    assert sum(x.costs) == 0
+
+
+def test_refuel_label_retryable(mocker):
+    class PostRequestMockResponse:
+        def __init__(self, resp, status_code):
+            self.resp = resp
+            self.status_code = status_code
+            self.text = resp
+
+        def json(self):
+            return self.resp
+
+        def raise_for_status(self):
+            pass
+
+    model = RefuelLLM(
+        config=AutolabelConfig(config="tests/assets/banking/config_banking_refuel.json")
+    )
+    prompts = ["test1", "test2"]
+    mocker.patch(
+        "requests.post",
+        return_value=PostRequestMockResponse(
+            resp='{"error_message": "Error123"}', status_code=500
+        ),
+    )
+    x = model.label(prompts)
+    assert [i[0].text for i in x.generations] == ["", ""]
+    for error in x.errors:
+        assert "NonRetryable Error:" not in error.error_message
+    assert sum(x.costs) == 0
+
+
 def test_refuel_get_cost():
     model = RefuelLLM(
         config=AutolabelConfig(config="tests/assets/banking/config_banking_refuel.json")

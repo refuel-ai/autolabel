@@ -76,7 +76,7 @@ class RefuelLLM(BaseModel):
             if response.status_code in UNRETRYABLE_ERROR_CODES:
                 # This is a bad request, and we should not retry
                 raise UnretryableError(
-                    f"Received status code {response.status_code} from Refuel API. Response: {response.text}"
+                    f"NonRetryable Error: Received status code {response.status_code} from Refuel API. Response: {response.text}"
                 )
 
             logger.warning(
