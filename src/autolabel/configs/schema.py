@@ -50,6 +50,7 @@ schema = {
             "type": "object",
             "properties": {
                 "label_column": {"type": ["string", "null"]},
+                "input_columns": {"type": ["array", "null"]},
                 "label_separator": {"type": ["string", "null"]},
                 "text_column": {"type": ["string", "null"]},
                 "delimiter": {"type": ["string", "null"]},
@@ -107,7 +108,7 @@ schema = {
                 "few_shot_examples": {
                     "anyOf": [
                         {"type": "array", "items": {"type": "object"}},
-                        # When few_shor_example is a string. It shoulf point to the
+                        # When few_shot_examples is a string. It should point to the
                         # filepath of a csv/other files containing the few shot examples
                         {"type": "string"},
                         {"type": "null"},

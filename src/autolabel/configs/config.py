@@ -23,6 +23,7 @@ class AutolabelConfig(BaseConfig):
     LABEL_SEPARATOR_KEY = "label_separator"
     EXPLANATION_COLUMN_KEY = "explanation_column"
     TEXT_COLUMN_KEY = "text_column"
+    INPUT_COLUMNS_KEY = "input_columns"
     DELIMITER_KEY = "delimiter"
     DISABLE_QUOTING = "disable_quoting"
 
@@ -115,6 +116,10 @@ class AutolabelConfig(BaseConfig):
     def text_column(self) -> str:
         """Returns the name of the column containing text data we intend to label"""
         return self._dataset_config.get(self.TEXT_COLUMN_KEY, None)
+
+    def input_columns(self) -> List[str]:
+        """Returns the names of the input columns from the dataset that are used in the prompt"""
+        return self._dataset_config.get(self.INPUT_COLUMNS_KEY, [])
 
     def explanation_column(self) -> str:
         """Returns the name of the column containing an explanation as to why the data is labeled a certain way"""
