@@ -50,6 +50,10 @@ class MultilabelClassificationTask(BaseTask):
         # prepare task guideline
         labels_list = self.config.labels_list()
         num_labels = len(labels_list)
+        if self.config.label_descriptions():
+            labels_list = ""
+            for label, description in self.config.label_descriptions().items():
+                labels_list = labels_list = f"{label} : {description}\n"
         fmt_task_guidelines = self.task_guidelines.format(
             num_labels=num_labels, labels="\n".join(labels_list)
         )
