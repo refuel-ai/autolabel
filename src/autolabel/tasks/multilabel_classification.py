@@ -63,6 +63,10 @@ class MultilabelClassificationTask(BaseTask):
         # prepare task guideline
         labels_list = self.config.labels_list()
         num_labels = len(labels_list)
+        if self.config.label_descriptions():
+            labels_list = ""
+            for label, description in self.config.label_descriptions().items():
+                labels_list = f"{label} : {description}\n"
         fmt_task_guidelines = self.task_guidelines.format_map(
             defaultdict(str, labels="\n".join(labels_list), num_labels=num_labels)
         )
@@ -155,9 +159,11 @@ class MultilabelClassificationTask(BaseTask):
 
         return pt.format(
             task_guidelines=fmt_task_guidelines,
-            label_format=self.LABEL_FORMAT_IN_EXPLANATION
-            if include_label
-            else self.EXCLUDE_LABEL_IN_EXPLANATION,
+            label_format=(
+                self.LABEL_FORMAT_IN_EXPLANATION
+                if include_label
+                else self.EXCLUDE_LABEL_IN_EXPLANATION
+            ),
             labeled_example=fmt_example,
         )
 

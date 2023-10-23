@@ -81,8 +81,24 @@ class ClassificationTask(BaseTask):
         )
         num_labels = len(labels_list)
 
-        fmt_task_guidelines = self.task_guidelines.format_map(
-            defaultdict(str, labels="\n".join(labels_list), num_labels=num_labels)
+        is_refuel_llm = self.config.provider() == ModelProvider.REFUEL
+
+        if is_refuel_llm:
+            labels = (
+                ", ".join([f'\\"{i}\\"' for i in labels_list[:-1]])
+                + " or "
+                + f'\\"{labels_list[-1]}\\"'
+            )
+        else:
+            if self.config.label_descriptions():
+                labels = ""
+                for label, description in self.config.label_descriptions().items():
+                    labels = labels + f"{label} : {description}\n"
+            else:
+                labels = "\n".join(labels_list)
+
+        fmt_task_guidelines = self.task_guidelines.format(
+            num_labels=num_labels, labels=labels
         )
 
         # prepare seed examples
@@ -173,9 +189,11 @@ class ClassificationTask(BaseTask):
 
         return pt.format(
             task_guidelines=fmt_task_guidelines,
-            label_format=self.LABEL_FORMAT_IN_EXPLANATION
-            if include_label
-            else self.EXCLUDE_LABEL_IN_EXPLANATION,
+            label_format=(
+                self.LABEL_FORMAT_IN_EXPLANATION
+                if include_label
+                else self.EXCLUDE_LABEL_IN_EXPLANATION
+            ),
             labeled_example=fmt_example,
         )
 
