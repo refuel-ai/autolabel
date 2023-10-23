@@ -66,9 +66,9 @@ class MultilabelClassificationTask(BaseTask):
         if self.config.label_descriptions():
             labels_list = ""
             for label, description in self.config.label_descriptions().items():
-                labels_list = f"{label} : {description}\n"
-        fmt_task_guidelines = self.task_guidelines.format_map(
-            defaultdict(str, labels="\n".join(labels_list), num_labels=num_labels)
+                labels_list = labels_list = f"{label} : {description}\n"
+        fmt_task_guidelines = self.task_guidelines.format(
+            num_labels=num_labels, labels="\n".join(labels_list)
         )
 
         # prepare seed examples
