@@ -78,7 +78,12 @@ class ClassificationTask(BaseTask):
                 + f'\\"{labels_list[-1]}\\"'
             )
         else:
-            labels = "\n".join(labels_list)
+            if self.config.label_descriptions():
+                labels = ""
+                for label, description in self.config.label_descriptions().items():
+                    labels = labels + f"{label} : {description}\n"
+            else:
+                labels = "\n".join(labels_list)
 
         fmt_task_guidelines = self.task_guidelines.format(
             num_labels=num_labels, labels=labels
