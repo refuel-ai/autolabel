@@ -164,6 +164,24 @@ class BaseTask(ABC):
                         error_type=ErrorType.OUTPUT_GUIDELINES_NOT_FOLLOWED_ERROR,
                         error_message=f"LLM response is not in the labels list: {llm_label}",
                     )
+            elif self.config.task_type() == TaskType.MULTILABEL_CLASSIFICATION:
+                llm_multi_labels = llm_label.split(self.config.label_separator())
+                llm_multi_labels = list(
+                    filter(
+                        lambda label: label in self.config.labels_list(),
+                        llm_multi_labels,
+                    )
+                )
+                if len(llm_multi_labels) == 0:
+                    llm_label = self.NULL_LABEL_TOKEN
+                    successfully_labeled = False
+                    error = LabelingError(
+                        error_type=ErrorType.OUTPUT_GUIDELINES_NOT_FOLLOWED_ERROR,
+                        error_message=f"LLM response is not in the labels list: {llm_label}",
+                    )
+                else:
+                    llm_label = self.config.label_separator().join(llm_multi_labels)
+                    successfully_labeled = True
             else:
                 successfully_labeled = True
 
