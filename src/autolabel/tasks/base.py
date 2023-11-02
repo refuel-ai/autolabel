@@ -34,12 +34,12 @@ class BaseTask(ABC):
     ZERO_SHOT_TEMPLATE_REFUEL_LLM = """
     <s>[INST] <<SYS>>
     {task_guidelines}{output_guidelines}
-    <<SYS>>
+    <</SYS>>
     {current_example}[/INST]\n"""
     FEW_SHOT_TEMPLATE_REFUEL_LLM = """
     <s>[INST] <<SYS>>
     {task_guidelines}{output_guidelines}\n{seed_examples}
-    <<SYS>>
+    <</SYS>>
     {current_example}[/INST]\n"""
 
     # Downstream classes should override these
