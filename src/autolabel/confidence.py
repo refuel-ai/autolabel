@@ -140,14 +140,20 @@ class ConfidenceCalculator:
                     score_type=self.score_type,
                 )
                 logprobs = self.cache.lookup(cache_entry)
-                cache_miss = False
 
-                # On cache miss, compute confidence using API call
+                # On cache miss, compute logprobs using API call and update cache
                 if logprobs == None:
-                    cache_miss = True
                     logprobs = self.compute_confidence(
                         model_generation.prompt, model_generation.raw_response
                     )
+                    cache_entry = ConfidenceCacheEntry(
+                        prompt=model_generation.prompt,
+                        raw_response=model_generation.raw_response,
+                        logprobs=logprobs,
+                        score_type=self.score_type,
+                        ttl_ms=self.TTL_MS,
+                    )
+                    self.cache.update(cache_entry)
         else:
             if model_generation.generation_info is None:
                 logger.debug("No generation info found")
@@ -169,17 +175,6 @@ class ConfidenceCalculator:
             **kwargs,
         )
         model_generation.confidence_score = confidence
-
-        # On cache miss, update cache
-        if self.cache and cache_miss:
-            cache_entry = ConfidenceCacheEntry(
-                prompt=model_generation.prompt,
-                raw_response=model_generation.raw_response,
-                logprobs=logprobs,
-                score_type=self.score_type,
-                ttl_ms=self.TTL_MS,
-            )
-            self.cache.update(cache_entry)
         return confidence
 
     @retry(
