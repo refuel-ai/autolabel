@@ -154,6 +154,10 @@ class ConfidenceCalculator:
                         ttl_ms=self.TTL_MS,
                     )
                     self.cache.update(cache_entry)
+            else:
+                logprobs = self.compute_confidence(
+                    model_generation.prompt, model_generation.raw_response
+                )
         else:
             if model_generation.generation_info is None:
                 logger.debug("No generation info found")
