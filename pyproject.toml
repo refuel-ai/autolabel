@@ -62,7 +62,7 @@ dev = [
     "pre-commit"
 ]
 openai = [
-    "openai >= 0.27.4",
+    "openai == 0.27.4",
     "tiktoken >= 0.3.3"
 ]
 anthropic = [
@@ -86,7 +86,7 @@ all = [
     "pytest-asyncio",
     "pytest-mock",
     "pre-commit",
-    "openai >= 0.27.4",
+    "openai == 0.27.4",
     "tiktoken >= 0.3.3",
     "anthropic == 0.3.0",
     "transformers >= 4.25.0",
