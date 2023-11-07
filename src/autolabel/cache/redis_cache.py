@@ -30,7 +30,7 @@ class RedisCache(BaseCache):
         Args:
             entry: Entry we wish to retrieve from the Cache
         Returns:
-            result: Deserialized cache entry. None if not found.
+            result: Deserialized cache entry. None if entry not found.
         """
         redis_key = entry.get_id()
         if self.redis.exists(redis_key):
