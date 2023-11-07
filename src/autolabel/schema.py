@@ -229,6 +229,36 @@ class GenerationCacheEntry(BaseModel):
         return [Generation(**gen) for gen in json.loads(output)]
 
 
+class ConfidenceCacheEntry(BaseModel):
+    prompt: Optional[str] = ""
+    raw_response: Optional[str] = ""
+    logprobs: Optional[list] = None
+    score_type: Optional[str] = "logprob_average"
+    creation_time_ms: Optional[int] = -1
+    ttl_ms: Optional[int] = -1
+
+    class Config:
+        orm_mode = True
+
+    def get_id(self) -> str:
+        """
+        Generates a unique ID for the given confidence cache configuration
+        """
+        return calculate_md5([self.prompt, self.raw_response, self.score_type])
+
+    def get_serialized_output(self) -> str:
+        """
+        Returns the serialized cache entry output
+        """
+        return json.dumps(self.logprobs)
+
+    def deserialize_output(self, output: str) -> Dict[str, float]:
+        """
+        Deserializes the cache entry output
+        """
+        return json.loads(output)
+
+
 class RefuelLLMResult(BaseModel):
     """List of generated outputs. This is a List[List[]] because
     each input could have multiple candidate generations."""

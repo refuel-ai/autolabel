@@ -14,6 +14,7 @@ from autolabel.cache import (
     BaseCache,
     SQLAlchemyGenerationCache,
     SQLAlchemyTransformCache,
+    SQLAlchemyConfidenceCache,
 )
 from autolabel.confidence import ConfidenceCalculator
 from autolabel.configs import AutolabelConfig
@@ -70,22 +71,27 @@ class LabelingAgent:
         console_output: Optional[bool] = True,
         generation_cache: Optional[BaseCache] = SQLAlchemyGenerationCache(),
         transform_cache: Optional[BaseCache] = SQLAlchemyTransformCache(),
+        confidence_cache: Optional[BaseCache] = SQLAlchemyConfidenceCache(),
     ) -> None:
         self.create_task = create_task
         self.db = StateManager() if self.create_task else None
         self.generation_cache = generation_cache
         self.transform_cache = transform_cache
+        self.confidence_cache = confidence_cache
         if not cache:
             logger.warning(
-                f"cache parameter is deprecated and will be removed soon. Please use generation_cache and transform_cache instead."
+                f"cache parameter is deprecated and will be removed soon. Please use generation_cache, transform_cache and confidence_cache instead."
             )
             self.generation_cache = None
             self.transform_cache = None
+            self.confidence_cache = None
 
         if self.generation_cache is not None:
             self.generation_cache.initialize()
         if self.transform_cache is not None:
             self.transform_cache.initialize()
+        if self.confidence_cache is not None:
+            self.confidence_cache.initialize()
 
         self.console = Console(quiet=not console_output)
 
@@ -96,10 +102,14 @@ class LabelingAgent:
         self.llm: BaseModel = ModelFactory.from_config(
             self.config, cache=self.generation_cache
         )
+
         score_type = "logprob_average"
         if self.config.task_type() == TaskType.ATTRIBUTE_EXTRACTION:
             score_type = "logprob_average_per_key"
-        self.confidence = ConfidenceCalculator(score_type=score_type, llm=self.llm)
+        self.confidence = ConfidenceCalculator(
+            score_type=score_type, llm=self.llm, cache=self.confidence_cache
+        )
+
         self.example_selector = example_selector
 
         # Only used if we don't use task management
@@ -266,7 +276,6 @@ class LabelingAgent:
                         if self.config.confidence():
                             annotation.confidence_score = self.confidence.calculate(
                                 model_generation=annotation,
-                                prompt=final_prompt,
                             )
 
                         annotations.append(annotation)
