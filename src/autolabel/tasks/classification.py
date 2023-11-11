@@ -70,7 +70,7 @@ class ClassificationTask(BaseTask):
         num_labels = len(labels_list)
 
         is_refuel_llm = self.config.provider() == ModelProvider.REFUEL
-
+        image_col = self.config.image_column()
         if is_refuel_llm:
             labels = (
                 ", ".join([f'\\"{i}\\"' for i in labels_list[:-1]])
@@ -107,19 +107,24 @@ class ClassificationTask(BaseTask):
         # populate the current example in the prompt
         current_example = example_template.format_map(defaultdict(str, input))
 
+        curr_text_prompt = ""
         if self._is_few_shot_mode():
-            return self.prompt_template.format(
+            curr_text_prompt = self.prompt_template.format(
                 task_guidelines=fmt_task_guidelines,
                 output_guidelines=self.output_guidelines,
                 seed_examples="\n".join(fmt_examples),
                 current_example=current_example,
             )
         else:
-            return self.prompt_template.format(
+            curr_text_prompt = self.prompt_template.format(
                 task_guidelines=fmt_task_guidelines,
                 output_guidelines=self.output_guidelines,
                 current_example=current_example,
             )
+        if image_col is not None:
+            return json.dumps({"text": curr_text_prompt, "image_url": input[image_col]})
+        else:
+            return curr_text_prompt
 
     def get_explanation_prompt(self, example: Dict) -> str:
         pt = PromptTemplate(
