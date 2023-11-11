@@ -1,0 +1,21 @@
+{
+    "task_name": "ImageClassification",
+    "task_type": "classification",
+    "dataset": {
+        "label_column": "label",
+        "delimiter": ",",
+        "image_url_column": "image_url"
+    },
+    "model": {
+        "provider": "openai_vision",
+        "name": "gpt-4-vision-preview"
+    },
+    "prompt": {
+        "task_guidelines": "Given an online product title and description, predict the PRIMARY color of the product. If you cannot infer the color from the product title and product description, select Unsure as the answer. The input product to label will be provided at the end. Use the provided image along with the description to label the last input. Your answer must be from one of the following options:\n{labels}",
+        "labels": ["Beige", "Black", "Blue", "Bronze", "Brown", "Clear", "Gold", "Gray", "Green", "Multi-Colored", "Off-White", "Orange", "Pink", "Purple", "Red", "Rose Gold", "Silver", "White", "Yellow", "Unsure"],
+        "few_shot_examples": "seed.csv",
+        "few_shot_selection": "semantic_similarity",
+        "few_shot_num": 5,
+        "example_template": "Input: Title: {name} Description: {description} \nOutput: {label}"
+    }
+}
