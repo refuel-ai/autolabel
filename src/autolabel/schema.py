@@ -18,6 +18,7 @@ class ModelProvider(str, Enum):
     OPENAI_VISION = "openai_vision"
     ANTHROPIC = "anthropic"
     HUGGINGFACE_PIPELINE = "huggingface_pipeline"
+    HUGGINGFACE_PIPELINE_VISION = "huggingface_pipeline_vision"
     REFUEL = "refuel"
     GOOGLE = "google"
     COHERE = "cohere"

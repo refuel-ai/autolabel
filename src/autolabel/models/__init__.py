@@ -12,6 +12,7 @@ from autolabel.models.anthropic import AnthropicLLM
 from autolabel.models.cohere import CohereLLM
 from autolabel.models.palm import PaLMLLM
 from autolabel.models.hf_pipeline import HFPipelineLLM
+from autolabel.models.hf_pipeline_vision import HFPipelineMultimodal
 from autolabel.models.refuel import RefuelLLM
 
 MODEL_REGISTRY = {
@@ -20,6 +21,7 @@ MODEL_REGISTRY = {
     ModelProvider.ANTHROPIC: AnthropicLLM,
     ModelProvider.COHERE: CohereLLM,
     ModelProvider.HUGGINGFACE_PIPELINE: HFPipelineLLM,
+    ModelProvider.HUGGINGFACE_PIPELINE_VISION: HFPipelineMultimodal,
     ModelProvider.GOOGLE: PaLMLLM,
     ModelProvider.REFUEL: RefuelLLM,
 }
