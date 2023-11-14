@@ -49,6 +49,7 @@ class MultilabelClassificationTask(BaseTask):
 
         # prepare task guideline
         labels_list = self.config.labels_list()
+        image_col = self.config.image_column()
         num_labels = len(labels_list)
         fmt_task_guidelines = self.task_guidelines.format(
             num_labels=num_labels, labels="\n".join(labels_list)
@@ -76,20 +77,24 @@ class MultilabelClassificationTask(BaseTask):
 
         # populate the current example in the prompt
         current_example = example_template.format_map(defaultdict(str, input))
-
+        curr_text_prompt = ""
         if self._is_few_shot_mode():
-            return self.prompt_template.format(
+            curr_text_prompt = self.prompt_template.format(
                 task_guidelines=fmt_task_guidelines,
                 output_guidelines=self.output_guidelines,
                 seed_examples="\n\n".join(fmt_examples),
                 current_example=current_example,
             )
         else:
-            return self.prompt_template.format(
+            curr_text_prompt = self.prompt_template.format(
                 task_guidelines=fmt_task_guidelines,
                 output_guidelines=self.output_guidelines,
                 current_example=current_example,
             )
+        if image_col is not None:
+            return json.dumps({"text": curr_text_prompt, "image_url": input[image_col]})
+        else:
+            return curr_text_prompt
 
     def get_explanation_prompt(self, example: Dict) -> str:
         pt = PromptTemplate(
