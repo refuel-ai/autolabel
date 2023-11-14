@@ -11,7 +11,7 @@ logger = logging.getLogger(__name__)
 
 
 class HFPipelineMultimodal(BaseModel):
-    DEFAULT_MODEL = "HuggingFaceM4/idefics-80b-instruct"
+    DEFAULT_MODEL = "HuggingFaceM4/idefics-9b-instruct"
     DEFAULT_PARAMS = {"temperature": 0.0, "quantize": 8}
 
     def __init__(self, config: AutolabelConfig, cache: BaseCache = None) -> None:
