@@ -119,7 +119,7 @@ class AutolabelDataset:
         if self.config.task_type() == TaskType.ATTRIBUTE_EXTRACTION:
             for attr in self.config.attributes():
                 self.df[self.generate_label_name("label", attr["name"])] = [
-                    x.label[attr["name"]] for x in llm_labels
+                    x.label.get(attr["name"], "") for x in llm_labels
                 ]
 
         # Add the LLM errors to the dataframe
@@ -153,7 +153,7 @@ class AutolabelDataset:
             if self.config.task_type() == TaskType.ATTRIBUTE_EXTRACTION:
                 for attr in self.config.attributes():
                     self.df[self.generate_label_name("confidence", attr["name"])] = [
-                        x.confidence_score[attr["name"]] for x in llm_labels
+                        x.confidence_score.get(attr["name"], 0.0) for x in llm_labels
                     ]
 
         # Add the LLM explanations to the dataframe if chain of thought is set in config
@@ -364,7 +364,9 @@ class AutolabelDataset:
 
     def generate_label_name(self, col_name: str, label_column: str = None):
         label_column = (
-            label_column or self.config.label_column() or self.config.task_name()
+            label_column
+            or self.config.label_column()
+            or f"{self.config.task_name()}_task"
         )
         return f"{label_column}_{col_name}"
 
