@@ -140,7 +140,7 @@ class AttributeExtractionTask(BaseTask):
         error = None
         try:
             completion_text = response.text
-            llm_label = json.loads(completion_text)
+            llm_label = {k: str(v) for k, v in json.loads(completion_text).items()}
             successfully_labeled = True
         except Exception as e:
             logger.error(f"Error parsing LLM response: {response.text}, Error: {e}")
@@ -156,7 +156,7 @@ class AttributeExtractionTask(BaseTask):
             successfully_labeled=successfully_labeled,
             label=llm_label,
             generation_info=response.generation_info,
-            raw_response=response.text,
+            raw_response=json.dumps(llm_label),
             prompt=prompt,
             error=error,
         )
