@@ -304,7 +304,7 @@ class LabelingAgent:
                                     # Potentially take this as an input from the user
                                     if (
                                         self.get_num_tokens(chunk[key])
-                                        > num_tokens_per_chunk
+                                        > self.CONFIDENCE_MAX_CONTEXT_LENGTH
                                     ):
                                         key_to_chunk = key
                                         break
