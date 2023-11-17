@@ -100,8 +100,9 @@ class AttributeExtractionTask(BaseTask):
         example_template = self.config.example_template()
         fmt_examples = []
         for eg in examples:
-            output_dict = self._generate_output_dict(eg)
-            eg.update({self.OUTPUT_DICT_KEY: output_dict})
+            if self.OUTPUT_DICT_KEY not in eg:
+                output_dict = self._generate_output_dict(eg)
+                eg.update({self.OUTPUT_DICT_KEY: output_dict})
             fmt_examples.append(example_template.format_map(defaultdict(str, eg)))
 
         input[self.OUTPUT_DICT_KEY] = ""
