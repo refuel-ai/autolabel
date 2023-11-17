@@ -333,7 +333,6 @@ class LabelingAgent:
                                         new_chunk, examples
                                     )
                                     annotation_dict = annotation.dict()
-                                    print(self.get_num_tokens(new_prompt))
                                     annotation_dict["prompt"] = new_prompt
                                     confidence_scores.append(
                                         self.confidence.calculate(
