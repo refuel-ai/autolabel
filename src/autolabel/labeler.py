@@ -298,19 +298,9 @@ class LabelingAgent:
                                     model_generation=annotation,
                                 )
                             else:
-                                empty_chunk = {k: "" for k in chunk.keys()}
-                                empty_prompt = self.task.construct_prompt(
-                                    empty_chunk, examples
-                                )
-                                num_tokens_empty_prompt = self.get_num_tokens(
-                                    empty_prompt
-                                )
-                                num_tokens_per_chunk = (
-                                    self.config.confidence_chunk_size()
-                                    - num_tokens_empty_prompt
-                                )
                                 key_to_chunk = None
                                 for key in chunk.keys():
+                                    # TODO(rajas): Better way to find the key to chunk
                                     if (
                                         self.get_num_tokens(chunk[key])
                                         > num_tokens_per_chunk
@@ -321,6 +311,19 @@ class LabelingAgent:
                                     raise ValueError(
                                         f"Unable to find a key in the chunk with a value that is longer than {num_tokens_per_chunk} tokens."
                                     )
+
+                                empty_chunk = chunk.copy()
+                                empty_chunk[key_to_chunk] = ""
+                                empty_prompt = self.task.construct_prompt(
+                                    empty_chunk, examples
+                                )
+                                num_tokens_empty_prompt = self.get_num_tokens(
+                                    empty_prompt
+                                )
+                                num_tokens_per_chunk = (
+                                    self.config.confidence_chunk_size()
+                                    - num_tokens_empty_prompt
+                                )
                                 confidence_chunks = self.chunk_string(
                                     chunk[key_to_chunk], num_tokens_per_chunk
                                 )
