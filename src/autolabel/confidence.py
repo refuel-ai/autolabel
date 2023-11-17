@@ -7,11 +7,10 @@ import requests
 import scipy.stats as stats
 import os
 import logging
-import tiktoken
 
-from autolabel.schema import LLMAnnotation, ConfidenceCacheEntry, AggregationFunction
+from autolabel.schema import LLMAnnotation, ConfidenceCacheEntry
 from autolabel.models import BaseModel
-from autolabel.cache import BaseCache, SQLAlchemyConfidenceCache
+from autolabel.cache import BaseCache
 
 from tenacity import (
     before_sleep_log,
@@ -22,31 +21,20 @@ from tenacity import (
 
 logger = logging.getLogger(__name__)
 
-MERGE_FUNCTION = {
-    AggregationFunction.MAX: np.max,
-    AggregationFunction.MEAN: np.mean,
-}
-
 
 class ConfidenceCalculator:
     TTL_MS = 60 * 60 * 24 * 365 * 3 * 1000  # 3 years
-    MAX_CONTEXT_LENGTH = 3400  # Update this once confidence API supports longer prompts
 
     def __init__(
         self,
         score_type: str = "logprob_average",
         llm: Optional[BaseModel] = None,
         cache: Optional[BaseCache] = None,
-        confidence_chunk_size=0,
-        confidence_merge_function=AggregationFunction.MAX,
     ) -> None:
         self.score_type = score_type
         self.llm = llm
         self.cache = cache
         self.tokens_to_ignore = {"<unk>", "", "\\n"}
-        self.encoding_tokenizer = tiktoken.encoding_for_model("gpt-3.5-turbo")
-        self.confidence_chunk_size = confidence_chunk_size
-        self.confidence_merge_function = MERGE_FUNCTION[confidence_merge_function]
         self.SUPPORTED_CALCULATORS = {
             "logprob_average": self.logprob_average,
             "p_true": self.p_true,
@@ -136,7 +124,7 @@ class ConfidenceCalculator:
                 return -math.e ** token[token_str]
         return 0
 
-    def calculate_chunk(self, model_generation: LLMAnnotation, **kwargs) -> float:
+    def calculate(self, model_generation: LLMAnnotation, **kwargs) -> float:
         if self.score_type not in self.SUPPORTED_CALCULATORS:
             raise NotImplementedError()
 
@@ -193,45 +181,6 @@ class ConfidenceCalculator:
         model_generation.confidence_score = confidence
         return confidence
 
-    def calculate(self, model_generation: LLMAnnotation, **kwargs) -> float:
-        full_prompt = model_generation.prompt + model_generation.raw_response
-        if not self.confidence_chunk_size or len(full_prompt) < self.MAX_CONTEXT_LENGTH:
-            return self.calculate_chunk(model_generation, **kwargs)
-        else:
-            # Split the model_input into chunks of size self.confidence_chunk_size
-            chunks = [
-                full_prompt[i : i + self.confidence_chunk_size]
-                for i in range(0, len(full_prompt), self.confidence_chunk_size)
-            ]
-
-            # Compute confidence for each chunk
-            confidence = []
-            for chunk in chunks:
-                confidence.append(
-                    self.calculate_chunk(
-                        LLMAnnotation(
-                            prompt=chunk,
-                            raw_response=model_generation.raw_response,
-                            generation_info=model_generation.generation_info,
-                            label=model_generation.label,
-                            successfully_labeled=model_generation.successfully_labeled,
-                        ),
-                        **kwargs,
-                    )
-                )
-
-            # Merge the confidence scores
-            merged_confidence = None
-            if isinstance(confidence[0], dict):
-                merged_confidence = {}
-                for key in confidence[0].keys():
-                    merged_confidence[key] = self.confidence_merge_function(
-                        [conf[key] for conf in confidence]
-                    )
-            else:
-                merged_confidence = self.confidence_merge_function(confidence)
-            return merged_confidence
-
     @retry(
         reraise=True,
         stop=stop_after_attempt(5),
@@ -268,32 +217,6 @@ class ConfidenceCalculator:
                 f"Unable to compute confidence score: {e}",
             )
             return [{"": 0.5}]
-
-    # def compute_confidence(self, model_input, model_output) -> Union[dict, List[dict]]:
-    #     prompt = model_input + model_output
-    #     num_tokens = len(self.encoding_tokenizer.encode(prompt))
-    #     if not self.confidence_chunk_size or num_tokens < self.MAX_CONTEXT_LENGTH:
-    #         return self.compute_confidence_for_chunk(model_input, model_output)
-    #     else:
-    #         # Split the model_input into chunks of size self.MAX_CONTEXT_LENGTH
-    #         chunks = [
-    #             model_input[i : i + self.MAX_CONTEXT_LENGTH]
-    #             for i in range(0, len(model_input), self.MAX_CONTEXT_LENGTH)
-    #         ]
-
-    #         # Compute confidence for each chunk
-    #         confidence = []
-    #         for chunk in chunks:
-    #             confidence.append(
-    #                 self.compute_confidence_for_chunk(chunk, model_output)
-    #             )
-
-    #         # Merge the confidence scores
-    #         merged_confidence = None
-    #         if isinstance(confidence[0], dict):
-    #             merged_confidence = {}
-    #             for key in confidence[0].keys():
-    #                 merged_confidence[key] = np.mean([conf[key] for conf in confidence])
 
     @classmethod
     def compute_completion(cls, confidence: List[float], threshold: float) -> float:
