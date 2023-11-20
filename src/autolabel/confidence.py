@@ -10,7 +10,7 @@ import logging
 
 from autolabel.schema import LLMAnnotation, ConfidenceCacheEntry
 from autolabel.models import BaseModel
-from autolabel.cache import BaseCache, SQLAlchemyConfidenceCache
+from autolabel.cache import BaseCache
 
 from tenacity import (
     before_sleep_log,
@@ -86,7 +86,7 @@ class ConfidenceCalculator:
         indices = []
         for ind, logprob in enumerate(logprobs):
             key = list(logprob.keys())[0]
-            if key == '"' or key == '",':
+            if '"' in key:
                 indices.append(ind)
         if len(indices) != 4 * len(keys):
             logger.error("Unable to find all keys in prompt")

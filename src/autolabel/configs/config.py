@@ -17,6 +17,7 @@ class AutolabelConfig(BaseConfig):
     EMBEDDING_CONFIG_KEY = "embedding"
     PROMPT_CONFIG_KEY = "prompt"
     DATASET_GENERATION_CONFIG_KEY = "dataset_generation"
+    CHUNKING_CONFIG_KEY = "chunking"
 
     # Dataset config keys (config["dataset"][<key>])
     LABEL_COLUMN_KEY = "label_column"
@@ -58,6 +59,10 @@ class AutolabelConfig(BaseConfig):
     DATASET_GENERATION_GUIDELINES_KEY = "guidelines"
     DATASET_GENERATION_NUM_ROWS_KEY = "num_rows"
 
+    # Chunking config keys (config["chunking"][<key>])
+    CONFIDENCE_CHUNK_SIZE_KEY = "confidence_chunk_size"
+    CONFIDENCE_MERGE_FUNCTION_KEY = "confidence_merge_function"
+
     def __init__(self, config: Union[str, Dict], validate: bool = True) -> None:
         super().__init__(config, validate=validate)
 
@@ -95,6 +100,11 @@ class AutolabelConfig(BaseConfig):
     def _dataset_generation_config(self) -> Dict:
         """Returns information about the prompt for synthetic dataset generation"""
         return self.config.get(self.DATASET_GENERATION_CONFIG_KEY, {})
+
+    @cached_property
+    def _chunking_config(self) -> Dict:
+        """Returns information about the chunking config"""
+        return self.config.get(self.CHUNKING_CONFIG_KEY, {})
 
     # project and task definition config
     def task_name(self) -> str:
@@ -243,3 +253,11 @@ class AutolabelConfig(BaseConfig):
         return self._dataset_generation_config.get(
             self.DATASET_GENERATION_NUM_ROWS_KEY, 1
         )
+
+    def confidence_chunk_size(self) -> int:
+        """Returns the chunk size for confidence chunking"""
+        return self._chunking_config.get(self.CONFIDENCE_CHUNK_SIZE_KEY, 0)
+
+    def confidence_merge_function(self) -> str:
+        """Returns the function to use when merging confidence scores"""
+        return self._chunking_config.get(self.CONFIDENCE_MERGE_FUNCTION_KEY, "max")

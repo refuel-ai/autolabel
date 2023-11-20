@@ -270,3 +270,10 @@ class RefuelLLMResult(BaseModel):
 
     """Costs incurred during the labeling job"""
     costs: Optional[List[float]] = []
+
+
+class AggregationFunction(str, Enum):
+    """Enum of supported aggregation functions"""
+
+    MAX = "max"
+    MEAN = "mean"
