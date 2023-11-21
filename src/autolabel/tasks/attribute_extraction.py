@@ -140,6 +140,11 @@ class AttributeExtractionTask(BaseTask):
         error = None
         try:
             completion_text = response.text
+
+            # Remove markdown formatting from the completion text
+            completion_text = completion_text.lstrip("```json")
+            completion_text = completion_text.rstrip("```")
+
             llm_label = {k: str(v) for k, v in json.loads(completion_text).items()}
             successfully_labeled = True
         except Exception as e:
