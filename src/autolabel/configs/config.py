@@ -60,6 +60,7 @@ class AutolabelConfig(BaseConfig):
     DATASET_GENERATION_NUM_ROWS_KEY = "num_rows"
 
     # Chunking config keys (config["chunking"][<key>])
+    CONFIDENCE_CHUNK_COLUMN_KEY = "confidence_chunk_column"
     CONFIDENCE_CHUNK_SIZE_KEY = "confidence_chunk_size"
     CONFIDENCE_MERGE_FUNCTION_KEY = "confidence_merge_function"
 
@@ -254,9 +255,13 @@ class AutolabelConfig(BaseConfig):
             self.DATASET_GENERATION_NUM_ROWS_KEY, 1
         )
 
+    def confidence_chunk_column(self) -> str:
+        """Returns the column name to use for confidence chunking"""
+        return self._chunking_config.get(self.CONFIDENCE_CHUNK_COLUMN_KEY)
+
     def confidence_chunk_size(self) -> int:
         """Returns the chunk size for confidence chunking"""
-        return self._chunking_config.get(self.CONFIDENCE_CHUNK_SIZE_KEY, 0)
+        return self._chunking_config.get(self.CONFIDENCE_CHUNK_SIZE_KEY, 3400)
 
     def confidence_merge_function(self) -> str:
         """Returns the function to use when merging confidence scores"""
