@@ -81,6 +81,7 @@ class LabelingAgent:
         generation_cache: Optional[BaseCache] = SQLAlchemyGenerationCache(),
         transform_cache: Optional[BaseCache] = SQLAlchemyTransformCache(),
         confidence_cache: Optional[BaseCache] = SQLAlchemyConfidenceCache(),
+        confidence_tokenizer: Optional[AutoTokenizer] = None,
     ) -> None:
         self.create_task = create_task
         self.db = StateManager() if self.create_task else None
@@ -112,7 +113,12 @@ class LabelingAgent:
             self.config, cache=self.generation_cache
         )
 
-        self.confidence_tokenizer = AutoTokenizer.from_pretrained("google/flan-t5-xxl")
+        if not confidence_tokenizer:
+            self.confidence_tokenizer = AutoTokenizer.from_pretrained(
+                "google/flan-t5-xxl"
+            )
+        else:
+            self.confidence_tokenizer = confidence_tokenizer
         score_type = "logprob_average"
         if self.config.task_type() == TaskType.ATTRIBUTE_EXTRACTION:
             score_type = "logprob_average_per_key"
