@@ -290,7 +290,7 @@ class LabelingAgent:
                                 annotation.prompt + annotation.raw_response
                             )
                             if (
-                                not self.config.confidence_chunk_size()
+                                not self.config.confidence_chunk_column()
                                 or self.get_num_tokens(full_confidence_input)
                                 < self.CONFIDENCE_MAX_CONTEXT_LENGTH
                             ):
@@ -298,19 +298,10 @@ class LabelingAgent:
                                     model_generation=annotation,
                                 )
                             else:
-                                key_to_chunk = None
-                                for key in chunk.keys():
-                                    # TODO(rajas): Better way to find the key to chunk
-                                    # Potentially take this as an input from the user
-                                    if (
-                                        self.get_num_tokens(chunk[key])
-                                        > self.CONFIDENCE_MAX_CONTEXT_LENGTH
-                                    ):
-                                        key_to_chunk = key
-                                        break
-                                if key_to_chunk is None:
+                                key_to_chunk = self.config.confidence_chunk_column()
+                                if not key_to_chunk:
                                     raise ValueError(
-                                        f"Unable to find a key in the chunk with a value that is longer than {num_tokens_per_chunk} tokens."
+                                        "confidence_chunk_column must be set in the config to use confidence_chunk_size"
                                     )
 
                                 empty_chunk = chunk.copy()
