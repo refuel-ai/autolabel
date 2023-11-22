@@ -114,21 +114,13 @@ class QuestionAnsweringTask(BaseTask):
             )
 
     def construct_confidence_prompt(self, input: str, examples: List, **kwargs) -> str:
-        prompt_template = PromptTemplate(
-            input_variables=get_format_variables(
-                self.FEW_SHOT_TEMPLATE_REFUEL_LLM
-                if self._is_few_shot_mode()
-                else self.ZERO_SHOT_TEMPLATE_REFUEL_LLM
-            ),
-            template=self.example_template,
+        output_guidelines_override = (
+            self.config.output_guidelines() or self.REFUEL_LLM_DEFAULT_OUTPUT_GUIDELINES
         )
-        refuel_prompt = self.construct_prompt(
+        refuel_prompt = self.construct_confidence_prompt(
             input,
             examples,
-            prompt_template=prompt_template,
-            refuel_prompt_override=True,
-            output_guidelines_override=self.config.output_guidelines()
-            or self.REFUEL_LLM_DEFAULT_OUTPUT_GUIDELINES,
+            output_guidelines_override=output_guidelines_override,
             **kwargs,
         )
         return refuel_prompt
