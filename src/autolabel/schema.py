@@ -117,6 +117,10 @@ class LLMAnnotation(BaseModel):
     explanation: Optional[str] = ""
     prompt: Optional[str] = ""
     confidence_prompt: Optional[str] = ""
+    input_tokens: Optional[int] = None
+    output_tokens: Optional[int] = None
+    cost: Optional[float] = None
+    latency: Optional[float] = None
     error: Optional[LabelingError] = None
 
 
@@ -271,6 +275,9 @@ class RefuelLLMResult(BaseModel):
 
     """Costs incurred during the labeling job"""
     costs: Optional[List[float]] = []
+
+    """Latencies incurred during the labeling job"""
+    latencies: Optional[List[float]] = []
 
 
 class AggregationFunction(str, Enum):

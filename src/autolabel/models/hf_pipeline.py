@@ -1,5 +1,6 @@
 import logging
 from typing import List, Optional, Dict
+from time import time
 from autolabel.models import BaseModel
 from autolabel.configs import AutolabelConfig
 from autolabel.cache import BaseCache
@@ -56,7 +57,7 @@ class HFPipelineLLM(BaseModel):
             }
 
         # initialize HF pipeline
-        tokenizer = AutoTokenizer.from_pretrained(
+        self.tokenizer = AutoTokenizer.from_pretrained(
             self.model_name, use_fast=False, add_prefix_space=True
         )
         quantize_bits = self.model_params["quantize"]
@@ -88,7 +89,7 @@ class HFPipelineLLM(BaseModel):
         pipe = pipeline(
             "text2text-generation",
             model=model,
-            tokenizer=tokenizer,
+            tokenizer=self.tokenizer,
             **model_kwargs,
         )
 
@@ -113,13 +114,12 @@ class HFPipelineLLM(BaseModel):
                 "Could not import transformers python package. "
                 "Please it install it with `pip install transformers`."
             )
-        tokenizer = AutoTokenizer.from_pretrained(
-            self.model_name, use_fast=False, add_prefix_space=True
-        )
-        sequence_bias = {tuple([tokenizer.eos_token_id]): self.config.logit_bias()}
+        sequence_bias = {tuple([self.tokenizer.eos_token_id]): self.config.logit_bias()}
         max_new_tokens = 0
         for label in self.config.labels_list():
-            tokens = tuple(tokenizer([label], add_special_tokens=False).input_ids[0])
+            tokens = tuple(
+                self.tokenizer([label], add_special_tokens=False).input_ids[0]
+            )
             for token in tokens:
                 sequence_bias[tuple([token])] = self.config.logit_bias()
             max_new_tokens = max(max_new_tokens, len(tokens))
@@ -131,9 +131,13 @@ class HFPipelineLLM(BaseModel):
 
     def _label(self, prompts: List[str]) -> RefuelLLMResult:
         try:
+            start_time = time()
             result = self.llm.generate(prompts)
+            end_time = time()
             return RefuelLLMResult(
-                generations=result.generations, errors=[None] * len(result.generations)
+                generations=result.generations,
+                errors=[None] * len(result.generations),
+                latencies=[end_time - start_time] * len(result.generations),
             )
         except Exception as e:
             return self._label_individually(prompts)
@@ -145,3 +149,6 @@ class HFPipelineLLM(BaseModel):
 
     def returns_token_probs(self) -> bool:
         return False
+
+    def get_num_tokens(self, prompt: str) -> int:
+        return len(self.tokenizer.encode(prompt))
