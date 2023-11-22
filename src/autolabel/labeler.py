@@ -307,9 +307,6 @@ class LabelingAgent:
                         )
                         annotation.cost = sum(response.costs)
                         annotation.latency = latency
-                        annotation.confidence_prompt = (
-                            self.task.construct_confidence_prompt(chunk, examples)
-                        )
 
                         if self.config.confidence():
                             full_confidence_input = (
