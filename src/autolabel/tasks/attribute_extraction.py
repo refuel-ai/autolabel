@@ -88,13 +88,24 @@ class AttributeExtractionTask(BaseTask):
             output_dict[attribute_name] = input[attribute_name]
         return json.dumps(output_dict)
 
-    def construct_prompt(self, input: Dict, examples: List) -> str:
+    def construct_prompt(
+        self,
+        input: Dict,
+        examples: List,
+        prompt_template_override: PromptTemplate = None,
+        refuel_prompt_override: bool = False,
+        output_guidelines_override: str = None,
+        **kwargs,
+    ) -> str:
         fmt_task_guidelines = self.task_guidelines
 
         attribute_json = self._construct_attribute_json()
-        fmt_output_guidelines = self.output_guidelines.format(
-            attribute_json=attribute_json
+        output_guidelines = (
+            self.output_guidelines
+            if output_guidelines_override is None
+            else output_guidelines_override
         )
+        fmt_output_guidelines = output_guidelines.format(attribute_json=attribute_json)
 
         # prepare seed examples
         example_template = self.config.example_template()
@@ -109,16 +120,20 @@ class AttributeExtractionTask(BaseTask):
 
         # populate the current example in the prompt
         current_example = example_template.format_map(defaultdict(str, input))
-
+        prompt_template = (
+            self.prompt_template
+            if prompt_template_override is None
+            else prompt_template_override
+        )
         if self._is_few_shot_mode():
-            return self.prompt_template.format(
+            return prompt_template.format(
                 task_guidelines=fmt_task_guidelines,
                 output_guidelines=fmt_output_guidelines,
                 seed_examples="\n\n".join(fmt_examples),
                 current_example=current_example,
             )
         else:
-            return self.prompt_template.format(
+            return prompt_template.format(
                 task_guidelines=fmt_task_guidelines,
                 output_guidelines=fmt_output_guidelines,
                 current_example=current_example,

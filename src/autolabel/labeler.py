@@ -266,7 +266,7 @@ class LabelingAgent:
             ):
                 selected_labels = self.label_selector.select_labels(chunk["example"])
                 final_prompt = self.task.construct_prompt(
-                    chunk, examples, selected_labels
+                    chunk, examples, selected_labels=selected_labels
                 )
             else:
                 final_prompt = self.task.construct_prompt(chunk, examples)
@@ -292,7 +292,7 @@ class LabelingAgent:
                             generation, chunk, final_prompt
                         )
                         annotation.confidence_prompt = (
-                            self.task.construct_refuel_prompt(chunk, examples)
+                            self.task.construct_confidence_prompt(chunk, examples)
                         )
 
                         if self.config.confidence():
@@ -316,7 +316,7 @@ class LabelingAgent:
 
                                 empty_chunk = chunk.copy()
                                 empty_chunk[key_to_chunk] = ""
-                                empty_prompt = self.task.construct_refuel_prompt(
+                                empty_prompt = self.task.construct_confidence_prompt(
                                     empty_chunk, examples
                                 )
                                 num_tokens_empty_prompt = self.get_num_tokens(
@@ -334,7 +334,7 @@ class LabelingAgent:
                                 for confidence_chunk in confidence_chunks:
                                     new_chunk = chunk.copy()
                                     new_chunk[key_to_chunk] = confidence_chunk
-                                    new_prompt = self.task.construct_refuel_prompt(
+                                    new_prompt = self.task.construct_confidence_prompt(
                                         new_chunk, examples
                                     )
                                     annotation_dict = annotation.dict()
@@ -520,7 +520,7 @@ class LabelingAgent:
             ):
                 selected_labels = self.label_selector.select_labels(input_i["example"])
                 final_prompt = self.task.construct_prompt(
-                    input_i, examples, selected_labels
+                    input_i, examples, selected_labels=selected_labels
                 )
             else:
                 final_prompt = self.task.construct_prompt(input_i, examples)

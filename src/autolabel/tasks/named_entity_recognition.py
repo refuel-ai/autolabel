@@ -3,12 +3,12 @@ import re
 from collections import defaultdict
 from typing import Dict, List, Tuple, Optional
 from copy import deepcopy
+from langchain.prompts.prompt import PromptTemplate
 
 from langchain.schema import Generation
 from sklearn.metrics import roc_auc_score
 import logging
 from nervaluate import Evaluator
-from autolabel.confidence import ConfidenceCalculator
 from autolabel.configs import AutolabelConfig
 from autolabel.schema import (
     LLMAnnotation,
@@ -62,7 +62,15 @@ class NamedEntityRecognitionTask(BaseTask):
             json_output[category].append(named_entity)
         return json_output
 
-    def construct_prompt(self, input: Dict, examples: List) -> str:
+    def construct_prompt(
+        self,
+        input: Dict,
+        examples: List,
+        prompt_template_override: PromptTemplate = None,
+        refuel_prompt_override: bool = False,
+        output_guidelines_override: str = None,
+        **kwargs,
+    ) -> str:
         # prepare task guideline
         labels_list = self.config.labels_list()
         num_labels = len(labels_list)
@@ -91,18 +99,27 @@ class NamedEntityRecognitionTask(BaseTask):
 
         # populate the current example in the prompt
         current_example = example_template.format_map(defaultdict(str, input))
-
+        prompt_template = (
+            self.prompt_template
+            if prompt_template_override is None
+            else prompt_template_override
+        )
+        output_guidelines = (
+            self.output_guidelines
+            if output_guidelines_override is None
+            else output_guidelines_override
+        )
         if self._is_few_shot_mode():
-            return self.prompt_template.format(
+            return prompt_template.format(
                 task_guidelines=fmt_task_guidelines,
-                output_guidelines=self.output_guidelines,
+                output_guidelines=output_guidelines,
                 seed_examples="\n\n".join(fmt_examples),
                 current_example=current_example,
             )
         else:
-            return self.prompt_template.format(
+            return prompt_template.format(
                 task_guidelines=fmt_task_guidelines,
-                output_guidelines=self.output_guidelines,
+                output_guidelines=output_guidelines,
                 current_example=current_example,
             )
 

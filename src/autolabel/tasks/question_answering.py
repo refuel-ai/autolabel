@@ -32,6 +32,7 @@ class QuestionAnsweringTask(BaseTask):
     DEFAULT_OUTPUT_GUIDELINES = (
         'You will return the answer one element: "the correct label"\n'
     )
+    REFUEL_LLM_DEFAULT_OUTPUT_GUIDELINES = ""
     DEFAULT_TASK_GUIDELINES = "Your job is to answer the following questions using the options provided for each question. Choose the best answer for the question.\n"
     NULL_LABEL_TOKEN = "NO_LABEL"
 
@@ -39,7 +40,7 @@ class QuestionAnsweringTask(BaseTask):
 
     def __init__(self, config: AutolabelConfig) -> None:
         if config.provider() == ModelProvider.REFUEL:
-            self.DEFAULT_OUTPUT_GUIDELINES = ""
+            self.DEFAULT_OUTPUT_GUIDELINES = self.REFUEL_LLM_DEFAULT_OUTPUT_GUIDELINES
 
         super().__init__(config)
         self.metrics = [
@@ -54,7 +55,15 @@ class QuestionAnsweringTask(BaseTask):
         if self.config.confidence():
             self.metrics.append(AUROCMetric())
 
-    def construct_prompt(self, input: Dict, examples: List[Dict]) -> str:
+    def construct_prompt(
+        self,
+        input: Dict,
+        examples: List[Dict],
+        prompt_template_override: PromptTemplate = None,
+        refuel_prompt_override: bool = False,
+        output_guidelines_override: str = None,
+        **kwargs,
+    ) -> str:
         # Copy over the input so that we can modify it
         input = input.copy()
 
@@ -80,20 +89,49 @@ class QuestionAnsweringTask(BaseTask):
 
         # populate the current example in the prompt
         current_example = example_template.format_map(defaultdict(str, input))
-
+        prompt_template = (
+            self.prompt_template
+            if prompt_template_override is None
+            else prompt_template_override
+        )
+        output_guidelines = (
+            self.output_guidelines
+            if output_guidelines_override is None
+            else output_guidelines_override
+        )
         if self._is_few_shot_mode():
-            return self.prompt_template.format(
+            return prompt_template.format(
                 task_guidelines=self.task_guidelines,
-                output_guidelines=self.output_guidelines,
+                output_guidelines=output_guidelines,
                 seed_examples="\n\n".join(fmt_examples),
                 current_example=current_example,
             )
         else:
-            return self.prompt_template.format(
+            return prompt_template.format(
                 task_guidelines=self.task_guidelines,
-                output_guidelines=self.output_guidelines,
+                output_guidelines=output_guidelines,
                 current_example=current_example,
             )
+
+    def construct_confidence_prompt(self, input: str, examples: List, **kwargs) -> str:
+        prompt_template = PromptTemplate(
+            input_variables=get_format_variables(
+                self.FEW_SHOT_TEMPLATE_REFUEL_LLM
+                if self._is_few_shot_mode()
+                else self.ZERO_SHOT_TEMPLATE_REFUEL_LLM
+            ),
+            template=self.example_template,
+        )
+        refuel_prompt = self.construct_prompt(
+            input,
+            examples,
+            prompt_template=prompt_template,
+            refuel_prompt_override=True,
+            output_guidelines_override=self.config.output_guidelines()
+            or self.REFUEL_LLM_DEFAULT_OUTPUT_GUIDELINES,
+            **kwargs,
+        )
+        return refuel_prompt
 
     def get_explanation_prompt(self, example: Dict) -> str:
         pt = PromptTemplate(

@@ -88,12 +88,19 @@ class BaseTask(ABC):
         return self.config.few_shot_algorithm() in [x.value for x in FewShotAlgorithm]
 
     @abstractmethod
-    def construct_prompt(self, input: str, examples: List) -> str:
+    def construct_prompt(
+        self,
+        input: str,
+        examples: List,
+        prompt_template_override: PromptTemplate = None,
+        refuel_prompt_override: bool = False,
+        output_guidelines_override: str = None,
+        **kwargs,
+    ) -> str:
         pass
 
-    def construct_refuel_prompt(self, input: str, examples: List) -> str:
-        self.use_refuel_prompt_schema = True
-        self.prompt_template = PromptTemplate(
+    def construct_confidence_prompt(self, input: str, examples: List, **kwargs) -> str:
+        prompt_template = PromptTemplate(
             input_variables=get_format_variables(
                 self.FEW_SHOT_TEMPLATE_REFUEL_LLM
                 if self._is_few_shot_mode()
@@ -101,10 +108,13 @@ class BaseTask(ABC):
             ),
             template=self.example_template,
         )
-        refuel_prompt = self.construct_prompt(input, examples)
-
-        # Reset task state
-        self._prompt_schema_init()
+        refuel_prompt = self.construct_prompt(
+            input,
+            examples,
+            prompt_template=prompt_template,
+            refuel_prompt_override=True,
+            **kwargs,
+        )
         return refuel_prompt
 
     @abstractmethod
