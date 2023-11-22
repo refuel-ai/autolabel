@@ -291,10 +291,13 @@ class LabelingAgent:
                         annotation = self.task.parse_llm_response(
                             generation, chunk, final_prompt
                         )
+                        annotation.confidence_prompt = (
+                            self.task.construct_refuel_prompt(chunk, examples)
+                        )
 
                         if self.config.confidence():
                             full_confidence_input = (
-                                annotation.prompt + annotation.raw_response
+                                annotation.confidence_prompt + annotation.raw_response
                             )
                             if (
                                 not self.config.confidence_chunk_column()
@@ -313,7 +316,7 @@ class LabelingAgent:
 
                                 empty_chunk = chunk.copy()
                                 empty_chunk[key_to_chunk] = ""
-                                empty_prompt = self.task.construct_prompt(
+                                empty_prompt = self.task.construct_refuel_prompt(
                                     empty_chunk, examples
                                 )
                                 num_tokens_empty_prompt = self.get_num_tokens(
@@ -331,11 +334,11 @@ class LabelingAgent:
                                 for confidence_chunk in confidence_chunks:
                                     new_chunk = chunk.copy()
                                     new_chunk[key_to_chunk] = confidence_chunk
-                                    new_prompt = self.task.construct_prompt(
+                                    new_prompt = self.task.construct_refuel_prompt(
                                         new_chunk, examples
                                     )
                                     annotation_dict = annotation.dict()
-                                    annotation_dict["prompt"] = new_prompt
+                                    annotation_dict["confidence_prompt"] = new_prompt
                                     confidence_scores.append(
                                         self.confidence.calculate(
                                             model_generation=LLMAnnotation(

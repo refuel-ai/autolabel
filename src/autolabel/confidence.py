@@ -40,7 +40,7 @@ class ConfidenceCalculator:
             "p_true": self.p_true,
             "logprob_average_per_key": self.logprob_average_per_key,
         }
-        self.BASE_API = "https://refuel-llm.refuel.ai/"
+        self.BASE_API = "https://llm.refuel.ai/models/refuelllm/confidence"
         self.REFUEL_API_ENV = "REFUEL_API_KEY"
         if self.REFUEL_API_ENV in os.environ and os.environ[self.REFUEL_API_ENV]:
             self.REFUEL_API_KEY = os.environ[self.REFUEL_API_ENV]
@@ -101,14 +101,16 @@ class ConfidenceCalculator:
         return logprob_per_key
 
     def p_true(self, model_generation: LLMAnnotation, **kwargs) -> float:
-        p_true_prompt = f"{model_generation.prompt}{model_generation.raw_response} \n Is the answer to the last example correct? Answer in one word on the same line [Yes/No]: "
+        p_true_prompt = f"{model_generation.raw_response} \n Is the answer to the last example correct? Answer in one word on the same line [Yes/No]: "
 
         if self.llm.returns_token_probs():
+            p_true_prompt = model_generation.prompt + p_true_prompt
             response = self.llm.label([p_true_prompt])
             response_logprobs = response.generations[0][0].generation_info["logprobs"][
                 "top_logprobs"
             ]
         else:
+            p_true_prompt = model_generation.confidence_prompt + p_true_prompt
             yes_logprob = self.compute_confidence(p_true_prompt, "Yes")
             no_logprob = self.compute_confidence(p_true_prompt, "No")
             response_logprobs = (
@@ -135,7 +137,7 @@ class ConfidenceCalculator:
                 return model_generation.confidence_score
             if self.cache:
                 cache_entry = ConfidenceCacheEntry(
-                    prompt=model_generation.prompt,
+                    prompt=model_generation.confidence_prompt,
                     raw_response=model_generation.raw_response,
                     score_type=self.score_type,
                 )
@@ -144,10 +146,11 @@ class ConfidenceCalculator:
                 # On cache miss, compute logprobs using API call and update cache
                 if logprobs == None:
                     logprobs = self.compute_confidence(
-                        model_generation.prompt, model_generation.raw_response
+                        model_generation.confidence_prompt,
+                        model_generation.raw_response,
                     )
                     cache_entry = ConfidenceCacheEntry(
-                        prompt=model_generation.prompt,
+                        prompt=model_generation.confidence_prompt,
                         raw_response=model_generation.raw_response,
                         logprobs=logprobs,
                         score_type=self.score_type,
@@ -156,7 +159,7 @@ class ConfidenceCalculator:
                     self.cache.update(cache_entry)
             else:
                 logprobs = self.compute_confidence(
-                    model_generation.prompt, model_generation.raw_response
+                    model_generation.confidence_prompt, model_generation.raw_response
                 )
         else:
             if model_generation.generation_info is None:
@@ -188,10 +191,7 @@ class ConfidenceCalculator:
         before_sleep=before_sleep_log(logger, logging.WARNING),
     )
     def _call_with_retry(self, model_input, model_output) -> requests.Response:
-        payload = {
-            "data": {"model_input": model_input, "model_output": model_output},
-            "task": "confidence",
-        }
+        payload = {"input": model_input, "output": model_output}
         headers = {"refuel_api_key": self.REFUEL_API_KEY}
         response = requests.post(self.BASE_API, json=payload, headers=headers)
         # raise Exception if status != 200
@@ -208,7 +208,7 @@ class ConfidenceCalculator:
                 return [{"": 0.5}]
             else:
                 response = self._call_with_retry(model_input, model_output)
-                return json.loads(response.json()["body"])
+                return json.loads(response.json())["logprobs"]
         except Exception as e:
             # This signifies an error in computing confidence score
             # using the API. We give it a score of 0.5 and go ahead
