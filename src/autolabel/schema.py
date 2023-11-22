@@ -116,6 +116,7 @@ class LLMAnnotation(BaseModel):
     raw_response: Optional[str] = ""
     explanation: Optional[str] = ""
     prompt: Optional[str] = ""
+    confidence_prompt: Optional[str] = ""
     error: Optional[LabelingError] = None
 
 

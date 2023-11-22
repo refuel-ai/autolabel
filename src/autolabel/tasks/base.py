@@ -51,8 +51,6 @@ class BaseTask(ABC):
     def __init__(self, config: AutolabelConfig) -> None:
         self.config = config
 
-        is_refuel_llm = self.config.provider() == ModelProvider.REFUEL
-
         # Update the default prompt template with the prompt template from the config
         self.task_guidelines = (
             self.config.task_guidelines() or self.DEFAULT_TASK_GUIDELINES
@@ -61,38 +59,63 @@ class BaseTask(ABC):
             self.config.output_guidelines() or self.DEFAULT_OUTPUT_GUIDELINES
         )
 
-        if self._is_few_shot_mode():
-            few_shot_template = (
-                self.FEW_SHOT_TEMPLATE_REFUEL_LLM
-                if is_refuel_llm
-                else self.FEW_SHOT_TEMPLATE
-            )
-            self.prompt_template = PromptTemplate(
-                input_variables=get_format_variables(few_shot_template),
-                template=few_shot_template,
-            )
-        else:
-            zero_shot_template = (
-                self.ZERO_SHOT_TEMPLATE_REFUEL_LLM
-                if is_refuel_llm
-                else self.ZERO_SHOT_TEMPLATE
-            )
-            self.prompt_template = PromptTemplate(
-                input_variables=get_format_variables(zero_shot_template),
-                template=zero_shot_template,
-            )
-
         self.dataset_generation_guidelines = (
             self.config.dataset_generation_guidelines()
             or self.DEFAULT_DATASET_GENERATION_GUIDELINES
+        )
+        self._prompt_schema_init()
+
+    def _prompt_schema_init(self) -> None:
+        self.use_refuel_prompt_schema = self.config.provider() == ModelProvider.REFUEL
+        if self._is_few_shot_mode():
+            self.example_template = (
+                self.FEW_SHOT_TEMPLATE_REFUEL_LLM
+                if self.use_refuel_prompt_schema
+                else self.FEW_SHOT_TEMPLATE
+            )
+        else:
+            self.example_template = (
+                self.ZERO_SHOT_TEMPLATE_REFUEL_LLM
+                if self.use_refuel_prompt_schema
+                else self.ZERO_SHOT_TEMPLATE
+            )
+        self.prompt_template = PromptTemplate(
+            input_variables=get_format_variables(self.example_template),
+            template=self.example_template,
         )
 
     def _is_few_shot_mode(self) -> bool:
         return self.config.few_shot_algorithm() in [x.value for x in FewShotAlgorithm]
 
     @abstractmethod
-    def construct_prompt(self, input: str, examples: List) -> str:
+    def construct_prompt(
+        self,
+        input: str,
+        examples: List,
+        prompt_template_override: PromptTemplate = None,
+        refuel_prompt_override: bool = False,
+        output_guidelines_override: str = None,
+        **kwargs,
+    ) -> str:
         pass
+
+    def construct_confidence_prompt(self, input: str, examples: List, **kwargs) -> str:
+        prompt_template = PromptTemplate(
+            input_variables=get_format_variables(
+                self.FEW_SHOT_TEMPLATE_REFUEL_LLM
+                if self._is_few_shot_mode()
+                else self.ZERO_SHOT_TEMPLATE_REFUEL_LLM
+            ),
+            template=self.example_template,
+        )
+        refuel_prompt = self.construct_prompt(
+            input,
+            examples,
+            prompt_template=prompt_template,
+            refuel_prompt_override=True,
+            **kwargs,
+        )
+        return refuel_prompt
 
     @abstractmethod
     def eval(
