@@ -1,5 +1,6 @@
 from functools import cached_property
 from typing import List, Optional
+from time import time
 import logging
 
 from autolabel.models import BaseModel
@@ -153,9 +154,13 @@ class OpenAILLM(BaseModel):
             # We might consider breaking this up into human vs system message in future
             prompts = [[HumanMessage(content=prompt)] for prompt in prompts]
         try:
+            start_time = time()
             result = self.llm.generate(prompts)
+            end_time = time()
             return RefuelLLMResult(
-                generations=result.generations, errors=[None] * len(result.generations)
+                generations=result.generations,
+                errors=[None] * len(result.generations),
+                latencies=[end_time - start_time] * len(result.generations),
             )
         except Exception as e:
             return self._label_individually(prompts)

@@ -1,5 +1,6 @@
 import logging
 from typing import List, Optional, Dict
+from time import time
 from autolabel.models import BaseModel
 from autolabel.configs import AutolabelConfig
 from autolabel.cache import BaseCache
@@ -131,9 +132,13 @@ class HFPipelineLLM(BaseModel):
 
     def _label(self, prompts: List[str]) -> RefuelLLMResult:
         try:
+            start_time = time()
             result = self.llm.generate(prompts)
+            end_time = time()
             return RefuelLLMResult(
-                generations=result.generations, errors=[None] * len(result.generations)
+                generations=result.generations,
+                errors=[None] * len(result.generations),
+                latencies=[end_time - start_time] * len(result.generations),
             )
         except Exception as e:
             return self._label_individually(prompts)

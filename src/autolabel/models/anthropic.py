@@ -1,4 +1,5 @@
 from typing import List, Optional
+from time import time
 
 from autolabel.configs import AutolabelConfig
 from autolabel.models import BaseModel
@@ -50,9 +51,13 @@ class AnthropicLLM(BaseModel):
     def _label(self, prompts: List[str]) -> RefuelLLMResult:
         prompts = [[HumanMessage(content=prompt)] for prompt in prompts]
         try:
+            start_time = time()
             result = self.llm.generate(prompts)
+            end_time = time()
             return RefuelLLMResult(
-                generations=result.generations, errors=[None] * len(result.generations)
+                generations=result.generations,
+                errors=[None] * len(result.generations),
+                latencies=[end_time - start_time] * len(result.generations),
             )
         except Exception as e:
             return self._label_individually(prompts)

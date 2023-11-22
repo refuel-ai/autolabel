@@ -1,11 +1,12 @@
 from functools import cached_property
 from typing import List, Optional
+from time import time
 import logging
 
 from autolabel.models import BaseModel
 from autolabel.configs import AutolabelConfig
 from autolabel.cache import BaseCache
-from autolabel.schema import RefuelLLMResult
+from autolabel.schema import RefuelLLMResult, LabelingError, ErrorType
 from langchain.schema import LLMResult, HumanMessage, Generation
 from tenacity import (
     before_sleep_log,
@@ -76,29 +77,43 @@ class PaLMLLM(BaseModel):
     def _label_with_retry(self, prompts: List[str]) -> LLMResult:
         return self.llm.generate(prompts)
 
-    def _label_individually(self, prompts: List[str]) -> LLMResult:
+    def _label_individually(self, prompts: List[str]) -> RefuelLLMResult:
         """Label each prompt individually. Should be used only after trying as a batch first.
 
         Args:
             prompts (List[str]): List of prompts to label
 
         Returns:
-            LLMResult: LLMResult object with generations
+            RefuelLLMResult: RefuelLLMResult object
         """
         generations = []
+        errors = []
+        latencies = []
         for i, prompt in enumerate(prompts):
             try:
+                start_time = time()
                 response = self._label_with_retry([prompt])
+                end_time = time()
                 for generation in response.generations[0]:
                     generation.text = generation.text.replace(
                         self.SEP_REPLACEMENT_TOKEN, "\n"
                     )
                 generations.append(response.generations[0])
+                errors.append(None)
+                latencies.append(end_time - start_time)
             except Exception as e:
                 print(f"Error generating from LLM: {e}, returning empty generation")
                 generations.append([Generation(text="")])
+                errors.append(
+                    LabelingError(
+                        error_type=ErrorType.LLM_PROVIDER_ERROR, error_message=str(e)
+                    )
+                )
+                latencies.append(0)
 
-        return LLMResult(generations=generations)
+        return RefuelLLMResult(
+            generations=generations, errors=errors, latencies=latencies
+        )
 
     def _label(self, prompts: List[str]) -> RefuelLLMResult:
         for prompt in prompts:
@@ -120,17 +135,21 @@ class PaLMLLM(BaseModel):
             prompts = [[HumanMessage(content=prompt)] for prompt in prompts]
 
         try:
+            start_time = time()
             result = self._label_with_retry(prompts)
+            end_time = time()
             for generations in result.generations:
                 for generation in generations:
                     generation.text = generation.text.replace(
                         self.SEP_REPLACEMENT_TOKEN, "\n"
                     )
             return RefuelLLMResult(
-                generations=result.generations, errors=[None] * len(result.generations)
+                generations=result.generations,
+                errors=[None] * len(result.generations),
+                latencies=[end_time - start_time] * len(result.generations),
             )
         except Exception as e:
-            self._label_individually(prompts)
+            return self._label_individually(prompts)
 
     def get_cost(self, prompt: str, label: Optional[str] = "") -> float:
         if self.model_name is None:
