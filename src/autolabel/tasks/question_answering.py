@@ -117,7 +117,7 @@ class QuestionAnsweringTask(BaseTask):
         output_guidelines_override = (
             self.config.output_guidelines() or self.REFUEL_LLM_DEFAULT_OUTPUT_GUIDELINES
         )
-        refuel_prompt = self.construct_confidence_prompt(
+        refuel_prompt = super().construct_confidence_prompt(
             input,
             examples,
             output_guidelines_override=output_guidelines_override,
