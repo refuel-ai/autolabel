@@ -121,6 +121,7 @@ class LLMAnnotation(BaseModel):
     output_tokens: Optional[int] = None
     cost: Optional[float] = None
     latency: Optional[float] = None
+    confidence_prompt: Optional[str] = ""
     error: Optional[LabelingError] = None
 
 
