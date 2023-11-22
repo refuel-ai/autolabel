@@ -38,7 +38,7 @@ class QuestionAnsweringTask(BaseTask):
     GENERATE_EXPLANATION_PROMPT = "You are an expert at providing a well reasoned explanation for the output of a given task. \n\nBEGIN TASK DESCRIPTION\n{task_guidelines}\nEND TASK DESCRIPTION\nYou will be given an input example and the corresponding output. You will be given a question and an answer. Your job is to provide an explanation for why the answer is correct for the task above.\nThink step by step and generate an explanation. The last line of the explanation should be - So, the answer is <label>.\n{labeled_example}\nExplanation: "
 
     def __init__(self, config: AutolabelConfig) -> None:
-        if self.config.provider() == ModelProvider.REFUEL:
+        if config.provider() == ModelProvider.REFUEL:
             self.DEFAULT_OUTPUT_GUIDELINES = ""
 
         super().__init__(config)
