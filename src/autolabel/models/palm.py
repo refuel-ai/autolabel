@@ -161,3 +161,6 @@ class PaLMLLM(BaseModel):
 
     def returns_token_probs(self) -> bool:
         return False
+
+    def get_num_tokens(self, prompt: str) -> int:
+        return len(prompt)

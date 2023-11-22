@@ -185,3 +185,7 @@ class OpenAILLM(BaseModel):
             self.model_name is not None
             and self.model_name in self.MODELS_WITH_TOKEN_PROBS
         )
+
+    def get_num_tokens(self, prompt: str) -> int:
+        encoding = self.tiktoken.encoding_for_model(self.model_name)
+        return len(encoding.encode(prompt))

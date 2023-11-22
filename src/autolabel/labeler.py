@@ -278,7 +278,7 @@ class LabelingAgent:
                 response.errors,
                 response.latencies,
             ):
-                input_tokens = self.get_num_tokens(final_prompt)
+                input_tokens = self.llm.get_num_tokens(final_prompt)
                 if error is not None:
                     annotation = LLMAnnotation(
                         successfully_labeled=False,
@@ -302,12 +302,11 @@ class LabelingAgent:
                             self.task.construct_confidence_prompt(chunk, examples)
                         )
                         annotation.input_tokens = input_tokens
-                        annotation.output_tokens = self.get_num_tokens(
+                        annotation.output_tokens = self.llm.get_num_tokens(
                             annotation.raw_response
                         )
                         annotation.cost = sum(response.costs)
                         annotation.latency = latency
-
                         if self.config.confidence():
                             full_confidence_input = (
                                 annotation.confidence_prompt + annotation.raw_response
