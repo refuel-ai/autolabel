@@ -113,12 +113,13 @@ class LabelingAgent:
             self.config, cache=self.generation_cache
         )
 
-        if not confidence_tokenizer:
-            self.confidence_tokenizer = AutoTokenizer.from_pretrained(
-                "google/flan-t5-xxl"
-            )
-        else:
-            self.confidence_tokenizer = confidence_tokenizer
+        if self.config.confidence_chunk_column():
+            if not confidence_tokenizer:
+                self.confidence_tokenizer = AutoTokenizer.from_pretrained(
+                    "google/flan-t5-xxl"
+                )
+            else:
+                self.confidence_tokenizer = confidence_tokenizer
         score_type = "logprob_average"
         if self.config.task_type() == TaskType.ATTRIBUTE_EXTRACTION:
             score_type = "logprob_average_per_key"
