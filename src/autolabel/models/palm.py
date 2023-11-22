@@ -75,7 +75,9 @@ class PaLMLLM(BaseModel):
         before_sleep=before_sleep_log(logger, logging.WARNING),
     )
     def _label_with_retry(self, prompts: List[str]) -> LLMResult:
-        return self.llm.generate(prompts)
+        start_time = time()
+        response = self.llm.generate(prompts)
+        return response, time() - start_time
 
     def _label_individually(self, prompts: List[str]) -> RefuelLLMResult:
         """Label each prompt individually. Should be used only after trying as a batch first.
@@ -91,16 +93,14 @@ class PaLMLLM(BaseModel):
         latencies = []
         for i, prompt in enumerate(prompts):
             try:
-                start_time = time()
-                response = self._label_with_retry([prompt])
-                end_time = time()
+                response, latency = self._label_with_retry([prompt])
                 for generation in response.generations[0]:
                     generation.text = generation.text.replace(
                         self.SEP_REPLACEMENT_TOKEN, "\n"
                     )
                 generations.append(response.generations[0])
                 errors.append(None)
-                latencies.append(end_time - start_time)
+                latencies.append(latency)
             except Exception as e:
                 print(f"Error generating from LLM: {e}, returning empty generation")
                 generations.append([Generation(text="")])
