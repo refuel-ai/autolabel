@@ -114,16 +114,12 @@ class QuestionAnsweringTask(BaseTask):
             )
 
     def construct_confidence_prompt(self, input: str, examples: List, **kwargs) -> str:
-        output_guidelines_override = (
-            self.config.output_guidelines() or self.REFUEL_LLM_DEFAULT_OUTPUT_GUIDELINES
-        )
-        refuel_prompt = super().construct_confidence_prompt(
+        confidence_prompt = super().construct_confidence_prompt(
             input,
             examples,
-            output_guidelines_override=output_guidelines_override,
             **kwargs,
         )
-        return refuel_prompt
+        return confidence_prompt
 
     def get_explanation_prompt(self, example: Dict) -> str:
         pt = PromptTemplate(

@@ -40,7 +40,7 @@ class ConfidenceCalculator:
             "p_true": self.p_true,
             "logprob_average_per_key": self.logprob_average_per_key,
         }
-        self.BASE_API = "https://llm.refuel.ai/models/refuelllm/confidence"
+        self.BASE_API = "https://refuel-llm.refuel.ai/"
         self.REFUEL_API_ENV = "REFUEL_API_KEY"
         if self.REFUEL_API_ENV in os.environ and os.environ[self.REFUEL_API_ENV]:
             self.REFUEL_API_KEY = os.environ[self.REFUEL_API_ENV]
@@ -191,7 +191,10 @@ class ConfidenceCalculator:
         before_sleep=before_sleep_log(logger, logging.WARNING),
     )
     def _call_with_retry(self, model_input, model_output) -> requests.Response:
-        payload = {"input": model_input, "output": model_output}
+        payload = {
+            "data": {"model_input": model_input, "model_output": model_output},
+            "task": "confidence",
+        }
         headers = {"refuel_api_key": self.REFUEL_API_KEY}
         response = requests.post(self.BASE_API, json=payload, headers=headers)
         # raise Exception if status != 200
@@ -208,7 +211,7 @@ class ConfidenceCalculator:
                 return [{"": 0.5}]
             else:
                 response = self._call_with_retry(model_input, model_output)
-                return json.loads(response.json())["logprobs"]
+                return json.loads(response.json()["body"])
         except Exception as e:
             # This signifies an error in computing confidence score
             # using the API. We give it a score of 0.5 and go ahead
