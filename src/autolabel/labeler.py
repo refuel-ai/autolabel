@@ -270,6 +270,7 @@ class LabelingAgent:
                 )
             else:
                 final_prompt = self.task.construct_prompt(chunk, examples)
+            logger.warn(final_prompt)
 
             response = self.llm.label([final_prompt])
             for i, generations, error, latency in zip(
