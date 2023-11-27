@@ -33,12 +33,12 @@ class BaseTask(ABC):
 
     ZERO_SHOT_TEMPLATE_REFUEL_LLM = """
     <s>[INST] <<SYS>>
-    {task_guidelines}{output_guidelines}
+    {task_guidelines}\n{output_guidelines}
     <</SYS>>
     {current_example}[/INST]\n"""
     FEW_SHOT_TEMPLATE_REFUEL_LLM = """
     <s>[INST] <<SYS>>
-    {task_guidelines}{output_guidelines}\n{seed_examples}
+    {task_guidelines}\n{output_guidelines}\n{seed_examples}
     <</SYS>>
     {current_example}[/INST]\n"""
 
@@ -100,18 +100,19 @@ class BaseTask(ABC):
         pass
 
     def construct_confidence_prompt(self, input: str, examples: List, **kwargs) -> str:
+        curr_template = (
+            self.FEW_SHOT_TEMPLATE_REFUEL_LLM
+            if self._is_few_shot_mode()
+            else self.ZERO_SHOT_TEMPLATE_REFUEL_LLM
+        )
         prompt_template = PromptTemplate(
-            input_variables=get_format_variables(
-                self.FEW_SHOT_TEMPLATE_REFUEL_LLM
-                if self._is_few_shot_mode()
-                else self.ZERO_SHOT_TEMPLATE_REFUEL_LLM
-            ),
-            template=self.example_template,
+            input_variables=get_format_variables(curr_template),
+            template=curr_template,
         )
         refuel_prompt = self.construct_prompt(
-            input,
-            examples,
-            prompt_template=prompt_template,
+            input=input,
+            examples=examples,
+            prompt_template_override=prompt_template,
             refuel_prompt_override=True,
             **kwargs,
         )
