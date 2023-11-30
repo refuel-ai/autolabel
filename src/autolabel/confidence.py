@@ -61,7 +61,10 @@ class ConfidenceCalculator:
         logprob_cumulative, count = 0, 0
         for token in logprobs:
             token_str = list(token.keys())[0]
-            if token_str.strip() not in self.tokens_to_ignore:
+            if (
+                token_str.strip() not in self.tokens_to_ignore
+                and token[token_str] is not None
+            ):
                 logprob_cumulative += (
                     token[token_str]
                     if token[token_str] >= 0

@@ -2,7 +2,7 @@ import json
 import os
 import requests
 import logging
-from typing import List, Optional
+from typing import List, Optional, Tuple
 from time import time
 
 from autolabel.models import BaseModel
@@ -64,7 +64,7 @@ class RefuelLLM(BaseModel):
         before_sleep=before_sleep_log(logger, logging.WARNING),
         retry=retry_if_not_exception_type(UnretryableError),
     )
-    def _label_with_retry(self, prompt: str) -> (requests.Response, float):
+    def _label_with_retry(self, prompt: str) -> Tuple[requests.Response, float]:
         payload = {
             "input": prompt,
             "params": {**self.model_params},

@@ -1,11 +1,11 @@
 import json
 import re
 from collections import defaultdict
-from typing import Dict, List, Tuple, Optional
+from typing import Dict, List, Optional, Tuple, Union
 from copy import deepcopy
 from langchain.prompts.prompt import PromptTemplate
 
-from langchain.schema import Generation
+from langchain.schema import Generation, ChatGeneration
 from sklearn.metrics import roc_auc_score
 import logging
 from nervaluate import Evaluator
@@ -161,7 +161,10 @@ class NamedEntityRecognitionTask(BaseTask):
         return processed_output
 
     def parse_llm_response(
-        self, response: Generation, curr_sample: Dict, prompt: str
+        self,
+        response: Union[Generation, ChatGeneration],
+        curr_sample: Dict,
+        prompt: str,
     ) -> LLMAnnotation:
         output = {}
         successfully_labeled = False

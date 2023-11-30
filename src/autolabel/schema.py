@@ -273,7 +273,7 @@ class RefuelLLMResult(BaseModel):
     """List of generated outputs. This is a List[List[]] because
     each input could have multiple candidate generations."""
 
-    generations: List[List[Generation]]
+    generations: List[List[Union[Generation, ChatGeneration]]]
 
     """Errors encountered while running the labeling job"""
     errors: List[Optional[LabelingError]]
