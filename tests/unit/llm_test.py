@@ -6,6 +6,8 @@ from autolabel.models.openai_vision import OpenAIVisionLLM
 from autolabel.models.palm import PaLMLLM
 from autolabel.models.refuel import RefuelLLM
 from langchain.schema import Generation, LLMResult
+from openai.types.chat.chat_completion import ChatCompletion, Choice
+from openai.types.chat.chat_completion_message import ChatCompletionMessage
 from pytest import approx
 
 
@@ -157,15 +159,22 @@ def test_gpt4V_label(mocker):
         json.dumps({"text": "test1", "image_url": "dummy1.jpg"}),
         json.dumps({"text": "test2", "image_url": "dummy2.jpg"}),
     ]
-    mocker.patch(
-        "openai.resources.chat.Completions.create",
-        return_value=LLMResult(
-            generations=[[Generation(text="Answers")] for _ in prompts]
-        ),
+    model.client.chat.completions._post = lambda *args, **kargs: ChatCompletion(
+        id="test",
+        choices=[
+            Choice(
+                finish_reason="stop",
+                index=0,
+                message=ChatCompletionMessage(content="Answers", role="assistant"),
+            )
+        ],
+        created=0,
+        model="test",
+        object="chat.completion",
     )
     x = model.label(prompts)
     assert [i[0].text for i in x.generations] == ["Answers", "Answers"]
-    assert sum(x.costs) == approx(0.00023999, rel=1e-3)
+    assert sum(x.costs) == approx(0.01568, rel=1e-3)
 
 
 def test_gpt4V_get_cost():

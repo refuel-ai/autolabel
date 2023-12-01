@@ -60,9 +60,9 @@ class OpenAIVisionLLM(BaseModel):
         if os.getenv("OPENAI_API_KEY") is None:
             raise ValueError("OPENAI_API_KEY environment variable not set")
 
-        client = OpenAI()
+        self.client = OpenAI()
         self.llm = partial(
-            client.chat.completions.create,
+            self.client.chat.completions.create,
             model=self.model_name,
             max_tokens=self.DEFAULT_PARAMS_CHAT_ENGINE["max_tokens"],
         )
