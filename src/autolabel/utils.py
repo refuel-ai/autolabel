@@ -44,6 +44,7 @@ EXAMPLE_DATASETS = [
     "lexical_relation",
     "quoref",
     "painting-style-classification",
+    "multimodal_science_qa",
 ]
 
 NO_SEED_DATASET = [
