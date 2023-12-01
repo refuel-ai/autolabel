@@ -1,6 +1,6 @@
 from autolabel.cache import BaseCache
-from langchain.schema import Generation
-from typing import Any, List
+from langchain.schema import Generation, ChatGeneration
+from typing import Any, List, Union
 import hashlib
 import json
 import logging
@@ -25,7 +25,7 @@ class RedisCache(BaseCache):
                 "redis is required to use the Redis Cache. Please install it with the following command: pip install redis"
             )
 
-    def lookup(self, entry: Any) -> List[Generation]:
+    def lookup(self, entry: Any) -> List[Union[Generation, ChatGeneration]]:
         """Retrieves an entry from the Cache. Returns an empty list [] if not found.
         Args:
             entry: Entry we wish to retrieve from the Cache

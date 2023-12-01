@@ -6,6 +6,8 @@ import json
 import pickle
 import asyncio
 import pandas as pd
+import numpy as np
+from transformers import AutoTokenizer
 from rich import print as pprint
 from rich.console import Console
 from rich.prompt import Confirm
@@ -37,6 +39,7 @@ from autolabel.schema import (
     TaskRun,
     TaskStatus,
     TaskType,
+    AggregationFunction,
 )
 from autolabel.tasks import TaskFactory
 from autolabel.utils import (
@@ -58,9 +61,15 @@ COST_TABLE_STYLES = {
 }
 METRIC_TABLE_STYLE = "cyan bold"
 
+MERGE_FUNCTION = {
+    AggregationFunction.MAX: np.max,
+    AggregationFunction.MEAN: np.mean,
+}
+
 
 class LabelingAgent:
     COST_KEY = "Cost in $"
+    CONFIDENCE_MAX_CONTEXT_LENGTH = 3400
 
     def __init__(
         self,
@@ -72,6 +81,7 @@ class LabelingAgent:
         generation_cache: Optional[BaseCache] = SQLAlchemyGenerationCache(),
         transform_cache: Optional[BaseCache] = SQLAlchemyTransformCache(),
         confidence_cache: Optional[BaseCache] = SQLAlchemyConfidenceCache(),
+        confidence_tokenizer: Optional[AutoTokenizer] = None,
     ) -> None:
         self.create_task = create_task
         self.db = StateManager() if self.create_task else None
@@ -103,11 +113,20 @@ class LabelingAgent:
             self.config, cache=self.generation_cache
         )
 
+        if self.config.confidence_chunk_column():
+            if not confidence_tokenizer:
+                self.confidence_tokenizer = AutoTokenizer.from_pretrained(
+                    "google/flan-t5-xxl"
+                )
+            else:
+                self.confidence_tokenizer = confidence_tokenizer
         score_type = "logprob_average"
         if self.config.task_type() == TaskType.ATTRIBUTE_EXTRACTION:
             score_type = "logprob_average_per_key"
         self.confidence = ConfidenceCalculator(
-            score_type=score_type, llm=self.llm, cache=self.confidence_cache
+            score_type=score_type,
+            llm=self.llm,
+            cache=self.confidence_cache,
         )
 
         self.example_selector = example_selector
@@ -247,15 +266,19 @@ class LabelingAgent:
             ):
                 selected_labels = self.label_selector.select_labels(chunk["example"])
                 final_prompt = self.task.construct_prompt(
-                    chunk, examples, selected_labels
+                    chunk, examples, selected_labels=selected_labels
                 )
             else:
                 final_prompt = self.task.construct_prompt(chunk, examples)
 
             response = self.llm.label([final_prompt])
-            for i, generations, error in zip(
-                range(len(response.generations)), response.generations, response.errors
+            for i, generations, error, latency in zip(
+                range(len(response.generations)),
+                response.generations,
+                response.errors,
+                response.latencies,
             ):
+                input_tokens = self.llm.get_num_tokens(final_prompt)
                 if error is not None:
                     annotation = LLMAnnotation(
                         successfully_labeled=False,
@@ -265,6 +288,9 @@ class LabelingAgent:
                         prompt=final_prompt,
                         confidence_score=0,
                         error=error,
+                        input_tokens=input_tokens,
+                        cost=0,
+                        latency=0,
                     )
                 else:
                     annotations = []
@@ -272,11 +298,82 @@ class LabelingAgent:
                         annotation = self.task.parse_llm_response(
                             generation, chunk, final_prompt
                         )
+                        annotation.confidence_prompt = (
+                            self.task.construct_confidence_prompt(chunk, examples)
+                        )
+                        annotation.input_tokens = input_tokens
+                        annotation.output_tokens = self.llm.get_num_tokens(
+                            annotation.raw_response
+                        )
+                        annotation.cost = sum(response.costs)
+                        annotation.latency = latency
 
                         if self.config.confidence():
-                            annotation.confidence_score = self.confidence.calculate(
-                                model_generation=annotation,
+                            full_confidence_input = (
+                                annotation.confidence_prompt + annotation.raw_response
                             )
+                            if (
+                                not self.config.confidence_chunk_column()
+                                or self.get_num_tokens(full_confidence_input)
+                                < self.CONFIDENCE_MAX_CONTEXT_LENGTH
+                            ):
+                                annotation.confidence_score = self.confidence.calculate(
+                                    model_generation=annotation,
+                                )
+                            else:
+                                key_to_chunk = self.config.confidence_chunk_column()
+                                if not key_to_chunk:
+                                    raise ValueError(
+                                        "confidence_chunk_column must be set in the config to use confidence_chunk_size"
+                                    )
+
+                                empty_chunk = chunk.copy()
+                                empty_chunk[key_to_chunk] = ""
+                                empty_prompt = self.task.construct_confidence_prompt(
+                                    empty_chunk, examples
+                                )
+                                num_tokens_empty_prompt = self.get_num_tokens(
+                                    empty_prompt
+                                )
+                                num_tokens_per_chunk = (
+                                    self.config.confidence_chunk_size()
+                                    - num_tokens_empty_prompt
+                                )
+                                confidence_chunks = self.chunk_string(
+                                    chunk[key_to_chunk], num_tokens_per_chunk
+                                )
+
+                                confidence_scores = []
+                                for confidence_chunk in confidence_chunks:
+                                    new_chunk = chunk.copy()
+                                    new_chunk[key_to_chunk] = confidence_chunk
+                                    new_prompt = self.task.construct_confidence_prompt(
+                                        new_chunk, examples
+                                    )
+                                    annotation_dict = annotation.dict()
+                                    annotation_dict["confidence_prompt"] = new_prompt
+                                    confidence_scores.append(
+                                        self.confidence.calculate(
+                                            model_generation=LLMAnnotation(
+                                                **annotation_dict
+                                            ),
+                                        )
+                                    )
+
+                                merge_function = MERGE_FUNCTION[
+                                    self.config.confidence_merge_function()
+                                ]
+                                if isinstance(confidence_scores[0], dict):
+                                    merged_confidence = {}
+                                    for key in confidence_scores[0].keys():
+                                        merged_confidence[key] = merge_function(
+                                            [conf[key] for conf in confidence_scores]
+                                        )
+                                else:
+                                    merged_confidence = merge_function(
+                                        confidence_scores
+                                    )
+                                annotation.confidence_score = merged_confidence
 
                         annotations.append(annotation)
                     annotation = self.majority_annotation(annotations)
@@ -436,7 +533,7 @@ class LabelingAgent:
             ):
                 selected_labels = self.label_selector.select_labels(input_i["example"])
                 final_prompt = self.task.construct_prompt(
-                    input_i, examples, selected_labels
+                    input_i, examples, selected_labels=selected_labels
                 )
             else:
                 final_prompt = self.task.construct_prompt(input_i, examples)
@@ -651,3 +748,13 @@ class LabelingAgent:
             return [pickle.loads(a.llm_annotation) for a in db_result]
         else:
             return self.all_annotations
+
+    def get_num_tokens(self, inp: str) -> int:
+        """Returns the number of tokens in the prompt"""
+        return len(self.confidence_tokenizer.encode(str(inp)))
+
+    def chunk_string(self, inp: str, chunk_size: int) -> List[str]:
+        """Chunks the input string into chunks of size chunk_size"""
+        tokens = self.confidence_tokenizer.encode(inp)
+        chunks = [tokens[i : i + chunk_size] for i in range(0, len(tokens), chunk_size)]
+        return [self.confidence_tokenizer.decode(chunk) for chunk in chunks]

@@ -58,7 +58,14 @@ class ClassificationTask(BaseTask):
                 )
 
     def construct_prompt(
-        self, input: Dict, examples: List, selected_labels: List[str] = None
+        self,
+        input: Dict,
+        examples: List,
+        selected_labels: List[str] = None,
+        prompt_template_override: PromptTemplate = None,
+        refuel_prompt_override: bool = False,
+        output_guidelines_override: str = None,
+        **kwargs,
     ) -> str:
         # Copy over the input so that we can modify it
         input = input.copy()
@@ -68,10 +75,8 @@ class ClassificationTask(BaseTask):
             self.config.labels_list() if not selected_labels else selected_labels
         )
         num_labels = len(labels_list)
-
-        is_refuel_llm = self.config.provider() == ModelProvider.REFUEL
         image_col = self.config.image_column()
-        if is_refuel_llm:
+        if self.use_refuel_prompt_schema or refuel_prompt_override:
             labels = (
                 ", ".join([f'\\"{i}\\"' for i in labels_list[:-1]])
                 + " or "
@@ -106,17 +111,25 @@ class ClassificationTask(BaseTask):
 
         # populate the current example in the prompt
         current_example = example_template.format_map(defaultdict(str, input))
-
-        curr_text_prompt = ""
+        prompt_template = (
+            self.prompt_template
+            if prompt_template_override is None
+            else prompt_template_override
+        )
+        output_guidelines = (
+            self.output_guidelines
+            if output_guidelines_override is None
+            else output_guidelines_override
+        )
         if self._is_few_shot_mode():
-            curr_text_prompt = self.prompt_template.format(
+            curr_text_prompt = prompt_template.format(
                 task_guidelines=fmt_task_guidelines,
-                output_guidelines=self.output_guidelines,
+                output_guidelines=output_guidelines,
                 seed_examples="\n".join(fmt_examples),
                 current_example=current_example,
             )
         else:
-            curr_text_prompt = self.prompt_template.format(
+            curr_text_prompt = prompt_template.format(
                 task_guidelines=fmt_task_guidelines,
                 output_guidelines=self.output_guidelines,
                 current_example=current_example,

@@ -2,7 +2,8 @@ import json
 import os
 import requests
 import logging
-from typing import List, Optional
+from typing import List, Optional, Tuple
+from time import time
 
 from autolabel.models import BaseModel
 from autolabel.configs import AutolabelConfig
@@ -63,14 +64,16 @@ class RefuelLLM(BaseModel):
         before_sleep=before_sleep_log(logger, logging.WARNING),
         retry=retry_if_not_exception_type(UnretryableError),
     )
-    def _label_with_retry(self, prompt: str) -> requests.Response:
+    def _label_with_retry(self, prompt: str) -> Tuple[requests.Response, float]:
         payload = {
             "input": prompt,
             "params": {**self.model_params},
             "confidence": self.config.confidence(),
         }
         headers = {"refuel_api_key": self.REFUEL_API_KEY}
+        start_time = time()
         response = requests.post(self.BASE_API, json=payload, headers=headers)
+        end_time = time()
         # raise Exception if status != 200
         if response.status_code != 200:
             if response.status_code in UNRETRYABLE_ERROR_CODES:
@@ -83,14 +86,15 @@ class RefuelLLM(BaseModel):
                 f"Received status code {response.status_code} from Refuel API. Response: {response.text}"
             )
             response.raise_for_status()
-        return response
+        return response, end_time - start_time
 
     def _label(self, prompts: List[str]) -> RefuelLLMResult:
         generations = []
         errors = []
+        latencies = []
         for prompt in prompts:
             try:
-                response = self._label_with_retry(prompt)
+                response, latency = self._label_with_retry(prompt)
                 response = json.loads(response.json())
                 generations.append(
                     [
@@ -105,6 +109,7 @@ class RefuelLLM(BaseModel):
                     ]
                 )
                 errors.append(None)
+                latencies.append(latency)
             except Exception as e:
                 # This signifies an error in generating the response using RefuelLLm
                 logger.error(
@@ -116,10 +121,16 @@ class RefuelLLM(BaseModel):
                         error_type=ErrorType.LLM_PROVIDER_ERROR, error_message=str(e)
                     )
                 )
-        return RefuelLLMResult(generations=generations, errors=errors)
+                latencies.append(0)
+        return RefuelLLMResult(
+            generations=generations, errors=errors, latencies=latencies
+        )
 
     def get_cost(self, prompt: str, label: Optional[str] = "") -> float:
         return 0
 
     def returns_token_probs(self) -> bool:
         return True
+
+    def get_num_tokens(self, prompt: str) -> int:
+        return len(prompt)

@@ -2,7 +2,7 @@ from .base import Base
 from pydantic import BaseModel
 from sqlalchemy import Column, Integer, String, Text, JSON
 from sqlalchemy.orm import relationship
-from langchain.schema import Generation
+from langchain.schema import Generation, ChatGeneration
 import json
 import time
 
@@ -41,7 +41,10 @@ class GenerationCacheEntryModel(Base):
             return None
 
         generations = json.loads(looked_up_entry.generations)["generations"]
-        generations = [Generation(**gen) for gen in generations]
+        generations = [
+            Generation(**gen) if gen["type"] == "Generation" else ChatGeneration(**gen)
+            for gen in generations
+        ]
 
         entry = GenerationCacheEntry(
             model_name=looked_up_entry.model_name,

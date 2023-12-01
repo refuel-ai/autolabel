@@ -7,9 +7,7 @@ from tabulate import tabulate
 import logging
 from autolabel.utils import print_table
 from rich.console import Console
-import json
-import pickle
-from autolabel.tasks import TaskFactory
+from autolabel.tasks import TaskFactory, BaseTask
 from autolabel.schema import TaskType
 
 logger = logging.getLogger(__name__)
@@ -118,9 +116,15 @@ class AutolabelDataset:
 
         if self.config.task_type() == TaskType.ATTRIBUTE_EXTRACTION:
             for attr in self.config.attributes():
-                self.df[self.generate_label_name("label", attr["name"])] = [
-                    x.label[attr["name"]] for x in llm_labels
-                ]
+                attribute_labels = []
+                for x in llm_labels:
+                    if x.successfully_labeled:
+                        attribute_labels.append(x.label.get(attr["name"], ""))
+                    else:
+                        attribute_labels.append(BaseTask.NULL_LABEL_TOKEN)
+                self.df[
+                    self.generate_label_name("label", attr["name"])
+                ] = attribute_labels
 
         # Add the LLM errors to the dataframe
         self.df[self.generate_label_name("error")] = [x.error for x in llm_labels]
@@ -152,9 +156,17 @@ class AutolabelDataset:
             ]
             if self.config.task_type() == TaskType.ATTRIBUTE_EXTRACTION:
                 for attr in self.config.attributes():
-                    self.df[self.generate_label_name("confidence", attr["name"])] = [
-                        x.confidence_score[attr["name"]] for x in llm_labels
-                    ]
+                    attr_confidence_scores = []
+                    for x in llm_labels:
+                        if x.successfully_labeled:
+                            attr_confidence_scores.append(
+                                x.confidence_score.get(attr["name"], 0.0)
+                            )
+                        else:
+                            attr_confidence_scores.append(0.0)
+                    self.df[
+                        self.generate_label_name("confidence", attr["name"])
+                    ] = attr_confidence_scores
 
         # Add the LLM explanations to the dataframe if chain of thought is set in config
         if self.config.chain_of_thought():
@@ -364,7 +376,9 @@ class AutolabelDataset:
 
     def generate_label_name(self, col_name: str, label_column: str = None):
         label_column = (
-            label_column or self.config.label_column() or self.config.task_name()
+            label_column
+            or self.config.label_column()
+            or f"{self.config.task_name()}_task"
         )
         return f"{label_column}_{col_name}"
 

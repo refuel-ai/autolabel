@@ -1,5 +1,6 @@
 from functools import cached_property
 from typing import List, Optional
+from time import time
 import logging
 
 from autolabel.models import BaseModel
@@ -27,6 +28,7 @@ class OpenAILLM(BaseModel):
         "gpt-4-0613",
         "gpt-4-32k",
         "gpt-4-32k-0613",
+        "gpt-4-1106-preview",
     ]
     MODELS_WITH_TOKEN_PROBS = ["text-curie-001", "text-davinci-003"]
 
@@ -59,6 +61,7 @@ class OpenAILLM(BaseModel):
         "gpt-4-32k-0613": 0.06 / 1000,
         "gpt-4-0314": 0.03 / 1000,
         "gpt-4-32k-0314": 0.06 / 1000,
+        "gpt-4-1106-preview": 0.01 / 1000,
     }
     COST_PER_COMPLETION_TOKEN = {
         "text-davinci-003": 0.02 / 1000,
@@ -74,6 +77,7 @@ class OpenAILLM(BaseModel):
         "gpt-4-32k-0613": 0.12 / 1000,
         "gpt-4-0314": 0.06 / 1000,
         "gpt-4-32k-0314": 0.12 / 1000,
+        "gpt-4-1106-preview": 0.03 / 1000,
     }
 
     @cached_property
@@ -110,13 +114,17 @@ class OpenAILLM(BaseModel):
 
         if self._engine == "chat":
             self.model_params = {**self.DEFAULT_PARAMS_CHAT_ENGINE, **model_params}
-            self.llm = ChatOpenAI(model_name=self.model_name, **self.model_params)
+            self.llm = ChatOpenAI(
+                model_name=self.model_name, verbose=False, **self.model_params
+            )
         else:
             self.model_params = {
                 **self.DEFAULT_PARAMS_COMPLETION_ENGINE,
                 **model_params,
             }
-            self.llm = OpenAI(model_name=self.model_name, **self.model_params)
+            self.llm = OpenAI(
+                model_name=self.model_name, verbose=False, **self.model_params
+            )
 
         self.tiktoken = tiktoken
 
@@ -150,9 +158,13 @@ class OpenAILLM(BaseModel):
             # We might consider breaking this up into human vs system message in future
             prompts = [[HumanMessage(content=prompt)] for prompt in prompts]
         try:
+            start_time = time()
             result = self.llm.generate(prompts)
+            end_time = time()
             return RefuelLLMResult(
-                generations=result.generations, errors=[None] * len(result.generations)
+                generations=result.generations,
+                errors=[None] * len(result.generations),
+                latencies=[end_time - start_time] * len(result.generations),
             )
         except Exception as e:
             return self._label_individually(prompts)
@@ -177,3 +189,7 @@ class OpenAILLM(BaseModel):
             self.model_name is not None
             and self.model_name in self.MODELS_WITH_TOKEN_PROBS
         )
+
+    def get_num_tokens(self, prompt: str) -> int:
+        encoding = self.tiktoken.encoding_for_model(self.model_name)
+        return len(encoding.encode(prompt))

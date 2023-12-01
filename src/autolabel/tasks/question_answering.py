@@ -32,15 +32,15 @@ class QuestionAnsweringTask(BaseTask):
     DEFAULT_OUTPUT_GUIDELINES = (
         'You will return the answer one element: "the correct label"\n'
     )
+    REFUEL_LLM_DEFAULT_OUTPUT_GUIDELINES = ""
     DEFAULT_TASK_GUIDELINES = "Your job is to answer the following questions using the options provided for each question. Choose the best answer for the question.\n"
     NULL_LABEL_TOKEN = "NO_LABEL"
 
     GENERATE_EXPLANATION_PROMPT = "You are an expert at providing a well reasoned explanation for the output of a given task. \n\nBEGIN TASK DESCRIPTION\n{task_guidelines}\nEND TASK DESCRIPTION\nYou will be given an input example and the corresponding output. You will be given a question and an answer. Your job is to provide an explanation for why the answer is correct for the task above.\nThink step by step and generate an explanation. The last line of the explanation should be - So, the answer is <label>.\n{labeled_example}\nExplanation: "
 
     def __init__(self, config: AutolabelConfig) -> None:
-        is_refuel_llm = config.provider() == ModelProvider.REFUEL
-        if is_refuel_llm:
-            self.DEFAULT_OUTPUT_GUIDELINES = ""
+        if config.provider() == ModelProvider.REFUEL:
+            self.DEFAULT_OUTPUT_GUIDELINES = self.REFUEL_LLM_DEFAULT_OUTPUT_GUIDELINES
 
         super().__init__(config)
         self.metrics = [
@@ -55,7 +55,15 @@ class QuestionAnsweringTask(BaseTask):
         if self.config.confidence():
             self.metrics.append(AUROCMetric())
 
-    def construct_prompt(self, input: Dict, examples: List[Dict]) -> str:
+    def construct_prompt(
+        self,
+        input: Dict,
+        examples: List[Dict],
+        prompt_template_override: PromptTemplate = None,
+        refuel_prompt_override: bool = False,
+        output_guidelines_override: str = None,
+        **kwargs,
+    ) -> str:
         # Copy over the input so that we can modify it
         input = input.copy()
 
@@ -81,20 +89,37 @@ class QuestionAnsweringTask(BaseTask):
 
         # populate the current example in the prompt
         current_example = example_template.format_map(defaultdict(str, input))
-
+        prompt_template = (
+            self.prompt_template
+            if prompt_template_override is None
+            else prompt_template_override
+        )
+        output_guidelines = (
+            self.output_guidelines
+            if output_guidelines_override is None
+            else output_guidelines_override
+        )
         if self._is_few_shot_mode():
-            return self.prompt_template.format(
+            return prompt_template.format(
                 task_guidelines=self.task_guidelines,
-                output_guidelines=self.output_guidelines,
+                output_guidelines=output_guidelines,
                 seed_examples="\n\n".join(fmt_examples),
                 current_example=current_example,
             )
         else:
-            return self.prompt_template.format(
+            return prompt_template.format(
                 task_guidelines=self.task_guidelines,
-                output_guidelines=self.output_guidelines,
+                output_guidelines=output_guidelines,
                 current_example=current_example,
             )
+
+    def construct_confidence_prompt(self, input: str, examples: List, **kwargs) -> str:
+        confidence_prompt = super().construct_confidence_prompt(
+            input,
+            examples,
+            **kwargs,
+        )
+        return confidence_prompt
 
     def get_explanation_prompt(self, example: Dict) -> str:
         pt = PromptTemplate(

@@ -43,7 +43,15 @@ class MultilabelClassificationTask(BaseTask):
         if self.config.confidence():
             self.metrics.append(AUROCMetric())
 
-    def construct_prompt(self, input: Dict, examples: List) -> str:
+    def construct_prompt(
+        self,
+        input: Dict,
+        examples: List,
+        prompt_template_override: PromptTemplate = None,
+        refuel_prompt_override: bool = False,
+        output_guidelines_override: str = None,
+        **kwargs,
+    ) -> str:
         # Copy over the input so that we can modify it
         input = input.copy()
 
@@ -77,18 +85,27 @@ class MultilabelClassificationTask(BaseTask):
 
         # populate the current example in the prompt
         current_example = example_template.format_map(defaultdict(str, input))
-        curr_text_prompt = ""
+        prompt_template = (
+            self.prompt_template
+            if prompt_template_override is None
+            else prompt_template_override
+        )
+        output_guidelines = (
+            self.output_guidelines
+            if output_guidelines_override is None
+            else output_guidelines_override
+        )
         if self._is_few_shot_mode():
-            curr_text_prompt = self.prompt_template.format(
+            curr_text_prompt = prompt_template.format(
                 task_guidelines=fmt_task_guidelines,
-                output_guidelines=self.output_guidelines,
+                output_guidelines=output_guidelines,
                 seed_examples="\n\n".join(fmt_examples),
                 current_example=current_example,
             )
         else:
-            curr_text_prompt = self.prompt_template.format(
+            curr_text_prompt = prompt_template.format(
                 task_guidelines=fmt_task_guidelines,
-                output_guidelines=self.output_guidelines,
+                output_guidelines=output_guidelines,
                 current_example=current_example,
             )
         if image_col is not None:

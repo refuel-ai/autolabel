@@ -2,6 +2,7 @@
 
 from abc import ABC, abstractmethod
 from typing import List, Optional
+from time import time
 
 from autolabel.configs import AutolabelConfig
 from autolabel.schema import (
@@ -32,6 +33,7 @@ class BaseModel(ABC):
         missing_prompts = prompts
         costs = []
         errors = [None for i in range(len(prompts))]
+        latencies = [0 for i in range(len(prompts))]
         if self.cache:
             (
                 existing_prompts,
@@ -48,17 +50,23 @@ class BaseModel(ABC):
                 )
 
             # Set the existing prompts to the new results
-            for i, result, error in zip(
-                missing_prompt_idxs, new_results.generations, new_results.errors
+            for i, result, error, latency in zip(
+                missing_prompt_idxs,
+                new_results.generations,
+                new_results.errors,
+                new_results.latencies,
             ):
                 existing_prompts[i] = result
                 errors[i] = error
+                latencies[i] = latency
 
             if self.cache:
                 self.update_cache(missing_prompt_idxs, new_results, prompts)
 
         generations = [existing_prompts[i] for i in range(len(prompts))]
-        return RefuelLLMResult(generations=generations, costs=costs, errors=errors)
+        return RefuelLLMResult(
+            generations=generations, costs=costs, errors=errors, latencies=latencies
+        )
 
     def _label_individually(self, prompts: List[str]) -> RefuelLLMResult:
         """Label each prompt individually. Should be used only after trying as a batch first.
@@ -72,11 +80,14 @@ class BaseModel(ABC):
         """
         generations = []
         errors = []
+        latencies = []
         for prompt in prompts:
             try:
+                start_time = time()
                 response = self.llm.generate([prompt])
                 generations.append(response.generations[0])
                 errors.append(None)
+                latencies.append(time() - start_time)
             except Exception as e:
                 print(f"Error generating from LLM: {e}")
                 generations.append([Generation(text="")])
@@ -85,8 +96,11 @@ class BaseModel(ABC):
                         error_type=ErrorType.LLM_PROVIDER_ERROR, error_message=str(e)
                     )
                 )
+                latencies.append(0)
 
-        return RefuelLLMResult(generations=generations, errors=errors)
+        return RefuelLLMResult(
+            generations=generations, errors=errors, latencies=latencies
+        )
 
     @abstractmethod
     def _label(self, prompts: List[str]) -> RefuelLLMResult:

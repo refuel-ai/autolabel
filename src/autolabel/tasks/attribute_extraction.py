@@ -1,11 +1,11 @@
-from typing import List, Dict
+from typing import List, Dict, Union
 from collections import defaultdict
 import logging
 import json
 import pickle
 
 from langchain.prompts.prompt import PromptTemplate
-from langchain.schema import Generation
+from langchain.schema import Generation, ChatGeneration
 
 from autolabel.configs import AutolabelConfig
 from autolabel.tasks import BaseTask
@@ -88,36 +88,52 @@ class AttributeExtractionTask(BaseTask):
             output_dict[attribute_name] = input[attribute_name]
         return json.dumps(output_dict)
 
-    def construct_prompt(self, input: Dict, examples: List) -> str:
+    def construct_prompt(
+        self,
+        input: Dict,
+        examples: List,
+        prompt_template_override: PromptTemplate = None,
+        refuel_prompt_override: bool = False,
+        output_guidelines_override: str = None,
+        **kwargs,
+    ) -> str:
         fmt_task_guidelines = self.task_guidelines
 
         attribute_json = self._construct_attribute_json()
-        fmt_output_guidelines = self.output_guidelines.format(
-            attribute_json=attribute_json
+        output_guidelines = (
+            self.output_guidelines
+            if output_guidelines_override is None
+            else output_guidelines_override
         )
+        fmt_output_guidelines = output_guidelines.format(attribute_json=attribute_json)
 
         # prepare seed examples
         example_template = self.config.example_template()
         fmt_examples = []
         for eg in examples:
-            output_dict = self._generate_output_dict(eg)
-            eg.update({self.OUTPUT_DICT_KEY: output_dict})
+            if self.OUTPUT_DICT_KEY not in eg:
+                output_dict = self._generate_output_dict(eg)
+                eg.update({self.OUTPUT_DICT_KEY: output_dict})
             fmt_examples.append(example_template.format_map(defaultdict(str, eg)))
 
         input[self.OUTPUT_DICT_KEY] = ""
 
         # populate the current example in the prompt
         current_example = example_template.format_map(defaultdict(str, input))
-
+        prompt_template = (
+            self.prompt_template
+            if prompt_template_override is None
+            else prompt_template_override
+        )
         if self._is_few_shot_mode():
-            return self.prompt_template.format(
+            return prompt_template.format(
                 task_guidelines=fmt_task_guidelines,
                 output_guidelines=fmt_output_guidelines,
                 seed_examples="\n\n".join(fmt_examples),
                 current_example=current_example,
             )
         else:
-            return self.prompt_template.format(
+            return prompt_template.format(
                 task_guidelines=fmt_task_guidelines,
                 output_guidelines=fmt_output_guidelines,
                 current_example=current_example,
@@ -134,13 +150,21 @@ class AttributeExtractionTask(BaseTask):
         raise NotImplementedError("Dataset generation not implemented for this task")
 
     def parse_llm_response(
-        self, response: Generation, curr_sample: Dict, prompt: str
+        self,
+        response: Union[Generation, ChatGeneration],
+        curr_sample: Dict,
+        prompt: str,
     ) -> LLMAnnotation:
         successfully_labeled = False
         error = None
         try:
             completion_text = response.text
-            llm_label = json.loads(completion_text)
+
+            # Remove markdown formatting from the completion text
+            completion_text = completion_text.lstrip("```json")
+            completion_text = completion_text.rstrip("```")
+
+            llm_label = {k: str(v) for k, v in json.loads(completion_text).items()}
             successfully_labeled = True
         except Exception as e:
             logger.error(f"Error parsing LLM response: {response.text}, Error: {e}")
@@ -156,7 +180,7 @@ class AttributeExtractionTask(BaseTask):
             successfully_labeled=successfully_labeled,
             label=llm_label,
             generation_info=response.generation_info,
-            raw_response=response.text,
+            raw_response=json.dumps(llm_label),
             prompt=prompt,
             error=error,
         )

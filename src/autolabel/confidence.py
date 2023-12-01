@@ -10,7 +10,7 @@ import logging
 
 from autolabel.schema import LLMAnnotation, ConfidenceCacheEntry
 from autolabel.models import BaseModel
-from autolabel.cache import BaseCache, SQLAlchemyConfidenceCache
+from autolabel.cache import BaseCache
 
 from tenacity import (
     before_sleep_log,
@@ -61,7 +61,10 @@ class ConfidenceCalculator:
         logprob_cumulative, count = 0, 0
         for token in logprobs:
             token_str = list(token.keys())[0]
-            if token_str.strip() not in self.tokens_to_ignore:
+            if (
+                token_str.strip() not in self.tokens_to_ignore
+                and token[token_str] is not None
+            ):
                 logprob_cumulative += (
                     token[token_str]
                     if token[token_str] >= 0
@@ -86,7 +89,7 @@ class ConfidenceCalculator:
         indices = []
         for ind, logprob in enumerate(logprobs):
             key = list(logprob.keys())[0]
-            if key == '"' or key == '",':
+            if '"' in key:
                 indices.append(ind)
         if len(indices) != 4 * len(keys):
             logger.error("Unable to find all keys in prompt")
@@ -101,14 +104,16 @@ class ConfidenceCalculator:
         return logprob_per_key
 
     def p_true(self, model_generation: LLMAnnotation, **kwargs) -> float:
-        p_true_prompt = f"{model_generation.prompt}{model_generation.raw_response} \n Is the answer to the last example correct? Answer in one word on the same line [Yes/No]: "
+        p_true_prompt = f"{model_generation.raw_response} \n Is the answer to the last example correct? Answer in one word on the same line [Yes/No]: "
 
         if self.llm.returns_token_probs():
+            p_true_prompt = model_generation.prompt + p_true_prompt
             response = self.llm.label([p_true_prompt])
             response_logprobs = response.generations[0][0].generation_info["logprobs"][
                 "top_logprobs"
             ]
         else:
+            p_true_prompt = model_generation.confidence_prompt + p_true_prompt
             yes_logprob = self.compute_confidence(p_true_prompt, "Yes")
             no_logprob = self.compute_confidence(p_true_prompt, "No")
             response_logprobs = (
@@ -135,7 +140,7 @@ class ConfidenceCalculator:
                 return model_generation.confidence_score
             if self.cache:
                 cache_entry = ConfidenceCacheEntry(
-                    prompt=model_generation.prompt,
+                    prompt=model_generation.confidence_prompt,
                     raw_response=model_generation.raw_response,
                     score_type=self.score_type,
                 )
@@ -144,10 +149,11 @@ class ConfidenceCalculator:
                 # On cache miss, compute logprobs using API call and update cache
                 if logprobs == None:
                     logprobs = self.compute_confidence(
-                        model_generation.prompt, model_generation.raw_response
+                        model_generation.confidence_prompt,
+                        model_generation.raw_response,
                     )
                     cache_entry = ConfidenceCacheEntry(
-                        prompt=model_generation.prompt,
+                        prompt=model_generation.confidence_prompt,
                         raw_response=model_generation.raw_response,
                         logprobs=logprobs,
                         score_type=self.score_type,
@@ -156,7 +162,7 @@ class ConfidenceCalculator:
                     self.cache.update(cache_entry)
             else:
                 logprobs = self.compute_confidence(
-                    model_generation.prompt, model_generation.raw_response
+                    model_generation.confidence_prompt, model_generation.raw_response
                 )
         else:
             if model_generation.generation_info is None:
