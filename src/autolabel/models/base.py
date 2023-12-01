@@ -62,7 +62,6 @@ class BaseModel(ABC):
 
             if self.cache:
                 self.update_cache(missing_prompt_idxs, new_results, prompts)
-
         generations = [existing_prompts[i] for i in range(len(prompts))]
         return RefuelLLMResult(
             generations=generations, costs=costs, errors=errors, latencies=latencies

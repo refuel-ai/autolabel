@@ -2,6 +2,7 @@ from functools import cached_property
 from typing import List, Optional
 import logging
 import json
+from time import time
 
 from autolabel.models import BaseModel
 from autolabel.configs import AutolabelConfig
@@ -91,6 +92,7 @@ class OpenAIVisionLLM(BaseModel):
 
     def _label(self, prompts: List[str]) -> RefuelLLMResult:
         generations = []
+        start_time = time()
         for prompt in prompts:
             parsed_prompt = json.loads(prompt)
             result = self.llm(
@@ -119,7 +121,9 @@ class OpenAIVisionLLM(BaseModel):
                 ]
             )
         return RefuelLLMResult(
-            generations=generations, errors=[None] * len(generations)
+            generations=generations,
+            errors=[None] * len(generations),
+            latencies=[time() - start_time] * len(generations),
         )
 
     def get_cost(self, prompt: str, label: Optional[str] = "") -> float:
@@ -146,3 +150,7 @@ class OpenAIVisionLLM(BaseModel):
             self.model_name is not None
             and self.model_name in self.MODELS_WITH_TOKEN_PROBS
         )
+
+    def get_num_tokens(self, prompt: str) -> int:
+        encoding = self.tiktoken.encoding_for_model(self.model_name)
+        return len(encoding.encode(prompt))
