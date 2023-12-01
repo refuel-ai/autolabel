@@ -57,7 +57,6 @@ class MultilabelClassificationTask(BaseTask):
 
         # prepare task guideline
         labels_list = self.config.labels_list()
-        image_col = self.config.image_column()
         num_labels = len(labels_list)
         fmt_task_guidelines = self.task_guidelines.format(
             num_labels=num_labels, labels="\n".join(labels_list)
@@ -108,8 +107,10 @@ class MultilabelClassificationTask(BaseTask):
                 output_guidelines=output_guidelines,
                 current_example=current_example,
             )
-        if image_col is not None:
-            return json.dumps({"text": curr_text_prompt, "image_url": input[image_col]})
+        if self.image_col is not None:
+            return json.dumps(
+                {"text": curr_text_prompt, "image_url": input[self.image_col]}
+            )
         else:
             return curr_text_prompt
 

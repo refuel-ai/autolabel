@@ -75,7 +75,6 @@ class ClassificationTask(BaseTask):
             self.config.labels_list() if not selected_labels else selected_labels
         )
         num_labels = len(labels_list)
-        image_col = self.config.image_column()
         if self.use_refuel_prompt_schema or refuel_prompt_override:
             labels = (
                 ", ".join([f'\\"{i}\\"' for i in labels_list[:-1]])
@@ -134,8 +133,10 @@ class ClassificationTask(BaseTask):
                 output_guidelines=self.output_guidelines,
                 current_example=current_example,
             )
-        if image_col is not None:
-            return json.dumps({"text": curr_text_prompt, "image_url": input[image_col]})
+        if self.image_col is not None:
+            return json.dumps(
+                {"text": curr_text_prompt, "image_url": input[self.image_col]}
+            )
         else:
             return curr_text_prompt
 

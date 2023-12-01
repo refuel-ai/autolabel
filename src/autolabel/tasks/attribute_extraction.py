@@ -126,18 +126,25 @@ class AttributeExtractionTask(BaseTask):
             else prompt_template_override
         )
         if self._is_few_shot_mode():
-            return prompt_template.format(
+            curr_text_prompt = prompt_template.format(
                 task_guidelines=fmt_task_guidelines,
                 output_guidelines=fmt_output_guidelines,
                 seed_examples="\n\n".join(fmt_examples),
                 current_example=current_example,
             )
         else:
-            return prompt_template.format(
+            curr_text_prompt = prompt_template.format(
                 task_guidelines=fmt_task_guidelines,
                 output_guidelines=fmt_output_guidelines,
                 current_example=current_example,
             )
+
+        if self.image_col is not None:
+            return json.dumps(
+                {"text": curr_text_prompt, "image_url": input[self.image_col]}
+            )
+        else:
+            return curr_text_prompt
 
     def get_explanation_prompt(self, example: Dict) -> str:
         raise NotImplementedError(

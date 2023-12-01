@@ -131,10 +131,14 @@ class OpenAIVisionLLM(BaseModel):
             # get an upper bound
             num_label_toks = self.model_params["max_tokens"]
 
+        # upper bound on image cost with high detail
+        cost_per_image = 765 * self.COST_PER_PROMPT_TOKEN[self.model_name]
         cost_per_prompt_token = self.COST_PER_PROMPT_TOKEN[self.model_name]
         cost_per_completion_token = self.COST_PER_COMPLETION_TOKEN[self.model_name]
-        return (num_prompt_toks * cost_per_prompt_token) + (
-            num_label_toks * cost_per_completion_token
+        return (
+            (num_prompt_toks * cost_per_prompt_token)
+            + (num_label_toks * cost_per_completion_token)
+            + cost_per_image
         )
 
     def returns_token_probs(self) -> bool:
