@@ -213,7 +213,9 @@ class AttributeExtractionTask(BaseTask):
                         curr_sample=llm_label.curr_sample,
                         prompt=llm_label.prompt,
                         error=llm_label.error,
-                        confidence_score=llm_label.confidence_score[attribute],
+                        confidence_score=llm_label.confidence_score[attribute]
+                        if llm_label.confidence_score
+                        else 0,
                     )
                 )
 
