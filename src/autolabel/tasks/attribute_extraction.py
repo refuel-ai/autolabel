@@ -1,11 +1,11 @@
-from typing import List, Dict
+from typing import List, Dict, Union
 from collections import defaultdict
 import logging
 import json
 import pickle
 
 from langchain.prompts.prompt import PromptTemplate
-from langchain.schema import Generation
+from langchain.schema import Generation, ChatGeneration
 
 from autolabel.configs import AutolabelConfig
 from autolabel.tasks import BaseTask
@@ -150,7 +150,10 @@ class AttributeExtractionTask(BaseTask):
         raise NotImplementedError("Dataset generation not implemented for this task")
 
     def parse_llm_response(
-        self, response: Generation, curr_sample: Dict, prompt: str
+        self,
+        response: Union[Generation, ChatGeneration],
+        curr_sample: Dict,
+        prompt: str,
     ) -> LLMAnnotation:
         successfully_labeled = False
         error = None

@@ -4,7 +4,7 @@ from typing import Any, Dict, List, Optional, Union
 
 import json
 import pandas as pd
-from langchain.schema import Generation
+from langchain.schema import Generation, ChatGeneration
 from pydantic import BaseModel
 
 from autolabel.configs import AutolabelConfig
@@ -208,7 +208,7 @@ class GenerationCacheEntry(BaseModel):
     model_name: str
     prompt: str
     model_params: str
-    generations: Optional[List[Generation]] = None
+    generations: Optional[List[Union[Generation, ChatGeneration]]] = None
     creation_time_ms: Optional[int] = -1
     ttl_ms: Optional[int] = -1
 
@@ -227,11 +227,16 @@ class GenerationCacheEntry(BaseModel):
         """
         return json.dumps([gen.dict() for gen in self.generations])
 
-    def deserialize_output(self, output: str) -> List[Generation]:
+    def deserialize_output(
+        self, output: str
+    ) -> List[Union[Generation, ChatGeneration]]:
         """
         Deserializes the cache entry output
         """
-        return [Generation(**gen) for gen in json.loads(output)]
+        if json.load(output)["type"] == "Generation":
+            return [Generation(**gen) for gen in json.loads(output)]
+        else:
+            return [ChatGeneration(**gen) for gen in json.loads(output)]
 
 
 class ConfidenceCacheEntry(BaseModel):
@@ -268,7 +273,7 @@ class RefuelLLMResult(BaseModel):
     """List of generated outputs. This is a List[List[]] because
     each input could have multiple candidate generations."""
 
-    generations: List[List[Generation]]
+    generations: List[List[Union[Generation, ChatGeneration]]]
 
     """Errors encountered while running the labeling job"""
     errors: List[Optional[LabelingError]]

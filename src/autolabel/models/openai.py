@@ -114,13 +114,17 @@ class OpenAILLM(BaseModel):
 
         if self._engine == "chat":
             self.model_params = {**self.DEFAULT_PARAMS_CHAT_ENGINE, **model_params}
-            self.llm = ChatOpenAI(model_name=self.model_name, **self.model_params)
+            self.llm = ChatOpenAI(
+                model_name=self.model_name, verbose=False, **self.model_params
+            )
         else:
             self.model_params = {
                 **self.DEFAULT_PARAMS_COMPLETION_ENGINE,
                 **model_params,
             }
-            self.llm = OpenAI(model_name=self.model_name, **self.model_params)
+            self.llm = OpenAI(
+                model_name=self.model_name, verbose=False, **self.model_params
+            )
 
         self.tiktoken = tiktoken
 

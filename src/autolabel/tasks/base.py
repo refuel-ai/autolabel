@@ -1,13 +1,13 @@
 """Base interface that all prediction tasks will implement."""
 
 from abc import ABC, abstractmethod
-from typing import Dict, List, Optional
+from typing import Dict, List, Optional, Union
 import logging
 import json
 import pickle
 
 from langchain.prompts.prompt import PromptTemplate
-from langchain.schema import Generation
+from langchain.schema import Generation, ChatGeneration
 from autolabel.configs import AutolabelConfig
 from autolabel.schema import (
     LLMAnnotation,
@@ -131,7 +131,10 @@ class BaseTask(ABC):
         raise NotImplementedError("Dataset generation not implemented for this task")
 
     def parse_llm_response(
-        self, response: Generation, curr_sample: Dict, prompt: str
+        self,
+        response: Union[Generation, ChatGeneration],
+        curr_sample: Dict,
+        prompt: str,
     ) -> LLMAnnotation:
         # The last line of the response is the label
         # This is done to handle the case where the model generates an explanation before generating the label

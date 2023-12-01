@@ -4,8 +4,8 @@ from autolabel.schema import GenerationCacheEntry
 from autolabel.database import create_db_engine
 from autolabel.data_models import Base
 from .base import BaseCache
-from typing import List
-from langchain.schema import Generation
+from typing import List, Union
+from langchain.schema import Generation, ChatGeneration
 from autolabel.data_models import GenerationCacheEntryModel
 import logging
 
@@ -25,7 +25,9 @@ class SQLAlchemyGenerationCache(BaseCache):
         self.base.metadata.create_all(self.engine)
         self.session = sessionmaker(bind=self.engine)()
 
-    def lookup(self, entry: GenerationCacheEntry) -> List[Generation]:
+    def lookup(
+        self, entry: GenerationCacheEntry
+    ) -> List[Union[Generation, ChatGeneration]]:
         """Retrieves an entry from the Cache. Returns an empty list [] if not found.
         Args:
             entry: GenerationCacheEntry we wish to retrieve from the Cache
