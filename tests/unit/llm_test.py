@@ -158,7 +158,7 @@ def test_gpt4V_label(mocker):
         json.dumps({"text": "test2", "image_url": "dummy2.jpg"}),
     ]
     mocker.patch(
-        "langchain.chat_models.ChatOpenAI.generate",
+        "openai.resources.chat.Completions.create",
         return_value=LLMResult(
             generations=[[Generation(text="Answers")] for _ in prompts]
         ),
@@ -176,7 +176,7 @@ def test_gpt4V_get_cost():
         {"text": "TestingExamplePrompt", "image_url": "dummy1.jpg"}
     )
     curr_cost = model.get_cost(example_prompt)
-    assert curr_cost == approx(0.06009, rel=1e-3)
+    assert curr_cost == approx(0.01682, rel=1e-3)
 
 
 def test_gpt4V_return_probs():
