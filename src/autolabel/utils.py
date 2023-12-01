@@ -43,6 +43,7 @@ EXAMPLE_DATASETS = [
     "math",
     "lexical_relation",
     "quoref",
+    "painting-style-classification",
 ]
 
 NO_SEED_DATASET = [
