@@ -233,7 +233,7 @@ class GenerationCacheEntry(BaseModel):
         """
         Deserializes the cache entry output
         """
-        if json.load(output)["type"] == "Generation":
+        if json.loads(output)["type"] == "Generation":
             return [Generation(**gen) for gen in json.loads(output)]
         else:
             return [ChatGeneration(**gen) for gen in json.loads(output)]
