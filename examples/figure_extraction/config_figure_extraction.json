@@ -1,0 +1,35 @@
+{
+  "task_name": "EthosAttributeExtraction",
+  "task_type": "attribute_extraction",
+  "dataset": {
+    "text_column": "text",
+    "delimiter": ",",
+    "image_url_column": "image_url"
+  },
+  "model": {
+    "provider": "openai_vision",
+        "name": "gpt-4-vision-preview"
+  },
+  "prompt": {
+    "task_guidelines": "You are an expert at understanding plots and charts. Your job is to extract the following attributes from the provided image.",
+    "attributes": [
+      {
+        "name": "caption",
+        "description": "The caption associated with the provided plot, usually at the bottom of the image."
+      },
+      {
+        "name": "x_axis_name",
+        "description": "The label given to the x axis of the plot"
+      },
+      {
+        "name": "y_axis_name",
+        "description": "The label given to the y axis of the plot"
+      },
+      {
+        "name": "title",
+        "description": "The title of the provided plot"
+      }
+    ],
+    "example_template": "Text: {text}\nOutput: {output_dict}"
+  }
+}

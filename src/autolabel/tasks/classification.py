@@ -75,7 +75,6 @@ class ClassificationTask(BaseTask):
             self.config.labels_list() if not selected_labels else selected_labels
         )
         num_labels = len(labels_list)
-
         if self.use_refuel_prompt_schema or refuel_prompt_override:
             labels = (
                 ", ".join([f'\\"{i}\\"' for i in labels_list[:-1]])
@@ -122,18 +121,24 @@ class ClassificationTask(BaseTask):
             else output_guidelines_override
         )
         if self._is_few_shot_mode():
-            return prompt_template.format(
+            curr_text_prompt = prompt_template.format(
                 task_guidelines=fmt_task_guidelines,
                 output_guidelines=output_guidelines,
                 seed_examples="\n".join(fmt_examples),
                 current_example=current_example,
             )
         else:
-            return prompt_template.format(
+            curr_text_prompt = prompt_template.format(
                 task_guidelines=fmt_task_guidelines,
                 output_guidelines=self.output_guidelines,
                 current_example=current_example,
             )
+        if self.image_col is not None:
+            return json.dumps(
+                {"text": curr_text_prompt, "image_url": input[self.image_col]}
+            )
+        else:
+            return curr_text_prompt
 
     def get_explanation_prompt(self, example: Dict) -> str:
         pt = PromptTemplate(

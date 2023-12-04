@@ -2,9 +2,12 @@ import json
 from autolabel.configs import AutolabelConfig
 from autolabel.models.anthropic import AnthropicLLM
 from autolabel.models.openai import OpenAILLM
+from autolabel.models.openai_vision import OpenAIVisionLLM
 from autolabel.models.palm import PaLMLLM
 from autolabel.models.refuel import RefuelLLM
 from langchain.schema import Generation, LLMResult
+from openai.types.chat.chat_completion import ChatCompletion, Choice
+from openai.types.chat.chat_completion_message import ChatCompletionMessage
 from pytest import approx
 
 
@@ -139,6 +142,60 @@ def test_gpt4_return_probs():
 
 
 ################### OPENAI GPT 4 TESTS #######################
+
+
+################### OPENAI GPT 4V TESTS #######################
+def test_gpt4V_initialization():
+    model = OpenAIVisionLLM(
+        config=AutolabelConfig(config="tests/assets/banking/config_banking_gpt4V.json")
+    )
+
+
+def test_gpt4V_label(mocker):
+    model = OpenAIVisionLLM(
+        config=AutolabelConfig(config="tests/assets/banking/config_banking_gpt4V.json")
+    )
+    prompts = [
+        json.dumps({"text": "test1", "image_url": "dummy1.jpg"}),
+        json.dumps({"text": "test2", "image_url": "dummy2.jpg"}),
+    ]
+    model.client.chat.completions._post = lambda *args, **kargs: ChatCompletion(
+        id="test",
+        choices=[
+            Choice(
+                finish_reason="stop",
+                index=0,
+                message=ChatCompletionMessage(content="Answers", role="assistant"),
+            )
+        ],
+        created=0,
+        model="test",
+        object="chat.completion",
+    )
+    x = model.label(prompts)
+    assert [i[0].text for i in x.generations] == ["Answers", "Answers"]
+    assert sum(x.costs) == approx(0.01568, rel=1e-3)
+
+
+def test_gpt4V_get_cost():
+    model = OpenAIVisionLLM(
+        config=AutolabelConfig(config="tests/assets/banking/config_banking_gpt4V.json")
+    )
+    example_prompt = json.dumps(
+        {"text": "TestingExamplePrompt", "image_url": "dummy1.jpg"}
+    )
+    curr_cost = model.get_cost(example_prompt)
+    assert curr_cost == approx(0.01682, rel=1e-3)
+
+
+def test_gpt4V_return_probs():
+    model = OpenAIVisionLLM(
+        config=AutolabelConfig(config="tests/assets/banking/config_banking_gpt4V.json")
+    )
+    assert model.returns_token_probs() is False
+
+
+################### OPENAI GPT 4V TESTS #######################
 
 
 ################### PALM TESTS #######################

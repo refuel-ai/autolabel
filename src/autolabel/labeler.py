@@ -54,6 +54,8 @@ from autolabel.utils import (
 )
 
 logger = logging.getLogger(__name__)
+logging.getLogger("httpx").setLevel(logging.WARNING)
+
 
 COST_TABLE_STYLES = {
     "parameter": "magenta bold",

@@ -1,0 +1,17 @@
+{
+    "task_name": "ScienceQuestionAnswering",
+    "task_type": "question_answering",
+    "dataset": {
+        "label_column": "answer",
+        "delimiter": ",",
+        "image_url_column": "image_url"
+    },
+    "model": {
+        "provider": "openai_vision",
+        "name": "gpt-4-vision-preview"
+    },
+    "prompt": {
+        "task_guidelines": "You are an expert at answer science questions. Your job is to answer the given question, using the options provided for each question. You'll also be given an image for each question - use that as context as needed. Choose the best answer for the question from among the options provided. Output just the answer (from the given options) and nothing else.",
+        "example_template": "Question: {question}\nOptions: {choices}\nAnswer: {answer}"
+    }
+}

@@ -15,8 +15,10 @@ class ModelProvider(str, Enum):
     """Enum containing all LLM providers currently supported by autolabeler"""
 
     OPENAI = "openai"
+    OPENAI_VISION = "openai_vision"
     ANTHROPIC = "anthropic"
     HUGGINGFACE_PIPELINE = "huggingface_pipeline"
+    HUGGINGFACE_PIPELINE_VISION = "huggingface_pipeline_vision"
     REFUEL = "refuel"
     GOOGLE = "google"
     COHERE = "cohere"
