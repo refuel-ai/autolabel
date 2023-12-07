@@ -39,8 +39,10 @@ class AUROCMetric(BaseMetric):
         if np.unique(match).shape[0] == 1:
             # all labels are the same
             auroc = 1 if match[0] == 1 else 0
-        else:
+        elif len(match) > 0 and len(confidence) == len(match):
             auroc = roc_auc_score(match, confidence)
+        else:
+            auroc = 0
 
         value = [
             MetricResult(

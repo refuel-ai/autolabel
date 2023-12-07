@@ -95,31 +95,42 @@ class OpenAIVisionLLM(BaseModel):
         start_time = time()
         for prompt in prompts:
             parsed_prompt = json.loads(prompt)
-            result = self.llm(
-                messages=[
-                    {
-                        "role": "user",
-                        "content": [
-                            {"type": "text", "text": parsed_prompt["text"]},
-                            {
-                                "type": "image_url",
-                                "image_url": {
-                                    "url": parsed_prompt["image_url"],
-                                    "detail": "high",
+            try:
+                result = self.llm(
+                    messages=[
+                        {
+                            "role": "user",
+                            "content": [
+                                {"type": "text", "text": parsed_prompt["text"]},
+                                {
+                                    "type": "image_url",
+                                    "image_url": {
+                                        "url": parsed_prompt["image_url"],
+                                        "detail": "high",
+                                    },
                                 },
-                            },
-                        ],
-                    },
-                ]
-            )
-            generations.append(
-                [
-                    Generation(
-                        text=result.choices[0].message.content,
-                        generation_info=None,
-                    )
-                ]
-            )
+                            ],
+                        },
+                    ]
+                )
+                generations.append(
+                    [
+                        Generation(
+                            text=result.choices[0].message.content,
+                            generation_info=None,
+                        )
+                    ]
+                )
+            except Exception as e:
+                logger.error(f"Error generating label: {e}")
+                generations.append(
+                    [
+                        Generation(
+                            text="",
+                            generation_info=None,
+                        )
+                    ]
+                )
         return RefuelLLMResult(
             generations=generations,
             errors=[None] * len(generations),
