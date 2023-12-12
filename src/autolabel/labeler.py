@@ -333,7 +333,10 @@ class LabelingAgent:
                                     # If the confidence_chunk_column is set to auto,
                                     # we choose the column with the most tokens as the chunking column.
                                     max_tokens = -1
-                                    for key in chunk:
+                                    example_template_keys = get_format_variables(
+                                        self.config.example_template()
+                                    )
+                                    for key in example_template_keys:
                                         num_tokens = self.get_num_tokens(chunk[key])
                                         if num_tokens > max_tokens:
                                             max_tokens = num_tokens
