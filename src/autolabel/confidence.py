@@ -199,7 +199,9 @@ class ConfidenceCalculator:
             "task": "confidence",
         }
         headers = {"refuel_api_key": self.REFUEL_API_KEY}
-        response = requests.post(self.BASE_API, json=payload, headers=headers)
+        response = requests.post(
+            self.BASE_API, json=payload, headers=headers, timeout=30
+        )
         # raise Exception if status != 200
         response.raise_for_status()
         return response
