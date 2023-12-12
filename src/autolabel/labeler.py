@@ -40,6 +40,7 @@ from autolabel.schema import (
     TaskStatus,
     TaskType,
     AggregationFunction,
+    AUTO_CONFIDENCE_CHUNKING_COLUMN,
 )
 from autolabel.tasks import TaskFactory
 from autolabel.utils import (
@@ -328,6 +329,15 @@ class LabelingAgent:
                                     raise ValueError(
                                         "confidence_chunk_column must be set in the config to use confidence_chunk_size"
                                     )
+                                if key_to_chunk == AUTO_CONFIDENCE_CHUNKING_COLUMN:
+                                    # If the confidence_chunk_column is set to auto,
+                                    # we choose the column with the most tokens as the chunking column.
+                                    max_tokens = -1
+                                    for key in chunk:
+                                        num_tokens = self.get_num_tokens(chunk[key])
+                                        if num_tokens > max_tokens:
+                                            max_tokens = num_tokens
+                                            key_to_chunk = key
 
                                 empty_chunk = chunk.copy()
                                 empty_chunk[key_to_chunk] = ""
