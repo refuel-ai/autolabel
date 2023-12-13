@@ -293,3 +293,6 @@ class AggregationFunction(str, Enum):
 
     MAX = "max"
     MEAN = "mean"
+
+
+AUTO_CONFIDENCE_CHUNKING_COLUMN = "auto"
