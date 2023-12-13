@@ -83,24 +83,42 @@ class ConfidenceCalculator:
         This function calculates the confidence score per key. This will return
         a confidence score per key.
         """
-
-        # Find all '"' and '",'
-        # This is a hacky way to find all the keys in the prompt
-        indices = []
-        for ind, logprob in enumerate(logprobs):
-            key = list(logprob.keys())[0]
-            if '"' in key:
-                indices.append(ind)
-        if len(indices) != 4 * len(keys):
-            logger.error("Unable to find all keys in prompt")
-            return {key: 0 for key in keys}
-
         # Find the logprob for each key
         logprob_per_key = {}
-        for i, key in enumerate(keys):
-            logprob_per_key[key] = self.logprob_average(
-                logprobs[indices[4 * i + 2] + 1 : indices[4 * i + 3]]
+
+        mapping = []
+        full_string = ""
+        for i in range(len(logprobs)):
+            for char in list(logprobs[i].keys())[0]:
+                mapping.append(i)
+                full_string += char
+
+        # Find the locations of each key in the logprobs as indices
+        # into the logprobs list
+        locations = []
+        for key in keys:
+            key_to_find = f'"{key}":'
+            loc = full_string.find(key_to_find)
+            if loc == -1:
+                logprob_per_key[key] = 0
+            start_token = mapping[loc]
+            end_token = mapping[loc + len(key_to_find) - 1]
+            locations.append((start_token, end_token, key))
+        locations.sort()
+
+        if len(logprob_per_key) != 0:
+            logger.warning("Some keys not found in logprobs")
+
+        for i in range(len(locations) - 1):
+            # Average the logprobs from the end of this to the start of the next token
+            logprob_per_key[locations[i][2]] = self.logprob_average(
+                logprobs[locations[i][1] + 1 : locations[i + 1][0]]
             )
+        # Average the logprobs from the end of the last token to the end of the logprobs
+        logprob_per_key[locations[-1][2]] = self.logprob_average(
+            logprobs[locations[-1][1] + 1 :]
+        )
+
         return logprob_per_key
 
     def p_true(self, model_generation: LLMAnnotation, **kwargs) -> float:
