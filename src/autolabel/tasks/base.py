@@ -101,14 +101,23 @@ class BaseTask(ABC):
         pass
 
     def construct_confidence_prompt(self, input: str, examples: List, **kwargs) -> str:
-        confidence_prompt = self.construct_prompt(
+        curr_template = (
+            self.FEW_SHOT_TEMPLATE_REFUEL_LLM
+            if self._is_few_shot_mode()
+            else self.ZERO_SHOT_TEMPLATE_REFUEL_LLM
+        )
+        prompt_template = PromptTemplate(
+            input_variables=get_format_variables(curr_template),
+            template=curr_template,
+        )
+        refuel_prompt = self.construct_prompt(
             input=input,
             examples=examples,
-            prompt_template_override=self.prompt_template,
-            refuel_prompt_override=False,
+            prompt_template_override=prompt_template,
+            refuel_prompt_override=True,
             **kwargs,
         )
-        return confidence_prompt
+        return refuel_prompt
 
     @abstractmethod
     def eval(
