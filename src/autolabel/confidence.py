@@ -149,6 +149,9 @@ class ConfidenceCalculator:
             p_true_prompt = model_generation.confidence_prompt + p_true_prompt
             yes_logprob = self.compute_confidence(p_true_prompt, "Yes")
             no_logprob = self.compute_confidence(p_true_prompt, "No")
+            if not yes_logprob or not no_logprob:
+                # Error while calculating logprobs
+                return 0
             response_logprobs = (
                 yes_logprob
                 if list(yes_logprob[0].values())[0] > list(no_logprob[0].values())[0]
@@ -185,6 +188,9 @@ class ConfidenceCalculator:
                         model_generation.confidence_prompt,
                         model_generation.raw_response,
                     )
+                    if not logprobs:
+                        model_generation.confidence_score = 0
+                        return model_generation.confidence_score
                     cache_entry = ConfidenceCacheEntry(
                         prompt=model_generation.confidence_prompt,
                         raw_response=model_generation.raw_response,
@@ -197,6 +203,9 @@ class ConfidenceCalculator:
                 logprobs = self.compute_confidence(
                     model_generation.confidence_prompt, model_generation.raw_response
                 )
+                if not logprobs:
+                    model_generation.confidence_score = 0
+                    return model_generation.confidence_score
         else:
             if model_generation.generation_info is None:
                 logger.debug("No generation info found")
@@ -237,13 +246,17 @@ class ConfidenceCalculator:
         return response
 
     def compute_confidence(self, model_input, model_output) -> Union[dict, List[dict]]:
+        """
+        This function computes the confidence score for the given model_input and model_output
+        and returns the logprobs for each token in the output. If there is an error, it returns None.
+        """
         try:
             if self.REFUEL_API_KEY is None:
                 logger.error(
                     f"Did not find {self.REFUEL_API_ENV}, please add an environment variable"
                     f" `{self.REFUEL_API_ENV}` which contains it"
                 )
-                return [{"": 0.5}]
+                return None
             else:
                 response = self._call_with_retry(model_input, model_output)
                 return json.loads(response.json())["logprobs"]
@@ -254,7 +267,7 @@ class ConfidenceCalculator:
             logger.error(
                 f"Unable to compute confidence score: {e}",
             )
-            return [{"": 0.5}]
+            return None
 
     @classmethod
     def compute_completion(cls, confidence: List[float], threshold: float) -> float:
