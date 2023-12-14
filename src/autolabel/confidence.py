@@ -86,12 +86,19 @@ class ConfidenceCalculator:
         # Find the logprob for each key
         logprob_per_key = {}
 
+        # Suppose the output for which we compute confidence is {"A": "B", "C": "D"}
+        # In this case the logprobs can be a list of dictionaries like
+        # [{"{": -1.2}, {"\"A": -1.3}, {"\"": -1.4}, {":": -1.5}, {"\"B\"": -1.6}, ...]
         mapping = []
         full_string = ""
         for i in range(len(logprobs)):
             for char in list(logprobs[i].keys())[0]:
                 mapping.append(i)
                 full_string += char
+        # Here full string would be the actual output string reconstructed i.e {"A": "B", "C": "D"}
+        # The mapping here maps every character in this output string to the corresponding token
+        # index in the logprobs list. This is because a single token can have multiple characters.
+        # Using this, from a given character index we can map to the token responsible for that character.
 
         # Find the locations of each key in the logprobs as indices
         # into the logprobs list
@@ -100,17 +107,25 @@ class ConfidenceCalculator:
             key_to_find = f'"{key}":'
             loc = full_string.find(key_to_find)
             if loc == -1:
+                # We did not find the key in the logprobs so we set its confidence as 0
+                # This should not be possible if the LLM followed its guidelines.
                 logprob_per_key[key] = 0
             start_token = mapping[loc]
             end_token = mapping[loc + len(key_to_find) - 1]
             locations.append((start_token, end_token, key))
         locations.sort()
+        # Here, the locations consist of the start and end *token* indices for each key
+        # i.e for the keys A and B, we find the start and end tokens where they are found in the logprobs list
+        # and store them in locations. For eg - locations can be [(1, 3, "A"), (9, 12, "C")]
 
         if len(logprob_per_key) != 0:
             logger.warning("Some keys not found in logprobs")
 
         for i in range(len(locations) - 1):
             # Average the logprobs from the end of this to the start of the next token
+            # This means that we average the logprobs of all tokens from the end of the key token
+            # to the start of the next key token thus for the key "A" this would average the tokens
+            # responsible for generating "B",
             logprob_per_key[locations[i][2]] = self.logprob_average(
                 logprobs[locations[i][1] + 1 : locations[i + 1][0]]
             )
