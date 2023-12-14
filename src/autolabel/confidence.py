@@ -1,4 +1,4 @@
-from typing import List, Optional, Tuple, Union
+from typing import List, Optional, Tuple, Union, Dict
 import math
 import numpy as np
 import pickle as pkl
@@ -165,6 +165,16 @@ class ConfidenceCalculator:
                 return -math.e ** token[token_str]
         return 0
 
+    def return_empty_logprob(
+        self, model_generation: LLMAnnotation
+    ) -> Union[float, Dict]:
+        if self.score_type == "logprob_average_per_key":
+            keys = model_generation.label.keys()
+            model_generation.confidence_score = {key: 0 for key in keys}
+        else:
+            model_generation.confidence_score = 0
+        return model_generation.confidence_score
+
     def calculate(self, model_generation: LLMAnnotation, **kwargs) -> float:
         if self.score_type not in self.SUPPORTED_CALCULATORS:
             raise NotImplementedError()
@@ -189,8 +199,7 @@ class ConfidenceCalculator:
                         model_generation.raw_response,
                     )
                     if not logprobs:
-                        model_generation.confidence_score = 0
-                        return model_generation.confidence_score
+                        return self.return_empty_logprob(model_generation)
                     cache_entry = ConfidenceCacheEntry(
                         prompt=model_generation.confidence_prompt,
                         raw_response=model_generation.raw_response,
@@ -204,8 +213,7 @@ class ConfidenceCalculator:
                     model_generation.confidence_prompt, model_generation.raw_response
                 )
                 if not logprobs:
-                    model_generation.confidence_score = 0
-                    return model_generation.confidence_score
+                    return self.return_empty_logprob(model_generation)
         else:
             if model_generation.generation_info is None:
                 logger.debug("No generation info found")
