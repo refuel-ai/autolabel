@@ -75,7 +75,7 @@ class ConfidenceCalculator:
 
     def logprob_average_per_key(
         self,
-        logprobs: list,
+        logprobs: Union[list, dict],
         keys: list,
         **kwargs,
     ):
@@ -85,6 +85,8 @@ class ConfidenceCalculator:
         """
         # Find the logprob for each key
         logprob_per_key = {}
+        if len(logprobs) == 0:
+            return logprob_per_key
 
         # Suppose the output for which we compute confidence is {"A": "B", "C": "D"}
         # In this case the logprobs can be a list of dictionaries like
