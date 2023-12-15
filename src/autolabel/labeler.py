@@ -312,83 +312,19 @@ class LabelingAgent:
                         annotation.latency = latency
 
                         if self.config.confidence():
-                            full_confidence_input = (
-                                annotation.confidence_prompt + annotation.raw_response
-                            )
-                            if (
-                                not self.config.confidence_chunk_column()
-                                or self.get_num_tokens(full_confidence_input)
-                                < self.CONFIDENCE_MAX_CONTEXT_LENGTH
-                            ):
-                                annotation.confidence_score = self.confidence.calculate(
-                                    model_generation=annotation,
+                            try:
+                                annotation.confidence_score = self.get_confidence_score(
+                                    annotation
                                 )
-                            else:
-                                key_to_chunk = self.config.confidence_chunk_column()
-                                if not key_to_chunk:
-                                    raise ValueError(
-                                        "confidence_chunk_column must be set in the config to use confidence_chunk_size"
-                                    )
-                                if key_to_chunk == AUTO_CONFIDENCE_CHUNKING_COLUMN:
-                                    # If the confidence_chunk_column is set to auto,
-                                    # we choose the column with the most tokens as the chunking column.
-                                    max_tokens = -1
-                                    example_template_keys = get_format_variables(
-                                        self.config.example_template()
-                                    )
-                                    for key in example_template_keys:
-                                        num_tokens = self.get_num_tokens(chunk[key])
-                                        if num_tokens > max_tokens:
-                                            max_tokens = num_tokens
-                                            key_to_chunk = key
-
-                                empty_chunk = chunk.copy()
-                                empty_chunk[key_to_chunk] = ""
-                                empty_prompt = self.task.construct_confidence_prompt(
-                                    empty_chunk, examples
-                                )
-                                num_tokens_empty_prompt = self.get_num_tokens(
-                                    empty_prompt
-                                )
-                                num_tokens_per_chunk = (
-                                    self.config.confidence_chunk_size()
-                                    - num_tokens_empty_prompt
-                                )
-                                confidence_chunks = self.chunk_string(
-                                    chunk[key_to_chunk], num_tokens_per_chunk
-                                )
-
-                                confidence_scores = []
-                                for confidence_chunk in confidence_chunks:
-                                    new_chunk = chunk.copy()
-                                    new_chunk[key_to_chunk] = confidence_chunk
-                                    new_prompt = self.task.construct_confidence_prompt(
-                                        new_chunk, examples
-                                    )
-                                    annotation_dict = annotation.dict()
-                                    annotation_dict["confidence_prompt"] = new_prompt
-                                    confidence_scores.append(
-                                        self.confidence.calculate(
-                                            model_generation=LLMAnnotation(
-                                                **annotation_dict
-                                            ),
-                                        )
-                                    )
-
-                                merge_function = MERGE_FUNCTION[
-                                    self.config.confidence_merge_function()
-                                ]
-                                if isinstance(confidence_scores[0], dict):
-                                    merged_confidence = {}
-                                    for key in confidence_scores[0].keys():
-                                        merged_confidence[key] = merge_function(
-                                            [conf[key] for conf in confidence_scores]
-                                        )
+                            except Exception as e:
+                                logger.error(f"Error calculating confidence score: {e}")
+                                if (
+                                    self.config.task_type()
+                                    == TaskType.ATTRIBUTE_EXTRACTION
+                                ):
+                                    annotation.confidence_score = {}
                                 else:
-                                    merged_confidence = merge_function(
-                                        confidence_scores
-                                    )
-                                annotation.confidence_score = merged_confidence
+                                    annotation.confidence_score = 0
 
                         annotations.append(annotation)
                     annotation = self.majority_annotation(annotations)
@@ -647,6 +583,64 @@ class LabelingAgent:
                 csv_file_name, self.task_object.id, self.dataset_obj.id
             )
         return task_run
+
+    def get_confidence_score(self, annotation: LLMAnnotation) -> Union[float, dict]:
+        full_confidence_input = annotation.confidence_prompt + annotation.raw_response
+        if (
+            not self.config.confidence_chunk_column()
+            or self.get_num_tokens(full_confidence_input)
+            < self.CONFIDENCE_MAX_CONTEXT_LENGTH
+        ):
+            return self.confidence.calculate(model_generation=annotation)
+        key_to_chunk = self.config.confidence_chunk_column()
+        if not key_to_chunk:
+            raise ValueError(
+                "confidence_chunk_column must be set in the config to use confidence_chunk_size"
+            )
+        if key_to_chunk == AUTO_CONFIDENCE_CHUNKING_COLUMN:
+            # If the confidence_chunk_column is set to auto,
+            # we choose the column with the most tokens as the chunking column.
+            max_tokens = -1
+            example_template_keys = get_format_variables(self.config.example_template())
+            for key in example_template_keys:
+                num_tokens = self.get_num_tokens(chunk[key])
+                if num_tokens > max_tokens:
+                    max_tokens = num_tokens
+                    key_to_chunk = key
+
+        empty_chunk = chunk.copy()
+        empty_chunk[key_to_chunk] = ""
+        empty_prompt = self.task.construct_confidence_prompt(empty_chunk, examples)
+        num_tokens_empty_prompt = self.get_num_tokens(empty_prompt)
+        num_tokens_per_chunk = (
+            self.config.confidence_chunk_size() - num_tokens_empty_prompt
+        )
+        confidence_chunks = self.chunk_string(chunk[key_to_chunk], num_tokens_per_chunk)
+
+        confidence_scores = []
+        for confidence_chunk in confidence_chunks:
+            new_chunk = chunk.copy()
+            new_chunk[key_to_chunk] = confidence_chunk
+            new_prompt = self.task.construct_confidence_prompt(new_chunk, examples)
+            annotation_dict = annotation.dict()
+            annotation_dict["confidence_prompt"] = new_prompt
+            confidence_scores.append(
+                self.confidence.calculate(
+                    model_generation=LLMAnnotation(**annotation_dict),
+                )
+            )
+
+        merge_function = MERGE_FUNCTION[self.config.confidence_merge_function()]
+        if isinstance(confidence_scores[0], dict):
+            merged_confidence = {}
+            for key in confidence_scores[0].keys():
+                merged_confidence[key] = merge_function(
+                    [conf[key] for conf in confidence_scores]
+                )
+            return merged_confidence
+        else:
+            merged_confidence = merge_function(confidence_scores)
+            return merged_confidence
 
     def save_task_run_state(
         self, current_index: int = None, status: TaskStatus = "", error: str = ""
