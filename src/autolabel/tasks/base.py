@@ -35,12 +35,14 @@ class BaseTask(ABC):
     <s>[INST] <<SYS>>
     {task_guidelines}\n{output_guidelines}
     <</SYS>>
-    {current_example}[/INST]\n"""
+    {current_example}[/INST]
+    """
     FEW_SHOT_TEMPLATE_REFUEL_LLM = """
     <s>[INST] <<SYS>>
     {task_guidelines}\n{output_guidelines}\n{seed_examples}
     <</SYS>>
-    {current_example}[/INST]\n"""
+    {current_example}[/INST]
+    """
 
     # Downstream classes should override these
     NULL_LABEL_TOKEN = "NO_LABEL"
