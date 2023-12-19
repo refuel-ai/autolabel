@@ -417,7 +417,11 @@ class LabelingAgent:
         """
         dataset = dataset.get_slice(max_items=max_items, start_index=start_index)
 
-        if self.config.confidence() and "REFUEL_API_KEY" not in os.environ:
+        if (
+            self.config.confidence()
+            and "REFUEL_API_KEY" not in os.environ
+            and not self.llm.returns_token_probs()
+        ):
             raise ValueError(
                 "REFUEL_API_KEY environment variable must be set to compute confidence scores. You can request an API key at https://refuel-ai.typeform.com/llm-access."
             )
