@@ -96,7 +96,7 @@ def test_gpt35_return_probs():
     model = OpenAILLM(
         config=AutolabelConfig(config="tests/assets/banking/config_banking.json")
     )
-    assert model.returns_token_probs() is False
+    assert model.returns_token_probs() is True
 
 
 ################### OPENAI GPT 3.5 TESTS #######################
@@ -138,7 +138,7 @@ def test_gpt4_return_probs():
     model = OpenAILLM(
         config=AutolabelConfig(config="tests/assets/banking/config_banking_gpt4.json")
     )
-    assert model.returns_token_probs() is False
+    assert model.returns_token_probs() is True
 
 
 ################### OPENAI GPT 4 TESTS #######################
