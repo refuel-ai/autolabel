@@ -195,13 +195,18 @@ class BaseTask(ABC):
                         error_message=f"LLM response is not in the labels list: {llm_label}",
                     )
             elif self.config.task_type() == TaskType.MULTILABEL_CLASSIFICATION:
+                logger.error(f"Multi label classification llm label: {llm_label}")
                 llm_multi_labels = llm_label.split(self.config.label_separator())
+                logger.error(
+                    f"Multi label classification llm label 2: {llm_multi_labels}"
+                )
                 llm_multi_labels = list(
                     filter(
                         lambda label: label in self.config.labels_list(),
                         llm_multi_labels,
                     )
                 )
+                logger.error(f"Multi labels {llm_multi_labels}")
                 if len(llm_multi_labels) == 0:
                     llm_label = self.NULL_LABEL_TOKEN
                     successfully_labeled = False

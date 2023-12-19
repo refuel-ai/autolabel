@@ -94,6 +94,7 @@ class RefuelLLM(BaseModel):
         latencies = []
         for prompt in prompts:
             try:
+                logger.error(f"Refuel prompt: {prompt}")
                 response, latency = self._label_with_retry(prompt)
                 response = json.loads(response.json())
                 generations.append(

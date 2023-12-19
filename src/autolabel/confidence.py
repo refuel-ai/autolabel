@@ -169,6 +169,7 @@ class ConfidenceCalculator:
                 logger.debug("No generation info found")
                 model_generation.confidence_score = 0
                 return model_generation
+            logger.error(f"Confidence: {model_generation.generation_info}")
             logprobs = model_generation.generation_info["logprobs"]["top_logprobs"]
 
         keys = None

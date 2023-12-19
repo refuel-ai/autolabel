@@ -30,7 +30,11 @@ class OpenAILLM(BaseModel):
         "gpt-4-32k-0613",
         "gpt-4-1106-preview",
     ]
-    MODELS_WITH_TOKEN_PROBS = ["text-curie-001", "text-davinci-003"]
+    MODELS_WITH_TOKEN_PROBS = [
+        "text-curie-001",
+        "text-davinci-003",
+        "gpt-4-1106-preview",
+    ]
 
     # Default parameters for OpenAILLM
     DEFAULT_MODEL = "gpt-3.5-turbo"
@@ -159,14 +163,17 @@ class OpenAILLM(BaseModel):
             prompts = [[HumanMessage(content=prompt)] for prompt in prompts]
         try:
             start_time = time()
-            result = self.llm.generate(prompts)
+            result = self.llm.generate(prompts, **{"logprobs": True, "top_logprobs": 1})
             end_time = time()
+            logger.error(f"LLM Input {prompts}")
+            logger.error(f"LLM Output {result.generations}")
             return RefuelLLMResult(
                 generations=result.generations,
                 errors=[None] * len(result.generations),
                 latencies=[end_time - start_time] * len(result.generations),
             )
         except Exception as e:
+            logger.error(f"Error: {e}")
             return self._label_individually(prompts)
 
     def get_cost(self, prompt: str, label: Optional[str] = "") -> float:

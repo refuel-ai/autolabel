@@ -301,6 +301,7 @@ class LabelingAgent:
                         annotation = self.task.parse_llm_response(
                             generation, chunk, final_prompt
                         )
+                        logger.error(f"Annotation: {annotation}")
                         annotation.confidence_prompt = (
                             self.task.construct_confidence_prompt(chunk, examples)
                         )
