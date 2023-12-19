@@ -7,7 +7,7 @@ from autolabel.models import BaseModel
 from autolabel.configs import AutolabelConfig
 from autolabel.cache import BaseCache
 from autolabel.schema import RefuelLLMResult
-from langchain.schema import HumanMessage
+from langchain.schema import HumanMessage, LLMResult
 
 
 import os
@@ -30,7 +30,22 @@ class OpenAILLM(BaseModel):
         "gpt-4-32k-0613",
         "gpt-4-1106-preview",
     ]
-    MODELS_WITH_TOKEN_PROBS = ["text-curie-001", "text-davinci-003"]
+    MODELS_WITH_TOKEN_PROBS = [
+        "text-curie-001",
+        "text-davinci-003",
+        "gpt-3.5-turbo",
+        "gpt-3.5-turbo-0301",
+        "gpt-3.5-turbo-0613",
+        "gpt-3.5-turbo-16k",
+        "gpt-3.5-turbo-16k-0613",
+        "gpt-4",
+        "gpt-4-0314",
+        "gpt-4-32k-0314",
+        "gpt-4-0613",
+        "gpt-4-32k",
+        "gpt-4-32k-0613",
+        "gpt-4-1106-preview",
+    ]
 
     # Default parameters for OpenAILLM
     DEFAULT_MODEL = "gpt-3.5-turbo"
@@ -45,6 +60,7 @@ class OpenAILLM(BaseModel):
         "temperature": 0.0,
         "request_timeout": 30,
     }
+    DEFAULT_QUERY_PARAMS_CHAT_ENGINE = {"logprobs": True, "top_logprobs": 1}
 
     # Reference: https://openai.com/pricing
     COST_PER_PROMPT_TOKEN = {
@@ -114,6 +130,7 @@ class OpenAILLM(BaseModel):
 
         if self._engine == "chat":
             self.model_params = {**self.DEFAULT_PARAMS_CHAT_ENGINE, **model_params}
+            self.query_params = self.DEFAULT_QUERY_PARAMS_CHAT_ENGINE
             self.llm = ChatOpenAI(
                 model_name=self.model_name, verbose=False, **self.model_params
             )
@@ -151,20 +168,35 @@ class OpenAILLM(BaseModel):
 
         return {"logit_bias": logit_bias, "max_tokens": max_tokens}
 
+    def _chat_backward_compatibility(
+        self, generations: List[LLMResult]
+    ) -> List[LLMResult]:
+        for generation_options in generations:
+            for curr_generation in generation_options:
+                generation_info = curr_generation.generation_info
+                new_logprobs = {"top_logprobs": []}
+                for curr_token in generation_info["logprobs"]["content"]:
+                    new_logprobs["top_logprobs"].append(
+                        {curr_token["token"]: curr_token["logprob"]}
+                    )
+                curr_generation.generation_info["logprobs"] = new_logprobs
+        return generations
+
     def _label(self, prompts: List[str]) -> RefuelLLMResult:
-        if self._engine == "chat":
-            # Need to convert list[prompts] -> list[messages]
-            # Currently the entire prompt is stuck into the "human message"
-            # We might consider breaking this up into human vs system message in future
-            prompts = [[HumanMessage(content=prompt)] for prompt in prompts]
         try:
             start_time = time()
-            result = self.llm.generate(prompts)
+            if self._engine == "chat":
+                prompts = [[HumanMessage(content=prompt)] for prompt in prompts]
+                result = self.llm.generate(prompts, **self.query_params)
+                generations = self._chat_backward_compatibility(result.generations)
+            else:
+                result = self.llm.generate(prompts)
+                generations = result.generations
             end_time = time()
             return RefuelLLMResult(
-                generations=result.generations,
-                errors=[None] * len(result.generations),
-                latencies=[end_time - start_time] * len(result.generations),
+                generations=generations,
+                errors=[None] * len(generations),
+                latencies=[end_time - start_time] * len(generations),
             )
         except Exception as e:
             return self._label_individually(prompts)
