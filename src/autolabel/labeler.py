@@ -591,7 +591,8 @@ class LabelingAgent:
     def get_confidence_score(self, annotation: LLMAnnotation) -> Union[float, dict]:
         full_confidence_input = annotation.confidence_prompt + annotation.raw_response
         if (
-            not self.config.confidence_chunk_column()
+            self.llm.returns_token_probs()
+            or not self.config.confidence_chunk_column()
             or self.get_num_tokens(full_confidence_input)
             < self.CONFIDENCE_MAX_CONTEXT_LENGTH
         ):
