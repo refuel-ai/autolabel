@@ -699,9 +699,16 @@ class LabelingAgent:
             console=self.console,
         ):
             explanation_prompt = self.task.get_explanation_prompt(seed_example)
+            if self.task.image_col is not None:
+                explanation_prompt = json.dumps(
+                    {
+                        "text": explanation_prompt,
+                        "image_url": seed_example[self.task.image_col],
+                    }
+                )
             explanation = self.llm.label([explanation_prompt])
             explanation = explanation.generations[0][0].text
-            seed_example["explanation"] = str(explanation) if explanation else ""
+            seed_example[explanation_column] = str(explanation) if explanation else ""
 
         if out_file:
             df = pd.DataFrame.from_records(seed_examples)
