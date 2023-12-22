@@ -135,7 +135,7 @@ class AutolabelConfig(BaseConfig):
 
     def explanation_column(self) -> str:
         """Returns the name of the column containing an explanation as to why the data is labeled a certain way"""
-        return self._dataset_config.get(self.EXPLANATION_COLUMN_KEY, None)
+        return self._dataset_config.get(self.EXPLANATION_COLUMN_KEY, "explanation")
 
     def image_column(self) -> str:
         """Returns the name of the column containing an image url for the given item"""
