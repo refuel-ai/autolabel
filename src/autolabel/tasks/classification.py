@@ -31,7 +31,7 @@ class ClassificationTask(BaseTask):
     )
     DEFAULT_TASK_GUIDELINES = "Your job is to correctly label the provided input example into one of the following {num_labels} categories.\nCategories:\n{labels}\n"
 
-    GENERATE_EXPLANATION_PROMPT = "You are an expert at providing a well reasoned explanation for the output of a given task. \n\nBEGIN TASK DESCRIPTION\n{task_guidelines}\nEND TASK DESCRIPTION\nYou will be given an input example and the corresponding output. Your job is to provide an explanation for why the output is correct for the task above.\nThink step by step and generate an explanation. The last line of the explanation should be - So, the answer is <label>.\n{labeled_example}\nExplanation: "
+    GENERATE_EXPLANATION_PROMPT = "You are an expert at providing a well reasoned explanation for the output of a given task. \n\nBEGIN TASK DESCRIPTION\n{task_guidelines}\nEND TASK DESCRIPTION\nYou will be given an input example and the corresponding output. Your job is to provide an explanation for why the output is correct for the task above.\nThink step by step and generate an explanation with at most 3 to 5 sentences. The last line of the explanation should be - So, the answer is <label>.\n{labeled_example}\nExplanation: "
 
     GENERATE_DATASET_TEMPLATE = "{guidelines}\n\nThe inputs must be diverse, covering a wide range of scenarios. You will not generate duplicate inputs. These inputs should be organized in rows in csv format with the columns {columns}.\n\n{label_descriptions}\n\n{format_guidelines}\n\n{output_guidelines}\n\n```csv"
     DEFAULT_DATASET_GENERATION_GUIDELINES = "You are an expert at generating plausible inputs for a given task.\n\nBEGIN TASK DESCRIPTION\n{task_guidelines}\nEND TASK DESCRIPTION"
