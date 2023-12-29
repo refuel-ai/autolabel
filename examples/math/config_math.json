@@ -6,18 +6,26 @@
         "delimiter": ","
     },
     "model": {
-        "provider": "openai",
-        "name": "gpt-3.5-turbo"
+        "provider": "vllm",
+        "name": "mistralai/Mixtral-8X7B-Instruct-v0.1",
+        "params": {
+            "max_tokens": 50,
+            "temperature": 0.0
+        }
     },
     "prompt": {
         "task_guidelines": "You are an expert at understanding math questions. You are supposed to identify the category of a high-school level math question. There are five possible categories (1) algebra (2) arithmetic (3) measurement (4) numbers, and (5) probability. Use the following guidelines: (1) 'algebra' questions will typically contain letter variables and will ask you to find the value of a variable (2) 'arithmetic' questions will ask the sum, difference, multiplication, division, power, square root or value of expressions involving brackets (3) 'measurement' questions are questions that ask to convert a quantity from some unit to some other unit (4) 'numbers' questions will be about bases, remainders, divisors, GCD, LCM etc. (5) 'probability' questions will ask about the probability of the occurrence of something. Make sure you output only one of the following categories: {labels}",
-        "output_guidelines": "You will answer with just the the correct output label and nothing else.",
+        "output_guidelines": "You will answer with just the the correct output label and nothing else. Output just one of the above labels and no other text.",
         "labels": [
-            "algebra", "arithmetic", "measurement", "numbers", "probability"
+            "algebra",
+            "arithmetic",
+            "measurement",
+            "numbers",
+            "probability"
         ],
         "few_shot_examples": "seed.csv",
-        "few_shot_selection": "semantic_similarity",
+        "few_shot_selection": "label_diversity_similarity",
         "few_shot_num": 10,
-        "example_template": "Input: {example}\nOutput: {label}"
+        "example_template": "Question: {example}\nCategory of question (no other text): {label}"
     }
 }

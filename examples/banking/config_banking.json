@@ -6,8 +6,12 @@
         "delimiter": ","
     },
     "model": {
-        "provider": "openai",
-        "name": "gpt-3.5-turbo"
+        "provider": "vllm",
+        "name": "mistralai/Mixtral-8X7B-Instruct-v0.1",
+        "params": {
+            "max_tokens": 50,
+            "temperature": 0.0
+        }
     },
     "prompt": {
         "task_guidelines": "You are an expert at understanding bank customers support complaints and queries.\nYour job is to correctly classify the provided input example into one of the following categories.\nCategories:\n{labels}",
@@ -93,7 +97,7 @@
         ],
         "few_shot_examples": "seed.csv",
         "few_shot_selection": "semantic_similarity",
-        "few_shot_num": 10,
+        "few_shot_num": 20,
         "example_template": "Input: {example}\nOutput: {label}"
     }
 }

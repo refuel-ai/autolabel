@@ -36,11 +36,9 @@ class BaseTask(ABC):
     {task_guidelines}\n{output_guidelines}
     <</SYS>>
     {current_example}[/INST]\n"""
-    FEW_SHOT_TEMPLATE_REFUEL_LLM = """
-    <s>[INST] <<SYS>>
+    FEW_SHOT_TEMPLATE_REFUEL_LLM = """<s>[INST]
     {task_guidelines}\n{output_guidelines}\n{seed_examples}
-    <</SYS>>
-    {current_example}[/INST]\n"""
+{current_example}</s>[/INST]"""
 
     # Downstream classes should override these
     NULL_LABEL_TOKEN = "NO_LABEL"
@@ -185,7 +183,9 @@ class BaseTask(ABC):
                 if llm_label in self.config.labels_list():
                     successfully_labeled = True
                 else:
-                    logger.warning(f"LLM response is not in the labels list")
+                    logger.warning(
+                        f"LLM response {llm_label} is not in the labels list"
+                    )
                     llm_label = self.NULL_LABEL_TOKEN
                     successfully_labeled = False
                     error = LabelingError(
