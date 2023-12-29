@@ -12,7 +12,7 @@ logger = logging.getLogger(__name__)
 
 class HFPipelineLLM(BaseModel):
     DEFAULT_MODEL = "google/flan-t5-xxl"
-    DEFAULT_PARAMS = {"temperature": 0.0, "quantize": 8}
+    DEFAULT_PARAMS = {"temperature": 0.0, "quantize": 16, "max_new_tokens": 128}
 
     def __init__(self, config: AutolabelConfig, cache: BaseCache = None) -> None:
         super().__init__(config, cache)
@@ -75,14 +75,14 @@ class HFPipelineLLM(BaseModel):
             model = AutoModel.from_pretrained(self.model_name)
         elif quantize_bits == 8:
             model = AutoModel.from_pretrained(
-                self.model_name, load_in_8bit=True, device_map="auto"
+                self.model_name, load_in_8bit=True, device_map="auto", cache_dir="/workspace"
             )
         elif quantize_bits == "16":
             model = AutoModel.from_pretrained(
-                self.model_name, torch_dtype=torch.float16, device_map="auto"
+                self.model_name, torch_dtype=torch.float16, device_map="auto", cache_dir="/workspace"
             )
         else:
-            model = AutoModel.from_pretrained(self.model_name, device_map="auto")
+            model = AutoModel.from_pretrained(self.model_name, device_map="auto", cache_dir="/workspace")
 
         model_kwargs = dict(self.model_params)  # make a copy of the model params
         model_kwargs.pop("quantize", None)  # remove quantize from the model params
@@ -133,6 +133,10 @@ class HFPipelineLLM(BaseModel):
         try:
             start_time = time()
             result = self.llm.generate(prompts)
+            logger.error(result)
+            for idx in range(len(result.generations)):
+                for gen in range(len(result.generations[idx])):
+                    result.generations[idx][gen].text = result.generations[idx][gen].text.replace(prompts[idx], "").replace("<|im_end|>", "").strip("\n")
             end_time = time()
             return RefuelLLMResult(
                 generations=result.generations,
@@ -140,6 +144,7 @@ class HFPipelineLLM(BaseModel):
                 latencies=[end_time - start_time] * len(result.generations),
             )
         except Exception as e:
+            logger.error(f"Error while generating output via HF Pipeline: {e}")
             return self._label_individually(prompts)
 
     def get_cost(self, prompt: str, label: Optional[str] = "") -> float:
