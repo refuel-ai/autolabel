@@ -133,7 +133,6 @@ class HFPipelineLLM(BaseModel):
         try:
             start_time = time()
             result = self.llm.generate(prompts)
-            logger.error(result)
             for idx in range(len(result.generations)):
                 for gen in range(len(result.generations[idx])):
                     result.generations[idx][gen].text = result.generations[idx][gen].text.replace(prompts[idx], "").replace("<|im_end|>", "").strip("\n")
