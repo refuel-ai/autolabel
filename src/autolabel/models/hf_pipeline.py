@@ -12,7 +12,7 @@ logger = logging.getLogger(__name__)
 
 class HFPipelineLLM(BaseModel):
     DEFAULT_MODEL = "google/flan-t5-xxl"
-    DEFAULT_PARAMS = {"temperature": 0.0, "quantize": 16, "max_new_tokens": 128}
+    DEFAULT_PARAMS = {"temperature": 0.05, "quantize": 16, "max_new_tokens": 128, "do_sample": True}
 
     def __init__(self, config: AutolabelConfig, cache: BaseCache = None) -> None:
         super().__init__(config, cache)
