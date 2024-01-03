@@ -22,7 +22,7 @@ class BaseTransform(ABC):
         """
         super().__init__()
         self._output_columns = output_columns
-        self.cache = cache
+        self.cache = None
 
     @staticmethod
     @abstractmethod
