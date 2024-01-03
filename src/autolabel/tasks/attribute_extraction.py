@@ -120,6 +120,7 @@ class AttributeExtractionTask(BaseTask):
 
         # populate the current example in the prompt
         current_example = example_template.format_map(defaultdict(str, input))
+        current_example = f"<|im_end|>\n<|im_start|>user\n{current_example}<|im_end|>\n<|im_start|>assistant\n"
         prompt_template = (
             self.prompt_template
             if prompt_template_override is None
