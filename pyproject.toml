@@ -91,7 +91,7 @@ all = [
     "tiktoken >= 0.3.3",
     "anthropic == 0.3.0",
     "transformers >= 4.25.0",
-    "google-cloud-aiplatform>=1.25.0",
+    "google-cloud-aiplatform>=1.38.0",
     "google-search-results>=2.4.2",
     "cohere>=4.11.2",
     "redis >= 3.5.3",
