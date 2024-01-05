@@ -67,7 +67,7 @@ class ConfidenceCalculator:
             ):
                 logprob_cumulative += (
                     token[token_str]
-                    if token[token_str] >= 0
+                    if token[token_str] > 0
                     else math.e ** (token[token_str])
                 )
                 count += 1
