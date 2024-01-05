@@ -36,11 +36,11 @@ class RedisTransformCache(BaseCache):
         """
         redis_key = entry.get_id()
         if self.redis.exists(redis_key):
-            logger.info("Cache hit")
+            logger.debug("Cache hit")
             output = entry.deserialize_output(self.redis.get(redis_key).decode("utf-8"))
             return output
 
-        logger.info("Cache miss")
+        logger.debug("Cache miss")
         return None
 
     def update(self, entry: TransformCacheEntry) -> None:
