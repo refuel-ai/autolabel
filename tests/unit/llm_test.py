@@ -198,64 +198,6 @@ def test_gpt4V_return_probs():
 ################### OPENAI GPT 4V TESTS #######################
 
 
-################### PALM TESTS #######################
-def test_palm_initialization(mocker):
-    mocker.patch(
-        "vertexai.preview.language_models.TextGenerationModel.from_pretrained",
-        return_value="Test",
-    )
-    model = PaLMLLM(
-        config=AutolabelConfig(config="tests/assets/banking/config_banking_palm.json")
-    )
-
-
-def test_palm_label(mocker):
-    mocker.patch(
-        "vertexai.preview.language_models.TextGenerationModel.from_pretrained",
-        return_value="Test",
-    )
-    model = PaLMLLM(
-        config=AutolabelConfig(config="tests/assets/banking/config_banking_palm.json")
-    )
-    prompts = ["test1", "test2"]
-    mocker.patch(
-        "langchain.llms.VertexAI.generate",
-        return_value=LLMResult(
-            generations=[[Generation(text="Answers")] for _ in prompts]
-        ),
-    )
-    x = model.label(prompts)
-    assert [i[0].text for i in x.generations] == ["Answers", "Answers"]
-    assert sum(x.costs) == approx(2.4e-05, rel=1e-3)
-
-
-def test_palm_get_cost(mocker):
-    mocker.patch(
-        "vertexai.preview.language_models.TextGenerationModel.from_pretrained",
-        return_value="Test",
-    )
-    model = PaLMLLM(
-        config=AutolabelConfig(config="tests/assets/banking/config_banking_palm.json")
-    )
-    example_prompt = "TestingExamplePrompt"
-    curr_cost = model.get_cost(example_prompt)
-    assert curr_cost == approx(0.00402, rel=1e-3)
-
-
-def test_palm_return_probs(mocker):
-    mocker.patch(
-        "vertexai.preview.language_models.TextGenerationModel.from_pretrained",
-        return_value="Test",
-    )
-    model = PaLMLLM(
-        config=AutolabelConfig(config="tests/assets/banking/config_banking_palm.json")
-    )
-    assert model.returns_token_probs() is False
-
-
-################### PALM TESTS #######################
-
-
 ################### REFUEL TESTS #######################
 def test_refuel_initialization():
     model = RefuelLLM(
