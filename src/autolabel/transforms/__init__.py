@@ -15,7 +15,7 @@ TRANSFORM_REGISTRY = {
     TransformType.PDF: PDFTransform,
     TransformType.WEBPAGE_TRANSFORM: WebpageTransform,
     TransformType.IMAGE: ImageTransform,
-    TransformType.SERP_API: SerpApi,
+    TransformType.WEB_SEARCH: SerpApi,
 }
 
 
