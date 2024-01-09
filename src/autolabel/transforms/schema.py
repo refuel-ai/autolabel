@@ -11,7 +11,7 @@ class TransformType(str, Enum):
     WEBPAGE_TRANSFORM = "webpage_transform"
     PDF = "pdf"
     IMAGE = "image"
-    SERP_API = "serp_api"
+    WEB_SEARCH = "web_search"
 
 
 class TransformCacheEntry(BaseModel):

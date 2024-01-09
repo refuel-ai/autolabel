@@ -81,7 +81,7 @@ class SerpApi(BaseTransform):
         )
 
     def name(self) -> str:
-        return TransformType.SERP_API
+        return TransformType.WEB_SEARCH
 
     async def _get_result(self, query):
         """
