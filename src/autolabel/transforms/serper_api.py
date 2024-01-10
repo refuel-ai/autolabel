@@ -1,7 +1,7 @@
 import json
 from autolabel.cache import BaseCache
 from autolabel.transforms import BaseTransform
-from langchain.utilities import SerpAPIWrapper
+from langchain.utilities import GoogleSerperAPIWrapper
 from typing import Dict, Any, List
 import logging
 import pandas as pd
@@ -15,28 +15,30 @@ from autolabel.transforms.schema import (
 logger = logging.getLogger(__name__)
 
 
-class RefuelSerpAPIWrapper(SerpAPIWrapper):
+class RefuelSerperAPIWrapper(GoogleSerperAPIWrapper):
     DEFAULT_ORGANIC_RESULTS_KEYS = ["position", "title", "link", "snippet"]
 
-    def __init__(self, search_engine=None, params=None, serpapi_api_key=None):
+    def __init__(self, search_engine=None, params=None, serper_api_key=None):
         super().__init__(
-            search_engine=search_engine, params=params, serpapi_api_key=serpapi_api_key
+            search_engine=search_engine,
+            params=params,
+            serper_api_key=serper_api_key,
         )
 
     async def arun(self, query: str, **kwargs: Any) -> Dict:
-        """Run query through SerpAPI and parse result async."""
+        """Run query through Serper.dev API and parse result async."""
         return self._process_response(await self.aresults(query))
 
     def _process_response(self, res: Dict) -> Dict:
         """
-        Processes the response from Serp API and returns the search results.
+        Processes the response from Serper.dev API and returns the search results.
         """
         cleaned_res = {}
         if "error" in res.keys():
-            raise ValueError(f"Got error from SerpAPI: {res['error']}")
-        if "knowledge_graph" in res.keys():
-            cleaned_res["knowledge_graph"] = json.dumps(res["knowledge_graph"])
-        if "organic_results" in res.keys():
+            raise ValueError(f"Got error from Serper.dev API: {res['error']}")
+        if "knowledgeGraph" in res.keys():
+            cleaned_res["knowledge_graph"] = json.dumps(res["knowledgeGraph"])
+        if "organic" in res.keys():
             organic_results = list(
                 map(
                     lambda result: dict(
@@ -45,14 +47,14 @@ class RefuelSerpAPIWrapper(SerpAPIWrapper):
                             result.items(),
                         )
                     ),
-                    res["organic_results"],
+                    res["organic"],
                 )
             )
             cleaned_res["organic_results"] = json.dumps(organic_results)
         return cleaned_res
 
 
-class SerpApi(BaseTransform):
+class SerperApi(BaseTransform):
     COLUMN_NAMES = ["knowledge_graph_results", "organic_search_results"]
 
     DEFAULT_ARGS = {
@@ -68,32 +70,34 @@ class SerpApi(BaseTransform):
         output_columns: Dict[str, Any],
         query_columns: List[str],
         query_template: str,
-        serp_api_key: str,
-        serp_args: dict = DEFAULT_ARGS,
+        serper_api_key: str,
+        serper_args: dict = DEFAULT_ARGS,
     ) -> None:
         super().__init__(cache, output_columns)
         self.query_columns = query_columns
         self.query_template = query_template
-        self.serp_api_key = serp_api_key
-        self.serp_args = serp_args
-        self.serp_api_wrapper = RefuelSerpAPIWrapper(
-            search_engine=None, params=self.serp_args, serpapi_api_key=self.serp_api_key
+        self.serper_api_key = serper_api_key
+        self.serper_args = serper_args
+        self.serper_api_wrapper = RefuelSerperAPIWrapper(
+            search_engine=None,
+            params=self.serper_args,
+            serper_api_key=self.serper_api_key,
         )
 
     def name(self) -> str:
-        return TransformType.WEB_SEARCH_SERP_API
+        return TransformType.WEB_SEARCH_SERPER
 
     async def _get_result(self, query):
         """
-        Makes a request to Serp API with the query
+        Makes a request to Serper.dev API with the query
         and returns the search results.
         """
         try:
-            search_result = await self.serp_api_wrapper.arun(query=query)
+            search_result = await self.serper_api_wrapper.arun(query=query)
         except Exception as e:
             raise TransformError(
-                TransformErrorType.SERP_API_ERROR,
-                f"Error while making request to Serp API: {e}",
+                TransformErrorType.SERPER_API_ERROR,
+                f"Error while making request to Serper API: {e}",
             )
         return search_result
 
@@ -128,6 +132,6 @@ class SerpApi(BaseTransform):
             "query_columns": self.query_columns,
             "query_template": self.query_template,
             "output_columns": self.output_columns,
-            "serp_api_key": self.serp_api_key,
-            "serp_args": self.serp_args,
+            "serper_api_key": self.serper_api_key,
+            "serper_args": self.serper_args,
         }
