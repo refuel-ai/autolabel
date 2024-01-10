@@ -71,7 +71,11 @@ async def test_error_handling():
     transformed_row = await transform.apply(row)
     # Check the output
     assert set(transformed_row.keys()) == set(
-        ["knowledge_graph_results", "web_search_serp_api_error", "organic_search_results"]
+        [
+            "knowledge_graph_results",
+            "web_search_serp_api_error",
+            "organic_search_results",
+        ]
     )
     assert transformed_row["knowledge_graph_results"] == "NO_TRANSFORM"
     assert "Invalid API key" in transformed_row["web_search_serp_api_error"]
@@ -101,7 +105,11 @@ async def test_null_query():
     transformed_row = await transform.apply(row)
     # Check the output
     assert set(transformed_row.keys()) == set(
-        ["knowledge_graph_results", "web_search_serp_api_error", "organic_search_results"]
+        [
+            "knowledge_graph_results",
+            "web_search_serp_api_error",
+            "organic_search_results",
+        ]
     )
     assert transformed_row["knowledge_graph_results"] == "NO_TRANSFORM"
     assert (
