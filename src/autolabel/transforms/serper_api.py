@@ -56,12 +56,7 @@ class RefuelSerperAPIWrapper(GoogleSerperAPIWrapper):
 class SerperApi(BaseTransform):
     COLUMN_NAMES = ["knowledge_graph_results", "organic_search_results"]
 
-    DEFAULT_ARGS = {
-        "engine": "google",
-        "google_domain": "google.com",
-        "gl": "us",
-        "hl": "en",
-    }
+    DEFAULT_ARGS = {"gl": "us", "hl": "en"}
 
     def __init__(
         self,
