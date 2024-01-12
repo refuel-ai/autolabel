@@ -18,9 +18,8 @@ logger = logging.getLogger(__name__)
 class RefuelSerperAPIWrapper(GoogleSerperAPIWrapper):
     DEFAULT_ORGANIC_RESULTS_KEYS = ["position", "title", "link", "snippet"]
 
-    def __init__(self, search_engine=None, params=None, serper_api_key=None):
+    def __init__(self, params=None, serper_api_key=None):
         super().__init__(
-            search_engine=search_engine,
             params=params,
             serper_api_key=serper_api_key,
         )
@@ -79,7 +78,6 @@ class SerperApi(BaseTransform):
         self.serper_api_key = serper_api_key
         self.serper_args = serper_args
         self.serper_api_wrapper = RefuelSerperAPIWrapper(
-            search_engine=None,
             params=self.serper_args,
             serper_api_key=self.serper_api_key,
         )
@@ -102,11 +100,12 @@ class SerperApi(BaseTransform):
         return search_result
 
     async def _apply(self, row: Dict[str, Any]) -> Dict[str, Any]:
-        if any(col not in row for col in self.query_columns):
-            raise TransformError(
-                TransformErrorType.INVALID_INPUT,
-                f"Missing query column in row {row}",
-            )
+        for col in self.query_columns:
+            if col not in row:
+                raise TransformError(
+                    TransformErrorType.INVALID_INPUT,
+                    f"Missing query column: {col} in row {row}",
+                )
         query = self.query_template.format(**row)
         search_result = self.NULL_TRANSFORM_TOKEN
         if pd.isna(query) or query == self.NULL_TRANSFORM_TOKEN:

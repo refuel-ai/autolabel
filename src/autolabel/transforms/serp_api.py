@@ -101,7 +101,7 @@ class SerpApi(BaseTransform):
         if any(col not in row for col in self.query_columns):
             raise TransformError(
                 TransformErrorType.INVALID_INPUT,
-                f"Missing query column in row {row}",
+                f"Missing query column: in row {row}",
             )
         query = self.query_template.format(**row)
         search_result = self.NULL_TRANSFORM_TOKEN
