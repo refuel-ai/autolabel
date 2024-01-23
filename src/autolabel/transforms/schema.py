@@ -13,6 +13,7 @@ class TransformType(str, Enum):
     IMAGE = "image"
     WEB_SEARCH_SERP_API = "web_search_serp_api"
     WEB_SEARCH_SERPER = "web_search"
+    WOLFRAM_ALPHA_API = "wolfram_alpha"
 
 
 class TransformCacheEntry(BaseModel):

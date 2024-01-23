@@ -5,6 +5,7 @@ from .pdf import PDFTransform
 from .serp_api import SerpApi
 from .serper_api import SerperApi
 from .webpage_transform import WebpageTransform
+from .wolfram_alpha import WolframAlpha
 from .image import ImageTransform
 from typing import Dict
 from autolabel.transforms.schema import TransformType
@@ -18,6 +19,7 @@ TRANSFORM_REGISTRY = {
     TransformType.IMAGE: ImageTransform,
     TransformType.WEB_SEARCH_SERP_API: SerpApi,
     TransformType.WEB_SEARCH_SERPER: SerperApi,
+    TransformType.WOLFRAM_ALPHA_API: WolframAlpha,
 }
 
 
