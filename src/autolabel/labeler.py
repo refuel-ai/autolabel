@@ -314,7 +314,7 @@ class LabelingAgent:
                         if self.config.confidence():
                             try:
                                 annotation.confidence_score = self.get_confidence_score(
-                                    annotation
+                                    annotation, chunk, examples
                                 )
                             except Exception as e:
                                 logger.error(f"Error calculating confidence score: {e}")
@@ -588,7 +588,9 @@ class LabelingAgent:
             )
         return task_run
 
-    def get_confidence_score(self, annotation: LLMAnnotation) -> Union[float, dict]:
+    def get_confidence_score(
+        self, annotation: LLMAnnotation, chunk: Dict, examples: List[Dict]
+    ) -> Union[float, dict]:
         full_confidence_input = annotation.confidence_prompt + annotation.raw_response
         if (
             self.llm.returns_token_probs()
