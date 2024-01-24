@@ -34,7 +34,7 @@ class AttributeExtractionTask(BaseTask):
     NULL_LABEL = {}
     DEFAULT_TASK_GUIDELINES = "You are an expert at extracting attributes from text. Given a piece of text, extract the required attributes."
     DEFAULT_OUTPUT_GUIDELINES = "You will return the extracted attributes as a json with the following keys:\n{attribute_json}"
-    GENERATE_EXPLANATION_PROMPT = "You are an expert at providing a well reasoned explanation for the output of a given task. \n\nBEGIN TASK DESCRIPTION\n{task_guidelines}\nEND TASK DESCRIPTION\nYou will be given an input example and the output for one of the attributes. Your job is to provide an explanation for why the output for that attribute is correct for the task above.\nGenerate a one line explanation. The last line of the explanation should be - So, the answer is <label>.\n{labeled_example}\nCurrent Attrribute:{attribute}.\nExplanation: "
+    GENERATE_EXPLANATION_PROMPT = "You are an expert at providing a well reasoned explanation for the output of a given task. \n\nBEGIN TASK DESCRIPTION\n{task_guidelines}\nEND TASK DESCRIPTION\nYou will be given an input example and the output for one of the attributes. Your job is to provide an explanation for why the output for that attribute is correct for the task above.\nYour explanation should be at most two sentence, and the explanation should end with - 'so, the answer is <label>.'\n{labeled_example}\nCurrent Attrribute:{attribute}.\nExplanation: "
     OUTPUT_DICT_KEY = "output_dict"
 
     def __init__(self, config: AutolabelConfig) -> None:
