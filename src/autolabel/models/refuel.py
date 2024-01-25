@@ -28,7 +28,7 @@ class UnretryableError(Exception):
 
 
 class RefuelLLM(BaseModel):
-    DEFAULT_CONTEXT_LENGTH = 3500
+    DEFAULT_CONTEXT_LENGTH = 3250
     DEFAULT_PARAMS = {
         "max_new_tokens": 128,
     }
