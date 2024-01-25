@@ -49,6 +49,7 @@ class PaLMLLM(BaseModel):
         try:
             from langchain.chat_models import ChatVertexAI
             from langchain.llms import VertexAI
+            import tiktoken
         except ImportError:
             raise ImportError(
                 "palm is required to use the Palm LLM. Please install it with the following command: pip install 'refuel-autolabel[google]'"
@@ -67,6 +68,7 @@ class PaLMLLM(BaseModel):
             self.llm = ChatVertexAI(model_name=self.model_name, **self.model_params)
         else:
             self.llm = VertexAI(model_name=self.model_name, **self.model_params)
+        self.tiktoken = tiktoken
 
     @retry(
         reraise=True,
@@ -163,4 +165,6 @@ class PaLMLLM(BaseModel):
         return False
 
     def get_num_tokens(self, prompt: str) -> int:
-        return len(prompt)
+        # TODO(dhruva): Replace with actual tokenizer once that is available
+        encoding = self.tiktoken.encoding_for_model("gpt2")
+        return len(encoding.encode(prompt))

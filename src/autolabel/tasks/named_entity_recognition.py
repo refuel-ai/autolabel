@@ -1,7 +1,7 @@
 import json
 import re
 from collections import defaultdict
-from typing import Dict, List, Optional, Tuple, Union
+from typing import Callable, Dict, List, Optional, Tuple, Union
 from copy import deepcopy
 from langchain.prompts.prompt import PromptTemplate
 
@@ -69,6 +69,8 @@ class NamedEntityRecognitionTask(BaseTask):
         prompt_template_override: PromptTemplate = None,
         refuel_prompt_override: bool = False,
         output_guidelines_override: str = None,
+        max_input_tokens: int = None,
+        get_num_tokens: Optional[Callable] = None,
         **kwargs,
     ) -> str:
         # prepare task guideline
@@ -110,17 +112,23 @@ class NamedEntityRecognitionTask(BaseTask):
             else output_guidelines_override
         )
         if self._is_few_shot_mode():
-            curr_text_prompt = prompt_template.format(
+            curr_text_prompt = self.trim_prompt(
+                prompt_template,
                 task_guidelines=fmt_task_guidelines,
                 output_guidelines=output_guidelines,
                 seed_examples="\n\n".join(fmt_examples),
                 current_example=current_example,
+                max_input_tokens=max_input_tokens,
+                get_num_tokens=get_num_tokens,
             )
         else:
-            curr_text_prompt = prompt_template.format(
+            curr_text_prompt = self.trim_prompt(
+                prompt_template,
                 task_guidelines=fmt_task_guidelines,
                 output_guidelines=output_guidelines,
                 current_example=current_example,
+                max_input_tokens=max_input_tokens,
+                get_num_tokens=get_num_tokens,
             )
 
         if self.image_col is not None:

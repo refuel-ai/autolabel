@@ -74,6 +74,7 @@ huggingface = [
     "sentence_transformers"
 ]
 google = [
+    "tiktoken >= 0.3.3",
     "google-cloud-aiplatform>=1.25.0"
 ]
 cohere = [
