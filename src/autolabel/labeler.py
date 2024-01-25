@@ -269,10 +269,19 @@ class LabelingAgent:
             ):
                 selected_labels = self.label_selector.select_labels(chunk["example"])
                 final_prompt = self.task.construct_prompt(
-                    chunk, examples, selected_labels=selected_labels
+                    chunk,
+                    examples,
+                    selected_labels=selected_labels,
+                    max_input_tokens=self.llm.DEFAULT_CONTEXT_LENGTH,
+                    get_num_tokens=self.llm.get_num_tokens,
                 )
             else:
-                final_prompt = self.task.construct_prompt(chunk, examples)
+                final_prompt = self.task.construct_prompt(
+                    chunk,
+                    examples,
+                    max_input_tokens=self.llm.DEFAULT_CONTEXT_LENGTH,
+                    get_num_tokens=self.llm.get_num_tokens,
+                )
 
             response = self.llm.label([final_prompt])
             for i, generations, error, latency in zip(
@@ -488,10 +497,19 @@ class LabelingAgent:
             ):
                 selected_labels = self.label_selector.select_labels(input_i["example"])
                 final_prompt = self.task.construct_prompt(
-                    input_i, examples, selected_labels=selected_labels
+                    input_i,
+                    examples,
+                    selected_labels=selected_labels,
+                    max_input_tokens=self.llm.DEFAULT_CONTEXT_LENGTH,
+                    get_num_tokens=self.llm.get_num_tokens,
                 )
             else:
-                final_prompt = self.task.construct_prompt(input_i, examples)
+                final_prompt = self.task.construct_prompt(
+                    input_i,
+                    examples,
+                    max_input_tokens=self.llm.DEFAULT_CONTEXT_LENGTH,
+                    get_num_tokens=self.llm.get_num_tokens,
+                )
             prompt_list.append(final_prompt)
 
             # Calculate the number of tokens

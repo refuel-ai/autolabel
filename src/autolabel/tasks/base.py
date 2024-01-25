@@ -1,7 +1,7 @@
 """Base interface that all prediction tasks will implement."""
 
 from abc import ABC, abstractmethod
-from typing import Dict, List, Optional, Union
+from typing import Callable, Dict, List, Optional, Union
 import logging
 import json
 import pickle
@@ -98,6 +98,8 @@ class BaseTask(ABC):
         prompt_template_override: PromptTemplate = None,
         refuel_prompt_override: bool = False,
         output_guidelines_override: str = None,
+        max_input_tokens: int = None,
+        get_num_tokens: Optional[Callable] = None,
         **kwargs,
     ) -> str:
         pass
@@ -120,6 +122,48 @@ class BaseTask(ABC):
             **kwargs,
         )
         return refuel_prompt
+
+    def trim_prompt(
+        self,
+        prompt_template: str,
+        task_guidelines: str,
+        output_guidelines: str,
+        current_example: str,
+        seed_examples: str = None,
+        max_input_tokens: int = None,
+        get_num_tokens: Optional[Callable] = None,
+    ) -> str:
+        complete_prompt = prompt_template.format(
+            task_guidelines=task_guidelines,
+            output_guidelines=output_guidelines,
+            seed_examples=seed_examples,
+            current_example=current_example,
+        )
+        if not max_input_tokens or not get_num_tokens:
+            return complete_prompt
+
+        current_prompt_length = get_num_tokens(complete_prompt)
+        if current_prompt_length > max_input_tokens:
+            extra_tokens = current_prompt_length - max_input_tokens
+            num_example_tokens = get_num_tokens(current_example)
+            if num_example_tokens <= extra_tokens:
+                raise ValueError(
+                    f"Number of tokens in the example {num_example_tokens} is less than extra tokens {extra_tokens}. Can't trim to ensure context length won't be exceeded."
+                )
+            else:
+                max_chars = (
+                    float(len(current_example))
+                    * (num_example_tokens - extra_tokens - 1)
+                    / (num_example_tokens)
+                )
+                current_example = current_example[: int(max_chars)]
+
+        return prompt_template.format(
+            task_guidelines=task_guidelines,
+            output_guidelines=output_guidelines,
+            seed_examples=seed_examples,
+            current_example=current_example,
+        )
 
     @abstractmethod
     def eval(

@@ -28,6 +28,7 @@ class UnretryableError(Exception):
 
 
 class RefuelLLM(BaseModel):
+    DEFAULT_CONTEXT_LENGTH = 3500
     DEFAULT_PARAMS = {
         "max_new_tokens": 128,
     }
@@ -38,6 +39,12 @@ class RefuelLLM(BaseModel):
         cache: BaseCache = None,
     ) -> None:
         super().__init__(config, cache)
+        try:
+            import tiktoken
+        except ImportError:
+            raise ImportError(
+                "tiktoken is required to use RefuelLLM. Please install it with the following command: pip install tiktoken"
+            )
 
         # populate model name
         # This is unused today, but in the future could
@@ -56,6 +63,7 @@ class RefuelLLM(BaseModel):
                 f"Did not find {self.REFUEL_API_ENV}, please add an environment variable"
                 f" `{self.REFUEL_API_ENV}` which contains it"
             )
+        self.tiktoken = tiktoken
 
     @retry(
         reraise=True,
@@ -133,4 +141,6 @@ class RefuelLLM(BaseModel):
         return True
 
     def get_num_tokens(self, prompt: str) -> int:
-        return len(prompt)
+        # TODO(dhruva): Replace with actual tokenizer once that is pushed to cache
+        encoding = self.tiktoken.encoding_for_model("gpt2")
+        return len(encoding.encode(prompt)) * 1.3

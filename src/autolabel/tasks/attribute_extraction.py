@@ -1,4 +1,4 @@
-from typing import List, Dict, Union
+from typing import Callable, Dict, List, Optional, Union
 from collections import defaultdict
 import logging
 import json
@@ -95,6 +95,8 @@ class AttributeExtractionTask(BaseTask):
         prompt_template_override: PromptTemplate = None,
         refuel_prompt_override: bool = False,
         output_guidelines_override: str = None,
+        max_input_tokens: int = None,
+        get_num_tokens: Optional[Callable] = None,
         **kwargs,
     ) -> str:
         fmt_task_guidelines = self.task_guidelines
@@ -126,17 +128,23 @@ class AttributeExtractionTask(BaseTask):
             else prompt_template_override
         )
         if self._is_few_shot_mode():
-            curr_text_prompt = prompt_template.format(
+            curr_text_prompt = self.trim_prompt(
+                prompt_template,
                 task_guidelines=fmt_task_guidelines,
                 output_guidelines=fmt_output_guidelines,
                 seed_examples="\n\n".join(fmt_examples),
                 current_example=current_example,
+                max_input_tokens=max_input_tokens,
+                get_num_tokens=get_num_tokens,
             )
         else:
-            curr_text_prompt = prompt_template.format(
+            curr_text_prompt = self.trim_prompt(
+                prompt_template,
                 task_guidelines=fmt_task_guidelines,
                 output_guidelines=fmt_output_guidelines,
                 current_example=current_example,
+                max_input_tokens=max_input_tokens,
+                get_num_tokens=get_num_tokens,
             )
 
         if self.image_col is not None:

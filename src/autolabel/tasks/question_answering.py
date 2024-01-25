@@ -1,5 +1,5 @@
 from collections import defaultdict
-from typing import List, Dict, Tuple, Optional
+from typing import Callable, Dict, List, Tuple, Optional
 import json
 
 from langchain.prompts.prompt import PromptTemplate
@@ -62,6 +62,8 @@ class QuestionAnsweringTask(BaseTask):
         prompt_template_override: PromptTemplate = None,
         refuel_prompt_override: bool = False,
         output_guidelines_override: str = None,
+        max_input_tokens: int = None,
+        get_num_tokens: Optional[Callable] = None,
         **kwargs,
     ) -> str:
         # Copy over the input so that we can modify it

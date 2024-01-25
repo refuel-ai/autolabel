@@ -18,6 +18,7 @@ from langchain.schema import Generation
 
 class BaseModel(ABC):
     TTL_MS = 60 * 60 * 24 * 365 * 3 * 1000  # 3 years
+    DEFAULT_CONTEXT_LENGTH = None
 
     def __init__(self, config: AutolabelConfig, cache: BaseCache) -> None:
         self.config = config
@@ -165,4 +166,10 @@ class BaseModel(ABC):
         Returns:
             bool: whether the LLM returns supports returning logprobs of generated tokens
         """
+        pass
+
+    @abstractmethod
+    def get_num_tokens(self, prompt: str) -> int:
+        """
+        Get the number of tokens in the prompt"""
         pass
