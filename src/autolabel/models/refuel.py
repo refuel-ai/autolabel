@@ -28,6 +28,7 @@ class UnretryableError(Exception):
 
 
 class RefuelLLM(BaseModel):
+    DEFAULT_TOKENIZATION_MODEL = "NousResearch/Llama-2-13b-chat-hf"
     DEFAULT_CONTEXT_LENGTH = 3250
     DEFAULT_PARAMS = {
         "max_new_tokens": 128,
@@ -40,10 +41,10 @@ class RefuelLLM(BaseModel):
     ) -> None:
         super().__init__(config, cache)
         try:
-            import tiktoken
-        except ImportError:
-            raise ImportError(
-                "tiktoken is required to use RefuelLLM. Please install it with the following command: pip install tiktoken"
+            from transformers import AutoTokenizer
+        except Exception as e:
+            raise Exception(
+                "Unable to import transformers. Please install transformers to use RefuelLLM"
             )
 
         # populate model name
@@ -52,6 +53,7 @@ class RefuelLLM(BaseModel):
         self.model_name = config.model_name()
         model_params = config.model_params()
         self.model_params = {**self.DEFAULT_PARAMS, **model_params}
+        self.tokenizer = AutoTokenizer.from_pretrained(self.DEFAULT_TOKENIZATION_MODEL)
 
         # initialize runtime
         self.BASE_API = f"https://llm.refuel.ai/models/{self.model_name}/generate"
@@ -63,7 +65,6 @@ class RefuelLLM(BaseModel):
                 f"Did not find {self.REFUEL_API_ENV}, please add an environment variable"
                 f" `{self.REFUEL_API_ENV}` which contains it"
             )
-        self.tiktoken = tiktoken
 
     @retry(
         reraise=True,
@@ -141,6 +142,4 @@ class RefuelLLM(BaseModel):
         return True
 
     def get_num_tokens(self, prompt: str) -> int:
-        # TODO(dhruva): Replace with actual tokenizer once that is pushed to cache
-        encoding = self.tiktoken.encoding_for_model("gpt2")
-        return len(encoding.encode(prompt)) * 1.3
+        return len(self.tokenizer.encode(prompt))
