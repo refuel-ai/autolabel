@@ -5,6 +5,7 @@ Autolabel provides datasets out-of-the-box so you can easily get started with LL
 | banking        | Classification        |
 | civil_comments | Classification        |
 | ledgar         | Classification        |
+| movie_reviews  | Classification        |
 | walmart_amazon | Entity Matching       |
 | company        | Entity Matching       |
 | squad_v2       | Question Answering    |
