@@ -18,6 +18,9 @@ from autolabel.metrics import (
     F1Metric,
     BaseMetric,
 )
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 class MultilabelClassificationTask(BaseTask):
@@ -60,8 +63,8 @@ class MultilabelClassificationTask(BaseTask):
         # prepare task guideline
         labels_list = self.config.labels_list()
         num_labels = len(labels_list)
-        fmt_task_guidelines = self.task_guidelines.format(
-            num_labels=num_labels, labels="\n".join(labels_list)
+        fmt_task_guidelines = self.task_guidelines.format_map(
+            defaultdict(str, labels="\n".join(labels_list), num_labels=num_labels)
         )
 
         # prepare seed examples

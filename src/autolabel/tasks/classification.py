@@ -86,8 +86,8 @@ class ClassificationTask(BaseTask):
         else:
             labels = "\n".join(labels_list)
 
-        fmt_task_guidelines = self.task_guidelines.format(
-            num_labels=num_labels, labels=labels
+        fmt_task_guidelines = self.task_guidelines.format_map(
+            defaultdict(str, labels="\n".join(labels_list), num_labels=num_labels)
         )
 
         # prepare seed examples
