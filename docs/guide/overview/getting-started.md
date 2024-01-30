@@ -89,11 +89,11 @@ config = {
 }
 ```
 
-*To create a custom configuration, you can use the [CLI](https://docs.refuel.ai/autolabel/guide/resources/CLI/) or [write your own](https://docs.refuel.ai/autolabel/guide/resources/configs/).*
+*To create a custom configuration, you can use the [CLI](guide/resources/CLI/) or [write your own](/guide/resources/configs/).*
 
 ### Preview the labeling against your dataset
 
-First import `autolabel`, create a `LabelingAgent` object and then run the `plan` command against the dataset (available [here](https://github.com/refuel-ai/autolabel/blob/main/docs/assets/movie_reviews.csv)) and can be downloaded through the `autolabel.get_data` function):
+First import `autolabel`, create a `LabelingAgent` object and then run the `plan` command against the dataset (available [here](https://github.com/refuel-ai/autolabel/docs/assets/movie_reviews.csv)) and can be downloaded through the `autolabel.get_data` function):
 
 ```python
 from autolabel import LabelingAgent, AutolabelDataset, get_data
