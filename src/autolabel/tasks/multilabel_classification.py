@@ -18,9 +18,6 @@ from autolabel.metrics import (
     F1Metric,
     BaseMetric,
 )
-import logging
-
-logger = logging.getLogger(__name__)
 
 
 class MultilabelClassificationTask(BaseTask):
