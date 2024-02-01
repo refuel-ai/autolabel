@@ -142,28 +142,40 @@ class BaseTask(ABC):
         if not max_input_tokens or not get_num_tokens:
             return complete_prompt
 
-        current_prompt_length = get_num_tokens(complete_prompt)
-        if current_prompt_length > max_input_tokens:
+        trimming_priority = [
+            seed_examples,
+            task_guidelines,
+            output_guidelines,
+            current_example,
+        ]
+        trimmed_elements = {key: key for key in trimming_priority if key is not None}
+        for trimming_candidate in trimming_priority:
+            current_prompt_length = get_num_tokens(complete_prompt)
+            if current_prompt_length <= max_input_tokens:
+                break
+            if trimming_candidate is None:
+                continue
             extra_tokens = current_prompt_length - max_input_tokens
-            num_example_tokens = get_num_tokens(current_example)
-            if num_example_tokens <= extra_tokens:
-                raise ValueError(
-                    f"Number of tokens in the example {num_example_tokens} is less than extra tokens {extra_tokens}. Can't trim to ensure context length won't be exceeded."
-                )
-            else:
-                max_chars = (
-                    float(len(current_example))
-                    * (num_example_tokens - extra_tokens - 1)
-                    / (num_example_tokens)
-                )
-                current_example = current_example[: int(max_chars)]
+            trimming_candidate_tokens = get_num_tokens(trimming_candidate)
+            max_chars = (
+                float(len(trimming_candidate))
+                * (trimming_candidate_tokens - extra_tokens - 1)
+                / (trimming_candidate_tokens + 1)
+            )
+            final_candidate_chars = int(max(0, max_chars))
+            trimmed_elements[trimming_candidate] = trimming_candidate[
+                :final_candidate_chars
+            ]
+            complete_prompt = prompt_template.format(
+                task_guidelines=trimmed_elements[task_guidelines],
+                output_guidelines=trimmed_elements[output_guidelines],
+                seed_examples=trimmed_elements[seed_examples]
+                if seed_examples is not None
+                else None,
+                current_example=trimmed_elements[current_example],
+            )
 
-        return prompt_template.format(
-            task_guidelines=task_guidelines,
-            output_guidelines=output_guidelines,
-            seed_examples=seed_examples,
-            current_example=current_example,
-        )
+        return complete_prompt
 
     @abstractmethod
     def eval(
