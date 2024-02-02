@@ -123,9 +123,9 @@ class AutolabelDataset:
                         attribute_labels.append(x.label.get(attr["name"], ""))
                     else:
                         attribute_labels.append(BaseTask.NULL_LABEL_TOKEN)
-                self.df[self.generate_label_name("label", attr["name"])] = (
-                    attribute_labels
-                )
+                self.df[
+                    self.generate_label_name("label", attr["name"])
+                ] = attribute_labels
 
         # Add the LLM errors to the dataframe
         self.df[self.generate_label_name("error")] = [x.error for x in llm_labels]
@@ -165,9 +165,9 @@ class AutolabelDataset:
                             )
                         else:
                             attr_confidence_scores.append(0.0)
-                    self.df[self.generate_label_name("confidence", attr["name"])] = (
-                        attr_confidence_scores
-                    )
+                    self.df[
+                        self.generate_label_name("confidence", attr["name"])
+                    ] = attr_confidence_scores
 
         # Add the LLM explanations to the dataframe if chain of thought is set in config
         if self.config.chain_of_thought():
