@@ -15,6 +15,9 @@ def test_get_data(mocker) -> None:
     """Test Get Data"""
     dataset_name = "banking"
 
+    os.mkdir("data") if not os.path.exists("data") else None
+    os.mkdir("data/banking") if not os.path.exists("data/banking") else None
+
     def assert_text_remove(file_name_: str, text: str):
         """Assert text and remove temp file
 
@@ -33,8 +36,6 @@ def test_get_data(mocker) -> None:
     ) -> None:
         """Generate a Temporary file with dummy content"""
         with tempfile.NamedTemporaryFile(dir=f"./", delete=False) as tmp_file:
-            os.mkdir("data") if not os.path.exists("data") else None
-            os.mkdir("data/banking") if not os.path.exists("data/banking") else None
             file_name = os.path.join("data/banking", input_url.split("/")[-1])
             os.rename(tmp_file.name, file_name)
             tmp_file.write(f"{input_url}".encode("utf-8"))
