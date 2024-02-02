@@ -1,24 +1,25 @@
 import json
+import logging
 import re
 from collections import defaultdict
-from typing import Callable, Dict, List, Optional, Tuple, Union
 from copy import deepcopy
-from langchain.prompts.prompt import PromptTemplate
+from typing import Callable, Dict, List, Optional, Tuple, Union
 
-from langchain.schema import Generation, ChatGeneration
-from sklearn.metrics import roc_auc_score
-import logging
+from langchain.prompts.prompt import PromptTemplate
+from langchain.schema import ChatGeneration, Generation
 from nervaluate import Evaluator
+from sklearn.metrics import roc_auc_score
+
 from autolabel.configs import AutolabelConfig
+from autolabel.metrics import BaseMetric
 from autolabel.schema import (
-    LLMAnnotation,
-    MetricType,
-    MetricResult,
-    LabelingError,
     ErrorType,
+    LabelingError,
+    LLMAnnotation,
+    MetricResult,
+    MetricType,
 )
 from autolabel.tasks import BaseTask
-from autolabel.metrics import BaseMetric
 
 logger = logging.getLogger(__name__)
 
@@ -99,8 +100,17 @@ class NamedEntityRecognitionTask(BaseTask):
         if explanation_column:
             input[explanation_column] = ""
 
+        # check if all mapped keys in input are in the example template
+        try:
+            current_example = example_template.format(**input)
+        except KeyError as e:
+            logger.error(
+                f'\n\nKey {e} in the "example_template" in the given config'
+                f"\n\n{example_template}\n\nis not present in the datsaset columns - {input.keys()}.\n\n"
+            )
+            raise e
+
         # populate the current example in the prompt
-        current_example = example_template.format_map(defaultdict(str, input))
         prompt_template = (
             self.prompt_template
             if prompt_template_override is None
@@ -372,9 +382,11 @@ class NamedEntityRecognitionTask(BaseTask):
         eval_metrics.append(
             MetricResult(
                 name=MetricType.COMPLETION_RATE,
-                value=len(curr_llm_labels) / float(len(gt_labels))
-                if len(gt_labels) > 0
-                else 0.0,
+                value=(
+                    len(curr_llm_labels) / float(len(gt_labels))
+                    if len(gt_labels) > 0
+                    else 0.0
+                ),
             )
         )
 

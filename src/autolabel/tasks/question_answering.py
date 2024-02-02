@@ -1,31 +1,33 @@
-from collections import defaultdict
-from typing import Callable, Dict, List, Tuple, Optional
 import json
+import logging
+from collections import defaultdict
+from typing import Callable, Dict, List, Optional, Tuple
 
 from langchain.prompts.prompt import PromptTemplate
 from sklearn.metrics import accuracy_score
 
 from autolabel.confidence import ConfidenceCalculator
 from autolabel.configs import AutolabelConfig
-from autolabel.schema import (
-    LLMAnnotation,
-    MetricType,
-    MetricResult,
-    F1Type,
-    ModelProvider,
-)
-from autolabel.tasks import BaseTask
-from autolabel.tasks.utils import normalize_text
-from autolabel.utils import get_format_variables
-from autolabel.tasks.utils import filter_unlabeled_examples
 from autolabel.metrics import (
     AccuracyMetric,
     AUROCMetric,
-    SupportMetric,
+    BaseMetric,
     CompletionRateMetric,
     F1Metric,
-    BaseMetric,
+    SupportMetric,
 )
+from autolabel.schema import (
+    F1Type,
+    LLMAnnotation,
+    MetricResult,
+    MetricType,
+    ModelProvider,
+)
+from autolabel.tasks import BaseTask
+from autolabel.tasks.utils import filter_unlabeled_examples, normalize_text
+from autolabel.utils import get_format_variables
+
+logger = logging.getLogger(__name__)
 
 
 class QuestionAnsweringTask(BaseTask):
@@ -89,8 +91,17 @@ class QuestionAnsweringTask(BaseTask):
         if explanation_column:
             input[explanation_column] = ""
 
+        # check if all mapped keys in input are in the example template
+        try:
+            current_example = example_template.format(**input)
+        except KeyError as e:
+            logger.error(
+                f'\n\nKey {e} in the "example_template" in the given config'
+                f"\n\n{example_template}\n\nis not present in the datsaset columns - {input.keys()}.\n\n"
+            )
+            raise e
+
         # populate the current example in the prompt
-        current_example = example_template.format_map(defaultdict(str, input))
         prompt_template = (
             self.prompt_template
             if prompt_template_override is None

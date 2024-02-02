@@ -15,14 +15,14 @@ Autolabel provides datasets out-of-the-box so you can easily get started with LL
 
 ## Downloading any dataset
 
-To download a specific dataset, such as `squad_v2`, run:
+To download a specific dataset, such as `civil_comments`, run:
 ```python
 from autolabel import get_data
 
 get_data('civil_comments')
-> Downloading seed example dataset to "seed.csv"...
+> Downloading seed example dataset to "data/civil_comments/seed.csv"...
 > 100% [..............................................................................] 65757 / 65757
 
-> Downloading test dataset to "test.csv"...
+> Downloading test dataset to "data/civil_comments/test.csv"...
 > 100% [............................................................................] 610663 / 610663
 ```

@@ -100,7 +100,7 @@ from autolabel import LabelingAgent, AutolabelDataset, get_data
 get_data('movie_reviews')
 
 agent = LabelingAgent(config)
-ds = AutolabelDataset('test.csv', config = config)
+ds = AutolabelDataset('data/movie_reviews/test.csv', config = config)
 agent.plan(ds)
 ```
 

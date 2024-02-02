@@ -1,14 +1,15 @@
-from typing import Dict, List, Union, Callable
+import logging
+from typing import Callable, Dict, List, Union
+
 import pandas as pd
+from rich.console import Console
+from tabulate import tabulate
+
 from autolabel.configs import AutolabelConfig
 from autolabel.dataset.validation import TaskDataValidation
-from autolabel.schema import MetricResult, LLMAnnotation
-from tabulate import tabulate
-import logging
+from autolabel.schema import LLMAnnotation, MetricResult, TaskType
+from autolabel.tasks import BaseTask, TaskFactory
 from autolabel.utils import print_table
-from rich.console import Console
-from autolabel.tasks import TaskFactory, BaseTask
-from autolabel.schema import TaskType
 
 logger = logging.getLogger(__name__)
 
@@ -122,9 +123,9 @@ class AutolabelDataset:
                         attribute_labels.append(x.label.get(attr["name"], ""))
                     else:
                         attribute_labels.append(BaseTask.NULL_LABEL_TOKEN)
-                self.df[
-                    self.generate_label_name("label", attr["name"])
-                ] = attribute_labels
+                self.df[self.generate_label_name("label", attr["name"])] = (
+                    attribute_labels
+                )
 
         # Add the LLM errors to the dataframe
         self.df[self.generate_label_name("error")] = [x.error for x in llm_labels]
@@ -164,9 +165,9 @@ class AutolabelDataset:
                             )
                         else:
                             attr_confidence_scores.append(0.0)
-                    self.df[
-                        self.generate_label_name("confidence", attr["name"])
-                    ] = attr_confidence_scores
+                    self.df[self.generate_label_name("confidence", attr["name"])] = (
+                        attr_confidence_scores
+                    )
 
         # Add the LLM explanations to the dataframe if chain of thought is set in config
         if self.config.chain_of_thought():
@@ -375,11 +376,7 @@ class AutolabelDataset:
             )
 
     def generate_label_name(self, col_name: str, label_column: str = None):
-        label_column = (
-            label_column
-            or self.config.label_column()
-            or f"{self.config.task_name()}_task"
-        )
+        label_column = label_column or f"{self.config.task_name()}_task"
         return f"{label_column}_{col_name}"
 
 
