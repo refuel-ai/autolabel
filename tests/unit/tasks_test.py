@@ -1,17 +1,17 @@
 import copy
 import json
 
+from langchain.schema import Generation
+
+from autolabel.configs import AutolabelConfig
+from autolabel.schema import ErrorType, LabelingError, LLMAnnotation, MetricType
 from autolabel.tasks import (
     ClassificationTask,
     EntityMatchingTask,
-    QuestionAnsweringTask,
     MultilabelClassificationTask,
     NamedEntityRecognitionTask,
+    QuestionAnsweringTask,
 )
-from autolabel.configs import AutolabelConfig
-from autolabel.schema import LLMAnnotation, MetricType, LabelingError, ErrorType
-
-from langchain.schema import Generation
 
 BANKING_CONFIG = json.load(open("tests/assets/banking/config_banking.json", "r"))
 
@@ -84,23 +84,19 @@ def test_classification_no_label_column_in_input():
 def test_classification_no_label_column_in_config():
     new_config = copy.deepcopy(BANKING_CONFIG)
     new_config["dataset"]["label_column"] = None
+    del new_config["prompt"]["few_shot_selection"]
+    del new_config["prompt"]["few_shot_num"]
+    del new_config["prompt"]["few_shot_examples"]
+    new_config["prompt"]["example_template"] = "Example: {example}"
     config = AutolabelConfig(new_config)
     task = ClassificationTask(config=config)
     assert task.config != None
 
     input = {"example": "Here is an example"}
-    examples = [
-        {"example": "Here is a seed example", "label": "label1"},
-        {"example": "Here is another seed example", "label": "label2"},
-    ]
-    prompt = task.construct_prompt(input, examples)
-
+    prompt = task.construct_prompt(input, [])
     assert BANKING_CONFIG["prompt"]["output_guidelines"] in prompt
     assert "\n".join(BANKING_CONFIG["prompt"]["labels"]) in prompt
     assert input["example"] in prompt
-    for example in examples:
-        assert example["example"] in prompt
-        assert example["label"] in prompt
 
 
 def test_classification_parse_llm_response():
