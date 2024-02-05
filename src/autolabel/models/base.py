@@ -17,7 +17,7 @@ from langchain.schema import Generation
 
 
 class BaseModel(ABC):
-    TTL_MS = 60 * 60 * 24 * 365 * 3 * 1000  # 3 years
+    TTL_MS = 60 * 60 * 24 * 7 * 1000  # 1 week
     DEFAULT_CONTEXT_LENGTH = None
 
     def __init__(self, config: AutolabelConfig, cache: BaseCache) -> None:

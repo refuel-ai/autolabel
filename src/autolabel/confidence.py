@@ -23,7 +23,7 @@ logger = logging.getLogger(__name__)
 
 
 class ConfidenceCalculator:
-    TTL_MS = 60 * 60 * 24 * 365 * 3 * 1000  # 3 years
+    TTL_MS = 60 * 60 * 24 * 7 * 1000  # 1 week
 
     def __init__(
         self,
