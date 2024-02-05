@@ -4,17 +4,16 @@ from typing import Dict
 from autolabel.configs import AutolabelConfig
 from autolabel.schema import TaskType
 
-#need to be first
-from .base import BaseTask
+# need to be first
+from autolabel.tasks.base import BaseTask
 
-#all the tasks
+from .attribute_extraction import AttributeExtractionTask
 from .classification import ClassificationTask
 from .entity_matching import EntityMatchingTask
 from .hierarchical_classification import HierarchicalClassificationTask
 from .multilabel_classification import MultilabelClassificationTask
 from .named_entity_recognition import NamedEntityRecognitionTask
 from .question_answering import QuestionAnsweringTask
-from .attribute_extraction import AttributeExtractionTask
 
 TASK_TYPE_TO_IMPLEMENTATION: Dict[TaskType, BaseTask] = {
     TaskType.CLASSIFICATION: ClassificationTask,
