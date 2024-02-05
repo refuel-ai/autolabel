@@ -5,6 +5,7 @@ from typing import Callable, Dict, List, Optional, Tuple
 
 from langchain.prompts.prompt import PromptTemplate
 from sklearn.metrics import accuracy_score
+from sklearn.metrics.pairwise import cosine_similarity
 
 from autolabel.confidence import ConfidenceCalculator
 from autolabel.configs import AutolabelConfig
@@ -16,6 +17,7 @@ from autolabel.metrics import (
     CompletionRateMetric,
     SupportMetric,
 )
+from autolabel.models import OpenAILLM
 from autolabel.schema import LLMAnnotation, MetricResult, MetricType, ModelProvider
 from autolabel.tasks import BaseTask
 from autolabel.tasks.utils import filter_unlabeled_examples
@@ -24,7 +26,7 @@ from autolabel.utils import get_format_variables
 logger = logging.getLogger(__name__)
 
 
-class ClassificationTask(BaseTask):
+class HierarchicalClassificationTask(BaseTask):
     DEFAULT_OUTPUT_GUIDELINES = (
         'You will return the answer with just one element: "the correct label"'
     )
@@ -56,6 +58,29 @@ class ClassificationTask(BaseTask):
                     "Label contains newline character. This can have output guideline issues."
                 )
 
+        # This will help take care of the first part of finding the relevant labels
+        self.embeddingModel = OpenAILLM(config, hierarchical_classification=True)
+        # max number of labels to send to the LLM for prediction
+        self.k = self.config.max_labels_to_llm()
+        # TODO: check in cache, cost update
+        self.labelEmbeddings = self.embeddingModel.get_embeddings(
+            self.config.labels_list()
+        )
+
+    def getKLabelsForInput(self, input: Dict) -> List[str]:
+        """Returns the top k labels for the given example"""
+        # TODO: check in cache, cost update
+        # get the embeddings for the example
+        input_text = self.config.example_template().format_map(defaultdict(str, input))
+
+        embeddings = self.embeddingModel.get_embeddings(input_text)
+        embeddings = embeddings.reshape(1, -1)
+        similarity_scores = cosine_similarity(embeddings, self.labelEmbeddings)[0]
+        # sort labels by cosine similarity
+        labelsWithScore = zip(self.config.labels_list(), similarity_scores)
+        labelsWithScore = sorted(labelsWithScore, key=lambda x: x[1], reverse=True)
+        return [label for label, _ in labelsWithScore[: self.k]]
+
     def construct_prompt(
         self,
         input: Dict,
@@ -72,9 +97,7 @@ class ClassificationTask(BaseTask):
         input = input.copy()
 
         # prepare task guideline
-        labels_list = (
-            self.config.labels_list() if not selected_labels else selected_labels
-        )
+        labels_list = self.getKLabelsForInput(input)
         num_labels = len(labels_list)
         if self.use_refuel_prompt_schema or refuel_prompt_override:
             labels = (
@@ -154,7 +177,7 @@ class ClassificationTask(BaseTask):
         )
 
         # prepare task guideline
-        labels_list = self.config.labels_list()
+        labels_list = self.getKLabelsForInput(example)
         num_labels = len(labels_list)
         fmt_task_guidelines = self.task_guidelines.format(
             num_labels=num_labels, labels="\n".join(labels_list)

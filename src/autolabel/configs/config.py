@@ -39,6 +39,8 @@ class AutolabelConfig(BaseConfig):
     # Embedding config keys (config["embedding"][<key>])
     EMBEDDING_PROVIDER_KEY = "provider"
     EMBEDDING_MODEL_NAME_KEY = "model"
+    INITIAL_EMBEDDING_MODEL_NAME_KEY = "embedding_model"
+    MAX_LABELS_KEY_TO_LLM = "k"
 
     # Prompt config keys (config["prompt"][<key>])
     TASK_GUIDELINE_KEY = "task_guidelines"
@@ -271,3 +273,8 @@ class AutolabelConfig(BaseConfig):
     def confidence_merge_function(self) -> str:
         """Returns the function to use when merging confidence scores"""
         return self._chunking_config.get(self.CONFIDENCE_MERGE_FUNCTION_KEY, "max")
+
+    def max_labels_to_llm(self) -> int:
+        return self._embedding_config.get(
+            self.MAX_LABELS_KEY_TO_LLM, len(self.labels_list())
+        )

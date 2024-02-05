@@ -1,16 +1,16 @@
-from functools import cached_property
-from typing import List, Optional
-from time import time
 import logging
+import os
+from functools import cached_property
+from time import time
+from typing import List, Optional
 
-from autolabel.models import BaseModel
-from autolabel.configs import AutolabelConfig
-from autolabel.cache import BaseCache
-from autolabel.schema import RefuelLLMResult
+import numpy as np
 from langchain.schema import HumanMessage, LLMResult
 
-
-import os
+from autolabel.cache import BaseCache
+from autolabel.configs import AutolabelConfig
+from autolabel.models import BaseModel
+from autolabel.schema import RefuelLLMResult
 
 logger = logging.getLogger(__name__)
 
@@ -103,17 +103,27 @@ class OpenAILLM(BaseModel):
         else:
             return "completion"
 
-    def __init__(self, config: AutolabelConfig, cache: BaseCache = None) -> None:
+    def __init__(
+        self,
+        config: AutolabelConfig,
+        cache: BaseCache = None,
+        hierarchical_classification: bool = False,
+    ) -> None:
         super().__init__(config, cache)
         try:
+            import tiktoken
             from langchain.chat_models import ChatOpenAI
             from langchain.llms import OpenAI
-            import tiktoken
         except ImportError:
             raise ImportError(
                 "openai is required to use the OpenAILLM. Please install it with the following command: pip install 'refuel-autolabel[openai]'"
             )
 
+        if hierarchical_classification:
+            from openai import OpenAI
+
+            self.llm = OpenAI()
+            return
         # populate model name
         self.model_name = config.model_name() or self.DEFAULT_MODEL
 
@@ -201,7 +211,22 @@ class OpenAILLM(BaseModel):
         except Exception as e:
             return self._label_individually(prompts)
 
+    def get_embeddings(self, input_text, model_name=None):
+        if not model_name:
+            model_name = self.config.embedding_model_name() or "text-embedding-3-small"
+        if type(input_text) != list:
+            input_text = [input_text]
+        input_text = [text.replace("\n", " ") for text in input_text]
+        embeddings = [
+            info.embedding
+            for info in self.llm.embeddings.create(
+                input=input_text, model=model_name
+            ).data
+        ]
+        return np.array(embeddings)
+
     def get_cost(self, prompt: str, label: Optional[str] = "") -> float:
+        print(prompt, label)
         encoding = self.tiktoken.encoding_for_model(self.model_name)
         num_prompt_toks = len(encoding.encode(prompt))
         if label:

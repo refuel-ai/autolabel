@@ -1,57 +1,58 @@
+import asyncio
+import io
+import json
 import logging
 import os
-import io
-from typing import Dict, List, Optional, Tuple, Union
-import json
 import pickle
-import asyncio
-import pandas as pd
+from typing import Dict, List, Optional, Tuple, Union
+
 import numpy as np
-from transformers import AutoTokenizer
+import pandas as pd
 from rich import print as pprint
 from rich.console import Console
 from rich.prompt import Confirm
+from transformers import AutoTokenizer
 
 from autolabel.cache import (
     BaseCache,
+    SQLAlchemyConfidenceCache,
     SQLAlchemyGenerationCache,
     SQLAlchemyTransformCache,
-    SQLAlchemyConfidenceCache,
 )
 from autolabel.confidence import ConfidenceCalculator
 from autolabel.configs import AutolabelConfig
-from autolabel.dataset import AutolabelDataset
 from autolabel.data_models import AnnotationModel, TaskRunModel
 from autolabel.database import StateManager
+from autolabel.dataset import AutolabelDataset
 from autolabel.few_shot import (
-    ExampleSelectorFactory,
-    BaseExampleSelector,
     DEFAULT_EMBEDDING_PROVIDER,
     PROVIDER_TO_MODEL,
+    BaseExampleSelector,
+    ExampleSelectorFactory,
 )
 from autolabel.few_shot.label_selector import LabelSelector
-from autolabel.models import BaseModel, ModelFactory
 from autolabel.metrics import BaseMetric
-from autolabel.transforms import BaseTransform, TransformFactory
+from autolabel.models import BaseModel, ModelFactory
 from autolabel.schema import (
+    AUTO_CONFIDENCE_CHUNKING_COLUMN,
+    AggregationFunction,
     LLMAnnotation,
     MetricResult,
     TaskRun,
     TaskStatus,
     TaskType,
-    AggregationFunction,
-    AUTO_CONFIDENCE_CHUNKING_COLUMN,
 )
 from autolabel.tasks import TaskFactory
+from autolabel.transforms import BaseTransform, TransformFactory
 from autolabel.utils import (
-    maybe_round,
-    print_table,
-    track,
-    track_with_stats,
     gather_async_tasks_with_progress,
     get_format_variables,
     in_notebook,
+    maybe_round,
+    print_table,
     safe_serialize_to_string,
+    track,
+    track_with_stats,
 )
 
 logger = logging.getLogger(__name__)
@@ -282,7 +283,6 @@ class LabelingAgent:
                     max_input_tokens=self.llm.DEFAULT_CONTEXT_LENGTH,
                     get_num_tokens=self.llm.get_num_tokens,
                 )
-
             response = self.llm.label([final_prompt])
             for i, generations, error, latency in zip(
                 range(len(response.generations)),
@@ -350,12 +350,14 @@ class LabelingAgent:
                 if dataset.gt_labels:
                     eval_result = self.task.eval(
                         llm_labels,
-                        dataset.gt_labels[: len(llm_labels)]
-                        if isinstance(dataset.gt_labels, list)
-                        else {
-                            k: v[: len(llm_labels)]
-                            for k, v in dataset.gt_labels.items()
-                        },
+                        (
+                            dataset.gt_labels[: len(llm_labels)]
+                            if isinstance(dataset.gt_labels, list)
+                            else {
+                                k: v[: len(llm_labels)]
+                                for k, v in dataset.gt_labels.items()
+                            }
+                        ),
                         additional_metrics=additional_metrics,
                     )
 
@@ -384,9 +386,11 @@ class LabelingAgent:
         if not skip_eval and dataset.gt_labels:
             eval_result = self.task.eval(
                 llm_labels,
-                dataset.gt_labels[: len(llm_labels)]
-                if isinstance(dataset.gt_labels, list)
-                else {k: v[: len(llm_labels)] for k, v in dataset.gt_labels.items()},
+                (
+                    dataset.gt_labels[: len(llm_labels)]
+                    if isinstance(dataset.gt_labels, list)
+                    else {k: v[: len(llm_labels)] for k, v in dataset.gt_labels.items()}
+                ),
                 additional_metrics=additional_metrics,
             )
             # TODO: serialize and write to file

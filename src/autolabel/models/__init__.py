@@ -1,18 +1,20 @@
 import logging
-from .base import BaseModel
+
+from autolabel.cache import BaseCache
 from autolabel.configs import AutolabelConfig
 from autolabel.schema import ModelProvider
-from autolabel.cache import BaseCache
+
+from .base import BaseModel
 
 logger = logging.getLogger(__name__)
 
-from autolabel.models.openai import OpenAILLM
-from autolabel.models.openai_vision import OpenAIVisionLLM
 from autolabel.models.anthropic import AnthropicLLM
 from autolabel.models.cohere import CohereLLM
-from autolabel.models.palm import PaLMLLM
 from autolabel.models.hf_pipeline import HFPipelineLLM
 from autolabel.models.hf_pipeline_vision import HFPipelineMultimodal
+from autolabel.models.openai import OpenAILLM
+from autolabel.models.openai_vision import OpenAIVisionLLM
+from autolabel.models.palm import PaLMLLM
 from autolabel.models.refuel import RefuelLLM
 
 MODEL_REGISTRY = {

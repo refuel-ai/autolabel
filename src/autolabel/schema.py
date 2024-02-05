@@ -1,10 +1,10 @@
+import json
 from datetime import datetime
 from enum import Enum
 from typing import Any, Dict, List, Optional, Union
 
-import json
 import pandas as pd
-from langchain.schema import Generation, ChatGeneration
+from langchain.schema import ChatGeneration, Generation
 from pydantic import BaseModel
 
 from autolabel.configs import AutolabelConfig
@@ -33,6 +33,7 @@ class TaskType(str, Enum):
     QUESTION_ANSWERING = "question_answering"
     ENTITY_MATCHING = "entity_matching"
     MULTILABEL_CLASSIFICATION = "multilabel_classification"
+    HIERARCHICAL_CLASSIFICATION = "hierarchical_classification"
     ATTRIBUTE_EXTRACTION = "attribute_extraction"
 
 
