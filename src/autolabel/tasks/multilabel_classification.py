@@ -24,7 +24,8 @@ class MultilabelClassificationTask(BaseTask):
     DEFAULT_OUTPUT_GUIDELINES = 'You will return the answer as a semicolon-separated list of labels. For example: "label1;label2;label3"'
     DEFAULT_TASK_GUIDELINES = "Your job is to correctly label the provided input example into one or more of the following {num_labels} categories.\nCategories:\n{labels}\n"
 
-    GENERATE_EXPLANATION_PROMPT = "You are an expert at providing a well reasoned explanation for the output of a given task. \n\nBEGIN TASK DESCRIPTION\n{task_guidelines}\nEND TASK DESCRIPTION\nYou will be given an input example and the corresponding output (a list of labels seperated by semicolon).\nWhy were these labels given to this input? Output the explanation for each label on a new line, and limit your explanation to one sentence. If there are more than 5 labels, output explanations only for the first 5 labels.\n{labeled_example}\nExplanation: "
+    LABEL_FORMAT_IN_EXPLANATION = " The last line of the explanation should be - So, the answer is <list of label separated by semicolon>."
+    GENERATE_EXPLANATION_PROMPT = "You are an expert at providing a well reasoned explanation for the output of a given task. \n\nBEGIN TASK DESCRIPTION\n{task_guidelines}\nEND TASK DESCRIPTION\nYou will be given an input example and the corresponding output (a list of labels seperated by semicolon).\nWhy were these labels given to this input? Output the explanation for each label on a new line, and limit your explanation to one sentence. If there are more than 5 labels, output explanations only for the first 5 labels.{label_format}\n{labeled_example}\nExplanation: "
 
     def __init__(self, config: AutolabelConfig) -> None:
         super().__init__(config)
@@ -122,7 +123,7 @@ class MultilabelClassificationTask(BaseTask):
         else:
             return curr_text_prompt
 
-    def get_explanation_prompt(self, example: Dict) -> str:
+    def get_explanation_prompt(self, example: Dict, include_label=True) -> str:
         pt = PromptTemplate(
             input_variables=get_format_variables(self.GENERATE_EXPLANATION_PROMPT),
             template=self.GENERATE_EXPLANATION_PROMPT,
@@ -141,6 +142,7 @@ class MultilabelClassificationTask(BaseTask):
 
         return pt.format(
             task_guidelines=fmt_task_guidelines,
+            label_format=self.LABEL_FORMAT_IN_EXPLANATION if include_label else "",
             labeled_example=fmt_example,
         )
 

@@ -138,7 +138,7 @@ class NamedEntityRecognitionTask(BaseTask):
         else:
             return curr_text_prompt
 
-    def get_explanation_prompt(self, example: Dict) -> str:
+    def get_explanation_prompt(self, example: Dict, include_label=True) -> str:
         raise NotImplementedError(
             "Explanation generation not implemented for this task"
         )

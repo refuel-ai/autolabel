@@ -36,7 +36,8 @@ class QuestionAnsweringTask(BaseTask):
     DEFAULT_TASK_GUIDELINES = "Your job is to answer the following questions using the options provided for each question. Choose the best answer for the question.\n"
     NULL_LABEL_TOKEN = "NO_LABEL"
 
-    GENERATE_EXPLANATION_PROMPT = "You are an expert at providing a well reasoned explanation for the output of a given task. \n\nBEGIN TASK DESCRIPTION\n{task_guidelines}\nEND TASK DESCRIPTION\nYou will be given an input example and the corresponding output. You will be given a question and an answer. Your job is to provide an explanation for why the answer is correct for the task above.\nThink step by step and generate an explanation. The last line of the explanation should be - So, the answer is <label>.\n{labeled_example}\nExplanation: "
+    LABEL_FORMAT_IN_EXPLANATION = " The last line of the explanation should be - So, the answer is <label>."
+    GENERATE_EXPLANATION_PROMPT = "You are an expert at providing a well reasoned explanation for the output of a given task. \n\nBEGIN TASK DESCRIPTION\n{task_guidelines}\nEND TASK DESCRIPTION\nYou will be given an input example and the corresponding output. You will be given a question and an answer. Your job is to provide an explanation for why the answer is correct for the task above.\nThink step by step and generate an explanation.{label_format}\n{labeled_example}\nExplanation: "
 
     def __init__(self, config: AutolabelConfig) -> None:
         if config.provider() == ModelProvider.REFUEL:
@@ -134,7 +135,7 @@ class QuestionAnsweringTask(BaseTask):
         )
         return refuel_prompt
 
-    def get_explanation_prompt(self, example: Dict) -> str:
+    def get_explanation_prompt(self, example: Dict, include_label=True) -> str:
         pt = PromptTemplate(
             input_variables=get_format_variables(self.GENERATE_EXPLANATION_PROMPT),
             template=self.GENERATE_EXPLANATION_PROMPT,
@@ -144,6 +145,7 @@ class QuestionAnsweringTask(BaseTask):
 
         return pt.format(
             task_guidelines=self.task_guidelines,
+            label_format=self.LABEL_FORMAT_IN_EXPLANATION if include_label else "",
             labeled_example=fmt_example,
         )
 

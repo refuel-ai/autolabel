@@ -34,7 +34,8 @@ class AttributeExtractionTask(BaseTask):
     NULL_LABEL = {}
     DEFAULT_TASK_GUIDELINES = "You are an expert at extracting attributes from text. Given a piece of text, extract the required attributes."
     DEFAULT_OUTPUT_GUIDELINES = "You will return the extracted attributes as a json with the following keys:\n{attribute_json}"
-    GENERATE_EXPLANATION_PROMPT = "You are an expert at providing a well reasoned explanation for the output of a given task. \n\nBEGIN TASK DESCRIPTION\n{task_guidelines}\nEND TASK DESCRIPTION\nYou will be given an input example and the output for one of the attributes. Your job is to provide an explanation for why the output for that attribute is correct for the task above.\nYour explanation should be at most two sentences, and the explanation should end with - 'so, the answer is <label>.'\n{labeled_example}\nCurrent Attrribute:{attribute}.\nExplanation: "
+    LABEL_FORMAT_IN_EXPLANATION = " The explanation should end with - 'so, the answer is <label>.'"
+    GENERATE_EXPLANATION_PROMPT = "You are an expert at providing a well reasoned explanation for the output of a given task. \n\nBEGIN TASK DESCRIPTION\n{task_guidelines}\nEND TASK DESCRIPTION\nYou will be given an input example and the output for one of the attributes. Your job is to provide an explanation for why the output for that attribute is correct for the task above.\nYour explanation should be at most two sentences.{label_format}\n{labeled_example}\nCurrent Attrribute:{attribute}.\nExplanation: "
     OUTPUT_DICT_KEY = "output_dict"
 
     def __init__(self, config: AutolabelConfig) -> None:
@@ -154,7 +155,7 @@ class AttributeExtractionTask(BaseTask):
         else:
             return curr_text_prompt
 
-    def get_explanation_prompt(self, example: Dict) -> str:
+    def get_explanation_prompt(self, example: Dict, include_label=True) -> str:
         pt = PromptTemplate(
             input_variables=get_format_variables(self.GENERATE_EXPLANATION_PROMPT),
             template=self.GENERATE_EXPLANATION_PROMPT,
@@ -166,6 +167,7 @@ class AttributeExtractionTask(BaseTask):
         fmt_example = example_template.format_map(defaultdict(str, example))
         return pt.format(
             task_guidelines=fmt_task_guidelines,
+            label_format=self.LABEL_FORMAT_IN_EXPLANATION if include_label else "",
             labeled_example=fmt_example,
             attribute=example[self.OUTPUT_DICT_KEY],
         )

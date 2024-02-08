@@ -699,6 +699,7 @@ class LabelingAgent:
     def generate_explanations(
         self,
         seed_examples: Union[str, List[Dict]],
+        include_label: bool = True,
     ) -> List[Dict]:
         """Use LLM to generate explanations for why examples are labeled the way that they are."""
         out_file = None
@@ -718,7 +719,7 @@ class LabelingAgent:
             description="Generating explanations",
             console=self.console,
         ):
-            explanation_prompt = self.task.get_explanation_prompt(seed_example)
+            explanation_prompt = self.task.get_explanation_prompt(seed_example, include_label=include_label)
             if self.task.image_col is not None:
                 explanation_prompt = json.dumps(
                     {
