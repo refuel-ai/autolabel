@@ -77,6 +77,10 @@ google = [
     "tiktoken >= 0.3.3",
     "google-cloud-aiplatform>=1.25.0"
 ]
+replicate = [
+    "replicate >= 0.23.1",
+    "transformers >= 4.25.0",
+]
 cohere = [
     "cohere>=4.11.2"
 ]

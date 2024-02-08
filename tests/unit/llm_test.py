@@ -4,11 +4,13 @@ from autolabel.models.anthropic import AnthropicLLM
 from autolabel.models.openai import OpenAILLM
 from autolabel.models.openai_vision import OpenAIVisionLLM
 from autolabel.models.palm import PaLMLLM
+from autolabel.models.replicate import ReplicateLLM
 from autolabel.models.refuel import RefuelLLM
 from langchain.schema import Generation, LLMResult
 from openai.types.chat.chat_completion import ChatCompletion, Choice
 from openai.types.chat.chat_completion_message import ChatCompletionMessage
 from pytest import approx
+import pytest
 
 
 ################### ANTHROPIC TESTS #######################
@@ -196,6 +198,69 @@ def test_gpt4V_return_probs():
 
 
 ################### OPENAI GPT 4V TESTS #######################
+
+
+################### REPLICATE TESTS #######################
+class MockResponse:
+    def __init__(self, json_data, status_code):
+        self.json_data = json_data
+        self.status_code = status_code
+
+    def json(self):
+        return self.json_data
+
+
+@pytest.fixture
+def replicate_model(mocker):
+    mocker.patch(
+        "requests.get",
+        return_value=MockResponse({"latest_version": {"id": "valid_id"}}, 200),
+    )
+    return ReplicateLLM(
+        config=AutolabelConfig(
+            config="tests/assets/banking/config_banking_replicate.json"
+        )
+    )
+
+
+def test_replicate_initialization(replicate_model):
+    assert isinstance(replicate_model, ReplicateLLM)
+
+
+def test_replicate_invalid_model_initialization(mocker):
+    config = AutolabelConfig(
+        config="tests/assets/banking/config_banking_replicate.json"
+    )
+    mocker.patch(
+        "requests.get",
+        return_value=MockResponse({"error": "model not found"}, 404),
+    )
+
+    with pytest.raises(ValueError) as excinfo:
+        model = ReplicateLLM(config)
+
+    assert "Model meta/llama-2-70b-chat not found on Replicate" in str(excinfo.value)
+
+
+def test_replicate_label(mocker, replicate_model):
+    prompts = ["test1", "test2"]
+    mocker.patch(
+        "langchain_community.llms.Replicate.generate",
+        return_value=LLMResult(
+            generations=[[Generation(text="Answers")] for _ in prompts]
+        ),
+    )
+    x = replicate_model.label(prompts)
+    assert [i[0].text for i in x.generations] == ["Answers", "Answers"]
+
+
+def test_replicate_get_cost(replicate_model):
+    example_prompt = "TestingExamplePrompt"
+    curr_cost = replicate_model.get_cost(example_prompt)
+    assert curr_cost == approx(0.00275389, rel=1e-3)
+
+
+################### REPLICATE TESTS #######################
 
 
 ################### REFUEL TESTS #######################
