@@ -1,3 +1,4 @@
+from collections import defaultdict
 import json
 from autolabel.cache import BaseCache
 from autolabel.transforms import BaseTransform
@@ -104,7 +105,7 @@ class SerpApi(BaseTransform):
                     TransformErrorType.INVALID_INPUT,
                     f"Missing query column: {col} in row {row}",
                 )
-        query = self.query_template.format(**row)
+        query = self.query_template.format_map(defaultdict(str, row))
         search_result = self.NULL_TRANSFORM_TOKEN
         if pd.isna(query) or query == self.NULL_TRANSFORM_TOKEN:
             raise TransformError(
