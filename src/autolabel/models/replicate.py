@@ -104,7 +104,7 @@ class ReplicateLLM(BaseModel):
             "hf-internal-testing/llama-tokenizer"
         )
 
-    def is_model_mangaed_by_replicate(self) -> bool:
+    def is_model_managed_by_replicate(self) -> bool:
         return self.model_name in self.REPLICATE_MAINTAINED_MODELS
 
     def _label(self, prompts: List[str]) -> RefuelLLMResult:
