@@ -719,7 +719,9 @@ class LabelingAgent:
             description="Generating explanations",
             console=self.console,
         ):
-            explanation_prompt = self.task.get_explanation_prompt(seed_example, include_label=include_label)
+            explanation_prompt = self.task.get_explanation_prompt(
+                seed_example, include_label=include_label
+            )
             if self.task.image_col is not None:
                 explanation_prompt = json.dumps(
                     {
