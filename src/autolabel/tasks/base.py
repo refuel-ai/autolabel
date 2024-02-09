@@ -187,7 +187,7 @@ class BaseTask(ABC):
         pass
 
     @abstractmethod
-    def get_explanation_prompt(self, example: Dict) -> str:
+    def get_explanation_prompt(self, example: Dict, include_label=True) -> str:
         raise NotImplementedError(
             "Explanation generation not implemented for this task"
         )
