@@ -222,6 +222,14 @@ class LabelingAgent:
             )
 
         if self.example_selector is None:
+            if (
+                self.config.label_selection()
+                and self.config.few_shot_algorithm() != "fixed"
+            ):
+                raise ValueError(
+                    "Error: Only 'fixed' few shot example selector is supported for label selection."
+                )
+
             self.example_selector = ExampleSelectorFactory.initialize_selector(
                 self.config,
                 [safe_serialize_to_string(example) for example in seed_examples],
@@ -247,7 +255,7 @@ class LabelingAgent:
         postfix_dict = {}
 
         indices = range(current_index, len(dataset.inputs))
-
+        selected_labels = self.config.labels_list()
         for current_index in track_with_stats(
             indices,
             postfix_dict,
@@ -255,14 +263,8 @@ class LabelingAgent:
             console=self.console,
         ):
             chunk = dataset.inputs[current_index]
+            examples = []
 
-            if self.example_selector:
-                examples = self.example_selector.select_examples(
-                    safe_serialize_to_string(chunk)
-                )
-            else:
-                examples = []
-            # Construct Prompt to pass to LLM
             if (
                 self.config.label_selection()
                 and self.config.task_type() == TaskType.CLASSIFICATION
@@ -275,25 +277,29 @@ class LabelingAgent:
                 toEmbed = json.dumps(toEmbed)
 
                 selected_labels = self.label_selector.select_labels(toEmbed)
-                examples = [
-                    example
-                    for example in examples
-                    if example[self.config.label_column()] in selected_labels
-                ]
-                final_prompt = self.task.construct_prompt(
-                    chunk,
-                    examples,
-                    selected_labels=selected_labels,
-                    max_input_tokens=self.llm.DEFAULT_CONTEXT_LENGTH,
-                    get_num_tokens=self.llm.get_num_tokens,
-                )
+
+                if self.example_selector:
+                    examples = self.example_selector.select_examples(
+                        safe_serialize_to_string(chunk),
+                        selected_labels=selected_labels,
+                        label_column=self.config.label_column(),
+                    )
+                else:
+                    examples = []
             else:
-                final_prompt = self.task.construct_prompt(
-                    chunk,
-                    examples,
-                    max_input_tokens=self.llm.DEFAULT_CONTEXT_LENGTH,
-                    get_num_tokens=self.llm.get_num_tokens,
-                )
+                if self.example_selector:
+                    examples = self.example_selector.select_examples(
+                        safe_serialize_to_string(chunk),
+                    )
+
+            # Construct Prompt to pass to LLM
+            final_prompt = self.task.construct_prompt(
+                chunk,
+                examples,
+                selected_labels=selected_labels,
+                max_input_tokens=self.llm.DEFAULT_CONTEXT_LENGTH,
+                get_num_tokens=self.llm.get_num_tokens,
+            )
 
             response = self.llm.label([final_prompt])
             for i, generations, error, latency in zip(
