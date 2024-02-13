@@ -39,7 +39,6 @@ class LabelSelector:
         self.k = min(self.config.label_selection_count(), len(self.labels))
         self.threshold = self.config.label_selection_threshold()
         self.cache = cache
-        print(self.k, self.threshold)
         self.vectorStore = VectorStoreWrapper(
             embedding_function=embedding_func, cache=self.cache
         )
