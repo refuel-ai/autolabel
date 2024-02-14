@@ -29,6 +29,7 @@ class OpenAILLM(BaseModel):
         "gpt-4-32k",
         "gpt-4-32k-0613",
         "gpt-4-1106-preview",
+        "gpt-4-0125-preview",
     ]
     MODELS_WITH_TOKEN_PROBS = [
         "text-curie-001",
@@ -45,6 +46,7 @@ class OpenAILLM(BaseModel):
         "gpt-4-32k",
         "gpt-4-32k-0613",
         "gpt-4-1106-preview",
+        "gpt-4-0125-preview",
     ]
 
     # Default parameters for OpenAILLM
@@ -78,6 +80,7 @@ class OpenAILLM(BaseModel):
         "gpt-4-0314": 0.03 / 1000,
         "gpt-4-32k-0314": 0.06 / 1000,
         "gpt-4-1106-preview": 0.01 / 1000,
+        "gpt-4-0125-preview": 0.01 / 1000,
     }
     COST_PER_COMPLETION_TOKEN = {
         "text-davinci-003": 0.02 / 1000,
@@ -94,6 +97,7 @@ class OpenAILLM(BaseModel):
         "gpt-4-0314": 0.06 / 1000,
         "gpt-4-32k-0314": 0.12 / 1000,
         "gpt-4-1106-preview": 0.03 / 1000,
+        "gpt-4-0125-preview": 0.03 / 1000,
     }
 
     @cached_property
