@@ -155,7 +155,7 @@ class LabelingAgent:
         start_index: int = 0,
         additional_metrics: Optional[List[BaseMetric]] = [],
         skip_eval: Optional[bool] = False,
-    ) -> Tuple[pd.Series, pd.DataFrame, List[MetricResult]]:
+    ) -> AutolabelDataset:
         """Labels data in a given dataset. Output written to new CSV file.
 
         Args:
@@ -282,8 +282,9 @@ class LabelingAgent:
                     max_input_tokens=self.llm.DEFAULT_CONTEXT_LENGTH,
                     get_num_tokens=self.llm.get_num_tokens,
                 )
-
+            logger.info(f"Prompt: {final_prompt}")
             response = self.llm.label([final_prompt])
+            logger.info(f"Response: {response}")
             for i, generations, error, latency in zip(
                 range(len(response.generations)),
                 response.generations,
@@ -350,12 +351,14 @@ class LabelingAgent:
                 if dataset.gt_labels:
                     eval_result = self.task.eval(
                         llm_labels,
-                        dataset.gt_labels[: len(llm_labels)]
-                        if isinstance(dataset.gt_labels, list)
-                        else {
-                            k: v[: len(llm_labels)]
-                            for k, v in dataset.gt_labels.items()
-                        },
+                        (
+                            dataset.gt_labels[: len(llm_labels)]
+                            if isinstance(dataset.gt_labels, list)
+                            else {
+                                k: v[: len(llm_labels)]
+                                for k, v in dataset.gt_labels.items()
+                            }
+                        ),
                         additional_metrics=additional_metrics,
                     )
 
@@ -384,9 +387,11 @@ class LabelingAgent:
         if not skip_eval and dataset.gt_labels:
             eval_result = self.task.eval(
                 llm_labels,
-                dataset.gt_labels[: len(llm_labels)]
-                if isinstance(dataset.gt_labels, list)
-                else {k: v[: len(llm_labels)] for k, v in dataset.gt_labels.items()},
+                (
+                    dataset.gt_labels[: len(llm_labels)]
+                    if isinstance(dataset.gt_labels, list)
+                    else {k: v[: len(llm_labels)] for k, v in dataset.gt_labels.items()}
+                ),
                 additional_metrics=additional_metrics,
             )
             # TODO: serialize and write to file
@@ -533,7 +538,7 @@ class LabelingAgent:
 
     async def async_run_transform(
         self, transform: BaseTransform, dataset: AutolabelDataset
-    ):
+    ) -> AutolabelDataset:
         transform_outputs = [
             transform.apply(input_dict) for input_dict in dataset.inputs
         ]
@@ -548,7 +553,7 @@ class LabelingAgent:
         dataset = AutolabelDataset(final_df, self.config)
         return dataset
 
-    def transform(self, dataset: AutolabelDataset):
+    def transform(self, dataset: AutolabelDataset) -> AutolabelDataset:
         transforms = []
         for transform_dict in self.config.transforms():
             transforms.append(
