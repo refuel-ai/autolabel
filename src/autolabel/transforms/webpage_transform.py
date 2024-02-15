@@ -13,8 +13,9 @@ import ssl
 from autolabel.cache import BaseCache
 
 logger = logging.getLogger(__name__)
+logging.getLogger("httpx").setLevel(logging.WARNING)
 
-MAX_RETRIES = 3
+MAX_RETRIES = 5
 MAX_KEEPALIVE_CONNECTIONS = 20
 MAX_CONNECTIONS = 100
 BACKOFF = 2
@@ -35,7 +36,7 @@ class WebpageTransform(BaseTransform):
         cache: BaseCache,
         output_columns: Dict[str, Any],
         url_column: str,
-        timeout: int = 5,
+        timeout: int = 60,
         headers: Dict[str, str] = HEADERS,
     ) -> None:
         super().__init__(cache, output_columns)
@@ -53,7 +54,9 @@ class WebpageTransform(BaseTransform):
 
             self.httpx = httpx
             self.timeout_time = timeout
+            logger.warning(f"Timeout set to {self.timeout_time} seconds")
             self.timeout = httpx.Timeout(timeout)
+            logger.warning(f"Timeout set to {timeout} seconds")
             limits = httpx.Limits(
                 max_keepalive_connections=MAX_KEEPALIVE_CONNECTIONS,
                 max_connections=MAX_CONNECTIONS,
