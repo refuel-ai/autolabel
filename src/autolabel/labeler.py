@@ -272,7 +272,7 @@ class LabelingAgent:
             ):
                 # get every column except the one we want to label
                 toEmbed = chunk.copy()
-                if self.config.label_column():
+                if self.config.label_column() and self.config.label_column() in toEmbed:
                     del toEmbed[self.config.label_column()]
 
                 # convert this to a string

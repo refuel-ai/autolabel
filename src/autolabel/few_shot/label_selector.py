@@ -55,7 +55,6 @@ class LabelSelector:
             self.labels_embeddings = torch.Tensor(
                 self.vectorStore._get_embeddings(self.labels)
             )
-        print(type(self.labels_embeddings))
 
     def select_labels(self, input: str) -> List[str]:
         """Select which labels to use based on the similarity to input"""
