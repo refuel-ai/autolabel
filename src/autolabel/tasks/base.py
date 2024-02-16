@@ -169,9 +169,11 @@ class BaseTask(ABC):
             complete_prompt = prompt_template.format(
                 task_guidelines=trimmed_elements[task_guidelines],
                 output_guidelines=trimmed_elements[output_guidelines],
-                seed_examples=trimmed_elements[seed_examples]
-                if seed_examples is not None
-                else None,
+                seed_examples=(
+                    trimmed_elements[seed_examples]
+                    if seed_examples is not None
+                    else None
+                ),
                 current_example=trimmed_elements[current_example],
             )
 
@@ -258,6 +260,7 @@ class BaseTask(ABC):
                         llm_multi_labels,
                     )
                 )
+                llm_multi_labels = list(set(llm_multi_labels))
                 if len(llm_multi_labels) == 0:
                     llm_label = self.NULL_LABEL_TOKEN
                     successfully_labeled = False
