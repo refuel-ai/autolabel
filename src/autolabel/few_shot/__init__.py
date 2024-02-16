@@ -1,8 +1,6 @@
 import logging
 from typing import Dict, List
 
-from autolabel.configs import AutolabelConfig
-from autolabel.schema import FewShotAlgorithm, ModelProvider
 from langchain.embeddings import (
     CohereEmbeddings,
     HuggingFaceEmbeddings,
@@ -15,6 +13,9 @@ from langchain.prompts.example_selector import (
     SemanticSimilarityExampleSelector,
 )
 from langchain.prompts.example_selector.base import BaseExampleSelector
+
+from autolabel.configs import AutolabelConfig
+from autolabel.schema import FewShotAlgorithm, ModelProvider
 
 from .fixed_example_selector import FixedExampleSelector
 from .label_diversity_example_selector import (

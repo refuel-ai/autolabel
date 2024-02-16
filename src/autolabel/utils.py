@@ -1,13 +1,13 @@
 import asyncio
 import hashlib
-import os
 import json
 import logging
-from string import Formatter
+import os
 import re
-import string
-from typing import Any, Dict, Iterable, List, Optional, Sequence, Union
 import shutil
+import string
+from string import Formatter
+from typing import Any, Dict, Iterable, List, Optional, Sequence, Union
 
 import regex
 import wget
@@ -300,9 +300,11 @@ def print_table(
     """
     # Convert all values to strings
     data = {
-        str(key): [str(maybe_round(v)) for v in value]
-        if isinstance(value, List)
-        else [str(maybe_round(value))]
+        str(key): (
+            [str(maybe_round(v)) for v in value]
+            if isinstance(value, List)
+            else [str(maybe_round(value))]
+        )
         for key, value in data.items()
     }
     table = Table(show_header=show_header)

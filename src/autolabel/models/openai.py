@@ -1,16 +1,15 @@
-from functools import cached_property
-from typing import List, Optional
-from time import time
 import logging
+import os
+from functools import cached_property
+from time import time
+from typing import List, Optional
 
-from autolabel.models import BaseModel
-from autolabel.configs import AutolabelConfig
-from autolabel.cache import BaseCache
-from autolabel.schema import RefuelLLMResult
 from langchain.schema import HumanMessage, LLMResult
 
-
-import os
+from autolabel.cache import BaseCache
+from autolabel.configs import AutolabelConfig
+from autolabel.models import BaseModel
+from autolabel.schema import RefuelLLMResult
 
 logger = logging.getLogger(__name__)
 
@@ -110,9 +109,9 @@ class OpenAILLM(BaseModel):
     def __init__(self, config: AutolabelConfig, cache: BaseCache = None) -> None:
         super().__init__(config, cache)
         try:
+            import tiktoken
             from langchain.chat_models import ChatOpenAI
             from langchain.llms import OpenAI
-            import tiktoken
         except ImportError:
             raise ImportError(
                 "openai is required to use the OpenAILLM. Please install it with the following command: pip install 'refuel-autolabel[openai]'"

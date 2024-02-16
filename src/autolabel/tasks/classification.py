@@ -1,26 +1,25 @@
-from collections import defaultdict
-from typing import List, Callable, Dict, Optional, Tuple
+import json
 import logging
+from collections import defaultdict
+from typing import Callable, Dict, List, Optional, Tuple
 
 from langchain.prompts.prompt import PromptTemplate
 from sklearn.metrics import accuracy_score
 
 from autolabel.confidence import ConfidenceCalculator
 from autolabel.configs import AutolabelConfig
-from autolabel.schema import LLMAnnotation, MetricType, MetricResult, ModelProvider
-from autolabel.tasks import BaseTask
-from autolabel.utils import get_format_variables
-from autolabel.tasks.utils import filter_unlabeled_examples
 from autolabel.metrics import (
     AccuracyMetric,
     AUROCMetric,
-    SupportMetric,
-    CompletionRateMetric,
-    ClassificationReportMetric,
     BaseMetric,
+    ClassificationReportMetric,
+    CompletionRateMetric,
+    SupportMetric,
 )
-
-import json
+from autolabel.schema import LLMAnnotation, MetricResult, MetricType, ModelProvider
+from autolabel.tasks import BaseTask
+from autolabel.tasks.utils import filter_unlabeled_examples
+from autolabel.utils import get_format_variables
 
 logger = logging.getLogger(__name__)
 
@@ -81,14 +80,6 @@ class ClassificationTask(BaseTask):
             self.config.labels_list() if not selected_labels else selected_labels
         )
         num_labels = len(labels_list)
-        if self.use_refuel_prompt_schema or refuel_prompt_override:
-            labels = (
-                ", ".join([f'\\"{i}\\"' for i in labels_list[:-1]])
-                + " or "
-                + f'\\"{labels_list[-1]}\\"'
-            )
-        else:
-            labels = "\n".join(labels_list)
 
         fmt_task_guidelines = self.task_guidelines.format_map(
             defaultdict(str, labels="\n".join(labels_list), num_labels=num_labels)
