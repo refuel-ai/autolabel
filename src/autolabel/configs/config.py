@@ -237,7 +237,7 @@ class AutolabelConfig(BaseConfig):
         classification tasks with a large number of possible classes."""
         return self._prompt_config.get(self.LABEL_SELECTION_KEY, False)
 
-    def label_selection_count(self) -> int:
+    def max_selected_labels(self) -> int:
         """Returns the number of labels to select in LabelSelector"""
         k = self._prompt_config.get(self.LABEL_SELECTION_COUNT_KEY, 10)
         if k < 1:
@@ -248,7 +248,7 @@ class AutolabelConfig(BaseConfig):
         """Returns the threshold for label selection in LabelSelector
         If the similarity score ratio with the top Score is above this threshold,
         the label is selected."""
-        return self._prompt_config.get(self.LABEL_SELECTION_THRESHOLD, 0.95)
+        return self._prompt_config.get(self.LABEL_SELECTION_THRESHOLD, 0.0)
 
     def attributes(self) -> List[Dict]:
         """Returns a list of attributes to extract from the text."""

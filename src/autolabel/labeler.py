@@ -226,6 +226,7 @@ class LabelingAgent:
                 self.config.label_selection()
                 and self.config.few_shot_algorithm() != "fixed"
             ):
+                # TODO: Add support for other few shot algorithms specially semantic similarity
                 raise ValueError(
                     "Error: Only 'fixed' few shot example selector is supported for label selection."
                 )
@@ -271,7 +272,8 @@ class LabelingAgent:
             ):
                 # get every column except the one we want to label
                 toEmbed = chunk.copy()
-                del toEmbed[self.config.label_column()]
+                if self.config.label_column():
+                    del toEmbed[self.config.label_column()]
 
                 # convert this to a string
                 toEmbed = json.dumps(toEmbed)
