@@ -1,9 +1,10 @@
-import string
 import re
+import string
 from typing import List, Tuple
 
 from sklearn.metrics import f1_score
 from sklearn.preprocessing import MultiLabelBinarizer
+
 from autolabel.schema import LLMAnnotation
 
 

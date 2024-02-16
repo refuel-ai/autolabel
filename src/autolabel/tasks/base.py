@@ -1,28 +1,26 @@
 """Base interface that all prediction tasks will implement."""
 
+import json
+import logging
+import pickle
 from abc import ABC, abstractmethod
 from typing import Callable, Dict, List, Optional, Union
-import logging
-import json
-import pickle
 
 from langchain.prompts.prompt import PromptTemplate
-from langchain.schema import Generation, ChatGeneration
+from langchain.schema import ChatGeneration, Generation
+
 from autolabel.configs import AutolabelConfig
+from autolabel.metrics import BaseMetric
 from autolabel.schema import (
+    ErrorType,
+    FewShotAlgorithm,
+    LabelingError,
     LLMAnnotation,
     MetricResult,
-    FewShotAlgorithm,
-    TaskType,
-    LabelingError,
-    ErrorType,
     ModelProvider,
+    TaskType,
 )
-from autolabel.utils import (
-    get_format_variables,
-    extract_valid_json_substring,
-)
-from autolabel.metrics import BaseMetric
+from autolabel.utils import extract_valid_json_substring, get_format_variables
 
 logger = logging.getLogger(__name__)
 

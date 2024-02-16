@@ -95,12 +95,12 @@ class QuestionAnsweringTask(BaseTask):
         try:
             current_example = example_template.format(**input)
         except KeyError as e:
-            curr_text_prompt = example_template.format_map(defaultdict(str, input))
+            current_example = example_template.format_map(defaultdict(str, input))
             logger.warn(
                 f'\n\nKey {e} in the "example_template" in the given config'
                 f"\n\n{example_template}\n\nis not present in the datsaset columns - {input.keys()}.\n\n"
                 f"Input - {input}\n\n"
-                "Continuing with the prompt as {curr_text_prompt}"
+                "Continuing with the prompt as {current_example}"
             )
 
         # populate the current example in the prompt

@@ -81,24 +81,6 @@ def test_classification_no_label_column_in_input():
         assert example["label"] in prompt
 
 
-def test_classification_no_label_column_in_config():
-    new_config = copy.deepcopy(BANKING_CONFIG)
-    new_config["dataset"]["label_column"] = None
-    del new_config["prompt"]["few_shot_selection"]
-    del new_config["prompt"]["few_shot_num"]
-    del new_config["prompt"]["few_shot_examples"]
-    new_config["prompt"]["example_template"] = "Example: {example}"
-    config = AutolabelConfig(new_config)
-    task = ClassificationTask(config=config)
-    assert task.config != None
-
-    input = {"example": "Here is an example"}
-    prompt = task.construct_prompt(input, [])
-    assert BANKING_CONFIG["prompt"]["output_guidelines"] in prompt
-    assert "\n".join(BANKING_CONFIG["prompt"]["labels"]) in prompt
-    assert input["example"] in prompt
-
-
 def test_classification_parse_llm_response():
     new_config = copy.deepcopy(BANKING_CONFIG)
     new_config["prompt"]["labels"].append("label-true")

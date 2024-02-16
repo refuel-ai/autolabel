@@ -15,8 +15,7 @@ def test_get_data(mocker) -> None:
     """Test Get Data"""
     dataset_name = "banking"
 
-    os.mkdir("data") if not os.path.exists("data") else None
-    os.mkdir("data/banking") if not os.path.exists("data/banking") else None
+    os.makedirs("data/banking", exist_ok=True)
 
     def assert_text_remove(file_name_: str, text: str):
         """Assert text and remove temp file
