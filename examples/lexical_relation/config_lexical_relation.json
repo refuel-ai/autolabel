@@ -15,7 +15,7 @@
         "labels": [
             "RANDOM", "SYN", "ANT", "HYPER", "PART_OF"
         ],
-        "few_shot_examples": "seed.csv",
+        "few_shot_examples": "data/lexical_relation/seed.csv",
         "few_shot_selection": "semantic_similarity",
         "few_shot_num": 10,
         "example_template": "Input: {example}\nOutput: {label}"

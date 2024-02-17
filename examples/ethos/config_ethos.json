@@ -34,7 +34,7 @@
         "description": "If the hate speech uses gendered language and attacks a particular gender."
       }
     ],
-    "few_shot_examples": "seed.csv",
+    "few_shot_examples": "data/ethos/seed.csv",
     "few_shot_selection": "fixed",
     "few_shot_num": 5,
     "example_template": "Text: {text}\nOutput: {output_dict}"

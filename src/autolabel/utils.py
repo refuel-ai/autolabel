@@ -335,14 +335,15 @@ def get_data(dataset_name: str, force: bool = False):
 
     def download(url: str) -> None:
         """Downloads the data given an url"""
-        file_name = os.path.basename(url)
+        os.makedirs(os.path.join("data", dataset_name), exist_ok=True)
+        file_name = os.path.join("data", dataset_name, os.path.basename(url))
         if force and os.path.exists(file_name):
             print(f"File {file_name} exists. Removing")
             os.remove(file_name)
 
         if not os.path.exists(file_name):
             print(f"Downloading example dataset from {url} to {file_name}...")
-            wget.download(url, bar=download_bar)
+            wget.download(url, out=file_name, bar=download_bar)
 
     if dataset_name not in EXAMPLE_DATASETS:
         logger.error(

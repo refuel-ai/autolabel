@@ -1,23 +1,24 @@
+import json
+import logging
 from collections import defaultdict
-from typing import List, Callable, Dict, Optional, Tuple
+from typing import Callable, Dict, List, Optional, Tuple
 
 from langchain.prompts.prompt import PromptTemplate
 
 from autolabel.configs import AutolabelConfig
-from autolabel.schema import LLMAnnotation, MetricType, MetricResult, F1Type
-from autolabel.tasks import BaseTask
-from autolabel.utils import get_format_variables
-
-import json
-
 from autolabel.metrics import (
     AccuracyMetric,
     AUROCMetric,
-    SupportMetric,
+    BaseMetric,
     CompletionRateMetric,
     F1Metric,
-    BaseMetric,
+    SupportMetric,
 )
+from autolabel.schema import F1Type, LLMAnnotation, MetricResult, MetricType
+from autolabel.tasks import BaseTask
+from autolabel.utils import get_format_variables
+
+logger = logging.getLogger(__name__)
 
 
 class MultilabelClassificationTask(BaseTask):
@@ -86,8 +87,19 @@ class MultilabelClassificationTask(BaseTask):
         if explanation_column:
             input[explanation_column] = ""
 
+        # check if all mapped keys in input are in the example template
+        try:
+            current_example = example_template.format(**input)
+        except KeyError as e:
+            current_example = example_template.format_map(defaultdict(str, input))
+            logger.warn(
+                f'\n\nKey {e} in the "example_template" in the given config'
+                f"\n\n{example_template}\n\nis not present in the datsaset columns - {input.keys()}.\n\n"
+                f"Input - {input}\n\n"
+                "Continuing with the prompt as {current_example}"
+            )
+
         # populate the current example in the prompt
-        current_example = example_template.format_map(defaultdict(str, input))
         prompt_template = (
             self.prompt_template
             if prompt_template_override is None

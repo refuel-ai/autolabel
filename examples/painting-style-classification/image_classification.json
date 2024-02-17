@@ -13,7 +13,7 @@
     "prompt": {
         "task_guidelines": "Given the description of a painting, predict the style of the paining. You will be first shown multiple descriptions and their styles. For the last input, you'll be shown an image along with the description and your job is to predict the style for this input. Your answer must be from one of the following categories:\n{labels}",
         "labels": ["Impressionism", "Color Field Painting", "Early Renaissance", "Fauvism", "Minimalism", "Romanticism", "Mannerism Late Renaissance", "Post Impressionism", "Contemporary Realism", "Pointillism", "Ukiyo e", "Abstract Expressionism", "Analytical Cubism", "Art Nouveau Modern", "Expressionism", "High Renaissance", "Cubism", "Naive Art Primitivism", "Rococo", "Pop Art", "Synthetic Cubism", "Realism", "Symbolism", "Northern Renaissance", "Baroque", "New Realism"],
-        "few_shot_examples": "seed.csv",
+        "few_shot_examples": "data/painting-style-classification/seed.csv",
         "few_shot_selection": "semantic_similarity",
         "few_shot_num": 5,
         "example_template": "Input: Description: {description} \nOutput: {label}"
