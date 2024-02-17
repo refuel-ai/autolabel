@@ -1,0 +1,2535 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+        <link rel="canonical" href="https://refuel.ai/guide/llms/llms/">
+      
+      
+        <link rel="prev" href="../../overview/tutorial-classification/">
+      
+      
+        <link rel="next" href="../embeddings/">
+      
+      
+      <link rel="icon" href="../../../assets/favicon.ico">
+      <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.5.9">
+    
+    
+      
+        <title>LLMs - Autolabel</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.f2e4d321.min.css">
+      
+        
+        <link rel="stylesheet" href="../../../assets/stylesheets/palette.06af60db.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/_mkdocstrings.css">
+    
+    <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#large-language-models-llms" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../../.." title="Autolabel" class="md-header__button md-logo" aria-label="Autolabel" data-md-component="logo">
+      
+  <img src="../../../assets/logo.png" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Autolabel
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              LLMs
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M17 6H7c-3.31 0-6 2.69-6 6s2.69 6 6 6h10c3.31 0 6-2.69 6-6s-2.69-6-6-6zm0 10H7c-2.21 0-4-1.79-4-4s1.79-4 4-4h10c2.21 0 4 1.79 4 4s-1.79 4-4 4zM7 9c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M17 7H7a5 5 0 0 0-5 5 5 5 0 0 0 5 5h10a5 5 0 0 0 5-5 5 5 0 0 0-5-5m0 8a3 3 0 0 1-3-3 3 3 0 0 1 3-3 3 3 0 0 1 3 3 3 3 0 0 1-3 3Z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var media,input,key,value,palette=__md_get("__palette");if(palette&&palette.color){"(prefers-color-scheme)"===palette.color.media&&(media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']"),palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent"));for([key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41Z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/refuel-ai/autolabel" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.5.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    refuel-ai/autolabel
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../../.." class="md-tabs__link">
+          
+  
+  Guide
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../reference/labeler/" class="md-tabs__link">
+          
+  
+  Reference
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../.." title="Autolabel" class="md-nav__button md-logo" aria-label="Autolabel" data-md-component="logo">
+      
+  <img src="../../../assets/logo.png" alt="logo">
+
+    </a>
+    Autolabel
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/refuel-ai/autolabel" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.5.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    refuel-ai/autolabel
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+      
+        
+        
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_1" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_1" id="__nav_1_label" tabindex="">
+            
+  
+  <span class="md-ellipsis">
+    Guide
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_1_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_1">
+            <span class="md-nav__icon md-icon"></span>
+            Guide
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../.." class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Introduction
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../overview/getting-started/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Getting Started
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../overview/tutorial-classification/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Tutorial - Toxic comment classification
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    
+    
+    
+      
+      
+        
+          
+          
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_1_4" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_1_4" id="__nav_1_4_label" tabindex="">
+            
+  
+  <span class="md-ellipsis">
+    Models
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_1_4_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_1_4">
+            <span class="md-nav__icon md-icon"></span>
+            Models
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  <span class="md-ellipsis">
+    LLMs
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  <span class="md-ellipsis">
+    LLMs
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#refuel" class="md-nav__link">
+    <span class="md-ellipsis">
+      Refuel
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Refuel">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#setup" class="md-nav__link">
+    <span class="md-ellipsis">
+      Setup
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#getting-a-refuel-api-key" class="md-nav__link">
+    <span class="md-ellipsis">
+      Getting a Refuel API key
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#example-usage" class="md-nav__link">
+    <span class="md-ellipsis">
+      Example usage
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#additional-parameters" class="md-nav__link">
+    <span class="md-ellipsis">
+      Additional parameters
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#openai" class="md-nav__link">
+    <span class="md-ellipsis">
+      OpenAI
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="OpenAI">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#setup_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      Setup
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#example-usage_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      Example usage
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#additional-parameters_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      Additional parameters
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#anthropic" class="md-nav__link">
+    <span class="md-ellipsis">
+      Anthropic
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Anthropic">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#setup_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      Setup
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#example-usage_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      Example usage
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#additional-parameters_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      Additional parameters
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#hugging-face" class="md-nav__link">
+    <span class="md-ellipsis">
+      Hugging Face
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Hugging Face">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#setup_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      Setup
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#example-usage_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      Example usage
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#additional-parameters_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      Additional parameters
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#google-palm" class="md-nav__link">
+    <span class="md-ellipsis">
+      Google PaLM
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Google PaLM">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#setup_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      Setup
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#example-usage_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      Example usage
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#additional-parameters_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      Additional parameters
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#model-behavior" class="md-nav__link">
+    <span class="md-ellipsis">
+      Model behavior
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#content-moderation" class="md-nav__link">
+    <span class="md-ellipsis">
+      Content moderation
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#cohere" class="md-nav__link">
+    <span class="md-ellipsis">
+      Cohere
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Cohere">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#setup_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      Setup
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#example-usage_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      Example usage
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#additional-parameters_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      Additional parameters
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#provider-list" class="md-nav__link">
+    <span class="md-ellipsis">
+      Provider List
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../embeddings/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Embedding Models
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../benchmarks/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Benchmarks
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+      
+      
+        
+          
+          
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_1_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_1_5" id="__nav_1_5_label" tabindex="">
+            
+  
+  <span class="md-ellipsis">
+    Labeling Tasks
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_1_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_1_5">
+            <span class="md-nav__icon md-icon"></span>
+            Labeling Tasks
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../tasks/classification_task/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Classification Task
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../tasks/multilabel_classification_task/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Multilabel Classification Task
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../tasks/entity_matching_task/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Entity Matching Task
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../tasks/named_entity_recognition_task/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Named Entity Recognition Task
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../tasks/question_answering_task/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Question Answering Task
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+      
+      
+        
+          
+          
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_1_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_1_6" id="__nav_1_6_label" tabindex="">
+            
+  
+  <span class="md-ellipsis">
+    Transformations
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_1_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_1_6">
+            <span class="md-nav__icon md-icon"></span>
+            Transformations
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../transforms/introduction/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Introduction
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../transforms/webpage_transform/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Webpage Transform
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../transforms/pdf_transform/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    PDF Transform
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../transforms/image_transform/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Image Transform
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+      
+      
+        
+          
+          
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_1_7" >
+        
+          
+          <label class="md-nav__link" for="__nav_1_7" id="__nav_1_7_label" tabindex="">
+            
+  
+  <span class="md-ellipsis">
+    Improving Labeling Accuracy
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_1_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_1_7">
+            <span class="md-nav__icon md-icon"></span>
+            Improving Labeling Accuracy
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../accuracy/prompting-better/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Prompting Better
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../accuracy/few-shot/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Few-shot Prompting
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../accuracy/confidence/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Confidence
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../accuracy/chain-of-thought/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Chain of Thought
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+      
+      
+        
+          
+          
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_1_8" >
+        
+          
+          <label class="md-nav__link" for="__nav_1_8" id="__nav_1_8_label" tabindex="">
+            
+  
+  <span class="md-ellipsis">
+    Reliability and Robustness
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_1_8_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_1_8">
+            <span class="md-nav__icon md-icon"></span>
+            Reliability and Robustness
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reliability/llm-output-caching/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    LLM Output Caching
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reliability/state-management/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    State Management
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+      
+      
+        
+          
+          
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_1_9" >
+        
+          
+          <label class="md-nav__link" for="__nav_1_9" id="__nav_1_9_label" tabindex="">
+            
+  
+  <span class="md-ellipsis">
+    Working with Autolabel
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_1_9_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_1_9">
+            <span class="md-nav__icon md-icon"></span>
+            Working with Autolabel
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../resources/configs/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Configs
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../resources/autolabel_dataset/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    AutolabelDataset
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../resources/CLI/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    CLI
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../resources/refuel_datasets/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Refuel-provided Datasets
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../resources/synthetic_dataset_generation/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Synthetic Dataset Generation
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Reference
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            Reference
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../reference/labeler/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    AutoLabeler
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../reference/configs/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Config
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../reference/models/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Models
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../reference/tasks/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Tasks
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../reference/schema/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Schema
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../reference/cache/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Cache
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../reference/example_select/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Example Selector
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../reference/data_models/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Data Models
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#refuel" class="md-nav__link">
+    <span class="md-ellipsis">
+      Refuel
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Refuel">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#setup" class="md-nav__link">
+    <span class="md-ellipsis">
+      Setup
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#getting-a-refuel-api-key" class="md-nav__link">
+    <span class="md-ellipsis">
+      Getting a Refuel API key
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#example-usage" class="md-nav__link">
+    <span class="md-ellipsis">
+      Example usage
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#additional-parameters" class="md-nav__link">
+    <span class="md-ellipsis">
+      Additional parameters
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#openai" class="md-nav__link">
+    <span class="md-ellipsis">
+      OpenAI
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="OpenAI">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#setup_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      Setup
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#example-usage_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      Example usage
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#additional-parameters_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      Additional parameters
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#anthropic" class="md-nav__link">
+    <span class="md-ellipsis">
+      Anthropic
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Anthropic">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#setup_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      Setup
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#example-usage_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      Example usage
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#additional-parameters_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      Additional parameters
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#hugging-face" class="md-nav__link">
+    <span class="md-ellipsis">
+      Hugging Face
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Hugging Face">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#setup_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      Setup
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#example-usage_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      Example usage
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#additional-parameters_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      Additional parameters
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#google-palm" class="md-nav__link">
+    <span class="md-ellipsis">
+      Google PaLM
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Google PaLM">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#setup_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      Setup
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#example-usage_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      Example usage
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#additional-parameters_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      Additional parameters
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#model-behavior" class="md-nav__link">
+    <span class="md-ellipsis">
+      Model behavior
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#content-moderation" class="md-nav__link">
+    <span class="md-ellipsis">
+      Content moderation
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#cohere" class="md-nav__link">
+    <span class="md-ellipsis">
+      Cohere
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Cohere">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#setup_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      Setup
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#example-usage_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      Example usage
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#additional-parameters_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      Additional parameters
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#provider-list" class="md-nav__link">
+    <span class="md-ellipsis">
+      Provider List
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+  
+  
+
+
+<h1 id="large-language-models-llms">Large Language Models (LLMs)<a class="headerlink" href="#large-language-models-llms" title="Permanent link">&para;</a></h1>
+<p>Autolabel supports multiple LLMs for labeling data. Some LLMs are available by calling an API with the appropriate API keys (OpenAI, Anthropic, etc.) while others can be run locally (such as the ones available on Hugging Face). The LLM used to label can be controlled using the <code>provider</code> and <code>name</code> keys in the dictionary specified under <code>model</code> in the input config.</p>
+<p>Each LLM belongs to an LLM provider -- which refers to the organization or open-source framework through which we are able to access the LLM. A full list of LLM providers and LLMs that are currently supported is provided towards the end of this page.</p>
+<p>Autolabel makes it easy to try out different LLMs for your task and this page will walk you through how to get started with each LLM provider and model. Separately, we've also benchmarked multiple LLMs across different datasets - you can read the full technical report here [link to blog post] or check out the latest benchmark results <a href="/guide/llms/benchmarks">here</a>.</p>
+<h2 id="refuel">Refuel<a class="headerlink" href="#refuel" title="Permanent link">&para;</a></h2>
+<p>To use models hosted by <a href="https://refuel.ai/">Refuel</a>, you can set <code>provider</code> to <code>refuel</code> when creating a labeling configuration. The specific model that will be queried can be specified using the <code>name</code> key. Autolabel currently supports two models:</p>
+<ul>
+<li><code>refuel-llm</code></li>
+<li><code>llama-13b-chat</code></li>
+</ul>
+<p>You can access RefuelLLM, our recently announced LLM purpose built for data labeling, through Autolabel (Read more about it in this <a href="http://www.refuel.ai/blog-posts/announcing-refuel-llm">blog post</a>). Refuel LLM is a Llama-v2-13b base model, instruction tuned on over 2500 unique (5.24B tokens) labeling tasks spanning categories such as classification, entity resolution, matching, reading comprehension and information extraction. You can experiment with the model in the playground <a href="https://app.refuel.ai/playground">here</a>.</p>
+<p><img alt="Refuel Performance" src="/assets/refuel_llm_performance.png" width="100%"></p>
+<p>You can request access to Refuel LLM <a href="https://refuel-ai.typeform.com/llm-access">here</a>. Read the docs about using RefuelLLM in autolabel <a href="https://docs.refuel.ai/guide/llms/llms/#refuel">here</a>.</p>
+<p>Llama-13b-chat is a 13 billion parameter model available on <a href="https://huggingface.co/meta-llama/Llama-2-13b-chat-hf">Huggingface</a>. However, running such a huge model locally is a challenge, which is why we are currently hosting the model on our servers.</p>
+<h3 id="setup">Setup<a class="headerlink" href="#setup" title="Permanent link">&para;</a></h3>
+<p>To use Refuel models with Autolabel, make sure set the following environment variable:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>export REFUEL_API_KEY=&lt;your-refuel-key&gt;
+</code></pre></div>
+<p>replacing <code>&lt;your-refuel-key&gt;</code> with your API key.</p>
+<h3 id="getting-a-refuel-api-key">Getting a Refuel API key<a class="headerlink" href="#getting-a-refuel-api-key" title="Permanent link">&para;</a></h3>
+<p>If you're interested in trying one of the LLMs hosted by Refuel, sign up for your Refuel API key by filling out the form <a href="https://refuel-ai.typeform.com/llm-access" target="_blank">here</a>. We'll review your application and get back to you soon!</p>
+<h3 id="example-usage">Example usage<a class="headerlink" href="#example-usage" title="Permanent link">&para;</a></h3>
+<p>Here is an example of setting config to a dictionary that will use Refuel's <code>refuel-llm</code> model. Specifically, note that in the dictionary proivded by the <code>model</code> tag, <code>provider</code> is set to <code>refuel</code> and <code>name</code> is set to be <code>refuel-llm</code>.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="n">config</span> <span class="o">=</span> <span class="p">{</span>
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>    <span class="s2">&quot;task_name&quot;</span><span class="p">:</span> <span class="s2">&quot;OpenbookQAWikipedia&quot;</span><span class="p">,</span>
+<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>    <span class="s2">&quot;task_type&quot;</span><span class="p">:</span> <span class="s2">&quot;question_answering&quot;</span><span class="p">,</span>
+<a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>    <span class="s2">&quot;dataset&quot;</span><span class="p">:</span> <span class="p">{</span>
+<a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>        <span class="s2">&quot;label_column&quot;</span><span class="p">:</span> <span class="s2">&quot;answer&quot;</span><span class="p">,</span>
+<a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a>        <span class="s2">&quot;delimiter&quot;</span><span class="p">:</span> <span class="s2">&quot;,&quot;</span>
+<a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a>    <span class="p">},</span>
+<a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a>    <span class="s2">&quot;model&quot;</span><span class="p">:</span> <span class="p">{</span>
+<a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a>        <span class="s2">&quot;provider&quot;</span><span class="p">:</span> <span class="s2">&quot;refuel&quot;</span><span class="p">,</span>
+<a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a>        <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;refuel-llm&quot;</span><span class="p">,</span>
+<a id="__codelineno-1-11" name="__codelineno-1-11" href="#__codelineno-1-11"></a>        <span class="s2">&quot;params&quot;</span><span class="p">:</span> <span class="p">{}</span>
+<a id="__codelineno-1-12" name="__codelineno-1-12" href="#__codelineno-1-12"></a>    <span class="p">},</span>
+<a id="__codelineno-1-13" name="__codelineno-1-13" href="#__codelineno-1-13"></a>    <span class="s2">&quot;prompt&quot;</span><span class="p">:</span> <span class="p">{</span>
+<a id="__codelineno-1-14" name="__codelineno-1-14" href="#__codelineno-1-14"></a>        <span class="s2">&quot;task_guidelines&quot;</span><span class="p">:</span> <span class="s2">&quot;You are an expert at answering questions.&quot;</span><span class="p">,</span>
+<a id="__codelineno-1-15" name="__codelineno-1-15" href="#__codelineno-1-15"></a>        <span class="s2">&quot;example_template&quot;</span><span class="p">:</span> <span class="s2">&quot;Question: </span><span class="si">{question}</span><span class="se">\n</span><span class="s2">Answer: </span><span class="si">{answer}</span><span class="s2">&quot;</span>
+<a id="__codelineno-1-16" name="__codelineno-1-16" href="#__codelineno-1-16"></a>    <span class="p">}</span>
+<a id="__codelineno-1-17" name="__codelineno-1-17" href="#__codelineno-1-17"></a><span class="p">}</span>
+</code></pre></div>
+<h3 id="additional-parameters">Additional parameters<a class="headerlink" href="#additional-parameters" title="Permanent link">&para;</a></h3>
+<p>A few parameters that can be passed in for <code>refuel</code> models to control the model behavior. For example:</p>
+<ul>
+<li><code>max_new_tokens</code> (int) - The maximum tokens to sample from the model</li>
+<li><code>temperature</code> (float) - A float b/w 0 and 1 which indicates the diversity you want in the output. 0 uses greedy sampling.</li>
+</ul>
+<p>These parameters can be passed in via the <code>params</code> dictionary under <code>model</code>. Here is an example:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="s2">&quot;model&quot;</span><span class="p">:</span> <span class="p">{</span>
+<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>    <span class="s2">&quot;provider&quot;</span><span class="p">:</span> <span class="s2">&quot;refuel&quot;</span><span class="p">,</span>
+<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>    <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;refuel-llm&quot;</span><span class="p">,</span>
+<a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>    <span class="s2">&quot;params&quot;</span><span class="p">:</span> <span class="p">{</span>
+<a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>        <span class="s2">&quot;max_new_tokens&quot;</span><span class="p">:</span> <span class="mi">512</span><span class="p">,</span>
+<a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>        <span class="s2">&quot;temperature&quot;</span><span class="p">:</span> <span class="mf">0.1</span><span class="p">,</span>
+<a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a>    <span class="p">}</span>
+<a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a><span class="p">}</span>
+</code></pre></div>
+<p><code>refuel</code> hosted LLMs support all the parameters that can be passed as a part of <a href="https://huggingface.co/docs/transformers/main_classes/text_generation#transformers.GenerationConfig">GenerationConfig</a> while calling generate functions of Hugging Face LLMs.</p>
+<h2 id="openai">OpenAI<a class="headerlink" href="#openai" title="Permanent link">&para;</a></h2>
+<p>To use models from <a href="https://platform.openai.com/docs/models">OpenAI</a>, you can set <code>provider</code> to <code>openai</code> when creating a labeling configuration. The specific model that will be queried can be specified using the <code>name</code> key. Autolabel currently supports the following models from OpenAI:</p>
+<ul>
+<li><code>text-davinci-003</code></li>
+<li><code>gpt-3.5-turbo</code>, <code>gpt-3.5-turbo-0301</code> and <code>gpt-3.5-turbo-0613</code> (4,096 max tokens)</li>
+<li><code>gpt-3.5-turbo-16k</code> and <code>gpt-3.5-turbo-16k-0613</code> (16,384 max tokens)</li>
+<li><code>gpt-4</code>, <code>gpt-4-0314</code> and <code>gpt-4-0613</code> (8,192 max tokens)</li>
+<li><code>gpt-4-32k</code>, <code>gpt-4-32k-0314</code> and <code>gpt-4-32k-0613</code> (32,768 max tokens)</li>
+</ul>
+<p><code>gpt-4</code> set of models are the most capable (and most expensive) from OpenAI, while <code>gpt-3.5-turbo</code> set of models are cheap (but still quite capable). Detailed pricing for these models is available <a href="https://openai.com/pricing">here</a>.</p>
+<h3 id="setup_1">Setup<a class="headerlink" href="#setup_1" title="Permanent link">&para;</a></h3>
+<p>To use OpenAI models with Autolabel, make sure to first install the relevant packages by running:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>pip<span class="w"> </span>install<span class="w"> </span><span class="s1">&#39;refuel-autolabel[openai]&#39;</span>
+</code></pre></div>
+<p>and also setting the following environment variable:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>export OPENAI_API_KEY=&lt;your-openai-key&gt;
+</code></pre></div>
+<p>replacing <code>&lt;your-openai-key&gt;</code> with your API key, which you can get from <a href="https://platform.openai.com/account/api-keys">here</a>.</p>
+<h3 id="example-usage_1">Example usage<a class="headerlink" href="#example-usage_1" title="Permanent link">&para;</a></h3>
+<p>Here is an example of setting config to a dictionary that will use OpenAI's <code>gpt-3.5-turbo</code> model for labeling. Specifically, note that in the dictionary proivded by the <code>model</code> tag, <code>provider</code> is set to <code>openai</code> and <code>name</code> is set to be <code>gpt-3.5-turbo</code>. <code>name</code> can be switched to use any of the three models mentioned above.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="n">config</span> <span class="o">=</span> <span class="p">{</span>
+<a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>    <span class="s2">&quot;task_name&quot;</span><span class="p">:</span> <span class="s2">&quot;OpenbookQAWikipedia&quot;</span><span class="p">,</span>
+<a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>    <span class="s2">&quot;task_type&quot;</span><span class="p">:</span> <span class="s2">&quot;question_answering&quot;</span><span class="p">,</span>
+<a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a>    <span class="s2">&quot;dataset&quot;</span><span class="p">:</span> <span class="p">{</span>
+<a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a>        <span class="s2">&quot;label_column&quot;</span><span class="p">:</span> <span class="s2">&quot;answer&quot;</span><span class="p">,</span>
+<a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a>        <span class="s2">&quot;delimiter&quot;</span><span class="p">:</span> <span class="s2">&quot;,&quot;</span>
+<a id="__codelineno-5-7" name="__codelineno-5-7" href="#__codelineno-5-7"></a>    <span class="p">},</span>
+<a id="__codelineno-5-8" name="__codelineno-5-8" href="#__codelineno-5-8"></a>    <span class="s2">&quot;model&quot;</span><span class="p">:</span> <span class="p">{</span>
+<a id="__codelineno-5-9" name="__codelineno-5-9" href="#__codelineno-5-9"></a>        <span class="s2">&quot;provider&quot;</span><span class="p">:</span> <span class="s2">&quot;openai&quot;</span><span class="p">,</span>
+<a id="__codelineno-5-10" name="__codelineno-5-10" href="#__codelineno-5-10"></a>        <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;gpt-3.5-turbo&quot;</span><span class="p">,</span>
+<a id="__codelineno-5-11" name="__codelineno-5-11" href="#__codelineno-5-11"></a>        <span class="s2">&quot;params&quot;</span><span class="p">:</span> <span class="p">{}</span>
+<a id="__codelineno-5-12" name="__codelineno-5-12" href="#__codelineno-5-12"></a>    <span class="p">},</span>
+<a id="__codelineno-5-13" name="__codelineno-5-13" href="#__codelineno-5-13"></a>    <span class="s2">&quot;prompt&quot;</span><span class="p">:</span> <span class="p">{</span>
+<a id="__codelineno-5-14" name="__codelineno-5-14" href="#__codelineno-5-14"></a>        <span class="s2">&quot;task_guidelines&quot;</span><span class="p">:</span> <span class="s2">&quot;You are an expert at answering questions.&quot;</span><span class="p">,</span>
+<a id="__codelineno-5-15" name="__codelineno-5-15" href="#__codelineno-5-15"></a>        <span class="s2">&quot;example_template&quot;</span><span class="p">:</span> <span class="s2">&quot;Question: </span><span class="si">{question}</span><span class="se">\n</span><span class="s2">Answer: </span><span class="si">{answer}</span><span class="s2">&quot;</span>
+<a id="__codelineno-5-16" name="__codelineno-5-16" href="#__codelineno-5-16"></a>    <span class="p">}</span>
+<a id="__codelineno-5-17" name="__codelineno-5-17" href="#__codelineno-5-17"></a><span class="p">}</span>
+</code></pre></div>
+<h3 id="additional-parameters_1">Additional parameters<a class="headerlink" href="#additional-parameters_1" title="Permanent link">&para;</a></h3>
+<p>A few parameters can be passed in alongside <code>openai</code> models to tweak their behavior:</p>
+<ul>
+<li><code>max_tokens</code> (int): The maximum tokens to sample from the model</li>
+<li><code>temperature</code> (float): A float between 0 and 2 which indicates the diversity you want in the output. 0 uses greedy sampling (picks the most likely outcome).</li>
+</ul>
+<p>These parameters can be passed in via the <code>params</code> dictionary under <code>model</code>. Here is an example:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="s2">&quot;model&quot;</span><span class="p">:</span> <span class="p">{</span>
+<a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>    <span class="s2">&quot;provider&quot;</span><span class="p">:</span> <span class="s2">&quot;openai&quot;</span><span class="p">,</span>
+<a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>    <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;gpt-3.5-turbo&quot;</span><span class="p">,</span>
+<a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a>    <span class="s2">&quot;params&quot;</span><span class="p">:</span> <span class="p">{</span>
+<a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a>        <span class="s2">&quot;max_tokens&quot;</span><span class="p">:</span> <span class="mi">512</span><span class="p">,</span>
+<a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a>        <span class="s2">&quot;temperature&quot;</span><span class="p">:</span> <span class="mf">0.1</span>
+<a id="__codelineno-6-7" name="__codelineno-6-7" href="#__codelineno-6-7"></a>    <span class="p">}</span>
+<a id="__codelineno-6-8" name="__codelineno-6-8" href="#__codelineno-6-8"></a><span class="p">}</span>
+</code></pre></div>
+<h2 id="anthropic">Anthropic<a class="headerlink" href="#anthropic" title="Permanent link">&para;</a></h2>
+<p>To use models from <a href="https://www.anthropic.com/index/introducing-claude">Anthropic</a>, you can set the <code>provider</code> to <code>anthropic</code> when creating a labeling configuration. The specific model that will be queried can be specified using the <code>name</code> key. Autolabel currently supports the following models from Anthropic:</p>
+<ul>
+<li><code>claude-instant-v1</code></li>
+<li><code>claude-v1</code></li>
+</ul>
+<p><code>claude-v1</code> is a state-of-the-art high-performance model, while <code>claude-instant-v1</code> is a lighter, less expensive, and much faster option. <code>claude-instant-v1</code> is ~6.7 times cheaper than <code>claude-v1</code>, at $1.63/1 million tokens. On the other hand <code>claude-v1</code> costs $11.02/1 million tokens.</p>
+<h3 id="setup_2">Setup<a class="headerlink" href="#setup_2" title="Permanent link">&para;</a></h3>
+<p>To use Anthropic models with Autolabel, make sure to first install the relevant packages by running:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>pip<span class="w"> </span>install<span class="w"> </span><span class="s1">&#39;refuel-autolabel[anthropic]&#39;</span>
+</code></pre></div>
+<p>and also setting the following environment variable:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>export ANTHROPIC_API_KEY=&lt;your-anthropic-key&gt;
+</code></pre></div>
+<p>replacing <code>&lt;your-anthropic-key&gt;</code> with your API key, which you can get from <a href="https://console.anthropic.com/docs/access">here</a>.</p>
+<h3 id="example-usage_2">Example usage<a class="headerlink" href="#example-usage_2" title="Permanent link">&para;</a></h3>
+<p>Here is an example of setting config to a dictionary that will use anthropic's <code>claude-instant-v1</code> model for labeling. Specifically, note that in the dictionary proivded by the <code>model</code> tag, <code>provider</code> is set to <code>anthropic</code> and <code>name</code> is set to be <code>claude-instant-v1</code>. <code>name</code> can be switched to use any of the two models mentioned above.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="n">config</span> <span class="o">=</span> <span class="p">{</span>
+<a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a>    <span class="s2">&quot;task_name&quot;</span><span class="p">:</span> <span class="s2">&quot;OpenbookQAWikipedia&quot;</span><span class="p">,</span>
+<a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a>    <span class="s2">&quot;task_type&quot;</span><span class="p">:</span> <span class="s2">&quot;question_answering&quot;</span><span class="p">,</span>
+<a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a>    <span class="s2">&quot;dataset&quot;</span><span class="p">:</span> <span class="p">{</span>
+<a id="__codelineno-9-5" name="__codelineno-9-5" href="#__codelineno-9-5"></a>        <span class="s2">&quot;label_column&quot;</span><span class="p">:</span> <span class="s2">&quot;answer&quot;</span><span class="p">,</span>
+<a id="__codelineno-9-6" name="__codelineno-9-6" href="#__codelineno-9-6"></a>        <span class="s2">&quot;delimiter&quot;</span><span class="p">:</span> <span class="s2">&quot;,&quot;</span>
+<a id="__codelineno-9-7" name="__codelineno-9-7" href="#__codelineno-9-7"></a>    <span class="p">},</span>
+<a id="__codelineno-9-8" name="__codelineno-9-8" href="#__codelineno-9-8"></a>    <span class="s2">&quot;model&quot;</span><span class="p">:</span> <span class="p">{</span>
+<a id="__codelineno-9-9" name="__codelineno-9-9" href="#__codelineno-9-9"></a>        <span class="s2">&quot;provider&quot;</span><span class="p">:</span> <span class="s2">&quot;anthropic&quot;</span><span class="p">,</span>
+<a id="__codelineno-9-10" name="__codelineno-9-10" href="#__codelineno-9-10"></a>        <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;claude-instant-v1&quot;</span><span class="p">,</span>
+<a id="__codelineno-9-11" name="__codelineno-9-11" href="#__codelineno-9-11"></a>        <span class="s2">&quot;params&quot;</span><span class="p">:</span> <span class="p">{}</span>
+<a id="__codelineno-9-12" name="__codelineno-9-12" href="#__codelineno-9-12"></a>    <span class="p">},</span>
+<a id="__codelineno-9-13" name="__codelineno-9-13" href="#__codelineno-9-13"></a>    <span class="s2">&quot;prompt&quot;</span><span class="p">:</span> <span class="p">{</span>
+<a id="__codelineno-9-14" name="__codelineno-9-14" href="#__codelineno-9-14"></a>        <span class="s2">&quot;task_guidelines&quot;</span><span class="p">:</span> <span class="s2">&quot;You are an expert at answering questions.&quot;</span><span class="p">,</span>
+<a id="__codelineno-9-15" name="__codelineno-9-15" href="#__codelineno-9-15"></a>        <span class="s2">&quot;example_template&quot;</span><span class="p">:</span> <span class="s2">&quot;Question: </span><span class="si">{question}</span><span class="se">\n</span><span class="s2">Answer: </span><span class="si">{answer}</span><span class="s2">&quot;</span>
+<a id="__codelineno-9-16" name="__codelineno-9-16" href="#__codelineno-9-16"></a>    <span class="p">}</span>
+<a id="__codelineno-9-17" name="__codelineno-9-17" href="#__codelineno-9-17"></a><span class="p">}</span>
+</code></pre></div>
+<h3 id="additional-parameters_2">Additional parameters<a class="headerlink" href="#additional-parameters_2" title="Permanent link">&para;</a></h3>
+<p>A few parameters that can be passed in for <code>anthropic</code> models to control the model behavior:</p>
+<ul>
+<li><code>max_tokens_to_sample</code> (int): The maximum tokens to sample from the model</li>
+<li><code>temperature</code> (float): A float between 0 and 2 which indicates the diversity you want in the output. 0 uses greedy sampling (picks the most likely outcome).</li>
+</ul>
+<p>These parameters can be passed in via the <code>params</code> dictionary under <code>model</code>. Here is an example:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="s2">&quot;model&quot;</span><span class="p">:</span> <span class="p">{</span>
+<a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a>    <span class="s2">&quot;provider&quot;</span><span class="p">:</span> <span class="s2">&quot;anthropic&quot;</span><span class="p">,</span>
+<a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a>    <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;claude-instant-v1&quot;</span><span class="p">,</span>
+<a id="__codelineno-10-4" name="__codelineno-10-4" href="#__codelineno-10-4"></a>    <span class="s2">&quot;params&quot;</span><span class="p">:</span> <span class="p">{</span>
+<a id="__codelineno-10-5" name="__codelineno-10-5" href="#__codelineno-10-5"></a>        <span class="s2">&quot;max_tokens_to_sample&quot;</span><span class="p">:</span> <span class="mi">512</span><span class="p">,</span>
+<a id="__codelineno-10-6" name="__codelineno-10-6" href="#__codelineno-10-6"></a>        <span class="s2">&quot;temperature&quot;</span><span class="p">:</span> <span class="mf">0.1</span>
+<a id="__codelineno-10-7" name="__codelineno-10-7" href="#__codelineno-10-7"></a>    <span class="p">}</span>
+<a id="__codelineno-10-8" name="__codelineno-10-8" href="#__codelineno-10-8"></a><span class="p">}</span>
+</code></pre></div>
+<h2 id="hugging-face">Hugging Face<a class="headerlink" href="#hugging-face" title="Permanent link">&para;</a></h2>
+<p>To use models from <a href="https://huggingface.co/">Hugging Face</a>, you can set <code>provider</code> to <code>huggingface_pipeline</code> when creating a labeling configuration. The specific model that will be queried can be specified using the <code>name</code> key. Autolabel currently supports all Sequence2Sequence and Causal Language Models on Hugging Face. All models available on Hugging Face can be found <a href="https://huggingface.co/docs/transformers/model_doc/openai-gpt#:~:text=TEXT-,MODELS,-ALBERT">here</a>. Ensure that the model you choose can be loaded using <code>AutoModelForSeq2SeqLM</code> or <code>AutoModelForCausalLM</code>. Here are a few examples:</p>
+<p>Sequence2Sequence Language Models:</p>
+<ul>
+<li><code>google/flan-t5-small</code> (all flan-t5-* models)</li>
+<li><code>google/pegasus-x-base</code></li>
+<li><code>microsoft/prophetnet-large-uncased</code></li>
+</ul>
+<p>Causal Language Models:</p>
+<ul>
+<li><code>gpt2</code></li>
+<li><code>openlm-research/open_llama_3b</code></li>
+<li><code>meta-llama/Llama-2-7b</code></li>
+</ul>
+<p>This will run the model locally on a GPU (if available). You can also specify quantization strategy to load larger models in lower precision (and thus decreasing memory requirements).</p>
+<h3 id="setup_3">Setup<a class="headerlink" href="#setup_3" title="Permanent link">&para;</a></h3>
+<p>To use Hugging Face models with Autolabel, make sure to first install the relevant packages by running:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a>pip<span class="w"> </span>install<span class="w"> </span><span class="s1">&#39;refuel-autolabel[huggingface]&#39;</span>
+</code></pre></div>
+<h3 id="example-usage_3">Example usage<a class="headerlink" href="#example-usage_3" title="Permanent link">&para;</a></h3>
+<p>Here is an example of setting config to a dictionary that will use <code>google/flan-t5-small</code> model for labeling via Hugging Face. Specifically, note that in the dictionary proivded by the <code>model</code> tag, <code>provider</code> is set to <code>huggingface_pipeline</code> and <code>name</code> is set to be <code>google/flan-t5-small</code>. <code>name</code> can be switched to use any model that satisfies the constraints above.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a><span class="n">config</span> <span class="o">=</span> <span class="p">{</span>
+<a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a>    <span class="s2">&quot;task_name&quot;</span><span class="p">:</span> <span class="s2">&quot;OpenbookQAWikipedia&quot;</span><span class="p">,</span>
+<a id="__codelineno-12-3" name="__codelineno-12-3" href="#__codelineno-12-3"></a>    <span class="s2">&quot;task_type&quot;</span><span class="p">:</span> <span class="s2">&quot;question_answering&quot;</span><span class="p">,</span>
+<a id="__codelineno-12-4" name="__codelineno-12-4" href="#__codelineno-12-4"></a>    <span class="s2">&quot;dataset&quot;</span><span class="p">:</span> <span class="p">{</span>
+<a id="__codelineno-12-5" name="__codelineno-12-5" href="#__codelineno-12-5"></a>        <span class="s2">&quot;label_column&quot;</span><span class="p">:</span> <span class="s2">&quot;answer&quot;</span><span class="p">,</span>
+<a id="__codelineno-12-6" name="__codelineno-12-6" href="#__codelineno-12-6"></a>        <span class="s2">&quot;delimiter&quot;</span><span class="p">:</span> <span class="s2">&quot;,&quot;</span>
+<a id="__codelineno-12-7" name="__codelineno-12-7" href="#__codelineno-12-7"></a>    <span class="p">},</span>
+<a id="__codelineno-12-8" name="__codelineno-12-8" href="#__codelineno-12-8"></a>    <span class="s2">&quot;model&quot;</span><span class="p">:</span> <span class="p">{</span>
+<a id="__codelineno-12-9" name="__codelineno-12-9" href="#__codelineno-12-9"></a>        <span class="s2">&quot;provider&quot;</span><span class="p">:</span> <span class="s2">&quot;huggingface_pipeline&quot;</span><span class="p">,</span>
+<a id="__codelineno-12-10" name="__codelineno-12-10" href="#__codelineno-12-10"></a>        <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;google/flan-t5-small&quot;</span><span class="p">,</span>
+<a id="__codelineno-12-11" name="__codelineno-12-11" href="#__codelineno-12-11"></a>        <span class="s2">&quot;params&quot;</span><span class="p">:</span> <span class="p">{}</span>
+<a id="__codelineno-12-12" name="__codelineno-12-12" href="#__codelineno-12-12"></a>    <span class="p">},</span>
+<a id="__codelineno-12-13" name="__codelineno-12-13" href="#__codelineno-12-13"></a>    <span class="s2">&quot;prompt&quot;</span><span class="p">:</span> <span class="p">{</span>
+<a id="__codelineno-12-14" name="__codelineno-12-14" href="#__codelineno-12-14"></a>        <span class="s2">&quot;task_guidelines&quot;</span><span class="p">:</span> <span class="s2">&quot;You are an expert at answering questions.&quot;</span><span class="p">,</span>
+<a id="__codelineno-12-15" name="__codelineno-12-15" href="#__codelineno-12-15"></a>        <span class="s2">&quot;example_template&quot;</span><span class="p">:</span> <span class="s2">&quot;Question: </span><span class="si">{question}</span><span class="se">\n</span><span class="s2">Answer: </span><span class="si">{answer}</span><span class="s2">&quot;</span>
+<a id="__codelineno-12-16" name="__codelineno-12-16" href="#__codelineno-12-16"></a>    <span class="p">}</span>
+<a id="__codelineno-12-17" name="__codelineno-12-17" href="#__codelineno-12-17"></a><span class="p">}</span>
+</code></pre></div>
+<h3 id="additional-parameters_3">Additional parameters<a class="headerlink" href="#additional-parameters_3" title="Permanent link">&para;</a></h3>
+<p>A few parameters that can be passed in for <code>huggingface_pipeline</code> models to control the model behavior:</p>
+<ul>
+<li><code>max_new_tokens</code> (int) - The maximum tokens to sample from the model</li>
+<li><code>temperature</code> (float) - A float b/w 0 and 1 which indicates the diversity you want in the output. 0 uses greedy sampling.</li>
+<li><code>quantize</code> (int) - The model quantization to use. 32 bit by default, but we also support 16 bit and 8 bit support for models which have been hosted on Hugging Face.</li>
+</ul>
+<p>These parameters can be passed in via the <code>params</code> dictionary under <code>model</code>. Here is an example:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a><span class="s2">&quot;model&quot;</span><span class="p">:</span> <span class="p">{</span>
+<a id="__codelineno-13-2" name="__codelineno-13-2" href="#__codelineno-13-2"></a>    <span class="s2">&quot;provider&quot;</span><span class="p">:</span> <span class="s2">&quot;huggingface_pipeline&quot;</span><span class="p">,</span>
+<a id="__codelineno-13-3" name="__codelineno-13-3" href="#__codelineno-13-3"></a>    <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;google/flan-t5-small&quot;</span><span class="p">,</span>
+<a id="__codelineno-13-4" name="__codelineno-13-4" href="#__codelineno-13-4"></a>    <span class="s2">&quot;params&quot;</span><span class="p">:</span> <span class="p">{</span>
+<a id="__codelineno-13-5" name="__codelineno-13-5" href="#__codelineno-13-5"></a>        <span class="s2">&quot;max_new_tokens&quot;</span><span class="p">:</span> <span class="mi">512</span><span class="p">,</span>
+<a id="__codelineno-13-6" name="__codelineno-13-6" href="#__codelineno-13-6"></a>        <span class="s2">&quot;temperature&quot;</span><span class="p">:</span> <span class="mf">0.1</span><span class="p">,</span>
+<a id="__codelineno-13-7" name="__codelineno-13-7" href="#__codelineno-13-7"></a>        <span class="s2">&quot;quantize&quot;</span><span class="p">:</span> <span class="mi">8</span>
+<a id="__codelineno-13-8" name="__codelineno-13-8" href="#__codelineno-13-8"></a>    <span class="p">}</span>
+<a id="__codelineno-13-9" name="__codelineno-13-9" href="#__codelineno-13-9"></a><span class="p">},</span>
+</code></pre></div>
+<p>To use Llama 2, you can use the following model configuration:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a><span class="s2">&quot;model&quot;</span><span class="p">:</span> <span class="p">{</span>
+<a id="__codelineno-14-2" name="__codelineno-14-2" href="#__codelineno-14-2"></a>    <span class="s2">&quot;provider&quot;</span><span class="p">:</span> <span class="s2">&quot;huggingface_pipeline&quot;</span><span class="p">,</span>
+<a id="__codelineno-14-3" name="__codelineno-14-3" href="#__codelineno-14-3"></a>    <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;meta-llama/Llama-2-7b&quot;</span><span class="p">,</span>
+<a id="__codelineno-14-4" name="__codelineno-14-4" href="#__codelineno-14-4"></a><span class="p">}</span>
+</code></pre></div>
+<h2 id="google-palm">Google PaLM<a class="headerlink" href="#google-palm" title="Permanent link">&para;</a></h2>
+<p>To use models from <a href="https://developers.generativeai.google/products/palm">Google</a>, you can set the <code>provider</code> to <code>google</code> when creating a labeling configuration. The specific model that will be queried can be specified using the <code>name</code> key. Autolabel currently supports the following models from Google:</p>
+<ul>
+<li><code>text-bison@001</code></li>
+<li><code>chat-bison@001</code></li>
+</ul>
+<p><code>text-bison@001</code> is often more suitable for labeling tasks due to its ability to follow natural language instructions. <code>chat-bison@001</code> is fine-tuned for multi-turn conversations. <code>text-bison@001</code> costs $0.001/1K characters and <code>chat-bison@001</code> costs half that at $0.0005/1K characters. Detailed pricing for these models is available <a href="https://cloud.google.com/vertex-ai/pricing#generative_ai_models">here</a></p>
+<h3 id="setup_4">Setup<a class="headerlink" href="#setup_4" title="Permanent link">&para;</a></h3>
+<p>To use Google models with Autolabel, make sure to first install the relevant packages by running:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a>pip<span class="w"> </span>install<span class="w"> </span><span class="s1">&#39;refuel-autolabel[google]&#39;</span>
+</code></pre></div>
+<p>and also setting up <a href="https://cloud.google.com/docs/authentication/application-default-credentials">Google authentication</a> locally.</p>
+<h3 id="example-usage_4">Example usage<a class="headerlink" href="#example-usage_4" title="Permanent link">&para;</a></h3>
+<p>Here is an example of setting config to a dictionary that will use google's <code>text-bison@001</code> model for labeling. Specifically, note that in the dictionary provided by the <code>model</code> tag, <code>provider</code> is set to <code>google</code> and <code>name</code> is set to be <code>text-bison@001</code>. <code>name</code> can be switched to use any of the two models mentioned above.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-16-1" name="__codelineno-16-1" href="#__codelineno-16-1"></a><span class="n">config</span> <span class="o">=</span> <span class="p">{</span>
+<a id="__codelineno-16-2" name="__codelineno-16-2" href="#__codelineno-16-2"></a>    <span class="s2">&quot;task_name&quot;</span><span class="p">:</span> <span class="s2">&quot;OpenbookQAWikipedia&quot;</span><span class="p">,</span>
+<a id="__codelineno-16-3" name="__codelineno-16-3" href="#__codelineno-16-3"></a>    <span class="s2">&quot;task_type&quot;</span><span class="p">:</span> <span class="s2">&quot;question_answering&quot;</span><span class="p">,</span>
+<a id="__codelineno-16-4" name="__codelineno-16-4" href="#__codelineno-16-4"></a>    <span class="s2">&quot;dataset&quot;</span><span class="p">:</span> <span class="p">{</span>
+<a id="__codelineno-16-5" name="__codelineno-16-5" href="#__codelineno-16-5"></a>        <span class="s2">&quot;label_column&quot;</span><span class="p">:</span> <span class="s2">&quot;answer&quot;</span><span class="p">,</span>
+<a id="__codelineno-16-6" name="__codelineno-16-6" href="#__codelineno-16-6"></a>        <span class="s2">&quot;delimiter&quot;</span><span class="p">:</span> <span class="s2">&quot;,&quot;</span>
+<a id="__codelineno-16-7" name="__codelineno-16-7" href="#__codelineno-16-7"></a>    <span class="p">},</span>
+<a id="__codelineno-16-8" name="__codelineno-16-8" href="#__codelineno-16-8"></a>    <span class="s2">&quot;model&quot;</span><span class="p">:</span> <span class="p">{</span>
+<a id="__codelineno-16-9" name="__codelineno-16-9" href="#__codelineno-16-9"></a>        <span class="s2">&quot;provider&quot;</span><span class="p">:</span> <span class="s2">&quot;google&quot;</span><span class="p">,</span>
+<a id="__codelineno-16-10" name="__codelineno-16-10" href="#__codelineno-16-10"></a>        <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;text-bison@001&quot;</span><span class="p">,</span>
+<a id="__codelineno-16-11" name="__codelineno-16-11" href="#__codelineno-16-11"></a>        <span class="s2">&quot;params&quot;</span><span class="p">:</span> <span class="p">{}</span>
+<a id="__codelineno-16-12" name="__codelineno-16-12" href="#__codelineno-16-12"></a>    <span class="p">},</span>
+<a id="__codelineno-16-13" name="__codelineno-16-13" href="#__codelineno-16-13"></a>    <span class="s2">&quot;prompt&quot;</span><span class="p">:</span> <span class="p">{</span>
+<a id="__codelineno-16-14" name="__codelineno-16-14" href="#__codelineno-16-14"></a>        <span class="s2">&quot;task_guidelines&quot;</span><span class="p">:</span> <span class="s2">&quot;You are an expert at answering questions.&quot;</span><span class="p">,</span>
+<a id="__codelineno-16-15" name="__codelineno-16-15" href="#__codelineno-16-15"></a>        <span class="s2">&quot;example_template&quot;</span><span class="p">:</span> <span class="s2">&quot;Question: </span><span class="si">{question}</span><span class="se">\n</span><span class="s2">Answer: </span><span class="si">{answer}</span><span class="s2">&quot;</span>
+<a id="__codelineno-16-16" name="__codelineno-16-16" href="#__codelineno-16-16"></a>    <span class="p">}</span>
+<a id="__codelineno-16-17" name="__codelineno-16-17" href="#__codelineno-16-17"></a><span class="p">}</span>
+</code></pre></div>
+<h3 id="additional-parameters_4">Additional parameters<a class="headerlink" href="#additional-parameters_4" title="Permanent link">&para;</a></h3>
+<p>A few parameters can be passed in alongside <code>google</code> models to tweak their behavior:</p>
+<ul>
+<li><code>max_output_tokens</code> (int): Maximum number of tokens that can be generated in the response.</li>
+<li><code>temperature</code> (float): A float between 0 and 1 which indicates the diversity you want in the output. 0 uses greedy sampling (picks the most likely outcome).</li>
+</ul>
+<p>These parameters can be passed in via the <code>params</code> dictionary under <code>model</code>. Here is an example:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-17-1" name="__codelineno-17-1" href="#__codelineno-17-1"></a><span class="s2">&quot;model&quot;</span><span class="p">:</span> <span class="p">{</span>
+<a id="__codelineno-17-2" name="__codelineno-17-2" href="#__codelineno-17-2"></a>    <span class="s2">&quot;provider&quot;</span><span class="p">:</span> <span class="s2">&quot;google&quot;</span><span class="p">,</span>
+<a id="__codelineno-17-3" name="__codelineno-17-3" href="#__codelineno-17-3"></a>    <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;text-bison@001&quot;</span><span class="p">,</span>
+<a id="__codelineno-17-4" name="__codelineno-17-4" href="#__codelineno-17-4"></a>    <span class="s2">&quot;params&quot;</span><span class="p">:</span> <span class="p">{</span>
+<a id="__codelineno-17-5" name="__codelineno-17-5" href="#__codelineno-17-5"></a>        <span class="s2">&quot;max_output_tokens&quot;</span><span class="p">:</span> <span class="mi">512</span><span class="p">,</span>
+<a id="__codelineno-17-6" name="__codelineno-17-6" href="#__codelineno-17-6"></a>        <span class="s2">&quot;temperature&quot;</span><span class="p">:</span> <span class="mf">0.1</span>
+<a id="__codelineno-17-7" name="__codelineno-17-7" href="#__codelineno-17-7"></a>    <span class="p">}</span>
+<a id="__codelineno-17-8" name="__codelineno-17-8" href="#__codelineno-17-8"></a><span class="p">}</span>
+</code></pre></div>
+<h3 id="model-behavior">Model behavior<a class="headerlink" href="#model-behavior" title="Permanent link">&para;</a></h3>
+<p><code>chat-bison@001</code> always responds in a "chatty" manner (example below), often returning more than just the requested label. This can cause problems on certain labeling tasks.</p>
+<h3 id="content-moderation">Content moderation<a class="headerlink" href="#content-moderation" title="Permanent link">&para;</a></h3>
+<p>Both Google LLMs seem to have much stricter content moderation rules than the other supported models. This can cause certain labeling jobs to completely fail as shown in our technical report [add link to technical report]. Consider a different model if your dataset has content that is likely to trigger Google's built-in content moderation.</p>
+<h2 id="cohere">Cohere<a class="headerlink" href="#cohere" title="Permanent link">&para;</a></h2>
+<p>To use models from <a href="https://cohere.com/">Cohere</a>, you can set the <code>provider</code> to <code>cohere</code> when creating a labeling configuration. The specific model that will be queried can be specified using the <code>name</code> key. Autolabel currently supports the following models from Cohere:</p>
+<ul>
+<li><code>command</code> (4096 max tokens)</li>
+<li><code>command-light</code> (4096 max tokens)</li>
+<li><code>base</code> (2048 max tokens)</li>
+<li><code>base-light</code> (2048 max tokens)</li>
+</ul>
+<p><code>command</code> is an instruction-following conversational model that performs language tasks with high quality, while <code>command-light</code> is an almost as capable, but much faster option. <code>base</code> is a model that performs generative language tasks, while <code>base-light</code> much faster but a little less capable. All models cost the same at $15/1 million tokens. Detailed pricing for these models is available <a href="https://cohere.com/pricing">here</a>.</p>
+<h3 id="setup_5">Setup<a class="headerlink" href="#setup_5" title="Permanent link">&para;</a></h3>
+<p>To use Cohere models with Autolabel, make sure to first install the relevant packages by running:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-18-1" name="__codelineno-18-1" href="#__codelineno-18-1"></a>pip<span class="w"> </span>install<span class="w"> </span><span class="s1">&#39;refuel-autolabel[cohere]&#39;</span>
+</code></pre></div>
+<p>and also setting the following environment variable:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-19-1" name="__codelineno-19-1" href="#__codelineno-19-1"></a>export COHERE_API_KEY=&lt;your-cohere-key&gt;
+</code></pre></div>
+<p>replacing <code>&lt;your-cohere-key&gt;</code> with your API key, which you can get from <a href="https://dashboard.cohere.ai/">here</a>.</p>
+<h3 id="example-usage_5">Example usage<a class="headerlink" href="#example-usage_5" title="Permanent link">&para;</a></h3>
+<p>Here is an example of setting config to a dictionary that will use cohere's <code>command</code> model for labeling. Specifically, note that in the dictionary proivded by the <code>model</code> tag, <code>provider</code> is set to <code>cohere</code> and <code>name</code> is set to be <code>command</code>. <code>name</code> can be switched to use any of the four models mentioned above.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-20-1" name="__codelineno-20-1" href="#__codelineno-20-1"></a><span class="n">config</span> <span class="o">=</span> <span class="p">{</span>
+<a id="__codelineno-20-2" name="__codelineno-20-2" href="#__codelineno-20-2"></a>    <span class="s2">&quot;task_name&quot;</span><span class="p">:</span> <span class="s2">&quot;OpenbookQAWikipedia&quot;</span><span class="p">,</span>
+<a id="__codelineno-20-3" name="__codelineno-20-3" href="#__codelineno-20-3"></a>    <span class="s2">&quot;task_type&quot;</span><span class="p">:</span> <span class="s2">&quot;question_answering&quot;</span><span class="p">,</span>
+<a id="__codelineno-20-4" name="__codelineno-20-4" href="#__codelineno-20-4"></a>    <span class="s2">&quot;dataset&quot;</span><span class="p">:</span> <span class="p">{</span>
+<a id="__codelineno-20-5" name="__codelineno-20-5" href="#__codelineno-20-5"></a>        <span class="s2">&quot;label_column&quot;</span><span class="p">:</span> <span class="s2">&quot;answer&quot;</span><span class="p">,</span>
+<a id="__codelineno-20-6" name="__codelineno-20-6" href="#__codelineno-20-6"></a>        <span class="s2">&quot;delimiter&quot;</span><span class="p">:</span> <span class="s2">&quot;,&quot;</span>
+<a id="__codelineno-20-7" name="__codelineno-20-7" href="#__codelineno-20-7"></a>    <span class="p">},</span>
+<a id="__codelineno-20-8" name="__codelineno-20-8" href="#__codelineno-20-8"></a>    <span class="s2">&quot;model&quot;</span><span class="p">:</span> <span class="p">{</span>
+<a id="__codelineno-20-9" name="__codelineno-20-9" href="#__codelineno-20-9"></a>        <span class="s2">&quot;provider&quot;</span><span class="p">:</span> <span class="s2">&quot;cohere&quot;</span><span class="p">,</span>
+<a id="__codelineno-20-10" name="__codelineno-20-10" href="#__codelineno-20-10"></a>        <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;command&quot;</span><span class="p">,</span>
+<a id="__codelineno-20-11" name="__codelineno-20-11" href="#__codelineno-20-11"></a>        <span class="s2">&quot;params&quot;</span><span class="p">:</span> <span class="p">{}</span>
+<a id="__codelineno-20-12" name="__codelineno-20-12" href="#__codelineno-20-12"></a>    <span class="p">},</span>
+<a id="__codelineno-20-13" name="__codelineno-20-13" href="#__codelineno-20-13"></a>    <span class="s2">&quot;prompt&quot;</span><span class="p">:</span> <span class="p">{</span>
+<a id="__codelineno-20-14" name="__codelineno-20-14" href="#__codelineno-20-14"></a>        <span class="s2">&quot;task_guidelines&quot;</span><span class="p">:</span> <span class="s2">&quot;You are an expert at answering questions.&quot;</span><span class="p">,</span>
+<a id="__codelineno-20-15" name="__codelineno-20-15" href="#__codelineno-20-15"></a>        <span class="s2">&quot;example_template&quot;</span><span class="p">:</span> <span class="s2">&quot;Question: </span><span class="si">{question}</span><span class="se">\n</span><span class="s2">Answer: </span><span class="si">{answer}</span><span class="s2">&quot;</span>
+<a id="__codelineno-20-16" name="__codelineno-20-16" href="#__codelineno-20-16"></a>    <span class="p">}</span>
+<a id="__codelineno-20-17" name="__codelineno-20-17" href="#__codelineno-20-17"></a><span class="p">}</span>
+</code></pre></div>
+<h3 id="additional-parameters_5">Additional parameters<a class="headerlink" href="#additional-parameters_5" title="Permanent link">&para;</a></h3>
+<p>A few parameters that can be passed in for <code>cohere</code> models to control the model behavior:</p>
+<ul>
+<li><code>max_tokens</code> (int): The maximum number of tokens to predict per generation</li>
+<li><code>temperature</code> (float): The degree of randomness in generations from 0.0 to 5.0, lower is less random.</li>
+</ul>
+<p>These parameters can be passed in via the <code>params</code> dictionary under <code>model</code>. Here is an example:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-21-1" name="__codelineno-21-1" href="#__codelineno-21-1"></a><span class="s2">&quot;model&quot;</span><span class="p">:</span> <span class="p">{</span>
+<a id="__codelineno-21-2" name="__codelineno-21-2" href="#__codelineno-21-2"></a>    <span class="s2">&quot;provider&quot;</span><span class="p">:</span> <span class="s2">&quot;cohere&quot;</span><span class="p">,</span>
+<a id="__codelineno-21-3" name="__codelineno-21-3" href="#__codelineno-21-3"></a>    <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;command&quot;</span><span class="p">,</span>
+<a id="__codelineno-21-4" name="__codelineno-21-4" href="#__codelineno-21-4"></a>    <span class="s2">&quot;params&quot;</span><span class="p">:</span> <span class="p">{</span>
+<a id="__codelineno-21-5" name="__codelineno-21-5" href="#__codelineno-21-5"></a>        <span class="s2">&quot;max_tokens&quot;</span><span class="p">:</span> <span class="mi">512</span><span class="p">,</span>
+<a id="__codelineno-21-6" name="__codelineno-21-6" href="#__codelineno-21-6"></a>        <span class="s2">&quot;temperature&quot;</span><span class="p">:</span> <span class="mf">0.1</span>
+<a id="__codelineno-21-7" name="__codelineno-21-7" href="#__codelineno-21-7"></a>    <span class="p">}</span>
+<a id="__codelineno-21-8" name="__codelineno-21-8" href="#__codelineno-21-8"></a><span class="p">}</span>
+</code></pre></div>
+<h2 id="provider-list">Provider List<a class="headerlink" href="#provider-list" title="Permanent link">&para;</a></h2>
+<p>The table lists out all the provider, model combinations that Autolabel supports today:</p>
+<table>
+<thead>
+<tr>
+<th>Provider</th>
+<th>Name</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>openai</td>
+<td>text-davinci-003</td>
+</tr>
+<tr>
+<td>openai</td>
+<td><a href="https://platform.openai.com/docs/models/gpt-3-5">gpt-3.5-turbo models</a></td>
+</tr>
+<tr>
+<td>openai</td>
+<td><a href="https://platform.openai.com/docs/models/gpt-4">gpt-4 models</a></td>
+</tr>
+<tr>
+<td>anthropic</td>
+<td>claude-v1</td>
+</tr>
+<tr>
+<td>anthropic</td>
+<td>claude-instant-v1</td>
+</tr>
+<tr>
+<td>huggingface_pipeline</td>
+<td><a href="https://huggingface.co/learn/nlp-course/chapter1/7?fw=pt#sequencetosequence-modelssequencetosequencemodels">seq2seq models</a> and <a href="https://huggingface.co/docs/transformers/tasks/language_modeling">causalLM models</a></td>
+</tr>
+<tr>
+<td>refuel</td>
+<td>flan-t5-xxl</td>
+</tr>
+<tr>
+<td>google</td>
+<td>text-bison@001</td>
+</tr>
+<tr>
+<td>google</td>
+<td>chat-bison@001</td>
+</tr>
+<tr>
+<td>cohere</td>
+<td>command</td>
+</tr>
+<tr>
+<td>cohere</td>
+<td>command-light</td>
+</tr>
+<tr>
+<td>cohere</td>
+<td>base</td>
+</tr>
+<tr>
+<td>cohere</td>
+<td>base-light</td>
+</tr>
+</tbody>
+</table>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+  <script>var tabs=__md_get("__tabs");if(Array.isArray(tabs))e:for(var set of document.querySelectorAll(".tabbed-set")){var tab,labels=set.querySelector(".tabbed-labels");for(tab of tabs)for(var label of labels.getElementsByTagName("label"))if(label.innerText.trim()===tab){var input=document.getElementById(label.htmlFor);input.checked=!0;continue e}}</script>
+
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12Z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    <script id="__config" type="application/json">{"base": "../../..", "features": ["navigation.instant", "navigation.tabs", "navigation.sections", "navigation.top", "toc.follow", "search.suggest", "search.highlight", "content.tabs.link", "content.code.annotation", "content.code.copy"], "search": "../../../assets/javascripts/workers/search.b8dbb3d2.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
+    
+    
+      <script src="../../../assets/javascripts/bundle.8fd75fb4.min.js"></script>
+      
+    
+  </body>
+</html>
