@@ -335,12 +335,7 @@ def get_data(dataset_name: str, force: bool = False):
 
     def download(url: str) -> None:
         """Downloads the data given an url"""
-        os.mkdir("data") if not os.path.exists("data") else None
-        (
-            os.mkdir(f"data/{dataset_name}")
-            if not os.path.exists(f"data/{dataset_name}")
-            else None
-        )
+        os.makedirs(os.path.join("data", dataset_name), exist_ok=True)
         file_name = os.path.join("data", dataset_name, os.path.basename(url))
         if force and os.path.exists(file_name):
             print(f"File {file_name} exists. Removing")
