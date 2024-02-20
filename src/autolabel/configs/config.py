@@ -35,6 +35,7 @@ class AutolabelConfig(BaseConfig):
     MODEL_PARAMS_KEY = "params"
     COMPUTE_CONFIDENCE_KEY = "compute_confidence"
     LOGIT_BIAS_KEY = "logit_bias"
+    JSON_MODE = "json_mode"
 
     # Embedding config keys (config["embedding"][<key>])
     EMBEDDING_PROVIDER_KEY = "provider"
@@ -281,3 +282,7 @@ class AutolabelConfig(BaseConfig):
     def confidence_merge_function(self) -> str:
         """Returns the function to use when merging confidence scores"""
         return self._chunking_config.get(self.CONFIDENCE_MERGE_FUNCTION_KEY, "max")
+
+    def json_mode(self) -> bool:
+        """Returns true if the model should be used in json mode. Currently only used for OpenAI models."""
+        return self._model_config.get(self.JSON_MODE, False)
