@@ -77,6 +77,7 @@ class LabelingAgent:
         cache: Optional[bool] = True,
         example_selector: Optional[BaseExampleSelector] = None,
         console_output: Optional[bool] = True,
+        create_task: Optional[bool] = False,
         generation_cache: Optional[BaseCache] = SQLAlchemyGenerationCache(),
         transform_cache: Optional[BaseCache] = SQLAlchemyTransformCache(),
         confidence_cache: Optional[BaseCache] = SQLAlchemyConfidenceCache(),
