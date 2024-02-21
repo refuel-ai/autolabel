@@ -1,28 +1,26 @@
 """Base interface that all prediction tasks will implement."""
 
+import json
+import logging
+import pickle
 from abc import ABC, abstractmethod
 from typing import Callable, Dict, List, Optional, Union
-import logging
-import json
-import pickle
 
 from langchain.prompts.prompt import PromptTemplate
-from langchain.schema import Generation, ChatGeneration
+from langchain.schema import ChatGeneration, Generation
+
 from autolabel.configs import AutolabelConfig
+from autolabel.metrics import BaseMetric
 from autolabel.schema import (
+    ErrorType,
+    FewShotAlgorithm,
+    LabelingError,
     LLMAnnotation,
     MetricResult,
-    FewShotAlgorithm,
-    TaskType,
-    LabelingError,
-    ErrorType,
     ModelProvider,
+    TaskType,
 )
-from autolabel.utils import (
-    get_format_variables,
-    extract_valid_json_substring,
-)
-from autolabel.metrics import BaseMetric
+from autolabel.utils import extract_valid_json_substring, get_format_variables
 
 logger = logging.getLogger(__name__)
 
@@ -169,9 +167,11 @@ class BaseTask(ABC):
             complete_prompt = prompt_template.format(
                 task_guidelines=trimmed_elements[task_guidelines],
                 output_guidelines=trimmed_elements[output_guidelines],
-                seed_examples=trimmed_elements[seed_examples]
-                if seed_examples is not None
-                else None,
+                seed_examples=(
+                    trimmed_elements[seed_examples]
+                    if seed_examples is not None
+                    else None
+                ),
                 current_example=trimmed_elements[current_example],
             )
 
@@ -258,6 +258,7 @@ class BaseTask(ABC):
                         llm_multi_labels,
                     )
                 )
+                llm_multi_labels = list(set(llm_multi_labels))
                 if len(llm_multi_labels) == 0:
                     llm_label = self.NULL_LABEL_TOKEN
                     successfully_labeled = False

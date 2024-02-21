@@ -114,7 +114,7 @@
             "Withholdings"
         ],
         "example_template": "Example: {example}\nOutput: {label}",
-        "few_shot_examples": "seed.csv",
+        "few_shot_examples": "data/ledgar/seed.csv",
         "few_shot_selection": "semantic_similarity",
         "few_shot_num": 4
     }

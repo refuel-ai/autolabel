@@ -19,7 +19,7 @@
             "Miscellaneous"
         ],
         "example_template": "Example: {example}\nOutput:\n{CategorizedLabels}",
-        "few_shot_examples": "seed.csv",
+        "few_shot_examples": "data/conll2003/seed.csv",
         "few_shot_selection": "semantic_similarity",
         "few_shot_num": 5
     }

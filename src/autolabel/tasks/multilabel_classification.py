@@ -1,23 +1,24 @@
+import json
+import logging
 from collections import defaultdict
-from typing import List, Callable, Dict, Optional, Tuple
+from typing import Callable, Dict, List, Optional, Tuple
 
 from langchain.prompts.prompt import PromptTemplate
 
 from autolabel.configs import AutolabelConfig
-from autolabel.schema import LLMAnnotation, MetricType, MetricResult, F1Type
-from autolabel.tasks import BaseTask
-from autolabel.utils import get_format_variables
-
-import json
-
 from autolabel.metrics import (
     AccuracyMetric,
     AUROCMetric,
-    SupportMetric,
+    BaseMetric,
     CompletionRateMetric,
     F1Metric,
-    BaseMetric,
+    SupportMetric,
 )
+from autolabel.schema import F1Type, LLMAnnotation, MetricResult, MetricType
+from autolabel.tasks import BaseTask
+from autolabel.utils import get_format_variables
+
+logger = logging.getLogger(__name__)
 
 
 class MultilabelClassificationTask(BaseTask):
@@ -62,8 +63,12 @@ class MultilabelClassificationTask(BaseTask):
         # prepare task guideline
         labels_list = self.config.labels_list()
         num_labels = len(labels_list)
-        fmt_task_guidelines = self.task_guidelines.format_map(
-            defaultdict(str, labels="\n".join(labels_list), num_labels=num_labels)
+        if self.config.label_descriptions():
+            labels_list = ""
+            for label, description in self.config.label_descriptions().items():
+                labels_list = labels_list = f"{label} : {description}\n"
+        fmt_task_guidelines = self.task_guidelines.format(
+            num_labels=num_labels, labels="\n".join(labels_list)
         )
 
         # prepare seed examples
@@ -86,8 +91,19 @@ class MultilabelClassificationTask(BaseTask):
         if explanation_column:
             input[explanation_column] = ""
 
+        # check if all mapped keys in input are in the example template
+        try:
+            current_example = example_template.format(**input)
+        except KeyError as e:
+            current_example = example_template.format_map(defaultdict(str, input))
+            logger.warn(
+                f'\n\nKey {e} in the "example_template" in the given config'
+                f"\n\n{example_template}\n\nis not present in the datsaset columns - {input.keys()}.\n\n"
+                f"Input - {input}\n\n"
+                "Continuing with the prompt as {current_example}"
+            )
+
         # populate the current example in the prompt
-        current_example = example_template.format_map(defaultdict(str, input))
         prompt_template = (
             self.prompt_template
             if prompt_template_override is None
@@ -143,9 +159,11 @@ class MultilabelClassificationTask(BaseTask):
 
         return pt.format(
             task_guidelines=fmt_task_guidelines,
-            label_format=self.LABEL_FORMAT_IN_EXPLANATION
-            if include_label
-            else self.EXCLUDE_LABEL_IN_EXPLANATION,
+            label_format=(
+                self.LABEL_FORMAT_IN_EXPLANATION
+                if include_label
+                else self.EXCLUDE_LABEL_IN_EXPLANATION
+            ),
             labeled_example=fmt_example,
         )
 

@@ -15,7 +15,7 @@
         "labels": [
             "algebra", "arithmetic", "measurement", "numbers", "probability"
         ],
-        "few_shot_examples": "seed.csv",
+        "few_shot_examples": "data/math/seed.csv",
         "few_shot_selection": "semantic_similarity",
         "few_shot_num": 10,
         "example_template": "Input: {example}\nOutput: {label}"

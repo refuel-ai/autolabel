@@ -81,8 +81,24 @@ class ClassificationTask(BaseTask):
         )
         num_labels = len(labels_list)
 
-        fmt_task_guidelines = self.task_guidelines.format_map(
-            defaultdict(str, labels="\n".join(labels_list), num_labels=num_labels)
+        is_refuel_llm = self.config.provider() == ModelProvider.REFUEL
+
+        if is_refuel_llm:
+            labels = (
+                ", ".join([f'\\"{i}\\"' for i in labels_list[:-1]])
+                + " or "
+                + f'\\"{labels_list[-1]}\\"'
+            )
+        else:
+            if self.config.label_descriptions():
+                labels = ""
+                for label, description in self.config.label_descriptions().items():
+                    labels = labels + f"{label} : {description}\n"
+            else:
+                labels = "\n".join(labels_list)
+
+        fmt_task_guidelines = self.task_guidelines.format(
+            num_labels=num_labels, labels=labels
         )
 
         # prepare seed examples
@@ -105,8 +121,19 @@ class ClassificationTask(BaseTask):
         if explanation_column:
             input[explanation_column] = ""
 
+        # check if all mapped keys in input are in the example template
+        try:
+            current_example = example_template.format(**input)
+        except KeyError as e:
+            current_example = example_template.format_map(defaultdict(str, input))
+            logger.warn(
+                f'\n\nKey {e} in the "example_template" in the given config'
+                f"\n\n{example_template}\n\nis not present in the datsaset columns - {input.keys()}.\n\n"
+                f"Input - {input}\n\n"
+                "Continuing with the prompt as {current_example}"
+            )
+
         # populate the current example in the prompt
-        current_example = example_template.format_map(defaultdict(str, input))
         prompt_template = (
             self.prompt_template
             if prompt_template_override is None
@@ -162,9 +189,11 @@ class ClassificationTask(BaseTask):
 
         return pt.format(
             task_guidelines=fmt_task_guidelines,
-            label_format=self.LABEL_FORMAT_IN_EXPLANATION
-            if include_label
-            else self.EXCLUDE_LABEL_IN_EXPLANATION,
+            label_format=(
+                self.LABEL_FORMAT_IN_EXPLANATION
+                if include_label
+                else self.EXCLUDE_LABEL_IN_EXPLANATION
+            ),
             labeled_example=fmt_example,
         )
 

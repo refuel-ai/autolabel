@@ -178,10 +178,12 @@ class VectorStoreWrapper(VectorStore):
                         f"SELECT embedding FROM {EMBEDDINGS_TABLE} WHERE embedding_function = :x AND text = :y",
                     )
                     params = {
-                        "x": self._embedding_function.model
-                        if self._embedding_function.__class__.__name__
-                        not in ["HuggingFaceEmbeddings", "VertexAIEmbeddings"]
-                        else self._embedding_function.model_name,
+                        "x": (
+                            self._embedding_function.model
+                            if self._embedding_function.__class__.__name__
+                            not in ["HuggingFaceEmbeddings", "VertexAIEmbeddings"]
+                            else self._embedding_function.model_name
+                        ),
                         "y": text,
                     }
                     result = conn.execute(query, params).fetchone()
@@ -218,10 +220,12 @@ class VectorStoreWrapper(VectorStore):
                         f"INSERT INTO {EMBEDDINGS_TABLE} (embedding_function, text, embedding) VALUES (:x, :y, :z)"
                     )
                     params = {
-                        "x": self._embedding_function.model
-                        if self._embedding_function.__class__.__name__
-                        not in ["HuggingFaceEmbeddings", "VertexAIEmbeddings"]
-                        else self._embedding_function.model_name,
+                        "x": (
+                            self._embedding_function.model
+                            if self._embedding_function.__class__.__name__
+                            not in ["HuggingFaceEmbeddings", "VertexAIEmbeddings"]
+                            else self._embedding_function.model_name
+                        ),
                         "y": text,
                         "z": pickle.dumps(embedding),
                     }

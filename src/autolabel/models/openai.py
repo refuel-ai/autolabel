@@ -47,6 +47,13 @@ class OpenAILLM(BaseModel):
         "gpt-4-1106-preview",
         "gpt-4-0125-preview",
     ]
+    JSON_MODE_MODELS = [
+        "gpt-3.5-turbo-0125",
+        "gpt-3.5-turbo",
+        "gpt-4-0125-preview",
+        "gpt-4-1106-preview",
+        "gpt-4-turbo-preview",
+    ]
 
     # Default parameters for OpenAILLM
     DEFAULT_MODEL = "gpt-3.5-turbo"
@@ -137,6 +144,13 @@ class OpenAILLM(BaseModel):
             self.llm = ChatOpenAI(
                 model_name=self.model_name, verbose=False, **self.model_params
             )
+            if config.json_mode():
+                if self.model_name not in self.JSON_MODE_MODELS:
+                    logger.warning(
+                        f"json_mode is not supported for model {self.model_name}. Disabling json_mode."
+                    )
+                else:
+                    self.query_params["response_format"] = {"type": "json_object"}
         else:
             self.model_params = {
                 **self.DEFAULT_PARAMS_COMPLETION_ENGINE,

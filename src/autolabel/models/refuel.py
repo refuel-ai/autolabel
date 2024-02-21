@@ -109,11 +109,11 @@ class RefuelLLM(BaseModel):
                     [
                         Generation(
                             text=response["generated_text"],
-                            generation_info={
-                                "logprobs": {"top_logprobs": response["logprobs"]}
-                            }
-                            if self.config.confidence()
-                            else None,
+                            generation_info=(
+                                {"logprobs": {"top_logprobs": response["logprobs"]}}
+                                if self.config.confidence()
+                                else None
+                            ),
                         )
                     ]
                 )

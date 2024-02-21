@@ -1,31 +1,31 @@
-from typing import Callable, Dict, List, Optional, Union
-from collections import defaultdict
-import logging
 import json
+import logging
 import pickle
+from collections import defaultdict
+from typing import Callable, Dict, List, Optional, Union
 
 from langchain.prompts.prompt import PromptTemplate
-from langchain.schema import Generation, ChatGeneration
+from langchain.schema import ChatGeneration, Generation
 
 from autolabel.configs import AutolabelConfig
-from autolabel.tasks import BaseTask
-from autolabel.schema import (
-    LLMAnnotation,
-    MetricResult,
-    F1Type,
-    LabelingError,
-    ErrorType,
-    TaskType,
-    MetricType,
-)
-from autolabel.utils import get_format_variables
 from autolabel.metrics import (
     AccuracyMetric,
-    SupportMetric,
-    CompletionRateMetric,
     AUROCMetric,
     BaseMetric,
+    CompletionRateMetric,
+    SupportMetric,
 )
+from autolabel.schema import (
+    ErrorType,
+    F1Type,
+    LabelingError,
+    LLMAnnotation,
+    MetricResult,
+    MetricType,
+    TaskType,
+)
+from autolabel.tasks import BaseTask
+from autolabel.utils import get_format_variables
 
 logger = logging.getLogger(__name__)
 
@@ -124,8 +124,19 @@ class AttributeExtractionTask(BaseTask):
 
         input[self.OUTPUT_DICT_KEY] = ""
 
+        # check if all mapped keys in input are in the example template
+        try:
+            current_example = example_template.format(**input)
+        except KeyError as e:
+            current_example = example_template.format_map(defaultdict(str, input))
+            logger.warn(
+                f'\n\nKey {e} in the "example_template" in the given config'
+                f"\n\n{example_template}\n\nis not present in the datsaset columns - {input.keys()}.\n\n"
+                f"Input - {input}\n\n"
+                "Continuing with the prompt as {current_example}"
+            )
+
         # populate the current example in the prompt
-        current_example = example_template.format_map(defaultdict(str, input))
         prompt_template = (
             self.prompt_template
             if prompt_template_override is None
@@ -239,9 +250,11 @@ class AttributeExtractionTask(BaseTask):
                         curr_sample=llm_label.curr_sample,
                         prompt=llm_label.prompt,
                         error=llm_label.error,
-                        confidence_score=llm_label.confidence_score[attribute]
-                        if llm_label.confidence_score
-                        else 0,
+                        confidence_score=(
+                            llm_label.confidence_score[attribute]
+                            if llm_label.confidence_score
+                            else 0
+                        ),
                     )
                 )
 

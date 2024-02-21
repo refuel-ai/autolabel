@@ -324,6 +324,9 @@ def run(
     max_items: Annotated[int, typer.Option(help="Max number of items to label")] = None,
     start_index: Annotated[int, typer.Option(help="Index to start at")] = 0,
     cache: Annotated[bool, typer.Option(help="Cache results")] = True,
+    output_name: Annotated[
+        str, typer.Option(help="Path to output file to save run results to")
+    ] = None,
     verbose_debug: Annotated[
         bool, typer.Option("--debug", "-vv", help="Verbose (debug log level)")
     ] = False,
@@ -342,7 +345,9 @@ def run(
     agent = LabelingAgent(config=config, cache=cache)
     config = agent.config
     dataset = AutolabelDataset(dataset, config)
-    agent.run(dataset, max_items=max_items, start_index=start_index)
+    agent.run(
+        dataset, max_items=max_items, output_name=output_name, start_index=start_index
+    )
 
 
 if __name__ == "__main__":
