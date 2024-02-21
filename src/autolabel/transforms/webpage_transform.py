@@ -15,7 +15,6 @@ from langchain.docstore.document import Document
 from autolabel.cache import BaseCache
 
 logger = logging.getLogger(__name__)
-logging.getLogger(__name__).setLevel(logging.INFO)
 
 MAX_RETRIES = 5
 BACKOFF = 2
