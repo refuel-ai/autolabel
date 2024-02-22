@@ -1,3 +1,4 @@
+from urllib.parse import urlparse
 from autolabel.transforms.schema import (
     TransformType,
     TransformError,
@@ -88,8 +89,9 @@ class WebpageTransform(BaseTransform):
                 TransformErrorType.INVALID_INPUT,
                 f"Empty url in row {row}",
             )
-        else:
-            url_response_text = await self._load_url(url)
+        if not urlparse(url).scheme:
+            url = f"https://{url}"
+        url_response_text = await self._load_url(url)
 
         transformed_row = {
             self.output_columns["content_column"]: url_response_text,
