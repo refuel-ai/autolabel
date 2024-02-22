@@ -9,7 +9,7 @@ import asyncio
 import logging
 import pandas as pd
 import ssl
-from langchain.document_loaders.chromium import AsyncChromiumLoader
+from playwright.async_api import async_playwright
 from langchain_community.document_transformers import Html2TextTransformer
 from langchain.docstore.document import Document
 from autolabel.cache import BaseCache
@@ -18,6 +18,7 @@ logger = logging.getLogger(__name__)
 
 MAX_RETRIES = 5
 BACKOFF = 2
+DEFAULT_TIMEOUT = 60000  # in milliseconds
 
 
 class WebpageTransform(BaseTransform):
@@ -30,14 +31,31 @@ class WebpageTransform(BaseTransform):
         cache: BaseCache,
         output_columns: Dict[str, Any],
         url_column: str,
+        timeout: int = DEFAULT_TIMEOUT,
     ) -> None:
         super().__init__(cache, output_columns)
         self.url_column = url_column
         self.max_retries = MAX_RETRIES
+        self.timeout = timeout
         self.html2text_transformer = Html2TextTransformer()
 
     def name(self) -> str:
         return TransformType.WEBPAGE_TRANSFORM
+
+    async def ascrape_playwright(self, url: str) -> str:
+        results = ""
+        async with async_playwright() as p:
+            browser = await p.chromium.launch(headless=True)
+            context = await browser.new_context(ignore_https_errors=True)
+            try:
+                page = await context.new_page()
+                page.set_default_timeout(self.timeout)
+                await page.goto(url)
+                results = await page.content()
+            except Exception as e:
+                results = f"Error: {e}"
+            await browser.close()
+        return results
 
     async def _load_url(self, url: str, retry_count=0) -> str:
         if retry_count >= self.max_retries:
@@ -47,8 +65,7 @@ class WebpageTransform(BaseTransform):
             )
 
         try:
-            loader = AsyncChromiumLoader(urls=[url])
-            html_content = await loader.ascrape_playwright(url)
+            html_content = await self.ascrape_playwright(url)
             documents = [Document(page_content=html_content, metadata={"source": url})]
             text = self.html2text_transformer.transform_documents(documents)[
                 0
