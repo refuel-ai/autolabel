@@ -1,4 +1,6 @@
 from collections import defaultdict
+import copy
+from itertools import groupby
 from autolabel.configs.config import AutolabelConfig
 import logging
 from typing import Dict, List, Optional
@@ -16,6 +18,7 @@ from autolabel.cache.sqlalchemy_transform_cache import SQLAlchemyTransformCache
 from autolabel.cache.sqlalchemy_confidence_cache import SQLAlchemyConfidenceCache
 from autolabel.cache.base import BaseCache
 from pydantic import BaseModel
+from autolabel.configs import TaskChainConfig
 from autolabel.transforms import TransformFactory
 from transformers import AutoTokenizer
 import pandas as pd
@@ -66,7 +69,7 @@ class TaskGraph:
 class TaskChainOrchestrator:
     def __init__(
         self,
-        task_configs: List[AutolabelConfig],
+        task_chain_config: TaskChainConfig,
         dataset_df: pd.DataFrame,
         cache: Optional[bool] = True,
         example_selector: Optional[BaseExampleSelector] = None,
@@ -76,7 +79,8 @@ class TaskChainOrchestrator:
         confidence_tokenizer: Optional[AutoTokenizer] = None,
         column_name_map: Optional[Dict[str, str]] = None,
     ):
-        self.task_configs = task_configs
+        self.task_chain_config = task_chain_config
+        self.task_configs = self.initialize_task_configs()
         self.dataset_df = dataset_df
         self.cache = cache
         self.example_selector = example_selector
@@ -91,6 +95,24 @@ class TaskChainOrchestrator:
         self.task_graph = self.initialize_task_graph()
         logger.info(f"task graph: {self.task_graph.graph}")
         self.sort_task_chain()
+
+    def initialize_task_configs(self):
+        task_configs = []
+        subtasks = self.task_chain_config.subtasks()
+        logger.info(f"subtasks: {subtasks}")
+        for input_columns, group in groupby(subtasks, lambda x: x.get("input_columns")):
+            task_config = copy.deepcopy(self.task_chain_config.config)
+            logger.info(f"task config: {task_config}")
+            task_config["prompt"]["attributes"] = task_config["prompt"].pop(
+                "subtasks", []
+            )
+            task_config["dataset"]["input_columns"] = input_columns
+            attributes = []
+            for subtask in group:
+                attributes.append(subtask)
+            logger.info(f"task config: {task_config}")
+            task_configs.append(AutolabelConfig(task_config))
+        return task_configs
 
     def initialize_task_chain(self):
         task_chain = []
