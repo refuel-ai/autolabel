@@ -91,7 +91,7 @@
             "wrong_amount_of_cash_received",
             "wrong_exchange_rate_for_cash_withdrawal"
         ],
-        "few_shot_examples": "seed.csv",
+        "few_shot_examples": "data/banking/seed.csv",
         "few_shot_selection": "semantic_similarity",
         "few_shot_num": 10,
         "example_template": "Input: {example}\nOutput: {label}"

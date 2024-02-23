@@ -1,16 +1,15 @@
-from functools import cached_property
-from typing import List, Optional
-from time import time
 import logging
+import os
+from functools import cached_property
+from time import time
+from typing import List, Optional
 
-from autolabel.models import BaseModel
-from autolabel.configs import AutolabelConfig
-from autolabel.cache import BaseCache
-from autolabel.schema import RefuelLLMResult
 from langchain.schema import HumanMessage, LLMResult
 
-
-import os
+from autolabel.cache import BaseCache
+from autolabel.configs import AutolabelConfig
+from autolabel.models import BaseModel
+from autolabel.schema import RefuelLLMResult
 
 logger = logging.getLogger(__name__)
 
@@ -29,6 +28,7 @@ class OpenAILLM(BaseModel):
         "gpt-4-32k",
         "gpt-4-32k-0613",
         "gpt-4-1106-preview",
+        "gpt-4-0125-preview",
     ]
     MODELS_WITH_TOKEN_PROBS = [
         "text-curie-001",
@@ -45,6 +45,14 @@ class OpenAILLM(BaseModel):
         "gpt-4-32k",
         "gpt-4-32k-0613",
         "gpt-4-1106-preview",
+        "gpt-4-0125-preview",
+    ]
+    JSON_MODE_MODELS = [
+        "gpt-3.5-turbo-0125",
+        "gpt-3.5-turbo",
+        "gpt-4-0125-preview",
+        "gpt-4-1106-preview",
+        "gpt-4-turbo-preview",
     ]
 
     # Default parameters for OpenAILLM
@@ -78,6 +86,7 @@ class OpenAILLM(BaseModel):
         "gpt-4-0314": 0.03 / 1000,
         "gpt-4-32k-0314": 0.06 / 1000,
         "gpt-4-1106-preview": 0.01 / 1000,
+        "gpt-4-0125-preview": 0.01 / 1000,
     }
     COST_PER_COMPLETION_TOKEN = {
         "text-davinci-003": 0.02 / 1000,
@@ -94,6 +103,7 @@ class OpenAILLM(BaseModel):
         "gpt-4-0314": 0.06 / 1000,
         "gpt-4-32k-0314": 0.12 / 1000,
         "gpt-4-1106-preview": 0.03 / 1000,
+        "gpt-4-0125-preview": 0.03 / 1000,
     }
 
     @cached_property
@@ -106,9 +116,9 @@ class OpenAILLM(BaseModel):
     def __init__(self, config: AutolabelConfig, cache: BaseCache = None) -> None:
         super().__init__(config, cache)
         try:
+            import tiktoken
             from langchain.chat_models import ChatOpenAI
             from langchain.llms import OpenAI
-            import tiktoken
         except ImportError:
             raise ImportError(
                 "openai is required to use the OpenAILLM. Please install it with the following command: pip install 'refuel-autolabel[openai]'"
@@ -134,6 +144,13 @@ class OpenAILLM(BaseModel):
             self.llm = ChatOpenAI(
                 model_name=self.model_name, verbose=False, **self.model_params
             )
+            if config.json_mode():
+                if self.model_name not in self.JSON_MODE_MODELS:
+                    logger.warning(
+                        f"json_mode is not supported for model {self.model_name}. Disabling json_mode."
+                    )
+                else:
+                    self.query_params["response_format"] = {"type": "json_object"}
         else:
             self.model_params = {
                 **self.DEFAULT_PARAMS_COMPLETION_ENGINE,

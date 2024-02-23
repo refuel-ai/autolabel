@@ -1,57 +1,58 @@
+import asyncio
+import io
+import json
 import logging
 import os
-import io
-from typing import Dict, List, Optional, Tuple, Union
-import json
 import pickle
-import asyncio
-import pandas as pd
+from typing import Dict, List, Optional, Tuple, Union
+
 import numpy as np
-from transformers import AutoTokenizer
+import pandas as pd
 from rich import print as pprint
 from rich.console import Console
 from rich.prompt import Confirm
+from transformers import AutoTokenizer
 
 from autolabel.cache import (
     BaseCache,
+    SQLAlchemyConfidenceCache,
     SQLAlchemyGenerationCache,
     SQLAlchemyTransformCache,
-    SQLAlchemyConfidenceCache,
 )
 from autolabel.confidence import ConfidenceCalculator
 from autolabel.configs import AutolabelConfig
-from autolabel.dataset import AutolabelDataset
 from autolabel.data_models import AnnotationModel, TaskRunModel
 from autolabel.database import StateManager
+from autolabel.dataset import AutolabelDataset
 from autolabel.few_shot import (
-    ExampleSelectorFactory,
-    BaseExampleSelector,
     DEFAULT_EMBEDDING_PROVIDER,
     PROVIDER_TO_MODEL,
+    BaseExampleSelector,
+    ExampleSelectorFactory,
 )
 from autolabel.few_shot.label_selector import LabelSelector
-from autolabel.models import BaseModel, ModelFactory
 from autolabel.metrics import BaseMetric
-from autolabel.transforms import BaseTransform, TransformFactory
+from autolabel.models import BaseModel, ModelFactory
 from autolabel.schema import (
+    AUTO_CONFIDENCE_CHUNKING_COLUMN,
+    AggregationFunction,
     LLMAnnotation,
     MetricResult,
     TaskRun,
     TaskStatus,
     TaskType,
-    AggregationFunction,
-    AUTO_CONFIDENCE_CHUNKING_COLUMN,
 )
 from autolabel.tasks import TaskFactory
+from autolabel.transforms import BaseTransform, TransformFactory
 from autolabel.utils import (
-    maybe_round,
-    print_table,
-    track,
-    track_with_stats,
     gather_async_tasks_with_progress,
     get_format_variables,
     in_notebook,
+    maybe_round,
+    print_table,
     safe_serialize_to_string,
+    track,
+    track_with_stats,
 )
 
 logger = logging.getLogger(__name__)
@@ -221,6 +222,15 @@ class LabelingAgent:
             )
 
         if self.example_selector is None:
+            if (
+                self.config.label_selection()
+                and self.config.few_shot_algorithm() != "fixed"
+            ):
+                # TODO: Add support for other few shot algorithms specially semantic similarity
+                raise ValueError(
+                    "Error: Only 'fixed' few shot example selector is supported for label selection."
+                )
+
             self.example_selector = ExampleSelectorFactory.initialize_selector(
                 self.config,
                 [safe_serialize_to_string(example) for example in seed_examples],
@@ -234,12 +244,11 @@ class LabelingAgent:
                     "Warning: label_selection only supported for classification tasks!"
                 )
             else:
-                self.label_selector = LabelSelector.from_examples(
-                    labels=self.config.labels_list(),
+                self.label_selector = LabelSelector(
+                    config=self.config,
                     embedding_func=PROVIDER_TO_MODEL.get(
                         self.config.embedding_provider(), DEFAULT_EMBEDDING_PROVIDER
-                    )(),
-                    k=self.config.label_selection_count(),
+                    )(model=self.config.embedding_model_name()),
                 )
 
         current_index = self.task_run.current_index if self.create_task else 0
@@ -247,7 +256,7 @@ class LabelingAgent:
         postfix_dict = {}
 
         indices = range(current_index, len(dataset.inputs))
-
+        selected_labels = self.config.labels_list()
         for current_index in track_with_stats(
             indices,
             postfix_dict,
@@ -255,33 +264,44 @@ class LabelingAgent:
             console=self.console,
         ):
             chunk = dataset.inputs[current_index]
+            examples = []
 
-            if self.example_selector:
-                examples = self.example_selector.select_examples(
-                    safe_serialize_to_string(chunk)
-                )
-            else:
-                examples = []
-            # Construct Prompt to pass to LLM
             if (
                 self.config.label_selection()
                 and self.config.task_type() == TaskType.CLASSIFICATION
             ):
-                selected_labels = self.label_selector.select_labels(chunk["example"])
-                final_prompt = self.task.construct_prompt(
-                    chunk,
-                    examples,
-                    selected_labels=selected_labels,
-                    max_input_tokens=self.llm.DEFAULT_CONTEXT_LENGTH,
-                    get_num_tokens=self.llm.get_num_tokens,
-                )
+                # get every column except the one we want to label
+                toEmbed = chunk.copy()
+                if self.config.label_column() and self.config.label_column() in toEmbed:
+                    del toEmbed[self.config.label_column()]
+
+                # convert this to a string
+                toEmbed = json.dumps(toEmbed)
+
+                selected_labels = self.label_selector.select_labels(toEmbed)
+
+                if self.example_selector:
+                    examples = self.example_selector.select_examples(
+                        safe_serialize_to_string(chunk),
+                        selected_labels=selected_labels,
+                        label_column=self.config.label_column(),
+                    )
+                else:
+                    examples = []
             else:
-                final_prompt = self.task.construct_prompt(
-                    chunk,
-                    examples,
-                    max_input_tokens=self.llm.DEFAULT_CONTEXT_LENGTH,
-                    get_num_tokens=self.llm.get_num_tokens,
-                )
+                if self.example_selector:
+                    examples = self.example_selector.select_examples(
+                        safe_serialize_to_string(chunk),
+                    )
+
+            # Construct Prompt to pass to LLM
+            final_prompt = self.task.construct_prompt(
+                chunk,
+                examples,
+                selected_labels=selected_labels,
+                max_input_tokens=self.llm.DEFAULT_CONTEXT_LENGTH,
+                get_num_tokens=self.llm.get_num_tokens,
+            )
             logger.info(f"Prompt: {final_prompt}")
             response = self.llm.label([final_prompt])
             logger.info(f"Response: {response}")
@@ -474,16 +494,14 @@ class LabelingAgent:
                     "Warning: label_selection only supported for classification tasks!"
                 )
             else:
-                self.label_selector = LabelSelector.from_examples(
-                    labels=self.config.labels_list(),
+                self.label_selector = LabelSelector(
+                    config=self.config,
                     embedding_func=PROVIDER_TO_MODEL.get(
                         self.config.embedding_provider(), DEFAULT_EMBEDDING_PROVIDER
-                    )(),
-                    k=self.config.label_selection_count(),
+                    )(model=self.config.embedding_model_name()),
                 )
 
-        input_limit = min(len(dataset.inputs), 100)
-
+        input_limit = min(len(dataset.inputs), 100) if max_items is None else max_items  # type: ignore
         for input_i in track(
             dataset.inputs[:input_limit],
             description="Generating Prompts...",
@@ -704,6 +722,7 @@ class LabelingAgent:
     def generate_explanations(
         self,
         seed_examples: Union[str, List[Dict]],
+        include_label: bool = True,
     ) -> List[Dict]:
         """Use LLM to generate explanations for why examples are labeled the way that they are."""
         out_file = None
@@ -723,7 +742,9 @@ class LabelingAgent:
             description="Generating explanations",
             console=self.console,
         ):
-            explanation_prompt = self.task.get_explanation_prompt(seed_example)
+            explanation_prompt = self.task.get_explanation_prompt(
+                seed_example, include_label=include_label
+            )
             if self.task.image_col is not None:
                 explanation_prompt = json.dumps(
                     {
