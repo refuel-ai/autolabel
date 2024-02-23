@@ -1,11 +1,12 @@
-from typing import List, Optional
 from time import time
+from typing import List, Optional
 
+from langchain.schema import HumanMessage
+
+from autolabel.cache import BaseCache
 from autolabel.configs import AutolabelConfig
 from autolabel.models import BaseModel
-from autolabel.cache import BaseCache
 from autolabel.schema import RefuelLLMResult
-from langchain.schema import HumanMessage
 
 
 class AnthropicLLM(BaseModel):
@@ -31,8 +32,8 @@ class AnthropicLLM(BaseModel):
         super().__init__(config, cache)
 
         try:
-            from langchain.chat_models import ChatAnthropic
             from anthropic._tokenizers import sync_get_tokenizer
+            from langchain_community.chat_models import ChatAnthropic
         except ImportError:
             raise ImportError(
                 "anthropic is required to use the anthropic LLM. Please install it with the following command: pip install 'refuel-autolabel[anthropic]'"

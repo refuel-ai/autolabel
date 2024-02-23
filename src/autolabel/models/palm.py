@@ -1,19 +1,15 @@
-from functools import cached_property
-from typing import List, Optional
-from time import time
 import logging
+from functools import cached_property
+from time import time
+from typing import List, Optional
 
-from autolabel.models import BaseModel
-from autolabel.configs import AutolabelConfig
+from langchain.schema import Generation, HumanMessage, LLMResult
+from tenacity import before_sleep_log, retry, stop_after_attempt, wait_exponential
+
 from autolabel.cache import BaseCache
-from autolabel.schema import RefuelLLMResult, LabelingError, ErrorType
-from langchain.schema import LLMResult, HumanMessage, Generation
-from tenacity import (
-    before_sleep_log,
-    retry,
-    stop_after_attempt,
-    wait_exponential,
-)
+from autolabel.configs import AutolabelConfig
+from autolabel.models import BaseModel
+from autolabel.schema import ErrorType, LabelingError, RefuelLLMResult
 
 logger = logging.getLogger(__name__)
 
@@ -47,9 +43,9 @@ class PaLMLLM(BaseModel):
     ) -> None:
         super().__init__(config, cache)
         try:
-            from langchain.chat_models import ChatVertexAI
-            from langchain.llms import VertexAI
             import tiktoken
+            from langchain_community.chat_models import ChatVertexAI
+            from langchain_community.llms import VertexAI
         except ImportError:
             raise ImportError(
                 "palm is required to use the Palm LLM. Please install it with the following command: pip install 'refuel-autolabel[google]'"
