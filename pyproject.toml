@@ -103,7 +103,7 @@ all = [
     "beautifulsoup4 >= 4.12.2",
     "httpx",
     "fake_useragent",
-    "playwright",
+    "scrapingbee",
     "pillow >= 9.5.0"
 ]
 
