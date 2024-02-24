@@ -71,7 +71,7 @@ anthropic = [
 ]
 huggingface = [
     "transformers >= 4.25.0",
-    "sentence_transformers"
+    "sentence-transformers==2.3.1"
 ]
 google = [
     "tiktoken >= 0.3.3",
@@ -96,7 +96,7 @@ all = [
     "google-search-results>=2.4.2",
     "cohere>=4.11.2",
     "redis >= 3.5.3",
-    "sentence_transformers",
+    "sentence-transformers==2.3.1",
     "sentencepiece",
     "pdfplumber >= 0.10.2",
     "pdf2image >= 1.16.3",
