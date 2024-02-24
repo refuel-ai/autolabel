@@ -11,7 +11,6 @@ import pandas as pd
 import ssl
 from langchain_community.document_transformers import Html2TextTransformer
 from langchain.docstore.document import Document
-from langchain_community.document_loaders import SeleniumURLLoader
 from autolabel.cache import BaseCache
 from scrapingbee import ScrapingBeeClient
 
@@ -57,8 +56,6 @@ class WebpageTransform(BaseTransform):
             )
 
         try:
-            loader = SeleniumURLLoader(urls=[url])
-            documents = loader.load()
             response = self.client.get(url, params=self.scrapingbee_params)
             documents = [
                 Document(page_content=response.content, metadata={"source": url})
