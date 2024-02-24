@@ -104,6 +104,7 @@ all = [
     "httpx",
     "fake_useragent",
     "scrapingbee",
+    "sentencepiece",
     "pillow >= 9.5.0"
 ]
 
