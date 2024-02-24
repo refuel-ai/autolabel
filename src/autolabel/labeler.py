@@ -303,7 +303,7 @@ class LabelingAgent:
                 max_input_tokens=self.llm.DEFAULT_CONTEXT_LENGTH,
                 get_num_tokens=self.llm.get_num_tokens,
             )
-            print(final_prompt)
+
             response = self.llm.label([final_prompt])
             for i, generations, error, latency in zip(
                 range(len(response.generations)),
