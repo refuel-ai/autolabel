@@ -13,6 +13,7 @@ from langchain_community.document_transformers import Html2TextTransformer
 from langchain.docstore.document import Document
 from langchain_community.document_loaders import SeleniumURLLoader
 from autolabel.cache import BaseCache
+from scrapingbee import ScrapingBeeClient
 
 logger = logging.getLogger(__name__)
 
@@ -32,12 +33,18 @@ class WebpageTransform(BaseTransform):
         output_columns: Dict[str, Any],
         url_column: str,
         timeout: int = DEFAULT_TIMEOUT,
+        scrapingbee_api_key: str = None,
     ) -> None:
         super().__init__(cache, output_columns)
         self.url_column = url_column
         self.max_retries = MAX_RETRIES
         self.timeout = timeout
         self.html2text_transformer = Html2TextTransformer()
+        self.api_key = scrapingbee_api_key
+        self.client = ScrapingBeeClient(api_key=self.api_key)
+        self.scrapingbee_params = {
+            "timeout": self.timeout,
+        }
 
     def name(self) -> str:
         return TransformType.WEBPAGE_TRANSFORM
@@ -52,19 +59,17 @@ class WebpageTransform(BaseTransform):
         try:
             loader = SeleniumURLLoader(urls=[url])
             documents = loader.load()
+            response = self.client.get(url, params=self.scrapingbee_params)
+            documents = [
+                Document(page_content=response.content, metadata={"source": url})
+            ]
             text = self.html2text_transformer.transform_documents(documents)[
                 0
             ].page_content
             return text
-        except ssl.SSLCertVerificationError as e:
-            logger.warning(
-                f"SSL verification error when fetching content from URL: {url}, retrying with verify=False"
-            )
+        except Exception as e:
             await asyncio.sleep(BACKOFF**retry_count)
             return await self._load_url(url, retry_count=retry_count + 1)
-        except Exception as e:
-            logger.error(f"Error fetching content from URL: {url}. Exception: {e}")
-            raise e
 
     async def _apply(self, row: Dict[str, Any]) -> Dict[str, Any]:
         url = row[self.url_column]
@@ -85,4 +90,6 @@ class WebpageTransform(BaseTransform):
         return {
             "url_column": self.url_column,
             "output_columns": self.output_columns,
+            "timeout": self.timeout,
+            "scrapingbee_api_key": self.api_key,
         }
