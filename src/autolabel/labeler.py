@@ -221,7 +221,8 @@ class LabelingAgent:
                 f"Explanation column {self.config.explanation_column()} not found in dataset.\nMake sure that explanations were generated using labeler.generate_explanations(seed_file)."
             )
 
-        if self.example_selector is None:
+        if self.example_selector is None and self.config.few_shot_algorithm():
+            print(self.config.few_shot_algorithm())
             if (
                 self.config.label_selection()
                 and self.config.few_shot_algorithm() != "fixed"
@@ -302,7 +303,7 @@ class LabelingAgent:
                 max_input_tokens=self.llm.DEFAULT_CONTEXT_LENGTH,
                 get_num_tokens=self.llm.get_num_tokens,
             )
-
+            print(final_prompt)
             response = self.llm.label([final_prompt])
             for i, generations, error, latency in zip(
                 range(len(response.generations)),

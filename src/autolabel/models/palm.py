@@ -45,7 +45,7 @@ class PaLMLLM(BaseModel):
         try:
             import tiktoken
             from langchain_community.chat_models import ChatVertexAI
-            from langchain_community.llms import VertexAI
+            from langchain_google_vertexai import VertexAI
         except ImportError:
             raise ImportError(
                 "palm is required to use the Palm LLM. Please install it with the following command: pip install 'refuel-autolabel[google]'"

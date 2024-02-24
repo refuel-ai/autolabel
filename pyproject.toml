@@ -42,7 +42,7 @@ dependencies = [
     "simple-term-menu >= 1.6.1",
     "transformers >= 4.25.0",
 ]
-requires-python = ">=3.6"
+requires-python = ">=3.9"
 
 [project.optional-dependencies]
 dev = [
@@ -76,7 +76,9 @@ huggingface = [
 ]
 google = [
     "tiktoken >= 0.3.3",
-    "google-cloud-aiplatform>=1.25.0"
+    "google-cloud-aiplatform>=1.25.0",
+    "langchain_google_vertexai==0.0.5",
+    "langchain-google-genai==0.0.9"
 ]
 cohere = [
     "cohere>=4.11.2"
