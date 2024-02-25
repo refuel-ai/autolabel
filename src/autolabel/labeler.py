@@ -553,7 +553,7 @@ class LabelingAgent:
 
         return dataset
 
-    def get_confidence_score(
+    async def get_confidence_score(
         self, annotation: LLMAnnotation, chunk: Dict, examples: List[Dict]
     ) -> Union[float, dict]:
         full_confidence_input = annotation.confidence_prompt + annotation.raw_response
