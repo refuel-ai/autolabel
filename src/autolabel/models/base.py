@@ -27,7 +27,7 @@ class BaseModel(ABC):
         # Specific classes that implement this interface should run initialization steps here
         # E.g. initializing the LLM model with required parameters from ModelConfig
 
-    def label(self, prompts: List[str]) -> RefuelLLMResult:
+    async def label(self, prompts: List[str]) -> RefuelLLMResult:
         """Label a list of prompts."""
         existing_prompts = {}
         missing_prompt_idxs = list(range(len(prompts)))
@@ -43,7 +43,10 @@ class BaseModel(ABC):
             ) = self.get_cached_prompts(prompts)
         # label missing prompts
         if len(missing_prompts) > 0:
-            new_results = self._label(missing_prompts)
+            if hasattr(self, "_alabel"):
+                new_results = await self._alabel(missing_prompts)
+            else:
+                new_results = self._label(missing_prompts)
             for ind, prompt in enumerate(missing_prompts):
                 costs.append(
                     self.get_cost(prompt, label=new_results.generations[ind][0].text)
@@ -65,6 +68,40 @@ class BaseModel(ABC):
         generations = [existing_prompts[i] for i in range(len(prompts))]
         return RefuelLLMResult(
             generations=generations, costs=costs, errors=errors, latencies=latencies
+        )
+
+    async def _alabel_individually(self, prompts: List[str]) -> RefuelLLMResult:
+        """Label each prompt individually. Should be used only after trying as a batch first.
+
+        Args:
+            prompts (List[str]): List of prompts to label
+
+        Returns:
+            LLMResult: LLMResult object with generations
+            List[LabelingError]: List of errors encountered while labeling
+        """
+        generations = []
+        errors = []
+        latencies = []
+        for prompt in prompts:
+            try:
+                start_time = time()
+                response = await self.llm.agenerate([prompt])
+                generations.append(response.generations[0])
+                errors.append(None)
+                latencies.append(time() - start_time)
+            except Exception as e:
+                print(f"Error generating from LLM: {e}")
+                generations.append([Generation(text="")])
+                errors.append(
+                    LabelingError(
+                        error_type=ErrorType.LLM_PROVIDER_ERROR, error_message=str(e)
+                    )
+                )
+                latencies.append(0)
+
+        return RefuelLLMResult(
+            generations=generations, errors=errors, latencies=latencies
         )
 
     def _label_individually(self, prompts: List[str]) -> RefuelLLMResult:
