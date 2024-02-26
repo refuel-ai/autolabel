@@ -20,7 +20,9 @@ async def test_webpage_transform():
     # Transform the row
     transformed_row = await transform.apply(row)
     # Check the output
-    assert set(transformed_row.keys()) == set(["webpage_content"])
+    assert set(transformed_row.keys()) == set(
+        ["webpage_content", "webpage_scrape_error"]
+    )
     assert isinstance(transformed_row["webpage_content"], str)
     assert len(transformed_row["webpage_content"]) > 0
 
