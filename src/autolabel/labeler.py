@@ -156,7 +156,27 @@ class LabelingAgent:
         start_index: int = 0,
         additional_metrics: Optional[List[BaseMetric]] = [],
         skip_eval: Optional[bool] = False,
-    ) -> AutolabelDataset:
+    ) -> Tuple[pd.Series, pd.DataFrame, List[MetricResult]]:
+        return asyncio.run(
+            self.arun(
+                dataset=dataset,
+                output_name=output_name,
+                max_items=max_items,
+                start_index=start_index,
+                additional_metrics=additional_metrics,
+                skip_eval=skip_eval,
+            )
+        )
+
+    async def arun(
+        self,
+        dataset: AutolabelDataset,
+        output_name: Optional[str] = None,
+        max_items: Optional[int] = None,
+        start_index: int = 0,
+        additional_metrics: Optional[List[BaseMetric]] = [],
+        skip_eval: Optional[bool] = False,
+    ) -> Tuple[pd.Series, pd.DataFrame, List[MetricResult]]:
         """Labels data in a given dataset. Output written to new CSV file.
 
         Args:
@@ -302,9 +322,8 @@ class LabelingAgent:
                 max_input_tokens=self.llm.DEFAULT_CONTEXT_LENGTH,
                 get_num_tokens=self.llm.get_num_tokens,
             )
-            logger.info(f"Prompt: {final_prompt}")
-            response = self.llm.label([final_prompt])
-            logger.info(f"Response: {response}")
+
+            response = await self.llm.label([final_prompt])
             for i, generations, error, latency in zip(
                 range(len(response.generations)),
                 response.generations,
@@ -343,8 +362,10 @@ class LabelingAgent:
 
                         if self.config.confidence():
                             try:
-                                annotation.confidence_score = self.get_confidence_score(
-                                    annotation, chunk, examples
+                                annotation.confidence_score = (
+                                    await self.get_confidence_score(
+                                        annotation, chunk, examples
+                                    )
                                 )
                             except Exception as e:
                                 logger.error(f"Error calculating confidence score: {e}")
@@ -629,7 +650,7 @@ class LabelingAgent:
             )
         return task_run
 
-    def get_confidence_score(
+    async def get_confidence_score(
         self, annotation: LLMAnnotation, chunk: Dict, examples: List[Dict]
     ) -> Union[float, dict]:
         full_confidence_input = annotation.confidence_prompt + annotation.raw_response
@@ -639,7 +660,7 @@ class LabelingAgent:
             or self.get_num_tokens(full_confidence_input)
             < self.CONFIDENCE_MAX_CONTEXT_LENGTH
         ):
-            return self.confidence.calculate(model_generation=annotation)
+            return await self.confidence.calculate(model_generation=annotation)
         key_to_chunk = self.config.confidence_chunk_column()
         if not key_to_chunk:
             raise ValueError(
@@ -673,7 +694,7 @@ class LabelingAgent:
             annotation_dict = annotation.dict()
             annotation_dict["confidence_prompt"] = new_prompt
             confidence_scores.append(
-                self.confidence.calculate(
+                await self.confidence.calculate(
                     model_generation=LLMAnnotation(**annotation_dict),
                 )
             )
