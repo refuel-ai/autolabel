@@ -1,0 +1,53 @@
+{
+    "chunking": {
+        "confidence_chunk_column": "auto"
+    },
+    "dataset": {
+        "delimiter": ",",
+        "input_columns": [
+            "product name"
+        ]
+    },
+    "model": {
+        "compute_confidence": true,
+        "json_mode": true,
+        "name": "gpt-4-1106-preview",
+        "params": {
+            "max_tokens": 4096,
+            "request_timeout": 240
+        },
+        "provider": "openai"
+    },
+    "prompt": {
+        "attributes": [
+            {
+                "description": "Return the product name",
+                "id": "06bbd65b-defb-4ac5-8094-da0d6befea04",
+                "input_columns": [
+                    "product name"
+                ],
+                "label_column": "refuel_label_placeholder",
+                "name": "name",
+                "task_type": "attribute_extraction"
+            },
+            {
+                "description": "Return the product brand",
+                "id": "86e2308c-8134-40ce-b0af-56a6911b04b8",
+                "input_columns": [
+                    "brand"
+                ],
+                "label_column": "refuel_label_placeholder",
+                "name": "brand name",
+                "task_type": "attribute_extraction"
+            }
+        ],
+        "context": "You are an expert about coffee.",
+        "example_template": "Product name: {product name}\nBrand: {brand}\nOutput: {output_dict}",
+        "few_shot_num": 5,
+        "few_shot_selection": "semantic_similarity",
+        "task_guidelines": "You are an expert about coffee."
+    },
+    "task_name": "task_chain_test",
+    "task_type": "attribute_extraction",
+    "transforms": []
+}

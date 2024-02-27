@@ -2,7 +2,7 @@
 
 from typing import List
 
-from autolabel.schema import FewShotAlgorithm, ModelProvider, TaskType
+from autolabel.schema import FewShotAlgorithm, ModelProvider, TaskType, TASK_CHAIN_TYPE
 
 
 def populate_vendors() -> List[str]:
@@ -19,7 +19,7 @@ def populate_task_types() -> List[str]:
 
     this function retrives the list of acceptable task_types from TaskType
     """
-    return [enum_member.value for enum_member in TaskType]
+    return [enum_member.value for enum_member in TaskType] + [TASK_CHAIN_TYPE]
 
 
 def populate_few_shot_selection() -> List[str]:
@@ -123,6 +123,12 @@ schema = {
                 "label_selection": {"type": ["boolean", "null"]},
                 "label_selection_count": {"type": ["number", "null"]},
                 "attributes": {
+                    "anyOf": [
+                        {"type": "array", "items": {"type": "object"}},
+                        {"type": "null"},
+                    ]
+                },
+                "subtasks": {
                     "anyOf": [
                         {"type": "array", "items": {"type": "object"}},
                         {"type": "null"},

@@ -4,6 +4,7 @@ from typing import Dict, List, Union
 from jsonschema import validate
 
 from .config import AutolabelConfig
+from .base import BaseConfig
 
 
 class TaskChainConfig(AutolabelConfig):
@@ -67,8 +68,18 @@ class TaskChainConfig(AutolabelConfig):
     CONFIDENCE_CHUNK_SIZE_KEY = "confidence_chunk_size"
     CONFIDENCE_MERGE_FUNCTION_KEY = "confidence_merge_function"
 
-    def __init__(self, config: Union[str, Dict]) -> None:
-        super().__init__(config, validate=False)
+    def __init__(self, config: Union[str, Dict], validate: bool = True) -> None:
+        super().__init__(config, validate=validate)
+
+    def _validate(self) -> bool:
+        """Returns true if the config settings are valid"""
+        from autolabel.configs.schema import schema
+
+        validate(
+            instance=self.config,
+            schema=schema,
+        )
+        return True
 
     @cached_property
     def _dataset_config(self) -> Dict:

@@ -1,7 +1,8 @@
 from collections import defaultdict
 import copy
 from itertools import groupby
-from autolabel.configs.config import AutolabelConfig
+import uuid
+from autolabel.configs import AutolabelConfig
 import logging
 from typing import Dict, List, Optional
 
@@ -19,6 +20,7 @@ from autolabel.cache.sqlalchemy_confidence_cache import SQLAlchemyConfidenceCach
 from autolabel.cache.base import BaseCache
 from pydantic import BaseModel
 from autolabel.configs import TaskChainConfig
+from autolabel.schema import TaskType
 from autolabel.transforms import TransformFactory
 from transformers import AutoTokenizer
 import pandas as pd
@@ -29,6 +31,7 @@ logging.getLogger("httpx").setLevel(logging.WARNING)
 
 class ChainTask(BaseModel):
     type: str
+    id: str
     name: str
     input_columns: List[str]
     output_columns: List[str]
@@ -61,8 +64,8 @@ class TaskGraph:
         stack = []
 
         for task in self.task_chain:
-            if visited[task.name] == False:
-                self.topological_sort_helper(task.name, visited, stack)
+            if visited[task.id] == False:
+                self.topological_sort_helper(task.id, visited, stack)
         return stack[::-1]
 
 
@@ -99,19 +102,23 @@ class TaskChainOrchestrator:
     def initialize_task_configs(self):
         task_configs = []
         subtasks = self.task_chain_config.subtasks()
-        logger.info(f"subtasks: {subtasks}")
         for input_columns, group in groupby(subtasks, lambda x: x.get("input_columns")):
             task_config = copy.deepcopy(self.task_chain_config.config)
-            logger.info(f"task config: {task_config}")
-            task_config["prompt"]["attributes"] = task_config["prompt"].pop(
-                "subtasks", []
-            )
+            task_config["task_name"] = task_config["task_name"]
+            task_config["task_type"] = TaskType.ATTRIBUTE_EXTRACTION
+            example_template = ""
+            input_columns = [column.lower() for column in input_columns]
+            for column in input_columns:
+                example_template += f"\n{column.capitalize()}: { {column} }".replace(
+                    "'", ""
+                )
+            example_template += "\nOutput: {output_dict}"
+            example_template = example_template.strip()
             task_config["dataset"]["input_columns"] = input_columns
-            attributes = []
-            for subtask in group:
-                attributes.append(subtask)
-            logger.info(f"task config: {task_config}")
+            task_config["prompt"]["example_template"] = example_template
+            task_config["prompt"]["attributes"] = list(group)
             task_configs.append(AutolabelConfig(task_config))
+        logger.info(f"task_configs: {task_configs}")
         return task_configs
 
     def initialize_task_chain(self):
@@ -124,6 +131,7 @@ class TaskChainOrchestrator:
             task_chain.append(
                 ChainTask(
                     type="label",
+                    id=str(uuid.uuid4()),
                     name=task_config.task_name(),
                     input_columns=task_config.input_columns(),
                     output_columns=output_columns,
@@ -135,6 +143,7 @@ class TaskChainOrchestrator:
                 task_chain.append(
                     ChainTask(
                         type="transform",
+                        id=str(uuid.uuid4()),
                         name=transform.get("name"),
                         input_columns=transform.get("input_columns", []),
                         output_columns=list(
@@ -151,19 +160,19 @@ class TaskChainOrchestrator:
         chain_output_columns = {}
         for task in self.task_chain:
             for output_column in task.output_columns:
-                chain_output_columns[output_column] = task.name
+                chain_output_columns[output_column] = task.id
         for task in self.task_chain:
             for input_column in task.input_columns:
                 if input_column in chain_output_columns:
                     pre_task = chain_output_columns[input_column]
-                    task_graph.add_dependency(pre_task, task.name)
+                    task_graph.add_dependency(pre_task, task.id)
         return task_graph
 
     def sort_task_chain(self):
         task_order = self.task_graph.topological_sort()
         logger.info(f"Task Order: {task_order}")
         self.task_chain = sorted(
-            self.task_chain, key=lambda task: task_order.index(task.name)
+            self.task_chain, key=lambda task: task_order.index(task.id)
         )
 
     async def run(self):
@@ -171,7 +180,7 @@ class TaskChainOrchestrator:
             raise ValueError("No task configurations provided")
         dataset = AutolabelDataset(self.dataset_df, self.task_chain[0].autolabel_config)
         for task in self.task_chain:
-            logger.info(f"Running task: {task.name}")
+            logger.info(f"Running task: {task.id}")
             dataset = AutolabelDataset(dataset.df, task.autolabel_config)
             if task.type == "label":
                 agent = LabelingAgent(
@@ -184,7 +193,7 @@ class TaskChainOrchestrator:
                     confidence_tokenizer=self.confidence_tokenizer,
                 )
                 logger.info(f"dataset df columns 3: {len(dataset.df.columns)}")
-                dataset = agent.run(
+                dataset = await agent.arun(
                     dataset,
                     skip_eval=True,
                 )
@@ -225,6 +234,7 @@ class TaskChainOrchestrator:
         d = {}
         for attr in self.attributes:
             d[attr] = row[attr]
+        logger.info(f"d: {d}")
         return d
 
     def clean(self, dataset: AutolabelDataset):

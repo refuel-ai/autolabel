@@ -89,7 +89,7 @@ class AttributeExtractionTask(BaseTask):
         output_dict = {}
         for attribute in self.config.attributes():
             attribute_name = attribute["name"]
-            output_dict[attribute_name] = input[attribute_name]
+            output_dict[attribute_name] = input.get(attribute_name, "")
         return json.dumps(output_dict)
 
     def construct_prompt(
@@ -181,9 +181,11 @@ class AttributeExtractionTask(BaseTask):
         fmt_example = example_template.format_map(defaultdict(str, example))
         return pt.format(
             task_guidelines=fmt_task_guidelines,
-            label_format=self.LABEL_FORMAT_IN_EXPLANATION
-            if include_label
-            else self.EXCLUDE_LABEL_IN_EXPLANATION,
+            label_format=(
+                self.LABEL_FORMAT_IN_EXPLANATION
+                if include_label
+                else self.EXCLUDE_LABEL_IN_EXPLANATION
+            ),
             labeled_example=fmt_example,
             attribute=example[self.OUTPUT_DICT_KEY],
         )
