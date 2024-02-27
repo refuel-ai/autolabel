@@ -8,9 +8,7 @@ from typing import Dict, List, Optional, Tuple, Union
 
 import numpy as np
 import pandas as pd
-from rich import print as pprint
 from rich.console import Console
-from rich.prompt import Confirm
 from transformers import AutoTokenizer
 
 from autolabel.cache import (
@@ -21,8 +19,6 @@ from autolabel.cache import (
 )
 from autolabel.confidence import ConfidenceCalculator
 from autolabel.configs import AutolabelConfig
-from autolabel.data_models import AnnotationModel, TaskRunModel
-from autolabel.database import StateManager
 from autolabel.dataset import AutolabelDataset
 from autolabel.few_shot import (
     DEFAULT_EMBEDDING_PROVIDER,
@@ -38,8 +34,6 @@ from autolabel.schema import (
     AggregationFunction,
     LLMAnnotation,
     MetricResult,
-    TaskRun,
-    TaskStatus,
     TaskType,
 )
 from autolabel.tasks import TaskFactory
@@ -80,15 +74,12 @@ class LabelingAgent:
         config: Union[AutolabelConfig, str, dict],
         cache: Optional[bool] = True,
         example_selector: Optional[BaseExampleSelector] = None,
-        create_task: Optional[bool] = False,
         console_output: Optional[bool] = True,
         generation_cache: Optional[BaseCache] = SQLAlchemyGenerationCache(),
         transform_cache: Optional[BaseCache] = SQLAlchemyTransformCache(),
         confidence_cache: Optional[BaseCache] = SQLAlchemyConfidenceCache(),
         confidence_tokenizer: Optional[AutoTokenizer] = None,
     ) -> None:
-        self.create_task = create_task
-        self.db = StateManager() if self.create_task else None
         self.generation_cache = generation_cache
         self.transform_cache = transform_cache
         self.confidence_cache = confidence_cache
@@ -135,14 +126,6 @@ class LabelingAgent:
 
         self.example_selector = example_selector
 
-        # Only used if we don't use task management
-        self.all_annotations = []
-
-        if self.create_task:
-            logger.warning(
-                f"create_task parameter is deprecated and will be removed soon. The LLM calls are getting cached and should handle most use cases."
-            )
-
         if in_notebook():
             import nest_asyncio
 
@@ -188,40 +171,7 @@ class LabelingAgent:
 
         dataset = dataset.get_slice(max_items=max_items, start_index=start_index)
 
-        if self.create_task:
-            self.db.initialize()
-            self.dataset_obj = self.db.initialize_dataset(dataset.df, self.config)
-            self.task_object = self.db.initialize_task(self.config)
-        else:
-            self.all_annotations = []
-
-        if isinstance(dataset, str):
-            csv_file_name = (
-                output_name
-                if output_name
-                else f"{dataset.replace('.csv','')}_labeled.csv"
-            )
-        else:
-            csv_file_name = f"{self.config.task_name()}_labeled.csv"
-
-        if self.create_task:
-            # Initialize task run and check if it already exists
-            self.task_run = self.db.get_task_run(
-                self.task_object.id, self.dataset_obj.id
-            )
-            # Resume/Delete the task if it already exists or create a new task run
-            if self.task_run:
-                logger.info("Task run already exists.")
-                self.task_run = self.handle_existing_task_run(
-                    self.task_run,
-                    csv_file_name,
-                    gt_labels=dataset.gt_labels,
-                    additional_metrics=additional_metrics,
-                )
-            else:
-                self.task_run = self.db.create_task_run(
-                    csv_file_name, self.task_object.id, self.dataset_obj.id
-                )
+        llm_labels = []
 
         # Get the seed examples from the dataset config
         seed_examples = self.config.few_shot_example_set()
@@ -271,7 +221,7 @@ class LabelingAgent:
                     )(model=self.config.embedding_model_name()),
                 )
 
-        current_index = self.task_run.current_index if self.create_task else 0
+        current_index = 0
         cost = 0.0
         postfix_dict = {}
 
@@ -380,15 +330,13 @@ class LabelingAgent:
                         annotations.append(annotation)
                     annotation = self.majority_annotation(annotations)
 
-                # Save the annotation in the database
-                self.save_annotation(annotation, current_index, i)
+                llm_labels.append(annotation)
 
             cost += sum(response.costs)
             postfix_dict[self.COST_KEY] = f"{cost:.2f}"
 
             # Evaluate the task every eval_every examples
             if not skip_eval and (current_index + 1) % 100 == 0:
-                llm_labels = self.get_all_annotations()
                 if dataset.gt_labels:
                     eval_result = self.task.eval(
                         llm_labels,
@@ -414,13 +362,6 @@ class LabelingAgent:
                                 else m.value
                             )
 
-            if self.create_task:
-                # Update task run state
-                self.task_run = self.save_task_run_state(
-                    current_index=current_index + len(chunk)
-                )
-
-        llm_labels = self.get_all_annotations()
         eval_result = None
         table = {}
 
@@ -603,53 +544,6 @@ class LabelingAgent:
 
         return dataset
 
-    def handle_existing_task_run(
-        self,
-        task_run: TaskRun,
-        csv_file_name: str,
-        gt_labels: List[str] = None,
-        additional_metrics: List[BaseMetric] = [],
-    ) -> TaskRun:
-        """
-        Allows for continuing an existing labeling task. The user will be asked whether they wish to continue from where the run previously left off, or restart from the beginning.
-        Args:
-            task_run: TaskRun to retry
-            csv_file_name: path to the dataset we wish to label (only used if user chooses to restart the task)
-            gt_labels: If ground truth labels are provided, performance metrics will be displayed, such as label accuracy
-        """
-        self.console.print(
-            f"There is an existing task with following details: {task_run}"
-        )
-        llm_labels = self.get_all_annotations()
-        if gt_labels and len(llm_labels) > 0:
-            pprint("Evaluating the existing task...")
-            gt_labels = (
-                gt_labels[: len(llm_labels)]
-                if isinstance(gt_labels, list)
-                else {k: v[: len(llm_labels)] for k, v in gt_labels.items()}
-            )
-            eval_result = self.task.eval(
-                llm_labels, gt_labels, additional_metrics=additional_metrics
-            )
-            table = {}
-            for m in eval_result:
-                if isinstance(m.value, list):
-                    continue
-                elif m.show_running:
-                    table[m.name] = m.value
-                else:
-                    self.console.print(f"{m.name}:\n{m.value}")
-
-            print_table(table, console=self.console, default_style=METRIC_TABLE_STYLE)
-        self.console.print(f"{task_run.current_index} examples labeled so far.")
-        if not Confirm.ask("Do you want to resume the task?"):
-            TaskRunModel.delete_by_id(self.db.session, task_run.id)
-            self.console.print("Deleted the existing task and starting a new one...")
-            task_run = self.db.create_task_run(
-                csv_file_name, self.task_object.id, self.dataset_obj.id
-            )
-        return task_run
-
     async def get_confidence_score(
         self, annotation: LLMAnnotation, chunk: Dict, examples: List[Dict]
     ) -> Union[float, dict]:
@@ -710,19 +604,6 @@ class LabelingAgent:
         else:
             merged_confidence = merge_function(confidence_scores)
             return merged_confidence
-
-    def save_task_run_state(
-        self, current_index: int = None, status: TaskStatus = "", error: str = ""
-    ) -> TaskRun:
-        """Saves the current state of the Task being performed"""
-        # Save the current state of the task
-        if error:
-            self.task_run.error = error
-        if status:
-            self.task_run.status = status
-        if current_index:
-            self.task_run.current_index = current_index
-        return TaskRunModel.update(self.db.session, self.task_run)
 
     def majority_annotation(
         self, annotation_list: List[LLMAnnotation]
@@ -826,27 +707,6 @@ class LabelingAgent:
         """
         self.generation_cache.clear(use_ttl=use_ttl)
         self.transform_cache.clear(use_ttl=use_ttl)
-
-    def save_annotation(self, annotation: LLMAnnotation, current_index: int, i: int):
-        if self.create_task:
-            # Store the annotation in the database
-            AnnotationModel.create_from_llm_annotation(
-                self.db.session,
-                annotation,
-                current_index + i,
-                self.task_run.id,
-            )
-        else:
-            self.all_annotations.append(annotation)
-
-    def get_all_annotations(self):
-        if self.create_task:
-            db_result = AnnotationModel.get_annotations_by_task_run_id(
-                self.db.session, self.task_run.id
-            )
-            return [pickle.loads(a.llm_annotation) for a in db_result]
-        else:
-            return self.all_annotations
 
     def get_num_tokens(self, inp: str) -> int:
         """Returns the number of tokens in the prompt"""

@@ -126,6 +126,22 @@ def _autolabel_progress(
     )
 
 
+class LiveDisplay:
+    _instance = None
+
+    def __new__(cls, *args, **kwargs):
+        if cls._instance is None:
+            cls._instance = super().__new__(cls)
+            cls._instance.live = Live(*args, **kwargs)
+        return cls._instance
+
+    @classmethod
+    def get_instance(cls, *args, **kwargs):
+        if cls._instance is None:
+            cls._instance = cls(*args, **kwargs)
+        return cls._instance
+
+
 def track(
     sequence: Union[Sequence[ProgressType], Iterable[ProgressType]],
     description: str = None,
@@ -252,7 +268,7 @@ def track_with_stats(
     )
 
     group = Group(progress, stats_progress)
-    live = Live(group, console=console)
+    live = LiveDisplay.get_instance(group, console=console).live
 
     if total is None:
         total = len(sequence)
