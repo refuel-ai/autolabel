@@ -8,9 +8,7 @@ from typing import Dict, List, Optional, Tuple, Union
 
 import numpy as np
 import pandas as pd
-from rich import print as pprint
 from rich.console import Console
-from rich.prompt import Confirm
 from transformers import AutoTokenizer
 
 from autolabel.cache import (
@@ -77,7 +75,6 @@ class LabelingAgent:
         cache: Optional[bool] = True,
         example_selector: Optional[BaseExampleSelector] = None,
         console_output: Optional[bool] = True,
-        create_task: Optional[bool] = False,
         generation_cache: Optional[BaseCache] = SQLAlchemyGenerationCache(),
         transform_cache: Optional[BaseCache] = SQLAlchemyTransformCache(),
         confidence_cache: Optional[BaseCache] = SQLAlchemyConfidenceCache(),
@@ -129,9 +126,6 @@ class LabelingAgent:
 
         self.example_selector = example_selector
 
-        # Only used if we don't use task management
-        self.all_annotations = []
-
         if in_notebook():
             import nest_asyncio
 
@@ -177,7 +171,7 @@ class LabelingAgent:
 
         dataset = dataset.get_slice(max_items=max_items, start_index=start_index)
 
-        self.all_annotations = []
+        llm_labels = []
 
         # Get the seed examples from the dataset config
         seed_examples = self.config.few_shot_example_set()
@@ -336,15 +330,13 @@ class LabelingAgent:
                         annotations.append(annotation)
                     annotation = self.majority_annotation(annotations)
 
-                # Save the annotation in the database
-                self.save_annotation(annotation, current_index, i)
+                llm_labels.append(annotation)
 
             cost += sum(response.costs)
             postfix_dict[self.COST_KEY] = f"{cost:.2f}"
 
             # Evaluate the task every eval_every examples
             if not skip_eval and (current_index + 1) % 100 == 0:
-                llm_labels = self.get_all_annotations()
                 if dataset.gt_labels:
                     eval_result = self.task.eval(
                         llm_labels,
@@ -370,7 +362,6 @@ class LabelingAgent:
                                 else m.value
                             )
 
-        llm_labels = self.get_all_annotations()
         eval_result = None
         table = {}
 
@@ -716,12 +707,6 @@ class LabelingAgent:
         """
         self.generation_cache.clear(use_ttl=use_ttl)
         self.transform_cache.clear(use_ttl=use_ttl)
-
-    def save_annotation(self, annotation: LLMAnnotation, current_index: int, i: int):
-        self.all_annotations.append(annotation)
-
-    def get_all_annotations(self):
-        return self.all_annotations
 
     def get_num_tokens(self, inp: str) -> int:
         """Returns the number of tokens in the prompt"""
