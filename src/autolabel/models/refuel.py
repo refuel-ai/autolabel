@@ -33,7 +33,7 @@ class RefuelLLM(BaseModel):
     DEFAULT_TOKENIZATION_MODEL = "NousResearch/Llama-2-13b-chat-hf"
     DEFAULT_CONTEXT_LENGTH = 3250
     DEFAULT_CONNECT_TIMEOUT = 10
-    DEFAULT_READ_TIMEOUT = 60
+    DEFAULT_READ_TIMEOUT = 120
     DEFAULT_PARAMS = {
         "max_new_tokens": 128,
     }
