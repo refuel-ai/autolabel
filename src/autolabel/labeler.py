@@ -745,6 +745,17 @@ class LabelingAgent:
         seed_examples: Union[str, List[Dict]],
         include_label: bool = True,
     ) -> List[Dict]:
+        return asyncio.run(
+            self.agenerate_explanations(
+                seed_examples=seed_examples, include_label=include_label
+            )
+        )
+
+    async def agenerate_explanations(
+        self,
+        seed_examples: Union[str, List[Dict]],
+        include_label: bool = True,
+    ) -> List[Dict]:
         """Use LLM to generate explanations for why examples are labeled the way that they are."""
         out_file = None
         if isinstance(seed_examples, str):
@@ -773,7 +784,7 @@ class LabelingAgent:
                         "image_url": seed_example[self.task.image_col],
                     }
                 )
-            explanation = self.llm.label([explanation_prompt])
+            explanation = await self.llm.label([explanation_prompt])
             explanation = explanation.generations[0][0].text
             seed_example[explanation_column] = str(explanation) if explanation else ""
 
