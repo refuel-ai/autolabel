@@ -73,7 +73,6 @@ class TaskChainOrchestrator:
     def __init__(
         self,
         task_chain_config: TaskChainConfig,
-        dataset_df: pd.DataFrame,
         cache: Optional[bool] = True,
         example_selector: Optional[BaseExampleSelector] = None,
         generation_cache: Optional[BaseCache] = SQLAlchemyGenerationCache(),
@@ -84,7 +83,6 @@ class TaskChainOrchestrator:
     ):
         self.task_chain_config = task_chain_config
         self.task_configs = self.initialize_task_configs()
-        self.dataset_df = dataset_df
         self.cache = cache
         self.example_selector = example_selector
         self.generation_cache = generation_cache
@@ -124,6 +122,7 @@ class TaskChainOrchestrator:
     def initialize_task_chain(self):
         task_chain = []
         for task_config in self.task_configs:
+            logger.info(f"task_config: {task_config}")
             output_columns = [
                 attribute.get("name") for attribute in task_config.attributes()
             ]
@@ -140,6 +139,15 @@ class TaskChainOrchestrator:
                 )
             )
             for transform in task_config.transforms():
+                skip = False
+                for task in task_chain:
+                    if task.name == transform.get("name") and sorted(
+                        task.input_columns
+                    ) == sorted(transform.get("input_columns", [])):
+                        logger.info(f"Skipping transform: {transform.get('name')}")
+                        skip = True
+                if skip:
+                    continue
                 task_chain.append(
                     ChainTask(
                         type="transform",
@@ -147,7 +155,10 @@ class TaskChainOrchestrator:
                         name=transform.get("name"),
                         input_columns=transform.get("input_columns", []),
                         output_columns=list(
-                            transform.get("output_columns", {}).values()
+                            map(
+                                lambda col: self.column_name_map.get(col),
+                                list(transform.get("output_columns", {}).values()),
+                            )
                         ),
                         autolabel_config=task_config,
                         config=transform,
@@ -175,12 +186,12 @@ class TaskChainOrchestrator:
             self.task_chain, key=lambda task: task_order.index(task.id)
         )
 
-    async def run(self):
+    async def run(self, dataset_df: pd.DataFrame):
         if not self.task_chain:
             raise ValueError("No task configurations provided")
-        dataset = AutolabelDataset(self.dataset_df, self.task_chain[0].autolabel_config)
+        dataset = AutolabelDataset(dataset_df, self.task_chain[0].autolabel_config)
         for task in self.task_chain:
-            logger.info(f"Running task: {task.id}")
+            logger.info(f"Running task: {task.name} with id: {task.id}")
             dataset = AutolabelDataset(dataset.df, task.autolabel_config)
             if task.type == "label":
                 agent = LabelingAgent(
@@ -192,13 +203,15 @@ class TaskChainOrchestrator:
                     confidence_cache=self.confidence_cache,
                     confidence_tokenizer=self.confidence_tokenizer,
                 )
-                logger.info(f"dataset df columns 3: {len(dataset.df.columns)}")
+                logger.info(f"dataset df columns 3: {(dataset.df.columns)}")
                 dataset = await agent.arun(
                     dataset,
                     skip_eval=True,
                 )
-                logger.info(f"dataset df columns 4: {len(dataset.df.columns)}")
+                dataset = self.aggregate(dataset, task)
+                logger.info(f"dataset df columns 4: {(dataset.df.columns)}")
             elif task.type == "transform":
+                logger.info(f"transform task.config: {task.config}")
                 transform = TransformFactory.from_dict(
                     task.config,
                     cache=None,
@@ -214,9 +227,14 @@ class TaskChainOrchestrator:
                 )
                 logger.info(f"dataset df columns 1: {dataset.df.columns}")
                 dataset = await agent.async_run_transform(transform, dataset)
+                dataset = self.aggregate(dataset, task)
+
                 logger.info(f"dataset df columns 2: {dataset.df.columns}")
-            dataset = self.aggregate(dataset, task)
+            logger.info(f"finished step: {task.name} with id: {task.id}")
+
         dataset = self.clean(dataset)
+        logger.info(f"final here")
+
         return dataset
 
     def aggregate(self, dataset: AutolabelDataset, task: ChainTask):
