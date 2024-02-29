@@ -68,6 +68,30 @@ class TaskGraph:
                 self.topological_sort_helper(task.id, visited, stack)
         return stack[::-1]
 
+    def check_cycle(self):
+        visited = defaultdict(bool)
+        rec_stack = defaultdict(bool)
+
+        for task in self.task_chain:
+            if visited[task.id] == False:
+                if self.check_cycle_helper(task.id, visited, rec_stack) == True:
+                    return True
+        return False
+
+    def check_cycle_helper(self, pre_task: str, visited: List, rec_stack: List):
+        """Recursive helper function to check for cycles"""
+        visited[pre_task] = True
+        rec_stack[pre_task] = True
+
+        for post_task in self.graph[pre_task]:
+            if visited[post_task] == False:
+                if self.check_cycle_helper(post_task, visited, rec_stack) == True:
+                    return True
+            elif rec_stack[post_task] == True:
+                return True
+        rec_stack[pre_task] = False
+        return False
+
 
 class TaskChainOrchestrator:
     def __init__(
@@ -122,7 +146,6 @@ class TaskChainOrchestrator:
     def initialize_task_chain(self):
         task_chain = []
         for task_config in self.task_configs:
-            logger.info(f"task_config: {task_config}")
             output_columns = [
                 attribute.get("name") for attribute in task_config.attributes()
             ]
@@ -186,6 +209,9 @@ class TaskChainOrchestrator:
             self.task_chain, key=lambda task: task_order.index(task.id)
         )
 
+    def validate_task_chain(self):
+        return not self.task_graph.check_cycle()
+
     async def run(self, dataset_df: pd.DataFrame):
         if not self.task_chain:
             raise ValueError("No task configurations provided")
@@ -203,13 +229,16 @@ class TaskChainOrchestrator:
                     confidence_cache=self.confidence_cache,
                     confidence_tokenizer=self.confidence_tokenizer,
                 )
-                logger.info(f"dataset df columns 3: {(dataset.df.columns)}")
+                logger.info(
+                    f"dataset df columns before llm call: {(dataset.df.columns)}"
+                )
                 dataset = await agent.arun(
                     dataset,
                     skip_eval=True,
                 )
-                dataset = self.aggregate(dataset, task)
-                logger.info(f"dataset df columns 4: {(dataset.df.columns)}")
+                logger.info(
+                    f"dataset df columns after llm call: {(dataset.df.columns)}"
+                )
             elif task.type == "transform":
                 logger.info(f"transform task.config: {task.config}")
                 transform = TransformFactory.from_dict(
@@ -225,12 +254,14 @@ class TaskChainOrchestrator:
                     confidence_cache=None,
                     confidence_tokenizer=self.confidence_tokenizer,
                 )
-                logger.info(f"dataset df columns 1: {dataset.df.columns}")
+                logger.info(
+                    f"dataset df columns before transform: {dataset.df.columns}"
+                )
                 dataset = await agent.async_run_transform(transform, dataset)
-                dataset = self.aggregate(dataset, task)
-
-                logger.info(f"dataset df columns 2: {dataset.df.columns}")
+                logger.info(f"dataset df columns after transform: {dataset.df.columns}")
             logger.info(f"finished step: {task.name} with id: {task.id}")
+            dataset = self.aggregate(dataset, task)
+            logger.info(f"dataset df columns after aggregate: {dataset.df.columns}")
 
         dataset = self.clean(dataset)
         logger.info(f"final here")
@@ -245,21 +276,20 @@ class TaskChainOrchestrator:
                 ].apply(lambda x: x.get(attribute) if x and type(x) is dict else None)
         elif task.type == "transform":
             dataset.df.rename(columns=self.column_name_map, inplace=True)
-        logger.info(f"dataset df columns 5: {dataset.df.columns}")
         return dataset
 
-    def create_dict(self, row):
-        d = {}
+    def create_output_dict(self, row):
+        output_dict = {}
         for attr in self.attributes:
-            d[attr] = row[attr]
-        logger.info(f"d: {d}")
-        return d
+            output_dict[attr] = row[attr]
+        logger.info(f"output dict: {output_dict}")
+        return output_dict
 
     def clean(self, dataset: AutolabelDataset):
         # dataset.df[dataset.generate_label_name("label")] = dataset.df[
         #     dataset.generate_label_name("label")
         # ].apply(lambda x: {attr: dataset.df[attr] for attr in self.attributes})
         dataset.df[dataset.generate_label_name("label")] = dataset.df.apply(
-            self.create_dict, axis=1
+            self.create_output_dict, axis=1
         )
         return dataset

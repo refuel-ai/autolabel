@@ -113,7 +113,6 @@ class LabelingAgent:
             config if isinstance(config, AutolabelConfig) else AutolabelConfig(config)
         )
         self.task = TaskFactory.from_config(self.config)
-        logger.info(f"config after task factory: {self.config}")
         self.llm: BaseModel = ModelFactory.from_config(
             self.config, cache=self.generation_cache
         )
