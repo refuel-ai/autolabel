@@ -38,7 +38,7 @@ class WebpageScrape(BaseTransform):
         super().__init__(cache, output_columns)
         self.url_column = url_column
         self.max_retries = MAX_RETRIES
-        self.timeout = timeout
+        self.timeout = DEFAULT_TIMEOUT
         self.html2text_transformer = Html2TextTransformer()
         self.api_key = scrapingbee_api_key
         self.client = ScrapingBeeClient(api_key=self.api_key)
