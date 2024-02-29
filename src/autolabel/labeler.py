@@ -318,7 +318,12 @@ class LabelingAgent:
                                     )
                                 )
                             except Exception as e:
-                                logger.error(f"Error calculating confidence score: {e}")
+                                logger.exception(
+                                    f"Error calculating confidence score: {e}"
+                                )
+                                logger.error(
+                                    f"Could not calculate confidence score for annotation: {annotation.json()}"
+                                )
                                 if (
                                     self.config.task_type()
                                     == TaskType.ATTRIBUTE_EXTRACTION
