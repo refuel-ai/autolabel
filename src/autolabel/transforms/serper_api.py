@@ -96,6 +96,11 @@ class SerperApi(BaseTransform):
         return search_result
 
     async def _apply(self, row: Dict[str, Any]) -> Dict[str, Any]:
+        for col in self.query_columns:
+            if col not in row:
+                logger.error(
+                    f"Missing query column: {col} in row {row}",
+                )
         query = self.query_template.format_map(defaultdict(str, row))
         search_result = self.NULL_TRANSFORM_TOKEN
         if pd.isna(query) or query == self.NULL_TRANSFORM_TOKEN:
