@@ -97,7 +97,6 @@ class SerperApi(BaseTransform):
 
     async def _apply(self, row: Dict[str, Any]) -> Dict[str, Any]:
         query = self.query_template.format_map(defaultdict(str, row))
-        query = ""
         search_result = self.NULL_TRANSFORM_TOKEN
         if pd.isna(query) or query == self.NULL_TRANSFORM_TOKEN:
             raise TransformError(
