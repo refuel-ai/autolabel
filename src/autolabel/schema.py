@@ -46,10 +46,6 @@ class FewShotAlgorithm(str, Enum):
     LABEL_DIVERSITY_SIMILARITY = "label_diversity_similarity"
 
 
-class TaskStatus(str, Enum):
-    ACTIVE = "active"
-
-
 class MetricType(str, Enum):
     """Enum of supported performance metrics. Some metrics are always available (task agnostic), while others are only supported by certain types of tasks"""
 
@@ -124,86 +120,6 @@ class LLMAnnotation(BaseModel):
     cost: Optional[float] = None
     latency: Optional[float] = None
     error: Optional[LabelingError] = None
-
-
-class Dataset(BaseModel):
-    """Contains Dataset parameters, including input file path, indexes for state management (e.g. job batching and retries), and a unique ID"""
-
-    id: str
-    input_file: str
-    start_index: int
-    end_index: int
-
-    class Config:
-        orm_mode = True
-
-    @classmethod
-    def create_id(
-        self,
-        dataset: Union[str, pd.DataFrame],
-        config: AutolabelConfig,
-        start_index: int,
-        max_items: int,
-    ) -> str:
-        """
-        Generates a unique ID for the given Dataset configuration
-        Args:
-            dataset: either 1) input file name or 2) pandas Dataframe
-            config:  AutolabelConfig object containing project settings
-            start_index: index to begin labeling job at (used for job batching, retries, state management)
-            max_items: number of data points to label, beginning at start_index
-
-        Returns:
-            filehash: a unique ID generated from an MD5 hash of the functions parameters
-        """
-        if isinstance(dataset, str):
-            filehash = calculate_md5(
-                [open(dataset, "rb"), config._dataset_config, start_index, max_items]
-            )
-        else:
-            filehash = calculate_md5(
-                [dataset.to_csv(), config._dataset_config, start_index, max_items]
-            )
-        return filehash
-
-
-class Task(BaseModel):
-    id: str
-    task_type: TaskType
-    model_name: str
-    config: str
-
-    class Config:
-        orm_mode = True
-
-    @classmethod
-    def create_id(self, config: AutolabelConfig) -> str:
-        filehash = calculate_md5(config.config)
-        return filehash
-
-
-class TaskRun(BaseModel):
-    id: Optional[str] = None
-    created_at: datetime
-    task_id: str
-    dataset_id: str
-    current_index: int
-    output_file: str
-    status: TaskStatus
-    error: Optional[str] = None
-    metrics: Optional[Dict[str, Any]] = None
-
-    class Config:
-        orm_mode = True
-
-
-class Annotation(BaseModel):
-    id: Optional[str] = None
-    index: int
-    llm_annotation: Optional[LLMAnnotation] = None
-
-    class Config:
-        orm_mode = True
 
 
 class GenerationCacheEntry(BaseModel):

@@ -1,9 +1,11 @@
+import asyncio
 import json
 import os
 import requests
 import logging
 from typing import List, Optional, Tuple
 from time import time
+import httpx
 
 from autolabel.models import BaseModel
 from autolabel.configs import AutolabelConfig
@@ -30,6 +32,8 @@ class UnretryableError(Exception):
 class RefuelLLM(BaseModel):
     DEFAULT_TOKENIZATION_MODEL = "NousResearch/Llama-2-13b-chat-hf"
     DEFAULT_CONTEXT_LENGTH = 3250
+    DEFAULT_CONNECT_TIMEOUT = 10
+    DEFAULT_READ_TIMEOUT = 120
     DEFAULT_PARAMS = {
         "max_new_tokens": 128,
     }
@@ -81,7 +85,12 @@ class RefuelLLM(BaseModel):
         }
         headers = {"refuel_api_key": self.REFUEL_API_KEY}
         start_time = time()
-        response = requests.post(self.BASE_API, json=payload, headers=headers)
+        response = requests.post(
+            self.BASE_API,
+            json=payload,
+            headers=headers,
+            timeout=(self.DEFAULT_CONNECT_TIMEOUT, self.DEFAULT_READ_TIMEOUT),
+        )
         end_time = time()
         # raise Exception if status != 200
         if response.status_code != 200:
@@ -96,6 +105,43 @@ class RefuelLLM(BaseModel):
             )
             response.raise_for_status()
         return response, end_time - start_time
+
+    @retry(
+        reraise=True,
+        stop=stop_after_attempt(5),
+        wait=wait_exponential(multiplier=1, min=2, max=10),
+        before_sleep=before_sleep_log(logger, logging.WARNING),
+        retry=retry_if_not_exception_type(UnretryableError),
+    )
+    async def _alabel_with_retry(self, prompt: str) -> Tuple[requests.Response, float]:
+        payload = {
+            "input": prompt,
+            "params": {**self.model_params},
+            "confidence": self.config.confidence(),
+        }
+        headers = {"refuel_api_key": self.REFUEL_API_KEY}
+        async with httpx.AsyncClient() as client:
+            timeout = httpx.Timeout(
+                self.DEFAULT_CONNECT_TIMEOUT, read=self.DEFAULT_READ_TIMEOUT
+            )
+            start_time = time()
+            response = await client.post(
+                self.BASE_API, json=payload, headers=headers, timeout=timeout
+            )
+            end_time = time()
+            # raise Exception if status != 200
+            if response.status_code != 200:
+                if response.status_code in UNRETRYABLE_ERROR_CODES:
+                    # This is a bad request, and we should not retry
+                    raise UnretryableError(
+                        f"NonRetryable Error: Received status code {response.status_code} from Refuel API. Response: {response.text}"
+                    )
+
+                logger.warning(
+                    f"Received status code {response.status_code} from Refuel API. Response: {response.text}"
+                )
+                response.raise_for_status()
+            return response, end_time - start_time
 
     def _label(self, prompts: List[str]) -> RefuelLLMResult:
         generations = []
@@ -131,6 +177,45 @@ class RefuelLLM(BaseModel):
                     )
                 )
                 latencies.append(0)
+        return RefuelLLMResult(
+            generations=generations, errors=errors, latencies=latencies
+        )
+
+    async def _alabel(self, prompts: List[str]) -> RefuelLLMResult:
+        generations = []
+        errors = []
+        latencies = []
+        try:
+            requests = [self._alabel_with_retry(prompt) for prompt in prompts]
+            responses = await asyncio.gather(*requests)
+            for response, latency in responses:
+                response = json.loads(response.json())
+                generations.append(
+                    [
+                        Generation(
+                            text=response["generated_text"],
+                            generation_info=(
+                                {"logprobs": {"top_logprobs": response["logprobs"]}}
+                                if self.config.confidence()
+                                else None
+                            ),
+                        )
+                    ]
+                )
+                errors.append(None)
+                latencies.append(latency)
+        except Exception as e:
+            # This signifies an error in generating the response using RefuelLLm
+            logger.error(
+                f"Unable to generate prediction: {e}",
+            )
+            generations.append([Generation(text="")])
+            errors.append(
+                LabelingError(
+                    error_type=ErrorType.LLM_PROVIDER_ERROR, error_message=str(e)
+                )
+            )
+            latencies.append(0)
         return RefuelLLMResult(
             generations=generations, errors=errors, latencies=latencies
         )

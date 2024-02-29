@@ -20,7 +20,7 @@ def test_anthropic_initialization():
     )
 
 
-def test_anthropic_label(mocker):
+async def test_anthropic_label(mocker):
     model = AnthropicLLM(
         config=AutolabelConfig(
             config="tests/assets/banking/config_banking_anthropic.json"
@@ -33,7 +33,7 @@ def test_anthropic_label(mocker):
             generations=[[Generation(text="Answers")] for _ in prompts]
         ),
     )
-    x = model.label(prompts)
+    x = await model.label(prompts)
     assert [i[0].text for i in x.generations] == ["Answers", "Answers"]
     assert sum(x.costs) == approx(0.00010944, rel=1e-3)
 
@@ -68,7 +68,7 @@ def test_gpt35_initialization():
     )
 
 
-def test_gpt35_label(mocker):
+async def test_gpt35_label(mocker):
     model = OpenAILLM(
         config=AutolabelConfig(config="tests/assets/banking/config_banking.json")
     )
@@ -79,7 +79,7 @@ def test_gpt35_label(mocker):
             generations=[[Generation(text="Answers")] for _ in prompts]
         ),
     )
-    x = model.label(prompts)
+    x = await model.label(prompts)
     assert [i[0].text for i in x.generations] == ["Answers", "Answers"]
 
 
@@ -109,7 +109,7 @@ def test_gpt4_initialization():
     )
 
 
-def test_gpt4_label(mocker):
+async def test_gpt4_label(mocker):
     model = OpenAILLM(
         config=AutolabelConfig(config="tests/assets/banking/config_banking_gpt4.json")
     )
@@ -120,7 +120,7 @@ def test_gpt4_label(mocker):
             generations=[[Generation(text="Answers")] for _ in prompts]
         ),
     )
-    x = model.label(prompts)
+    x = await model.label(prompts)
     assert [i[0].text for i in x.generations] == ["Answers", "Answers"]
     assert sum(x.costs) == approx(0.00023999, rel=1e-3)
 
@@ -151,7 +151,7 @@ def test_gpt4V_initialization():
     )
 
 
-def test_gpt4V_label(mocker):
+async def test_gpt4V_label(mocker):
     model = OpenAIVisionLLM(
         config=AutolabelConfig(config="tests/assets/banking/config_banking_gpt4V.json")
     )
@@ -172,7 +172,7 @@ def test_gpt4V_label(mocker):
         model="test",
         object="chat.completion",
     )
-    x = model.label(prompts)
+    x = await model.label(prompts)
     assert [i[0].text for i in x.generations] == ["Answers", "Answers"]
     assert sum(x.costs) == approx(0.01568, rel=1e-3)
 
@@ -205,7 +205,7 @@ def test_refuel_initialization():
     )
 
 
-def test_refuel_label(mocker):
+async def test_refuel_label(mocker):
     class PostRequestMockResponse:
         def __init__(self, resp, status_code):
             self.resp = resp
@@ -227,12 +227,12 @@ def test_refuel_label(mocker):
             resp='{"generated_text": "Answers"}', status_code=200
         ),
     )
-    x = model.label(prompts)
+    x = await model.label(prompts)
     assert [i[0].text for i in x.generations] == ["Answers", "Answers"]
     assert sum(x.costs) == 0
 
 
-def test_refuel_label_non_retryable(mocker):
+async def test_refuel_label_non_retryable(mocker):
     class PostRequestMockResponse:
         def __init__(self, resp, status_code):
             self.resp = resp
@@ -255,14 +255,14 @@ def test_refuel_label_non_retryable(mocker):
             resp='{"error_message": "Error123"}', status_code=422
         ),
     )
-    x = model.label(prompts)
+    x = await model.label(prompts)
     assert [i[0].text for i in x.generations] == ["", ""]
     for error in x.errors:
         assert "NonRetryable Error:" in error.error_message
     assert sum(x.costs) == 0
 
 
-def test_refuel_label_retryable(mocker):
+async def test_refuel_label_retryable(mocker):
     class PostRequestMockResponse:
         def __init__(self, resp, status_code):
             self.resp = resp
@@ -285,7 +285,7 @@ def test_refuel_label_retryable(mocker):
             resp='{"error_message": "Error123"}', status_code=500
         ),
     )
-    x = model.label(prompts)
+    x = await model.label(prompts)
     assert [i[0].text for i in x.generations] == ["", ""]
     for error in x.errors:
         assert "NonRetryable Error:" not in error.error_message

@@ -3,7 +3,7 @@ import math
 import numpy as np
 import pickle as pkl
 import json
-import requests
+import httpx
 import scipy.stats as stats
 import os
 import logging
@@ -138,7 +138,7 @@ class ConfidenceCalculator:
 
         return logprob_per_key
 
-    def p_true(self, model_generation: LLMAnnotation, **kwargs) -> float:
+    async def p_true(self, model_generation: LLMAnnotation, **kwargs) -> float:
         p_true_prompt = f"{model_generation.raw_response} \n Is the answer to the last example correct? Answer in one word on the same line [Yes/No]: "
 
         if self.llm.returns_token_probs():
@@ -149,8 +149,8 @@ class ConfidenceCalculator:
             ]
         else:
             p_true_prompt = model_generation.confidence_prompt + p_true_prompt
-            yes_logprob = self.compute_confidence(p_true_prompt, "Yes")
-            no_logprob = self.compute_confidence(p_true_prompt, "No")
+            yes_logprob = await self.compute_confidence(p_true_prompt, "Yes")
+            no_logprob = await self.compute_confidence(p_true_prompt, "No")
             if not yes_logprob or not no_logprob:
                 # Error while calculating logprobs
                 return 0
@@ -177,7 +177,7 @@ class ConfidenceCalculator:
             model_generation.confidence_score = 0
         return model_generation.confidence_score
 
-    def calculate(self, model_generation: LLMAnnotation, **kwargs) -> float:
+    async def calculate(self, model_generation: LLMAnnotation, **kwargs) -> float:
         if self.score_type not in self.SUPPORTED_CALCULATORS:
             raise NotImplementedError()
 
@@ -196,7 +196,7 @@ class ConfidenceCalculator:
 
                 # On cache miss, compute logprobs using API call and update cache
                 if logprobs == None:
-                    logprobs = self.compute_confidence(
+                    logprobs = await self.compute_confidence(
                         model_generation.confidence_prompt,
                         model_generation.raw_response,
                     )
@@ -211,7 +211,7 @@ class ConfidenceCalculator:
                     )
                     self.cache.update(cache_entry)
             else:
-                logprobs = self.compute_confidence(
+                logprobs = await self.compute_confidence(
                     model_generation.confidence_prompt, model_generation.raw_response
                 )
                 if not logprobs:
@@ -245,17 +245,20 @@ class ConfidenceCalculator:
         wait=wait_exponential(multiplier=1, min=2, max=10),
         before_sleep=before_sleep_log(logger, logging.WARNING),
     )
-    def _call_with_retry(self, model_input, model_output) -> requests.Response:
+    async def _call_with_retry(self, model_input, model_output):
         payload = {"input": model_input, "output": model_output}
         headers = {"refuel_api_key": self.REFUEL_API_KEY}
-        response = requests.post(
-            self.BASE_API, json=payload, headers=headers, timeout=30
-        )
-        # raise Exception if status != 200
-        response.raise_for_status()
-        return response
+        async with httpx.AsyncClient() as client:
+            response = await client.post(
+                self.BASE_API, json=payload, headers=headers, timeout=30
+            )
+            # raise Exception if status != 200
+            response.raise_for_status()
+            return response
 
-    def compute_confidence(self, model_input, model_output) -> Union[dict, List[dict]]:
+    async def compute_confidence(
+        self, model_input, model_output
+    ) -> Union[dict, List[dict]]:
         """
         This function computes the confidence score for the given model_input and model_output
         and returns the logprobs for each token in the output. If there is an error, it returns None.
@@ -268,7 +271,7 @@ class ConfidenceCalculator:
                 )
                 return None
             else:
-                response = self._call_with_retry(model_input, model_output)
+                response = await self._call_with_retry(model_input, model_output)
                 return json.loads(response.json())["logprobs"]
         except Exception as e:
             # This signifies an error in computing confidence score
