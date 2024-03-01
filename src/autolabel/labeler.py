@@ -222,7 +222,6 @@ class LabelingAgent:
             )
 
         if self.example_selector is None and self.config.few_shot_algorithm():
-            print(self.config.few_shot_algorithm())
             if (
                 self.config.label_selection()
                 and self.config.few_shot_algorithm() != "fixed"

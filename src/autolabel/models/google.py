@@ -5,6 +5,7 @@ from typing import List, Optional
 
 from langchain.schema import Generation, HumanMessage, LLMResult
 from tenacity import before_sleep_log, retry, stop_after_attempt, wait_exponential
+
 from autolabel.cache import BaseCache
 from autolabel.configs import AutolabelConfig
 from autolabel.models import BaseModel
@@ -16,13 +17,33 @@ logger = logging.getLogger(__name__)
 class GoogleLLM(BaseModel):
     SEP_REPLACEMENT_TOKEN = "@@"
     CHAT_ENGINE_MODELS = ["gemini-pro"]
+    try:
+        import tiktoken
+        from langchain_google_genai import (
+            ChatGoogleGenerativeAI,
+            HarmBlockThreshold,
+            HarmCategory,
+        )
+    except ImportError:
+        raise ImportError(
+            "tiktoken and langchain_google_genai. Please install it with the following command: pip install 'refuel-autolabel[google]'"
+        )
 
     DEFAULT_MODEL = "gemini-pro"
-    DEFAULT_PARAMS = {}
+    DEFAULT_PARAMS = {
+        "temperature": 0.0,
+        "topK": 3,
+        "safety_settings": {
+            HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT: HarmBlockThreshold.BLOCK_NONE,
+            HarmCategory.HARM_CATEGORY_HATE_SPEECH: HarmBlockThreshold.BLOCK_NONE,
+            HarmCategory.HARM_CATEGORY_HARASSMENT: HarmBlockThreshold.BLOCK_NONE,
+            HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT: HarmBlockThreshold.BLOCK_NONE,
+        },
+    }
 
-    # Reference: https://cloud.google.com/vertex-ai/pricing
+    # Reference: https://ai.google.dev/pricing
     COST_PER_CHARACTER = {
-        "gemini-pro": 0.001 / 1000,
+        "gemini-pro": 0.000125 / 1000,
     }
 
     @cached_property
@@ -38,36 +59,21 @@ class GoogleLLM(BaseModel):
         cache: BaseCache = None,
     ) -> None:
         super().__init__(config, cache)
-        try:
-            import tiktoken
-            from langchain_google_genai import (
-                ChatGoogleGenerativeAI,
-                HarmBlockThreshold,
-                HarmCategory,
-            )
-        except ImportError:
-            raise ImportError(
-                "tiktoken and langchain_google_genai. Please install it with the following command: pip install 'refuel-autolabel[google]'"
-            )
-
         # populate model name
         self.model_name = config.model_name() or self.DEFAULT_MODEL
-        print(self.model_name)
         # populate model params and initialize the LLM
         model_params = config.model_params()
         self.model_params = {
-            **self.DEFAULT_PARAMS,
             **model_params,
-            "safety_settings": {
-            HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT: HarmBlockThreshold.BLOCK_NONE,
-            HarmCategory.HARM_CATEGORY_HATE_SPEECH: HarmBlockThreshold.BLOCK_NONE,
-            HarmCategory.HARM_CATEGORY_HARASSMENT: HarmBlockThreshold.BLOCK_NONE,
-            HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT: HarmBlockThreshold.BLOCK_NONE,
-        }}
+        }
         if self._engine == "chat":
-            self.llm = ChatGoogleGenerativeAI(model=self.model_name, **self.model_params)
+            self.llm = ChatGoogleGenerativeAI(
+                model=self.model_name, **self.model_params
+            )
         else:
-            self.llm = ChatGoogleGenerativeAI(model=self.model_name, **self.model_params)
+            self.llm = ChatGoogleGenerativeAI(
+                model=self.model_name, **self.model_params
+            )
         self.tiktoken = tiktoken
 
     @retry(
@@ -78,7 +84,11 @@ class GoogleLLM(BaseModel):
     )
     def _label_with_retry(self, prompts: List[str]) -> LLMResult:
         start_time = time()
-        response = self.llm.generate(prompts)
+        try:
+            response = self.llm.generate(prompts)
+        except Exception as e:
+            print(f"Error generating from LLM: {e}, returning empty generation")
+            response = LLMResult(generations=[Generation(text="")])
         return response, time() - start_time
 
     def _label_individually(self, prompts: List[str]) -> RefuelLLMResult:
@@ -158,7 +168,7 @@ class GoogleLLM(BaseModel):
             return 0.0
         cost_per_char = self.COST_PER_CHARACTER.get(self.model_name, 0.0)
         return cost_per_char * len(prompt) + cost_per_char * (
-            len(label) if label else 4 * self.model_params["max_output_tokens"]
+            len(label) if label else 1
         )
 
     def returns_token_probs(self) -> bool:
