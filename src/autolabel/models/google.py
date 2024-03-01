@@ -17,29 +17,8 @@ logger = logging.getLogger(__name__)
 class GoogleLLM(BaseModel):
     SEP_REPLACEMENT_TOKEN = "@@"
     CHAT_ENGINE_MODELS = ["gemini-pro"]
-    try:
-        import tiktoken
-        from langchain_google_genai import (
-            ChatGoogleGenerativeAI,
-            HarmBlockThreshold,
-            HarmCategory,
-        )
-    except ImportError:
-        raise ImportError(
-            "tiktoken and langchain_google_genai. Please install it with the following command: pip install 'refuel-autolabel[google]'"
-        )
 
     DEFAULT_MODEL = "gemini-pro"
-    DEFAULT_PARAMS = {
-        "temperature": 0.0,
-        "topK": 3,
-        "safety_settings": {
-            HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT: HarmBlockThreshold.BLOCK_NONE,
-            HarmCategory.HARM_CATEGORY_HATE_SPEECH: HarmBlockThreshold.BLOCK_NONE,
-            HarmCategory.HARM_CATEGORY_HARASSMENT: HarmBlockThreshold.BLOCK_NONE,
-            HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT: HarmBlockThreshold.BLOCK_NONE,
-        },
-    }
 
     # Reference: https://ai.google.dev/pricing
     COST_PER_CHARACTER = {
@@ -58,6 +37,30 @@ class GoogleLLM(BaseModel):
         config: AutolabelConfig,
         cache: BaseCache = None,
     ) -> None:
+
+        try:
+            import tiktoken
+            from langchain_google_genai import (
+                ChatGoogleGenerativeAI,
+                HarmBlockThreshold,
+                HarmCategory,
+            )
+        except ImportError:
+            raise ImportError(
+                "tiktoken and langchain_google_genai. Please install it with the following command: pip install 'refuel-autolabel[google]'"
+            )
+
+        self.DEFAULT_PARAMS = {
+            "temperature": 0.0,
+            "topK": 3,
+            "safety_settings": {
+                HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT: HarmBlockThreshold.BLOCK_NONE,
+                HarmCategory.HARM_CATEGORY_HATE_SPEECH: HarmBlockThreshold.BLOCK_NONE,
+                HarmCategory.HARM_CATEGORY_HARASSMENT: HarmBlockThreshold.BLOCK_NONE,
+                HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT: HarmBlockThreshold.BLOCK_NONE,
+            },
+        }
+
         super().__init__(config, cache)
         # populate model name
         self.model_name = config.model_name() or self.DEFAULT_MODEL
