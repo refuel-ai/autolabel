@@ -65,16 +65,16 @@ class GoogleLLM(BaseModel):
         model_params = config.model_params()
         self.model_params = {
             **model_params,
+            **self.DEFAULT_PARAMS,
         }
         if self._engine == "chat":
-            self.llm = ChatGoogleGenerativeAI(
+            self.llm = self.ChatGoogleGenerativeAI(
                 model=self.model_name, **self.model_params
             )
         else:
-            self.llm = ChatGoogleGenerativeAI(
+            self.llm = self.ChatGoogleGenerativeAI(
                 model=self.model_name, **self.model_params
             )
-        self.tiktoken = tiktoken
 
     @retry(
         reraise=True,
