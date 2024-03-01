@@ -7,10 +7,8 @@ from langchain.prompts.example_selector import (
     SemanticSimilarityExampleSelector,
 )
 from langchain.prompts.example_selector.base import BaseExampleSelector
-from langchain_community.embeddings import (
-    CohereEmbeddings,
-    HuggingFaceEmbeddings,
-)
+from langchain_community.embeddings import CohereEmbeddings, HuggingFaceEmbeddings
+
 # from langchain_google_vertexai import VertexAIEmbeddings
 from langchain_openai import OpenAIEmbeddings
 
