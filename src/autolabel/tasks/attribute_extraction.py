@@ -1,3 +1,4 @@
+import ast
 import json
 import logging
 import pickle
@@ -208,7 +209,7 @@ class AttributeExtractionTask(BaseTask):
             completion_text = completion_text.lstrip("```json")
             completion_text = completion_text.rstrip("```")
 
-            llm_label = {k: str(v) for k, v in json.loads(completion_text).items()}
+            llm_label = {k: str(v) for k, v in ast.literal_eval(completion_text).items()}
             successfully_labeled = True
         except Exception as e:
             logger.error(f"Error parsing LLM response: {response.text}, Error: {e}")
