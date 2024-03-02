@@ -322,7 +322,7 @@ class LabelingAgent:
                                     f"Error calculating confidence score: {e}"
                                 )
                                 logger.error(
-                                    f"Could not calculate confidence score for annotation: {annotation.json()}"
+                                    f"Could not calculate confidence score for annotation: {annotation}"
                                 )
                                 if (
                                     self.config.task_type()
