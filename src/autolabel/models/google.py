@@ -37,7 +37,6 @@ class GoogleLLM(BaseModel):
         config: AutolabelConfig,
         cache: BaseCache = None,
     ) -> None:
-
         try:
             import tiktoken
             from langchain_google_genai import (
