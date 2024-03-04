@@ -1,5 +1,6 @@
 import json
 import logging
+import pickle
 import re
 from collections import defaultdict
 from copy import deepcopy
@@ -348,13 +349,23 @@ class NamedEntityRecognitionTask(BaseTask):
         Returns:
             List[MetricResult]: list of metrics and corresponding values
         """
-        gt_labels = [
-            self.add_text_spans(
-                json.loads(gt_labels[index]), llm_labels[index].curr_sample.decode()
-            )
-            for index in range(len(gt_labels))
-        ]
-
+        new_gt_labels = []
+        for index in range(len(llm_labels)):
+            try:
+                new_gt_labels.append(
+                    self.add_text_spans(
+                        json.loads(gt_labels[index]),
+                        llm_labels[index].curr_sample.decode(),
+                    )
+                )
+            except:
+                new_gt_labels.append(
+                    self.add_text_spans(
+                        json.loads(gt_labels[index]),
+                        str(pickle.loads(llm_labels[index].curr_sample)),
+                    )
+                )
+        gt_labels = new_gt_labels
         (
             curr_gt_labels,
             curr_llm_labels,
