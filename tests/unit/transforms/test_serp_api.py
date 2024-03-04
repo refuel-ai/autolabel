@@ -74,14 +74,12 @@ async def test_error_handling():
     assert set(transformed_row.keys()) == set(
         [
             "knowledge_graph_results",
-            "TransformType.WEB_SEARCH_SERP_API_error",
+            "web_search_serp_api_error",
             "organic_search_results",
         ]
     )
     assert transformed_row["knowledge_graph_results"] == "NO_TRANSFORM"
-    assert (
-        "Invalid API key" in transformed_row["TransformType.WEB_SEARCH_SERP_API_error"]
-    )
+    assert "Invalid API key" in transformed_row["web_search_serp_api_error"]
 
 
 @pytest.mark.asyncio
@@ -110,12 +108,12 @@ async def test_null_query():
     assert set(transformed_row.keys()) == set(
         [
             "knowledge_graph_results",
-            "TransformType.WEB_SEARCH_SERP_API_error",
+            "web_search_serp_api_error",
             "organic_search_results",
         ]
     )
     assert transformed_row["knowledge_graph_results"] == "NO_TRANSFORM"
     assert (
-        transformed_row["TransformType.WEB_SEARCH_SERP_API_error"]
+        transformed_row["web_search_serp_api_error"]
         == "INVALID_INPUT: Empty query in row {'query': 'NO_TRANSFORM'}"
     )

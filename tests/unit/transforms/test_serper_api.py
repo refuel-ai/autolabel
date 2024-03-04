@@ -76,14 +76,10 @@ async def test_null_query():
     transformed_row = await transform.apply(row)
     # Check the output
     assert set(transformed_row.keys()) == set(
-        [
-            "knowledge_graph_results",
-            "TransformType.WEB_SEARCH_SERPER_error",
-            "organic_search_results",
-        ]
+        ["knowledge_graph_results", "web_search_error", "organic_search_results"]
     )
     assert transformed_row["knowledge_graph_results"] == "NO_TRANSFORM"
     assert (
-        transformed_row["TransformType.WEB_SEARCH_SERPER_error"]
+        transformed_row["web_search_error"]
         == "INVALID_INPUT: Empty query in row {'query': 'NO_TRANSFORM'}"
     )

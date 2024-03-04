@@ -60,9 +60,9 @@ async def test_error_handling():
     # Transform the row
     transformed_row = await transform.apply(row)
     # Check the output
-    assert set(transformed_row.keys()) == set(["content", "TransformType.IMAGE_error"])
+    assert set(transformed_row.keys()) == set(["content", "image_error"])
     assert transformed_row["content"] == "NO_TRANSFORM"
     assert (
-        transformed_row["TransformType.IMAGE_error"]
+        transformed_row["image_error"]
         == "tesseract is not installed or it's not in your PATH. See README file for more information."
     )

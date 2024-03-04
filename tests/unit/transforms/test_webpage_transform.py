@@ -71,10 +71,10 @@ async def test_empty_url():
     transformed_row = await transform.apply(row)
     # Check the output
     assert set(transformed_row.keys()) == set(
-        ["webpage_content", "TransformType.WEBPAGE_TRANSFORM_error"]
+        ["webpage_content", "webpage_scrape_error"]
     )
     assert transformed_row["webpage_content"] == "NO_TRANSFORM"
     assert (
-        transformed_row["TransformType.WEBPAGE_TRANSFORM_error"]
+        transformed_row["webpage_scrape_error"]
         == "INVALID_INPUT: Empty url in row {'url': 'NO_TRANSFORM'}"
     )
