@@ -16,6 +16,7 @@ logger = logging.getLogger(__name__)
 
 MAX_RETRIES = 5
 MAX_KEEPALIVE_CONNECTIONS = 20
+CONNECTION_TIMEOUT = 5
 MAX_CONNECTIONS = 100
 BACKOFF = 2
 HEADERS = {}
@@ -53,7 +54,7 @@ class WebpageScrape(BaseTransform):
 
             self.httpx = httpx
             self.timeout_time = timeout
-            self.timeout = httpx.Timeout(timeout)
+            self.timeout = httpx.Timeout(connect=CONNECTION_TIMEOUT, timeout=timeout)
             limits = httpx.Limits(
                 max_keepalive_connections=MAX_KEEPALIVE_CONNECTIONS,
                 max_connections=MAX_CONNECTIONS,
