@@ -18,12 +18,6 @@ from scrapingbee import ScrapingBeeClient
 logger = logging.getLogger(__name__)
 
 MAX_RETRIES = 5
-<<<<<<< HEAD
-=======
-MAX_KEEPALIVE_CONNECTIONS = 20
-CONNECTION_TIMEOUT = 5
-MAX_CONNECTIONS = 100
->>>>>>> main
 BACKOFF = 2
 DEFAULT_TIMEOUT = 60000  # in milliseconds
 
