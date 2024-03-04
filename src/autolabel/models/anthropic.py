@@ -33,7 +33,7 @@ class AnthropicLLM(BaseModel):
 
         try:
             from anthropic._tokenizers import sync_get_tokenizer
-            from langchain_community.chat_models import ChatAnthropic
+            from langchain_anthropic import ChatAnthropic
         except ImportError:
             raise ImportError(
                 "anthropic is required to use the anthropic LLM. Please install it with the following command: pip install 'refuel-autolabel[anthropic]'"
