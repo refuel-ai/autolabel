@@ -1,5 +1,6 @@
-from autolabel.transforms.pdf import PDFTransform
 import pytest
+
+from autolabel.transforms.pdf import PDFTransform
 
 pytest_plugins = ("pytest_asyncio",)
 
@@ -20,6 +21,7 @@ async def test_pdf_transform():
     row = {"file_path": "tests/assets/transforms/Resume.pdf"}
     # Transform the row
     transformed_row = await transform.apply(row)
+    print(transformed_row)
     # Check the output
     assert set(transformed_row.keys()) == set(["content", "metadata"])
     assert isinstance(transformed_row["content"], str)
@@ -76,9 +78,9 @@ async def test_error_handling():
     # Transform the row
     transformed_row = await transform.apply(row)
     # Check the output
-    assert set(transformed_row.keys()) == set(["content", "pdf_error"])
+    assert set(transformed_row.keys()) == set(["content", "TransformType.PDF_error"])
     assert transformed_row["content"] == "NO_TRANSFORM"
     assert (
-        transformed_row["pdf_error"]
+        transformed_row["TransformType.PDF_error"]
         == "File path invalid_file.pdf is not a valid file or url"
     )

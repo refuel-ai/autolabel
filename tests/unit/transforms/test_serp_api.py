@@ -1,8 +1,9 @@
-from autolabel.transforms.serp_api import SerpApi
-from unittest.mock import Mock
-from autolabel.transforms.serp_api import RefuelSerpAPIWrapper
-import pytest
 import json
+from unittest.mock import Mock
+
+import pytest
+
+from autolabel.transforms.serp_api import RefuelSerpAPIWrapper, SerpApi
 
 pytest_plugins = ("pytest_asyncio",)
 
@@ -73,12 +74,14 @@ async def test_error_handling():
     assert set(transformed_row.keys()) == set(
         [
             "knowledge_graph_results",
-            "web_search_serp_api_error",
+            "TransformType.WEB_SEARCH_SERP_API_error",
             "organic_search_results",
         ]
     )
     assert transformed_row["knowledge_graph_results"] == "NO_TRANSFORM"
-    assert "Invalid API key" in transformed_row["web_search_serp_api_error"]
+    assert (
+        "Invalid API key" in transformed_row["TransformType.WEB_SEARCH_SERP_API_error"]
+    )
 
 
 @pytest.mark.asyncio
@@ -107,12 +110,12 @@ async def test_null_query():
     assert set(transformed_row.keys()) == set(
         [
             "knowledge_graph_results",
-            "web_search_serp_api_error",
+            "TransformType.WEB_SEARCH_SERP_API_error",
             "organic_search_results",
         ]
     )
     assert transformed_row["knowledge_graph_results"] == "NO_TRANSFORM"
     assert (
-        transformed_row["web_search_serp_api_error"]
+        transformed_row["TransformType.WEB_SEARCH_SERP_API_error"]
         == "INVALID_INPUT: Empty query in row {'query': 'NO_TRANSFORM'}"
     )

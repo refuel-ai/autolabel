@@ -1,8 +1,9 @@
-from autolabel.transforms.serper_api import SerperApi
-from unittest.mock import Mock
-from autolabel.transforms.serper_api import RefuelSerperAPIWrapper
-import pytest
 import json
+from unittest.mock import Mock
+
+import pytest
+
+from autolabel.transforms.serper_api import RefuelSerperAPIWrapper, SerperApi
 
 pytest_plugins = ("pytest_asyncio",)
 
@@ -75,10 +76,14 @@ async def test_null_query():
     transformed_row = await transform.apply(row)
     # Check the output
     assert set(transformed_row.keys()) == set(
-        ["knowledge_graph_results", "web_search_error", "organic_search_results"]
+        [
+            "knowledge_graph_results",
+            "TransformType.WEB_SEARCH_SERPER_error",
+            "organic_search_results",
+        ]
     )
     assert transformed_row["knowledge_graph_results"] == "NO_TRANSFORM"
     assert (
-        transformed_row["web_search_error"]
+        transformed_row["TransformType.WEB_SEARCH_SERPER_error"]
         == "INVALID_INPUT: Empty query in row {'query': 'NO_TRANSFORM'}"
     )

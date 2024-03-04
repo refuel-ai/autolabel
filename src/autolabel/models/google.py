@@ -71,13 +71,15 @@ class GoogleLLM(BaseModel):
             **self.DEFAULT_PARAMS,
         }
         if self._engine == "chat":
-            self.llm = self.ChatGoogleGenerativeAI(
+            self.llm = ChatGoogleGenerativeAI(
                 model=self.model_name, **self.model_params
             )
         else:
-            self.llm = self.ChatGoogleGenerativeAI(
+            self.llm = ChatGoogleGenerativeAI(
                 model=self.model_name, **self.model_params
             )
+
+        self.tiktoken = tiktoken
 
     @retry(
         reraise=True,
@@ -87,11 +89,7 @@ class GoogleLLM(BaseModel):
     )
     def _label_with_retry(self, prompts: List[str]) -> LLMResult:
         start_time = time()
-        try:
-            response = self.llm.generate(prompts)
-        except Exception as e:
-            print(f"Error generating from LLM: {e}, returning empty generation")
-            response = LLMResult(generations=[Generation(text="")])
+        response = self.llm.generate(prompts)
         return response, time() - start_time
 
     def _label_individually(self, prompts: List[str]) -> RefuelLLMResult:
