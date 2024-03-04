@@ -66,7 +66,7 @@ dev = [
     "pre-commit"
 ]
 openai = [
-    "openai == 1.5.0",
+    "openai == 1.10.0",
     "tiktoken >= 0.3.3"
 ]
 anthropic = [
