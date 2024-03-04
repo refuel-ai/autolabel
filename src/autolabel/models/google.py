@@ -21,8 +21,12 @@ class GoogleLLM(BaseModel):
     DEFAULT_MODEL = "gemini-pro"
 
     # Reference: https://ai.google.dev/pricing
-    COST_PER_CHARACTER = {
+    COST_PER_PROMPT_CHARACTER = {
         "gemini-pro": 0.000125 / 1000,
+    }
+
+    COST_PER_COMPLETION_CHARACTER = {
+        "gemini-pro": 0.000375 / 1000,
     }
 
     @cached_property
@@ -65,10 +69,7 @@ class GoogleLLM(BaseModel):
         self.model_name = config.model_name() or self.DEFAULT_MODEL
         # populate model params and initialize the LLM
         model_params = config.model_params()
-        self.model_params = {
-            **model_params,
-            **self.DEFAULT_PARAMS,
-        }
+        self.model_params = {**self.DEFAULT_PARAMS, **model_params}
         if self._engine == "chat":
             self.llm = ChatGoogleGenerativeAI(
                 model=self.model_name, **self.model_params
@@ -80,12 +81,6 @@ class GoogleLLM(BaseModel):
 
         self.tiktoken = tiktoken
 
-    @retry(
-        reraise=True,
-        stop=stop_after_attempt(5),
-        wait=wait_exponential(multiplier=1, min=2, max=10),
-        before_sleep=before_sleep_log(logger, logging.WARNING),
-    )
     def _label_with_retry(self, prompts: List[str]) -> LLMResult:
         start_time = time()
         response = self.llm.generate(prompts)
@@ -128,37 +123,20 @@ class GoogleLLM(BaseModel):
         )
 
     def _label(self, prompts: List[str]) -> RefuelLLMResult:
-        for prompt in prompts:
-            if self.SEP_REPLACEMENT_TOKEN in prompt:
-                logger.warning(
-                    f"""Current prompt contains {self.SEP_REPLACEMENT_TOKEN} 
-                                which is currently used as a separator token by refuel
-                                llm. It is highly recommended to avoid having any
-                                occurences of this substring in the prompt.
-                            """
-                )
-        prompts = [
-            prompt.replace("\n", self.SEP_REPLACEMENT_TOKEN) for prompt in prompts
-        ]
-        if self._engine == "chat":
-            # Need to convert list[prompts] -> list[messages]
-            # Currently the entire prompt is stuck into the "human message"
-            # We might consider breaking this up into human vs system message in future
-            prompts = [[HumanMessage(content=prompt)] for prompt in prompts]
-
         try:
             start_time = time()
-            result = self._label_with_retry(prompts)
+            if self._engine == "chat":
+                prompts = [[HumanMessage(content=prompt)] for prompt in prompts]
+                result = self.llm.generate(prompts, **self.query_params)
+                generations = self._chat_backward_compatibility(result.generations)
+            else:
+                result = self.llm.generate(prompts)
+                generations = result.generations
             end_time = time()
-            for generations in result.generations:
-                for generation in generations:
-                    generation.text = generation.text.replace(
-                        self.SEP_REPLACEMENT_TOKEN, "\n"
-                    )
             return RefuelLLMResult(
-                generations=result.generations,
-                errors=[None] * len(result.generations),
-                latencies=[end_time - start_time] * len(result.generations),
+                generations=generations,
+                errors=[None] * len(generations),
+                latencies=[end_time - start_time] * len(generations),
             )
         except Exception as e:
             return self._label_individually(prompts)
@@ -166,9 +144,10 @@ class GoogleLLM(BaseModel):
     def get_cost(self, prompt: str, label: Optional[str] = "") -> float:
         if self.model_name is None:
             return 0.0
-        cost_per_char = self.COST_PER_CHARACTER.get(self.model_name, 0.0)
-        return cost_per_char * len(prompt) + cost_per_char * (
-            len(label) if label else 1
+        cost_per_prompt_char = self.COST_PER_PROMPT_CHARACTER[self.model_name]
+        cost_per_completion_char = self.COST_PER_COMPLETION_CHARACTER[self.model_name]
+        return cost_per_prompt_char * len(prompt) + cost_per_completion_char * (
+            len(label) if label else 0.0
         )
 
     def returns_token_probs(self) -> bool:

@@ -16,16 +16,20 @@ class AnthropicLLM(BaseModel):
         "temperature": 0.0,
     }
 
-    # Reference: https://cdn2.assets-servd.host/anthropic-website/production/images/apr-pricing-tokens.pdf
+    # Reference: https://www.anthropic.com/api#pricing
     COST_PER_PROMPT_TOKEN = {
-        # $11.02 per million tokens
-        "claude-v1": (11.02 / 1000000),
-        "claude-instant-v1": (1.63 / 1000000),
+        "claude-instant-1.2": (0.80 / 1_000_000),
+        "claude-2.0": (8 / 1_000_000),
+        "claude-2.1": (8 / 1_000_000),
+        "claude-3-opus-20240229": (15 / 1_000_000),
+        "claude-3-sonnet-20240229": (3 / 1_000_000),
     }
     COST_PER_COMPLETION_TOKEN = {
-        # $32.68 per million tokens
-        "claude-v1": (32.68 / 1000000),
-        "claude-instant-v1": (5.51 / 1000000),
+        "claude-instant-1.2": (2.4 / 1_000_000),
+        "claude-2.0": (24 / 1_000_000),
+        "claude-2.1": (24 / 1_000_000),
+        "claude-3-opus-20240229": (75 / 1_000_000),
+        "claude-3-sonnet-20240229": (15 / 1_000_000),
     }
 
     def __init__(self, config: AutolabelConfig, cache: BaseCache = None) -> None:
