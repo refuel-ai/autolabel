@@ -98,8 +98,7 @@ class SerperApi(BaseTransform):
     async def _apply(self, row: Dict[str, Any]) -> Dict[str, Any]:
         for col in self.query_columns:
             if col not in row:
-                raise TransformError(
-                    TransformErrorType.INVALID_INPUT,
+                logger.error(
                     f"Missing query column: {col} in row {row}",
                 )
         query = self.query_template.format_map(defaultdict(str, row))
