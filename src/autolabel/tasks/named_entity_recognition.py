@@ -359,6 +359,7 @@ class NamedEntityRecognitionTask(BaseTask):
                     )
                 )
             except:
+                ## handles the unlabeled cases (don't know why this is an issue but this seems to fix it)
                 new_gt_labels.append(
                     self.add_text_spans(
                         json.loads(gt_labels[index]),
