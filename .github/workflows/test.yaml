@@ -32,4 +32,3 @@ jobs:
           OPENAI_API_KEY: "test_key"
           ANTHROPIC_API_KEY: "test_key"
           REFUEL_API_KEY: "test_key"
-          TEST_ENV: "True"
