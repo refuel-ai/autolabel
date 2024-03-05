@@ -20,6 +20,7 @@ jobs:
         with:
           python-version: 3.8
           architecture: x64
+          cache: "pip"
       - name: Install autolabel
         run: |
           pip install '.[all]'
