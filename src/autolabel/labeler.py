@@ -321,7 +321,7 @@ class LabelingAgent:
                                 logger.exception(
                                     f"Error calculating confidence score: {e}"
                                 )
-                                logger.error(
+                                logger.warning(
                                     f"Could not calculate confidence score for annotation: {annotation}"
                                 )
                                 if (
