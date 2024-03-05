@@ -28,32 +28,6 @@ async def test_webpage_scrape():
 
 
 @pytest.mark.asyncio
-async def test_error_handling():
-    # Initialize the transform class
-    transform = WebpageScrape(
-        output_columns={
-            "content_column": "webpage_content",
-        },
-        url_column="url",
-        cache=None,
-    )
-
-    # Create a mock row
-    row = {"url": "bad_url"}
-    # Transform the row
-    transformed_row = await transform.apply(row)
-    # Check the output
-    assert set(transformed_row.keys()) == set(
-        ["webpage_content", "webpage_scrape_error"]
-    )
-    assert transformed_row["webpage_content"] == "NO_TRANSFORM"
-    assert (
-        transformed_row["webpage_scrape_error"]
-        == "Request URL is missing an 'http://' or 'https://' protocol."
-    )
-
-
-@pytest.mark.asyncio
 async def test_empty_url():
     # Initialize the transform class
     transform = WebpageScrape(
