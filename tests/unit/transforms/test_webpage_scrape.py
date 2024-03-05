@@ -17,7 +17,7 @@ async def test_webpage_scrape():
     )
 
     # Create a mock row
-    row = {"url": "https://en.wikipedia.org/wiki/Main_Page"}
+    row = {"url": "en.wikipedia.org/wiki/Main_Page"}
     # Transform the row
     transformed_row = await transform.apply(row)
     # Check the output
