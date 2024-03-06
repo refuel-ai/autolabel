@@ -80,6 +80,42 @@ class TaskGraph:
                 self.topological_sort_helper(task.id, visited, stack)
         return stack[::-1]
 
+    # Still testing this logic
+    def check_cycle(self):
+        """Check for cycles in the task graph
+
+        Returns:
+            bool: True if cycle is present, False otherwise"""
+        visited = defaultdict(bool)
+        rec_stack = defaultdict(bool)
+
+        for task in self.task_chain:
+            if visited[task.id] == False:
+                if self.check_cycle_helper(task.id, visited, rec_stack):
+                    return True
+        return False
+
+    def check_cycle_helper(self, pre_task: str, visited: List, rec_stack: List):
+        """Recursive helper function to check for cycles
+        Args:
+            pre_task (str): The task we are currently visiting
+            visited (List): List of visited tasks
+            rec_stack (List): A recursive tack to store the current path
+        Returns:
+            bool: True if cycle is present, False otherwise
+        """
+        visited[pre_task] = True
+        rec_stack[pre_task] = True
+
+        for post_task in self.graph[pre_task]:
+            if visited[post_task] == False:
+                if self.check_cycle_helper(post_task, visited, rec_stack) == True:
+                    return True
+            elif rec_stack[post_task] == True:
+                return True
+        rec_stack[pre_task] = False
+        return False
+
 
 class TaskChainOrchestrator:
     def __init__(
@@ -196,6 +232,14 @@ class TaskChainOrchestrator:
         self.task_chain = sorted(
             self.task_chain, key=lambda task: task_order.index(task.id)
         )
+
+    def validate_task_chain(self):
+        """Validate the task graph by checking for cycles
+
+        Returns:
+            bool: True if the graph is valid, False otherwise
+        """
+        return not self.task_graph.check_cycle()
 
     # TODO: For now, we run each separate step of the task chain serially and aggregate at the end.
     # We can optimize this with parallelization where possible/no dependencies.
