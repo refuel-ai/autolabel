@@ -197,9 +197,6 @@ class TaskChainOrchestrator:
             self.task_chain, key=lambda task: task_order.index(task.id)
         )
 
-    def validate_task_chain(self):
-        return not self.task_graph.check_cycle()
-
     # TODO: For now, we run each separate step of the task chain serially and aggregate at the end.
     # We can optimize this with parallelization where possible/no dependencies.
     async def run(self, dataset_df: pd.DataFrame):
