@@ -27,7 +27,7 @@
       "surprise",
       "trust"
     ],
-    "few_shot_examples": "seed.csv",
+    "few_shot_examples": "data/twitter_emotion_detection/seed.csv",
     "few_shot_selection": "semantic_similarity",
     "few_shot_num": 5,
     "example_template": "Input: {example}\nOutput: {labels}"

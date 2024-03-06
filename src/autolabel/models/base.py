@@ -1,19 +1,19 @@
 """Base interface that all model providers will implement."""
 
 from abc import ABC, abstractmethod
-from typing import List, Optional
 from time import time
+from typing import List, Optional
 
+from langchain.schema import Generation
+
+from autolabel.cache import BaseCache
 from autolabel.configs import AutolabelConfig
 from autolabel.schema import (
+    ErrorType,
     GenerationCacheEntry,
     LabelingError,
     RefuelLLMResult,
-    ErrorType,
 )
-from autolabel.cache import BaseCache
-
-from langchain.schema import Generation
 
 
 class BaseModel(ABC):
@@ -41,7 +41,6 @@ class BaseModel(ABC):
                 missing_prompt_idxs,
                 missing_prompts,
             ) = self.get_cached_prompts(prompts)
-
         # label missing prompts
         if len(missing_prompts) > 0:
             new_results = self._label(missing_prompts)

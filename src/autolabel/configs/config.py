@@ -35,6 +35,7 @@ class AutolabelConfig(BaseConfig):
     MODEL_PARAMS_KEY = "params"
     COMPUTE_CONFIDENCE_KEY = "compute_confidence"
     LOGIT_BIAS_KEY = "logit_bias"
+    JSON_MODE = "json_mode"
 
     # Embedding config keys (config["embedding"][<key>])
     EMBEDDING_PROVIDER_KEY = "provider"
@@ -53,6 +54,7 @@ class AutolabelConfig(BaseConfig):
     CHAIN_OF_THOUGHT_KEY = "chain_of_thought"
     LABEL_SELECTION_KEY = "label_selection"
     LABEL_SELECTION_COUNT_KEY = "label_selection_count"
+    LABEL_SELECTION_THRESHOLD = "label_selection_threshold"
     ATTRIBUTES_KEY = "attributes"
     TRANSFORM_KEY = "transforms"
 
@@ -188,7 +190,7 @@ class AutolabelConfig(BaseConfig):
         if isinstance(self._prompt_config.get(self.VALID_LABELS_KEY, []), List):
             return self._prompt_config.get(self.VALID_LABELS_KEY, [])
         else:
-            return self._prompt_config.get(self.VALID_LABELS_KEY, {}).keys()
+            return list(self._prompt_config.get(self.VALID_LABELS_KEY, {}).keys())
 
     def label_descriptions(self) -> Dict[str, str]:
         """Returns a dict of label descriptions"""
@@ -236,9 +238,18 @@ class AutolabelConfig(BaseConfig):
         classification tasks with a large number of possible classes."""
         return self._prompt_config.get(self.LABEL_SELECTION_KEY, False)
 
-    def label_selection_count(self) -> int:
+    def max_selected_labels(self) -> int:
         """Returns the number of labels to select in LabelSelector"""
-        return self._prompt_config.get(self.LABEL_SELECTION_COUNT_KEY, 10)
+        k = self._prompt_config.get(self.LABEL_SELECTION_COUNT_KEY, 10)
+        if k < 1:
+            return len(self.labels_list())
+        return k
+
+    def label_selection_threshold(self) -> float:
+        """Returns the threshold for label selection in LabelSelector
+        If the similarity score ratio with the top Score is above this threshold,
+        the label is selected."""
+        return self._prompt_config.get(self.LABEL_SELECTION_THRESHOLD, 0.0)
 
     def attributes(self) -> List[Dict]:
         """Returns a list of attributes to extract from the text."""
@@ -271,3 +282,7 @@ class AutolabelConfig(BaseConfig):
     def confidence_merge_function(self) -> str:
         """Returns the function to use when merging confidence scores"""
         return self._chunking_config.get(self.CONFIDENCE_MERGE_FUNCTION_KEY, "max")
+
+    def json_mode(self) -> bool:
+        """Returns true if the model should be used in json mode. Currently only used for OpenAI models."""
+        return self._model_config.get(self.JSON_MODE, False)

@@ -1,9 +1,9 @@
 from __future__ import annotations
 
-from pydantic import BaseModel, Extra
+from typing import Dict, List, Optional
 
-from typing import Dict, List
 from langchain.prompts.example_selector.base import BaseExampleSelector
+from pydantic import BaseModel, Extra
 
 
 class FixedExampleSelector(BaseExampleSelector, BaseModel):
@@ -26,9 +26,29 @@ class FixedExampleSelector(BaseExampleSelector, BaseModel):
     def add_example(self, example: Dict[str, str]) -> None:
         self.examples.append(example)
 
-    def select_examples(self, input_variables: Dict[str, str]) -> List[dict]:
+    def select_examples(
+        self,
+        input_variables: Dict[str, str],
+        **kwargs,
+    ) -> List[dict]:
         """Select which examples to use based on the input lengths."""
-        return self.examples[: self.k]
+        label_column = kwargs.get("label_column")
+        selected_labels = kwargs.get("selected_labels")
+
+        if not selected_labels:
+            return self.examples[: self.k]
+
+        if not label_column:
+            print("No label column provided, returning all examples")
+            return self.examples[: self.k]
+
+        # get the examples where label matches the selected labels
+        valid_examples = [
+            example
+            for example in self.examples
+            if example.get(label_column) in selected_labels
+        ]
+        return valid_examples[: min(self.k, len(valid_examples))]
 
     @classmethod
     def from_examples(

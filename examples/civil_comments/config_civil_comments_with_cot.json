@@ -17,7 +17,7 @@
             "toxic",
             "not toxic"
         ],
-        "few_shot_examples": "seed.csv",
+        "few_shot_examples": "data/civil_comments/seed.csv",
         "few_shot_selection": "label_diversity_random",
         "few_shot_num": 4,
         "chain_of_thought": true,

@@ -80,7 +80,7 @@ Now, we do the dry-run with `agent.plan`:
 from autolabel import LabelingAgent, AutolabelDataset
 
 agent = LabelingAgent(config)
-ds = AutolabelDataset('test.csv', config = config)
+ds = AutolabelDataset('docs/civil_comments/test.csv', config = config)
 agent.plan(ds)
 ```
 

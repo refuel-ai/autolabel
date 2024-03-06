@@ -14,7 +14,7 @@ from autolabel.cache import BaseCache
 
 logger = logging.getLogger(__name__)
 
-MAX_RETRIES = 3
+MAX_RETRIES = 5
 MAX_KEEPALIVE_CONNECTIONS = 20
 MAX_CONNECTIONS = 100
 BACKOFF = 2
@@ -35,7 +35,7 @@ class WebpageTransform(BaseTransform):
         cache: BaseCache,
         output_columns: Dict[str, Any],
         url_column: str,
-        timeout: int = 5,
+        timeout: int = 60,
         headers: Dict[str, str] = HEADERS,
     ) -> None:
         super().__init__(cache, output_columns)
