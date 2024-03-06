@@ -42,6 +42,7 @@ class ChainTask(BaseModel):
         arbitrary_types_allowed = True
 
 
+# TODO: Before merging, need to add docstrings where not present
 class TaskGraph:
     def __init__(self, task_chain: List[ChainTask]):
         self.graph = defaultdict(set)
@@ -51,7 +52,13 @@ class TaskGraph:
         self.graph[pre_task].add(post_task)
 
     def topological_sort_helper(self, pre_task: str, visited: List, stack: List):
-        """Recursive helper function to perform topological sort"""
+        """Recursive helper function to perform topological sort
+
+        Args:
+            pre_task (str): The task we are currently visiting
+            visited (List): List of visited tasks
+            stack (List): Stack to store the sorted tasks (in reverse order)
+        """
         visited[pre_task] = True
 
         for post_task in self.graph[pre_task]:
@@ -60,6 +67,11 @@ class TaskGraph:
         stack.append(pre_task)
 
     def topological_sort(self) -> List[str]:
+        """Topological sort of the task graph
+
+        Returns:
+            List[str]: List of task names in topological order
+        """
         visited = defaultdict(bool)
         stack = []
 
@@ -68,18 +80,30 @@ class TaskGraph:
                 self.topological_sort_helper(task.id, visited, stack)
         return stack[::-1]
 
+    # Still testing this logic
     def check_cycle(self):
+        """Check for cycles in the task graph
+
+        Returns:
+            bool: True if cycle is present, False otherwise"""
         visited = defaultdict(bool)
         rec_stack = defaultdict(bool)
 
         for task in self.task_chain:
             if visited[task.id] == False:
-                if self.check_cycle_helper(task.id, visited, rec_stack) == True:
+                if self.check_cycle_helper(task.id, visited, rec_stack):
                     return True
         return False
 
     def check_cycle_helper(self, pre_task: str, visited: List, rec_stack: List):
-        """Recursive helper function to check for cycles"""
+        """Recursive helper function to check for cycles
+        Args:
+            pre_task (str): The task we are currently visiting
+            visited (List): List of visited tasks
+            rec_stack (List): A recursive tack to store the current path
+        Returns:
+            bool: True if cycle is present, False otherwise
+        """
         visited[pre_task] = True
         rec_stack[pre_task] = True
 
@@ -268,6 +292,7 @@ class TaskChainOrchestrator:
 
         return dataset
 
+    # TODO: Before merging, need to clean up following functions and remove unnecessary code
     def aggregate(self, dataset: AutolabelDataset, task: ChainTask):
         if task.type == "label":
             for attribute in task.output_columns:
