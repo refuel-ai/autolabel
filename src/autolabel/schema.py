@@ -22,6 +22,7 @@ class ModelProvider(str, Enum):
     REFUEL = "refuel"
     GOOGLE = "google"
     COHERE = "cohere"
+    REPLICATE = "replicate"
     CUSTOM = "custom"
 
 

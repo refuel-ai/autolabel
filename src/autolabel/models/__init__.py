@@ -13,6 +13,7 @@ from autolabel.models.cohere import CohereLLM
 from autolabel.models.palm import PaLMLLM
 from autolabel.models.hf_pipeline import HFPipelineLLM
 from autolabel.models.hf_pipeline_vision import HFPipelineMultimodal
+from autolabel.models.replicate import ReplicateLLM
 from autolabel.models.refuel import RefuelLLM
 
 MODEL_REGISTRY = {
@@ -23,6 +24,7 @@ MODEL_REGISTRY = {
     ModelProvider.HUGGINGFACE_PIPELINE: HFPipelineLLM,
     ModelProvider.HUGGINGFACE_PIPELINE_VISION: HFPipelineMultimodal,
     ModelProvider.GOOGLE: PaLMLLM,
+    ModelProvider.REPLICATE: ReplicateLLM,
     ModelProvider.REFUEL: RefuelLLM,
 }
 
