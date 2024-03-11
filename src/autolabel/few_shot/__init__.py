@@ -8,8 +8,7 @@ from langchain.prompts.example_selector import (
 )
 from langchain.prompts.example_selector.base import BaseExampleSelector
 from langchain_community.embeddings import CohereEmbeddings, HuggingFaceEmbeddings
-
-# from langchain_google_vertexai import VertexAIEmbeddings
+from langchain_google_vertexai import VertexAIEmbeddings
 from langchain_openai import OpenAIEmbeddings
 
 from autolabel.configs import AutolabelConfig
@@ -34,7 +33,7 @@ DEFAULT_EMBEDDING_PROVIDER = OpenAIEmbeddings
 
 PROVIDER_TO_MODEL: Dict[ModelProvider, Embeddings] = {
     ModelProvider.OPENAI: OpenAIEmbeddings,
-    ModelProvider.GOOGLE: OpenAIEmbeddings,
+    ModelProvider.GOOGLE: VertexAIEmbeddings,
     ModelProvider.HUGGINGFACE_PIPELINE: HuggingFaceEmbeddings,
     ModelProvider.COHERE: CohereEmbeddings,
 }
