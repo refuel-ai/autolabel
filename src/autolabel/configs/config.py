@@ -143,7 +143,7 @@ class AutolabelConfig(BaseConfig):
     def image_column(self) -> str:
         """Returns the name of the column containing an image url for the given item"""
         return self._dataset_config.get(self.IMAGE_COLUMN_KEY, None)
-    
+
     def image_columns(self) -> List[str]:
         """Returns the names of the columns containing an image url for the given item"""
         return self._dataset_config.get(self.IMAGE_COLUMNS_KEY, [])
