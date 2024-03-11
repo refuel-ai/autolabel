@@ -67,6 +67,7 @@ class OpenAIVisionLLM(BaseModel):
             max_tokens=self.DEFAULT_PARAMS_CHAT_ENGINE["max_tokens"],
         )
         self.tiktoken = tiktoken
+        self.image_cols = config.image_columns()
 
     def _generate_logit_bias(self) -> None:
         """Generates logit bias for the labels specified in the config
@@ -96,20 +97,38 @@ class OpenAIVisionLLM(BaseModel):
         for prompt in prompts:
             parsed_prompt = json.loads(prompt)
             try:
+                content = [{"type": "text", "text": parsed_prompt["text"]}]
+                if self.image_cols:
+                    for col in self.image_cols:
+                        if (
+                            parsed_prompt.get(col) is not None
+                            and len(parsed_prompt[col]) > 0
+                        ):
+                            content.append(
+                                {
+                                    "type": "image_url",
+                                    "image_url": {
+                                        "url": parsed_prompt[col],
+                                        "detail": "high",
+                                    },
+                                }
+                            )
+                elif "image_url" in parsed_prompt:
+                    content.append(
+                        {
+                            "type": "image_url",
+                            "image_url": {
+                                "url": parsed_prompt["image_url"],
+                                "detail": "high",
+                            },
+                        }
+                    )
+                logger.info(f"content: {content}")
                 result = self.llm(
                     messages=[
                         {
                             "role": "user",
-                            "content": [
-                                {"type": "text", "text": parsed_prompt["text"]},
-                                {
-                                    "type": "image_url",
-                                    "image_url": {
-                                        "url": parsed_prompt["image_url"],
-                                        "detail": "high",
-                                    },
-                                },
-                            ],
+                            "content": content,
                         },
                     ]
                 )

@@ -24,6 +24,7 @@ class AutolabelConfig(BaseConfig):
     LABEL_SEPARATOR_KEY = "label_separator"
     EXPLANATION_COLUMN_KEY = "explanation_column"
     IMAGE_COLUMN_KEY = "image_url_column"
+    IMAGE_COLUMNS_KEY = "image_url_columns"
     TEXT_COLUMN_KEY = "text_column"
     INPUT_COLUMNS_KEY = "input_columns"
     DELIMITER_KEY = "delimiter"
@@ -142,6 +143,10 @@ class AutolabelConfig(BaseConfig):
     def image_column(self) -> str:
         """Returns the name of the column containing an image url for the given item"""
         return self._dataset_config.get(self.IMAGE_COLUMN_KEY, None)
+    
+    def image_columns(self) -> List[str]:
+        """Returns the names of the columns containing an image url for the given item"""
+        return self._dataset_config.get(self.IMAGE_COLUMNS_KEY, [])
 
     def delimiter(self) -> str:
         """Returns the token used to seperate cells in the dataset. Defaults to a comma ','"""

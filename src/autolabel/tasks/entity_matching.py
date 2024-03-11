@@ -146,6 +146,13 @@ class EntityMatchingTask(BaseTask):
             return json.dumps(
                 {"text": curr_text_prompt, "image_url": input[self.image_col]}
             )
+        if self.image_cols:
+            prompt_dict = {"text": curr_text_prompt}
+            for col in self.image_cols:
+                if col in input and input[col]:
+                    prompt_dict[col] = input[col]
+                prompt_dict[col] = input[col]
+            return json.dumps(prompt_dict)
         else:
             return curr_text_prompt
 
