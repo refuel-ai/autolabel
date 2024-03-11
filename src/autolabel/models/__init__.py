@@ -10,7 +10,7 @@ from autolabel.models.openai import OpenAILLM
 from autolabel.models.openai_vision import OpenAIVisionLLM
 from autolabel.models.anthropic import AnthropicLLM
 from autolabel.models.cohere import CohereLLM
-from autolabel.models.palm import PaLMLLM
+from autolabel.models.google import GoogleLLM
 from autolabel.models.hf_pipeline import HFPipelineLLM
 from autolabel.models.hf_pipeline_vision import HFPipelineMultimodal
 from autolabel.models.refuel import RefuelLLM
@@ -22,7 +22,7 @@ MODEL_REGISTRY = {
     ModelProvider.COHERE: CohereLLM,
     ModelProvider.HUGGINGFACE_PIPELINE: HFPipelineLLM,
     ModelProvider.HUGGINGFACE_PIPELINE_VISION: HFPipelineMultimodal,
-    ModelProvider.GOOGLE: PaLMLLM,
+    ModelProvider.GOOGLE: GoogleLLM,
     ModelProvider.REFUEL: RefuelLLM,
 }
 

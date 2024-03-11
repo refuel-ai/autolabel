@@ -200,7 +200,7 @@ class AutolabelConfig(BaseConfig):
     def label_descriptions(self) -> Dict[str, str]:
         """Returns a dict of label descriptions"""
         if isinstance(self._prompt_config.get(self.VALID_LABELS_KEY, []), List):
-            return {}
+            return None
         else:
             return self._prompt_config.get(self.VALID_LABELS_KEY, {})
 

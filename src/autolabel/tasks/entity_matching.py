@@ -175,9 +175,11 @@ class EntityMatchingTask(BaseTask):
 
         return pt.format(
             task_guidelines=fmt_task_guidelines,
-            label_format=self.LABEL_FORMAT_IN_EXPLANATION
-            if include_label
-            else self.EXCLUDE_LABEL_IN_EXPLANATION,
+            label_format=(
+                self.LABEL_FORMAT_IN_EXPLANATION
+                if include_label
+                else self.EXCLUDE_LABEL_IN_EXPLANATION
+            ),
             labeled_example=fmt_example,
         )
 

@@ -217,18 +217,23 @@ async def gather_async_tasks_with_progress(
     if total is None:
         total = len(tasks)
 
-    async def _task_with_tracker(task, progress, progress_task):
+    group = Group(progress)
+    live = LiveDisplay.get_instance(group, console=console).live
+
+    async def _task_with_tracker(task, progress, progress_task, live):
         res = await task
         progress.advance(
             progress_task,
             advance=min(advance, total - progress.tasks[progress_task].completed),
         )
-        progress.refresh()
+        live.refresh()
         return res
 
-    with progress:
+    with live:
         progress_task = progress.add_task(description, total=total)
-        tasks = [_task_with_tracker(task, progress, progress_task) for task in tasks]
+        tasks = [
+            _task_with_tracker(task, progress, progress_task, live) for task in tasks
+        ]
         return await asyncio.gather(*tasks)
 
 

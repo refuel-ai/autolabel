@@ -1,17 +1,16 @@
-from functools import cached_property
-from typing import List, Optional
-import logging
 import json
-from time import time
-
-from autolabel.models import BaseModel
-from autolabel.configs import AutolabelConfig
-from autolabel.cache import BaseCache
-from autolabel.schema import RefuelLLMResult
-from langchain.schema import HumanMessage, Generation
-from functools import partial
-
+import logging
 import os
+from functools import cached_property, partial
+from time import time
+from typing import List, Optional
+
+from langchain.schema import Generation, HumanMessage
+
+from autolabel.cache import BaseCache
+from autolabel.configs import AutolabelConfig
+from autolabel.models import BaseModel
+from autolabel.schema import RefuelLLMResult
 
 logger = logging.getLogger(__name__)
 
@@ -46,8 +45,8 @@ class OpenAIVisionLLM(BaseModel):
     def __init__(self, config: AutolabelConfig, cache: BaseCache = None) -> None:
         super().__init__(config, cache)
         try:
-            from openai import OpenAI
             import tiktoken
+            from openai import OpenAI
         except ImportError:
             raise ImportError(
                 "openai is required to use the OpenAIVisionLLM. Please install it with the following command: pip install 'refuel-autolabel[openai]'"

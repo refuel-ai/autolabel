@@ -1,5 +1,6 @@
-from autolabel.transforms.image import ImageTransform
 import pytest
+
+from autolabel.transforms.image import ImageTransform
 
 pytest_plugins = ("pytest_asyncio",)
 
