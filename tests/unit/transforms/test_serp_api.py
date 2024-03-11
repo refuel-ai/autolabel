@@ -1,8 +1,9 @@
-from autolabel.transforms.serp_api import SerpApi
-from unittest.mock import Mock
-from autolabel.transforms.serp_api import RefuelSerpAPIWrapper
-import pytest
 import json
+from unittest.mock import Mock
+
+import pytest
+
+from autolabel.transforms.serp_api import RefuelSerpAPIWrapper, SerpApi
 
 pytest_plugins = ("pytest_asyncio",)
 

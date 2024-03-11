@@ -1,5 +1,6 @@
-from autolabel.transforms.pdf import PDFTransform
 import pytest
+
+from autolabel.transforms.pdf import PDFTransform
 
 pytest_plugins = ("pytest_asyncio",)
 

@@ -117,8 +117,7 @@ class OpenAILLM(BaseModel):
         super().__init__(config, cache)
         try:
             import tiktoken
-            from langchain.chat_models import ChatOpenAI
-            from langchain.llms import OpenAI
+            from langchain_openai import ChatOpenAI, OpenAI
         except ImportError:
             raise ImportError(
                 "openai is required to use the OpenAILLM. Please install it with the following command: pip install 'refuel-autolabel[openai]'"

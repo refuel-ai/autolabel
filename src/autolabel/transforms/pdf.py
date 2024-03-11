@@ -1,8 +1,8 @@
-from typing import List, Dict, Any
+from typing import Any, Dict, List
 
-from autolabel.transforms.schema import TransformType
-from autolabel.transforms import BaseTransform
 from autolabel.cache import BaseCache
+from autolabel.transforms import BaseTransform
+from autolabel.transforms.schema import TransformType
 
 
 class PDFTransform(BaseTransform):
@@ -32,8 +32,8 @@ class PDFTransform(BaseTransform):
 
         if self.ocr_enabled:
             try:
-                from pdf2image import convert_from_path
                 import pytesseract
+                from pdf2image import convert_from_path
 
                 self.convert_from_path = convert_from_path
                 self.pytesseract = pytesseract
@@ -48,7 +48,7 @@ class PDFTransform(BaseTransform):
                 )
         else:
             try:
-                from langchain.document_loaders import PDFPlumberLoader
+                from langchain_community.document_loaders import PDFPlumberLoader
 
                 self.PDFPlumberLoader = PDFPlumberLoader
             except ImportError:
