@@ -272,8 +272,7 @@ class LabelingAgent:
                 max_input_tokens=self.llm.DEFAULT_CONTEXT_LENGTH,
                 get_num_tokens=self.llm.get_num_tokens,
             )
-            logger.info(f"Prompt: {final_prompt}")
-
+            logger.info(f"Final prompt: {final_prompt}")
             response = await self.llm.label([final_prompt])
             logger.info(f"Response: {response}")
             for i, generations, error, latency in zip(
