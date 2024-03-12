@@ -151,7 +151,7 @@ class NamedEntityRecognitionTask(BaseTask):
         if self.image_cols:
             prompt_dict = {"text": curr_text_prompt}
             for col in self.image_cols:
-                if input.get(col) is not None and len(input.get(col) > 0):
+                if input.get(col) is not None and len(input.get(col)) > 0:
                     prompt_dict[col] = input[col]
                 prompt_dict[col] = input[col]
             return json.dumps(prompt_dict)

@@ -122,7 +122,6 @@ class OpenAIVisionLLM(BaseModel):
                             },
                         }
                     )
-                logger.info(f"content: {content}")
                 result = self.llm(
                     messages=[
                         {
