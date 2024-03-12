@@ -1,18 +1,16 @@
 import logging
 from typing import Dict, List
 
-from langchain.embeddings import (
-    CohereEmbeddings,
-    HuggingFaceEmbeddings,
-    OpenAIEmbeddings,
-    VertexAIEmbeddings,
-)
 from langchain.embeddings.base import Embeddings
 from langchain.prompts.example_selector import (
     MaxMarginalRelevanceExampleSelector,
     SemanticSimilarityExampleSelector,
 )
 from langchain.prompts.example_selector.base import BaseExampleSelector
+from langchain_community.embeddings import CohereEmbeddings, HuggingFaceEmbeddings
+
+# from langchain_google_vertexai import VertexAIEmbeddings
+from langchain_openai import OpenAIEmbeddings
 
 from autolabel.configs import AutolabelConfig
 from autolabel.schema import FewShotAlgorithm, ModelProvider
@@ -36,7 +34,7 @@ DEFAULT_EMBEDDING_PROVIDER = OpenAIEmbeddings
 
 PROVIDER_TO_MODEL: Dict[ModelProvider, Embeddings] = {
     ModelProvider.OPENAI: OpenAIEmbeddings,
-    ModelProvider.GOOGLE: VertexAIEmbeddings,
+    ModelProvider.GOOGLE: OpenAIEmbeddings,
     ModelProvider.HUGGINGFACE_PIPELINE: HuggingFaceEmbeddings,
     ModelProvider.COHERE: CohereEmbeddings,
 }

@@ -5,6 +5,7 @@ from autolabel.transforms.schema import (
 )
 from autolabel.transforms import BaseTransform
 from typing import Dict, Any
+from urllib.parse import urlparse
 import asyncio
 import logging
 import pandas as pd
@@ -16,7 +17,7 @@ logger = logging.getLogger(__name__)
 
 MAX_RETRIES = 5
 MAX_KEEPALIVE_CONNECTIONS = 20
-CONNECTION_TIMEOUT = 5
+CONNECTION_TIMEOUT = 10
 MAX_CONNECTIONS = 100
 BACKOFF = 2
 HEADERS = {}
@@ -137,6 +138,8 @@ class WebpageScrape(BaseTransform):
                 f"Empty url in row {row}",
             )
         else:
+            if not urlparse(url).scheme:
+                url = f"https://{url}"
             url_response_data = await self._load_url(url)
 
         transformed_row = {

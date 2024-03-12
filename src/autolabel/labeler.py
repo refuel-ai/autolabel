@@ -191,7 +191,7 @@ class LabelingAgent:
                 f"Explanation column {self.config.explanation_column()} not found in dataset.\nMake sure that explanations were generated using labeler.generate_explanations(seed_file)."
             )
 
-        if self.example_selector is None:
+        if self.example_selector is None and self.config.few_shot_algorithm():
             if (
                 self.config.label_selection()
                 and self.config.few_shot_algorithm() != "fixed"
@@ -322,7 +322,7 @@ class LabelingAgent:
                                 logger.exception(
                                     f"Error calculating confidence score: {e}"
                                 )
-                                logger.error(
+                                logger.warning(
                                     f"Could not calculate confidence score for annotation: {annotation}"
                                 )
                                 if (

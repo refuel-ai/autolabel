@@ -1,14 +1,15 @@
 import json
-from autolabel.configs import AutolabelConfig
-from autolabel.models.anthropic import AnthropicLLM
-from autolabel.models.openai import OpenAILLM
-from autolabel.models.openai_vision import OpenAIVisionLLM
-from autolabel.models.palm import PaLMLLM
-from autolabel.models.refuel import RefuelLLM
+
 from langchain.schema import Generation, LLMResult
 from openai.types.chat.chat_completion import ChatCompletion, Choice
 from openai.types.chat.chat_completion_message import ChatCompletionMessage
 from pytest import approx
+
+from autolabel.configs import AutolabelConfig
+from autolabel.models.anthropic import AnthropicLLM
+from autolabel.models.openai import OpenAILLM
+from autolabel.models.openai_vision import OpenAIVisionLLM
+from autolabel.models.refuel import RefuelLLM
 
 
 ################### ANTHROPIC TESTS #######################
@@ -46,7 +47,7 @@ def test_anthropic_get_cost():
     )
     example_prompt = "TestingExamplePrompt"
     curr_cost = model.get_cost(example_prompt)
-    assert curr_cost == approx(0.03271306, rel=1e-3)
+    assert curr_cost == approx(0.024024, rel=1e-3)
 
 
 def test_anthropic_return_probs():

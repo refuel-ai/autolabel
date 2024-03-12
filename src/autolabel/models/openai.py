@@ -117,13 +117,12 @@ class OpenAILLM(BaseModel):
         super().__init__(config, cache)
         try:
             import tiktoken
-            from langchain.chat_models import ChatOpenAI
-            from langchain.llms import OpenAI
+            from langchain_openai import ChatOpenAI, OpenAI
         except ImportError:
             raise ImportError(
                 "openai is required to use the OpenAILLM. Please install it with the following command: pip install 'refuel-autolabel[openai]'"
             )
-
+        self.tiktoken = tiktoken
         # populate model name
         self.model_name = config.model_name() or self.DEFAULT_MODEL
 
@@ -134,8 +133,8 @@ class OpenAILLM(BaseModel):
         model_params = config.model_params()
         if config.logit_bias() != 0:
             model_params = {
-                **self._generate_logit_bias(),
                 **model_params,
+                **self._generate_logit_bias(),
             }
 
         if self._engine == "chat":
@@ -160,8 +159,6 @@ class OpenAILLM(BaseModel):
                 model_name=self.model_name, verbose=False, **self.model_params
             )
 
-        self.tiktoken = tiktoken
-
     def _generate_logit_bias(self) -> None:
         """Generates logit bias for the labels specified in the config
 
@@ -182,7 +179,7 @@ class OpenAILLM(BaseModel):
                 for token in tokens:
                     logit_bias[token] = self.config.logit_bias()
                 max_tokens = max(max_tokens, len(tokens))
-
+        logit_bias[encoding.eot_token] = self.config.logit_bias()
         return {"logit_bias": logit_bias, "max_tokens": max_tokens}
 
     def _chat_backward_compatibility(

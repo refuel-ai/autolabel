@@ -1,10 +1,10 @@
-from typing import List, Optional
-from time import time
 import os
+from time import time
+from typing import List, Optional
 
-from autolabel.models import BaseModel
-from autolabel.configs import AutolabelConfig
 from autolabel.cache import BaseCache
+from autolabel.configs import AutolabelConfig
+from autolabel.models import BaseModel
 from autolabel.schema import RefuelLLMResult
 
 
@@ -23,7 +23,7 @@ class CohereLLM(BaseModel):
         super().__init__(config, cache)
         try:
             import cohere
-            from langchain.llms import Cohere
+            from langchain_community.llms import Cohere
         except ImportError:
             raise ImportError(
                 "cohere is required to use the cohere LLM. Please install it with the following command: pip install 'refuel-autolabel[cohere]'"

@@ -2,7 +2,7 @@ from collections import defaultdict
 import json
 from autolabel.cache import BaseCache
 from autolabel.transforms import BaseTransform
-from langchain.utilities import SerpAPIWrapper
+from langchain_community.utilities import SerpAPIWrapper
 from typing import Dict, Any, List
 import logging
 import pandas as pd
