@@ -90,6 +90,8 @@ all = [
     "pre-commit",
     "openai == 1.10.0",
     "langchain-anthropic==0.1.1",
+    "langchain-core==0.1.23",
+    "langchain-community==0.0.20",
     "langchain-openai==0.0.7",
     "langchain_google_vertexai==0.0.5",
     "langchain-google-genai==0.0.9",
@@ -107,7 +109,7 @@ all = [
     "pytesseract >= 0.3.10",
     "beautifulsoup4 >= 4.12.2",
     "httpx",
-    "fake_useragent",
+    "fake_useragent==1.4.0",
     "scrapingbee",
     "pillow >= 9.5.0"
 ]
