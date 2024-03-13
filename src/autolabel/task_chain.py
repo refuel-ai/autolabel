@@ -199,29 +199,27 @@ class TaskChainOrchestrator:
                     config=task_config.config,
                 )
             )
+            added_transforms = set()
             for transform in task_config.transforms():
-                for task in task_chain:
-                    if task.name != transform.get("name") or sorted(
-                        task.input_columns
-                    ) != sorted(transform.get("input_columns", [])):
-                        task_chain.append(
-                            ChainTask(
-                                type="transform",
-                                id=str(uuid.uuid4()),
-                                name=transform.get("name"),
-                                input_columns=transform.get("input_columns", []),
-                                output_columns=list(
-                                    map(
-                                        lambda col: self.column_name_map.get(col),
-                                        list(
-                                            transform.get("output_columns", {}).values()
-                                        ),
-                                    )
-                                ),
-                                autolabel_config=task_config,
-                                config=transform,
+                if transform.get("name") in added_transforms:
+                    continue
+                added_transforms.add(transform.get("name"))
+                task_chain.append(
+                    ChainTask(
+                        type="transform",
+                        id=str(uuid.uuid4()),
+                        name=transform.get("name"),
+                        input_columns=transform.get("input_columns", []),
+                        output_columns=list(
+                            map(
+                                lambda col: self.column_name_map.get(col),
+                                list(transform.get("output_columns", {}).values()),
                             )
-                        )
+                        ),
+                        autolabel_config=task_config,
+                        config=transform,
+                    )
+                )
         return task_chain
 
     def initialize_task_graph(self):
