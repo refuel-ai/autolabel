@@ -183,6 +183,7 @@ class TaskChainOrchestrator:
             List[ChainTask]: List of ChainTask objects
         """
         task_chain = []
+        added_transforms = set()
         for task_config in self.task_configs:
             output_columns = [
                 attribute.get("name") for attribute in task_config.attributes()
@@ -199,7 +200,6 @@ class TaskChainOrchestrator:
                     config=task_config.config,
                 )
             )
-            added_transforms = set()
             for transform in task_config.transforms():
                 if transform.get("name") in added_transforms:
                     continue
