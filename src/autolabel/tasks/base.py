@@ -50,7 +50,6 @@ class BaseTask(ABC):
 
     def __init__(self, config: AutolabelConfig) -> None:
         self.config = config
-        self.image_col = self.config.image_column()
         self.image_cols = self.config.image_columns()
 
         # Update the default prompt template with the prompt template from the config

@@ -131,11 +131,6 @@ class QuestionAnsweringTask(BaseTask):
                 output_guidelines=output_guidelines,
                 current_example=current_example,
             )
-
-        if self.image_col is not None:
-            return json.dumps(
-                {"text": curr_text_prompt, "image_url": input[self.image_col]}
-            )
         if self.image_cols:
             prompt_dict = {"text": curr_text_prompt}
             for col in self.image_cols:

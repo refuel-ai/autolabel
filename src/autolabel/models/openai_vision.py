@@ -112,16 +112,6 @@ class OpenAIVisionLLM(BaseModel):
                                     },
                                 }
                             )
-                elif "image_url" in parsed_prompt:
-                    content.append(
-                        {
-                            "type": "image_url",
-                            "image_url": {
-                                "url": parsed_prompt["image_url"],
-                                "detail": "high",
-                            },
-                        }
-                    )
                 result = self.llm(
                     messages=[
                         {
