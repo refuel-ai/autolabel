@@ -89,7 +89,10 @@ all = [
     "pytest-mock",
     "pre-commit",
     "openai == 1.10.0",
+    "langchain==0.1.9",
     "langchain-anthropic==0.1.1",
+    "langchain-core==0.1.30",
+    "langchain-community==0.0.27",
     "langchain-openai==0.0.7",
     "langchain_google_vertexai==0.0.5",
     "langchain-google-genai==0.0.9",
@@ -101,14 +104,14 @@ all = [
     "cohere>=4.11.2",
     "redis >= 3.5.3",
     "sentence-transformers==2.3.1",
-    "sentencepiece",
+    "sentencepiece==0.2.0",
     "pdfplumber >= 0.10.2",
     "pdf2image >= 1.16.3",
     "pytesseract >= 0.3.10",
     "beautifulsoup4 >= 4.12.2",
     "httpx",
-    "fake_useragent",
-    "scrapingbee",
+    "fake_useragent==1.4.0",
+    "scrapingbee==2.0.1",
     "pillow >= 9.5.0"
 ]
 

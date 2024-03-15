@@ -14,6 +14,7 @@ from autolabel.models.google import GoogleLLM
 from autolabel.models.hf_pipeline import HFPipelineLLM
 from autolabel.models.hf_pipeline_vision import HFPipelineMultimodal
 from autolabel.models.refuel import RefuelLLM
+from autolabel.models.tgi import TGILLM
 
 MODEL_REGISTRY = {
     ModelProvider.OPENAI: OpenAILLM,
@@ -24,6 +25,7 @@ MODEL_REGISTRY = {
     ModelProvider.HUGGINGFACE_PIPELINE_VISION: HFPipelineMultimodal,
     ModelProvider.GOOGLE: GoogleLLM,
     ModelProvider.REFUEL: RefuelLLM,
+    ModelProvider.TGI: TGILLM,
 }
 
 

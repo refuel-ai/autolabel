@@ -23,6 +23,7 @@ class ModelProvider(str, Enum):
     GOOGLE = "google"
     COHERE = "cohere"
     CUSTOM = "custom"
+    TGI = "tgi"
 
 
 class TaskType(str, Enum):
