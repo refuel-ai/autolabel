@@ -131,7 +131,6 @@ class TGILLM(BaseModel):
                 errors.append(None)
                 latencies.append(latency)
             except Exception as e:
-                # This signifies an error in generating the response using TGILLm
                 logger.exception(
                     f"Unable to generate prediction: {e}",
                 )
@@ -176,7 +175,6 @@ class TGILLM(BaseModel):
                 errors.append(None)
                 latencies.append(latency)
         except Exception as e:
-            # This signifies an error in generating the response using TGILLm
             logger.exception(
                 f"Unable to generate prediction: {e}",
             )
