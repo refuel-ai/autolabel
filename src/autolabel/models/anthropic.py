@@ -10,7 +10,7 @@ from autolabel.schema import RefuelLLMResult
 
 
 class AnthropicLLM(BaseModel):
-    DEFAULT_MODEL = "claude-instant-v1"
+    DEFAULT_MODEL = "claude-3-haiku-20240307"
     DEFAULT_PARAMS = {
         "max_tokens_to_sample": 1000,
         "temperature": 0.0,
@@ -23,6 +23,7 @@ class AnthropicLLM(BaseModel):
         "claude-2.1": (8 / 1_000_000),
         "claude-3-opus-20240229": (15 / 1_000_000),
         "claude-3-sonnet-20240229": (3 / 1_000_000),
+        "claude-3-haiku-20240307": (0.25 / 1_000_000),
     }
     COST_PER_COMPLETION_TOKEN = {
         "claude-instant-1.2": (2.4 / 1_000_000),
@@ -30,6 +31,7 @@ class AnthropicLLM(BaseModel):
         "claude-2.1": (24 / 1_000_000),
         "claude-3-opus-20240229": (75 / 1_000_000),
         "claude-3-sonnet-20240229": (15 / 1_000_000),
+        "claude-3-haiku-20240307": (1.25 / 1_000_000),
     }
 
     def __init__(self, config: AutolabelConfig, cache: BaseCache = None) -> None:
