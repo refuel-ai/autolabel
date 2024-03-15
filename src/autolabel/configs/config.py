@@ -26,6 +26,7 @@ class AutolabelConfig(BaseConfig):
     IMAGE_COLUMN_KEY = "image_url_column"
     TEXT_COLUMN_KEY = "text_column"
     INPUT_COLUMNS_KEY = "input_columns"
+    OUTPUT_COLUMNS_KEY = "output_columns"
     DELIMITER_KEY = "delimiter"
     DISABLE_QUOTING = "disable_quoting"
 
@@ -134,6 +135,10 @@ class AutolabelConfig(BaseConfig):
     def input_columns(self) -> List[str]:
         """Returns the names of the input columns from the dataset that are used in the prompt"""
         return self._dataset_config.get(self.INPUT_COLUMNS_KEY, [])
+
+    def output_columns(self) -> List[str]:
+        """Returns the names of the expected output fields from the dataset"""
+        return self._dataset_config.get(self.OUTPUT_COLUMNS_KEY, [])
 
     def explanation_column(self) -> str:
         """Returns the name of the column containing an explanation as to why the data is labeled a certain way"""

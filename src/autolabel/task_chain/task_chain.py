@@ -1,6 +1,6 @@
 from collections import defaultdict
 import copy
-from itertools import groupby
+from itertools import accumulate, groupby
 import uuid
 from autolabel.configs import AutolabelConfig
 import logging
@@ -26,21 +26,8 @@ logger = logging.getLogger(__name__)
 logging.getLogger("httpx").setLevel(logging.WARNING)
 
 
-class ChainTask(BaseModel):
-    type: str
-    id: str
-    name: str
-    input_columns: List[str]
-    output_columns: List[str]
-    autolabel_config: AutolabelConfig = None
-    config: Dict = None
-
-    class Config:
-        arbitrary_types_allowed = True
-
-
 class TaskGraph:
-    def __init__(self, task_chain: List[ChainTask]):
+    def __init__(self, task_chain: List[Dict]):
         self.graph = defaultdict(set)
         self.task_chain = task_chain
 
@@ -78,8 +65,8 @@ class TaskGraph:
         stack = []
 
         for task in self.task_chain:
-            if visited[task.id] == False:
-                self.topological_sort_helper(task.id, visited, stack)
+            if visited[task.get("task_name")] == False:
+                self.topological_sort_helper(task.get("task_name"), visited, stack)
         return stack[::-1]
 
     # Still testing this logic
@@ -92,8 +79,8 @@ class TaskGraph:
         rec_stack = defaultdict(bool)
 
         for task in self.task_chain:
-            if visited[task.id] == False:
-                if self.check_cycle_helper(task.id, visited, rec_stack):
+            if visited[task.get("task_name")] == False:
+                if self.check_cycle_helper(task.get("task_name"), visited, rec_stack):
                     return True
         return False
 
@@ -132,7 +119,6 @@ class TaskChainOrchestrator:
         column_name_map: Optional[Dict[str, str]] = None,
     ):
         self.task_chain_config = task_chain_config
-        self.task_configs = self.initialize_task_configs()
         self.cache = cache
         self.example_selector = example_selector
         self.generation_cache = generation_cache
@@ -140,122 +126,15 @@ class TaskChainOrchestrator:
         self.confidence_cache = confidence_cache
         self.confidence_tokenizer = confidence_tokenizer
         self.column_name_map = column_name_map
-        self.attributes = []  # TODO REMOVE
-        self.task_chain: List[ChainTask] = self.initialize_task_chain()
-        logger.info(f"task chain: {self.task_chain}")
-        self.task_graph = self.initialize_task_graph()
-        logger.info(f"task graph: {self.task_graph.graph}")
-        self.sort_task_chain()
-
-    def initialize_task_configs(self):
-        """
-        Initialize task configurations by grouping them based on their input columns
-
-        Returns:
-            List[AutolabelConfig]: List of unsorted task configurations, grouped by their input columns
-        """
-        task_configs = []
-        subtasks = self.task_chain_config.subtasks()
-        for input_columns, group in groupby(subtasks, lambda x: x.get("input_columns")):
-            task_config = copy.deepcopy(self.task_chain_config.config)
-            task_config["task_name"] = task_config["task_name"]
-            task_config["task_type"] = TaskType.ATTRIBUTE_EXTRACTION
-            example_template = ""
-            input_columns = [column.lower() for column in input_columns]
-            for column in input_columns:
-                example_template += f"\n{column.capitalize()}: { {column} }".replace(
-                    "'", ""
-                )
-            example_template += "\nOutput: {output_dict}"
-            example_template = example_template.strip()
-            task_config["dataset"]["input_columns"] = input_columns
-            task_config["prompt"]["example_template"] = example_template
-            task_config["prompt"]["attributes"] = list(group)
-            task_configs.append(AutolabelConfig(task_config))
-        logger.info(f"task_configs: {task_configs}")
-        return task_configs
-
-    def initialize_task_chain(self):
-        """
-        Initialize the task chain by creating a list of ChainTask objects, including both labeling tasks and transforms
-
-        Returns:
-            List[ChainTask]: List of ChainTask objects
-        """
-        task_chain = []
-        added_transforms = set()
-        for task_config in self.task_configs:
-            output_columns = [
-                attribute.get("name") for attribute in task_config.attributes()
-            ]
-            self.attributes.extend(output_columns)
-            task_chain.append(
-                ChainTask(
-                    type="label",
-                    id=str(uuid.uuid4()),
-                    name=task_config.task_name(),
-                    input_columns=task_config.input_columns(),
-                    output_columns=output_columns,
-                    autolabel_config=task_config,
-                    config=task_config.config,
-                )
+        self.attributes = list(
+            set(
+                [
+                    attr.get("name")
+                    for subtask in task_chain_config.subtasks()
+                    for attr in AutolabelConfig(subtask).attributes()
+                ]
             )
-            for transform in task_config.transforms():
-                if transform.get("name") in added_transforms:
-                    continue
-                added_transforms.add(transform.get("name"))
-                task_chain.append(
-                    ChainTask(
-                        type="transform",
-                        id=str(uuid.uuid4()),
-                        name=transform.get("name"),
-                        input_columns=transform.get("input_columns", []),
-                        output_columns=list(
-                            map(
-                                lambda col: self.column_name_map.get(col),
-                                list(transform.get("output_columns", {}).values()),
-                            )
-                        ),
-                        autolabel_config=task_config,
-                        config=transform,
-                    )
-                )
-        return task_chain
-
-    def initialize_task_graph(self):
-        """
-        Create a task graph to represent the dependencies between tasks in the task chain
-
-        Returns:
-            TaskGraph: A task graph object representing the dependencies between tasks
-        """
-        task_graph = TaskGraph(self.task_chain)
-        chain_output_columns = {}
-        for task in self.task_chain:
-            for output_column in task.output_columns:
-                chain_output_columns[output_column] = task.id
-        for task in self.task_chain:
-            for input_column in task.input_columns:
-                if input_column in chain_output_columns:
-                    pre_task = chain_output_columns[input_column]
-                    task_graph.add_dependency(pre_task, task.id)
-        return task_graph
-
-    def sort_task_chain(self):
-        """Sort the task chain based on the topological sort of the task graph"""
-        task_order = self.task_graph.topological_sort()
-        logger.info(f"Task Order: {task_order}")
-        self.task_chain = sorted(
-            self.task_chain, key=lambda task: task_order.index(task.id)
         )
-
-    def validate_task_chain(self):
-        """Validate the task graph by checking for cycles
-
-        Returns:
-            bool: True if the graph is valid, False otherwise
-        """
-        return not self.task_graph.check_cycle()
 
     # TODO: For now, we run each separate step of the task chain serially and aggregate at the end.
     # We can optimize this with parallelization where possible/no dependencies.
@@ -268,16 +147,37 @@ class TaskChainOrchestrator:
         Returns:
             AutolabelDataset: Output dataset with the results of the task chain
         """
-        if not self.task_chain:
-            raise ValueError("No task configurations provided")
-        dataset = AutolabelDataset(dataset_df, self.task_chain[0].autolabel_config)
-        for task in self.task_chain:
-            logger.info(f"Running task: {task.name} with id: {task.id}")
-            dataset = AutolabelDataset(dataset.df, task.autolabel_config)
-            if task.type == "label":
+        subtasks = self.task_chain_config.subtasks()
+        if len(subtasks) == 0:
+            raise ValueError("No subtasks found in the task chain")
+        for task in subtasks:
+            autolabel_config = AutolabelConfig(task)
+            dataset = AutolabelDataset(dataset_df, autolabel_config)
+            if autolabel_config.transforms():
                 agent = LabelingAgent(
-                    config=task.autolabel_config,
-                    cache=False,
+                    config=autolabel_config,
+                    cache=self.cache,
+                    example_selector=self.example_selector,
+                    generation_cache=self.generation_cache,
+                    transform_cache=self.transform_cache,
+                    confidence_cache=self.confidence_cache,
+                    confidence_tokenizer=self.confidence_tokenizer,
+                )
+                logger.info(
+                    f"dataset df columns before transform: {dataset.df.columns}"
+                )
+                for transform_dict in autolabel_config.transforms():
+                    logger.info(f"transform task.config: {transform_dict}")
+                    transform = TransformFactory.from_dict(
+                        transform_dict,
+                        cache=None,
+                    )
+                    dataset = await agent.async_run_transform(transform, dataset)
+                logger.info(f"dataset df columns after transform: {dataset.df.columns}")
+            if autolabel_config.attributes():
+                agent = LabelingAgent(
+                    config=task,
+                    cache=self.cache,
                     example_selector=self.example_selector,
                     generation_cache=self.generation_cache,
                     transform_cache=self.transform_cache,
@@ -294,29 +194,9 @@ class TaskChainOrchestrator:
                 logger.info(
                     f"dataset df columns after llm call: {(dataset.df.columns)}"
                 )
-            elif task.type == "transform":
-                logger.info(f"transform task.config: {task.config}")
-                transform = TransformFactory.from_dict(
-                    task.config,
-                    cache=None,
-                )
-                agent = LabelingAgent(
-                    config=task.autolabel_config,
-                    cache=self.cache,
-                    example_selector=self.example_selector,
-                    generation_cache=None,
-                    transform_cache=None,
-                    confidence_cache=None,
-                    confidence_tokenizer=self.confidence_tokenizer,
-                )
-                logger.info(
-                    f"dataset df columns before transform: {dataset.df.columns}"
-                )
-                dataset = await agent.async_run_transform(transform, dataset)
-                logger.info(f"dataset df columns after transform: {dataset.df.columns}")
-            logger.info(f"finished step: {task.name} with id: {task.id}")
-            dataset = self.rename_output_columns(dataset, task)
+            dataset = self.rename_output_columns(dataset, autolabel_config)
             logger.info(f"dataset df columns after aggregate: {dataset.df.columns}")
+            dataset_df = dataset.df
 
         dataset = self.construct_output_dicts(dataset)
         logger.info(f"final here")
@@ -324,7 +204,9 @@ class TaskChainOrchestrator:
         return dataset
 
     # TODO: Before merging, need to clean up following functions and remove unnecessary code. For instance, we can drop some redundant dataframe columns here.
-    def rename_output_columns(self, dataset: AutolabelDataset, task: ChainTask):
+    def rename_output_columns(
+        self, dataset: AutolabelDataset, autolabel_config: AutolabelConfig
+    ):
         """
         Rename the output columns of the dataset for each intermediate step in the task chain so that
         they are consistent with the expected input columns of future steps
@@ -335,12 +217,12 @@ class TaskChainOrchestrator:
         Returns:
             AutolabelDataset: The dataset with renamed output columns
         """
-        if task.type == "label":
-            for attribute in task.output_columns:
+        if autolabel_config.attributes():
+            for attribute in autolabel_config.attributes():
                 dataset.df[attribute] = dataset.df[
                     dataset.generate_label_name("label")
                 ].apply(lambda x: x.get(attribute) if x and type(x) is dict else None)
-        elif task.type == "transform":
+        elif autolabel_config.transforms():
             dataset.df.rename(columns=self.column_name_map, inplace=True)
         return dataset
 
@@ -356,6 +238,7 @@ class TaskChainOrchestrator:
         dataset.df[dataset.generate_label_name("label")] = dataset.df.apply(
             lambda row: {attr: row[attr] for attr in self.attributes}, axis=1
         )
+        # Currently, confidence is done in a hacky way.
         dataset.df[dataset.generate_label_name("confidence")] = dataset.df.apply(
             lambda row: {attr: row[f"{attr}_confidence"] for attr in self.attributes},
             axis=1,
