@@ -117,9 +117,7 @@ class TGILLM(BaseModel):
                             generation_info=(
                                 {
                                     "logprobs": {
-                                        "top_logprobs": self.parse_logprobs(
-                                            response["details"]["tokens"]
-                                        )
+                                        "top_logprobs": response["details"]["tokens"]
                                     }
                                 }
                                 if self.config.confidence()
@@ -161,9 +159,7 @@ class TGILLM(BaseModel):
                             generation_info=(
                                 {
                                     "logprobs": {
-                                        "top_logprobs": self.parse_logprobs(
-                                            response["details"]["tokens"]
-                                        )
+                                        "top_logprobs": response["details"]["tokens"]
                                     }
                                 }
                                 if self.config.confidence()
@@ -188,19 +184,6 @@ class TGILLM(BaseModel):
         return RefuelLLMResult(
             generations=generations, errors=errors, latencies=latencies
         )
-
-    def parse_logprobs(self, logprobs: List):
-        new_logprobs = []
-        for item in logprobs:
-            if type(item) != dict:
-                item = dict(item)
-            if not item.get("special", False):
-                logprob = item["logprob"]
-                if logprob is None:
-                    logger.warning(f"Logprob is None! {item} {logprobs}")
-                    logprob = 0.0
-                new_logprobs.append({item["text"]: np.exp(logprob)})
-        return new_logprobs
 
     def get_cost(self, prompt: str, label: Optional[str] = "") -> float:
         return 0
