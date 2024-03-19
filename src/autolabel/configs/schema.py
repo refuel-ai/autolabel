@@ -128,12 +128,6 @@ schema = {
                         {"type": "null"},
                     ]
                 },
-                "subtasks": {
-                    "anyOf": [
-                        {"type": "array", "items": {"type": "object"}},
-                        {"type": "null"},
-                    ]
-                },
             },
             "required": ["task_guidelines"],
             "additionalProperties": True,
