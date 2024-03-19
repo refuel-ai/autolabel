@@ -272,9 +272,7 @@ class LabelingAgent:
                 max_input_tokens=self.llm.DEFAULT_CONTEXT_LENGTH,
                 get_num_tokens=self.llm.get_num_tokens,
             )
-            logger.info(f"Final prompt: {final_prompt}")
             response = await self.llm.label([final_prompt])
-            logger.info(f"Response: {response}")
             for i, generations, error, latency in zip(
                 range(len(response.generations)),
                 response.generations,
@@ -664,13 +662,12 @@ class LabelingAgent:
             explanation_prompt = self.task.get_explanation_prompt(
                 seed_example, include_label=include_label
             )
-            if self.task.image_col is not None:
-                explanation_prompt = json.dumps(
-                    {
-                        "text": explanation_prompt,
-                        "image_url": seed_example[self.task.image_col],
-                    }
-                )
+            if self.task.image_cols is not None and len(self.task.image_cols) > 0:
+                explanation_prompt = {"text": explanation_prompt}
+                for col in self.task.image_cols:
+                    if col in seed_example and seed_example[col] is not None:
+                        explanation_prompt[col] = seed_example[col]
+                explanation_prompt = json.dumps(explanation_prompt)
             explanation = await self.llm.label([explanation_prompt])
             explanation = explanation.generations[0][0].text
             seed_example[explanation_column] = str(explanation) if explanation else ""
