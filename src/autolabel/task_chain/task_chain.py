@@ -119,6 +119,7 @@ class TaskChainOrchestrator:
         column_name_map: Optional[Dict[str, str]] = None,
     ):
         self.task_chain_config = task_chain_config
+        logger.info(f"task_chain_config subtasks: {task_chain_config.subtasks()}")
         self.cache = cache
         self.example_selector = example_selector
         self.generation_cache = generation_cache
@@ -126,15 +127,6 @@ class TaskChainOrchestrator:
         self.confidence_cache = confidence_cache
         self.confidence_tokenizer = confidence_tokenizer
         self.column_name_map = column_name_map
-        self.attributes = list(
-            set(
-                [
-                    attr.get("name")
-                    for subtask in task_chain_config.subtasks()
-                    for attr in AutolabelConfig(subtask).attributes()
-                ]
-            )
-        )
 
     # TODO: For now, we run each separate step of the task chain serially and aggregate at the end.
     # We can optimize this with parallelization where possible/no dependencies.
@@ -151,6 +143,7 @@ class TaskChainOrchestrator:
         if len(subtasks) == 0:
             raise ValueError("No subtasks found in the task chain")
         for task in subtasks:
+            logger.info(f"autolabel task: {task}")
             autolabel_config = AutolabelConfig(task)
             dataset = AutolabelDataset(dataset_df, autolabel_config)
             if autolabel_config.transforms():
@@ -174,7 +167,7 @@ class TaskChainOrchestrator:
                     )
                     dataset = await agent.async_run_transform(transform, dataset)
                 logger.info(f"dataset df columns after transform: {dataset.df.columns}")
-            if autolabel_config.attributes():
+            else:
                 agent = LabelingAgent(
                     config=task,
                     cache=self.cache,
@@ -197,10 +190,6 @@ class TaskChainOrchestrator:
             dataset = self.rename_output_columns(dataset, autolabel_config)
             logger.info(f"dataset df columns after aggregate: {dataset.df.columns}")
             dataset_df = dataset.df
-
-        dataset = self.construct_output_dicts(dataset)
-        logger.info(f"final here")
-
         return dataset
 
     # TODO: Before merging, need to clean up following functions and remove unnecessary code. For instance, we can drop some redundant dataframe columns here.
@@ -217,30 +206,20 @@ class TaskChainOrchestrator:
         Returns:
             AutolabelDataset: The dataset with renamed output columns
         """
-        if autolabel_config.attributes():
-            for attribute in autolabel_config.attributes():
-                dataset.df[attribute] = dataset.df[
-                    dataset.generate_label_name("label")
-                ].apply(lambda x: x.get(attribute) if x and type(x) is dict else None)
-        elif autolabel_config.transforms():
+        if autolabel_config.transforms():
             dataset.df.rename(columns=self.column_name_map, inplace=True)
-        return dataset
+        else:
+            if autolabel_config.task_type() == TaskType.ATTRIBUTE_EXTRACTION:
+                for attribute in autolabel_config.output_columns():
+                    dataset.df[attribute] = dataset.df[
+                        dataset.generate_label_name("label")
+                    ].apply(
+                        lambda x: x.get(attribute) if x and type(x) is dict else None
+                    )
+            elif autolabel_config.task_type() == TaskType.MULTILABEL_CLASSIFICATION:
+                for output_column in autolabel_config.output_columns():
+                    dataset.df[output_column] = dataset.df[
+                        dataset.generate_label_name("label")
+                    ]
 
-    def construct_output_dicts(self, dataset: AutolabelDataset):
-        """
-        Construct the output dictionaries for the final label and confidence outputs of the task chain
-
-        Args:
-            dataset (AutolabelDataset): Input dataset
-        Returns:
-            AutolabelDataset: The dataset with the output dictionaries
-        """
-        dataset.df[dataset.generate_label_name("label")] = dataset.df.apply(
-            lambda row: {attr: row[attr] for attr in self.attributes}, axis=1
-        )
-        # Currently, confidence is done in a hacky way.
-        dataset.df[dataset.generate_label_name("confidence")] = dataset.df.apply(
-            lambda row: {attr: row[f"{attr}_confidence"] for attr in self.attributes},
-            axis=1,
-        )
         return dataset

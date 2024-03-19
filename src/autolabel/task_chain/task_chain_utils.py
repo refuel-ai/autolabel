@@ -47,10 +47,12 @@ def initialize_task_chain_config(task_chain_name: str, configs: List[Dict]) -> D
     }
 
 
-def initialize_task_graph(subtasks: List[Dict]):
+def initialize_task_graph(subtasks: List[Dict]) -> TaskGraph:
     """
     Create a task graph to represent the dependencies between tasks in the task chain
 
+    Args:
+        subtasks (List[Dict]): The list of subtasks in the task chain
     Returns:
         TaskGraph: A task graph object representing the dependencies between tasks
     """
@@ -70,14 +72,23 @@ def initialize_task_graph(subtasks: List[Dict]):
 
 
 def sort_subtasks(subtasks: List[Dict], task_graph: TaskGraph) -> List[Dict]:
+    """Sort subtasks in topological order
+    Args:
+        subtasks (List[Dict]): The list of unsorted subtasks in the task chain
+        task_graph (TaskGraph): The task graph representing the dependencies between tasks
+    Returns:
+        List[Dict]: The sorted subtasks in the task chain
+    """
     task_order = task_graph.topological_sort()
     return sorted(subtasks, key=lambda task: task_order.index(task.get("task_name")))
 
 
-def validate_task_chain(task_graph: TaskGraph):
+# TODO: we should also validate that the subtasks are indeed sorted in topological order
+def validate_task_chain(task_chain_config: TaskChainConfig) -> bool:
     """Validate the task graph by checking for cycles
 
     Returns:
         bool: True if the graph is valid, False otherwise
     """
+    task_graph = TaskGraph(task_chain_config.subtasks())
     return not task_graph.check_cycle()
