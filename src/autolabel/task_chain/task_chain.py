@@ -69,7 +69,6 @@ class TaskGraph:
                 self.topological_sort_helper(task.get("task_name"), visited, stack)
         return stack[::-1]
 
-    # Still testing this logic
     def check_cycle(self):
         """Check for cycles in the task graph
 
@@ -119,7 +118,6 @@ class TaskChainOrchestrator:
         column_name_map: Optional[Dict[str, str]] = None,
     ):
         self.task_chain_config = task_chain_config
-        logger.info(f"task_chain_config subtasks: {task_chain_config.subtasks()}")
         self.cache = cache
         self.example_selector = example_selector
         self.generation_cache = generation_cache
@@ -143,7 +141,6 @@ class TaskChainOrchestrator:
         if len(subtasks) == 0:
             raise ValueError("No subtasks found in the task chain")
         for task in subtasks:
-            logger.info(f"autolabel task: {task}")
             autolabel_config = AutolabelConfig(task)
             dataset = AutolabelDataset(dataset_df, autolabel_config)
             if autolabel_config.transforms():
@@ -156,17 +153,12 @@ class TaskChainOrchestrator:
                     confidence_cache=self.confidence_cache,
                     confidence_tokenizer=self.confidence_tokenizer,
                 )
-                logger.info(
-                    f"dataset df columns before transform: {dataset.df.columns}"
-                )
                 for transform_dict in autolabel_config.transforms():
-                    logger.info(f"transform task.config: {transform_dict}")
                     transform = TransformFactory.from_dict(
                         transform_dict,
                         cache=None,
                     )
                     dataset = await agent.async_run_transform(transform, dataset)
-                logger.info(f"dataset df columns after transform: {dataset.df.columns}")
             else:
                 agent = LabelingAgent(
                     config=task,
@@ -177,22 +169,14 @@ class TaskChainOrchestrator:
                     confidence_cache=self.confidence_cache,
                     confidence_tokenizer=self.confidence_tokenizer,
                 )
-                logger.info(
-                    f"dataset df columns before llm call: {(dataset.df.columns)}"
-                )
                 dataset = await agent.arun(
                     dataset,
                     skip_eval=True,
                 )
-                logger.info(
-                    f"dataset df columns after llm call: {(dataset.df.columns)}"
-                )
             dataset = self.rename_output_columns(dataset, autolabel_config)
-            logger.info(f"dataset df columns after aggregate: {dataset.df.columns}")
             dataset_df = dataset.df
         return dataset
 
-    # TODO: Before merging, need to clean up following functions and remove unnecessary code. For instance, we can drop some redundant dataframe columns here.
     def rename_output_columns(
         self, dataset: AutolabelDataset, autolabel_config: AutolabelConfig
     ):
