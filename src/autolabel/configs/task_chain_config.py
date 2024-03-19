@@ -1,4 +1,3 @@
-from functools import cached_property
 from typing import Dict, List, Union
 
 from jsonschema import validate
@@ -7,7 +6,7 @@ from .base import BaseConfig
 
 
 class TaskChainConfig(BaseConfig):
-    """Class to parse and store configs passed to Autolabel agent."""
+    """Class to parse and store configs for Task Chain"""
 
     # Top-level config keys
     TASK_NAME_KEY = "task_name"
@@ -28,7 +27,6 @@ class TaskChainConfig(BaseConfig):
             )
         return True
 
-    # project and task definition config
     def task_name(self) -> str:
         return self.config.get(self.TASK_NAME_KEY, None)
 
