@@ -36,8 +36,8 @@ class MistralLLM(BaseModel):
         super().__init__(config, cache)
 
         try:
-            #get the tokenizer
-            from langchain_mistralai import ChatMistralAI 
+            # get the tokenizer
+            from langchain_mistralai import ChatMistralAI
         except ImportError:
             raise ImportError(
                 "mistralai and langchain_mistralai is required to use the anthropic LLM. Please install it with the following command: pip install 'refuel-autolabel[mistral]'"
@@ -64,7 +64,7 @@ class MistralLLM(BaseModel):
             )
         except Exception as e:
             return self._alabel_individually(prompts)
-        
+
     def _label(self, prompts: List[str]) -> RefuelLLMResult:
         prompts = [[HumanMessage(content=prompt)] for prompt in prompts]
         try:
@@ -80,9 +80,9 @@ class MistralLLM(BaseModel):
             return self._label_individually(prompts)
 
     def get_cost(self, prompt: str, label: Optional[str] = "") -> float:
-        num_prompt_toks = len(prompt)//4 # average token length is 4
+        num_prompt_toks = len(prompt) // 4  # average token length is 4
         if label:
-            num_label_toks = len(label)//4 # average token length is 4
+            num_label_toks = len(label) // 4  # average token length is 4
         else:
             # get an upper bound
             num_label_toks = self.model_params["max_tokens"]
@@ -97,4 +97,4 @@ class MistralLLM(BaseModel):
         return False
 
     def get_num_tokens(self, prompt: str) -> int:
-        return len(prompt)//4 # average token length is 4
+        return len(prompt) // 4  # average token length is 4
