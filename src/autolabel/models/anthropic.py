@@ -55,6 +55,20 @@ class AnthropicLLM(BaseModel):
 
         self.tokenizer = sync_get_tokenizer()
 
+    async def _alabel(self, prompts: List[str]) -> RefuelLLMResult:
+        prompts = [[HumanMessage(content=prompt)] for prompt in prompts]
+        try:
+            start_time = time()
+            result = self.llm.agenerate(prompts)
+            end_time = time()
+            return RefuelLLMResult(
+                generations=result.generations,
+                errors=[None] * len(result.generations),
+                latencies=[end_time - start_time] * len(result.generations),
+            )
+        except Exception as e:
+            return self._alabel_individually(prompts)
+
     def _label(self, prompts: List[str]) -> RefuelLLMResult:
         prompts = [[HumanMessage(content=prompt)] for prompt in prompts]
         try:
