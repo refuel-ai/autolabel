@@ -1,3 +1,4 @@
+import os
 from time import time
 from typing import List, Optional
 
@@ -43,6 +44,9 @@ class MistralLLM(BaseModel):
                 "mistralai and langchain_mistralai is required to use the anthropic LLM. Please install it with the following command: pip install 'refuel-autolabel[mistral]'"
             )
 
+        if os.getenv("MISTRAL_API_KEY") is None:
+            raise ValueError("MISTRAL_API_KEY environment variable not set")
+        
         # populate model name
         self.model_name = config.model_name() or self.DEFAULT_MODEL
         # populate model params
