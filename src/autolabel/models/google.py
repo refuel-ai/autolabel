@@ -1,3 +1,4 @@
+import os
 import logging
 from functools import cached_property
 from time import time
@@ -65,6 +66,10 @@ class GoogleLLM(BaseModel):
         }
 
         super().__init__(config, cache)
+
+        if os.getenv("GOOGLE_API_KEY") is None:
+            raise ValueError("GOOGLE_API_KEY environment variable not set")
+
         # populate model name
         self.model_name = config.model_name() or self.DEFAULT_MODEL
         # populate model params and initialize the LLM
@@ -80,47 +85,6 @@ class GoogleLLM(BaseModel):
             )
 
         self.tiktoken = tiktoken
-
-    def _label_with_retry(self, prompts: List[str]) -> LLMResult:
-        start_time = time()
-        response = self.llm.generate(prompts)
-        return response, time() - start_time
-
-    def _label_individually(self, prompts: List[str]) -> RefuelLLMResult:
-        """Label each prompt individually. Should be used only after trying as a batch first.
-
-        Args:
-            prompts (List[str]): List of prompts to label
-
-        Returns:
-            RefuelLLMResult: RefuelLLMResult object
-        """
-        generations = []
-        errors = []
-        latencies = []
-        for i, prompt in enumerate(prompts):
-            try:
-                response, latency = self._label_with_retry([prompt])
-                for generation in response.generations[0]:
-                    generation.text = generation.text.replace(
-                        self.SEP_REPLACEMENT_TOKEN, "\n"
-                    )
-                generations.append(response.generations[0])
-                errors.append(None)
-                latencies.append(latency)
-            except Exception as e:
-                print(f"Error generating from LLM: {e}, returning empty generation")
-                generations.append([Generation(text="")])
-                errors.append(
-                    LabelingError(
-                        error_type=ErrorType.LLM_PROVIDER_ERROR, error_message=str(e)
-                    )
-                )
-                latencies.append(0)
-
-        return RefuelLLMResult(
-            generations=generations, errors=errors, latencies=latencies
-        )
 
     def _label(self, prompts: List[str]) -> RefuelLLMResult:
         try:
@@ -154,6 +118,4 @@ class GoogleLLM(BaseModel):
         return False
 
     def get_num_tokens(self, prompt: str) -> int:
-        # TODO(dhruva): Replace with actual tokenizer once that is available
-        encoding = self.tiktoken.encoding_for_model("gpt2")
-        return len(encoding.encode(prompt))
+        return super().get_num_tokens(prompt)
