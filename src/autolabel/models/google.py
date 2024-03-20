@@ -90,8 +90,10 @@ class GoogleLLM(BaseModel):
         try:
             start_time = time()
             if self._engine == "chat":
+                logger.info(f"Google Prompts: {prompts}")
                 prompts = [[HumanMessage(content=prompt)] for prompt in prompts]
                 result = await self.llm.agenerate(prompts)
+                logger.info(f"Google Generations: {result}")
             else:
                 result = await self.llm.agenerate(prompts)
             generations = result.generations
