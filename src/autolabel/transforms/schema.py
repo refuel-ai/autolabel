@@ -1,6 +1,6 @@
 from autolabel.utils import calculate_md5
 from enum import Enum
-from pydantic import BaseModel
+from pydantic.v1 import BaseModel
 from typing import Any, Dict, Optional
 import json
 

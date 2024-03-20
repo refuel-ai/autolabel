@@ -1,5 +1,5 @@
 from .base import Base
-from pydantic import BaseModel
+from pydantic.v1 import BaseModel
 from sqlalchemy import Column, Integer, String, Text, JSON
 import json
 import time

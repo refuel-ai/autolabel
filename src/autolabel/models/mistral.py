@@ -46,7 +46,7 @@ class MistralLLM(BaseModel):
 
         if os.getenv("MISTRAL_API_KEY") is None:
             raise ValueError("MISTRAL_API_KEY environment variable not set")
-        
+
         # populate model name
         self.model_name = config.model_name() or self.DEFAULT_MODEL
         # populate model params

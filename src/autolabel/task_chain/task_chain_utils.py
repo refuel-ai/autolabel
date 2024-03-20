@@ -15,7 +15,7 @@ from autolabel.cache.sqlalchemy_generation_cache import SQLAlchemyGenerationCach
 from autolabel.cache.sqlalchemy_transform_cache import SQLAlchemyTransformCache
 from autolabel.cache.sqlalchemy_confidence_cache import SQLAlchemyConfidenceCache
 from autolabel.cache.base import BaseCache
-from pydantic import BaseModel
+from pydantic.v1 import BaseModel
 from autolabel.configs import TaskChainConfig
 from autolabel.schema import TASK_CHAIN_TYPE, TaskType
 from autolabel.transforms import TransformFactory
