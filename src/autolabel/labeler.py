@@ -522,7 +522,7 @@ class LabelingAgent:
 
     async def async_run_transform(
         self, transform: BaseTransform, dataset: AutolabelDataset
-    ):
+    ) -> AutolabelDataset:
         transform_outputs = [
             transform.apply(input_dict) for input_dict in dataset.inputs
         ]
@@ -537,7 +537,7 @@ class LabelingAgent:
         dataset = AutolabelDataset(final_df, self.config)
         return dataset
 
-    def transform(self, dataset: AutolabelDataset):
+    def transform(self, dataset: AutolabelDataset) -> AutolabelDataset:
         transforms = []
         for transform_dict in self.config.transforms():
             transforms.append(

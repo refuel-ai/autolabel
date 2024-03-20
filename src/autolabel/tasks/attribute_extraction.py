@@ -89,7 +89,7 @@ class AttributeExtractionTask(BaseTask):
         output_dict = {}
         for attribute in self.config.attributes():
             attribute_name = attribute["name"]
-            output_dict[attribute_name] = input[attribute_name]
+            output_dict[attribute_name] = input.get(attribute_name, "")
         return json.dumps(output_dict)
 
     def construct_prompt(

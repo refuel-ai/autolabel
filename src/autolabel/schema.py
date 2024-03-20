@@ -213,3 +213,4 @@ class AggregationFunction(str, Enum):
 
 
 AUTO_CONFIDENCE_CHUNKING_COLUMN = "auto"
+TASK_CHAIN_TYPE = "task_chain"
