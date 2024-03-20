@@ -59,7 +59,7 @@ class AnthropicLLM(BaseModel):
         prompts = [[HumanMessage(content=prompt)] for prompt in prompts]
         try:
             start_time = time()
-            result = self.llm.agenerate(prompts)
+            result = await self.llm.agenerate(prompts)
             end_time = time()
             return RefuelLLMResult(
                 generations=result.generations,
@@ -67,7 +67,7 @@ class AnthropicLLM(BaseModel):
                 latencies=[end_time - start_time] * len(result.generations),
             )
         except Exception as e:
-            return self._alabel_individually(prompts)
+            return await self._alabel_individually(prompts)
 
     def _label(self, prompts: List[str]) -> RefuelLLMResult:
         prompts = [[HumanMessage(content=prompt)] for prompt in prompts]
