@@ -20,6 +20,12 @@ DATASETS = [
     "sciq",
     "squad_v2",
     "walmart_amazon",
+    "quail",
+    "acronym",
+    "numeric",
+    "diagnosis",
+    "belebele",
+    "multiconer",
 ]
 
 MODEL_TO_PROVIDER = {
@@ -28,7 +34,7 @@ MODEL_TO_PROVIDER = {
     "claude-3-opus-20240229": "anthropic",
     "claude-3-sonnet-20240229": "anthropic",
     "mistralai/Mistral-7B-v0.1": "vllm",
-     "mistralai/Mistral-7B-Instruct-v0.1": "vllm",
+    "mistralai/Mistral-7B-Instruct-v0.1": "vllm",
     "mistralai/Mixtral-8x7B-v0.1": "mistral",
 }
 
@@ -82,7 +88,7 @@ def main():
         eval_result.append([x.dict() for x in agent.eval_result])
         json.dump(eval_result, open(eval_file_name, "w"))
         print(eval_result[-1])
-        if config["model"]["provider"] == 'vllm':
+        if config["model"]["provider"] == "vllm":
             agent.llm.destroy()
 
     print(eval_result)
