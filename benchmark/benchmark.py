@@ -28,11 +28,16 @@ MODEL_TO_PROVIDER = {
     "claude-3-opus-20240229": "anthropic",
     "claude-3-sonnet-20240229": "anthropic",
     "mistralai/Mistral-7B-v0.1": "vllm",
+     "mistralai/Mistral-7B-Instruct-v0.1": "vllm",
     "mistralai/Mixtral-8x7B-v0.1": "mistral",
 }
 
 PROMPT_TEMPLATES = {
     "mistralai/Mistral-7B-v0.1": {
+        "zero-shot": "<s> [INST] {task_guidelines}\n\n{output_guidelines}\n\nNow I want you to label the following example:\n{current_example} [/INST]",
+        "few-shot": "{task_guidelines}\n\n{output_guidelines}\n\nSome examples with their output answers are provided below:\n\n{seed_examples}\n\nNow I want you to label the following example:\n{current_example}",
+    },
+    "mistralai/Mistral-7B-Instruct-v0.1": {
         "zero-shot": "<s> [INST] {task_guidelines}\n\n{output_guidelines}\n\nNow I want you to label the following example:\n{current_example} [/INST]",
         "few-shot": "<s> [INST] {task_guidelines}\n\n{output_guidelines}\n\nSome examples with their output answers are provided below:\n\n{seed_examples}\n\nNow I want you to label the following example:\n{current_example} [/INST]",
     },
@@ -52,6 +57,7 @@ def main():
     args = parser.parse_args()
 
     eval_file_name = f"eval_{args.model}_{args.few_shot}_{args.max_items}.json"
+    eval_file_name = eval_file_name.replace("/", "")
     eval_result = []
     for dataset in DATASETS:
         config = json.load(open(f"configs/{dataset}.json", "r"))
@@ -76,6 +82,8 @@ def main():
         eval_result.append([x.dict() for x in agent.eval_result])
         json.dump(eval_result, open(eval_file_name, "w"))
         print(eval_result[-1])
+        if config["model"]["provider"] == 'vllm':
+            agent.llm.destroy()
 
     print(eval_result)
 
