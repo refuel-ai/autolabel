@@ -291,3 +291,15 @@ class AutolabelConfig(BaseConfig):
     def json_mode(self) -> bool:
         """Returns true if the model should be used in json mode. Currently only used for OpenAI models."""
         return self._model_config.get(self.JSON_MODE, False)
+
+    def use_system_user_prompt(self) -> bool:
+        """Returns true if the system user prompt should be used"""
+        return self._prompt_config.get("use_system_user_prompt", False)
+
+    def zero_shot_template(self) -> str:
+        """Returns the zero shot template"""
+        return self._prompt_config.get("zero_shot_template", None)
+
+    def few_shot_template(self) -> str:
+        """Returns the few shot template"""
+        return self._prompt_config.get("few_shot_template", None)

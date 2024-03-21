@@ -1,0 +1,23 @@
+{
+    "task_name": "CompanyEntityMatch",
+    "task_type": "entity_matching",
+    "dataset": {
+        "label_column": "label",
+        "delimiter": ","
+    },
+    "model": {
+        "provider": "openai",
+        "name": "gpt-3.5-turbo"
+    },
+    "prompt": {
+        "task_guidelines": "You are provided with descriptions of companies from their websites, and wikipedia pages. Your job is to categorize whether the descriptions are about the same company (duplicate) or different companies (not duplicate). Your answer must be from one of the following options:\n{labels}",
+        "labels": [
+            "not duplicate",
+            "duplicate"
+        ],
+        "example_template": "Company 1 description: {entity1}\nCompany 2 description: {entity2}\nDuplicate or not: {label}",
+        "few_shot_examples": "data/company/seed.csv",
+        "few_shot_selection": "semantic_similarity",
+        "few_shot_num": 5
+    }
+}
