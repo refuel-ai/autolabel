@@ -35,7 +35,7 @@ class VLLMModel(BaseModel):
     ) -> None:
         super().__init__(config, cache)
         self.params = SamplingParams(
-            max_new_tokens=self.DEFAULT_PARAMS["max_new_tokens"],
+            max_tokens=self.DEFAULT_PARAMS["max_tokens"],
             temperature=self.DEFAULT_PARAMS["temperature"],
             top_p=self.DEFAULT_PARAMS["top_p"],
         )
