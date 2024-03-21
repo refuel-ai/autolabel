@@ -27,16 +27,16 @@ MODEL_TO_PROVIDER = {
     "gpt-4": "openai",
     "claude-3-opus-20240229": "anthropic",
     "claude-3-sonnet-20240229": "anthropic",
-    "mistral-7b": "mistral",
-    "mixtral": "mistral",
+    "mistralai/Mistral-7B-v0.1": "vllm",
+    "mistralai/Mixtral-8x7B-v0.1": "mistral",
 }
 
 PROMPT_TEMPLATES = {
-    "mistral-7b": {
+    "mistralai/Mistral-7B-v0.1": {
         "zero-shot": "<s> [INST] {task_guidelines}\n\n{output_guidelines}\n\nNow I want you to label the following example:\n{current_example} [/INST]",
         "few-shot": "<s> [INST] {task_guidelines}\n\n{output_guidelines}\n\nSome examples with their output answers are provided below:\n\n{seed_examples}\n\nNow I want you to label the following example:\n{current_example} [/INST]",
     },
-    "mixtral": {
+    "mistralai/Mixtral-8x7B-v0.1": {
         "zero-shot": "<s> [INST] {task_guidelines}\n\n{output_guidelines}\n\nNow I want you to label the following example:\n{current_example} [/INST]",
         "few-shot": "<s> [INST] {task_guidelines}\n\n{output_guidelines}\n\nSome examples with their output answers are provided below:\n\n{seed_examples}\n\nNow I want you to label the following example:\n{current_example} [/INST]",
     },
