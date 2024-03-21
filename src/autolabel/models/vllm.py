@@ -23,7 +23,7 @@ class UnretryableError(Exception):
 
 class VLLMModel(BaseModel):
     DEFAULT_PARAMS = {
-        "max_new_tokens": 128,
+        "max_tokens": 128,
         "temperature": 0.05,
         "top_p": 0.95,
     }
