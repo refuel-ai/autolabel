@@ -29,13 +29,6 @@ class BaseTask(ABC):
     ZERO_SHOT_TEMPLATE = "{task_guidelines}\n\n{output_guidelines}\n\nNow I want you to label the following example:\n{current_example}"
     FEW_SHOT_TEMPLATE = "{task_guidelines}\n\n{output_guidelines}\n\nSome examples with their output answers are provided below:\n\n{seed_examples}\n\nNow I want you to label the following example:\n{current_example}"
 
-    SYSTEM_TEMPLATE = "{task_guidelines}\n\n{output_guidelines}\n\n"
-
-    ZERO_SHOT_USER_TEMPLATE = (
-        "Now I want you to label the following example:\n{current_example}"
-    )
-    FEW_SHOT_USER_TEMPLATE = "Some examples with their output answers are provided below:\n\n{seed_examples}\n\nNow I want you to label the following example:\n{current_example}"
-
     ZERO_SHOT_TEMPLATE_REFUEL_LLM = """
     <s>[INST] <<SYS>>
     {task_guidelines}\n{output_guidelines}
@@ -103,7 +96,7 @@ class BaseTask(ABC):
         )
 
     def _is_few_shot_mode(self) -> bool:
-        return self.config.few_shot_algorithm() in [x.value for x in FewShotAlgorithm]
+        return self.config.few_shot_algorithm() in [x.value for x in FewShotAlgorithm] and self.config.few_shot_num_examples() > 0
 
     @abstractmethod
     def construct_prompt(

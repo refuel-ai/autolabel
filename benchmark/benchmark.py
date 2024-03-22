@@ -31,11 +31,12 @@ DATASETS = [
 MODEL_TO_PROVIDER = {
     "gpt-3.5-turbo": "openai",
     "gpt-4": "openai",
+    "gpt-4-1106-preview": "openai",
     "claude-3-opus-20240229": "anthropic",
     "claude-3-sonnet-20240229": "anthropic",
     "mistralai/Mistral-7B-v0.1": "vllm",
     "mistralai/Mistral-7B-Instruct-v0.1": "vllm",
-    "mistralai/Mixtral-8x7B-v0.1": "mistral",
+    "mistralai/Mixtral-8x7B-v0.1": "vllm",
 }
 
 PROMPT_TEMPLATES = {
