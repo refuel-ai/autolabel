@@ -200,6 +200,7 @@ class OpenAILLM(BaseModel):
         try:
             start_time = time()
             if self._engine == "chat":
+                print(prompts)
                 prompts = [[HumanMessage(content=prompt)] for prompt in prompts]
                 result = await self.llm.agenerate(prompts, **self.query_params)
                 generations = self._chat_backward_compatibility(result.generations)
