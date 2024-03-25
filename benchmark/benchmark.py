@@ -34,25 +34,9 @@ MODEL_TO_PROVIDER = {
     "gpt-4-1106-preview": "openai",
     "claude-3-opus-20240229": "anthropic",
     "claude-3-sonnet-20240229": "anthropic",
-    "mistralai/Mistral-7B-v0.1": "vllm",
     "mistralai/Mistral-7B-Instruct-v0.1": "vllm",
-    "mistralai/Mixtral-8x7B-v0.1": "vllm",
-}
-
-PROMPT_TEMPLATES = {
-    "mistralai/Mistral-7B-v0.1": {
-        "zero-shot": "<s> [INST] {task_guidelines}\n\n{output_guidelines}\n\nNow I want you to label the following example:\n{current_example} [/INST]",
-        "few-shot": "{task_guidelines}\n\n{output_guidelines}\n\nSome examples with their output answers are provided below:\n\n{seed_examples}\n\nNow I want you to label the following example:\n{current_example}",
-    },
-    "mistralai/Mistral-7B-Instruct-v0.1": {
-        "zero-shot": "<s> [INST] {task_guidelines}\n\n{output_guidelines}\n\nNow I want you to label the following example:\n{current_example} [/INST]",
-        "few-shot": "<s> [INST] {task_guidelines}\n\n{output_guidelines}\n\nSome examples with their output answers are provided below:\n\n{seed_examples}\n\nNow I want you to label the following example:\n{current_example} [/INST]",
-    },
-    "mistralai/Mixtral-8x7B-v0.1": {
-        "zero-shot": "<s> [INST] {task_guidelines}\n\n{output_guidelines}\n\nNow I want you to label the following example:\n{current_example} [/INST]",
-        "few-shot": "<s> [INST] {task_guidelines}\n\n{output_guidelines}\n\nSome examples with their output answers are provided below:\n\n{seed_examples}\n\nNow I want you to label the following example:\n{current_example} [/INST]",
-    },
-    # Yi models don't have any prompt format as they are base models https://github.com/01-ai/Yi/issues/30
+    "mistralai/Mixtral-8x7B-Instruct-v0.1": "vllm",
+    "01-ai/Yi-34B-Chat": "vllm",
 }
 
 
@@ -73,14 +57,6 @@ def main():
         config["prompt"]["few_shot_num"] = args.few_shot
         if not args.few_shot:
             config["prompt"]["few_shot_selection"] = "fixed"
-
-        if args.model in PROMPT_TEMPLATES:
-            config["prompt"]["zero_shot_template"] = PROMPT_TEMPLATES[args.model][
-                "zero-shot"
-            ]
-            config["prompt"]["few_shot_template"] = PROMPT_TEMPLATES[args.model][
-                "few-shot"
-            ]
 
         agent = LabelingAgent(config, console_output=False)
         ds = AutolabelDataset(f"data/{dataset}/test.csv", config=config)

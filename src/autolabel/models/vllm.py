@@ -57,7 +57,10 @@ class VLLMModel(BaseModel):
         latencies = []
         for prompt in prompts:
             try:
-                response = self.llm.generate(prompt, self.params, use_tqdm=False)
+                messages = [
+                    {"role": "user", "content": prompt}
+                ]
+                response = self.llm.generate(prompt_token_ids=[self.tokenizer.apply_chat_template(messages)], sampling_params=self.params, use_tqdm=False)
                 generations.append(
                     [Generation(
                         text=response[0].outputs[0].text.strip(),
