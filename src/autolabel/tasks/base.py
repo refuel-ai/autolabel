@@ -96,7 +96,10 @@ class BaseTask(ABC):
         )
 
     def _is_few_shot_mode(self) -> bool:
-        return self.config.few_shot_algorithm() in [x.value for x in FewShotAlgorithm] and self.config.few_shot_num_examples() > 0
+        return (
+            self.config.few_shot_algorithm() in [x.value for x in FewShotAlgorithm]
+            and self.config.few_shot_num_examples() > 0
+        )
 
     @abstractmethod
     def construct_prompt(

@@ -143,7 +143,7 @@ class QuestionAnsweringTask(BaseTask):
 
     def construct_confidence_prompt(self, input: str, examples: List, **kwargs) -> str:
         output_guidelines_override = (
-            self.config.output_guidelines() or self.REFUEL_LLM_DEFAULT_OUTPUT_GUIDELINES
+            self.config.output_guidelines() or self.LLAMA_DEFAULT_OUTPUT_GUIDELINES
         )
         refuel_prompt = super().construct_confidence_prompt(
             input,

@@ -34,13 +34,15 @@ class VLLMModel(BaseModel):
         super().__init__(config, cache)
         try:
             from vllm import LLM, SamplingParams
-            from vllm.model_executor.parallel_utils.parallel_state import destroy_model_parallel
+            from vllm.model_executor.parallel_utils.parallel_state import (
+                destroy_model_parallel,
+            )
             from transformers import AutoTokenizer
         except ImportError:
             raise ImportError(
                 "vllm is required to use the vllm LLM. Please install it with the following command: pip install vllm"
             )
-        
+
         self.tokenizer = AutoTokenizer.from_pretrained(self.config.model_name())
         self.destroy_model_parallel = destroy_model_parallel
         self.params = SamplingParams(
@@ -57,14 +59,18 @@ class VLLMModel(BaseModel):
         latencies = []
         for prompt in prompts:
             try:
-                messages = [
-                    {"role": "user", "content": prompt}
-                ]
-                response = self.llm.generate(prompt_token_ids=[self.tokenizer.apply_chat_template(messages)], sampling_params=self.params, use_tqdm=False)
+                messages = [{"role": "user", "content": prompt}]
+                response = self.llm.generate(
+                    prompt_token_ids=[self.tokenizer.apply_chat_template(messages)],
+                    sampling_params=self.params,
+                    use_tqdm=False,
+                )
                 generations.append(
-                    [Generation(
-                        text=response[0].outputs[0].text.strip(),
-                    )]
+                    [
+                        Generation(
+                            text=response[0].outputs[0].text.strip(),
+                        )
+                    ]
                 )
                 errors.append(None)
                 latencies.append(0)
@@ -80,7 +86,9 @@ class VLLMModel(BaseModel):
                     )
                 )
                 latencies.append(0)
-        return RefuelLLMResult(generations=generations, errors=errors, latencies = latencies)
+        return RefuelLLMResult(
+            generations=generations, errors=errors, latencies=latencies
+        )
 
     def get_cost(self, prompt: str, label: Optional[str] = "") -> float:
         return 0
@@ -90,7 +98,7 @@ class VLLMModel(BaseModel):
 
     def get_num_tokens(self, prompt: str) -> int:
         return len(self.tokenizer.encode(prompt))
-    
+
     def destroy(self):
         self.destroy_model_parallel()
         del self.llm
