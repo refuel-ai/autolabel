@@ -239,7 +239,9 @@ class LabelingAgent:
                 console=self.console,
             )
             if self.console_output
-            else tqdm(indices) if self.use_tqdm else indices
+            else tqdm(indices)
+            if self.use_tqdm
+            else indices
         ):
             chunk = dataset.inputs[current_index]
             examples = []
