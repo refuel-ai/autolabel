@@ -58,7 +58,7 @@ def main():
         if not args.few_shot:
             config["prompt"]["few_shot_selection"] = "fixed"
 
-        agent = LabelingAgent(config, console_output=False)
+        agent = LabelingAgent(config, console_output=False, use_tqdm=True)
         ds = AutolabelDataset(f"data/{dataset}/test.csv", config=config)
         print("Benchmarking", dataset)
         new_ds = agent.run(ds, max_items=args.max_items)

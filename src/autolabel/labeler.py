@@ -80,6 +80,7 @@ class LabelingAgent:
         transform_cache: Optional[BaseCache] = SQLAlchemyTransformCache(),
         confidence_cache: Optional[BaseCache] = SQLAlchemyConfidenceCache(),
         confidence_tokenizer: Optional[AutoTokenizer] = None,
+        use_tqdm: Optional[bool] = False,
     ) -> None:
         self.generation_cache = generation_cache
         self.transform_cache = transform_cache
@@ -101,6 +102,7 @@ class LabelingAgent:
 
         self.console = Console(quiet=not console_output)
         self.console_output = console_output
+        self.use_tqdm = use_tqdm
 
         self.config = (
             config if isinstance(config, AutolabelConfig) else AutolabelConfig(config)
@@ -237,7 +239,7 @@ class LabelingAgent:
                 console=self.console,
             )
             if self.console_output
-            else tqdm(indices)
+            else tqdm(indices) if self.use_tqdm else indices
         ):
             chunk = dataset.inputs[current_index]
             examples = []
