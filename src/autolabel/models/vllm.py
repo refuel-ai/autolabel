@@ -50,7 +50,12 @@ class VLLMModel(BaseModel):
             temperature=self.DEFAULT_PARAMS["temperature"],
             top_p=self.DEFAULT_PARAMS["top_p"],
         )
-        self.llm = LLM(model=self.config.model_name(), tensor_parallel_size = self.config.model_params().get("tensor_parallel_size", 1))
+        self.llm = LLM(
+            model=self.config.model_name(),
+            tensor_parallel_size=self.config.model_params().get(
+                "tensor_parallel_size", 1
+            ),
+        )
 
     def _label(self, prompts: List[str]) -> RefuelLLMResult:
         generations = []
