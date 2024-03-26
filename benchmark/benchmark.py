@@ -56,7 +56,7 @@ def main():
         config = json.load(open(f"configs/{dataset}.json", "r"))
         config["model"]["name"] = args.model
         config["model"]["provider"] = MODEL_TO_PROVIDER[args.model]
-        config['model']['params'] = {"tensor_parallel_size": 4}
+        config["model"]["params"] = {"tensor_parallel_size": 4}
         config["prompt"]["few_shot_num"] = args.few_shot
         if not args.few_shot:
             config["prompt"]["few_shot_selection"] = "fixed"
@@ -66,7 +66,7 @@ def main():
         else:
             config = AutolabelConfig(config)
             agent.config = config
-            agent.task =  TaskFactory.from_config(config)
+            agent.task = TaskFactory.from_config(config)
             agent.llm.config = config
             agent.example_selector = None
         ds = AutolabelDataset(f"data/{dataset}/test.csv", config=config)
