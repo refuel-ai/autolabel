@@ -64,6 +64,13 @@ class BaseTask(ABC):
             self.config.dataset_generation_guidelines()
             or self.DEFAULT_DATASET_GENERATION_GUIDELINES
         )
+
+        if self.config.zero_shot_template():
+            self.ZERO_SHOT_TEMPLATE = self.config.zero_shot_template()
+
+        if self.config.few_shot_template():
+            self.FEW_SHOT_TEMPLATE = self.config.few_shot_template()
+
         self._prompt_schema_init()
 
     def _prompt_schema_init(self) -> None:
@@ -86,7 +93,10 @@ class BaseTask(ABC):
         )
 
     def _is_few_shot_mode(self) -> bool:
-        return self.config.few_shot_algorithm() in [x.value for x in FewShotAlgorithm]
+        return (
+            self.config.few_shot_algorithm() in [x.value for x in FewShotAlgorithm]
+            and self.config.few_shot_num_examples() > 0
+        )
 
     @abstractmethod
     def construct_prompt(
