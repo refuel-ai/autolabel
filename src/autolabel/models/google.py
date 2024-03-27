@@ -87,6 +87,8 @@ class GoogleLLM(BaseModel):
         self.tiktoken = tiktoken
 
     async def _alabel(self, prompts: List[str]) -> RefuelLLMResult:
+        logger.info(f"Prompts: {prompts}")
+        logger.info(f"Engine: {self._engine}")
         try:
             start_time = time()
             if self._engine == "chat":
@@ -104,6 +106,7 @@ class GoogleLLM(BaseModel):
                 latencies=[end_time - start_time] * len(generations),
             )
         except Exception as e:
+            logger.error(f"Error from Google LLM: {e}")
             return await self._alabel_individually(prompts)
 
     def _label(self, prompts: List[str]) -> RefuelLLMResult:
@@ -122,6 +125,7 @@ class GoogleLLM(BaseModel):
                 latencies=[end_time - start_time] * len(generations),
             )
         except Exception as e:
+            logger.error(f"Error from Google LLM: {e}")
             return self._label_individually(prompts)
 
     def get_cost(self, prompt: str, label: Optional[str] = "") -> float:
