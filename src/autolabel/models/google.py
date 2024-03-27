@@ -83,7 +83,7 @@ class GoogleLLM(BaseModel):
             self.llm = ChatGoogleGenerativeAI(
                 model=self.model_name, **self.model_params
             )
-
+        logger.info(f"self.llm: {self.llm}")
         self.tiktoken = tiktoken
 
     async def _alabel(self, prompts: List[str]) -> RefuelLLMResult:
