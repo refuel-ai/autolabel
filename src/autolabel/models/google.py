@@ -111,6 +111,8 @@ class GoogleLLM(BaseModel):
             return await self._alabel_individually(prompts)
 
     def _label(self, prompts: List[str]) -> RefuelLLMResult:
+        logger.info(f"Prompts: {prompts}")
+        logger.info(f"Engine: {self._engine}")
         try:
             start_time = time()
             if self._engine == "chat":
