@@ -10,7 +10,7 @@ from typing import Any, Dict, List, Optional, Type
 from langchain.embeddings.base import Embeddings
 from langchain.prompts.example_selector.base import BaseExampleSelector
 from langchain.vectorstores.base import VectorStore
-from pydantic import BaseModel, Extra
+from pydantic.v1 import BaseModel, Extra
 
 
 def sorted_values(values: Dict[str, str]) -> List[Any]:

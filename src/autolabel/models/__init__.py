@@ -13,6 +13,7 @@ from autolabel.models.cohere import CohereLLM
 from autolabel.models.google import GoogleLLM
 from autolabel.models.hf_pipeline import HFPipelineLLM
 from autolabel.models.hf_pipeline_vision import HFPipelineMultimodal
+from autolabel.models.mistral import MistralLLM
 from autolabel.models.refuel import RefuelLLM
 from autolabel.models.tgi import TGILLM
 
@@ -24,6 +25,7 @@ MODEL_REGISTRY = {
     ModelProvider.HUGGINGFACE_PIPELINE: HFPipelineLLM,
     ModelProvider.HUGGINGFACE_PIPELINE_VISION: HFPipelineMultimodal,
     ModelProvider.GOOGLE: GoogleLLM,
+    ModelProvider.MISTRAL: MistralLLM,
     ModelProvider.REFUEL: RefuelLLM,
     ModelProvider.TGI: TGILLM,
 }
