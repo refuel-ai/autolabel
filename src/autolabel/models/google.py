@@ -75,6 +75,7 @@ class GoogleLLM(BaseModel):
         # populate model params and initialize the LLM
         model_params = config.model_params()
         self.model_params = {**self.DEFAULT_PARAMS, **model_params}
+        logger.info(f"Model Name: {self.model_name}")
         if self._engine == "chat":
             self.llm = ChatGoogleGenerativeAI(
                 model=self.model_name, **self.model_params
@@ -83,7 +84,7 @@ class GoogleLLM(BaseModel):
             self.llm = ChatGoogleGenerativeAI(
                 model=self.model_name, **self.model_params
             )
-
+        logger.info(f"self.llm: {self.llm}")
         self.tiktoken = tiktoken
 
     async def _alabel(self, prompts: List[str]) -> RefuelLLMResult:
@@ -110,6 +111,8 @@ class GoogleLLM(BaseModel):
             return await self._alabel_individually(prompts)
 
     def _label(self, prompts: List[str]) -> RefuelLLMResult:
+        logger.info(f"Prompts: {prompts}")
+        logger.info(f"Engine: {self._engine}")
         try:
             start_time = time()
             if self._engine == "chat":
