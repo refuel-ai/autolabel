@@ -34,7 +34,7 @@ class QuestionAnsweringTask(BaseTask):
     DEFAULT_OUTPUT_GUIDELINES = (
         'You will return the answer one element: "the correct label"\n'
     )
-    REFUEL_LLM_DEFAULT_OUTPUT_GUIDELINES = ""
+    LLAMA_DEFAULT_OUTPUT_GUIDELINES = ""
     DEFAULT_TASK_GUIDELINES = "Your job is to answer the following questions using the options provided for each question. Choose the best answer for the question.\n"
     NULL_LABEL_TOKEN = "NO_LABEL"
 
@@ -45,8 +45,8 @@ class QuestionAnsweringTask(BaseTask):
     GENERATE_EXPLANATION_PROMPT = "You are an expert at providing a well reasoned explanation for the output of a given task. \n\nBEGIN TASK DESCRIPTION\n{task_guidelines}\nEND TASK DESCRIPTION\nYou will be given an input example and the corresponding output. You will be given a question and an answer. Your job is to provide an explanation for why the answer is correct for the task above.\nThink step by step and generate an explanation.{label_format}\n{labeled_example}\nExplanation: "
 
     def __init__(self, config: AutolabelConfig) -> None:
-        if config.provider() == ModelProvider.REFUEL:
-            self.DEFAULT_OUTPUT_GUIDELINES = self.REFUEL_LLM_DEFAULT_OUTPUT_GUIDELINES
+        if config.provider() in [ModelProvider.REFUEL, ModelProvider.TGI]:
+            self.DEFAULT_OUTPUT_GUIDELINES = self.LLAMA_DEFAULT_OUTPUT_GUIDELINES
 
         super().__init__(config)
         self.metrics = [
