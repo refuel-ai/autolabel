@@ -81,9 +81,12 @@ class ClassificationTask(BaseTask):
         )
         num_labels = len(labels_list)
 
-        is_refuel_llm = self.config.provider() == ModelProvider.REFUEL
+        is_llama_based_llm = self.config.provider() in [
+            ModelProvider.REFUEL,
+            ModelProvider.TGI,
+        ]
 
-        if is_refuel_llm:
+        if is_llama_based_llm:
             labels = (
                 ", ".join([f'\\"{i}\\"' for i in labels_list[:-1]])
                 + " or "

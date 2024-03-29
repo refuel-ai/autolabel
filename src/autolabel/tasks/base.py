@@ -29,13 +29,13 @@ class BaseTask(ABC):
     ZERO_SHOT_TEMPLATE = "{task_guidelines}\n\n{output_guidelines}\n\nNow I want you to label the following example:\n{current_example}"
     FEW_SHOT_TEMPLATE = "{task_guidelines}\n\n{output_guidelines}\n\nSome examples with their output answers are provided below:\n\n{seed_examples}\n\nNow I want you to label the following example:\n{current_example}"
 
-    ZERO_SHOT_TEMPLATE_REFUEL_LLM = """
+    ZERO_SHOT_TEMPLATE_LLAMA = """
     <s>[INST] <<SYS>>
     {task_guidelines}\n{output_guidelines}
     <</SYS>>
     {current_example}[/INST]
     """
-    FEW_SHOT_TEMPLATE_REFUEL_LLM = """
+    FEW_SHOT_TEMPLATE_LLAMA = """
     <s>[INST] <<SYS>>
     {task_guidelines}\n{output_guidelines}\n{seed_examples}
     <</SYS>>
@@ -67,17 +67,20 @@ class BaseTask(ABC):
         self._prompt_schema_init()
 
     def _prompt_schema_init(self) -> None:
-        self.use_refuel_prompt_schema = self.config.provider() == ModelProvider.REFUEL
+        self.use_llama_prompt_schema = self.config.provider() in [
+            ModelProvider.REFUEL,
+            ModelProvider.TGI,
+        ]
         if self._is_few_shot_mode():
             self.example_template = (
-                self.FEW_SHOT_TEMPLATE_REFUEL_LLM
-                if self.use_refuel_prompt_schema
+                self.FEW_SHOT_TEMPLATE_LLAMA
+                if self.use_llama_prompt_schema
                 else self.FEW_SHOT_TEMPLATE
             )
         else:
             self.example_template = (
-                self.ZERO_SHOT_TEMPLATE_REFUEL_LLM
-                if self.use_refuel_prompt_schema
+                self.ZERO_SHOT_TEMPLATE_LLAMA
+                if self.use_llama_prompt_schema
                 else self.ZERO_SHOT_TEMPLATE
             )
         self.prompt_template = PromptTemplate(
@@ -104,9 +107,9 @@ class BaseTask(ABC):
 
     def construct_confidence_prompt(self, input: str, examples: List, **kwargs) -> str:
         curr_template = (
-            self.FEW_SHOT_TEMPLATE_REFUEL_LLM
+            self.FEW_SHOT_TEMPLATE_LLAMA
             if self._is_few_shot_mode()
-            else self.ZERO_SHOT_TEMPLATE_REFUEL_LLM
+            else self.ZERO_SHOT_TEMPLATE_LLAMA
         )
         prompt_template = PromptTemplate(
             input_variables=get_format_variables(curr_template),
