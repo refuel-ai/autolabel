@@ -10,6 +10,7 @@ import asyncio
 import logging
 import pandas as pd
 import ssl
+import json
 from langchain_community.document_transformers import Html2TextTransformer
 from langchain.docstore.document import Document
 from autolabel.cache import BaseCache
@@ -20,6 +21,17 @@ logger = logging.getLogger(__name__)
 MAX_RETRIES = 5
 BACKOFF = 2
 DEFAULT_TIMEOUT = 60000  # in milliseconds
+PREMIUM_PROXY_PARAM = "premium_proxy"
+JS_SCENARIO = {
+    "instructions": [
+        {
+            "infinite_scroll": {
+                "max_count": 0,
+                "delay": 1000,
+            }
+        }
+    ]
+}
 
 
 class WebpageTransform(BaseTransform):
@@ -44,20 +56,30 @@ class WebpageTransform(BaseTransform):
         self.client = ScrapingBeeClient(api_key=self.api_key)
         self.scrapingbee_params = {
             "timeout": self.timeout,
+            "transparent_status_code": "True",
+            "js_scenario": JS_SCENARIO,
         }
 
     def name(self) -> str:
         return TransformType.WEBPAGE_TRANSFORM
 
+    # On error, retry fetching the URL with a premium proxy. Only use exponential backoff for certain status codes.
     async def _load_url(self, url: str, retry_count=0) -> str:
-        if retry_count >= self.max_retries:
+        if (
+            retry_count >= self.max_retries
+            or self.scrapingbee_params.get(PREMIUM_PROXY_PARAM) == "True"
+        ):
             logger.warning(f"Max retries reached for URL: {url}")
             raise TransformError(
                 TransformErrorType.MAX_RETRIES_REACHED, "Max retries reached"
             )
+        if retry_count > 0:
+            logger.warning(f"Retrying scraping URL: {url} with premium proxy")
+            self.scrapingbee_params[PREMIUM_PROXY_PARAM] = "True"
 
         try:
             response = self.client.get(url, params=self.scrapingbee_params)
+            response.raise_for_status()
             documents = [
                 Document(page_content=response.content, metadata={"source": url})
             ]
@@ -66,7 +88,9 @@ class WebpageTransform(BaseTransform):
             ].page_content
             return text
         except Exception as e:
-            await asyncio.sleep(BACKOFF**retry_count)
+            logger.warning(f"Error fetching content from URL: {url}. Exception: {e}")
+            if response.status_code in [408, 425, 429, 500, 502, 503, 504]:
+                await asyncio.sleep(BACKOFF**retry_count)
             return await self._load_url(url, retry_count=retry_count + 1)
 
     async def _apply(self, row: Dict[str, Any]) -> Dict[str, Any]:

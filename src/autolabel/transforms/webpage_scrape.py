@@ -101,7 +101,7 @@ class WebpageScrape(BaseTransform):
             if not verify:
                 client = self.client_with_no_verify
             response = await client.get(url, headers=headers)
-
+            response.raise_for_status()
             # TODO: Add support for other parsers
             content_bytes = response.content
             soup = self.beautiful_soup(content_bytes, HTML_PARSER)
