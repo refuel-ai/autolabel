@@ -51,7 +51,7 @@ class GoogleLLM(BaseModel):
             )
         except ImportError:
             raise ImportError(
-                "tiktoken and langchain_google_genai. Please install it with the following command: pip install 'refuel-autolabel[google]'"
+                "tiktoken and langchain_google_vertexai. Please install it with the following command: pip install 'refuel-autolabel[google]'"
             )
 
         self.DEFAULT_PARAMS = {
@@ -67,8 +67,8 @@ class GoogleLLM(BaseModel):
 
         super().__init__(config, cache)
 
-        if os.getenv("GOOGLE_API_KEY") is None:
-            raise ValueError("GOOGLE_API_KEY environment variable not set")
+        if os.getenv("GOOGLE_APPLICATION_CREDENTIALS") is None:
+            raise ValueError("GOOGLE_APPLICATION_CREDENTIALS environment variable not set")
 
         # populate model name
         self.model_name = config.model_name() or self.DEFAULT_MODEL
