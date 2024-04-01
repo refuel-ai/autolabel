@@ -77,7 +77,6 @@ class GoogleLLM(BaseModel):
         # populate model params and initialize the LLM
         model_params = config.model_params()
         self.model_params = {**self.DEFAULT_PARAMS, **model_params}
-        logger.info(f"Model Name: {self.model_name}")
         if self._engine == "chat":
             self.llm = VertexAI(model_name=self.model_name, **self.model_params)
         else:
