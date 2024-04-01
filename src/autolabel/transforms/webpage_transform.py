@@ -10,6 +10,7 @@ import asyncio
 import logging
 import pandas as pd
 import ssl
+import json
 from langchain_community.document_transformers import Html2TextTransformer
 from langchain.docstore.document import Document
 from autolabel.cache import BaseCache
@@ -21,6 +22,16 @@ MAX_RETRIES = 5
 BACKOFF = 2
 DEFAULT_TIMEOUT = 60000  # in milliseconds
 PREMIUM_PROXY_PARAM = "premium_proxy"
+JS_SCENARIO = {
+    "instructions": [
+        {
+            "infinite_scroll": {
+                "max_count": 0,
+                "delay": 1000,
+            }
+        }
+    ]
+}
 
 
 class WebpageTransform(BaseTransform):
@@ -51,8 +62,12 @@ class WebpageTransform(BaseTransform):
     def name(self) -> str:
         return TransformType.WEBPAGE_TRANSFORM
 
+    # On error, retry fetching the URL with a premium proxy. Only use exponential backoff for certain status codes.
     async def _load_url(self, url: str, retry_count=0) -> str:
-        if retry_count >= self.max_retries:
+        if (
+            retry_count >= self.max_retries
+            or self.scrapingbee_params.get(PREMIUM_PROXY_PARAM) == "True"
+        ):
             logger.warning(f"Max retries reached for URL: {url}")
             raise TransformError(
                 TransformErrorType.MAX_RETRIES_REACHED, "Max retries reached"
@@ -60,6 +75,7 @@ class WebpageTransform(BaseTransform):
         if retry_count > 0:
             logger.warning(f"Retrying scraping URL: {url} with premium proxy")
             self.scrapingbee_params[PREMIUM_PROXY_PARAM] = "True"
+            self.scrapingbee_params["js_scenario"] = JS_SCENARIO
 
         try:
             response = self.client.get(url, params=self.scrapingbee_params)
