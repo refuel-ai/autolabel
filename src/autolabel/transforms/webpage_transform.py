@@ -20,6 +20,7 @@ logger = logging.getLogger(__name__)
 MAX_RETRIES = 5
 BACKOFF = 2
 DEFAULT_TIMEOUT = 60000  # in milliseconds
+PREMIUM_PROXY_PARAM = "premium_proxy"
 
 
 class WebpageTransform(BaseTransform):
@@ -42,9 +43,7 @@ class WebpageTransform(BaseTransform):
         self.html2text_transformer = Html2TextTransformer()
         self.api_key = scrapingbee_api_key
         self.client = ScrapingBeeClient(api_key=self.api_key)
-        self.scrapingbee_params = {
-            "timeout": self.timeout,
-        }
+        self.scrapingbee_params = {"timeout": self.timeout}
 
     def name(self) -> str:
         return TransformType.WEBPAGE_TRANSFORM
@@ -55,9 +54,13 @@ class WebpageTransform(BaseTransform):
             raise TransformError(
                 TransformErrorType.MAX_RETRIES_REACHED, "Max retries reached"
             )
+        if retry_count > 0:
+            logger.warning(f"Retrying scraping URL: {url} with premium proxy")
+            self.scrapingbee_params[PREMIUM_PROXY_PARAM] = "True"
 
         try:
             response = self.client.get(url, params=self.scrapingbee_params)
+            response.raise_for_status()
             documents = [
                 Document(page_content=response.content, metadata={"source": url})
             ]
@@ -66,6 +69,7 @@ class WebpageTransform(BaseTransform):
             ].page_content
             return text
         except Exception as e:
+            logger.warning(f"Error fetching content from URL: {url}. Exception: {e}")
             await asyncio.sleep(BACKOFF**retry_count)
             return await self._load_url(url, retry_count=retry_count + 1)
 
