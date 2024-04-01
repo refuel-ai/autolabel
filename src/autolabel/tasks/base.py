@@ -24,6 +24,8 @@ from autolabel.utils import extract_valid_json_substring, get_format_variables
 
 logger = logging.getLogger(__name__)
 
+REFUEL_LLM_MODEL = "refuel-llm"
+
 
 class BaseTask(ABC):
     ZERO_SHOT_TEMPLATE = "{task_guidelines}\n\n{output_guidelines}\n\nNow I want you to label the following example:\n{current_example}"
@@ -67,10 +69,10 @@ class BaseTask(ABC):
         self._prompt_schema_init()
 
     def _prompt_schema_init(self) -> None:
-        self.use_llama_prompt_schema = self.config.provider() in [
-            ModelProvider.REFUEL,
-            ModelProvider.TGI,
-        ]
+        self.use_llama_prompt_schema = (
+            self.config.provider() == ModelProvider.REFUEL
+            and self.config.model_name() == REFUEL_LLM_MODEL
+        ) or self.config.provider() == ModelProvider.TGI
         if self._is_few_shot_mode():
             self.example_template = (
                 self.FEW_SHOT_TEMPLATE_LLAMA
