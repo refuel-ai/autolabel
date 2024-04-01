@@ -68,7 +68,9 @@ class GoogleLLM(BaseModel):
         super().__init__(config, cache)
 
         if os.getenv("GOOGLE_APPLICATION_CREDENTIALS") is None:
-            raise ValueError("GOOGLE_APPLICATION_CREDENTIALS environment variable not set")
+            raise ValueError(
+                "GOOGLE_APPLICATION_CREDENTIALS environment variable not set"
+            )
 
         # populate model name
         self.model_name = config.model_name() or self.DEFAULT_MODEL
