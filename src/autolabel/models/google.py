@@ -77,13 +77,9 @@ class GoogleLLM(BaseModel):
         self.model_params = {**self.DEFAULT_PARAMS, **model_params}
         logger.info(f"Model Name: {self.model_name}")
         if self._engine == "chat":
-            self.llm = VertexAI(
-                model_name=self.model_name, **self.model_params
-            )
+            self.llm = VertexAI(model_name=self.model_name, **self.model_params)
         else:
-            self.llm = VertexAI(
-                model_name=self.model_name, **self.model_params
-            )
+            self.llm = VertexAI(model_name=self.model_name, **self.model_params)
         self.tiktoken = tiktoken
 
     async def _alabel(self, prompts: List[str]) -> RefuelLLMResult:
