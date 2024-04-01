@@ -76,6 +76,7 @@ huggingface = [
 google = [
     "tiktoken >= 0.3.3",
     "google-cloud-aiplatform>=1.25.0",
+    "langchain_google_vertexai==0.0.5",
 ]
 cohere = [
     "cohere>=4.11.2"

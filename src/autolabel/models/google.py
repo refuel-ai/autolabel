@@ -44,92 +44,131 @@ class GoogleLLM(BaseModel):
     ) -> None:
         try:
             import tiktoken
-            from langchain_google_genai import (
-                ChatGoogleGenerativeAI,
+            from vertexai.generative_models import (
+                GenerativeModel,
                 HarmBlockThreshold,
                 HarmCategory,
             )
         except ImportError:
             raise ImportError(
-                "tiktoken and langchain_google_genai. Please install it with the following command: pip install 'refuel-autolabel[google]'"
+                "tiktoken and langchain_google_vertexai are requried for google models. Please install it with the following command: pip install 'refuel-autolabel[google]'"
             )
 
         self.DEFAULT_PARAMS = {
             "temperature": 0.0,
-            "topK": 3,
-            "safety_settings": {
-                HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT: HarmBlockThreshold.BLOCK_NONE,
-                HarmCategory.HARM_CATEGORY_HATE_SPEECH: HarmBlockThreshold.BLOCK_NONE,
-                HarmCategory.HARM_CATEGORY_HARASSMENT: HarmBlockThreshold.BLOCK_NONE,
-                HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT: HarmBlockThreshold.BLOCK_NONE,
-            },
+            "top_k": 3,
+        }
+
+        self.safety_settings = {
+            HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT: HarmBlockThreshold.BLOCK_ONLY_HIGH,
+            HarmCategory.HARM_CATEGORY_HATE_SPEECH: HarmBlockThreshold.BLOCK_ONLY_HIGH,
+            HarmCategory.HARM_CATEGORY_HARASSMENT: HarmBlockThreshold.BLOCK_ONLY_HIGH,
+            HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT: HarmBlockThreshold.BLOCK_ONLY_HIGH,
         }
 
         super().__init__(config, cache)
 
-        if os.getenv("GOOGLE_API_KEY") is None:
-            raise ValueError("GOOGLE_API_KEY environment variable not set")
+        if os.getenv("GOOGLE_APPLICATION_CREDENTIALS") is None:
+            raise ValueError("GOOGLE_APPLICATION_CREDENTIALS environment variable not set")
 
         # populate model name
         self.model_name = config.model_name() or self.DEFAULT_MODEL
         # populate model params and initialize the LLM
         model_params = config.model_params()
         self.model_params = {**self.DEFAULT_PARAMS, **model_params}
-        logger.info(f"Model Name: {self.model_name}")
+
         if self._engine == "chat":
-            self.llm = ChatGoogleGenerativeAI(
-                model=self.model_name, **self.model_params
+            self.llm = GenerativeModel(
+                model_name=self.model_name
             )
         else:
-            self.llm = ChatGoogleGenerativeAI(
-                model=self.model_name, **self.model_params
+            self.llm = GenerativeModel(
+                model_name=self.model_name, **self.model_params
             )
-        logger.info(f"self.llm: {self.llm}")
         self.tiktoken = tiktoken
 
-    async def _alabel(self, prompts: List[str]) -> RefuelLLMResult:
-        logger.info(f"Prompts: {prompts}")
-        logger.info(f"Engine: {self._engine}")
-        try:
-            start_time = time()
-            if self._engine == "chat":
-                logger.info(f"Google Prompts: {prompts}")
-                prompts = [[HumanMessage(content=prompt)] for prompt in prompts]
-                result = await self.llm.agenerate(prompts)
-                logger.info(f"Google Generations: {result}")
-            else:
-                result = await self.llm.agenerate(prompts)
-            generations = result.generations
-            end_time = time()
-            return RefuelLLMResult(
-                generations=generations,
-                errors=[None] * len(generations),
-                latencies=[end_time - start_time] * len(generations),
-            )
-        except Exception as e:
-            logger.error(f"Error from Google LLM: {e}")
-            return await self._alabel_individually(prompts)
+    # async def _alabel(self, prompts: List[str]) -> RefuelLLMResult:
+    #     generations = []
+    #     errors = []
+    #     latencies = []
+    #     for prompt in prompts:
+    #         try:
+    #             start_time = time()
+    #             response = self.llm.generate_content(
+    #                 prompt,
+    #                 generation_config=self.DEFAULT_PARAMS,
+    #                 safety_settings=self.safety_settings,
+    #             )
+    #             end_time = time()
+    #             latency = end_time - start_time
+    #             generations.append(
+    #                 [
+    #                     Generation(
+    #                         text=response.text,
+    #                         generation_info=(
+    #                             {"logprobs": {"top_logprobs": response["logprobs"]}}
+    #                             if self.config.confidence()
+    #                             else None
+    #                         ),
+    #                     )
+    #                 ]
+    #             )
+    #             errors.append(None)
+    #             latencies.append(latency)
+    #         except Exception as e:
+    #             # This signifies an error in generating the response using RefuelLLm
+    #             logger.error(
+    #                 f"Unable to generate prediction: {e}",
+    #             )
+    #             generations.append([Generation(text="")])
+    #             errors.append(
+    #                 LabelingError(
+    #                     error_type=ErrorType.LLM_PROVIDER_ERROR, error_message=str(e)
+    #                 )
+    #             )
+    #             latencies.append(0)
+    #     return RefuelLLMResult(
+    #         generations=generations, errors=errors, latencies=latencies
+    #     )
 
     def _label(self, prompts: List[str]) -> RefuelLLMResult:
-        logger.info(f"Prompts: {prompts}")
-        logger.info(f"Engine: {self._engine}")
-        try:
-            start_time = time()
-            if self._engine == "chat":
-                prompts = [[HumanMessage(content=prompt)] for prompt in prompts]
-                result = self.llm.generate(prompts)
-            else:
-                result = self.llm.generate(prompts)
-            generations = result.generations
-            end_time = time()
-            return RefuelLLMResult(
-                generations=generations,
-                errors=[None] * len(generations),
-                latencies=[end_time - start_time] * len(generations),
-            )
-        except Exception as e:
-            logger.error(f"Error from Google LLM: {e}")
-            return self._label_individually(prompts)
+        generations = []
+        errors = []
+        latencies = []
+        for prompt in prompts:
+            try:
+                start_time = time()
+                response = self.llm.generate_content(
+                    prompt,
+                    generation_config=self.DEFAULT_PARAMS,
+                    safety_settings=self.safety_settings,
+                )
+                end_time = time()
+                latency = end_time - start_time
+                generations.append(
+                    [
+                        Generation(
+                            text=response.text,
+                        )
+                    ]
+                )
+                errors.append(None)
+                latencies.append(latency)
+            except Exception as e:
+                # This signifies an error in generating the response using RefuelLLm
+                logger.error(
+                    f"Unable to generate prediction: {e}",
+                )
+                generations.append([Generation(text="")])
+                errors.append(
+                    LabelingError(
+                        error_type=ErrorType.LLM_PROVIDER_ERROR, error_message=str(e)
+                    )
+                )
+                latencies.append(0)
+        return RefuelLLMResult(
+            generations=generations, errors=errors, latencies=latencies
+        )
 
     def get_cost(self, prompt: str, label: Optional[str] = "") -> float:
         if self.model_name is None:
