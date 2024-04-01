@@ -69,17 +69,10 @@ class BaseTask(ABC):
         self._prompt_schema_init()
 
     def _prompt_schema_init(self) -> None:
-<<<<<<< Updated upstream
-        self.use_llama_prompt_schema = self.config.provider() in [
-            ModelProvider.REFUEL,
-            ModelProvider.TGI,
-        ]
-=======
-        self.use_refuel_prompt_schema = (
+        self.use_llama_prompt_schema = (
             self.config.provider() == ModelProvider.REFUEL
             and self.config.model_name() == REFUEL_LLM_MODEL
-        )
->>>>>>> Stashed changes
+        ) or self.config.provider() == ModelProvider.TGI
         if self._is_few_shot_mode():
             self.example_template = (
                 self.FEW_SHOT_TEMPLATE_LLAMA
