@@ -43,7 +43,10 @@ class WebpageTransform(BaseTransform):
         self.html2text_transformer = Html2TextTransformer()
         self.api_key = scrapingbee_api_key
         self.client = ScrapingBeeClient(api_key=self.api_key)
-        self.scrapingbee_params = {"timeout": self.timeout}
+        self.scrapingbee_params = {
+            "timeout": self.timeout,
+            "transparent_status_code": "True",
+        }
 
     def name(self) -> str:
         return TransformType.WEBPAGE_TRANSFORM
@@ -70,7 +73,8 @@ class WebpageTransform(BaseTransform):
             return text
         except Exception as e:
             logger.warning(f"Error fetching content from URL: {url}. Exception: {e}")
-            await asyncio.sleep(BACKOFF**retry_count)
+            if response.status_code in [408, 425, 429, 500, 502, 503, 504]:
+                await asyncio.sleep(BACKOFF**retry_count)
             return await self._load_url(url, retry_count=retry_count + 1)
 
     async def _apply(self, row: Dict[str, Any]) -> Dict[str, Any]:
