@@ -255,8 +255,14 @@ class BaseTask(ABC):
             ]:
                 if llm_label in self.config.labels_list():
                     successfully_labeled = True
+                elif llm_label.replace("\_", "_") in self.config.labels_list():
+                    llm_label = llm_label.replace("\_", "_")
+                    successfully_labeled = True
+                elif llm_label.lower() in self.config.labels_list():
+                    llm_label = llm_label.lower()
+                    successfully_labeled = True
                 else:
-                    logger.warning(f"LLM response is not in the labels list")
+                    logger.warning(f"LLM response {llm_label} is not in the labels list")
                     llm_label = self.NULL_LABEL_TOKEN
                     successfully_labeled = False
                     error = LabelingError(
@@ -295,3 +301,4 @@ class BaseTask(ABC):
             explanation=explanation if self.config.chain_of_thought() else "",
             error=error,
         )
+    

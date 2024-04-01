@@ -12,6 +12,7 @@
     },
     "prompt": {
         "task_guidelines": "You are an expert at extracting numbers from text. Your job is to extract numbers mentioned exactly as they are in the text. If there are multiple numbers, return the first number.",
+        "output_guidelines": "You will output just the number and nothing else.",
         "labels": [
             "Number"
         ],

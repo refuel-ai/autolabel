@@ -50,6 +50,7 @@ class VLLMModel(BaseModel):
             temperature=self.DEFAULT_PARAMS["temperature"],
             top_p=self.DEFAULT_PARAMS["top_p"],
         )
+        self.model_name = self.config.model_name()
         self.llm = LLM(
             model=self.config.model_name(),
             tensor_parallel_size=self.config.model_params().get(

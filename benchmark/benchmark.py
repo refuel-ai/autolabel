@@ -56,7 +56,8 @@ def main():
         config = json.load(open(f"configs/{dataset}.json", "r"))
         config["model"]["name"] = args.model
         config["model"]["provider"] = MODEL_TO_PROVIDER[args.model]
-        config["model"]["params"] = {"tensor_parallel_size": 4}
+        if MODEL_TO_PROVIDER[args.model] == "vllm":
+            config["model"]["params"] = {"tensor_parallel_size": 4}
         config["prompt"]["few_shot_num"] = args.few_shot
         if not args.few_shot:
             config["prompt"]["few_shot_selection"] = "fixed"
