@@ -57,6 +57,7 @@ class WebpageTransform(BaseTransform):
         self.scrapingbee_params = {
             "timeout": self.timeout,
             "transparent_status_code": "True",
+            "js_scenario": JS_SCENARIO,
         }
 
     def name(self) -> str:
@@ -75,7 +76,6 @@ class WebpageTransform(BaseTransform):
         if retry_count > 0:
             logger.warning(f"Retrying scraping URL: {url} with premium proxy")
             self.scrapingbee_params[PREMIUM_PROXY_PARAM] = "True"
-            self.scrapingbee_params["js_scenario"] = JS_SCENARIO
 
         try:
             response = self.client.get(url, params=self.scrapingbee_params)
