@@ -279,10 +279,6 @@ class LabelingAgent:
                 response.errors,
                 response.latencies,
             ):
-                if generations[0].text not in self.config.labels_list():
-                    logger.warn(
-                        f"Warning: Label {generations[0].text} not in selected labels."
-                    )
                 input_tokens = self.llm.get_num_tokens(final_prompt)
                 if error is not None:
                     annotation = LLMAnnotation(
