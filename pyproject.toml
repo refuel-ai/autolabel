@@ -112,7 +112,8 @@ all = [
     "httpx",
     "fake_useragent==1.4.0",
     "scrapingbee==2.0.1",
-    "pillow >= 9.5.0"
+    "pillow >= 9.5.0",
+    "pydantic == 1.10.9",
 ]
 
 [project.urls]

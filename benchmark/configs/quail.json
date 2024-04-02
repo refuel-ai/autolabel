@@ -1,0 +1,20 @@
+{
+    "task_name": "QuAIL",
+    "task_type": "question_answering",
+    "dataset": {
+        "label_column": "answer",
+        "delimiter": ","
+    },
+    "model": {
+        "provider": "openai",
+        "name": "gpt-3.5-turbo"
+    },
+    "prompt": {
+        "task_guidelines": "You are an expert at reading comprehension multiple choice questions. You are given a question and a list of options. Use the context to select the best answer for the given question.",
+        "output_guidelines": "You will output just the answer, which will be one of the given options.",
+        "example_template": "{question}\nOptions: {options}\nAnswer: {answer}",
+        "few_shot_examples": "data/quail/seed.csv",
+        "few_shot_selection": "semantic_similarity",
+        "few_shot_num": 5
+    }
+}

@@ -31,7 +31,7 @@ class BaseTask(ABC):
     ZERO_SHOT_TEMPLATE = "{task_guidelines}\n\n{output_guidelines}\n\nNow I want you to label the following example:\n{current_example}"
     FEW_SHOT_TEMPLATE = "{task_guidelines}\n\n{output_guidelines}\n\nSome examples with their output answers are provided below:\n\n{seed_examples}\n\nNow I want you to label the following example:\n{current_example}"
 
-    ZERO_SHOT_TEMPLATE_LLAMA = """
+    ZERO_SHOT_TEMPLATE_REFUEL_LLM = """
     <s>[INST] <<SYS>>
     {task_guidelines}\n{output_guidelines}
     <</SYS>>
@@ -66,6 +66,13 @@ class BaseTask(ABC):
             self.config.dataset_generation_guidelines()
             or self.DEFAULT_DATASET_GENERATION_GUIDELINES
         )
+
+        if self.config.zero_shot_template():
+            self.ZERO_SHOT_TEMPLATE = self.config.zero_shot_template()
+
+        if self.config.few_shot_template():
+            self.FEW_SHOT_TEMPLATE = self.config.few_shot_template()
+
         self._prompt_schema_init()
 
     def _prompt_schema_init(self) -> None:
@@ -91,7 +98,10 @@ class BaseTask(ABC):
         )
 
     def _is_few_shot_mode(self) -> bool:
-        return self.config.few_shot_algorithm() in [x.value for x in FewShotAlgorithm]
+        return (
+            self.config.few_shot_algorithm() in [x.value for x in FewShotAlgorithm]
+            and self.config.few_shot_num_examples() > 0
+        )
 
     @abstractmethod
     def construct_prompt(
@@ -247,8 +257,16 @@ class BaseTask(ABC):
             ]:
                 if llm_label in self.config.labels_list():
                     successfully_labeled = True
+                elif llm_label.replace("\_", "_") in self.config.labels_list():
+                    llm_label = llm_label.replace("\_", "_")
+                    successfully_labeled = True
+                elif llm_label.lower() in self.config.labels_list():
+                    llm_label = llm_label.lower()
+                    successfully_labeled = True
                 else:
-                    logger.warning(f"LLM response is not in the labels list")
+                    logger.warning(
+                        f"LLM response {llm_label} is not in the labels list"
+                    )
                     llm_label = self.NULL_LABEL_TOKEN
                     successfully_labeled = False
                     error = LabelingError(
