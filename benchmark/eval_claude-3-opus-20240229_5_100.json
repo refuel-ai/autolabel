@@ -1,0 +1,882 @@
+[
+    [
+        {
+            "name": "accuracy",
+            "value": 0.8383838383838383,
+            "show_running": true
+        },
+        {
+            "name": "support",
+            "value": 100,
+            "show_running": true
+        },
+        {
+            "name": "completion_rate",
+            "value": 0.99,
+            "show_running": true
+        },
+        {
+            "name": "classification_report",
+            "value": "              precision    recall  f1-score   support\n\n   not toxic       0.93      0.89      0.91        87\n       toxic       0.38      0.50      0.43        12\n\n    accuracy                           0.84        99\n   macro avg       0.65      0.69      0.67        99\nweighted avg       0.86      0.84      0.85        99\n",
+            "show_running": false
+        }
+    ],
+    [
+        {
+            "name": "accuracy",
+            "value": 0.8,
+            "show_running": true
+        },
+        {
+            "name": "support",
+            "value": 100,
+            "show_running": true
+        },
+        {
+            "name": "completion_rate",
+            "value": 1.0,
+            "show_running": true
+        }
+    ],
+    [
+        {
+            "name": "accuracy",
+            "value": 0.9577464788732394,
+            "show_running": true
+        },
+        {
+            "name": "support",
+            "value": 100,
+            "show_running": true
+        },
+        {
+            "name": "completion_rate",
+            "value": 0.71,
+            "show_running": true
+        },
+        {
+            "name": "classification_report",
+            "value": "               precision    recall  f1-score   support\n\n    duplicate       0.88      0.94      0.91        16\nnot duplicate       0.98      0.96      0.97        55\n\n     accuracy                           0.96        71\n    macro avg       0.93      0.95      0.94        71\n weighted avg       0.96      0.96      0.96        71\n",
+            "show_running": false
+        }
+    ],
+    [
+        {
+            "name": "support",
+            "value": 100,
+            "show_running": true
+        },
+        {
+            "name": "completion_rate",
+            "value": 1.0,
+            "show_running": true
+        },
+        {
+            "name": "f1_exact",
+            "value": 0.9401330376940132,
+            "show_running": true
+        },
+        {
+            "name": "f1_strict",
+            "value": 0.9223946784922394,
+            "show_running": true
+        },
+        {
+            "name": "f1_partial",
+            "value": 0.9445676274944568,
+            "show_running": true
+        },
+        {
+            "name": "f1_ent_type",
+            "value": 0.9312638580931265,
+            "show_running": true
+        },
+        {
+            "name": "accuracy",
+            "value": 0.9585253456221198,
+            "show_running": true
+        }
+    ],
+    [
+        {
+            "name": "accuracy",
+            "value": 0.94,
+            "show_running": true
+        },
+        {
+            "name": "support",
+            "value": 100,
+            "show_running": true
+        },
+        {
+            "name": "completion_rate",
+            "value": 1.0,
+            "show_running": true
+        },
+        {
+            "name": "classification_report",
+            "value": "              precision    recall  f1-score   support\n\n        bike       1.00      0.91      0.95        11\n         car       0.94      1.00      0.97        16\n electronics       0.85      0.85      0.85        13\n   furniture       0.97      1.00      0.99        37\n     housing       1.00      0.93      0.97        15\n       phone       0.75      0.75      0.75         8\n\n    accuracy                           0.94       100\n   macro avg       0.92      0.91      0.91       100\nweighted avg       0.94      0.94      0.94       100\n",
+            "show_running": false
+        }
+    ],
+    [
+        {
+            "name": "accuracy",
+            "value": 0.7777777777777778,
+            "show_running": true
+        },
+        {
+            "name": "support",
+            "value": 100,
+            "show_running": true
+        },
+        {
+            "name": "completion_rate",
+            "value": 0.99,
+            "show_running": true
+        }
+    ],
+    [
+        {
+            "name": "accuracy",
+            "value": 0.93,
+            "show_running": true
+        },
+        {
+            "name": "support",
+            "value": 100,
+            "show_running": true
+        },
+        {
+            "name": "completion_rate",
+            "value": 1.0,
+            "show_running": true
+        },
+        {
+            "name": "classification_report",
+            "value": "              precision    recall  f1-score   support\n\n         ANT       0.80      0.89      0.84         9\n       HYPER       0.80      0.57      0.67         7\n     PART_OF       0.67      0.67      0.67         3\n      RANDOM       0.99      0.97      0.98        75\n         SYN       0.75      1.00      0.86         6\n\n    accuracy                           0.93       100\n   macro avg       0.80      0.82      0.80       100\nweighted avg       0.93      0.93      0.93       100\n",
+            "show_running": false
+        }
+    ],
+    [
+        {
+            "name": "accuracy",
+            "value": 0.96,
+            "show_running": true
+        },
+        {
+            "name": "support",
+            "value": 100,
+            "show_running": true
+        },
+        {
+            "name": "completion_rate",
+            "value": 1.0,
+            "show_running": true
+        },
+        {
+            "name": "classification_report",
+            "value": "              precision    recall  f1-score   support\n\n     algebra       1.00      0.96      0.98        24\n  arithmetic       0.83      1.00      0.90        19\n measurement       1.00      1.00      1.00        19\n     numbers       1.00      0.82      0.90        17\n probability       1.00      1.00      1.00        21\n\n    accuracy                           0.96       100\n   macro avg       0.97      0.96      0.96       100\nweighted avg       0.97      0.96      0.96       100\n",
+            "show_running": false
+        }
+    ],
+    [
+        {
+            "name": "support",
+            "value": 100,
+            "show_running": true
+        },
+        {
+            "name": "completion_rate",
+            "value": 1.0,
+            "show_running": true
+        },
+        {
+            "name": "f1_exact",
+            "value": 0.8108108108108109,
+            "show_running": true
+        },
+        {
+            "name": "f1_strict",
+            "value": 0.8108108108108109,
+            "show_running": true
+        },
+        {
+            "name": "f1_partial",
+            "value": 0.8558558558558559,
+            "show_running": true
+        },
+        {
+            "name": "f1_ent_type",
+            "value": 0.9009009009009009,
+            "show_running": true
+        },
+        {
+            "name": "accuracy",
+            "value": 0.8035714285714286,
+            "show_running": true
+        }
+    ],
+    [
+        {
+            "name": "accuracy",
+            "value": 0.96,
+            "show_running": true
+        },
+        {
+            "name": "support",
+            "value": 100,
+            "show_running": true
+        },
+        {
+            "name": "completion_rate",
+            "value": 1.0,
+            "show_running": true
+        },
+        {
+            "name": "text_partial_match",
+            "value": [
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                0.3333333333333333,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                0,
+                1.0,
+                1.0,
+                1.0,
+                0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "show_running": true
+        },
+        {
+            "name": "f1",
+            "value": 0.9633333333333334,
+            "show_running": true
+        }
+    ],
+    [
+        {
+            "name": "accuracy",
+            "value": 0.68,
+            "show_running": true
+        },
+        {
+            "name": "support",
+            "value": 100,
+            "show_running": true
+        },
+        {
+            "name": "completion_rate",
+            "value": 1.0,
+            "show_running": true
+        },
+        {
+            "name": "text_partial_match",
+            "value": [
+                1.0,
+                1.0,
+                1.0,
+                0.6666666666666666,
+                1.0,
+                0.3,
+                1.0,
+                0.33333333333333337,
+                1.0,
+                1.0,
+                0.3157894736842105,
+                1.0,
+                0.5714285714285715,
+                1.0,
+                1.0,
+                1.0,
+                0,
+                0.6666666666666666,
+                1.0,
+                0.6666666666666666,
+                1.0,
+                1.0,
+                0.6153846153846153,
+                1.0,
+                1.0,
+                1.0,
+                0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                0.8,
+                1.0,
+                0.7692307692307693,
+                0.2222222222222222,
+                1.0,
+                1.0,
+                0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                0.5,
+                0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                0.42857142857142855,
+                1.0,
+                0.6666666666666666,
+                1.0,
+                1.0,
+                1.0,
+                0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                0,
+                1.0,
+                0,
+                0.5,
+                1.0,
+                0.5882352941176471,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                0.8,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                0.33333333333333337,
+                0.9090909090909091,
+                1.0,
+                1.0,
+                0,
+                1.0,
+                0.6666666666666666,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                0,
+                0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "show_running": true
+        },
+        {
+            "name": "f1",
+            "value": 0.8031995328373038,
+            "show_running": true
+        }
+    ],
+    [
+        {
+            "name": "accuracy",
+            "value": 0.89,
+            "show_running": true
+        },
+        {
+            "name": "support",
+            "value": 100,
+            "show_running": true
+        },
+        {
+            "name": "completion_rate",
+            "value": 1.0,
+            "show_running": true
+        },
+        {
+            "name": "classification_report",
+            "value": "               precision    recall  f1-score   support\n\n    duplicate       0.38      0.86      0.52         7\nnot duplicate       0.99      0.89      0.94        93\n\n     accuracy                           0.89       100\n    macro avg       0.68      0.87      0.73       100\n weighted avg       0.95      0.89      0.91       100\n",
+            "show_running": false
+        }
+    ],
+    [
+        {
+            "name": "accuracy",
+            "value": 0.71,
+            "show_running": true
+        },
+        {
+            "name": "support",
+            "value": 100,
+            "show_running": true
+        },
+        {
+            "name": "completion_rate",
+            "value": 1.0,
+            "show_running": true
+        },
+        {
+            "name": "text_partial_match",
+            "value": [
+                1.0,
+                0,
+                1.0,
+                0,
+                1.0,
+                0,
+                0.4,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                0,
+                1.0,
+                1.0,
+                0,
+                1.0,
+                1.0,
+                0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                0.8888888888888888,
+                1.0,
+                1.0,
+                0,
+                0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                0,
+                0.5,
+                1.0,
+                1.0,
+                1.0,
+                0,
+                0,
+                1.0,
+                1.0,
+                1.0,
+                0,
+                1.0,
+                0,
+                1.0,
+                0.9333333333333333,
+                1.0,
+                1.0,
+                1.0,
+                0,
+                0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                0.4000000000000001,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                0,
+                1.0,
+                1.0,
+                0,
+                0,
+                1.0,
+                0,
+                1.0,
+                1.0,
+                0,
+                1.0,
+                0,
+                1.0,
+                1.0,
+                0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                0,
+                1.0,
+                0,
+                0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "show_running": true
+        },
+        {
+            "name": "f1",
+            "value": 0.7312222222222222,
+            "show_running": true
+        }
+    ],
+    [
+        {
+            "name": "support",
+            "value": 100,
+            "show_running": true
+        },
+        {
+            "name": "completion_rate",
+            "value": 1.0,
+            "show_running": true
+        },
+        {
+            "name": "f1_exact",
+            "value": 0.9077212806026365,
+            "show_running": true
+        },
+        {
+            "name": "f1_strict",
+            "value": 0.9077212806026365,
+            "show_running": true
+        },
+        {
+            "name": "f1_partial",
+            "value": 0.92090395480226,
+            "show_running": true
+        },
+        {
+            "name": "f1_ent_type",
+            "value": 0.9265536723163842,
+            "show_running": true
+        },
+        {
+            "name": "accuracy",
+            "value": 0.9128787878787878,
+            "show_running": true
+        }
+    ],
+    [
+        {
+            "name": "support",
+            "value": 100,
+            "show_running": true
+        },
+        {
+            "name": "completion_rate",
+            "value": 1.0,
+            "show_running": true
+        },
+        {
+            "name": "f1_exact",
+            "value": 0.9405940594059405,
+            "show_running": true
+        },
+        {
+            "name": "f1_strict",
+            "value": 0.9405940594059405,
+            "show_running": true
+        },
+        {
+            "name": "f1_partial",
+            "value": 0.9554455445544553,
+            "show_running": true
+        },
+        {
+            "name": "f1_ent_type",
+            "value": 0.9702970297029702,
+            "show_running": true
+        },
+        {
+            "name": "accuracy",
+            "value": 0.95,
+            "show_running": true
+        }
+    ],
+    [
+        {
+            "name": "accuracy",
+            "value": 0.71,
+            "show_running": true
+        },
+        {
+            "name": "support",
+            "value": 100,
+            "show_running": true
+        },
+        {
+            "name": "completion_rate",
+            "value": 1.0,
+            "show_running": true
+        }
+    ],
+    [
+        {
+            "name": "accuracy",
+            "value": 0.84,
+            "show_running": true
+        },
+        {
+            "name": "support",
+            "value": 100,
+            "show_running": true
+        },
+        {
+            "name": "completion_rate",
+            "value": 1.0,
+            "show_running": true
+        },
+        {
+            "name": "text_partial_match",
+            "value": [
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                0,
+                1.0,
+                1.0,
+                0.8571428571428571,
+                1.0,
+                1.0,
+                0,
+                0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                0.8571428571428571,
+                1.0,
+                1.0,
+                0.8000000000000002,
+                1.0,
+                0.5,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                0.8333333333333334,
+                0.6,
+                0.7,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                0.75,
+                1.0,
+                0,
+                0.5714285714285715,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                0.8888888888888888,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                0.75
+            ],
+            "show_running": true
+        },
+        {
+            "name": "f1",
+            "value": 0.9310793650793652,
+            "show_running": true
+        }
+    ],
+    [
+        {
+            "name": "support",
+            "value": 100,
+            "show_running": true
+        },
+        {
+            "name": "completion_rate",
+            "value": 1.0,
+            "show_running": true
+        },
+        {
+            "name": "f1_exact",
+            "value": 0.695187165775401,
+            "show_running": true
+        },
+        {
+            "name": "f1_strict",
+            "value": 0.6844919786096257,
+            "show_running": true
+        },
+        {
+            "name": "f1_partial",
+            "value": 0.7165775401069518,
+            "show_running": true
+        },
+        {
+            "name": "f1_ent_type",
+            "value": 0.7272727272727273,
+            "show_running": true
+        },
+        {
+            "name": "accuracy",
+            "value": 0.8888888888888888,
+            "show_running": true
+        }
+    ]
+]

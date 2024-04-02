@@ -2,6 +2,7 @@ import asyncio
 import io
 import json
 import logging
+from tqdm import tqdm
 import os
 import pickle
 from typing import Dict, List, Optional, Tuple, Union
@@ -79,6 +80,7 @@ class LabelingAgent:
         transform_cache: Optional[BaseCache] = SQLAlchemyTransformCache(),
         confidence_cache: Optional[BaseCache] = SQLAlchemyConfidenceCache(),
         confidence_tokenizer: Optional[AutoTokenizer] = None,
+        use_tqdm: Optional[bool] = False,
     ) -> None:
         self.generation_cache = generation_cache
         self.transform_cache = transform_cache
@@ -99,6 +101,8 @@ class LabelingAgent:
             self.confidence_cache.initialize()
 
         self.console = Console(quiet=not console_output)
+        self.console_output = console_output
+        self.use_tqdm = use_tqdm
 
         self.config = (
             config if isinstance(config, AutolabelConfig) else AutolabelConfig(config)
@@ -227,11 +231,17 @@ class LabelingAgent:
 
         indices = range(current_index, len(dataset.inputs))
         selected_labels = self.config.labels_list()
-        for current_index in track_with_stats(
-            indices,
-            postfix_dict,
-            total=len(dataset.inputs) - current_index,
-            console=self.console,
+        for current_index in (
+            track_with_stats(
+                indices,
+                postfix_dict,
+                total=len(dataset.inputs) - current_index,
+                console=self.console,
+            )
+            if self.console_output
+            else tqdm(indices)
+            if self.use_tqdm
+            else indices
         ):
             chunk = dataset.inputs[current_index]
             examples = []
@@ -392,6 +402,8 @@ class LabelingAgent:
                     table[m.name] = m.value
                 else:
                     self.console.print(f"{m.name}:\n{m.value}")
+
+        self.eval_result = eval_result
 
         # print cost
         self.console.print(f"Actual Cost: {maybe_round(cost)}")
