@@ -31,9 +31,7 @@ logger = logging.getLogger(__name__)
 
 
 class QuestionAnsweringTask(BaseTask):
-    DEFAULT_OUTPUT_GUIDELINES = (
-        'You will return just the answer and nothing else\n'
-    )
+    DEFAULT_OUTPUT_GUIDELINES = "You will return just the answer and nothing else\n"
     LLAMA_DEFAULT_OUTPUT_GUIDELINES = ""
     DEFAULT_TASK_GUIDELINES = "Your job is to answer the following questions using the options provided for each question. Choose the best answer for the question.\n"
     NULL_LABEL_TOKEN = "NO_LABEL"

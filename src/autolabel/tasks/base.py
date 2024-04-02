@@ -262,7 +262,9 @@ class BaseTask(ABC):
                     llm_label = llm_label.lower()
                     successfully_labeled = True
                 else:
-                    logger.warning(f"LLM response {llm_label} is not in the labels list")
+                    logger.warning(
+                        f"LLM response {llm_label} is not in the labels list"
+                    )
                     llm_label = self.NULL_LABEL_TOKEN
                     successfully_labeled = False
                     error = LabelingError(
@@ -301,4 +303,3 @@ class BaseTask(ABC):
             explanation=explanation if self.config.chain_of_thought() else "",
             error=error,
         )
-    
