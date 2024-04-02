@@ -24,7 +24,6 @@ class ModelProvider(str, Enum):
     COHERE = "cohere"
     CUSTOM = "custom"
     TGI = "tgi"
-    VLLM = "vllm"
 
 
 class TaskType(str, Enum):
