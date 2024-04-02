@@ -174,7 +174,7 @@ class NamedEntityRecognitionTask(BaseTask):
 
         for label in processed_output:
             text = label["text"]
-            matches = [i.start() for i in re.finditer(re.escape(text), input)]
+            matches = [i.start() for i in re.finditer(text, input)]
             count = frequency_count[text]
             # if count of the named entity is greater than the number of matches, default to last found match
             if count >= len(matches):
@@ -353,12 +353,21 @@ class NamedEntityRecognitionTask(BaseTask):
         """
         new_gt_labels = []
         for index in range(len(llm_labels)):
-            new_gt_labels.append(
-                self.add_text_spans(
-                    json.loads(gt_labels[index]),
-                    llm_labels[index].curr_sample.decode(),
+            try:
+                new_gt_labels.append(
+                    self.add_text_spans(
+                        json.loads(gt_labels[index]),
+                        llm_labels[index].curr_sample.decode(),
+                    )
                 )
-            )
+            except:
+                ## handles the unlabeled cases (don't know why this is an issue but this seems to fix it)
+                new_gt_labels.append(
+                    self.add_text_spans(
+                        json.loads(gt_labels[index]),
+                        str(pickle.loads(llm_labels[index].curr_sample)),
+                    )
+                )
         gt_labels = new_gt_labels
         (
             curr_gt_labels,

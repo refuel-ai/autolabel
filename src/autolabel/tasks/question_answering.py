@@ -31,7 +31,9 @@ logger = logging.getLogger(__name__)
 
 
 class QuestionAnsweringTask(BaseTask):
-    DEFAULT_OUTPUT_GUIDELINES = "You will return just the answer and nothing else\n"
+    DEFAULT_OUTPUT_GUIDELINES = (
+        'You will return the answer one element: "the correct label"\n'
+    )
     LLAMA_DEFAULT_OUTPUT_GUIDELINES = ""
     DEFAULT_TASK_GUIDELINES = "Your job is to answer the following questions using the options provided for each question. Choose the best answer for the question.\n"
     NULL_LABEL_TOKEN = "NO_LABEL"
@@ -141,7 +143,7 @@ class QuestionAnsweringTask(BaseTask):
 
     def construct_confidence_prompt(self, input: str, examples: List, **kwargs) -> str:
         output_guidelines_override = (
-            self.config.output_guidelines() or self.LLAMA_DEFAULT_OUTPUT_GUIDELINES
+            self.config.output_guidelines() or self.REFUEL_LLM_DEFAULT_OUTPUT_GUIDELINES
         )
         refuel_prompt = super().construct_confidence_prompt(
             input,
