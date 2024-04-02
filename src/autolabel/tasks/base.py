@@ -31,7 +31,7 @@ class BaseTask(ABC):
     ZERO_SHOT_TEMPLATE = "{task_guidelines}\n\n{output_guidelines}\n\nNow I want you to label the following example:\n{current_example}"
     FEW_SHOT_TEMPLATE = "{task_guidelines}\n\n{output_guidelines}\n\nSome examples with their output answers are provided below:\n\n{seed_examples}\n\nNow I want you to label the following example:\n{current_example}"
 
-    ZERO_SHOT_TEMPLATE_REFUEL_LLM = """
+    ZERO_SHOT_TEMPLATE_LLAMA = """
     <s>[INST] <<SYS>>
     {task_guidelines}\n{output_guidelines}
     <</SYS>>
@@ -66,13 +66,6 @@ class BaseTask(ABC):
             self.config.dataset_generation_guidelines()
             or self.DEFAULT_DATASET_GENERATION_GUIDELINES
         )
-
-        if self.config.zero_shot_template():
-            self.ZERO_SHOT_TEMPLATE = self.config.zero_shot_template()
-
-        if self.config.few_shot_template():
-            self.FEW_SHOT_TEMPLATE = self.config.few_shot_template()
-
         self._prompt_schema_init()
 
     def _prompt_schema_init(self) -> None:
