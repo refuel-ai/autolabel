@@ -117,7 +117,9 @@ class TGILLM(BaseModel):
                             generation_info=(
                                 {
                                     "logprobs": {
-                                        "top_logprobs": response["details"]["tokens"]
+                                        "top_logprobs": self._process_confidence_request(
+                                            response["details"]["tokens"]
+                                        )
                                     }
                                 }
                                 if self.config.confidence()
@@ -159,7 +161,9 @@ class TGILLM(BaseModel):
                             generation_info=(
                                 {
                                     "logprobs": {
-                                        "top_logprobs": response["details"]["tokens"]
+                                        "top_logprobs": self._process_confidence_request(
+                                            response["details"]["tokens"]
+                                        )
                                     }
                                 }
                                 if self.config.confidence()
@@ -193,3 +197,14 @@ class TGILLM(BaseModel):
 
     def get_num_tokens(self, prompt: str) -> int:
         return len(self.tokenizer.encode(prompt))
+
+    def _process_confidence_request(self, logprobs: List):
+        resp = []
+        for item in logprobs:
+            if not item.get("special", False):
+                logprob = item["logprob"]
+                if logprob is None:
+                    logger.warning(f"Logprob is None! {item} {logprobs}")
+                    logprob = 0.0
+                resp.append({item["text"]: np.exp(logprob)})
+        return resp
