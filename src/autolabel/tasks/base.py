@@ -91,7 +91,10 @@ class BaseTask(ABC):
         )
 
     def _is_few_shot_mode(self) -> bool:
-        return self.config.few_shot_algorithm() in [x.value for x in FewShotAlgorithm]
+        return (
+            self.config.few_shot_algorithm() in [x.value for x in FewShotAlgorithm]
+            and self.config.few_shot_num_examples() > 0
+        )
 
     @abstractmethod
     def construct_prompt(
@@ -247,8 +250,16 @@ class BaseTask(ABC):
             ]:
                 if llm_label in self.config.labels_list():
                     successfully_labeled = True
+                elif llm_label.replace("\_", "_") in self.config.labels_list():
+                    llm_label = llm_label.replace("\_", "_")
+                    successfully_labeled = True
+                elif llm_label.lower() in self.config.labels_list():
+                    llm_label = llm_label.lower()
+                    successfully_labeled = True
                 else:
-                    logger.warning(f"LLM response is not in the labels list")
+                    logger.warning(
+                        f"LLM response {llm_label} is not in the labels list"
+                    )
                     llm_label = self.NULL_LABEL_TOKEN
                     successfully_labeled = False
                     error = LabelingError(
