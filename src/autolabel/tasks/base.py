@@ -72,7 +72,11 @@ class BaseTask(ABC):
         self.use_llama_prompt_schema = (
             self.config.provider() == ModelProvider.REFUEL
             and self.config.model_name() == REFUEL_LLM_MODEL
-        ) or self.config.provider() == ModelProvider.TGI
+        ) or (
+            self.config.provider() == ModelProvider.TGI
+            and self.config.model_params().get("base_model", REFUEL_LLM_MODEL)
+            == REFUEL_LLM_MODEL
+        )
         if self._is_few_shot_mode():
             self.example_template = (
                 self.FEW_SHOT_TEMPLATE_LLAMA
