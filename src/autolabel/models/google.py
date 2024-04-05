@@ -30,13 +30,6 @@ class GoogleLLM(BaseModel):
         "gemini-pro": 0.000375 / 1000,
     }
 
-    @cached_property
-    def _engine(self) -> str:
-        if self.model_name is not None and self.model_name in self.CHAT_ENGINE_MODELS:
-            return "chat"
-        else:
-            return "completion"
-
     def __init__(
         self,
         config: AutolabelConfig,
@@ -44,61 +37,46 @@ class GoogleLLM(BaseModel):
     ) -> None:
         try:
             import tiktoken
-            from langchain_google_genai import (
-                ChatGoogleGenerativeAI,
+            from langchain_google_vertexai import (
+                VertexAI,
                 HarmBlockThreshold,
                 HarmCategory,
             )
         except ImportError:
             raise ImportError(
-                "tiktoken and langchain_google_genai. Please install it with the following command: pip install 'refuel-autolabel[google]'"
+                "tiktoken and langchain_google_vertexai. Please install it with the following command: pip install 'refuel-autolabel[google]'"
             )
 
         self.DEFAULT_PARAMS = {
             "temperature": 0.0,
             "topK": 3,
             "safety_settings": {
-                HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT: HarmBlockThreshold.BLOCK_NONE,
-                HarmCategory.HARM_CATEGORY_HATE_SPEECH: HarmBlockThreshold.BLOCK_NONE,
-                HarmCategory.HARM_CATEGORY_HARASSMENT: HarmBlockThreshold.BLOCK_NONE,
-                HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT: HarmBlockThreshold.BLOCK_NONE,
+                HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT: HarmBlockThreshold.BLOCK_ONLY_HIGH,
+                HarmCategory.HARM_CATEGORY_HATE_SPEECH: HarmBlockThreshold.BLOCK_ONLY_HIGH,
+                HarmCategory.HARM_CATEGORY_HARASSMENT: HarmBlockThreshold.BLOCK_ONLY_HIGH,
+                HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT: HarmBlockThreshold.BLOCK_ONLY_HIGH,
             },
         }
 
         super().__init__(config, cache)
 
-        if os.getenv("GOOGLE_API_KEY") is None:
-            raise ValueError("GOOGLE_API_KEY environment variable not set")
+        if os.getenv("GOOGLE_APPLICATION_CREDENTIALS") is None:
+            raise ValueError(
+                "GOOGLE_APPLICATION_CREDENTIALS environment variable not set"
+            )
 
         # populate model name
         self.model_name = config.model_name() or self.DEFAULT_MODEL
         # populate model params and initialize the LLM
         model_params = config.model_params()
         self.model_params = {**self.DEFAULT_PARAMS, **model_params}
-        logger.info(f"Model Name: {self.model_name}")
-        if self._engine == "chat":
-            self.llm = ChatGoogleGenerativeAI(
-                model=self.model_name, **self.model_params
-            )
-        else:
-            self.llm = ChatGoogleGenerativeAI(
-                model=self.model_name, **self.model_params
-            )
-        logger.info(f"self.llm: {self.llm}")
+        self.llm = VertexAI(model_name=self.model_name, **self.model_params)
         self.tiktoken = tiktoken
 
     async def _alabel(self, prompts: List[str]) -> RefuelLLMResult:
-        logger.info(f"Prompts: {prompts}")
-        logger.info(f"Engine: {self._engine}")
         try:
             start_time = time()
-            if self._engine == "chat":
-                logger.info(f"Google Prompts: {prompts}")
-                prompts = [[HumanMessage(content=prompt)] for prompt in prompts]
-                result = await self.llm.agenerate(prompts)
-                logger.info(f"Google Generations: {result}")
-            else:
-                result = await self.llm.agenerate(prompts)
+            result = await self.llm.agenerate(prompts)
             generations = result.generations
             end_time = time()
             return RefuelLLMResult(
@@ -111,15 +89,9 @@ class GoogleLLM(BaseModel):
             return await self._alabel_individually(prompts)
 
     def _label(self, prompts: List[str]) -> RefuelLLMResult:
-        logger.info(f"Prompts: {prompts}")
-        logger.info(f"Engine: {self._engine}")
         try:
             start_time = time()
-            if self._engine == "chat":
-                prompts = [[HumanMessage(content=prompt)] for prompt in prompts]
-                result = self.llm.generate(prompts)
-            else:
-                result = self.llm.generate(prompts)
+            result = self.llm.generate(prompts)
             generations = result.generations
             end_time = time()
             return RefuelLLMResult(
