@@ -4,31 +4,75 @@
 import json
 from argparse import ArgumentParser
 from rich.console import Console
+from typing import List
+import json
+import pickle as pkl
+import ast
+from sklearn.metrics import f1_score
 
 from autolabel import LabelingAgent, AutolabelConfig, AutolabelDataset
 from autolabel.tasks import TaskFactory
+from autolabel.metrics import BaseMetric
+from autolabel.schema import LLMAnnotation, MetricResult
 
-DATASETS = [
-    "civil_comments",
-    "banking",
-    "company",
-    "conll2003",
-    "craigslist",
-    "ledgar",
-    "lexical_relation",
-    "math",
-    "quoref",
-    "sciq",
-    "squad_v2",
-    "walmart_amazon",
-    "quail",
-    "acronym",
-    "numeric",
-    "diagnosis",
-    "belebele",
-    "multiconer",
-]
 
+class F1Metric(BaseMetric):
+    def compute(
+        llm_labels: List[LLMAnnotation], gt_labels: List[str]
+    ) -> List[MetricResult]:
+        def construct_binary_preds(curr_input: List[str], positive_tokens: List[str]):
+            curr_token_index = 0
+            binary_preds = [0 for _ in range(len(curr_input))]
+            while curr_token_index < len(positive_tokens):
+                for i in range(len(curr_input)):
+                    if (
+                        (curr_input[i] in positive_tokens[curr_token_index]
+                        or positive_tokens[curr_token_index] in curr_input[i])
+                        and binary_preds[i] != 1
+                    ):
+                        binary_preds[i] = 1
+                        curr_token_index += 1
+                        break
+                curr_token_index += 1
+            return binary_preds
+
+        predictions, gt = [], []
+        for i in range(len(llm_labels)):
+            curr_input = pkl.loads(llm_labels[i].curr_sample)["example"].split(" ")
+            try:
+                curr_pred = " ".join(ast.literal_eval(llm_labels[i].label)).split(" ")
+                predictions.extend(construct_binary_preds(curr_input, curr_pred))
+            except Exception as e:
+                print(e)
+                predictions.extend([0 for _ in range(len(curr_input))])
+            curr_gt = " ".join(ast.literal_eval(gt_labels[i])).split(" ")
+            gt.extend(construct_binary_preds(curr_input, curr_gt))
+        return [MetricResult(name="F1", value=f1_score(gt, predictions))]
+
+NER_METRICS = set(["Macro:accuracy", "Macro:F1"])
+NER_DATASETS = set(["conll2003"])
+DATASETS = []
+# DATASETS = [
+#     "civil_comments",
+#     "banking",
+#     "company",
+#     "conll2003",
+#     "craigslist",
+#     "ledgar",
+#     "lexical_relation",
+#     "math",
+#     "quoref",
+#     "sciq",
+#     "squad_v2",
+#     "walmart_amazon",
+#     "quail",
+#     "acronym",
+#     "numeric",
+#     "diagnosis",
+#     "belebele",
+#     "multiconer",
+# ]
+ALL_DATASETS = DATASETS + [i for i in NER_DATASETS]
 MODEL_TO_PROVIDER = {
     "gpt-3.5-turbo": "openai",
     "gpt-4": "openai",
@@ -52,7 +96,7 @@ def main():
     eval_file_name = eval_file_name.replace("/", "")
     eval_result = []
     agent = None
-    for dataset in DATASETS:
+    for dataset in ALL_DATASETS:
         config = json.load(open(f"configs/{dataset}.json", "r"))
         config["model"]["name"] = args.model
         config["model"]["provider"] = MODEL_TO_PROVIDER[args.model]
@@ -72,12 +116,14 @@ def main():
             agent.example_selector = None
         ds = AutolabelDataset(f"data/{dataset}/test.csv", config=config)
         print("Benchmarking", dataset)
-        new_ds = agent.run(ds, max_items=args.max_items)
-        eval_result.append([x.dict() for x in agent.eval_result])
+        additional_metrics = [F1Metric] if dataset in NER_DATASETS else []
+        new_ds = agent.run(ds, max_items=args.max_items, additional_metrics=additional_metrics)
+        if dataset in NER_DATASETS:
+            eval_result.append([x.dict() for x in agent.eval_result if x.name in NER_METRICS])
+        else:    
+            eval_result.append([x.dict() for x in agent.eval_result])
         json.dump(eval_result, open(eval_file_name, "w"))
         print(eval_result[-1])
-        # if config["model"]["provider"] == "vllm":
-        #     agent.llm.destroy()
 
     print(eval_result)
 

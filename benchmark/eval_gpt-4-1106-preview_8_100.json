@@ -1,1 +1,1 @@
-[[{"name": "accuracy", "value": 0.0, "show_running": true}, {"name": "support", "value": 100, "show_running": true}, {"name": "completion_rate", "value": 0.0, "show_running": true}], [{"name": "accuracy", "value": 0.0, "show_running": true}, {"name": "support", "value": 100, "show_running": true}, {"name": "completion_rate", "value": 0.0, "show_running": true}]]
+[[{"name": "Macro:accuracy", "value": 0.8975, "show_running": true}, {"name": "Macro:F1", "value": 0.9305697284868915, "show_running": true}]]
