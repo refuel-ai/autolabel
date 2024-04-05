@@ -26,10 +26,9 @@ class F1Metric(BaseMetric):
             while curr_token_index < len(positive_tokens):
                 for i in range(len(curr_input)):
                     if (
-                        (curr_input[i] in positive_tokens[curr_token_index]
-                        or positive_tokens[curr_token_index] in curr_input[i])
-                        and binary_preds[i] != 1
-                    ):
+                        curr_input[i] in positive_tokens[curr_token_index]
+                        or positive_tokens[curr_token_index] in curr_input[i]
+                    ) and binary_preds[i] != 1:
                         binary_preds[i] = 1
                         curr_token_index += 1
                         break
@@ -48,6 +47,7 @@ class F1Metric(BaseMetric):
             curr_gt = " ".join(ast.literal_eval(gt_labels[i])).split(" ")
             gt.extend(construct_binary_preds(curr_input, curr_gt))
         return [MetricResult(name="F1", value=f1_score(gt, predictions))]
+
 
 NER_METRICS = set(["Macro:accuracy", "Macro:F1"])
 NER_DATASETS = set(["conll2003", "quoref", "acronym", "numeric", "multiconer"])
@@ -111,10 +111,14 @@ def main():
         ds = AutolabelDataset(f"data/{dataset}/test.csv", config=config)
         print("Benchmarking", dataset)
         additional_metrics = [F1Metric] if dataset in NER_DATASETS else []
-        new_ds = agent.run(ds, max_items=args.max_items, additional_metrics=additional_metrics)
+        new_ds = agent.run(
+            ds, max_items=args.max_items, additional_metrics=additional_metrics
+        )
         if dataset in NER_DATASETS:
-            eval_result.append([x.dict() for x in agent.eval_result if x.name in NER_METRICS])
-        else:    
+            eval_result.append(
+                [x.dict() for x in agent.eval_result if x.name in NER_METRICS]
+            )
+        else:
             eval_result.append([x.dict() for x in agent.eval_result])
         json.dump(eval_result, open(eval_file_name, "w"))
         print(eval_result[-1])
