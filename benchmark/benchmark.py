@@ -49,6 +49,7 @@ class F1Metric(BaseMetric):
             gt.extend(construct_binary_preds(curr_input, curr_gt))
         return [MetricResult(name="F1", value=f1_score(gt, predictions))]
 
+
 NUM_GPUS = torch.cuda.device_count()
 NER_METRICS = set(["Macro:accuracy", "Macro:F1"])
 NER_DATASETS = set(["conll2003", "quoref", "acronym", "numeric", "multiconer"])
@@ -76,7 +77,7 @@ MODEL_TO_PROVIDER = {
     "claude-3-sonnet-20240229": "anthropic",
     "mistralai/Mistral-7B-Instruct-v0.1": "vllm",
     "mistralai/Mixtral-8x7B-Instruct-v0.1": "vllm",
-    "01-ai/Yi-34B-Chat": "vllm"
+    "01-ai/Yi-34B-Chat": "vllm",
 }
 
 
