@@ -15,21 +15,21 @@ DATASETS = [
     "civil_comments",
     "banking",
     "company",
-    "conll2003",
     "craigslist",
     "ledgar",
     "lexical_relation",
     "math",
-    "quoref",
     "sciq",
     "squad_v2",
     "walmart_amazon",
     "quail",
-    "acronym",
-    "numeric",
     "diagnosis",
     "belebele",
+    "acronym",
+    "numeric",
     "multiconer",
+    "quoref",
+    "conll2003"
 ]
 
 
@@ -54,6 +54,7 @@ def main():
         if not header_created:
             header.append("model")
         for i, dataset in enumerate(DATASETS):
+            print(dataset)
             config = json.load(open(f"configs/{dataset}.json", "r"))
             metrics_to_add = METRICS[config["task_type"]]
             for metric_to_add in metrics_to_add:

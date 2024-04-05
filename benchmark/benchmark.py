@@ -52,7 +52,7 @@ class F1Metric(BaseMetric):
 
 NUM_GPUS = torch.cuda.device_count()
 NER_METRICS = set(["Macro:accuracy", "Macro:F1"])
-NER_DATASETS = set(["conll2003", "quoref", "acronym", "numeric", "multiconer"])
+NER_DATASETS = ["acronym", "numeric", "multiconer", "quoref", "conll2003"]
 DATASETS = [
     "civil_comments",
     "banking",
@@ -68,7 +68,7 @@ DATASETS = [
     "diagnosis",
     "belebele",
 ]
-ALL_DATASETS = DATASETS + [i for i in NER_DATASETS]
+ALL_DATASETS = DATASETS + NER_DATASETS
 MODEL_TO_PROVIDER = {
     "gpt-3.5-turbo": "openai",
     "gpt-4": "openai",
@@ -78,6 +78,7 @@ MODEL_TO_PROVIDER = {
     "mistralai/Mistral-7B-Instruct-v0.1": "vllm",
     "mistralai/Mixtral-8x7B-Instruct-v0.1": "vllm",
     "01-ai/Yi-34B-Chat": "vllm",
+    "/workspace/refuelllm-1p-900": "vllm"
 }
 
 
