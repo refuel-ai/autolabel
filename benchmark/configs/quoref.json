@@ -10,12 +10,12 @@
         "name": "gpt-3.5-turbo"
     },
     "prompt": {
-        "task_guidelines": "Read the paragraph and answer the question at the end.",
+        "task_guidelines": "You are an expert at answering questions. Read the paragraph and answer the question at the end in the specified format.",
         "output_guidelines": "You will return the extracted attributes as a json with the following keys:\n{attribute_json}. Don't output anything other than the final JSON in our response.\n",
         "attributes": [
             {
               "name": "Answer",
-              "description": "Answer to the provided question contained in a list."
+              "description": "A list containing the answer to the provided question as an element."
             }
         ],
         "example_template": "Example: {example}\nOutput:\n{output_dict}",
