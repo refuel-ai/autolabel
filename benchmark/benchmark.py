@@ -9,6 +9,7 @@ import json
 import pickle as pkl
 import ast
 from sklearn.metrics import f1_score
+import torch
 
 from autolabel import LabelingAgent, AutolabelConfig, AutolabelDataset
 from autolabel.tasks import TaskFactory
@@ -48,7 +49,7 @@ class F1Metric(BaseMetric):
             gt.extend(construct_binary_preds(curr_input, curr_gt))
         return [MetricResult(name="F1", value=f1_score(gt, predictions))]
 
-
+NUM_GPUS = torch.cuda.device_count()
 NER_METRICS = set(["Macro:accuracy", "Macro:F1"])
 NER_DATASETS = set(["conll2003", "quoref", "acronym", "numeric", "multiconer"])
 DATASETS = [
@@ -75,7 +76,7 @@ MODEL_TO_PROVIDER = {
     "claude-3-sonnet-20240229": "anthropic",
     "mistralai/Mistral-7B-Instruct-v0.1": "vllm",
     "mistralai/Mixtral-8x7B-Instruct-v0.1": "vllm",
-    "01-ai/Yi-34B-Chat": "vllm",
+    "01-ai/Yi-34B-Chat": "vllm"
 }
 
 
@@ -95,7 +96,7 @@ def main():
         config["model"]["name"] = args.model
         config["model"]["provider"] = MODEL_TO_PROVIDER[args.model]
         if MODEL_TO_PROVIDER[args.model] == "vllm":
-            config["model"]["params"] = {"tensor_parallel_size": 4}
+            config["model"]["params"] = {"tensor_parallel_size": NUM_GPUS}
         config["prompt"]["few_shot_num"] = args.few_shot
         if not args.few_shot:
             config["prompt"]["few_shot_selection"] = "fixed"
