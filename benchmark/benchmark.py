@@ -50,28 +50,22 @@ class F1Metric(BaseMetric):
         return [MetricResult(name="F1", value=f1_score(gt, predictions))]
 
 NER_METRICS = set(["Macro:accuracy", "Macro:F1"])
-NER_DATASETS = set(["conll2003"])
-DATASETS = []
-# DATASETS = [
-#     "civil_comments",
-#     "banking",
-#     "company",
-#     "conll2003",
-#     "craigslist",
-#     "ledgar",
-#     "lexical_relation",
-#     "math",
-#     "quoref",
-#     "sciq",
-#     "squad_v2",
-#     "walmart_amazon",
-#     "quail",
-#     "acronym",
-#     "numeric",
-#     "diagnosis",
-#     "belebele",
-#     "multiconer",
-# ]
+NER_DATASETS = set(["conll2003", "quoref", "acronym", "numeric", "multiconer"])
+DATASETS = [
+    "civil_comments",
+    "banking",
+    "company",
+    "craigslist",
+    "ledgar",
+    "lexical_relation",
+    "math",
+    "sciq",
+    "squad_v2",
+    "walmart_amazon",
+    "quail",
+    "diagnosis",
+    "belebele",
+]
 ALL_DATASETS = DATASETS + [i for i in NER_DATASETS]
 MODEL_TO_PROVIDER = {
     "gpt-3.5-turbo": "openai",
