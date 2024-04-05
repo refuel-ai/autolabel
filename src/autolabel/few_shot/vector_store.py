@@ -7,12 +7,10 @@ from typing import Any, Callable, Dict, Iterable, List, Optional, Tuple, Type
 from autolabel.database import create_db_engine
 
 import numpy as np
-import torch
 from langchain.docstore.document import Document
 from langchain.embeddings.base import Embeddings
 from langchain.vectorstores.base import VectorStore
 from langchain.vectorstores.utils import maximal_marginal_relevance
-from torch import Tensor
 import pickle
 
 from sqlalchemy.sql import text as sql_text
@@ -31,7 +29,7 @@ def _results_to_docs_and_scores(results: Any) -> List[Tuple[Document, float]]:
     ]
 
 
-def cos_sim(a: Tensor, b: Tensor) -> Tensor:
+def cos_sim(a, b):
     """
     Computes the cosine similarity cos_sim(a[i], b[j]) for all i and j.
     Returns:
@@ -55,12 +53,12 @@ def cos_sim(a: Tensor, b: Tensor) -> Tensor:
 
 
 def semantic_search(
-    query_embeddings: Tensor,
-    corpus_embeddings: Tensor,
+    query_embeddings,
+    corpus_embeddings,
     query_chunk_size: int = 100,
     corpus_chunk_size: int = 500000,
     top_k: int = 10,
-    score_function: Callable[[Tensor, Tensor], Tensor] = cos_sim,
+    score_function=cos_sim,
 ):
     """
     Semantic similarity search based on cosine similarity score. Implementation from this project: https://github.com/UKPLab/sentence-transformers
@@ -140,7 +138,7 @@ class VectorStoreWrapper(VectorStore):
     def __init__(
         self,
         embedding_function: Optional[Embeddings] = None,
-        corpus_embeddings: Optional[Tensor] = None,
+        corpus_embeddings=None,
         texts: Optional[List[str]] = None,
         metadatas: Optional[List[Dict[str, str]]] = None,
         cache: bool = True,
