@@ -30,13 +30,6 @@ class GoogleLLM(BaseModel):
         "gemini-pro": 0.000375 / 1000,
     }
 
-    @cached_property
-    def _engine(self) -> str:
-        if self.model_name is not None and self.model_name in self.CHAT_ENGINE_MODELS:
-            return "chat"
-        else:
-            return "completion"
-
     def __init__(
         self,
         config: AutolabelConfig,
@@ -77,10 +70,7 @@ class GoogleLLM(BaseModel):
         # populate model params and initialize the LLM
         model_params = config.model_params()
         self.model_params = {**self.DEFAULT_PARAMS, **model_params}
-        if self._engine == "chat":
-            self.llm = VertexAI(model_name=self.model_name, **self.model_params)
-        else:
-            self.llm = VertexAI(model_name=self.model_name, **self.model_params)
+        self.llm = VertexAI(model_name=self.model_name, **self.model_params)
         self.tiktoken = tiktoken
 
     async def _alabel(self, prompts: List[str]) -> RefuelLLMResult:
