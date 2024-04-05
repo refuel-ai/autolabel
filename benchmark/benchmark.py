@@ -116,12 +116,7 @@ def main():
         new_ds = agent.run(
             ds, max_items=args.max_items, additional_metrics=additional_metrics
         )
-        if dataset in NER_DATASETS:
-            eval_result.append(
-                [x.dict() for x in agent.eval_result if x.name in NER_METRICS]
-            )
-        else:
-            eval_result.append([x.dict() for x in agent.eval_result])
+        eval_result.append([x.dict() for x in agent.eval_result])
         json.dump(eval_result, open(eval_file_name, "w"))
         print(eval_result[-1])
 
