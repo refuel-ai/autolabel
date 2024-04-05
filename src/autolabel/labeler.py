@@ -174,7 +174,6 @@ class LabelingAgent:
         """
 
         dataset = dataset.get_slice(max_items=max_items, start_index=start_index)
-
         llm_labels = []
 
         # Get the seed examples from the dataset config
@@ -289,10 +288,6 @@ class LabelingAgent:
                 response.errors,
                 response.latencies,
             ):
-                if generations[0].text not in self.config.labels_list():
-                    logger.warn(
-                        f"Warning: Label {generations[0].text} not in selected labels."
-                    )
                 input_tokens = self.llm.get_num_tokens(final_prompt)
                 if error is not None:
                     annotation = LLMAnnotation(
