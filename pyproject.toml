@@ -81,13 +81,6 @@ cohere = [
     "cohere>=4.11.2"
 ]
 cloud = [
-    "black",
-    "bumpver",
-    "pip-tools",
-    "pytest",
-    "pytest-asyncio",
-    "pytest-mock",
-    "pre-commit",
     "openai == 1.10.0",
     "langchain==0.1.9",
     "langchain-anthropic==0.1.1",
