@@ -156,7 +156,7 @@ class TaskChainOrchestrator:
                 for transform_dict in autolabel_config.transforms():
                     transform = TransformFactory.from_dict(
                         transform_dict,
-                        cache=None,
+                        cache=self.transform_cache,
                     )
                     dataset = await agent.async_run_transform(transform, dataset)
             else:
