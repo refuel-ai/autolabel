@@ -13,6 +13,17 @@ from langchain.vectorstores.base import VectorStore
 from langchain.vectorstores.utils import maximal_marginal_relevance
 import pickle
 
+import logging
+
+logger = logging.getLogger(__name__)
+
+try:
+    import torch
+except ImportError:
+    logger.warning(
+        "Torch is not installed. Please install torch to use the VectorStoreWrapper."
+    )
+
 from sqlalchemy.sql import text as sql_text
 
 EMBEDDINGS_TABLE = "autolabel_embeddings"
