@@ -4,7 +4,6 @@ import bisect
 from collections.abc import Callable
 from typing import Dict, List, Optional, Tuple, Union
 
-import torch
 from sqlalchemy.sql import text as sql_text
 
 from autolabel.configs import AutolabelConfig
