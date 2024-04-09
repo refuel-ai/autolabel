@@ -112,9 +112,9 @@ class GoogleLLM(BaseModel):
             return 0.0
         cost_per_prompt_token = self.COST_PER_PROMPT_TOKEN[self.model_name]
         cost_per_completion_token = self.COST_PER_COMPLETION_TOKEN[self.model_name]
-        return cost_per_prompt_token * self.get_num_tokens(prompt) + cost_per_completion_token * (
-            self.get_num_tokens(label) if label else 0.0
-        )
+        return cost_per_prompt_token * self.get_num_tokens(
+            prompt
+        ) + cost_per_completion_token * (self.get_num_tokens(label) if label else 0.0)
 
     def returns_token_probs(self) -> bool:
         return False
