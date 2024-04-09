@@ -22,12 +22,12 @@ class GoogleLLM(BaseModel):
     DEFAULT_MODEL = "gemini-pro"
 
     # Reference: https://ai.google.dev/pricing
-    COST_PER_PROMPT_CHARACTER = {
+    COST_PER_PROMPT_TOKEN = {
         "gemini-pro": 0.5 / 1_000_000,
         "gemini-1.5-pro-preview-0409": 7 / 1_000_000,
     }
 
-    COST_PER_COMPLETION_CHARACTER = {
+    COST_PER_COMPLETION_TOKEN = {
         "gemini-pro": 1.5 / 1_000_000,
         "gemini-1.5-pro-preview-0409": 21 / 1_000_000,
     }
@@ -44,6 +44,7 @@ class GoogleLLM(BaseModel):
                 HarmBlockThreshold,
                 HarmCategory,
             )
+            from vertexai import generative_models
         except ImportError:
             raise ImportError(
                 "tiktoken and langchain_google_vertexai. Please install it with the following command: pip install 'refuel-autolabel[google]'"
@@ -73,6 +74,7 @@ class GoogleLLM(BaseModel):
         model_params = config.model_params()
         self.model_params = {**self.DEFAULT_PARAMS, **model_params}
         self.llm = VertexAI(model_name=self.model_name, **self.model_params)
+        self.vertexaiModel = generative_models.GenerativeModel(self.model_name)
         self.tiktoken = tiktoken
 
     async def _alabel(self, prompts: List[str]) -> RefuelLLMResult:
@@ -108,14 +110,14 @@ class GoogleLLM(BaseModel):
     def get_cost(self, prompt: str, label: Optional[str] = "") -> float:
         if self.model_name is None:
             return 0.0
-        cost_per_prompt_char = self.COST_PER_PROMPT_CHARACTER[self.model_name]
-        cost_per_completion_char = self.COST_PER_COMPLETION_CHARACTER[self.model_name]
-        return cost_per_prompt_char * len(prompt) + cost_per_completion_char * (
-            len(label) if label else 0.0
+        cost_per_prompt_token = self.COST_PER_PROMPT_TOKEN[self.model_name]
+        cost_per_completion_token = self.COST_PER_COMPLETION_TOKEN[self.model_name]
+        return cost_per_prompt_token * self.get_num_tokens(prompt) + cost_per_completion_token * (
+            self.get_num_tokens(label) if label else 0.0
         )
 
     def returns_token_probs(self) -> bool:
         return False
 
     def get_num_tokens(self, prompt: str) -> int:
-        return super().get_num_tokens(prompt)
+        return self.vertexaiModel.count_tokens(prompt).total_tokens
