@@ -17,17 +17,19 @@ logger = logging.getLogger(__name__)
 
 class GoogleLLM(BaseModel):
     SEP_REPLACEMENT_TOKEN = "@@"
-    CHAT_ENGINE_MODELS = ["gemini-pro"]
+    CHAT_ENGINE_MODELS = ["gemini-pro", "gemini-1.5-pro-preview-0409"]
 
     DEFAULT_MODEL = "gemini-pro"
 
     # Reference: https://ai.google.dev/pricing
     COST_PER_PROMPT_CHARACTER = {
-        "gemini-pro": 0.000125 / 1000,
+        "gemini-pro": 0.5 / 1_000_000,
+        "gemini-1.5-pro-preview-0409": 7 / 1_000_000,
     }
 
     COST_PER_COMPLETION_CHARACTER = {
-        "gemini-pro": 0.000375 / 1000,
+        "gemini-pro": 1.5 / 1_000_000,
+        "gemini-1.5-pro-preview-0409": 21 / 1_000_000,
     }
 
     def __init__(
