@@ -110,3 +110,6 @@ class PDFTransform(BaseTransform):
             "output_columns": self.output_columns,
             "lang": self.lang,
         }
+
+    def input_columns(self) -> List[str]:
+        return [self.file_path_column]

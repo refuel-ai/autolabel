@@ -116,3 +116,6 @@ class WebpageTransform(BaseTransform):
             "timeout": self.timeout,
             "scrapingbee_api_key": self.api_key,
         }
+
+    def input_columns(self):
+        return [self.url_column]

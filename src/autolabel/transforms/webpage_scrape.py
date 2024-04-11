@@ -159,3 +159,6 @@ class WebpageScrape(BaseTransform):
             "output_columns": self.output_columns,
             "timeout": self.timeout_time,
         }
+
+    def input_columns(self):
+        return [self.url_column]

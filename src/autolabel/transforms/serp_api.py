@@ -132,3 +132,6 @@ class SerpApi(BaseTransform):
             "serp_api_key": self.serp_api_key,
             "serp_args": self.serp_args,
         }
+
+    def input_columns(self) -> List[str]:
+        return self.query_columns

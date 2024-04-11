@@ -1,4 +1,4 @@
-from typing import Dict, Any
+from typing import Dict, Any, List
 
 from autolabel.transforms.schema import TransformType
 from autolabel.transforms import BaseTransform
@@ -87,3 +87,6 @@ class ImageTransform(BaseTransform):
             "file_path_column": self.file_path_column,
             "lang": self.lang,
         }
+
+    def input_columns(self) -> List[str]:
+        return [self.file_path_column]
