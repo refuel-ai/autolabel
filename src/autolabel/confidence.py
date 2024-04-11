@@ -182,7 +182,11 @@ class ConfidenceCalculator:
             raise NotImplementedError()
 
         logprobs = None
-        if not self.llm.returns_token_probs():
+        if not self.llm.returns_token_probs() or (
+            self.llm.returns_token_probs()
+            and model_generation.generation_info is not None
+            and model_generation.generation_info["logprobs"] is None
+        ):
             if model_generation.raw_response == "":
                 model_generation.confidence_score = 0
                 return model_generation.confidence_score
