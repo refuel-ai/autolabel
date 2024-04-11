@@ -5,10 +5,6 @@ import logging
 from typing import List, Optional, Tuple
 from time import time
 
-
-import gc
-import torch
-
 from autolabel.models import BaseModel
 from autolabel.configs import AutolabelConfig
 from autolabel.cache import BaseCache
@@ -103,10 +99,3 @@ class VLLMModel(BaseModel):
 
     def get_num_tokens(self, prompt: str) -> int:
         return len(self.tokenizer.encode(prompt))
-
-    def destroy(self):
-        self.destroy_model_parallel()
-        del self.llm
-        gc.collect()
-        torch.cuda.empty_cache()
-        torch.distributed.destroy_process_group()

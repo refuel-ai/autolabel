@@ -1,8 +1,7 @@
 {
     "task_name": "NumericFusedHead",
-    "task_type": "named_entity_recognition",
+    "task_type": "attribute_extraction",
     "dataset": {
-        "label_column": "CategorizedLabels",
         "text_column": "example",
         "delimiter": ","
     },
@@ -11,12 +10,14 @@
         "name": "gpt-3.5-turbo"
     },
     "prompt": {
-        "task_guidelines": "You are an expert at extracting numbers from text. Your job is to extract numbers mentioned exactly as they are in the text. If there are multiple numbers, return the first number.",
-        "output_guidelines": "You will output just the number and nothing else.",
-        "labels": [
-            "Number"
+        "task_guidelines": "You are an expert at extracting numbers from text. Your job is to extract numbers mentioned exactly as they are in the text. If there are multiple numbers, return the first number.", 
+        "attributes": [
+            {
+              "name": "Number",
+              "description": "The first instance of a number in the provided text returned as a list."
+            }
         ],
-        "example_template": "Example: {example}\nOutput:\n{CategorizedLabels}",
+        "example_template": "Example: {example}\nOutput:\n{output_dict}",
         "few_shot_examples": "data/numeric/seed.csv",
         "few_shot_selection": "semantic_similarity",
         "few_shot_num": 5

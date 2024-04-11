@@ -263,6 +263,7 @@ class AttributeExtractionTask(BaseTask):
                 )
 
         eval_metrics = []
+        macro_metrics = {}
 
         for attribute in llm_labels_dict.keys():
             for metric in self.metrics + additional_metrics:
@@ -280,5 +281,16 @@ class AttributeExtractionTask(BaseTask):
                             value=m.value,
                         )
                     )
+                    if m.name not in macro_metrics:
+                        macro_metrics[m.name] = []
+                    macro_metrics[m.name].append(m.value)
+
+        for key in macro_metrics:
+            eval_metrics.append(
+                MetricResult(
+                    name=f"Macro:{key}",
+                    value=sum(macro_metrics[key]) / len(macro_metrics[key]),
+                )
+            )
 
         return eval_metrics
