@@ -114,7 +114,14 @@ class BaseTask(ABC):
     ) -> str:
         pass
 
-    def construct_confidence_prompt(self, input: str, examples: List, **kwargs) -> str:
+    def construct_confidence_prompt(
+        self,
+        input: str,
+        examples: List,
+        max_input_tokens: int = None,
+        get_num_tokens: Optional[Callable] = None,
+        **kwargs,
+    ) -> str:
         curr_template = (
             self.FEW_SHOT_TEMPLATE_LLAMA
             if self._is_few_shot_mode()
@@ -129,6 +136,8 @@ class BaseTask(ABC):
             examples=examples,
             prompt_template_override=prompt_template,
             refuel_prompt_override=True,
+            max_input_tokens=max_input_tokens,
+            get_num_tokens=get_num_tokens,
             **kwargs,
         )
         return refuel_prompt
