@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 from autolabel.cache import BaseCache
 from autolabel.transforms.schema import TransformCacheEntry, TransformError
-from typing import Dict, Any
+from typing import Dict, Any, List
 import logging
 
 logger = logging.getLogger(__name__)
@@ -68,12 +68,22 @@ class BaseTransform(ABC):
         """
         return {}
 
+    @abstractmethod
+    def input_columns(self) -> List[str]:
+        """
+        Returns a list of input columns required by the transform.
+        Returns:
+            A list of input columns required by the transform.
+        """
+        return []
+
     async def apply(self, row: Dict[str, Any]) -> Dict[str, Any]:
         if self.cache is not None:
+            input = {key: row.get(key, None) for key in self.input_columns()}
             cache_entry = TransformCacheEntry(
                 transform_name=self.name(),
                 transform_params=self.params(),
-                input=row,
+                input=input,
                 ttl_ms=self.TTL_MS,
             )
             output = self.cache.lookup(cache_entry)

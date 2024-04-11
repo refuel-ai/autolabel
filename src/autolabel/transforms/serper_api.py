@@ -129,3 +129,6 @@ class SerperApi(BaseTransform):
             "serper_api_key": self.serper_api_key,
             "serper_args": self.serper_args,
         }
+
+    def input_columns(self) -> List[str]:
+        return self.query_columns
