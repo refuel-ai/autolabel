@@ -3,7 +3,7 @@ from __future__ import annotations
 from typing import Dict, List, Optional
 
 from langchain.prompts.example_selector.base import BaseExampleSelector
-from pydantic.v1 import BaseModel, Extra
+from pydantic import BaseModel, Extra
 
 
 class FixedExampleSelector(BaseExampleSelector, BaseModel):

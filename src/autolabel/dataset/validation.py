@@ -7,8 +7,8 @@ from json.decoder import JSONDecodeError
 from typing import Dict, List, Optional, Union
 
 from autolabel.configs import AutolabelConfig
-from pydantic.v1 import BaseModel, ValidationError, create_model, root_validator
-from pydantic.v1.types import StrictStr
+from pydantic import BaseModel, ValidationError, create_model, root_validator
+from pydantic.types import StrictStr
 
 # Regex pattern to extract expected column from onfig.example_template()
 EXPECTED_COLUMN_PATTERN = r"\{([^}]*)\}"

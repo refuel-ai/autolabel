@@ -1,5 +1,5 @@
 from .base import Base
-from pydantic.v1 import BaseModel
+from pydantic import BaseModel
 from sqlalchemy import Column, Integer, String, Text, JSON
 from sqlalchemy.orm import relationship
 from langchain.schema import Generation, ChatGeneration

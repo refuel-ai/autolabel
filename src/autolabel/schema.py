@@ -5,7 +5,7 @@ from typing import Any, Dict, List, Optional, Union
 import json
 import pandas as pd
 from langchain.schema import Generation, ChatGeneration
-from pydantic.v1 import BaseModel
+from pydantic import BaseModel
 
 from autolabel.configs import AutolabelConfig
 from autolabel.utils import calculate_md5
