@@ -308,14 +308,6 @@ class LabelingAgent:
                         annotation = self.task.parse_llm_response(
                             generation, chunk, final_prompt
                         )
-                        annotation.confidence_prompt = (
-                            self.task.construct_confidence_prompt(
-                                chunk,
-                                examples,
-                                max_input_tokens=self.CONFIDENCE_MAX_CONTEXT_LENGTH,
-                                get_num_tokens=self.get_num_tokens,
-                            )
-                        )
                         annotation.input_tokens = input_tokens
                         annotation.output_tokens = self.llm.get_num_tokens(
                             annotation.raw_response
@@ -324,6 +316,14 @@ class LabelingAgent:
                         annotation.latency = latency
 
                         if self.config.confidence():
+                            annotation.confidence_prompt = (
+                                self.task.construct_confidence_prompt(
+                                    chunk,
+                                    examples,
+                                    max_input_tokens=self.CONFIDENCE_MAX_CONTEXT_LENGTH,
+                                    get_num_tokens=self.get_num_tokens,
+                                )
+                            )
                             try:
                                 annotation.confidence_score = (
                                     await self.confidence.calculate(
