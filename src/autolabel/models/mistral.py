@@ -27,8 +27,10 @@ from langchain.schema import Generation
 
 logger = logging.getLogger(__name__)
 
+
 class UnretryableError(Exception):
     """This is an error which is unretriable from autolabel."""
+
 
 class MistralLLM(BaseModel):
     DEFAULT_TOKENIZATION_MODEL = "NousResearch/Llama-2-13b-chat-hf"
@@ -90,12 +92,12 @@ class MistralLLM(BaseModel):
     def _label_with_retry(self, prompt: str) -> Tuple[requests.Response, float]:
         data = {
             "model": self.model_name,
-            "messages": [{"role": "user", "content": prompt}]
+            "messages": [{"role": "user", "content": prompt}],
         }
         headers = {
             "Content-Type": "application/json",
             "Accept": "application/json",
-            "Authorization": "Bearer " + os.getenv("MISTRAL_API_KEY")
+            "Authorization": "Bearer " + os.getenv("MISTRAL_API_KEY"),
         }
         start_time = time()
         response = requests.post(self.url, json=data, headers=headers)
@@ -118,19 +120,21 @@ class MistralLLM(BaseModel):
     async def _alabel_with_retry(self, prompt: str) -> Tuple[requests.Response, float]:
         data = {
             "model": self.model_name,
-            "messages": [{"role": "user", "content": prompt}]
+            "messages": [{"role": "user", "content": prompt}],
         }
         headers = {
             "Content-Type": "application/json",
             "Accept": "application/json",
-            "Authorization": "Bearer " + os.getenv("MISTRAL_API_KEY")
+            "Authorization": "Bearer " + os.getenv("MISTRAL_API_KEY"),
         }
         async with httpx.AsyncClient() as client:
             timeout = httpx.Timeout(
                 self.DEFAULT_CONNECT_TIMEOUT, read=self.DEFAULT_READ_TIMEOUT
             )
             start_time = time()
-            response =  await client.post(self.url, json=data, headers=headers, timeout=timeout)
+            response = await client.post(
+                self.url, json=data, headers=headers, timeout=timeout
+            )
             end_time = time()
             # raise Exception if status != 200
             if response.status_code != 200:
@@ -153,7 +157,13 @@ class MistralLLM(BaseModel):
                         Generation(
                             text=response["choices"][0]["message"]["content"],
                             generation_info=(
-                                {"logprobs": {"top_logprobs": response["choices"][0]["logprobs"]}}
+                                {
+                                    "logprobs": {
+                                        "top_logprobs": response["choices"][0][
+                                            "logprobs"
+                                        ]
+                                    }
+                                }
                                 if self.config.confidence()
                                 else None
                             ),
@@ -192,7 +202,13 @@ class MistralLLM(BaseModel):
                         Generation(
                             text=response["choices"][0]["message"]["content"],
                             generation_info=(
-                                {"logprobs": {"top_logprobs": response["choices"][0]["logprobs"]}}
+                                {
+                                    "logprobs": {
+                                        "top_logprobs": response["choices"][0][
+                                            "logprobs"
+                                        ]
+                                    }
+                                }
                                 if self.config.confidence()
                                 else None
                             ),
