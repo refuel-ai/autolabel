@@ -115,7 +115,7 @@ class LabelingAgent:
         if self.config.confidence_chunk_column():
             if not confidence_tokenizer:
                 self.confidence_tokenizer = AutoTokenizer.from_pretrained(
-                    "google/flan-t5-xxl"
+                    "NousResearch/Llama-2-13b-chat-hf"
                 )
             else:
                 self.confidence_tokenizer = confidence_tokenizer
@@ -667,6 +667,11 @@ class LabelingAgent:
         self.transform_cache.clear(use_ttl=use_ttl)
 
     def get_num_tokens(self, inp: str) -> int:
+        if not self.confidence_tokenizer:
+            logger.warning("Confidence tokenizer is not set. Using default tokenizer.")
+            self.confidence_tokenizer = AutoTokenizer.from_pretrained(
+                "NousResearch/Llama-2-13b-chat-hf"
+            )
         """Returns the number of tokens in the prompt"""
         return len(self.confidence_tokenizer.encode(str(inp)))
 
