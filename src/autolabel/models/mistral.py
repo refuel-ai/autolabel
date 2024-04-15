@@ -93,6 +93,7 @@ class MistralLLM(BaseModel):
         data = {
             "model": self.model_name,
             "messages": [{"role": "user", "content": prompt}],
+            **self.model_params,
         }
         headers = {
             "Content-Type": "application/json",
@@ -121,6 +122,7 @@ class MistralLLM(BaseModel):
         data = {
             "model": self.model_name,
             "messages": [{"role": "user", "content": prompt}],
+            **self.model_params,
         }
         headers = {
             "Content-Type": "application/json",
