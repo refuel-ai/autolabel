@@ -10,8 +10,8 @@
         "name": "gpt-3.5-turbo"
     },
     "prompt": {
-        "task_guidelines": "You are an expert at answering questions based on wikipedia articles. Your job is to answer the following questions using the context provided with the question.\nThe answer is a continuous span of words from the context.\nUse the context to answer the question. If the question cannot be answered using the context and the context alone without any outside knowledge, answer the question as unanswerable.",
-        "output_guidelines": "You will return the answer with one element: the correct answer. If the question is unanswerable, return the answer as unanswerable\n",
+        "task_guidelines": "You are an expert at answering questions based on wikipedia articles. Your job is to answer the following questions using the context provided with the question. The answer is a continuous span of words from the context. Use the context to answer the question. If the question cannot be answered using the context and the context alone without any outside knowledge, output unanswerable.",
+        "output_guidelines": "You will return the answer with one element: the correct answer. If the question is unanswerable, output unanswerable\n",
         "few_shot_examples": "data/squad_v2/seed.csv",
         "few_shot_selection": "semantic_similarity",
         "few_shot_num": 5,

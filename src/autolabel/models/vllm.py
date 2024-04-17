@@ -17,9 +17,9 @@ logger = logging.getLogger(__name__)
 
 class VLLMModel(BaseModel):
     DEFAULT_PARAMS = {
-        "max_tokens": 128,
+        "max_tokens": 1024,
         "temperature": 0.05,
-        "top_p": 0.95,
+        "top_p": 0.99999999,
     }
 
     def __init__(
@@ -61,8 +61,11 @@ class VLLMModel(BaseModel):
         for prompt in prompts:
             try:
                 messages = [{"role": "user", "content": prompt}]
+                tokenized_prompt = self.tokenizer.apply_chat_template(messages)
+                if len(tokenized_prompt) > 4096:
+                    logger.warning(f"Input is greater than 4096 tokens: {len(tokenized_prompt)}")
                 response = self.llm.generate(
-                    prompt_token_ids=[self.tokenizer.apply_chat_template(messages)],
+                    prompt_token_ids=[tokenized_prompt],
                     sampling_params=self.params,
                     use_tqdm=False,
                 )
