@@ -8,7 +8,7 @@ METRICS = {
     "entity_matching": ["accuracy", "completion_rate"],
     "question_answering": ["accuracy", "f1"],
     "named_entity_recognition": ["accuracy", "f1_strict"],
-    "attribute_extraction": ["Macro:accuracy", "Macro:F1"]
+    "attribute_extraction": ["Macro:accuracy", "Macro:F1"],
 }
 
 DATASETS = [
@@ -29,7 +29,7 @@ DATASETS = [
     "numeric",
     "multiconer",
     "quoref",
-    "conll2003"
+    "conll2003",
 ]
 
 

@@ -81,7 +81,7 @@ MODEL_TO_PROVIDER = {
     "mistralai/Mixtral-8x7B-Instruct-v0.1": "vllm",
     "01-ai/Yi-34B-Chat": "vllm",
     "/workspace/refuel_llm_v2_1000": "vllm",
-    "/workspace/gcp_run_2000": "vllm"
+    "/workspace/gcp_run_2000": "vllm",
 }
 
 
@@ -101,7 +101,12 @@ def main():
         config["model"]["name"] = args.model
         config["model"]["provider"] = MODEL_TO_PROVIDER[args.model]
         if MODEL_TO_PROVIDER[args.model] == "vllm":
-            config["model"]["params"] = {"tensor_parallel_size": NUM_GPUS, "max_tokens": 1024, "temperature": 0.01, "top_p": 0.999999999999}
+            config["model"]["params"] = {
+                "tensor_parallel_size": NUM_GPUS,
+                "max_tokens": 1024,
+                "temperature": 0.01,
+                "top_p": 0.999999999999,
+            }
         config["prompt"]["few_shot_num"] = args.few_shot
         if not args.few_shot:
             config["prompt"]["few_shot_selection"] = "fixed"
