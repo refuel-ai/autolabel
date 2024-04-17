@@ -63,7 +63,9 @@ class VLLMModel(BaseModel):
                 messages = [{"role": "user", "content": prompt}]
                 tokenized_prompt = self.tokenizer.apply_chat_template(messages)
                 if len(tokenized_prompt) > 4096:
-                    logger.warning(f"Input is greater than 4096 tokens: {len(tokenized_prompt)}")
+                    logger.warning(
+                        f"Input is greater than 4096 tokens: {len(tokenized_prompt)}"
+                    )
                 response = self.llm.generate(
                     prompt_token_ids=[tokenized_prompt],
                     sampling_params=self.params,
