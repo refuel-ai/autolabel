@@ -43,7 +43,7 @@ class F1Metric(BaseMetric):
                 curr_pred = " ".join(ast.literal_eval(llm_labels[i].label)).split(" ")
                 predictions.extend(construct_binary_preds(curr_input, curr_pred))
             except Exception as e:
-                print(e)
+                print(e, llm_labels[i].label)
                 predictions.extend([0 for _ in range(len(curr_input))])
             curr_gt = " ".join(ast.literal_eval(gt_labels[i])).split(" ")
             gt.extend(construct_binary_preds(curr_input, curr_gt))
@@ -54,7 +54,9 @@ NUM_GPUS = torch.cuda.device_count()
 NER_METRICS = set(["Macro:accuracy", "Macro:F1"])
 # NER_DATASETS = []
 DATASETS = []
-NER_DATASETS = ["quoref"]
+# NER_DATASETS = ["acronym", "numeric", "multiconer", "quoref", "conll2003"]
+# NER_DATASETS = ["quoref"]
+NER_DATASETS = ["acronym"]
 # DATASETS = [
 #     "civil_comments",
 #     "banking",
