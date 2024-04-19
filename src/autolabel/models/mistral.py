@@ -67,8 +67,9 @@ class MistralLLM(BaseModel):
         self.prompts2tokens = {}
         # populate model params
         model_params = config.model_params()
+        self.timeout = self.DEFAULT_READ_TIMEOUT
         if "request_timeout" in model_params.keys():
-            DEFAULT_READ_TIMEOUT = model_params["request_timeout"]
+            self.timeout = model_params["request_timeout"]
             del model_params["request_timeout"]
         self.model_params = {**self.DEFAULT_PARAMS, **model_params}
         self.url = "https://api.mistral.ai/v1/chat/completions"
@@ -92,7 +93,7 @@ class MistralLLM(BaseModel):
             "Authorization": "Bearer " + os.getenv("MISTRAL_API_KEY"),
         }
         start_time = time()
-        response = requests.post(self.url, json=data, headers=headers)
+        response = requests.post(self.url, json=data, headers=headers, timeout=self.timeout)
         end_time = time()
         # raise Exception if status != 200
         if response.status_code != 200:
@@ -122,7 +123,7 @@ class MistralLLM(BaseModel):
         }
         async with httpx.AsyncClient() as client:
             timeout = httpx.Timeout(
-                self.DEFAULT_CONNECT_TIMEOUT, read=self.DEFAULT_READ_TIMEOUT
+                self.DEFAULT_CONNECT_TIMEOUT, read=self.timeout
             )
             start_time = time()
             response = await client.post(
