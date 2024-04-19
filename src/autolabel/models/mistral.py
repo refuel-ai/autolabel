@@ -5,8 +5,6 @@ from time import time
 from typing import List, Optional, Tuple
 import httpx
 
-from langchain.schema import HumanMessage
-
 from autolabel.cache import BaseCache
 from autolabel.configs import AutolabelConfig
 from autolabel.models import BaseModel
