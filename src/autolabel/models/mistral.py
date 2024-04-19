@@ -155,22 +155,7 @@ class MistralLLM(BaseModel):
                 response, latency = self._label_with_retry(prompt)
                 response = response.json()
                 generations.append(
-                    [
-                        Generation(
-                            text=response["choices"][0]["message"]["content"],
-                            generation_info=(
-                                {
-                                    "logprobs": {
-                                        "top_logprobs": response["choices"][0][
-                                            "logprobs"
-                                        ]
-                                    }
-                                }
-                                if self.config.confidence()
-                                else None
-                            ),
-                        )
-                    ]
+                    [Generation(text=response["choices"][0]["message"]["content"])]
                 )
                 errors.append(None)
                 latencies.append(latency)
@@ -200,22 +185,7 @@ class MistralLLM(BaseModel):
             for response, latency in responses:
                 response = response.json()
                 generations.append(
-                    [
-                        Generation(
-                            text=response["choices"][0]["message"]["content"],
-                            generation_info=(
-                                {
-                                    "logprobs": {
-                                        "top_logprobs": response["choices"][0][
-                                            "logprobs"
-                                        ]
-                                    }
-                                }
-                                if self.config.confidence()
-                                else None
-                            ),
-                        )
-                    ]
+                    [Generation(text=response["choices"][0]["message"]["content"])]
                 )
                 errors.append(None)
                 latencies.append(latency)
