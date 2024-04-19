@@ -11,7 +11,10 @@ import logging
 import pandas as pd
 import ssl
 
+from langchain_community.document_transformers import Html2TextTransformer
+from langchain.docstore.document import Document
 from autolabel.cache import BaseCache
+from scrapingbee import ScrapingBeeClient
 
 logger = logging.getLogger(__name__)
 
@@ -22,14 +25,23 @@ MAX_CONNECTIONS = 100
 BACKOFF = 2
 HEADERS = {}
 HTML_PARSER = "html.parser"
+SCRAPINGBEE_TIMEOUT = 60000  # in milliseconds
+PREMIUM_PROXY_PARAM = "premium_proxy"
+JS_SCENARIO = {
+    "instructions": [
+        {
+            "infinite_scroll": {
+                "max_count": 0,
+                "delay": 1000,
+            }
+        }
+    ]
+}
 
 
 class WebpageScrape(BaseTransform):
     COLUMN_NAMES = [
         "content_column",
-        "content_in_bytes_column",
-        "soup_column",
-        "metadata_column",
     ]
 
     def __init__(
@@ -39,11 +51,19 @@ class WebpageScrape(BaseTransform):
         url_column: str,
         timeout: int = 60,
         headers: Dict[str, str] = HEADERS,
+        scrapingbee_api_key: str = None,
     ) -> None:
         super().__init__(cache, output_columns)
         self.url_column = url_column
         self.headers = headers
+        self.api_key = scrapingbee_api_key
+        self.html2text_transformer = Html2TextTransformer()
         self.max_retries = MAX_RETRIES
+        self.scrapingbee_params = {
+            "timeout": SCRAPINGBEE_TIMEOUT,
+            "transparent_status_code": "True",
+            "js_scenario": JS_SCENARIO,
+        }
         try:
             from bs4 import BeautifulSoup
             import httpx
@@ -122,12 +142,39 @@ class WebpageScrape(BaseTransform):
                 f"SSL verification error when fetching content from URL: {url}, retrying with verify=False"
             )
             await asyncio.sleep(BACKOFF**retry_count)
-            return await self._load_url(
-                url, verify=False, headers=headers, retry_count=retry_count + 1
-            )
+            return await self._load_url_scrapingbee(url, retry_count=retry_count + 1)
         except Exception as e:
             logger.error(f"Error fetching content from URL: {url}. Exception: {e}")
             raise e
+
+    async def _load_url_scrapingbee(self, url: str, retry_count=0) -> str:
+        if (
+            retry_count >= self.max_retries
+            or self.scrapingbee_params.get(PREMIUM_PROXY_PARAM) == "True"
+        ):
+            logger.warning(f"Max retries reached for URL: {url}")
+            raise TransformError(
+                TransformErrorType.MAX_RETRIES_REACHED, "Max retries reached"
+            )
+        if retry_count > 0:
+            logger.warning(f"Retrying scraping URL: {url} with premium proxy")
+            self.scrapingbee_params[PREMIUM_PROXY_PARAM] = "True"
+
+        try:
+            response = self.client.get(url, params=self.scrapingbee_params)
+            response.raise_for_status()
+            documents = [
+                Document(page_content=response.content, metadata={"source": url})
+            ]
+            text = self.html2text_transformer.transform_documents(documents)[
+                0
+            ].page_content
+            return text
+        except Exception as e:
+            logger.warning(f"Error fetching content from URL: {url}. Exception: {e}")
+            if response.status_code in [408, 425, 429, 500, 502, 503, 504]:
+                await asyncio.sleep(BACKOFF**retry_count)
+            return await self._load_url_scrapingbee(url, retry_count=retry_count + 1)
 
     async def _apply(self, row: Dict[str, Any]) -> Dict[str, Any]:
         url = row[self.url_column]
@@ -144,11 +191,6 @@ class WebpageScrape(BaseTransform):
 
         transformed_row = {
             self.output_columns["content_column"]: url_response_data.get("content"),
-            self.output_columns["content_in_bytes_column"]: url_response_data.get(
-                "content_bytes"
-            ),
-            self.output_columns["soup_column"]: url_response_data.get("soup"),
-            self.output_columns["metadata_column"]: url_response_data.get("metadata"),
         }
 
         return self._return_output_row(transformed_row)
@@ -158,6 +200,7 @@ class WebpageScrape(BaseTransform):
             "url_column": self.url_column,
             "output_columns": self.output_columns,
             "timeout": self.timeout_time,
+            "scrapingbee_api_key": self.api_key,
         }
 
     def input_columns(self):
