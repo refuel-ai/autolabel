@@ -33,10 +33,8 @@ class UnretryableError(Exception):
 
 
 class MistralLLM(BaseModel):
-    DEFAULT_TOKENIZATION_MODEL = "NousResearch/Llama-2-13b-chat-hf"
-    DEFAULT_CONTEXT_LENGTH = 3250
     DEFAULT_CONNECT_TIMEOUT = 10
-    DEFAULT_READ_TIMEOUT = 120
+    DEFAULT_READ_TIMEOUT = 60
     DEFAULT_MODEL = "mistral-small-latest"
     DEFAULT_PARAMS = {
         "max_tokens": 1000,
@@ -61,15 +59,7 @@ class MistralLLM(BaseModel):
 
     def __init__(self, config: AutolabelConfig, cache: BaseCache = None) -> None:
         super().__init__(config, cache)
-
-        try:
-            # get the tokenizer
-            from langchain_mistralai import ChatMistralAI
-        except ImportError:
-            raise ImportError(
-                "mistralai and langchain_mistralai is required to use the anthropic LLM. Please install it with the following command: pip install 'refuel-autolabel[mistral]'"
-            )
-
+        
         if os.getenv("MISTRAL_API_KEY") is None:
             raise ValueError("MISTRAL_API_KEY environment variable not set")
 
@@ -79,6 +69,9 @@ class MistralLLM(BaseModel):
         self.prompts2tokens = {}
         # populate model params
         model_params = config.model_params()
+        if 'request_timeout' in model_params.keys(): 
+            DEFAULT_READ_TIMEOUT = model_params['request_timeout']
+            del model_params['request_timeout']
         self.model_params = {**self.DEFAULT_PARAMS, **model_params}
         self.url = "https://api.mistral.ai/v1/chat/completions"
 
