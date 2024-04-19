@@ -59,7 +59,7 @@ class MistralLLM(BaseModel):
 
     def __init__(self, config: AutolabelConfig, cache: BaseCache = None) -> None:
         super().__init__(config, cache)
-        
+
         if os.getenv("MISTRAL_API_KEY") is None:
             raise ValueError("MISTRAL_API_KEY environment variable not set")
 
@@ -69,9 +69,9 @@ class MistralLLM(BaseModel):
         self.prompts2tokens = {}
         # populate model params
         model_params = config.model_params()
-        if 'request_timeout' in model_params.keys(): 
-            DEFAULT_READ_TIMEOUT = model_params['request_timeout']
-            del model_params['request_timeout']
+        if "request_timeout" in model_params.keys():
+            DEFAULT_READ_TIMEOUT = model_params["request_timeout"]
+            del model_params["request_timeout"]
         self.model_params = {**self.DEFAULT_PARAMS, **model_params}
         self.url = "https://api.mistral.ai/v1/chat/completions"
 
