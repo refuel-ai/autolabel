@@ -93,7 +93,9 @@ class MistralLLM(BaseModel):
             "Authorization": "Bearer " + os.getenv("MISTRAL_API_KEY"),
         }
         start_time = time()
-        response = requests.post(self.url, json=data, headers=headers, timeout=self.timeout)
+        response = requests.post(
+            self.url, json=data, headers=headers, timeout=self.timeout
+        )
         end_time = time()
         # raise Exception if status != 200
         if response.status_code != 200:
@@ -122,9 +124,7 @@ class MistralLLM(BaseModel):
             "Authorization": "Bearer " + os.getenv("MISTRAL_API_KEY"),
         }
         async with httpx.AsyncClient() as client:
-            timeout = httpx.Timeout(
-                self.DEFAULT_CONNECT_TIMEOUT, read=self.timeout
-            )
+            timeout = httpx.Timeout(self.DEFAULT_CONNECT_TIMEOUT, read=self.timeout)
             start_time = time()
             response = await client.post(
                 self.url, json=data, headers=headers, timeout=timeout
