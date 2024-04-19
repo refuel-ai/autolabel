@@ -63,7 +63,6 @@ class MistralLLM(BaseModel):
 
         # populate model name
         self.model_name = config.model_name() or self.DEFAULT_MODEL
-        self.tokenizer = AutoTokenizer.from_pretrained("mistralai/Mistral-7B-v0.1")
         self.prompts2tokens = {}
         # populate model params
         model_params = config.model_params()
@@ -209,4 +208,4 @@ class MistralLLM(BaseModel):
         return False
 
     def get_num_tokens(self, prompt: str) -> int:
-        return len(self.tokenizer.encode(prompt))
+        return len(prompt) // 4
