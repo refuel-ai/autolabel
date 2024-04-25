@@ -31,7 +31,7 @@ dependencies = [
     "regex >= 2023.6.3",
     "rich >= 13.3.5",
     "scipy >= 1.10.1",
-    "pydantic == 1.10.9",
+    "pydantic == 1.10.13",
     "wget >= 3.2",
     "ipywidgets == 8.0.6",
     "jsonschema >= 4.17.3",
@@ -102,7 +102,7 @@ minimal = [
     "fake_useragent==1.4.0",
     "scrapingbee==2.0.1",
     "pillow >= 9.5.0",
-    "pydantic == 1.10.9",
+    "pydantic == 1.10.13",
 ]
 all = [
     "black",
@@ -138,7 +138,7 @@ all = [
     "fake_useragent==1.4.0",
     "scrapingbee==2.0.1",
     "pillow >= 9.5.0",
-    "pydantic == 1.10.9",
+    "pydantic == 1.10.13",
 ]
 
 [project.urls]
