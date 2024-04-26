@@ -1,0 +1,23 @@
+{
+    "task_name": "TeacherQuestionPrediction",
+    "task_type": "classification",
+    "dataset": {
+        "label_column": "label",
+        "delimiter": ","
+    },
+    "model": {
+        "provider": "openai",
+        "name": "gpt-3.5-turbo"
+    },
+    "prompt": {
+        "task_guidelines": "Your task is to analyze classroom interactions to identify instances where the teacher asks the student(s) to respond, intending a verbal response from the student(s). We will call this a \"teacher ask\". A \"teacher ask\" can involve a question (such as, \"How so?\", \"Can you please explain that?\") or a non-question prompt (such as, \"Tell me more\", \"Please explain\"). Your role is to categorize classroom interactions based on the presence of such \"teacher asks\". For this analysis, you will receive transcripts that capture the classroom dialogue. Each transcript will always involve teacher speaking. If the teacher completely answers the question immediately after asking the question, interpret it as the \"teacher ask\" being absent. If the teacher prompts student(s) to verbally respond and then proceeds to give hints or clarifying comments related to the prompt, interpret it as the \"teacher ask\" being present. Your job is to correctly label the provided input example into one of the following categories:\n{labels}",
+        "labels": [
+            "Present",
+            "Absent"
+        ],
+        "few_shot_examples": "data/teachfx/seed.csv",
+        "few_shot_selection": "semantic_similarity",
+        "few_shot_num": 5,
+        "example_template": "{input}\nOutput: {label}"
+    }
+}

@@ -1,0 +1,34 @@
+{
+  "task_name": "AttributeExtractionProduct",
+  "task_type": "attribute_extraction",
+  "dataset": {
+      "text_column": "example",
+      "delimiter": ","
+  },
+  "model": {
+      "provider": "openai",
+      "name": "gpt-3.5-turbo"
+  },
+  "prompt": {
+      "task_guidelines": "You are an expert at product cataloging. Your goal is to extract specific attributes from text describing clothing and home products. Don't output anything other than the final JSON in your response.",
+      "output_guidelines": "You will return the extracted attributes as a JSON with the following keys:\n{attribute_json}. Don't output anything other than the final JSON with the required keys in your response.",
+      "attributes": [
+          {
+            "name": "delivery",
+            "description": "Extract the delivery dates for the product given the extracted tag information. The delivery date can be formatted in multiple ways. It may be a range of dates, such as \"02/01/2023-03/01/2023\", a singular date like \"03/02/2023\", written out like FEB 2022, Dec-21, 08.12.2023, etc. If the delivery is alphabetical, it'll likely be \"IN STOCK\", \"IMMEDIATE\", \"IMM,\" \"RERUN,\" \"ATS,\" \"AVAILABLE.\" Do not include \"AVAIL ON\" in the value for delivery date. If the date is formatted using slashes (/) and numbers, the year should be in the range 2015-2025 or 15-25. If the date is formatted like month/year (02/2024 for example), the value for month should be between 1 and 12. If delivery dates are not available, return \"Not available\". "
+          },
+          {
+            "name": "price",
+            "description": "If the prices of the product are available, return that value. There may be multiple prices throughout the input, please return all unique prices and separate them with commas. Prices may be separated by a slash such as \"89/151\". Prices may succeed words like \"WSP,\" \"WS,\" \"MSRP,\" \"Price:, \"W/S\", etc. European prices may have a comma separating the dollar and cent amount (such as 100,95) instead of a period (like 100.95). Return the price with any symbols related to currency if available (dollar signs, euro signs, pound signs) as well as the amount in dollars, and cents if available, and any commas or periods in between. Do not return any alphabetic characters, words, or slashes (/). The price should be an exact substring of the input. Otherwise say: \"Not available\"."
+          },
+          {
+            "name": "color",
+            "description": "Extract the color for the product given the extracted tag information. A product may be available in multiple colors, return all unique colors separated by commas. These colors might be preceded by adjectives describing the shade/color such as light, dark, etc. Words like \"MULTI\" and \"COMBO\" may follow the colors as well and should be included. The color should be substring of the input and contain the same capitalization and spelling. The value should not contain any numbers or any non alphabetical characters. If colors are not available, return \"Not available\". Ensure that only values that are actually colors are output."
+          }
+      ],
+      "example_template": "Example: {example}\nOutput:\n{output_dict}",
+      "few_shot_examples": "data/favespro/seed.csv",
+      "few_shot_selection": "semantic_similarity",
+      "few_shot_num": 5
+  }
+}

@@ -8,7 +8,8 @@ METRICS = {
     "entity_matching": ["accuracy", "completion_rate"],
     "question_answering": ["accuracy", "f1"],
     "named_entity_recognition": ["accuracy", "f1_strict"],
-    "attribute_extraction": ["Macro:accuracy", "Macro:F1"],
+    "attribute_extraction": ["Macro:accuracy", "Macro:F1", "Macro:TextSimilarity"],
+    "multilabel_classification": ["accuracy", "f1_weighted"]
 }
 
 DATASETS = [
@@ -25,11 +26,14 @@ DATASETS = [
     "quail",
     "diagnosis",
     "belebele",
+    "teachfx",
+    "pathstream",
+    "favespro",
     "acronym",
     "numeric",
     "multiconer",
     "quoref",
-    "conll2003",
+    "conll2003"
 ]
 
 
@@ -50,7 +54,7 @@ def main():
     for file in eval_files:
         d = json.load(open(f"{args.eval_dir}/{file}", "r"))
         row = []
-        row.append(file.split("_")[1])
+        row.append("-".join(file.split(".")[0].split("/")))
         if not header_created:
             header.append("model")
         for i, dataset in enumerate(DATASETS):

@@ -1,0 +1,52 @@
+{
+    "task_name": "Faire",
+    "task_type": "classification",
+    "dataset": {
+        "label_column": "label",
+        "delimiter": ","
+    },
+    "model": {
+        "provider": "openai",
+        "name": "gpt-3.5-turbo"
+    },
+    "prompt": {
+        "task_guidelines": "You are an expert at understanding product catalog data. Your job is to correctly classify the product into one of the following theme category. Given an online product title and description, predict the theme of the greeting cards, stationery, and novelty products. If none of the options apply, output n/a. Make sure that the final theme is in the provided list of categories. If the exact theme isn't in the list, output the closest category. Categories:\n{labels}.",
+        "labels": [
+            "animals",
+            "plants & floral",
+            "pop culture",
+            "cats dogs & other pets",
+            "love",
+            "geography & hometown",
+            "gothic",
+            "beach & coastal",
+            "holiday season",
+            "sci-fi & fantasy",
+            "alphabet dates & numbers",
+            "lgbtq+",
+            "space",
+            "books & reading",
+            "nature",
+            "family & friendship",
+            "art & music",
+            "food & drink",
+            "zodiac & birth month",
+            "history",
+            "travel & adventure",
+            "politics",
+            "gratitude",
+            "abstract & geometric",
+            "fashion",
+            "female empowerment",
+            "sports",
+            "teacher appreciation",
+            "health & wellness",
+            "transportation",
+            "n/a"
+        ],
+        "example_template": "Example: {input}\nOutput: {label}",
+        "few_shot_examples": "data/faire/seed.csv",
+        "few_shot_selection": "semantic_similarity",
+        "few_shot_num": 5
+    }
+}

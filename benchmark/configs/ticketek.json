@@ -1,0 +1,35 @@
+{
+    "task_name": "TicketekClassification",
+    "task_type": "classification",
+    "dataset": {
+        "label_column": "label",
+        "delimiter": ","
+    },
+    "model": {
+        "provider": "openai",
+        "name": "gpt-3.5-turbo"
+    },
+    "prompt": {
+        "task_guidelines": "You are an expert at understanding events.Given the description of the event and results from a Google search about the event, correctly categorize the type of event it is based on the taxonomy details below. Types of events: \nDANCE: Dance themed events (ballet, breakroom, tap, latin, etc)\nTHEATR: Theater, drama, comedy and standup related events (includes standup comedians)\nMTHTRE: Musical theatre event (cabaret, musical, etc)\nCLASMU: Classical music event (chamber, choral, recitals, sacred, singing, classical pop)\nCONTMU: Concerts and events showcasing music from genres other than classical (50s, 70s Pop, Electronic, etc)\nOPERA: Opera event\nCHILDR: Children's events (interactive, workshops, kids events)\nSPECIAL: Art, Award/graduation ceremonies, Balls, Galas, Museum, Fashion, Circus, Performance Art, etc\nMULTFES: Multi-category festival events (dances, multiple musical events, film festivals, food events etc)\nSINGFES: Single-category festival events\nFILM: Event involving watching a specific film or cinema\nSPORT: Sports events\nOTHER: CD purchases, merchandising events, Memberships, Gourmet, Water or Nature/Outdoor events, Car Parking, Self Development, Tours\nYour job is to correctly classify the provided input example into one of these categories.",
+        "output_guidelines": "You will answer with just the the correct output label and nothing else.",
+        "labels": [
+            "SPORT",
+            "OTHER",
+            "CONTMU",
+            "CHILDR",
+            "SPECIAL",
+            "SINGFES",
+            "MTHTRE",
+            "BMARK6",
+            "THEATR",
+            "CLASMU",
+            "MULTFES",
+            "DANCE",
+            "FILM"
+        ],
+        "few_shot_examples": "data/ticketek/seed.csv",
+        "few_shot_selection": "semantic_similarity",
+        "few_shot_num": 5,
+        "example_template": "Input: {example}\nOutput: {label}"
+    }
+}

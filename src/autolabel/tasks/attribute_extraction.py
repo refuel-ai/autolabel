@@ -267,7 +267,7 @@ class AttributeExtractionTask(BaseTask):
 
         for attribute in llm_labels_dict.keys():
             for metric in self.metrics + additional_metrics:
-                if gt_labels[attribute] is None:
+                if attribute not in gt_labels or gt_labels[attribute] is None:
                     continue
 
                 computed_metrics = metric.compute(

@@ -1,0 +1,35 @@
+{
+    "task_name": "PathstreamClassification",
+    "task_type": "classification",
+    "dataset": {
+        "label_column": "label",
+        "delimiter": ","
+    },
+    "model": {
+        "provider": "openai",
+        "name": "gpt-3.5-turbo"
+    },
+    "prompt": {
+        "task_guidelines": "You are a human resources expert and can accurately predict which category a job belongs to. Given the job title and skills for that job, output which category of jobs it belongs to. Give more weightage to skills that are listed first. Make sure the output is from one of the following categories: {labels}.\n",
+        "output_guidelines": "You will answer with just the the correct output label and nothing else.",
+        "labels": [
+            "marketing, communications and graphic design",
+            "operations - business process improvement",
+            "operations",
+            "operations - quality",
+            "claims and appeals operations",
+            "knowledge management and training",
+            "admin operations/project management",
+            "data management and it",
+            "account management",
+            "customer service",
+            "business analytics",
+            "accounting and finance",
+            "compliance and credentialing"
+        ],
+        "few_shot_examples": "data/pathstream/seed.csv",
+        "few_shot_selection": "semantic_similarity",
+        "few_shot_num": 5,
+        "example_template": "Input: {input}\nOutput: {label}"
+    }
+}
