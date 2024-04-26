@@ -1,5 +1,5 @@
 import logging
-from typing import Callable, Dict, List, Union
+from typing import Callable, Dict, List, Union, Optional
 
 import pandas as pd
 from rich.console import Console
@@ -34,6 +34,8 @@ class AutolabelDataset:
         max_items: int = None,
         start_index: int = 0,
         validate: bool = False,
+        shuffle: bool = False,
+        random_state: Optional[int] = None,
     ) -> None:
         """
         Initializes the dataset.
@@ -60,6 +62,8 @@ class AutolabelDataset:
                 df = pd.read_json(dataset, lines=True, dtype="str")
         elif isinstance(dataset, pd.DataFrame):
             df = dataset.copy()
+        if shuffle:
+            df = df.sample(frac=1, random_state=random_state).reset_index(drop=True)
 
         df = df[start_index:]
         if max_items and max_items > 0:
