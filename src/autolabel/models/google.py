@@ -120,4 +120,6 @@ class GoogleLLM(BaseModel):
         return False
 
     def get_num_tokens(self, prompt: str) -> int:
-        return self.vertexaiModel.count_tokens(prompt).total_tokens
+        if prompt:
+            return self.vertexaiModel.count_tokens(prompt).total_tokens
+        return 0
