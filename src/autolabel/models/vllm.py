@@ -61,7 +61,7 @@ class VLLMModel(BaseModel):
         for prompt in prompts:
             try:
                 messages = [{"role": "user", "content": prompt}]
-                tokenized_prompt = self.tokenizer.apply_chat_template(messages)
+                tokenized_prompt = self.tokenizer.apply_chat_template(messages, add_generation_prompt=True)
                 if len(tokenized_prompt) > 4096:
                     logger.warning(
                         f"Input is greater than 4096 tokens: {len(tokenized_prompt)}"
@@ -74,7 +74,7 @@ class VLLMModel(BaseModel):
                 generations.append(
                     [
                         Generation(
-                            text=response[0].outputs[0].text.strip(),
+                            text=response[0].outputs[0].text.strip().replace("<|eot_id|>", ""),
                         )
                     ]
                 )

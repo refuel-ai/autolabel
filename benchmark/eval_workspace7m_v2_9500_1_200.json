@@ -1,0 +1,1 @@
+[[{"name": "accuracy", "value": 0.775, "show_running": true}, {"name": "support", "value": 200, "show_running": true}, {"name": "completion_rate", "value": 1.0, "show_running": true}, {"name": "f1_macro", "value": 0.726841939595411, "show_running": true}, {"name": "f1_weighted", "value": 0.8737343477373322, "show_running": true}]]

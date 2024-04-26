@@ -1,5 +1,7 @@
 from typing import List
 import logging
+import pylcs
+
 
 from sklearn.metrics import roc_auc_score
 import numpy as np
@@ -13,6 +15,11 @@ logger = logging.getLogger(__name__)
 class AUROCMetric(BaseMetric):
     def __init__(self) -> None:
         super().__init__()
+    
+    def similarity_acceptance(self, a, b) -> bool:
+        if not isinstance(a, str) or not isinstance(b, str): return False
+        substring_lengths = pylcs.lcs_string_length(a, b)
+        return substring_lengths / max(len(a) + 1e-5, len(b) + 1e-5) > 0.9
 
     def compute(
         self, llm_labels: List[LLMAnnotation], gt_labels: List[str]
@@ -31,7 +38,7 @@ class AUROCMetric(BaseMetric):
                 filtered_gt_labels.append(gt_label)
 
         match = [
-            int(llm_label.label == gt_label)
+            int(self.similarity_acceptance(llm_label.label, gt_label))
             for llm_label, gt_label in zip(filtered_llm_labels, filtered_gt_labels)
         ]
         confidence = [llm_label.confidence_score for llm_label in filtered_llm_labels]

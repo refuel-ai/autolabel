@@ -1,0 +1,28 @@
+{
+    "task_name": "ExtractAnswerSubstring",
+    "task_type": "multilabel_classification",
+    "dataset": {
+        "label_column": "stages",
+        "label_separator": ", ",
+        "delimiter": ","
+      },
+    "model": {
+        "provider": "openai",
+        "name": "gpt-3.5-turbo"
+    },
+    "prompt": {
+        "task_guidelines": "As someone who has a deep understanding of organizations providing education and is well-versed in the laws and regulations of countries, you're asked to evaluate if an educational institution offers formal education. Formal education refers to the structured education system from nursery school to university and includes specialised vocational, technical and professional training programmes. This task requires you to determine if the organisation offers formal education and, in that case, for which educational stages. The educational system is divided into stages based on age. Children enter early childhood education from ages 3-4, attending pre-primary. They move into primary education as they progress to ages 5-6. In the 2-stage system, primary education is called 'Primary school' and continues until age 11. However, in the 3-stage system, this period is often divided into 'Elementary school' and 'Middle school'. Hence, primary education typically comprises of education between grades 1 and 5. Secondary education begins at age 12 and goes up to 18 years. In a 2-stage system, Secondary School encompasses all of secondary education (grades 6 through 12). However, in a 3-stage system, this is split into secondary school (grades 6 through 8) and high school (grades 9 through 12). Hence, both secondary school and high school are part of secondary education. Higher education doesn't refer to high school education, instead it refers to education beyond high school. Higher education comprises a component of post-secondary, third-level, or tertiary education and is an optional final stage of formal learning after completing secondary education. You need to map the education organization with the proper stages (there can be one or more than one). If it's not a formal education organization, use only 'not_education'. Valid categories are:\n{labels}",
+        "output_guidelines": "You will return the answer as a comma separated list of labels sorted in alphabetical order. For example: \"label1, label2, label3\"",
+        "labels": [
+            "pre-primary", 
+            "primary",
+            "secondary",
+            "higher",
+            "not_education"
+        ],
+        "example_template": "Example: {example}\nOutput:\n{stages}",
+        "few_shot_examples": "data/percent/seed.csv",
+        "few_shot_selection": "semantic_similarity",
+        "few_shot_num": 5
+    }
+}
