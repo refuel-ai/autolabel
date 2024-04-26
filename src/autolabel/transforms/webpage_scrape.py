@@ -18,7 +18,7 @@ from scrapingbee import ScrapingBeeClient
 
 logger = logging.getLogger(__name__)
 
-MAX_RETRIES = 5
+MAX_RETRIES = 3
 MAX_KEEPALIVE_CONNECTIONS = 20
 CONNECTION_TIMEOUT = 10
 MAX_CONNECTIONS = 100
@@ -56,7 +56,7 @@ class WebpageScrape(BaseTransform):
         super().__init__(cache, output_columns)
         self.url_column = url_column
         self.headers = headers
-        self.api_key = scrapingbee_api_key
+        self.scrapingbee_api_key = scrapingbee_api_key
         self.html2text_transformer = Html2TextTransformer()
         self.max_retries = MAX_RETRIES
         self.scrapingbee_params = {
@@ -86,6 +86,9 @@ class WebpageScrape(BaseTransform):
             )
             self.client_with_no_verify = httpx.AsyncClient(
                 timeout=self.timeout, limits=limits, follow_redirects=True, verify=False
+            )
+            self.scrapingbee_client = ScrapingBeeClient(
+                api_key=self.scrapingbee_api_key
             )
             self.beautiful_soup = BeautifulSoup
         except ImportError:
@@ -125,18 +128,11 @@ class WebpageScrape(BaseTransform):
             # TODO: Add support for other parsers
             content_bytes = response.content
             soup = self.beautiful_soup(content_bytes, HTML_PARSER)
-            return {
-                "content": soup.get_text(),
-                "content_bytes": content_bytes,
-                "soup": soup,
-                "metadata": self._load_metadata(url, soup),
-            }
+            return soup.get_text()
         except self.httpx.ConnectTimeout as e:
             logger.error(f"Timeout when fetching content from URL: {url}")
-            raise TransformError(
-                TransformErrorType.TRANSFORM_TIMEOUT,
-                "Timeout when fetching content from URL",
-            )
+            await asyncio.sleep(BACKOFF**retry_count)
+            return await self._load_url_scrapingbee(url, retry_count=retry_count + 1)
         except ssl.SSLCertVerificationError as e:
             logger.warning(
                 f"SSL verification error when fetching content from URL: {url}, retrying with verify=False"
@@ -145,13 +141,10 @@ class WebpageScrape(BaseTransform):
             return await self._load_url_scrapingbee(url, retry_count=retry_count + 1)
         except Exception as e:
             logger.error(f"Error fetching content from URL: {url}. Exception: {e}")
-            raise e
+            return await self._load_url_scrapingbee(url, retry_count=retry_count + 1)
 
     async def _load_url_scrapingbee(self, url: str, retry_count=0) -> str:
-        if (
-            retry_count >= self.max_retries
-            or self.scrapingbee_params.get(PREMIUM_PROXY_PARAM) == "True"
-        ):
+        if retry_count >= self.max_retries:
             logger.warning(f"Max retries reached for URL: {url}")
             raise TransformError(
                 TransformErrorType.MAX_RETRIES_REACHED, "Max retries reached"
@@ -161,7 +154,7 @@ class WebpageScrape(BaseTransform):
             self.scrapingbee_params[PREMIUM_PROXY_PARAM] = "True"
 
         try:
-            response = self.client.get(url, params=self.scrapingbee_params)
+            response = self.scrapingbee_client.get(url, params=self.scrapingbee_params)
             response.raise_for_status()
             documents = [
                 Document(page_content=response.content, metadata={"source": url})
@@ -187,10 +180,10 @@ class WebpageScrape(BaseTransform):
         else:
             if not urlparse(url).scheme:
                 url = f"https://{url}"
-            url_response_data = await self._load_url(url)
+            url_content = await self._load_url(url)
 
         transformed_row = {
-            self.output_columns["content_column"]: url_response_data.get("content"),
+            self.output_columns["content_column"]: url_content,
         }
 
         return self._return_output_row(transformed_row)
@@ -200,7 +193,7 @@ class WebpageScrape(BaseTransform):
             "url_column": self.url_column,
             "output_columns": self.output_columns,
             "timeout": self.timeout_time,
-            "scrapingbee_api_key": self.api_key,
+            "scrapingbee_api_key": self.scrapingbee_api_key,
         }
 
     def input_columns(self):
