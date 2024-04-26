@@ -1,0 +1,20 @@
+{
+    "task_name": "Quality",
+    "task_type": "question_answering",
+    "dataset": {
+        "label_column": "output",
+        "delimiter": ","
+    },
+    "model": {
+        "provider": "openai",
+        "name": "gpt-3.5-turbo"
+    },
+    "prompt": {
+        "task_guidelines": "You are an expert at answering reading comprehension questions. You will be given an input question followed by 4 options. This will be followed by the article context. Use the article to answer the given quesiton. The question will be one of the options provided.",
+        "output_guidelines": "You will output just the answer, which will be one of the given options. Just output the text of the option.",
+        "example_template": "Question, Options and article: {input}\nAnswer: {output}",
+        "few_shot_examples": "data/quality/seed.csv",
+        "few_shot_selection": "semantic_similarity",
+        "few_shot_num": 0
+    }
+}

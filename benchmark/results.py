@@ -33,7 +33,11 @@ DATASETS = [
     "numeric",
     "multiconer",
     "quoref",
-    "conll2003"
+    "conll2003",
+    "quality",
+    "qasper",
+    "contract_nli",
+    "naturalqa",
 ]
 
 

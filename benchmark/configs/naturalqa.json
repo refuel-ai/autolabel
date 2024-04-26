@@ -1,0 +1,20 @@
+{
+    "task_name": "NaturalQA",
+    "task_type": "question_answering",
+    "dataset": {
+        "label_column": "answer",
+        "delimiter": ","
+    },
+    "model": {
+        "provider": "openai",
+        "name": "gpt-3.5-turbo"
+    },
+    "prompt": {
+        "task_guidelines": "You are an expert at reading documents and answer questions. You will be given a few documents followed by a question. Carefully read the documents and answer the question as a short answer (with a few words).",
+        "output_guidelines": "You will output just the answer.",
+        "example_template": "{question}\nAnswer: {answer}",
+        "few_shot_examples": "data/naturalqa/seed.csv",
+        "few_shot_selection": "semantic_similarity",
+        "few_shot_num": 0
+    }
+}

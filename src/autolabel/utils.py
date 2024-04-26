@@ -398,7 +398,7 @@ def normalize_text(s: str) -> str:
     def lower(text):
         return text.lower()
 
-    return white_space_fix(remove_articles(remove_punc(lower(s))))
+    return white_space_fix(remove_articles(remove_punc(lower(str(s)))))
 
 
 def in_notebook():

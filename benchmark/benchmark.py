@@ -87,7 +87,13 @@ DATASETS = [
     "teachfx",
     "pathstream"
 ]
-ALL_DATASETS = DATASETS + NER_DATASETS
+LONG_DATASETS = [
+    "quality",
+    "qasper",
+    "contract_nli",
+    "naturalqa",
+]
+ALL_DATASETS = DATASETS + NER_DATASETS + LONG_DATASETS
 FEW_SHOT_OVERRIDES = {
     "company": 4,
     "squad_v2": 6,
@@ -109,7 +115,8 @@ MODEL_TO_PROVIDER = {
     "/workspace/7m_v2_21000": "vllm",
     "/workspace/7m_v1_llama3_10500": "vllm",
     "NousResearch/Meta-Llama-3-70B-Instruct": "vllm",
-    "/workspace/7m_v1_llama3_21500": "vllm"
+    "/workspace/7m_v1_llama3_21500": "vllm",
+    "/workspace/test_mistral_lctxt_5_last": "vllm",
 }
 
 
@@ -125,18 +132,24 @@ def main():
     eval_result = []
     agent = None
     for index, dataset in enumerate(ALL_DATASETS):
+        # Set few shot for long datasets
+        few_shot = args.few_shot
+        if dataset in LONG_DATASETS:
+            few_shot = 0
+
         config = json.load(open(f"configs/{dataset}.json", "r"))
         config["model"]["name"] = args.model
-        config["model"]["provider"] = MODEL_TO_PROVIDER[args.model]
-        if MODEL_TO_PROVIDER[args.model] == "vllm":
+        provider = MODEL_TO_PROVIDER.get(args.model, "vllm")
+        config["model"]["provider"] = provider
+        if provider == "vllm":
             config["model"]["params"] = {
                 "tensor_parallel_size": NUM_GPUS,
                 "max_tokens": 1024,
                 "temperature": 0.05,
                 "top_p": 0.999999999999,
             }
-        config["prompt"]["few_shot_num"] = FEW_SHOT_OVERRIDES[dataset] if dataset in FEW_SHOT_OVERRIDES else args.few_shot
-        if not args.few_shot:
+        config["prompt"]["few_shot_num"] = FEW_SHOT_OVERRIDES[dataset] if dataset in FEW_SHOT_OVERRIDES else few_shot
+        if not few_shot:
             config["prompt"]["few_shot_selection"] = "fixed"
 
         if not agent:
