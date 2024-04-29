@@ -111,7 +111,6 @@ class GoogleLLM(BaseModel):
             generations = result.generations
             end_time = time()
             if generations == [[]]:
-                print("Returning empty generations")
                 return RefuelLLMResult(
                     generations=[[Generation(text="")]],
                     errors=[
