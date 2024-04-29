@@ -85,14 +85,19 @@ DATASETS = [
     "diagnosis",
     "belebele",
     "teachfx",
-    "pathstream"
+    "pathstream",
+    "goodfit",
+    "harmonic"
 ]
+NER_DATASETS = []
 ALL_DATASETS = DATASETS + NER_DATASETS
 FEW_SHOT_OVERRIDES = {
     "company": 4,
     "squad_v2": 6,
     "quail": 4,
-    "quoref": 2
+    "quoref": 2,
+    "goodfit": 1,
+    "harmonic": 6
 }
 MODEL_TO_PROVIDER = {
     "gpt-3.5-turbo": "openai",
@@ -128,6 +133,8 @@ def main():
         config = json.load(open(f"configs/{dataset}.json", "r"))
         config["model"]["name"] = args.model
         config["model"]["provider"] = MODEL_TO_PROVIDER[args.model]
+        if MODEL_TO_PROVIDER[args.model] == "openai" or MODEL_TO_PROVIDER[args.model] == "vllm":
+            config["model"]["compute_confidence"] = True
         if MODEL_TO_PROVIDER[args.model] == "vllm":
             config["model"]["params"] = {
                 "tensor_parallel_size": NUM_GPUS,
@@ -147,6 +154,10 @@ def main():
             agent.task = TaskFactory.from_config(config)
             agent.llm.config = config
             agent.example_selector = None
+            if dataset in NER_DATASETS:
+                agent.confidence.score_type = "logprob_average_per_key"
+            else:
+                agent.confidence.score_type = "logprob_average"
         ds = AutolabelDataset(f"data/{dataset}/test.csv", config=config)
         print("Benchmarking", dataset)
         additional_metrics = [F1Metric, TextSimilarity] if dataset in NER_DATASETS else []
