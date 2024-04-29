@@ -83,7 +83,6 @@ class GoogleLLM(BaseModel):
             generations = result.generations
             end_time = time()
             if generations == [[]]:
-                print("Returning empty generations")
                 return RefuelLLMResult(
                     generations=[[Generation(text="")]],
                     errors=[
@@ -100,7 +99,6 @@ class GoogleLLM(BaseModel):
                 latencies=[end_time - start_time] * len(generations),
             )
         except Exception as e:
-            print(f"Error from Google LLM: {e}")
             logger.error(f"Error from Google LLM: {e}")
             return await self._alabel_individually(prompts)
 
