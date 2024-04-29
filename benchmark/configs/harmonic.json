@@ -1,0 +1,27 @@
+{
+    "task_name": "HarmonicClassification",
+    "task_type": "multilabel_classification",
+    "dataset": {
+        "label_column": "label",
+        "label_separator": ";",
+        "delimiter": ","
+      },
+    "model": {
+        "provider": "openai",
+        "name": "gpt-3.5-turbo"
+    },
+    "prompt": {
+        "task_guidelines": "You are a data security and privacy expert. Your job is to identify if the input contains any of the following categories of sensitive data: \n1. Employee Personal Identifiable Information (PII) \n2. Employee Payroll Records \n3. Sensitive meeting minutes. Output your answer as a list of one or more categories separated by a semicolon (;). If the input contains none of the above sensitive information, output None of the above",
+        "output_guidelines": "You will return the answer as a semicolon separated list of labels sorted in alphabetical order. For example: \"label1;label2\". Output only the answer, without any other information.",
+        "labels": [
+            "Employee Personal Identifiable Information (PII)",
+            "Sensitive meeting minutes",
+            "Employee Payroll Records",
+            "None of the above"
+        ],
+        "example_template": "Input: {input}\nOutput:\n{label}",
+        "few_shot_examples": "data/harmonic/seed.csv",
+        "few_shot_selection": "semantic_similarity",
+        "few_shot_num": 5
+    }
+}
