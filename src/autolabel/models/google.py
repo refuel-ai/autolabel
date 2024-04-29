@@ -1,11 +1,10 @@
 import os
 import logging
-from functools import cached_property
 from time import time
 from typing import List, Optional
 
-from langchain.schema import Generation, HumanMessage, LLMResult
-from tenacity import before_sleep_log, retry, stop_after_attempt, wait_exponential
+from langchain.schema import Generation
+from tenacity import before_sleep_log, retry
 
 from autolabel.cache import BaseCache
 from autolabel.configs import AutolabelConfig
@@ -83,12 +82,25 @@ class GoogleLLM(BaseModel):
             result = await self.llm.agenerate(prompts)
             generations = result.generations
             end_time = time()
+            if generations == [[]]:
+                print("Returning empty generations")
+                return RefuelLLMResult(
+                    generations=[[Generation(text="")]],
+                    errors=[
+                        LabelingError(
+                            error_type=ErrorType.LLM_PROVIDER_ERROR,
+                            error_message="No generations returned",
+                        )
+                    ],
+                    latencies=[end_time - start_time],
+                )
             return RefuelLLMResult(
                 generations=generations,
                 errors=[None] * len(generations),
                 latencies=[end_time - start_time] * len(generations),
             )
         except Exception as e:
+            print(f"Error from Google LLM: {e}")
             logger.error(f"Error from Google LLM: {e}")
             return await self._alabel_individually(prompts)
 
@@ -98,6 +110,18 @@ class GoogleLLM(BaseModel):
             result = self.llm.generate(prompts)
             generations = result.generations
             end_time = time()
+            if generations == [[]]:
+                print("Returning empty generations")
+                return RefuelLLMResult(
+                    generations=[[Generation(text="")]],
+                    errors=[
+                        LabelingError(
+                            error_type=ErrorType.LLM_PROVIDER_ERROR,
+                            error_message="No generations returned",
+                        )
+                    ],
+                    latencies=[end_time - start_time],
+                )
             return RefuelLLMResult(
                 generations=generations,
                 errors=[None] * len(generations),
