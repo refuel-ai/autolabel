@@ -55,18 +55,24 @@ class F1Metric(BaseMetric):
             gt.extend(construct_binary_preds(curr_input, curr_gt))
         return [MetricResult(name="F1", value=f1_score(gt, predictions))]
 
+
 class TextSimilarity(BaseMetric):
     def compute(
         llm_labels: List[LLMAnnotation], gt_labels: List[str]
     ) -> List[MetricResult]:
         def get_similarity(str_a, str_b):
             substring_lengths = pylcs.lcs_string_length(str_a, str_b)
-            return substring_lengths / max(len(str_a), len(str_b)) 
-        
+            return substring_lengths / max(len(str_a), len(str_b))
+
         text_similarity = []
         for i in range(len(llm_labels)):
             text_similarity.append(get_similarity(llm_labels[i].label, gt_labels[i]))
-        return [MetricResult(name="TextSimilarity", value=sum(text_similarity)/len(text_similarity))]
+        return [
+            MetricResult(
+                name="TextSimilarity", value=sum(text_similarity) / len(text_similarity)
+            )
+        ]
+
 
 NUM_GPUS = torch.cuda.device_count()
 NER_DATASETS = ["favespro", "acronym", "numeric", "multiconer", "quoref", "conll2003"]
@@ -87,7 +93,7 @@ DATASETS = [
     "teachfx",
     "pathstream",
     "goodfit",
-    "harmonic"
+    "harmonic",
 ]
 LONG_DATASETS = [
     "quality",
@@ -102,7 +108,7 @@ FEW_SHOT_OVERRIDES = {
     "quail": 4,
     "quoref": 2,
     "goodfit": 1,
-    "harmonic": 6
+    "harmonic": 6,
 }
 MODEL_TO_PROVIDER = {
     "gpt-3.5-turbo": "openai",
@@ -153,7 +159,9 @@ def main():
                 "temperature": 0.05,
                 "top_p": 0.999999999999,
             }
-        config["prompt"]["few_shot_num"] = FEW_SHOT_OVERRIDES[dataset] if dataset in FEW_SHOT_OVERRIDES else few_shot
+        config["prompt"]["few_shot_num"] = (
+            FEW_SHOT_OVERRIDES[dataset] if dataset in FEW_SHOT_OVERRIDES else few_shot
+        )
         if not few_shot:
             config["prompt"]["few_shot_selection"] = "fixed"
 
@@ -171,7 +179,9 @@ def main():
                 agent.confidence.score_type = "logprob_average"
         ds = AutolabelDataset(f"data/{dataset}/test.csv", config=config)
         print("Benchmarking", dataset)
-        additional_metrics = [F1Metric, TextSimilarity] if dataset in NER_DATASETS else []
+        additional_metrics = (
+            [F1Metric, TextSimilarity] if dataset in NER_DATASETS else []
+        )
         new_ds = agent.run(
             ds, max_items=args.max_items, additional_metrics=additional_metrics
         )

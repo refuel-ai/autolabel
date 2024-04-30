@@ -47,14 +47,14 @@ class VLLMModel(BaseModel):
             top_p=self.DEFAULT_PARAMS["top_p"],
             use_beam_search=True,
             best_of=5,
-            logprobs=1
+            logprobs=1,
         )
         self.model_name = self.config.model_name()
         self.llm = LLM(
             model=self.config.model_name(),
             tensor_parallel_size=self.config.model_params().get(
                 "tensor_parallel_size", 1
-            )
+            ),
         )
 
     def _label(self, prompts: List[str]) -> RefuelLLMResult:
@@ -64,7 +64,9 @@ class VLLMModel(BaseModel):
         for prompt in prompts:
             try:
                 messages = [{"role": "user", "content": prompt}]
-                tokenized_prompt = self.tokenizer.apply_chat_template(messages, add_generation_prompt=True)
+                tokenized_prompt = self.tokenizer.apply_chat_template(
+                    messages, add_generation_prompt=True
+                )
                 if len(tokenized_prompt) > 4096:
                     logger.warning(
                         f"Input is greater than 4096 tokens: {len(tokenized_prompt)}"
@@ -77,7 +79,10 @@ class VLLMModel(BaseModel):
                 generations.append(
                     [
                         Generation(
-                            text=response[0].outputs[0].text.strip().replace("<|eot_id|>", ""),
+                            text=response[0]
+                            .outputs[0]
+                            .text.strip()
+                            .replace("<|eot_id|>", ""),
                             generation_info=(
                                 {
                                     "logprobs": {
@@ -88,7 +93,7 @@ class VLLMModel(BaseModel):
                                 }
                                 if self.config.confidence()
                                 else None
-                            )
+                            ),
                         )
                     ]
                 )
@@ -109,11 +114,12 @@ class VLLMModel(BaseModel):
         return RefuelLLMResult(
             generations=generations, errors=errors, latencies=latencies
         )
+
     def _process_confidence_request(self, logprobs):
         resp = []
         for item in logprobs:
             key = list(item.keys())[0]
-            curr_logprob_obj = item[key] 
+            curr_logprob_obj = item[key]
             resp.append({curr_logprob_obj.decoded_token: curr_logprob_obj.logprob})
         return resp
 
