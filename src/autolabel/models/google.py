@@ -80,12 +80,20 @@ class GoogleLLM(BaseModel):
             start_time = time()
             result = await self.llm.agenerate(prompts)
             generations = []
+            errors = []
             end_time = time()
             for generation in result.generations:
                 if not generation:
                     generations.append([Generation(text="")])
+                    errors.append(
+                        LabelingError(
+                            error_type=ErrorType.LABELING_FAILED,
+                            error_message="No generation",
+                        )
+                    )
                 else:
                     generations.append(generation)
+                    errors.append(None)
             return RefuelLLMResult(
                 generations=generations,
                 errors=[None] * len(generations),
@@ -99,15 +107,21 @@ class GoogleLLM(BaseModel):
         try:
             start_time = time()
             result = self.llm.generate(prompts)
-            generations = result.generations
-            end_time = time()
             generations = []
+            errors = []
             end_time = time()
             for generation in result.generations:
                 if not generation:
                     generations.append([Generation(text="")])
+                    errors.append(
+                        LabelingError(
+                            error_type=ErrorType.LABELING_FAILED,
+                            error_message="No generation",
+                        )
+                    )
                 else:
                     generations.append(generation)
+                    errors.append(None)
             return RefuelLLMResult(
                 generations=generations,
                 errors=[None] * len(generations),
