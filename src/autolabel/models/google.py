@@ -79,9 +79,9 @@ class GoogleLLM(BaseModel):
         try:
             start_time = time()
             result = await self.llm.agenerate(prompts)
+            end_time = time()
             generations = []
             errors = []
-            end_time = time()
             for generation in result.generations:
                 if not generation:
                     generations.append([Generation(text="")])
@@ -107,9 +107,9 @@ class GoogleLLM(BaseModel):
         try:
             start_time = time()
             result = self.llm.generate(prompts)
+            end_time = time()
             generations = []
             errors = []
-            end_time = time()
             for generation in result.generations:
                 if not generation:
                     generations.append([Generation(text="")])
