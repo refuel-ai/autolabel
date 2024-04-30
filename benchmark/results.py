@@ -8,8 +8,13 @@ METRICS = {
     "entity_matching": ["accuracy", "completion_rate", "auroc"],
     "question_answering": ["accuracy", "f1", "auroc"],
     "named_entity_recognition": ["accuracy", "f1_strict", "auroc"],
-    "attribute_extraction": ["Macro:accuracy", "Macro:F1", "Macro:TextSimilarity", "Macro:auroc"],
-    "multilabel_classification": ["accuracy", "f1_weighted", "auroc"]
+    "attribute_extraction": [
+        "Macro:accuracy",
+        "Macro:F1",
+        "Macro:TextSimilarity",
+        "Macro:auroc",
+    ],
+    "multilabel_classification": ["accuracy", "f1_weighted", "auroc"],
 }
 
 DATASETS = [
@@ -35,7 +40,11 @@ DATASETS = [
     "numeric",
     "multiconer",
     "quoref",
-    "conll2003"
+    "conll2003",
+    "quality",
+    "qasper",
+    "contract_nli",
+    "naturalqa",
 ]
 
 

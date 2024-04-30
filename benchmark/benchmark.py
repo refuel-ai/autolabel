@@ -55,18 +55,24 @@ class F1Metric(BaseMetric):
             gt.extend(construct_binary_preds(curr_input, curr_gt))
         return [MetricResult(name="F1", value=f1_score(gt, predictions))]
 
+
 class TextSimilarity(BaseMetric):
     def compute(
         llm_labels: List[LLMAnnotation], gt_labels: List[str]
     ) -> List[MetricResult]:
         def get_similarity(str_a, str_b):
             substring_lengths = pylcs.lcs_string_length(str_a, str_b)
-            return substring_lengths / max(len(str_a), len(str_b)) 
-        
+            return substring_lengths / max(len(str_a), len(str_b))
+
         text_similarity = []
         for i in range(len(llm_labels)):
             text_similarity.append(get_similarity(llm_labels[i].label, gt_labels[i]))
-        return [MetricResult(name="TextSimilarity", value=sum(text_similarity)/len(text_similarity))]
+        return [
+            MetricResult(
+                name="TextSimilarity", value=sum(text_similarity) / len(text_similarity)
+            )
+        ]
+
 
 NUM_GPUS = torch.cuda.device_count()
 NER_DATASETS = ["favespro", "acronym", "numeric", "multiconer", "quoref", "conll2003"]
@@ -87,16 +93,22 @@ DATASETS = [
     "teachfx",
     "pathstream",
     "goodfit",
-    "harmonic"
+    "harmonic",
 ]
-ALL_DATASETS = DATASETS + NER_DATASETS
+LONG_DATASETS = [
+    "quality",
+    "qasper",
+    "contract_nli",
+    "naturalqa",
+]
+ALL_DATASETS = DATASETS + NER_DATASETS + LONG_DATASETS
 FEW_SHOT_OVERRIDES = {
     "company": 4,
     "squad_v2": 6,
     "quail": 4,
     "quoref": 2,
     "goodfit": 1,
-    "harmonic": 6
+    "harmonic": 6,
 }
 MODEL_TO_PROVIDER = {
     "gpt-3.5-turbo": "openai",
@@ -113,7 +125,8 @@ MODEL_TO_PROVIDER = {
     "/workspace/7m_v2_21000": "vllm",
     "/workspace/7m_v1_llama3_10500": "vllm",
     "NousResearch/Meta-Llama-3-70B-Instruct": "vllm",
-    "/workspace/7m_v1_llama3_21500": "vllm"
+    "/workspace/7m_v1_llama3_21500": "vllm",
+    "/workspace/test_mistral_lctxt_5_last": "vllm",
 }
 
 
@@ -129,20 +142,27 @@ def main():
     eval_result = []
     agent = None
     for index, dataset in enumerate(ALL_DATASETS):
+        # Set few shot for long datasets
+        few_shot = args.few_shot
+        if dataset in LONG_DATASETS:
+            few_shot = 0
+
         config = json.load(open(f"configs/{dataset}.json", "r"))
         config["model"]["name"] = args.model
-        config["model"]["provider"] = MODEL_TO_PROVIDER[args.model]
-        if MODEL_TO_PROVIDER[args.model] == "openai" or MODEL_TO_PROVIDER[args.model] == "vllm":
-            config["model"]["compute_confidence"] = True
-        if MODEL_TO_PROVIDER[args.model] == "vllm":
+        provider = MODEL_TO_PROVIDER.get(args.model, "vllm")
+        config["model"]["provider"] = provider
+        config["model"]["compute_confidence"] = True
+        if provider == "vllm":
             config["model"]["params"] = {
                 "tensor_parallel_size": NUM_GPUS,
                 "max_tokens": 1024,
                 "temperature": 0.05,
                 "top_p": 0.999999999999,
             }
-        config["prompt"]["few_shot_num"] = FEW_SHOT_OVERRIDES[dataset] if dataset in FEW_SHOT_OVERRIDES else args.few_shot
-        if not args.few_shot:
+        config["prompt"]["few_shot_num"] = (
+            FEW_SHOT_OVERRIDES[dataset] if dataset in FEW_SHOT_OVERRIDES else few_shot
+        )
+        if not few_shot:
             config["prompt"]["few_shot_selection"] = "fixed"
 
         if not agent:
@@ -159,7 +179,9 @@ def main():
                 agent.confidence.score_type = "logprob_average"
         ds = AutolabelDataset(f"data/{dataset}/test.csv", config=config)
         print("Benchmarking", dataset)
-        additional_metrics = [F1Metric, TextSimilarity] if dataset in NER_DATASETS else []
+        additional_metrics = (
+            [F1Metric, TextSimilarity] if dataset in NER_DATASETS else []
+        )
         new_ds = agent.run(
             ds, max_items=args.max_items, additional_metrics=additional_metrics
         )

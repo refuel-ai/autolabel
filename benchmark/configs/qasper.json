@@ -1,0 +1,20 @@
+{
+    "task_name": "Qasper",
+    "task_type": "question_answering",
+    "dataset": {
+        "label_column": "output",
+        "delimiter": ","
+    },
+    "model": {
+        "provider": "openai",
+        "name": "gpt-3.5-turbo"
+    },
+    "prompt": {
+        "task_guidelines": "You are an expert at reading academic papers and answering questions after reading the paper. You are given a question followed by the text in the research paper. Use the text from the paper to answer the question at the start. If the question is a yes/no question, answer using yes/no.",
+        "output_guidelines": "You will output just the answer.",
+        "example_template": "Question and Paper Text: {input}\nAnswer: {output}",
+        "few_shot_examples": "data/qasper/seed.csv",
+        "few_shot_selection": "semantic_similarity",
+        "few_shot_num": 0
+    }
+}
