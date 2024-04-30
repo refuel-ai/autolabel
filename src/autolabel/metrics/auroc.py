@@ -17,9 +17,10 @@ class AUROCMetric(BaseMetric):
         super().__init__()
     
     def similarity_acceptance(self, a, b) -> bool:
-        if not isinstance(a, str) or not isinstance(b, str): return False
+        if not isinstance(a, str) or not isinstance(b, str): 0
+        a, b = a.replace('"', "'"), b.replace('"', "'")
         substring_lengths = pylcs.lcs_string_length(a, b)
-        return substring_lengths / max(len(a) + 1e-5, len(b) + 1e-5) > 0.9
+        return substring_lengths / max(len(a) + 1e-5, len(b) + 1e-5)
 
     def compute(
         self, llm_labels: List[LLMAnnotation], gt_labels: List[str]
@@ -36,13 +37,12 @@ class AUROCMetric(BaseMetric):
             if llm_label.error is None and gt_label != "nan":
                 filtered_llm_labels.append(llm_label)
                 filtered_gt_labels.append(gt_label)
-
+        
         match = [
-            int(self.similarity_acceptance(llm_label.label, gt_label))
+            int(self.similarity_acceptance(llm_label.label, gt_label) > 0.95)
             for llm_label, gt_label in zip(filtered_llm_labels, filtered_gt_labels)
         ]
         confidence = [llm_label.confidence_score for llm_label in filtered_llm_labels]
-
         if np.unique(match).shape[0] == 1:
             # all labels are the same
             auroc = 1 if match[0] == 1 else 0

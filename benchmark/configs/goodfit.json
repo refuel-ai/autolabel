@@ -1,0 +1,41 @@
+{
+    "task_name": "GoodfitClassification",
+    "task_type": "classification",
+    "dataset": {
+        "label_column": "label",
+        "delimiter": ","
+    },
+    "model": {
+        "provider": "openai",
+        "name": "gpt-3.5-turbo"
+    },
+    "prompt": {
+        "task_guidelines": "You are an expert at reading and understanding websites and determining what type of business they are. Your job is to correctly classify the provided business into one of the following categories using the information scraped from their websites.\nCategories:\n{labels}",
+        "output_guidelines": "You will answer with just the the correct output label and nothing else. Make sure that the category is from one of the categories provided above. Do not output any category that is not in the provided list of possible categories.",
+        "labels": [
+            "legal",
+            "process automation",
+            "recruiting",
+            "sales tooling",
+            "gifting and swag",
+            "compliance & security",
+            "developer tools","it management",
+            "learning and enablement",
+            "business banking",
+            "compensation management",
+            "workforce management",
+            "expense management",
+            "team collaboration",
+            "customer success tooling",
+            "procurement",
+            "product experience",
+            "contract management",
+            "esg",
+            "employee experience"
+        ],
+        "few_shot_examples": "data/goodfit/seed.csv",
+        "few_shot_selection": "semantic_similarity",
+        "few_shot_num": 0,
+        "example_template": "Business: {input}\nCategory: {label}"
+    }
+}

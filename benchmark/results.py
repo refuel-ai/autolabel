@@ -4,12 +4,12 @@ import json
 import pandas as pd
 
 METRICS = {
-    "classification": ["accuracy", "completion_rate"],
-    "entity_matching": ["accuracy", "completion_rate"],
-    "question_answering": ["accuracy", "f1"],
-    "named_entity_recognition": ["accuracy", "f1_strict"],
-    "attribute_extraction": ["Macro:accuracy", "Macro:F1", "Macro:TextSimilarity"],
-    "multilabel_classification": ["accuracy", "f1_weighted"]
+    "classification": ["accuracy", "completion_rate", "auroc"],
+    "entity_matching": ["accuracy", "completion_rate", "auroc"],
+    "question_answering": ["accuracy", "f1", "auroc"],
+    "named_entity_recognition": ["accuracy", "f1_strict", "auroc"],
+    "attribute_extraction": ["Macro:accuracy", "Macro:F1", "Macro:TextSimilarity", "Macro:auroc"],
+    "multilabel_classification": ["accuracy", "f1_weighted", "auroc"]
 }
 
 DATASETS = [
@@ -28,6 +28,8 @@ DATASETS = [
     "belebele",
     "teachfx",
     "pathstream",
+    "goodfit",
+    "harmonic",
     "favespro",
     "acronym",
     "numeric",
