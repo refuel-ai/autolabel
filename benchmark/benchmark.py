@@ -69,28 +69,26 @@ class TextSimilarity(BaseMetric):
         return [MetricResult(name="TextSimilarity", value=sum(text_similarity)/len(text_similarity))]
 
 NUM_GPUS = torch.cuda.device_count()
-# NER_DATASETS = ["favespro", "acronym", "numeric", "multiconer", "quoref", "conll2003"]
-# DATASETS = [
-#     "civil_comments",
-#     "banking",
-#     "company",
-#     "craigslist",
-#     "ledgar",
-#     "lexical_relation",
-#     "math",
-#     "sciq",
-#     "squad_v2",
-#     "walmart_amazon",
-#     "quail",
-#     "diagnosis",
-#     "belebele",
-#     "teachfx",
-#     "pathstream",
-#     "goodfit",
-#     "harmonic"
-# ]
-DATASETS = []
-NER_DATASETS = ["acronym"]
+NER_DATASETS = ["favespro", "acronym", "numeric", "multiconer", "quoref", "conll2003"]
+DATASETS = [
+    "civil_comments",
+    "banking",
+    "company",
+    "craigslist",
+    "ledgar",
+    "lexical_relation",
+    "math",
+    "sciq",
+    "squad_v2",
+    "walmart_amazon",
+    "quail",
+    "diagnosis",
+    "belebele",
+    "teachfx",
+    "pathstream",
+    "goodfit",
+    "harmonic"
+]
 ALL_DATASETS = DATASETS + NER_DATASETS
 FEW_SHOT_OVERRIDES = {
     "company": 4,

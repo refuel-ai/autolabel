@@ -28,6 +28,8 @@ DATASETS = [
     "belebele",
     "teachfx",
     "pathstream",
+    "goodfit",
+    "harmonic",
     "favespro",
     "acronym",
     "numeric",
