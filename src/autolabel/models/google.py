@@ -4,7 +4,6 @@ from time import time
 from typing import List, Optional
 
 from langchain.schema import Generation
-from tenacity import before_sleep_log, retry
 
 from autolabel.cache import BaseCache
 from autolabel.configs import AutolabelConfig
@@ -80,19 +79,13 @@ class GoogleLLM(BaseModel):
         try:
             start_time = time()
             result = await self.llm.agenerate(prompts)
-            generations = result.generations
+            generations = []
             end_time = time()
-            if generations == [[]]:
-                return RefuelLLMResult(
-                    generations=[[Generation(text="")]],
-                    errors=[
-                        LabelingError(
-                            error_type=ErrorType.LLM_PROVIDER_ERROR,
-                            error_message="No generations returned",
-                        )
-                    ],
-                    latencies=[end_time - start_time],
-                )
+            for generation in result.generations:
+                if not generation:
+                    generations.append([Generation(text="")])
+                else:
+                    generations.append(generation)
             return RefuelLLMResult(
                 generations=generations,
                 errors=[None] * len(generations),
@@ -108,17 +101,13 @@ class GoogleLLM(BaseModel):
             result = self.llm.generate(prompts)
             generations = result.generations
             end_time = time()
-            if generations == [[]]:
-                return RefuelLLMResult(
-                    generations=[[Generation(text="")]],
-                    errors=[
-                        LabelingError(
-                            error_type=ErrorType.LLM_PROVIDER_ERROR,
-                            error_message="No generations returned",
-                        )
-                    ],
-                    latencies=[end_time - start_time],
-                )
+            generations = []
+            end_time = time()
+            for generation in result.generations:
+                if not generation:
+                    generations.append([Generation(text="")])
+                else:
+                    generations.append(generation)
             return RefuelLLMResult(
                 generations=generations,
                 errors=[None] * len(generations),
