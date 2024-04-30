@@ -89,7 +89,6 @@ DATASETS = [
     "goodfit",
     "harmonic"
 ]
-NER_DATASETS = []
 ALL_DATASETS = DATASETS + NER_DATASETS
 FEW_SHOT_OVERRIDES = {
     "company": 4,
