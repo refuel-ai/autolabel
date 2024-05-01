@@ -11,7 +11,7 @@
     },
     "prompt": {
         "task_guidelines": "You are an expert at understanding bank customers support complaints and queries.\nYour job is to correctly classify the provided input example into one of the following categories.\nCategories:\n{labels}",
-        "output_guidelines": "You will answer with just the the correct output label and nothing else.",
+        "output_guidelines": "You will answer with just the correct output label and nothing else.",
         "labels": [
             "activate_my_card",
             "age_limit",

@@ -1,11 +1,9 @@
 import os
 import logging
-from functools import cached_property
 from time import time
 from typing import List, Optional
 
-from langchain.schema import Generation, HumanMessage, LLMResult
-from tenacity import before_sleep_log, retry, stop_after_attempt, wait_exponential
+from langchain.schema import Generation
 
 from autolabel.cache import BaseCache
 from autolabel.configs import AutolabelConfig
@@ -81,8 +79,21 @@ class GoogleLLM(BaseModel):
         try:
             start_time = time()
             result = await self.llm.agenerate(prompts)
-            generations = result.generations
             end_time = time()
+            generations = []
+            errors = []
+            for generation in result.generations:
+                if not generation:
+                    generations.append([Generation(text="")])
+                    errors.append(
+                        LabelingError(
+                            error_type=ErrorType.LABELING_FAILED,
+                            error_message="No generation",
+                        )
+                    )
+                else:
+                    generations.append(generation)
+                    errors.append(None)
             return RefuelLLMResult(
                 generations=generations,
                 errors=[None] * len(generations),
@@ -96,8 +107,21 @@ class GoogleLLM(BaseModel):
         try:
             start_time = time()
             result = self.llm.generate(prompts)
-            generations = result.generations
             end_time = time()
+            generations = []
+            errors = []
+            for generation in result.generations:
+                if not generation:
+                    generations.append([Generation(text="")])
+                    errors.append(
+                        LabelingError(
+                            error_type=ErrorType.LABELING_FAILED,
+                            error_message="No generation",
+                        )
+                    )
+                else:
+                    generations.append(generation)
+                    errors.append(None)
             return RefuelLLMResult(
                 generations=generations,
                 errors=[None] * len(generations),
