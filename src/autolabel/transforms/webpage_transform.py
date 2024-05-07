@@ -65,10 +65,7 @@ class WebpageTransform(BaseTransform):
 
     # On error, retry fetching the URL with a premium proxy. Only use exponential backoff for certain status codes.
     async def _load_url(self, url: str, retry_count=0) -> str:
-        if (
-            retry_count >= self.max_retries
-            or self.scrapingbee_params.get(PREMIUM_PROXY_PARAM) == "True"
-        ):
+        if retry_count >= self.max_retries:
             logger.warning(f"Max retries reached for URL: {url}")
             raise TransformError(
                 TransformErrorType.MAX_RETRIES_REACHED, "Max retries reached"
