@@ -51,7 +51,7 @@ class TransformCacheEntryModel(Base):
             creation_time_ms=int(time.time() * 1000),
             ttl_ms=cache_entry.ttl_ms,
         )
-        db.add(db_object)
+        db.merge(db_object)
         db.commit()
         return db_object
 
