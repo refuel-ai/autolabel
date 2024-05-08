@@ -29,7 +29,18 @@ Autolabel is a Python library to label, clean and enrich text datasets with any 
 
 ## 🌟 (New!) Benchmark models on Refuel's Benchmark
 
-You can
+Check out our [technical report](https://refuel.ai/blog-posts/announcing-refuel-llm-2) to learn more about the performance of RefuelLLM-v2 on our benchmark. You can replicate the benchmark yourself by following the steps below
+
+```python
+cd autolabel/benchmark
+python benchmark.py --model $model --base_dir benchmark-results
+python results.py --eval_dir benchmark-results
+cat results.csv
+```
+
+You can benchmark the relevant model by replacing $model with the name of the model needed to be benchmarked. If it is an API hosted model like `gpt-3.5-turbo`, `gpt-4-1106-preview`, `claude-3-opus-20240229`, `gemini-1.5-pro-preview-0409` or some other Autolabel supported model, just write the name of the model. If the model to be benchmarked is a [vLLM supported model](https://docs.vllm.ai/en/latest/models/supported_models.html) then pass the local path or the huggingface path corresponding to the model. This will run the benchmark along with the _same_ prompts for all models.
+
+The `results.csv` will contain a row with every model that was benchmarked as a row. Look at `benchmark/results.csv` for an example.
 
 ## 🌟 Access RefuelLLM through Autolabel
 
@@ -169,21 +180,6 @@ ds.df.head()
 Refuel provides access to hosted open source LLMs for labeling, and for estimating confidence This is helpful, because you can calibrate a confidence threshold for your labeling task, and then route less confident labels to humans, while you still get the benefits of auto-labeling for the confident examples.
 
 In order to use Refuel hosted LLMs, you can [request access here](https://refuel-ai.typeform.com/llm-access).
-
-## Benchmark
-
-Check out our [technical report]() to learn more about the performance of RefuelLLM-v2 on our benchmark. You can replicate the benchmark yourself by following the steps below
-
-```python
-cd autolabel/benchmark
-python benchmark.py --model $model --base_dir benchmark-results
-python results.py --eval_dir benchmark-results
-cat results.csv
-```
-
-You can benchmark the relevant model by replacing $model with the name of the model needed to be benchmarked. If it is an API hosted model like `gpt-3.5-turbo`, `gpt-4-1106-preview`, `claude-3-opus-20240229`, `gemini-1.5-pro-preview-0409` or some other Autolabel supported model, just write the name of the model. If the model to be benchmarked is a [vLLM supported model](https://docs.vllm.ai/en/latest/models/supported_models.html) then pass the local path or the huggingface path corresponding to the model. This will run the benchmark along with the _same_ prompts for all models.
-
-The `results.csv` will contain a row with every model that was benchmarked as a row. Look at `benchmark/results.csv` for an example.
 
 ## 🛠️ Roadmap
 
