@@ -58,20 +58,20 @@ class ConfidenceCalculator:
         called "logprobs". This dictionary further must contain "top_logprobs"
         that is a list of JSONs mapping tokens to their logprobs
         """
-        logprob_cumulative, count = 0, 0
+        logprob_cumulative, count = 1.0, 0
         for token in logprobs:
             token_str = list(token.keys())[0]
             if (
                 token_str.strip() not in self.tokens_to_ignore
                 and token[token_str] is not None
             ):
-                logprob_cumulative += (
+                logprob_cumulative *= (
                     token[token_str]
                     if token[token_str] > 0
                     else math.e ** (token[token_str])
                 )
                 count += 1
-        return logprob_cumulative / count if count > 0 else 0
+        return logprob_cumulative ** (1.0 / count) if count > 0 else 0
 
     def logprob_average_per_key(
         self,

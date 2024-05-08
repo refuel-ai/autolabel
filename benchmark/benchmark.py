@@ -10,6 +10,8 @@ import pickle as pkl
 import ast
 from sklearn.metrics import f1_score
 import torch
+import pylcs
+import os
 
 from autolabel import LabelingAgent, AutolabelConfig, AutolabelDataset
 from autolabel.tasks import TaskFactory
@@ -43,16 +45,38 @@ class F1Metric(BaseMetric):
                 curr_pred = " ".join(ast.literal_eval(llm_labels[i].label)).split(" ")
                 predictions.extend(construct_binary_preds(curr_input, curr_pred))
             except Exception as e:
-                print(e)
-                predictions.extend([0 for _ in range(len(curr_input))])
-            curr_gt = " ".join(ast.literal_eval(gt_labels[i])).split(" ")
+                curr_pred = llm_labels[i].label.split(" ")
+                predictions.extend(construct_binary_preds(curr_input, curr_pred))
+                # print(e, llm_labels[i].label)
+                # predictions.extend([0 for _ in range(len(curr_input))])
+            try:
+                curr_gt = " ".join(ast.literal_eval(gt_labels[i])).split(" ")
+            except Exception as e:
+                curr_gt = gt_labels[i].split(" ")
             gt.extend(construct_binary_preds(curr_input, curr_gt))
         return [MetricResult(name="F1", value=f1_score(gt, predictions))]
 
 
+class TextSimilarity(BaseMetric):
+    def compute(
+        llm_labels: List[LLMAnnotation], gt_labels: List[str]
+    ) -> List[MetricResult]:
+        def get_similarity(str_a, str_b):
+            substring_lengths = pylcs.lcs_string_length(str_a, str_b)
+            return substring_lengths / max(len(str_a), len(str_b))
+
+        text_similarity = []
+        for i in range(len(llm_labels)):
+            text_similarity.append(get_similarity(llm_labels[i].label, gt_labels[i]))
+        return [
+            MetricResult(
+                name="TextSimilarity", value=sum(text_similarity) / len(text_similarity)
+            )
+        ]
+
+
 NUM_GPUS = torch.cuda.device_count()
-NER_METRICS = set(["Macro:accuracy", "Macro:F1"])
-NER_DATASETS = set(["conll2003", "quoref", "acronym", "numeric", "multiconer"])
+NER_DATASETS = ["acronym", "numeric", "multiconer", "quoref", "conll2003"]
 DATASETS = [
     "civil_comments",
     "banking",
@@ -68,7 +92,19 @@ DATASETS = [
     "diagnosis",
     "belebele",
 ]
-ALL_DATASETS = DATASETS + [i for i in NER_DATASETS]
+LONG_DATASETS = [
+    "quality",
+    "qasper",
+    "contract_nli",
+    "naturalqa",
+]
+ALL_DATASETS = DATASETS + NER_DATASETS + LONG_DATASETS
+FEW_SHOT_OVERRIDES = {
+    "company": 4,
+    "squad_v2": 6,
+    "quail": 4,
+    "quoref": 2,
+}
 MODEL_TO_PROVIDER = {
     "gpt-3.5-turbo": "openai",
     "gpt-4": "openai",
@@ -78,28 +114,46 @@ MODEL_TO_PROVIDER = {
     "mistralai/Mistral-7B-Instruct-v0.1": "vllm",
     "mistralai/Mixtral-8x7B-Instruct-v0.1": "vllm",
     "01-ai/Yi-34B-Chat": "vllm",
+    "gemini-1.5-pro-preview-0409": "google",
 }
 
 
 def main():
     parser = ArgumentParser()
     parser.add_argument("--model", type=str, required=True)
-    parser.add_argument("--few-shot", type=int, default=0)
-    parser.add_argument("--max-items", type=int, default=100)
+    parser.add_argument("--few-shot", type=int, default=8)
+    parser.add_argument("--max-items", type=int, default=200)
+    parser.add_argument("--base_dir", type=str, default="benchmark-results")
     args = parser.parse_args()
 
+    os.makedirs(args.base_dir, exist_ok=True)
     eval_file_name = f"eval_{args.model}_{args.few_shot}_{args.max_items}.json"
     eval_file_name = eval_file_name.replace("/", "")
+    eval_file_name = f"{args.base_dir}/{eval_file_name}"
     eval_result = []
     agent = None
-    for dataset in ALL_DATASETS:
+    for index, dataset in enumerate(ALL_DATASETS):
+        # Set few shot for long datasets
+        few_shot = args.few_shot
+        if dataset in LONG_DATASETS:
+            few_shot = 0
+
         config = json.load(open(f"configs/{dataset}.json", "r"))
         config["model"]["name"] = args.model
-        config["model"]["provider"] = MODEL_TO_PROVIDER[args.model]
-        if MODEL_TO_PROVIDER[args.model] == "vllm":
-            config["model"]["params"] = {"tensor_parallel_size": NUM_GPUS}
-        config["prompt"]["few_shot_num"] = args.few_shot
-        if not args.few_shot:
+        provider = MODEL_TO_PROVIDER.get(args.model, "vllm")
+        config["model"]["provider"] = provider
+        config["model"]["compute_confidence"] = True
+        if provider == "vllm":
+            config["model"]["params"] = {
+                "tensor_parallel_size": NUM_GPUS,
+                "max_tokens": 1024,
+                "temperature": 0.05,
+                "top_p": 0.999999999999,
+            }
+        config["prompt"]["few_shot_num"] = (
+            FEW_SHOT_OVERRIDES[dataset] if dataset in FEW_SHOT_OVERRIDES else few_shot
+        )
+        if not few_shot:
             config["prompt"]["few_shot_selection"] = "fixed"
 
         if not agent:
@@ -110,18 +164,20 @@ def main():
             agent.task = TaskFactory.from_config(config)
             agent.llm.config = config
             agent.example_selector = None
+            if dataset in NER_DATASETS:
+                agent.confidence.score_type = "logprob_average_per_key"
+            else:
+                agent.confidence.score_type = "logprob_average"
         ds = AutolabelDataset(f"data/{dataset}/test.csv", config=config)
         print("Benchmarking", dataset)
-        additional_metrics = [F1Metric] if dataset in NER_DATASETS else []
+        additional_metrics = (
+            [F1Metric, TextSimilarity] if dataset in NER_DATASETS else []
+        )
         new_ds = agent.run(
             ds, max_items=args.max_items, additional_metrics=additional_metrics
         )
-        if dataset in NER_DATASETS:
-            eval_result.append(
-                [x.dict() for x in agent.eval_result if x.name in NER_METRICS]
-            )
-        else:
-            eval_result.append([x.dict() for x in agent.eval_result])
+        new_ds.df.to_csv(f"outputs_{dataset}.csv")
+        eval_result.append([x.dict() for x in agent.eval_result])
         json.dump(eval_result, open(eval_file_name, "w"))
         print(eval_result[-1])
 

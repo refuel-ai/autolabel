@@ -10,24 +10,24 @@
         "name": "gpt-3.5-turbo"
     },
     "prompt": {
-        "task_guidelines": "You are an expert at extracting Person, Organization, Location, and Miscellaneous entities from text. Your job is to extract named entities mentioned in text, grouped by entity type.",
-        "output_guidelines": "You will return the extracted attributes as a json with the following keys:\n{attribute_json}. Don't output anything other than the final JSON in our response.\n",
+        "task_guidelines": "You are an expert at extracting Location, Organization, Person, and Miscellaneous entities from text. Your job is to extract named entities mentioned in text, grouped by entity type.",
+        "output_guidelines": "You will return the extracted attributes as a json with the following keys:\n{attribute_json}. Don't output anything other than the final JSON in your response.",
         "attributes": [
             {
               "name": "Location",
-              "description": "A list containing all instances of locations in the input."
+              "description": "A list containing all instances of locations in the input. Output an empty list if no such entities exist."
             },
             {
               "name": "Organization",
-              "description": "A list containing all instances of all organizations in the input."
+              "description": "A list containing all instances of all organizations in the input. Output an empty list if no such entities exist."
             },
             {
               "name": "Person",
-              "description": "A list containing all instances of all people in the input."
+              "description": "A list containing all instances of all people in the input. Output an empty list if no such entities exist."
             },
             {
               "name": "Miscellaneous",
-              "description": "A list containing all instances of all miscellaneous entities in the input."
+              "description": "A list containing all instances of all miscellaneous entities in the input. Output an empty list if no such entities exist."
             }
             
         ],

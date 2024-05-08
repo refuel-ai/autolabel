@@ -1,0 +1,24 @@
+{
+    "task_name": "ContractNLI",
+    "task_type": "classification",
+    "dataset": {
+        "label_column": "output",
+        "delimiter": ","
+    },
+    "model": {
+        "provider": "openai",
+        "name": "gpt-3.5-turbo"
+    },
+    "prompt": {
+        "task_guidelines": "You are an expert at reading contracts and answering questions about hypotheses. You will be given hypothesis followed by a contract. Given the non disclosure agreement, predict whether the legal statement at the start is entailed (Entailment), not mentioned (Not mentioned) or contradicted (Contradiction) by the contract. Classify the hypothesis and contract into Entailment, Contradiction or Not mentioned.",
+        "labels": [
+            "Entailment",
+            "Contradiction",
+            "Not mentioned"
+        ],
+        "example_template": "Hypothesis and contract: {input}\nAnswer: {output}",
+        "few_shot_examples": "data/contract_nli/seed.csv",
+        "few_shot_selection": "semantic_similarity",
+        "few_shot_num": 0
+    }
+}

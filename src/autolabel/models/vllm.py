@@ -1,9 +1,5 @@
-import json
-import os
-import requests
 import logging
-from typing import List, Optional, Tuple
-from time import time
+from typing import List, Optional
 
 from autolabel.models import BaseModel
 from autolabel.configs import AutolabelConfig
@@ -17,9 +13,9 @@ logger = logging.getLogger(__name__)
 
 class VLLMModel(BaseModel):
     DEFAULT_PARAMS = {
-        "max_tokens": 128,
-        "temperature": 0.05,
-        "top_p": 0.95,
+        "max_tokens": 1024,
+        "temperature": 0,
+        "top_p": 1.0,
     }
 
     def __init__(
@@ -30,9 +26,6 @@ class VLLMModel(BaseModel):
         super().__init__(config, cache)
         try:
             from vllm import LLM, SamplingParams
-            from vllm.model_executor.parallel_utils.parallel_state import (
-                destroy_model_parallel,
-            )
             from transformers import AutoTokenizer
         except ImportError:
             raise ImportError(
@@ -40,11 +33,13 @@ class VLLMModel(BaseModel):
             )
 
         self.tokenizer = AutoTokenizer.from_pretrained(self.config.model_name())
-        self.destroy_model_parallel = destroy_model_parallel
         self.params = SamplingParams(
             max_tokens=self.DEFAULT_PARAMS["max_tokens"],
             temperature=self.DEFAULT_PARAMS["temperature"],
             top_p=self.DEFAULT_PARAMS["top_p"],
+            use_beam_search=True,
+            best_of=5,
+            logprobs=1,
         )
         self.model_name = self.config.model_name()
         self.llm = LLM(
@@ -61,15 +56,36 @@ class VLLMModel(BaseModel):
         for prompt in prompts:
             try:
                 messages = [{"role": "user", "content": prompt}]
+                tokenized_prompt = self.tokenizer.apply_chat_template(
+                    messages, add_generation_prompt=True
+                )
+                if len(tokenized_prompt) > 4096:
+                    logger.warning(
+                        f"Input is greater than 4096 tokens: {len(tokenized_prompt)}"
+                    )
                 response = self.llm.generate(
-                    prompt_token_ids=[self.tokenizer.apply_chat_template(messages)],
+                    prompt_token_ids=[tokenized_prompt],
                     sampling_params=self.params,
                     use_tqdm=False,
                 )
                 generations.append(
                     [
                         Generation(
-                            text=response[0].outputs[0].text.strip(),
+                            text=response[0]
+                            .outputs[0]
+                            .text.strip()
+                            .replace("<|eot_id|>", ""),
+                            generation_info=(
+                                {
+                                    "logprobs": {
+                                        "top_logprobs": self._process_confidence_request(
+                                            response[0].outputs[0].logprobs
+                                        )
+                                    }
+                                }
+                                if self.config.confidence()
+                                else None
+                            ),
                         )
                     ]
                 )
@@ -90,6 +106,14 @@ class VLLMModel(BaseModel):
         return RefuelLLMResult(
             generations=generations, errors=errors, latencies=latencies
         )
+
+    def _process_confidence_request(self, logprobs):
+        resp = []
+        for item in logprobs:
+            key = list(item.keys())[0]
+            curr_logprob_obj = item[key]
+            resp.append({curr_logprob_obj.decoded_token: curr_logprob_obj.logprob})
+        return resp
 
     def get_cost(self, prompt: str, label: Optional[str] = "") -> float:
         return 0

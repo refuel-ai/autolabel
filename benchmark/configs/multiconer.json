@@ -10,19 +10,20 @@
       "name": "gpt-3.5-turbo"
   },
   "prompt": {
-      "task_guidelines": "You are an expert at extracting Person, Corporation and Location entities from text. Your job is to extract named entities mentioned in text, grouped by entity type. Don't output anything other than the final JSON in our response.",
+      "task_guidelines": "You are an expert at extracting Person, Corporation and Location entities from text. Your job is to extract named entities mentioned in text, grouped by entity type. Don't output anything other than the final JSON in your response.",
+      "output_guidelines": "You will return the extracted attributes as a JSON with the following keys:\n{attribute_json}. Don't output anything other than the final JSON with the required keys in your response.",
       "attributes": [
           {
             "name": "Location",
-            "description": "A list containing all instances of locations in the input."
+            "description": "A list containing all instances of locations in the input. Output an empty list if no such entities exist."
           },
           {
             "name": "Corporation",
-            "description": "A list containing all instances of all corporations in the input."
+            "description": "A list containing all instances of all corporations in the input. Output an empty list if no such entities exist."
           },
           {
             "name": "Person",
-            "description": "A list containing all instances of all people in the input."
+            "description": "A list containing all instances of all people in the input. Output an empty list if no such entities exist."
           }
       ],
       "example_template": "Example: {example}\nOutput:\n{output_dict}",
