@@ -33,6 +33,8 @@ Check out our [technical report](https://refuel.ai/blog-posts/announcing-refuel-
 
 ```python
 cd autolabel/benchmark
+curl https://autolabel-benchmarking.s3.us-west-2.amazonaws.com/data.zip -o data.zip
+unzip data.zip
 python benchmark.py --model $model --base_dir benchmark-results
 python results.py --eval_dir benchmark-results
 cat results.csv
@@ -41,14 +43,6 @@ cat results.csv
 You can benchmark the relevant model by replacing $model with the name of the model needed to be benchmarked. If it is an API hosted model like `gpt-3.5-turbo`, `gpt-4-1106-preview`, `claude-3-opus-20240229`, `gemini-1.5-pro-preview-0409` or some other Autolabel supported model, just write the name of the model. If the model to be benchmarked is a [vLLM supported model](https://docs.vllm.ai/en/latest/models/supported_models.html) then pass the local path or the huggingface path corresponding to the model. This will run the benchmark along with the _same_ prompts for all models.
 
 The `results.csv` will contain a row with every model that was benchmarked as a row. Look at `benchmark/results.csv` for an example.
-
-## 🌟 Access RefuelLLM through Autolabel
-
-You can access RefuelLLM, our recently announced LLM purpose built for data labeling, through Autolabel (Read more about it in this [blog post](http://www.refuel.ai/blog-posts/announcing-refuel-llm)). RefuelLLM is a Llama-v2-13b base model, instruction tuned on over 2500 unique (5.24B tokens) labeling tasks spanning categories such as classification, entity resolution, matching, reading comprehension and information extraction. You can experiment with the model in the playground [here](https://app.refuel.ai/playground).
-
-<img alt="Refuel Performance" src="https://raw.githubusercontent.com/refuel-ai/autolabel/main/docs/assets/refuel_llm_performance.png">
-
-You can request access to RefuelLLM [here](https://refuel-ai.typeform.com/llm-access). Read the docs about using RefuelLLM in autolabel [here](https://docs.refuel.ai/guide/llms/llms/#refuel).
 
 ## 🚀 Getting started
 
