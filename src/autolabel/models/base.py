@@ -70,7 +70,9 @@ class BaseModel(ABC):
             generations=generations, costs=costs, errors=errors, latencies=latencies
         )
 
-    async def _alabel_individually(self, prompts: List[str]) -> RefuelLLMResult:
+    async def _alabel_individually(
+        self, prompts: List[str], **kwargs
+    ) -> RefuelLLMResult:
         """Label each prompt individually. Should be used only after trying as a batch first.
 
         Args:
@@ -86,7 +88,7 @@ class BaseModel(ABC):
         for prompt in prompts:
             try:
                 start_time = time()
-                response = await self.llm.agenerate([prompt])
+                response = await self.llm.agenerate([prompt], **kwargs)
                 generations.append(response.generations[0])
                 errors.append(None)
                 latencies.append(time() - start_time)
@@ -104,7 +106,7 @@ class BaseModel(ABC):
             generations=generations, errors=errors, latencies=latencies
         )
 
-    def _label_individually(self, prompts: List[str]) -> RefuelLLMResult:
+    def _label_individually(self, prompts: List[str], **kwargs) -> RefuelLLMResult:
         """Label each prompt individually. Should be used only after trying as a batch first.
 
         Args:
@@ -120,7 +122,7 @@ class BaseModel(ABC):
         for prompt in prompts:
             try:
                 start_time = time()
-                response = self.llm.generate([prompt])
+                response = self.llm.generate([prompt], **kwargs)
                 generations.append(response.generations[0])
                 errors.append(None)
                 latencies.append(time() - start_time)

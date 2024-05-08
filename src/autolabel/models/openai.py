@@ -137,6 +137,7 @@ class OpenAILLM(BaseModel):
                 **self._generate_logit_bias(),
             }
 
+        self.query_params = {}
         if self._engine == "chat":
             self.model_params = {**self.DEFAULT_PARAMS_CHAT_ENGINE, **model_params}
             self.query_params = self.DEFAULT_QUERY_PARAMS_CHAT_ENGINE
@@ -213,7 +214,14 @@ class OpenAILLM(BaseModel):
                 latencies=[end_time - start_time] * len(generations),
             )
         except Exception as e:
-            return await self._alabel_individually(prompts)
+            refuel_llm_result = await self._alabel_individually(
+                prompts, **self.query_params
+            )
+            if self._engine == "chat":
+                refuel_llm_result.generations = self._chat_backward_compatibility(
+                    refuel_llm_result.generations
+                )
+            return refuel_llm_result
 
     def _label(self, prompts: List[str]) -> RefuelLLMResult:
         try:
@@ -232,7 +240,12 @@ class OpenAILLM(BaseModel):
                 latencies=[end_time - start_time] * len(generations),
             )
         except Exception as e:
-            return self._label_individually(prompts)
+            refuel_llm_result = self._label_individually(prompts, **self.query_params)
+            if self._engine == "chat":
+                refuel_llm_result.generations = self._chat_backward_compatibility(
+                    refuel_llm_result.generations
+                )
+            return refuel_llm_result
 
     def get_cost(self, prompt: str, label: Optional[str] = "") -> float:
         encoding = self.tiktoken.encoding_for_model(self.model_name)
