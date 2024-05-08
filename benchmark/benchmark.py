@@ -11,6 +11,7 @@ import ast
 from sklearn.metrics import f1_score
 import torch
 import pylcs
+import os
 
 from autolabel import LabelingAgent, AutolabelConfig, AutolabelDataset
 from autolabel.tasks import TaskFactory
@@ -75,7 +76,7 @@ class TextSimilarity(BaseMetric):
 
 
 NUM_GPUS = torch.cuda.device_count()
-NER_DATASETS = ["favespro", "acronym", "numeric", "multiconer", "quoref", "conll2003"]
+NER_DATASETS = ["acronym", "numeric", "multiconer", "quoref", "conll2003"]
 DATASETS = [
     "civil_comments",
     "banking",
@@ -90,10 +91,6 @@ DATASETS = [
     "quail",
     "diagnosis",
     "belebele",
-    "teachfx",
-    "pathstream",
-    "goodfit",
-    "harmonic",
 ]
 LONG_DATASETS = [
     "quality",
@@ -107,8 +104,6 @@ FEW_SHOT_OVERRIDES = {
     "squad_v2": 6,
     "quail": 4,
     "quoref": 2,
-    "goodfit": 1,
-    "harmonic": 6,
 }
 MODEL_TO_PROVIDER = {
     "gpt-3.5-turbo": "openai",
@@ -119,14 +114,6 @@ MODEL_TO_PROVIDER = {
     "mistralai/Mistral-7B-Instruct-v0.1": "vllm",
     "mistralai/Mixtral-8x7B-Instruct-v0.1": "vllm",
     "01-ai/Yi-34B-Chat": "vllm",
-    "/workspace/refuel_llm_v2_1000": "vllm",
-    "/workspace/gcp_run_2000": "vllm",
-    "/workspace/7m_v2_9500": "vllm",
-    "/workspace/7m_v2_21000": "vllm",
-    "/workspace/7m_v1_llama3_10500": "vllm",
-    "NousResearch/Meta-Llama-3-70B-Instruct": "vllm",
-    "/workspace/7m_v1_llama3_21500": "vllm",
-    "/workspace/test_mistral_lctxt_5_last": "vllm",
 }
 
 
@@ -135,10 +122,13 @@ def main():
     parser.add_argument("--model", type=str, required=True)
     parser.add_argument("--few-shot", type=int, default=8)
     parser.add_argument("--max-items", type=int, default=200)
+    parser.add_argument("--base_dir", type=str, default="benchmark-results")
     args = parser.parse_args()
 
+    os.makedirs(args.base_dir, exist_ok=True)
     eval_file_name = f"eval_{args.model}_{args.few_shot}_{args.max_items}.json"
     eval_file_name = eval_file_name.replace("/", "")
+    eval_file_name = f"{args.base_dir}/{eval_file_name}"
     eval_result = []
     agent = None
     for index, dataset in enumerate(ALL_DATASETS):
