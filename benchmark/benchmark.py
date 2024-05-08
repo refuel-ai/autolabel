@@ -114,6 +114,7 @@ MODEL_TO_PROVIDER = {
     "mistralai/Mistral-7B-Instruct-v0.1": "vllm",
     "mistralai/Mixtral-8x7B-Instruct-v0.1": "vllm",
     "01-ai/Yi-34B-Chat": "vllm",
+    "gemini-1.5-pro-preview-0409": "google",
 }
 
 

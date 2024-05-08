@@ -1,9 +1,5 @@
-import json
-import os
-import requests
 import logging
-from typing import List, Optional, Tuple
-from time import time
+from typing import List, Optional
 
 from autolabel.models import BaseModel
 from autolabel.configs import AutolabelConfig

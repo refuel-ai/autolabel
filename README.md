@@ -27,7 +27,11 @@ Access to [large, clean and diverse](https://twitter.com/karpathy/status/1528443
 
 Autolabel is a Python library to label, clean and enrich text datasets with any Large Language Models (LLM) of your choice.
 
-## 🌟 (New!) Access RefuelLLM through Autolabel
+## 🌟 (New!) Benchmark models on Refuel's Benchmark
+
+You can
+
+## 🌟 Access RefuelLLM through Autolabel
 
 You can access RefuelLLM, our recently announced LLM purpose built for data labeling, through Autolabel (Read more about it in this [blog post](http://www.refuel.ai/blog-posts/announcing-refuel-llm)). RefuelLLM is a Llama-v2-13b base model, instruction tuned on over 2500 unique (5.24B tokens) labeling tasks spanning categories such as classification, entity resolution, matching, reading comprehension and information extraction. You can experiment with the model in the playground [here](https://app.refuel.ai/playground).
 
@@ -168,7 +172,18 @@ In order to use Refuel hosted LLMs, you can [request access here](https://refuel
 
 ## Benchmark
 
-Check out our [technical report](https://www.refuel.ai/blog-posts/llm-labeling-technical-report) to learn more about the performance of various LLMs, and human annoators, on label quality, turnaround time and cost.
+Check out our [technical report]() to learn more about the performance of RefuelLLM-v2 on our benchmark. You can replicate the benchmark yourself by following the steps below
+
+```python
+cd autolabel/benchmark
+python benchmark.py --model $model --base_dir benchmark-results
+python results.py --eval_dir benchmark-results
+cat results.csv
+```
+
+You can benchmark the relevant model by replacing $model with the name of the model needed to be benchmarked. If it is an API hosted model like `gpt-3.5-turbo`, `gpt-4-1106-preview`, `claude-3-opus-20240229`, `gemini-1.5-pro-preview-0409` or some other Autolabel supported model, just write the name of the model. If the model to be benchmarked is a [vLLM supported model](https://docs.vllm.ai/en/latest/models/supported_models.html) then pass the local path or the huggingface path corresponding to the model. This will run the benchmark along with the _same_ prompts for all models.
+
+The `results.csv` will contain a row with every model that was benchmarked as a row. Look at `benchmark/results.csv` for an example.
 
 ## 🛠️ Roadmap
 
