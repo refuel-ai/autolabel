@@ -57,31 +57,25 @@ class AnthropicLLM(BaseModel):
 
     async def _alabel(self, prompts: List[str]) -> RefuelLLMResult:
         prompts = [[HumanMessage(content=prompt)] for prompt in prompts]
-        try:
-            start_time = time()
-            result = await self.llm.agenerate(prompts)
-            end_time = time()
-            return RefuelLLMResult(
-                generations=result.generations,
-                errors=[None] * len(result.generations),
-                latencies=[end_time - start_time] * len(result.generations),
-            )
-        except Exception as e:
-            return await self._alabel_individually(prompts)
+        start_time = time()
+        result = await self.llm.agenerate(prompts)
+        end_time = time()
+        return RefuelLLMResult(
+            generations=result.generations,
+            errors=[None] * len(result.generations),
+            latencies=[end_time - start_time] * len(result.generations),
+        )
 
     def _label(self, prompts: List[str]) -> RefuelLLMResult:
         prompts = [[HumanMessage(content=prompt)] for prompt in prompts]
-        try:
-            start_time = time()
-            result = self.llm.generate(prompts)
-            end_time = time()
-            return RefuelLLMResult(
-                generations=result.generations,
-                errors=[None] * len(result.generations),
-                latencies=[end_time - start_time] * len(result.generations),
-            )
-        except Exception as e:
-            return self._label_individually(prompts)
+        start_time = time()
+        result = self.llm.generate(prompts)
+        end_time = time()
+        return RefuelLLMResult(
+            generations=result.generations,
+            errors=[None] * len(result.generations),
+            latencies=[end_time - start_time] * len(result.generations),
+        )
 
     def get_cost(self, prompt: str, label: Optional[str] = "") -> float:
         num_prompt_toks = len(self.tokenizer.encode(prompt).ids)

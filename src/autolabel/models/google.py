@@ -76,60 +76,52 @@ class GoogleLLM(BaseModel):
         self.tiktoken = tiktoken
 
     async def _alabel(self, prompts: List[str]) -> RefuelLLMResult:
-        try:
-            start_time = time()
-            result = await self.llm.agenerate(prompts)
-            end_time = time()
-            generations = []
-            errors = []
-            for generation in result.generations:
-                if not generation:
-                    generations.append([Generation(text="")])
-                    errors.append(
-                        LabelingError(
-                            error_type=ErrorType.LABELING_FAILED,
-                            error_message="No generation",
-                        )
+        start_time = time()
+        result = await self.llm.agenerate(prompts)
+        end_time = time()
+        generations = []
+        errors = []
+        for generation in result.generations:
+            if not generation:
+                generations.append([Generation(text="")])
+                errors.append(
+                    LabelingError(
+                        error_type=ErrorType.LABELING_FAILED,
+                        error_message="No generation",
                     )
-                else:
-                    generations.append(generation)
-                    errors.append(None)
-            return RefuelLLMResult(
-                generations=generations,
-                errors=[None] * len(generations),
-                latencies=[end_time - start_time] * len(generations),
-            )
-        except Exception as e:
-            logger.error(f"Error from Google LLM: {e}")
-            return await self._alabel_individually(prompts)
+                )
+            else:
+                generations.append(generation)
+                errors.append(None)
+        return RefuelLLMResult(
+            generations=generations,
+            errors=[None] * len(generations),
+            latencies=[end_time - start_time] * len(generations),
+        )
 
     def _label(self, prompts: List[str]) -> RefuelLLMResult:
-        try:
-            start_time = time()
-            result = self.llm.generate(prompts)
-            end_time = time()
-            generations = []
-            errors = []
-            for generation in result.generations:
-                if not generation:
-                    generations.append([Generation(text="")])
-                    errors.append(
-                        LabelingError(
-                            error_type=ErrorType.LABELING_FAILED,
-                            error_message="No generation",
-                        )
+        start_time = time()
+        result = self.llm.generate(prompts)
+        end_time = time()
+        generations = []
+        errors = []
+        for generation in result.generations:
+            if not generation:
+                generations.append([Generation(text="")])
+                errors.append(
+                    LabelingError(
+                        error_type=ErrorType.LABELING_FAILED,
+                        error_message="No generation",
                     )
-                else:
-                    generations.append(generation)
-                    errors.append(None)
-            return RefuelLLMResult(
-                generations=generations,
-                errors=[None] * len(generations),
-                latencies=[end_time - start_time] * len(generations),
-            )
-        except Exception as e:
-            logger.error(f"Error from Google LLM: {e}")
-            return self._label_individually(prompts)
+                )
+            else:
+                generations.append(generation)
+                errors.append(None)
+        return RefuelLLMResult(
+            generations=generations,
+            errors=[None] * len(generations),
+            latencies=[end_time - start_time] * len(generations),
+        )
 
     def get_cost(self, prompt: str, label: Optional[str] = "") -> float:
         if self.model_name is None:

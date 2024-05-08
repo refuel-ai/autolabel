@@ -198,54 +198,36 @@ class OpenAILLM(BaseModel):
         return generations
 
     async def _alabel(self, prompts: List[str]) -> RefuelLLMResult:
-        try:
-            start_time = time()
-            if self._engine == "chat":
-                prompts = [[HumanMessage(content=prompt)] for prompt in prompts]
-                result = await self.llm.agenerate(prompts, **self.query_params)
-                generations = self._chat_backward_compatibility(result.generations)
-            else:
-                result = await self.llm.agenerate(prompts)
-                generations = result.generations
-            end_time = time()
-            return RefuelLLMResult(
-                generations=generations,
-                errors=[None] * len(generations),
-                latencies=[end_time - start_time] * len(generations),
-            )
-        except Exception as e:
-            refuel_llm_result = await self._alabel_individually(
-                prompts, **self.query_params
-            )
-            if self._engine == "chat":
-                refuel_llm_result.generations = self._chat_backward_compatibility(
-                    refuel_llm_result.generations
-                )
-            return refuel_llm_result
+        start_time = time()
+        if self._engine == "chat":
+            prompts = [[HumanMessage(content=prompt)] for prompt in prompts]
+            result = await self.llm.agenerate(prompts, **self.query_params)
+            generations = self._chat_backward_compatibility(result.generations)
+        else:
+            result = await self.llm.agenerate(prompts)
+            generations = result.generations
+        end_time = time()
+        return RefuelLLMResult(
+            generations=generations,
+            errors=[None] * len(generations),
+            latencies=[end_time - start_time] * len(generations),
+        )
 
     def _label(self, prompts: List[str]) -> RefuelLLMResult:
-        try:
-            start_time = time()
-            if self._engine == "chat":
-                prompts = [[HumanMessage(content=prompt)] for prompt in prompts]
-                result = self.llm.generate(prompts, **self.query_params)
-                generations = self._chat_backward_compatibility(result.generations)
-            else:
-                result = self.llm.generate(prompts)
-                generations = result.generations
-            end_time = time()
-            return RefuelLLMResult(
-                generations=generations,
-                errors=[None] * len(generations),
-                latencies=[end_time - start_time] * len(generations),
-            )
-        except Exception as e:
-            refuel_llm_result = self._label_individually(prompts, **self.query_params)
-            if self._engine == "chat":
-                refuel_llm_result.generations = self._chat_backward_compatibility(
-                    refuel_llm_result.generations
-                )
-            return refuel_llm_result
+        start_time = time()
+        if self._engine == "chat":
+            prompts = [[HumanMessage(content=prompt)] for prompt in prompts]
+            result = self.llm.generate(prompts, **self.query_params)
+            generations = self._chat_backward_compatibility(result.generations)
+        else:
+            result = self.llm.generate(prompts)
+            generations = result.generations
+        end_time = time()
+        return RefuelLLMResult(
+            generations=generations,
+            errors=[None] * len(generations),
+            latencies=[end_time - start_time] * len(generations),
+        )
 
     def get_cost(self, prompt: str, label: Optional[str] = "") -> float:
         encoding = self.tiktoken.encoding_for_model(self.model_name)

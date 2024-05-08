@@ -130,17 +130,14 @@ class HFPipelineLLM(BaseModel):
         }
 
     def _label(self, prompts: List[str]) -> RefuelLLMResult:
-        try:
-            start_time = time()
-            result = self.llm.generate(prompts)
-            end_time = time()
-            return RefuelLLMResult(
-                generations=result.generations,
-                errors=[None] * len(result.generations),
-                latencies=[end_time - start_time] * len(result.generations),
-            )
-        except Exception as e:
-            return self._label_individually(prompts)
+        start_time = time()
+        result = self.llm.generate(prompts)
+        end_time = time()
+        return RefuelLLMResult(
+            generations=result.generations,
+            errors=[None] * len(result.generations),
+            latencies=[end_time - start_time] * len(result.generations),
+        )
 
     def get_cost(self, prompt: str, label: Optional[str] = "") -> float:
         # Model inference for this model is being run locally
