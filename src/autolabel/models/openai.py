@@ -1,3 +1,4 @@
+import copy
 import logging
 import os
 from functools import cached_property
@@ -139,7 +140,7 @@ class OpenAILLM(BaseModel):
 
         if self._engine == "chat":
             self.model_params = {**self.DEFAULT_PARAMS_CHAT_ENGINE, **model_params}
-            self.query_params = self.DEFAULT_QUERY_PARAMS_CHAT_ENGINE
+            self.query_params = copy.deepcopy(self.DEFAULT_QUERY_PARAMS_CHAT_ENGINE)
             self.llm = ChatOpenAI(
                 model_name=self.model_name, verbose=False, **self.model_params
             )
