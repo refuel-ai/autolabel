@@ -2,10 +2,12 @@ import os
 from time import time
 from typing import List, Optional
 
+from langchain.schema import Generation
+
 from autolabel.cache import BaseCache
 from autolabel.configs import AutolabelConfig
 from autolabel.models import BaseModel
-from autolabel.schema import RefuelLLMResult
+from autolabel.schema import ErrorType, LabelingError, RefuelLLMResult
 
 
 class CohereLLM(BaseModel):
@@ -42,14 +44,27 @@ class CohereLLM(BaseModel):
         self.co = cohere.Client(api_key=os.environ["COHERE_API_KEY"])
 
     def _label(self, prompts: List[str]) -> RefuelLLMResult:
-        start_time = time()
-        result = self.llm.generate(prompts)
-        end_time = time()
-        return RefuelLLMResult(
-            generations=result.generations,
-            errors=[None] * len(result.generations),
-            latencies=[end_time - start_time] * len(result.generations),
-        )
+        try:
+            start_time = time()
+            result = self.llm.generate(prompts)
+            end_time = time()
+            return RefuelLLMResult(
+                generations=result.generations,
+                errors=[None] * len(result.generations),
+                latencies=[end_time - start_time] * len(result.generations),
+            )
+        except Exception as e:
+            return RefuelLLMResult(
+                generations=[[Generation(text="")] for _ in prompts],
+                errors=[
+                    LabelingError(
+                        error_type=ErrorType.LLM_PROVIDER_ERROR,
+                        error_message=str(e),
+                    )
+                    for _ in prompts
+                ],
+                latencies=[0 for _ in prompts],
+            )
 
     def get_cost(self, prompt: str, label: Optional[str] = "") -> float:
         num_prompt_toks = len(self.co.tokenize(prompt).tokens)

@@ -4,12 +4,12 @@ from functools import cached_property
 from time import time
 from typing import List, Optional
 
-from langchain.schema import HumanMessage, LLMResult
+from langchain.schema import HumanMessage, Generation, LLMResult
 
 from autolabel.cache import BaseCache
 from autolabel.configs import AutolabelConfig
 from autolabel.models import BaseModel
-from autolabel.schema import RefuelLLMResult
+from autolabel.schema import ErrorType, RefuelLLMResult, LabelingError
 
 logger = logging.getLogger(__name__)
 
@@ -198,36 +198,64 @@ class OpenAILLM(BaseModel):
         return generations
 
     async def _alabel(self, prompts: List[str]) -> RefuelLLMResult:
-        start_time = time()
-        if self._engine == "chat":
-            prompts = [[HumanMessage(content=prompt)] for prompt in prompts]
-            result = await self.llm.agenerate(prompts, **self.query_params)
-            generations = self._chat_backward_compatibility(result.generations)
-        else:
-            result = await self.llm.agenerate(prompts)
-            generations = result.generations
-        end_time = time()
-        return RefuelLLMResult(
-            generations=generations,
-            errors=[None] * len(generations),
-            latencies=[end_time - start_time] * len(generations),
-        )
+        try:
+            start_time = time()
+            if self._engine == "chat":
+                prompts = [[HumanMessage(content=prompt)] for prompt in prompts]
+                result = await self.llm.agenerate(prompts, **self.query_params)
+                generations = self._chat_backward_compatibility(result.generations)
+            else:
+                result = await self.llm.agenerate(prompts)
+                generations = result.generations
+            end_time = time()
+            return RefuelLLMResult(
+                generations=generations,
+                errors=[None] * len(generations),
+                latencies=[end_time - start_time] * len(generations),
+            )
+        except Exception as e:
+            logger.exception(f"Unable to generate prediction: {e}")
+            return RefuelLLMResult(
+                generations=[[Generation(text="")] for _ in prompts],
+                errors=[
+                    LabelingError(
+                        error_type=ErrorType.LLM_PROVIDER_ERROR,
+                        error_message=str(e),
+                    )
+                    for _ in prompts
+                ],
+                latencies=[0 for _ in prompts],
+            )
 
     def _label(self, prompts: List[str]) -> RefuelLLMResult:
-        start_time = time()
-        if self._engine == "chat":
-            prompts = [[HumanMessage(content=prompt)] for prompt in prompts]
-            result = self.llm.generate(prompts, **self.query_params)
-            generations = self._chat_backward_compatibility(result.generations)
-        else:
-            result = self.llm.generate(prompts)
-            generations = result.generations
-        end_time = time()
-        return RefuelLLMResult(
-            generations=generations,
-            errors=[None] * len(generations),
-            latencies=[end_time - start_time] * len(generations),
-        )
+        try:
+            start_time = time()
+            if self._engine == "chat":
+                prompts = [[HumanMessage(content=prompt)] for prompt in prompts]
+                result = self.llm.generate(prompts, **self.query_params)
+                generations = self._chat_backward_compatibility(result.generations)
+            else:
+                result = self.llm.generate(prompts)
+                generations = result.generations
+            end_time = time()
+            return RefuelLLMResult(
+                generations=generations,
+                errors=[None] * len(generations),
+                latencies=[end_time - start_time] * len(generations),
+            )
+        except Exception as e:
+            logger.exception(f"Unable to generate prediction: {e}")
+            return RefuelLLMResult(
+                generations=[[Generation(text="")] for _ in prompts],
+                errors=[
+                    LabelingError(
+                        error_type=ErrorType.LLM_PROVIDER_ERROR,
+                        error_message=str(e),
+                    )
+                    for _ in prompts
+                ],
+                latencies=[0 for _ in prompts],
+            )
 
     def get_cost(self, prompt: str, label: Optional[str] = "") -> float:
         encoding = self.tiktoken.encoding_for_model(self.model_name)

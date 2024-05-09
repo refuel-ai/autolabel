@@ -9,9 +9,7 @@ from langchain.schema import Generation
 from autolabel.cache import BaseCache
 from autolabel.configs import AutolabelConfig
 from autolabel.schema import (
-    ErrorType,
     GenerationCacheEntry,
-    LabelingError,
     RefuelLLMResult,
 )
 
