@@ -1,12 +1,12 @@
 from time import time
 from typing import List, Optional
 
-from langchain.schema import HumanMessage
+from langchain.schema import HumanMessage, Generation
 
 from autolabel.cache import BaseCache
 from autolabel.configs import AutolabelConfig
 from autolabel.models import BaseModel
-from autolabel.schema import RefuelLLMResult
+from autolabel.schema import ErrorType, RefuelLLMResult, LabelingError
 
 
 class AnthropicLLM(BaseModel):
@@ -56,8 +56,8 @@ class AnthropicLLM(BaseModel):
         self.tokenizer = sync_get_tokenizer()
 
     async def _alabel(self, prompts: List[str]) -> RefuelLLMResult:
-        prompts = [[HumanMessage(content=prompt)] for prompt in prompts]
         try:
+            prompts = [[HumanMessage(content=prompt)] for prompt in prompts]
             start_time = time()
             result = await self.llm.agenerate(prompts)
             end_time = time()
@@ -67,11 +67,21 @@ class AnthropicLLM(BaseModel):
                 latencies=[end_time - start_time] * len(result.generations),
             )
         except Exception as e:
-            return await self._alabel_individually(prompts)
+            return RefuelLLMResult(
+                generations=[[Generation(text="")] for _ in prompts],
+                errors=[
+                    LabelingError(
+                        error_type=ErrorType.LLM_PROVIDER_ERROR,
+                        error_message=str(e),
+                    )
+                    for _ in prompts
+                ],
+                latencies=[0 for _ in prompts],
+            )
 
     def _label(self, prompts: List[str]) -> RefuelLLMResult:
-        prompts = [[HumanMessage(content=prompt)] for prompt in prompts]
         try:
+            prompts = [[HumanMessage(content=prompt)] for prompt in prompts]
             start_time = time()
             result = self.llm.generate(prompts)
             end_time = time()
@@ -81,7 +91,17 @@ class AnthropicLLM(BaseModel):
                 latencies=[end_time - start_time] * len(result.generations),
             )
         except Exception as e:
-            return self._label_individually(prompts)
+            return RefuelLLMResult(
+                generations=[[Generation(text="")] for _ in prompts],
+                errors=[
+                    LabelingError(
+                        error_type=ErrorType.LLM_PROVIDER_ERROR,
+                        error_message=str(e),
+                    )
+                    for _ in prompts
+                ],
+                latencies=[0 for _ in prompts],
+            )
 
     def get_cost(self, prompt: str, label: Optional[str] = "") -> float:
         num_prompt_toks = len(self.tokenizer.encode(prompt).ids)

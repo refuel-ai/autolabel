@@ -9,9 +9,7 @@ from langchain.schema import Generation
 from autolabel.cache import BaseCache
 from autolabel.configs import AutolabelConfig
 from autolabel.schema import (
-    ErrorType,
     GenerationCacheEntry,
-    LabelingError,
     RefuelLLMResult,
 )
 
@@ -68,74 +66,6 @@ class BaseModel(ABC):
         generations = [existing_prompts[i] for i in range(len(prompts))]
         return RefuelLLMResult(
             generations=generations, costs=costs, errors=errors, latencies=latencies
-        )
-
-    async def _alabel_individually(self, prompts: List[str]) -> RefuelLLMResult:
-        """Label each prompt individually. Should be used only after trying as a batch first.
-
-        Args:
-            prompts (List[str]): List of prompts to label
-
-        Returns:
-            LLMResult: LLMResult object with generations
-            List[LabelingError]: List of errors encountered while labeling
-        """
-        generations = []
-        errors = []
-        latencies = []
-        for prompt in prompts:
-            try:
-                start_time = time()
-                response = await self.llm.agenerate([prompt])
-                generations.append(response.generations[0])
-                errors.append(None)
-                latencies.append(time() - start_time)
-            except Exception as e:
-                print(f"Error generating from LLM: {e}")
-                generations.append([Generation(text="")])
-                errors.append(
-                    LabelingError(
-                        error_type=ErrorType.LLM_PROVIDER_ERROR, error_message=str(e)
-                    )
-                )
-                latencies.append(0)
-
-        return RefuelLLMResult(
-            generations=generations, errors=errors, latencies=latencies
-        )
-
-    def _label_individually(self, prompts: List[str]) -> RefuelLLMResult:
-        """Label each prompt individually. Should be used only after trying as a batch first.
-
-        Args:
-            prompts (List[str]): List of prompts to label
-
-        Returns:
-            LLMResult: LLMResult object with generations
-            List[LabelingError]: List of errors encountered while labeling
-        """
-        generations = []
-        errors = []
-        latencies = []
-        for prompt in prompts:
-            try:
-                start_time = time()
-                response = self.llm.generate([prompt])
-                generations.append(response.generations[0])
-                errors.append(None)
-                latencies.append(time() - start_time)
-            except Exception as e:
-                print(f"Error generating from LLM: {e}")
-                generations.append([Generation(text="")])
-                errors.append(
-                    LabelingError(
-                        error_type=ErrorType.LLM_PROVIDER_ERROR, error_message=str(e)
-                    )
-                )
-                latencies.append(0)
-
-        return RefuelLLMResult(
-            generations=generations, errors=errors, latencies=latencies
         )
 
     @abstractmethod

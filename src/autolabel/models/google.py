@@ -100,8 +100,18 @@ class GoogleLLM(BaseModel):
                 latencies=[end_time - start_time] * len(generations),
             )
         except Exception as e:
-            logger.error(f"Error from Google LLM: {e}")
-            return await self._alabel_individually(prompts)
+            logger.exception(f"Unable to generate prediction: {e}")
+            return RefuelLLMResult(
+                generations=[[Generation(text="")] for _ in prompts],
+                errors=[
+                    LabelingError(
+                        error_type=ErrorType.LLM_PROVIDER_ERROR,
+                        error_message=str(e),
+                    )
+                    for _ in prompts
+                ],
+                latencies=[0 for _ in prompts],
+            )
 
     def _label(self, prompts: List[str]) -> RefuelLLMResult:
         try:
@@ -128,8 +138,18 @@ class GoogleLLM(BaseModel):
                 latencies=[end_time - start_time] * len(generations),
             )
         except Exception as e:
-            logger.error(f"Error from Google LLM: {e}")
-            return self._label_individually(prompts)
+            logger.exception(f"Unable to generate prediction: {e}")
+            return RefuelLLMResult(
+                generations=[[Generation(text="")] for _ in prompts],
+                errors=[
+                    LabelingError(
+                        error_type=ErrorType.LLM_PROVIDER_ERROR,
+                        error_message=str(e),
+                    )
+                    for _ in prompts
+                ],
+                latencies=[0 for _ in prompts],
+            )
 
     def get_cost(self, prompt: str, label: Optional[str] = "") -> float:
         if self.model_name is None:
