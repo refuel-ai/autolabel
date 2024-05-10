@@ -584,10 +584,13 @@ class LabelingAgent:
         self,
         seed_examples: Union[str, List[Dict]],
         include_label: bool = True,
+        return_annotations: bool = False,
     ) -> List[Dict]:
         return asyncio.run(
             self.agenerate_explanations(
-                seed_examples=seed_examples, include_label=include_label
+                seed_examples=seed_examples,
+                include_label=include_label,
+                return_annotations=return_annotations,
             )
         )
 
@@ -595,7 +598,8 @@ class LabelingAgent:
         self,
         seed_examples: Union[str, List[Dict]],
         include_label: bool = True,
-    ) -> List[Dict]:
+        return_annotations: bool = False,
+    ) -> Union[List[Dict], Tuple[List[Dict], List[LLMAnnotation]]]:
         """Use LLM to generate explanations for why examples are labeled the way that they are."""
         out_file = None
         if isinstance(seed_examples, str):
@@ -608,7 +612,7 @@ class LabelingAgent:
             raise ValueError(
                 "The explanation column needs to be specified in the dataset config."
             )
-
+        llm_annotations = []
         for seed_example in track(
             seed_examples,
             description="Generating explanations",
@@ -623,14 +627,45 @@ class LabelingAgent:
                     if col in seed_example and seed_example[col] is not None:
                         explanation_prompt[col] = seed_example[col]
                 explanation_prompt = json.dumps(explanation_prompt)
-            explanation = await self.llm.label([explanation_prompt])
-            explanation = explanation.generations[0][0].text
+            response = await self.llm.label([explanation_prompt])
+            explanation = response.generations[0][0].text
             seed_example[explanation_column] = str(explanation) if explanation else ""
+            if return_annotations:
+                error = response.errors[0]
+                input_tokens = self.llm.get_num_tokens(explanation_prompt)
+                if error is not None:
+                    annotation = LLMAnnotation(
+                        successfully_labeled=False,
+                        label=self.task.NULL_LABEL_TOKEN,
+                        raw_response="",
+                        curr_sample=pickle.dumps(seed_example),
+                        prompt=explanation_prompt,
+                        confidence_score=0,
+                        error=error,
+                        input_tokens=input_tokens,
+                        cost=0,
+                        latency=0,
+                    )
+                else:
+                    annotation = LLMAnnotation(
+                        successfully_labeled=True,
+                        label=explanation,
+                        raw_response=explanation,
+                        curr_sample=pickle.dumps(seed_example),
+                        prompt=explanation_prompt,
+                        error=None,
+                        input_tokens=input_tokens,
+                        output_tokens=self.llm.get_num_tokens(explanation),
+                        cost=sum(response.costs),
+                        latency=response.latencies[0],
+                    )
+                llm_annotations.append(annotation)
 
         if out_file:
             df = pd.DataFrame.from_records(seed_examples)
             df.to_csv(out_file, index=False)
-
+        if return_annotations:
+            return seed_examples, llm_annotations
         return seed_examples
 
     def generate_synthetic_dataset(self) -> AutolabelDataset:
