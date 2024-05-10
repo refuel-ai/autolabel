@@ -32,6 +32,7 @@ from autolabel.few_shot.label_selector import LabelSelector
 from autolabel.metrics import BaseMetric
 from autolabel.models import BaseModel, ModelFactory
 from autolabel.schema import (
+    ModelProvider,
     AUTO_CONFIDENCE_CHUNKING_COLUMN,
     AggregationFunction,
     LLMAnnotation,
@@ -61,7 +62,7 @@ COST_TABLE_STYLES = {
 }
 METRIC_TABLE_STYLE = "cyan bold"
 DEFAULT_CONFIDENCE_MODEL = "NousResearch/Llama-2-13b-chat-hf"
-
+DEFAULT_CONFIDENCE_PROVIDER = ModelProvider.REFUEL
 MERGE_FUNCTION = {
     AggregationFunction.MAX: np.max,
     AggregationFunction.MEAN: np.mean,
@@ -119,6 +120,9 @@ class LabelingAgent:
         confidence_model_config._model_config[
             confidence_model_config.MODEL_NAME_KEY
         ] = self.confidence_model
+        confidence_model_config._model_config[confidence_model_config.PROVIDER_KEY] = (
+            DEFAULT_CONFIDENCE_PROVIDER
+        )
         self.confidence_llm: BaseModel = ModelFactory.from_config(
             self.config, cache=self.generation_cache
         )
