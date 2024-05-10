@@ -50,11 +50,9 @@ class MultilabelClassificationTask(BaseTask):
         self,
         input: Dict,
         examples: List,
-        prompt_template_override: PromptTemplate = None,
-        refuel_prompt_override: bool = False,
-        output_guidelines_override: str = None,
         max_input_tokens: int = None,
         get_num_tokens: Optional[Callable] = None,
+        apply_model_template: Optional[Callable] = lambda x: x,
         **kwargs,
     ) -> str:
         # Copy over the input so that we can modify it
@@ -104,21 +102,11 @@ class MultilabelClassificationTask(BaseTask):
             )
 
         # populate the current example in the prompt
-        prompt_template = (
-            self.prompt_template
-            if prompt_template_override is None
-            else prompt_template_override
-        )
-        output_guidelines = (
-            self.output_guidelines
-            if output_guidelines_override is None
-            else output_guidelines_override
-        )
         if self._is_few_shot_mode():
             curr_text_prompt = self.trim_prompt(
-                prompt_template,
+                self.prompt_template,
                 task_guidelines=fmt_task_guidelines,
-                output_guidelines=output_guidelines,
+                output_guidelines=self.output_guidelines,
                 seed_examples="\n\n".join(fmt_examples),
                 current_example=current_example,
                 max_input_tokens=max_input_tokens,
@@ -126,9 +114,9 @@ class MultilabelClassificationTask(BaseTask):
             )
         else:
             curr_text_prompt = self.trim_prompt(
-                prompt_template,
+                self.prompt_template,
                 task_guidelines=fmt_task_guidelines,
-                output_guidelines=output_guidelines,
+                output_guidelines=self.output_guidelines,
                 current_example=current_example,
                 max_input_tokens=max_input_tokens,
                 get_num_tokens=get_num_tokens,
@@ -139,9 +127,8 @@ class MultilabelClassificationTask(BaseTask):
                 if input.get(col) is not None and len(input.get(col)) > 0:
                     prompt_dict[col] = input[col]
                 prompt_dict[col] = input[col]
-            return json.dumps(prompt_dict)
-        else:
-            return curr_text_prompt
+            curr_text_prompt = json.dumps(prompt_dict)
+        return apply_model_template(curr_text_prompt)
 
     def get_explanation_prompt(self, example: Dict, include_label=True) -> str:
         pt = PromptTemplate(

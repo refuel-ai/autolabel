@@ -63,7 +63,6 @@ class MistralLLM(BaseModel):
 
         # populate model name
         self.model_name = config.model_name() or self.DEFAULT_MODEL
-        self.prompts2tokens = {}
         # populate model params
         model_params = config.model_params()
         self.timeout = self.DEFAULT_READ_TIMEOUT

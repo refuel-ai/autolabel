@@ -139,3 +139,12 @@ class BaseModel(ABC):
         """
         Get the number of tokens in the prompt"""
         pass
+
+    def apply_model_template(self, prompt: str) -> str:
+        """
+        Some models (like the ones from Refuel) directly take in the string
+        that should be used as the prompt for the model. Hence, they require
+        the application of the model chat template to the prompt before sending
+        it for inference.
+        """
+        return prompt

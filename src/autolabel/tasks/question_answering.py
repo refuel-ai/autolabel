@@ -32,7 +32,6 @@ logger = logging.getLogger(__name__)
 
 class QuestionAnsweringTask(BaseTask):
     DEFAULT_OUTPUT_GUIDELINES = "You will return just the answer and nothing else\n"
-    LLAMA_DEFAULT_OUTPUT_GUIDELINES = ""
     DEFAULT_TASK_GUIDELINES = "Your job is to answer the following questions using the options provided for each question. Choose the best answer for the question.\n"
     NULL_LABEL_TOKEN = "NO_LABEL"
 
@@ -43,9 +42,6 @@ class QuestionAnsweringTask(BaseTask):
     GENERATE_EXPLANATION_PROMPT = "You are an expert at providing a well reasoned explanation for the output of a given task. \n\nBEGIN TASK DESCRIPTION\n{task_guidelines}\nEND TASK DESCRIPTION\nYou will be given an input example and the corresponding output. You will be given a question and an answer. Your job is to provide an explanation for why the answer is correct for the task above.\nThink step by step and generate an explanation.{label_format}\n{labeled_example}\nExplanation: "
 
     def __init__(self, config: AutolabelConfig) -> None:
-        if config.provider() in [ModelProvider.REFUEL, ModelProvider.TGI]:
-            self.DEFAULT_OUTPUT_GUIDELINES = self.LLAMA_DEFAULT_OUTPUT_GUIDELINES
-
         super().__init__(config)
         self.metrics = [
             AccuracyMetric(),
@@ -63,11 +59,9 @@ class QuestionAnsweringTask(BaseTask):
         self,
         input: Dict,
         examples: List[Dict],
-        prompt_template_override: PromptTemplate = None,
-        refuel_prompt_override: bool = False,
-        output_guidelines_override: str = None,
         max_input_tokens: int = None,
         get_num_tokens: Optional[Callable] = None,
+        apply_model_template: Optional[Callable] = lambda x: x,
         **kwargs,
     ) -> str:
         # Copy over the input so that we can modify it
@@ -106,28 +100,24 @@ class QuestionAnsweringTask(BaseTask):
             )
 
         # populate the current example in the prompt
-        prompt_template = (
-            self.prompt_template
-            if prompt_template_override is None
-            else prompt_template_override
-        )
-        output_guidelines = (
-            self.output_guidelines
-            if output_guidelines_override is None
-            else output_guidelines_override
-        )
         if self._is_few_shot_mode():
-            curr_text_prompt = prompt_template.format(
+            curr_text_prompt = self.trim_prompt(
+                self.prompt_template,
                 task_guidelines=self.task_guidelines,
-                output_guidelines=output_guidelines,
+                output_guidelines=self.output_guidelines,
                 seed_examples="\n\n".join(fmt_examples),
                 current_example=current_example,
+                max_input_tokens=max_input_tokens,
+                get_num_tokens=get_num_tokens,
             )
         else:
-            curr_text_prompt = prompt_template.format(
+            curr_text_prompt = self.trim_prompt(
+                self.prompt_template,
                 task_guidelines=self.task_guidelines,
-                output_guidelines=output_guidelines,
+                output_guidelines=self.output_guidelines,
                 current_example=current_example,
+                max_input_tokens=max_input_tokens,
+                get_num_tokens=get_num_tokens,
             )
         if self.image_cols:
             prompt_dict = {"text": curr_text_prompt}
@@ -135,21 +125,8 @@ class QuestionAnsweringTask(BaseTask):
                 if input.get(col) is not None and len(input.get(col)) > 0:
                     prompt_dict[col] = input[col]
                 prompt_dict[col] = input[col]
-            return json.dumps(prompt_dict)
-        else:
-            return curr_text_prompt
-
-    def construct_confidence_prompt(self, input: str, examples: List, **kwargs) -> str:
-        output_guidelines_override = (
-            self.config.output_guidelines() or self.LLAMA_DEFAULT_OUTPUT_GUIDELINES
-        )
-        refuel_prompt = super().construct_confidence_prompt(
-            input,
-            examples,
-            output_guidelines_override=output_guidelines_override,
-            **kwargs,
-        )
-        return refuel_prompt
+            curr_text_prompt = json.dumps(prompt_dict)
+        return apply_model_template(curr_text_prompt)
 
     def get_explanation_prompt(self, example: Dict, include_label=True) -> str:
         pt = PromptTemplate(

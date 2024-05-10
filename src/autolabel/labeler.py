@@ -1,4 +1,5 @@
 import asyncio
+import copy
 import io
 import json
 import logging
@@ -59,6 +60,7 @@ COST_TABLE_STYLES = {
     "value": "green bold",
 }
 METRIC_TABLE_STYLE = "cyan bold"
+DEFAULT_CONFIDENCE_MODEL = "NousResearch/Llama-2-13b-chat-hf"
 
 MERGE_FUNCTION = {
     AggregationFunction.MAX: np.max,
@@ -79,12 +81,13 @@ class LabelingAgent:
         generation_cache: Optional[BaseCache] = SQLAlchemyGenerationCache(),
         transform_cache: Optional[BaseCache] = SQLAlchemyTransformCache(),
         confidence_cache: Optional[BaseCache] = SQLAlchemyConfidenceCache(),
-        confidence_tokenizer: Optional[AutoTokenizer] = None,
+        confidence_model: Optional[str] = DEFAULT_CONFIDENCE_MODEL,
         use_tqdm: Optional[bool] = False,
     ) -> None:
         self.generation_cache = generation_cache
         self.transform_cache = transform_cache
         self.confidence_cache = confidence_cache
+        self.confidence_model = confidence_model
         if not cache:
             logger.warning(
                 f"cache parameter is deprecated and will be removed soon. Please use generation_cache, transform_cache and confidence_cache instead."
@@ -112,13 +115,14 @@ class LabelingAgent:
             self.config, cache=self.generation_cache
         )
 
-        if self.config.confidence_chunk_column():
-            if not confidence_tokenizer:
-                self.confidence_tokenizer = AutoTokenizer.from_pretrained(
-                    "NousResearch/Llama-2-13b-chat-hf"
-                )
-            else:
-                self.confidence_tokenizer = confidence_tokenizer
+        confidence_model_config = copy.deepcopy(self.config)
+        confidence_model_config._model_config[
+            confidence_model_config.MODEL_NAME_KEY
+        ] = self.confidence_model
+        self.confidence_llm: BaseModel = ModelFactory.from_config(
+            self.config, cache=self.generation_cache
+        )
+
         score_type = "logprob_average"
         if self.config.task_type() == TaskType.ATTRIBUTE_EXTRACTION:
             score_type = "logprob_average_per_key"
@@ -238,9 +242,7 @@ class LabelingAgent:
                 console=self.console,
             )
             if self.console_output
-            else tqdm(indices)
-            if self.use_tqdm
-            else indices
+            else tqdm(indices) if self.use_tqdm else indices
         ):
             chunk = dataset.inputs[current_index]
             examples = []
@@ -280,6 +282,7 @@ class LabelingAgent:
                 selected_labels=selected_labels,
                 max_input_tokens=self.llm.DEFAULT_CONTEXT_LENGTH,
                 get_num_tokens=self.llm.get_num_tokens,
+                apply_model_template=self.llm.apply_model_template,
             )
             response = await self.llm.label([final_prompt])
             for i, generations, error, latency in zip(
@@ -316,13 +319,12 @@ class LabelingAgent:
                         annotation.latency = latency
 
                         if self.config.confidence():
-                            annotation.confidence_prompt = (
-                                self.task.construct_confidence_prompt(
-                                    chunk,
-                                    examples,
-                                    max_input_tokens=self.CONFIDENCE_MAX_CONTEXT_LENGTH,
-                                    get_num_tokens=self.get_num_tokens,
-                                )
+                            annotation.confidence_prompt = self.task.construct_prompt(
+                                chunk,
+                                examples,
+                                max_input_tokens=self.CONFIDENCE_MAX_CONTEXT_LENGTH,
+                                get_num_tokens=self.get_num_tokens,
+                                apply_model_template=self.confidence_llm.apply_model_template,
                             )
                             try:
                                 annotation.confidence_score = (
@@ -507,6 +509,7 @@ class LabelingAgent:
                     selected_labels=selected_labels,
                     max_input_tokens=self.llm.DEFAULT_CONTEXT_LENGTH,
                     get_num_tokens=self.llm.get_num_tokens,
+                    apply_model_template=self.llm.apply_model_template,
                 )
             else:
                 final_prompt = self.task.construct_prompt(
@@ -514,6 +517,7 @@ class LabelingAgent:
                     examples,
                     max_input_tokens=self.llm.DEFAULT_CONTEXT_LENGTH,
                     get_num_tokens=self.llm.get_num_tokens,
+                    apply_model_template=self.llm.apply_model_template,
                 )
             prompt_list.append(final_prompt)
 
@@ -667,16 +671,10 @@ class LabelingAgent:
         self.transform_cache.clear(use_ttl=use_ttl)
 
     def get_num_tokens(self, inp: str) -> int:
-        if not self.confidence_tokenizer:
-            logger.warning("Confidence tokenizer is not set. Using default tokenizer.")
-            self.confidence_tokenizer = AutoTokenizer.from_pretrained(
-                "NousResearch/Llama-2-13b-chat-hf"
-            )
-        """Returns the number of tokens in the prompt"""
-        return len(self.confidence_tokenizer.encode(str(inp)))
+        return len(self.confidence_llm.tokenizer.encode(str(inp)))
 
     def chunk_string(self, inp: str, chunk_size: int) -> List[str]:
         """Chunks the input string into chunks of size chunk_size"""
-        tokens = self.confidence_tokenizer.encode(inp)
+        tokens = self.confidence_llm.tokenizer.encode(inp)
         chunks = [tokens[i : i + chunk_size] for i in range(0, len(tokens), chunk_size)]
-        return [self.confidence_tokenizer.decode(chunk) for chunk in chunks]
+        return [self.confidence_llm.tokenizer.decode(chunk) for chunk in chunks]

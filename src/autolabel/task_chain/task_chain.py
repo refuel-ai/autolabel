@@ -6,7 +6,7 @@ from autolabel.configs import AutolabelConfig
 import logging
 from typing import Dict, List, Optional
 
-from autolabel.labeler import LabelingAgent
+from autolabel.labeler import DEFAULT_CONFIDENCE_MODEL, LabelingAgent
 from autolabel.dataset import AutolabelDataset
 from autolabel.few_shot import (
     BaseExampleSelector,
@@ -114,7 +114,7 @@ class TaskChainOrchestrator:
         generation_cache: Optional[BaseCache] = SQLAlchemyGenerationCache(),
         transform_cache: Optional[BaseCache] = SQLAlchemyTransformCache(),
         confidence_cache: Optional[BaseCache] = SQLAlchemyConfidenceCache(),
-        confidence_tokenizer: Optional[AutoTokenizer] = None,
+        confidence_model: Optional[str] = DEFAULT_CONFIDENCE_MODEL,
         column_name_map: Optional[Dict[str, str]] = None,
     ):
         self.task_chain_config = task_chain_config
@@ -123,7 +123,7 @@ class TaskChainOrchestrator:
         self.generation_cache = generation_cache
         self.transform_cache = transform_cache
         self.confidence_cache = confidence_cache
-        self.confidence_tokenizer = confidence_tokenizer
+        self.confidence_model = confidence_model
         self.column_name_map = column_name_map
 
     # TODO: For now, we run each separate step of the task chain serially and aggregate at the end.
@@ -151,7 +151,7 @@ class TaskChainOrchestrator:
                     generation_cache=self.generation_cache,
                     transform_cache=self.transform_cache,
                     confidence_cache=self.confidence_cache,
-                    confidence_tokenizer=self.confidence_tokenizer,
+                    confidence_model=self.confidence_model,
                 )
                 for transform_dict in autolabel_config.transforms():
                     transform = TransformFactory.from_dict(
@@ -167,7 +167,7 @@ class TaskChainOrchestrator:
                     generation_cache=self.generation_cache,
                     transform_cache=self.transform_cache,
                     confidence_cache=self.confidence_cache,
-                    confidence_tokenizer=self.confidence_tokenizer,
+                    confidence_model=self.confidence_model,
                 )
                 dataset = await agent.arun(
                     dataset,

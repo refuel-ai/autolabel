@@ -55,26 +55,15 @@ class VLLMModel(BaseModel):
         latencies = []
         for prompt in prompts:
             try:
-                messages = [{"role": "user", "content": prompt}]
-                tokenized_prompt = self.tokenizer.apply_chat_template(
-                    messages, add_generation_prompt=True
-                )
-                if len(tokenized_prompt) > 4096:
-                    logger.warning(
-                        f"Input is greater than 4096 tokens: {len(tokenized_prompt)}"
-                    )
                 response = self.llm.generate(
-                    prompt_token_ids=[tokenized_prompt],
+                    prompts=[prompt],
                     sampling_params=self.params,
                     use_tqdm=False,
                 )
                 generations.append(
                     [
                         Generation(
-                            text=response[0]
-                            .outputs[0]
-                            .text.strip()
-                            .replace("<|eot_id|>", ""),
+                            text=response[0].outputs[0].text.strip(),
                             generation_info=(
                                 {
                                     "logprobs": {
@@ -123,3 +112,9 @@ class VLLMModel(BaseModel):
 
     def get_num_tokens(self, prompt: str) -> int:
         return len(self.tokenizer.encode(prompt))
+
+    def apply_model_template(self, prompt: str) -> str:
+        messages = [{"role": "user", "content": prompt}]
+        return self.tokenizer.apply_chat_template(
+            messages, add_generation_prompt=True, tokenize=False
+        )

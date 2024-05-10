@@ -208,3 +208,9 @@ class TGILLM(BaseModel):
                     logprob = 0.0
                 resp.append({item["text"]: np.exp(logprob)})
         return resp
+
+    def apply_model_template(self, prompt: str) -> str:
+        messages = [{"role": "user", "content": prompt}]
+        return self.tokenizer.apply_chat_template(
+            messages, add_generation_prompt=True, tokenize=False
+        )

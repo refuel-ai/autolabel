@@ -30,7 +30,6 @@ class UnretryableError(Exception):
 
 
 class RefuelLLM(BaseModel):
-    DEFAULT_TOKENIZATION_MODEL = "NousResearch/Llama-2-13b-chat-hf"
     DEFAULT_CONTEXT_LENGTH = 3250
     DEFAULT_CONNECT_TIMEOUT = 10
     DEFAULT_READ_TIMEOUT = 120
@@ -57,7 +56,7 @@ class RefuelLLM(BaseModel):
         self.model_name = config.model_name()
         model_params = config.model_params()
         self.model_params = {**self.DEFAULT_PARAMS, **model_params}
-        self.tokenizer = AutoTokenizer.from_pretrained(self.DEFAULT_TOKENIZATION_MODEL)
+        self.tokenizer = AutoTokenizer.from_pretrained(self.model_name)
 
         # initialize runtime
         self.BASE_API = f"https://llm.refuel.ai/models/{self.model_name}/generate"
@@ -228,3 +227,9 @@ class RefuelLLM(BaseModel):
 
     def get_num_tokens(self, prompt: str) -> int:
         return len(self.tokenizer.encode(prompt))
+
+    def apply_model_template(self, prompt: str) -> str:
+        messages = [{"role": "user", "content": prompt}]
+        return self.tokenizer.apply_chat_template(
+            messages, add_generation_prompt=True, tokenize=False
+        )
