@@ -120,9 +120,9 @@ class LabelingAgent:
         confidence_model_config._model_config[
             confidence_model_config.MODEL_NAME_KEY
         ] = self.confidence_model
-        confidence_model_config._model_config[confidence_model_config.PROVIDER_KEY] = (
-            DEFAULT_CONFIDENCE_PROVIDER
-        )
+        confidence_model_config._model_config[
+            confidence_model_config.PROVIDER_KEY
+        ] = DEFAULT_CONFIDENCE_PROVIDER
         self.confidence_llm: BaseModel = ModelFactory.from_config(
             self.config, cache=self.generation_cache
         )
@@ -246,7 +246,9 @@ class LabelingAgent:
                 console=self.console,
             )
             if self.console_output
-            else tqdm(indices) if self.use_tqdm else indices
+            else tqdm(indices)
+            if self.use_tqdm
+            else indices
         ):
             chunk = dataset.inputs[current_index]
             examples = []
