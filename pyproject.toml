@@ -64,7 +64,7 @@ dev = [
 ]
 openai = [
     "openai == 1.10.0",
-    "tiktoken >= 0.3.3"
+    "tiktoken >= 0.7.0"
 ]
 anthropic = [
     "anthropic == 0.17.0"
@@ -74,7 +74,7 @@ huggingface = [
     "sentence-transformers==2.3.1"
 ]
 google = [
-    "tiktoken >= 0.3.3",
+    "tiktoken >= 0.7.0",
     "google-cloud-aiplatform>=1.25.0",
     "langchain_google_vertexai==0.0.5",
 ]
@@ -89,7 +89,7 @@ minimal = [
     "langchain-community==0.0.27",
     "langchain-openai==0.0.7",
     "langchain_google_vertexai==0.0.5",
-    "tiktoken >= 0.3.3",
+    "tiktoken >= 0.7.0",
     "anthropic == 0.17.0",
     "transformers >= 4.25.0",
     "google-cloud-aiplatform>=1.25.0",
@@ -120,7 +120,7 @@ all = [
     "langchain-community==0.0.27",
     "langchain-openai==0.0.7",
     "langchain_google_vertexai==0.0.5",
-    "tiktoken >= 0.3.3",
+    "tiktoken >= 0.7.0",
     "anthropic == 0.17.0",
     "transformers >= 4.25.0",
     "google-cloud-aiplatform>=1.25.0",
