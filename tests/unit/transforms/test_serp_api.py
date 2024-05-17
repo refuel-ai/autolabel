@@ -74,8 +74,9 @@ async def test_error_handling():
     assert set(transformed_row.keys()) == set(
         [
             "knowledge_graph_results",
-            "web_search_serp_api_error",
+            "knowledge_graph_results_error",
             "organic_search_results",
+            "organic_search_results_error",
         ]
     )
     assert transformed_row["knowledge_graph_results"] == "NO_TRANSFORM"

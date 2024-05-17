@@ -77,9 +77,9 @@ async def test_error_handling():
     # Transform the row
     transformed_row = await transform.apply(row)
     # Check the output
-    assert set(transformed_row.keys()) == set(["content", "pdf_error"])
+    assert set(transformed_row.keys()) == set(["content", "content_error"])
     assert transformed_row["content"] == "NO_TRANSFORM"
     assert (
-        transformed_row["pdf_error"]
+        transformed_row["content_error"]
         == "File path invalid_file.pdf is not a valid file or url"
     )

@@ -44,7 +44,7 @@ async def test_empty_url():
     transformed_row = await transform.apply(row)
     # Check the output
     assert set(transformed_row.keys()) == set(
-        ["webpage_content", "webpage_scrape_error"]
+        ["webpage_content", "webpage_content_error"]
     )
     assert transformed_row["webpage_content"] == "NO_TRANSFORM"
     assert (
@@ -70,10 +70,10 @@ async def test_unreachable_url():
     transformed_row = await transform.apply(row)
     # Check the output
     assert set(transformed_row.keys()) == set(
-        ["webpage_content", "webpage_scrape_error"]
+        ["webpage_content", "webpage_content_error"]
     )
     assert transformed_row["webpage_content"] == "NO_TRANSFORM"
     assert (
-        transformed_row["webpage_scrape_error"]
+        transformed_row["webpage_content_error"]
         == "TRANSFORM_TIMEOUT: Timeout when fetching content from URL"
     )
