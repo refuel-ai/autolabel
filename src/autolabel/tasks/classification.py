@@ -95,8 +95,8 @@ class ClassificationTask(BaseTask):
             else:
                 labels = "\n".join(labels_list)
 
-        fmt_task_guidelines = self.task_guidelines.format(
-            num_labels=num_labels, labels=labels
+        fmt_task_guidelines = self.task_guidelines.replace("{labels}", labels).replace(
+            "{num_labels}", str(num_labels)
         )
 
         # prepare seed examples
@@ -180,9 +180,9 @@ class ClassificationTask(BaseTask):
         # prepare task guideline
         labels_list = self.config.labels_list()
         num_labels = len(labels_list)
-        fmt_task_guidelines = self.task_guidelines.format(
-            num_labels=num_labels, labels="\n".join(labels_list)
-        )
+        fmt_task_guidelines = self.task_guidelines.replace(
+            "{labels}", "\n".join(labels_list)
+        ).replace("{num_labels}", str(num_labels))
 
         # prepare labeled example
         example_template = self.config.example_template()
@@ -207,9 +207,9 @@ class ClassificationTask(BaseTask):
         # prepare task guideline
         labels_list = self.config.labels_list()
         num_labels = len(labels_list)
-        fmt_task_guidelines = self.task_guidelines.format(
-            num_labels=num_labels, labels="\n".join(labels_list)
-        )
+        fmt_task_guidelines = self.task_guidelines.replace(
+            "{labels}", "\n".join(labels_list)
+        ).replace("{num_labels}", str(num_labels))
         fmt_guidelines = self.dataset_generation_guidelines.format(
             task_guidelines=fmt_task_guidelines
         )

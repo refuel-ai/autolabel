@@ -152,9 +152,9 @@ class MultilabelClassificationTask(BaseTask):
         # prepare task guideline
         labels_list = self.config.labels_list()
         num_labels = len(labels_list)
-        fmt_task_guidelines = self.task_guidelines.format(
-            num_labels=num_labels, labels="\n".join(labels_list)
-        )
+        fmt_task_guidelines = self.task_guidelines.replace(
+            "{labels}", "\n".join(labels_list)
+        ).replace("{num_labels}", str(num_labels))
 
         # prepare labeled example
         example_template = self.config.example_template()
