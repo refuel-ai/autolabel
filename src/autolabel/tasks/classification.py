@@ -94,8 +94,10 @@ class ClassificationTask(BaseTask):
                     labels = labels + f"{label} : {description}\n"
             else:
                 labels = "\n".join(labels_list)
-
-        fmt_task_guidelines = self.task_guidelines.format(
+        task_guidelines_escaped = self.task_guidelines.replace("{", "{{").replace(
+            "}", "}}"
+        )
+        fmt_task_guidelines = task_guidelines_escaped.format(
             num_labels=num_labels, labels=labels
         )
 
@@ -180,7 +182,10 @@ class ClassificationTask(BaseTask):
         # prepare task guideline
         labels_list = self.config.labels_list()
         num_labels = len(labels_list)
-        fmt_task_guidelines = self.task_guidelines.format(
+        task_guidelines_escaped = self.task_guidelines.replace("{", "{{").replace(
+            "}", "}}"
+        )
+        fmt_task_guidelines = task_guidelines_escaped.format(
             num_labels=num_labels, labels="\n".join(labels_list)
         )
 
@@ -207,7 +212,10 @@ class ClassificationTask(BaseTask):
         # prepare task guideline
         labels_list = self.config.labels_list()
         num_labels = len(labels_list)
-        fmt_task_guidelines = self.task_guidelines.format(
+        task_guidelines_escaped = self.task_guidelines.replace("{", "{{").replace(
+            "}", "}}"
+        )
+        fmt_task_guidelines = task_guidelines_escaped.format(
             num_labels=num_labels, labels="\n".join(labels_list)
         )
         fmt_guidelines = self.dataset_generation_guidelines.format(
