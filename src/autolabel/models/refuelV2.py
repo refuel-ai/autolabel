@@ -35,7 +35,9 @@ class RefuelLLMV2(BaseModel):
     DEFAULT_CONNECT_TIMEOUT = 10
     DEFAULT_READ_TIMEOUT = 120
     DEFAULT_PARAMS = {
-        "max_new_tokens": 128,
+        "max_tokens": 128,
+        "temperature": 0.05,
+        "top_p": 1.0,
     }
 
     def __init__(
