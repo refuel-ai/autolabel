@@ -15,6 +15,7 @@ from autolabel.models.mistral import MistralLLM
 from autolabel.models.hf_pipeline import HFPipelineLLM
 from autolabel.models.hf_pipeline_vision import HFPipelineMultimodal
 from autolabel.models.refuel import RefuelLLM
+from autolabel.models.refuelV2 import RefuelLLMV2
 from autolabel.models.tgi import TGILLM
 from autolabel.models.vllm import VLLMModel
 
@@ -30,6 +31,7 @@ MODEL_REGISTRY = {
     ModelProvider.REFUEL: RefuelLLM,
     ModelProvider.TGI: TGILLM,
     ModelProvider.VLLM: VLLMModel,
+    ModelProvider.REFUELV2: RefuelLLMV2,
 }
 
 
