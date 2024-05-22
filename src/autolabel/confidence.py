@@ -40,7 +40,7 @@ class ConfidenceCalculator:
             "p_true": self.p_true,
             "logprob_average_per_key": self.logprob_average_per_key,
         }
-        self.BASE_API = "https://llm.refuel.ai/models/refuelllm/confidence"
+        self.BASE_API = "https://llm.refuel.ai/models/refuel-llm-v2-small/v2/confidence"
         self.REFUEL_API_ENV = "REFUEL_API_KEY"
         if self.REFUEL_API_ENV in os.environ and os.environ[self.REFUEL_API_ENV]:
             self.REFUEL_API_KEY = os.environ[self.REFUEL_API_ENV]
@@ -246,7 +246,12 @@ class ConfidenceCalculator:
         before_sleep=before_sleep_log(logger, logging.WARNING),
     )
     async def _call_with_retry(self, model_input, model_output):
-        payload = {"input": model_input, "output": model_output}
+        payload = {
+            "messages": [
+                {"role": "user", "content": model_input},
+                {"role": "assistant", "content": model_output},
+            ]
+        }
         headers = {"refuel_api_key": self.REFUEL_API_KEY}
         async with httpx.AsyncClient() as client:
             response = await client.post(

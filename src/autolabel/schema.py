@@ -20,6 +20,7 @@ class ModelProvider(str, Enum):
     HUGGINGFACE_PIPELINE = "huggingface_pipeline"
     HUGGINGFACE_PIPELINE_VISION = "huggingface_pipeline_vision"
     REFUEL = "refuel"
+    REFUELV2 = "refuelV2"
     GOOGLE = "google"
     COHERE = "cohere"
     MISTRAL = "mistral"
