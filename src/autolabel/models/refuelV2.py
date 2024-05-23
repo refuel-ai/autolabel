@@ -62,7 +62,11 @@ class RefuelLLMV2(BaseModel):
         self.tokenizer = AutoTokenizer.from_pretrained(self.DEFAULT_TOKENIZATION_MODEL)
 
         # initialize runtime
-        self.BASE_API = f"https://llm.refuel.ai/models/{self.model_name}/v2/generate"
+        self.model_endpoint = (
+            f"https://llm.refuel.ai/models/{self.model_name}/v2/generate"
+            if "endpoint" not in self.model_params
+            else self.model_params["endpoint"]
+        )
         self.REFUEL_API_ENV = "REFUEL_API_KEY"
         if self.REFUEL_API_ENV in os.environ and os.environ[self.REFUEL_API_ENV]:
             self.REFUEL_API_KEY = os.environ[self.REFUEL_API_ENV]
@@ -82,13 +86,13 @@ class RefuelLLMV2(BaseModel):
     def _label_with_retry(self, prompt: str) -> Tuple[requests.Response, float]:
         payload = {
             "messages": [{"role": "user", "content": prompt}],
-            "params": {**self.model_params},
+            "parameters": {**self.model_params},
             "confidence": self.config.confidence(),
         }
         headers = {"refuel_api_key": self.REFUEL_API_KEY}
         start_time = time()
         response = requests.post(
-            self.BASE_API,
+            self.model_endpoint,
             json=payload,
             headers=headers,
             timeout=(self.DEFAULT_CONNECT_TIMEOUT, self.DEFAULT_READ_TIMEOUT),
@@ -118,7 +122,7 @@ class RefuelLLMV2(BaseModel):
     async def _alabel_with_retry(self, prompt: str) -> Tuple[requests.Response, float]:
         payload = {
             "messages": [{"role": "user", "content": prompt}],
-            "params": {**self.model_params},
+            "parameters": {**self.model_params},
             "confidence": self.config.confidence(),
         }
         headers = {"refuel_api_key": self.REFUEL_API_KEY}
@@ -128,7 +132,7 @@ class RefuelLLMV2(BaseModel):
             )
             start_time = time()
             response = await client.post(
-                self.BASE_API, json=payload, headers=headers, timeout=timeout
+                self.model_endpoint, json=payload, headers=headers, timeout=timeout
             )
             end_time = time()
             # raise Exception if status != 200
