@@ -637,7 +637,7 @@ class LabelingAgent:
                     annotation = LLMAnnotation(
                         successfully_labeled=False,
                         label=self.task.NULL_LABEL_TOKEN,
-                        raw_response="",
+                        raw_response=explanation,
                         curr_sample=pickle.dumps(seed_example),
                         prompt=explanation_prompt,
                         confidence_score=0,
