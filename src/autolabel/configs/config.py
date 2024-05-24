@@ -34,6 +34,7 @@ class AutolabelConfig(BaseConfig):
     PROVIDER_KEY = "provider"
     MODEL_NAME_KEY = "name"
     MODEL_PARAMS_KEY = "params"
+    MODEL_ENDPOINT_KEY = "endpoint"
     COMPUTE_CONFIDENCE_KEY = "compute_confidence"
     LOGIT_BIAS_KEY = "logit_bias"
     JSON_MODE = "json_mode"
@@ -168,6 +169,10 @@ class AutolabelConfig(BaseConfig):
     def model_params(self) -> Dict:
         """Returns a dict of configured settings for the model (e.g. hyperparameters)"""
         return self._model_config.get(self.MODEL_PARAMS_KEY, {})
+
+    def model_endpoint(self) -> str:
+        """Returns the endpoint to use for the model"""
+        return self._model_config.get(self.MODEL_ENDPOINT_KEY, None)
 
     def confidence(self) -> bool:
         """Returns true if the model is able to return a confidence score along with its predictions"""
