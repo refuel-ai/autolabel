@@ -21,7 +21,9 @@ async def test_webpage_scrape():
     # Transform the row
     transformed_row = await transform.apply(row)
     # Check the output
-    assert set(transformed_row.keys()) == set(["webpage_content", "metadata"])
+    assert set(transformed_row.keys()) == set(
+        ["webpage_content", "metadata", "webpage_content_error", "metadata_error"]
+    )
     assert isinstance(transformed_row["webpage_content"], str)
     assert isinstance(transformed_row["metadata"], dict)
     assert len(transformed_row["webpage_content"]) > 0
@@ -46,9 +48,12 @@ async def test_empty_url():
     assert set(transformed_row.keys()) == set(
         ["webpage_content", "webpage_content_error"]
     )
-    assert transformed_row["webpage_content"] == "NO_TRANSFORM"
     assert (
-        transformed_row["webpage_scrape_error"]
+        transformed_row["webpage_content"]
+        == "INVALID_INPUT: Empty url in row {'url': 'NO_TRANSFORM'}"
+    )
+    assert (
+        transformed_row["webpage_content_error"]
         == "INVALID_INPUT: Empty url in row {'url': 'NO_TRANSFORM'}"
     )
 
@@ -72,7 +77,10 @@ async def test_unreachable_url():
     assert set(transformed_row.keys()) == set(
         ["webpage_content", "webpage_content_error"]
     )
-    assert transformed_row["webpage_content"] == "NO_TRANSFORM"
+    assert (
+        transformed_row["webpage_content"]
+        == "TRANSFORM_TIMEOUT: Timeout when fetching content from URL"
+    )
     assert (
         transformed_row["webpage_content_error"]
         == "TRANSFORM_TIMEOUT: Timeout when fetching content from URL"

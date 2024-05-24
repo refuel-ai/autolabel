@@ -30,8 +30,12 @@ async def test_image_transform(mocker):
     row = {"file_path": "tests/assets/transforms/budget.png"}
     # Transform the row
     transformed_row = await transform.apply(row)
+    print("transformed_row", transformed_row)
     # Check the output
-    assert set(transformed_row.keys()) == set(["content", "metadata"])
+    assert set(transformed_row.keys()) == set(
+        ["content", "metadata", "content_error", "metadata_error"]
+    )
+    assert transformed_row["content_error"] is None
     assert transformed_row["content"] == "This is a test"
     assert isinstance(transformed_row["metadata"], dict)
     assert len(transformed_row["content"]) > 0
@@ -61,7 +65,10 @@ async def test_error_handling():
     transformed_row = await transform.apply(row)
     # Check the output
     assert set(transformed_row.keys()) == set(["content", "content_error"])
-    assert transformed_row["content"] == "NO_TRANSFORM"
+    assert (
+        transformed_row["content"]
+        == "tesseract is not installed or it's not in your PATH. See README file for more information."
+    )
     assert (
         transformed_row["content_error"]
         == "tesseract is not installed or it's not in your PATH. See README file for more information."

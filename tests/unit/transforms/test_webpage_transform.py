@@ -53,7 +53,10 @@ async def test_error_handling():
     assert set(transformed_row.keys()) == set(
         ["webpage_content", "webpage_content_error"]
     )
-    assert transformed_row["webpage_content"] == "NO_TRANSFORM"
+    assert (
+        transformed_row["webpage_content"]
+        == "INVALID_INPUT: Empty url in row {'url': 'NO_TRANSFORM'}"
+    )
     assert (
         transformed_row["webpage_content_error"]
         == "INVALID_INPUT: Empty url in row {'url': 'NO_TRANSFORM'}"

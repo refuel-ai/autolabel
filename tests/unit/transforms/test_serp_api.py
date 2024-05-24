@@ -45,7 +45,12 @@ async def test_webpage_transform():
     transformed_row = await transform.apply(row)
     # Check the output
     assert set(transformed_row.keys()) == set(
-        ["knowledge_graph_results", "organic_search_results"]
+        [
+            "knowledge_graph_results",
+            "organic_search_results",
+            "knowledge_graph_results_error",
+            "organic_search_results_error",
+        ]
     )
     assert (
         json.loads(transformed_row["knowledge_graph_results"])["title"] == "Joe Biden"
@@ -79,8 +84,8 @@ async def test_error_handling():
             "organic_search_results_error",
         ]
     )
-    assert transformed_row["knowledge_graph_results"] == "NO_TRANSFORM"
-    assert "Invalid API key" in transformed_row["web_search_serp_api_error"]
+    assert "Invalid API key" in transformed_row["knowledge_graph_results"]
+    assert "Invalid API key" in transformed_row["knowledge_graph_results_error"]
 
 
 @pytest.mark.asyncio
@@ -109,12 +114,16 @@ async def test_null_query():
     assert set(transformed_row.keys()) == set(
         [
             "knowledge_graph_results",
-            "web_search_serp_api_error",
+            "knowledge_graph_results_error",
             "organic_search_results",
+            "organic_search_results_error",
         ]
     )
-    assert transformed_row["knowledge_graph_results"] == "NO_TRANSFORM"
     assert (
-        transformed_row["web_search_serp_api_error"]
+        transformed_row["knowledge_graph_results"]
+        == "INVALID_INPUT: Empty query in row {'query': 'NO_TRANSFORM'}"
+    )
+    assert (
+        transformed_row["knowledge_graph_results_error"]
         == "INVALID_INPUT: Empty query in row {'query': 'NO_TRANSFORM'}"
     )

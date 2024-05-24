@@ -45,7 +45,12 @@ async def test_webpage_transform():
     transformed_row = await transform.apply(row)
     # Check the output
     assert set(transformed_row.keys()) == set(
-        ["knowledge_graph_results", "organic_search_results"]
+        [
+            "knowledge_graph_results",
+            "organic_search_results",
+            "knowledge_graph_results_error",
+            "organic_search_results_error",
+        ]
     )
     assert (
         json.loads(transformed_row["knowledge_graph_results"])["title"] == "Joe Biden"
@@ -83,7 +88,10 @@ async def test_null_query():
             "organic_search_results_error",
         ]
     )
-    assert transformed_row["knowledge_graph_results"] == "NO_TRANSFORM"
+    assert (
+        transformed_row["knowledge_graph_results"]
+        == "INVALID_INPUT: Empty query in row {'query': 'NO_TRANSFORM'}"
+    )
     assert (
         transformed_row["organic_search_results_error"]
         == "INVALID_INPUT: Empty query in row {'query': 'NO_TRANSFORM'}"

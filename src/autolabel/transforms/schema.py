@@ -65,6 +65,3 @@ class TransformError(Exception):
         self.error_type = error_type
         self.error_message = error_message
         super().__init__(f"{self.error_type.value}: {self.error_message}")
-
-    def __str__(self):
-        return self.error_message

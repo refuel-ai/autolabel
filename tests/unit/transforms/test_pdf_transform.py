@@ -22,7 +22,10 @@ async def test_pdf_transform():
     # Transform the row
     transformed_row = await transform.apply(row)
     # Check the output
-    assert set(transformed_row.keys()) == set(["content", "metadata"])
+    assert set(transformed_row.keys()) == set(
+        ["content", "metadata", "content_error", "metadata_error"]
+    )
+    assert transformed_row["content_error"] == None
     assert isinstance(transformed_row["content"], str)
     assert isinstance(transformed_row["metadata"], dict)
     assert len(transformed_row["content"]) > 0
@@ -54,7 +57,10 @@ async def test_pdf_transform_ocr(mocker):
     # Transform the row
     transformed_row = await transform.apply(row)
     # Check the output
-    assert set(transformed_row.keys()) == set(["content", "metadata"])
+    assert set(transformed_row.keys()) == set(
+        ["content", "metadata", "content_error", "metadata_error"]
+    )
+    assert transformed_row["content_error"] == None
     assert transformed_row["content"] == "Page 1: This is a test"
     assert isinstance(transformed_row["metadata"], dict)
     assert len(transformed_row["content"]) > 0
@@ -78,7 +84,10 @@ async def test_error_handling():
     transformed_row = await transform.apply(row)
     # Check the output
     assert set(transformed_row.keys()) == set(["content", "content_error"])
-    assert transformed_row["content"] == "NO_TRANSFORM"
+    assert (
+        transformed_row["content"]
+        == "File path invalid_file.pdf is not a valid file or url"
+    )
     assert (
         transformed_row["content_error"]
         == "File path invalid_file.pdf is not a valid file or url"

@@ -96,11 +96,7 @@ class BaseTransform(ABC):
             output = await self._apply(row)
         except Exception as e:
             logger.error(f"Error applying transform {self.name()}. Exception: {str(e)}")
-            output = {
-                k: self.NULL_TRANSFORM_TOKEN
-                for k in self.output_columns.values()
-                if k is not None
-            }
+            output = {k: str(e) for k in self.output_columns.values() if k is not None}
             for col in self.transform_error_columns:
                 output[col] = str(e)
             return output
