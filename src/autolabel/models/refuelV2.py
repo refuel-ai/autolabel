@@ -61,7 +61,9 @@ class RefuelLLMV2(BaseModel):
         self.model_params = {**self.DEFAULT_PARAMS, **model_params}
         self.model_endpoint = config.model_endpoint()
         self.tokenizer = AutoTokenizer.from_pretrained(self.DEFAULT_TOKENIZATION_MODEL)
-        self.read_timeout = self.model_params.get("request_timeout", self.DEFAULT_READ_TIMEOUT)
+        self.read_timeout = self.model_params.get(
+            "request_timeout", self.DEFAULT_READ_TIMEOUT
+        )
         del self.model_params["request_timeout"]
 
         # initialize runtime
