@@ -152,6 +152,7 @@ class TaskChainOrchestrator:
                     transform_cache=self.transform_cache,
                     confidence_cache=self.confidence_cache,
                     confidence_tokenizer=self.confidence_tokenizer,
+                    console_output=False,
                 )
                 for transform_dict in autolabel_config.transforms():
                     transform = TransformFactory.from_dict(
@@ -168,6 +169,7 @@ class TaskChainOrchestrator:
                     transform_cache=self.transform_cache,
                     confidence_cache=self.confidence_cache,
                     confidence_tokenizer=self.confidence_tokenizer,
+                    console_output=False,
                 )
                 dataset = await agent.arun(
                     dataset,
