@@ -64,6 +64,7 @@ class RefuelLLMV2(BaseModel):
         self.read_timeout = self.model_params.get(
             "request_timeout", self.DEFAULT_READ_TIMEOUT
         )
+        self.adapter_path = self.model_params.get("adapter_id", None)
         del self.model_params["request_timeout"]
 
         # initialize runtime
@@ -88,6 +89,7 @@ class RefuelLLMV2(BaseModel):
             "messages": [{"role": "user", "content": prompt}],
             "parameters": {**self.model_params},
             "confidence": self.config.confidence(),
+            "adapter_path": self.adapter_path,
         }
         headers = {"refuel_api_key": self.REFUEL_API_KEY}
         start_time = time()
@@ -124,6 +126,7 @@ class RefuelLLMV2(BaseModel):
             "messages": [{"role": "user", "content": prompt}],
             "parameters": {**self.model_params},
             "confidence": self.config.confidence(),
+            "adapter_path": self.adapter_path,
         }
         headers = {"refuel_api_key": self.REFUEL_API_KEY}
         async with httpx.AsyncClient() as client:
