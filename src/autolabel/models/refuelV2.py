@@ -59,14 +59,14 @@ class RefuelLLMV2(BaseModel):
         self.model_name = config.model_name()
         model_params = config.model_params()
         self.model_params = {**self.DEFAULT_PARAMS, **model_params}
+        self.model_endpoint = config.model_endpoint()
         self.tokenizer = AutoTokenizer.from_pretrained(self.DEFAULT_TOKENIZATION_MODEL)
+        self.read_timeout = self.model_params.get(
+            "request_timeout", self.DEFAULT_READ_TIMEOUT
+        )
+        del self.model_params["request_timeout"]
 
         # initialize runtime
-        self.model_endpoint = (
-            f"https://llm.refuel.ai/models/{self.model_name}/v2/generate"
-            if "endpoint" not in self.model_params
-            else self.model_params["endpoint"]
-        )
         self.REFUEL_API_ENV = "REFUEL_API_KEY"
         if self.REFUEL_API_ENV in os.environ and os.environ[self.REFUEL_API_ENV]:
             self.REFUEL_API_KEY = os.environ[self.REFUEL_API_ENV]
@@ -92,10 +92,10 @@ class RefuelLLMV2(BaseModel):
         headers = {"refuel_api_key": self.REFUEL_API_KEY}
         start_time = time()
         response = requests.post(
-            self.model_endpoint,
+            self.model_endpoint(),
             json=payload,
             headers=headers,
-            timeout=(self.DEFAULT_CONNECT_TIMEOUT, self.DEFAULT_READ_TIMEOUT),
+            timeout=(self.DEFAULT_CONNECT_TIMEOUT, self.read_timeout),
         )
         end_time = time()
         # raise Exception if status != 200
@@ -128,7 +128,7 @@ class RefuelLLMV2(BaseModel):
         headers = {"refuel_api_key": self.REFUEL_API_KEY}
         async with httpx.AsyncClient() as client:
             timeout = httpx.Timeout(
-                self.DEFAULT_CONNECT_TIMEOUT, read=self.DEFAULT_READ_TIMEOUT
+                self.DEFAULT_CONNECT_TIMEOUT, read=self.read_timeout
             )
             start_time = time()
             response = await client.post(
