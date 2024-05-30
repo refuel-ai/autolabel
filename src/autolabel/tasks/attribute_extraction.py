@@ -228,7 +228,7 @@ class AttributeExtractionTask(BaseTask):
             successfully_labeled=successfully_labeled,
             label=llm_label,
             generation_info=response.generation_info,
-            raw_response=json.dumps(llm_label),
+            raw_response=response.text,
             prompt=prompt,
             error=error,
         )
