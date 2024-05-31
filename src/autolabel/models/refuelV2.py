@@ -165,7 +165,13 @@ class RefuelLLMV2(BaseModel):
                         Generation(
                             text=response["generated_text"],
                             generation_info=(
-                                {"logprobs": {"top_logprobs": response["logprobs"]}}
+                                {
+                                    "logprobs": {
+                                        "top_logprobs": response["details"][
+                                            "output_logprobs"
+                                        ]
+                                    }
+                                }
                                 if self.config.confidence()
                                 else None
                             ),
@@ -204,7 +210,13 @@ class RefuelLLMV2(BaseModel):
                         Generation(
                             text=response["generated_text"],
                             generation_info=(
-                                {"logprobs": {"top_logprobs": response["logprobs"]}}
+                                {
+                                    "logprobs": {
+                                        "top_logprobs": response["details"][
+                                            "output_logprobs"
+                                        ]
+                                    }
+                                }
                                 if self.config.confidence()
                                 else None
                             ),
