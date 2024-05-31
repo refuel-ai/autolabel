@@ -30,7 +30,6 @@ async def test_image_transform(mocker):
     row = {"file_path": "tests/assets/transforms/budget.png"}
     # Transform the row
     transformed_row = await transform.apply(row)
-    print("transformed_row", transformed_row)
     # Check the output
     assert set(transformed_row.keys()) == set(
         ["content", "metadata", "content_error", "metadata_error"]
