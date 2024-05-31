@@ -68,7 +68,8 @@ class WebpageTransform(BaseTransform):
         if retry_count >= self.max_retries:
             logger.warning(f"Max retries reached for URL: {url}")
             raise TransformError(
-                TransformErrorType.MAX_RETRIES_REACHED, "Max retries reached"
+                TransformErrorType.MAX_RETRIES_REACHED,
+                f"Max retries reached for URL: {url}",
             )
         if retry_count > 0:
             logger.warning(f"Retrying scraping URL: {url} with premium proxy")

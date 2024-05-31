@@ -27,7 +27,7 @@ async def test_webpage_transform():
     transformed_row = await transform.apply(row)
     # Check the output
     assert set(transformed_row.keys()) == set(
-        ["webpage_content", "webpage_transform_error"]
+        ["webpage_content", "webpage_content_error"]
     )
     assert isinstance(transformed_row["webpage_content"], str)
     assert len(transformed_row["webpage_content"]) > 0
@@ -51,10 +51,13 @@ async def test_error_handling():
     transformed_row = await transform.apply(row)
     # Check the output
     assert set(transformed_row.keys()) == set(
-        ["webpage_content", "webpage_transform_error"]
+        ["webpage_content", "webpage_content_error"]
     )
-    assert transformed_row["webpage_content"] == "NO_TRANSFORM"
     assert (
-        transformed_row["webpage_transform_error"]
+        transformed_row["webpage_content"]
+        == "INVALID_INPUT: Empty url in row {'url': 'NO_TRANSFORM'}"
+    )
+    assert (
+        transformed_row["webpage_content_error"]
         == "INVALID_INPUT: Empty url in row {'url': 'NO_TRANSFORM'}"
     )
