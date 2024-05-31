@@ -215,11 +215,24 @@ class AttributeExtractionTask(BaseTask):
             llm_label = {k: str(v) for k, v in json.loads(completion_text).items()}
             successfully_labeled = True
         except Exception as e:
-            logger.error(f"Error parsing LLM response: {response.text}, Error: {e}")
-            llm_label = self.NULL_LABEL
-            error = LabelingError(
-                error_type=ErrorType.PARSING_ERROR, error_message=str(e)
+            logger.info(
+                f"Error parsing LLM response: {response.text}, Error: {e}. Now searching for valid JSON in response"
             )
+            try:
+                json_start, json_end = response.text.find("{"), response.text.rfind("}")
+                llm_label = {
+                    k: str(v)
+                    for k, v in json.loads(
+                        response.text[json_start : json_end + 1]
+                    ).items()
+                }
+                successfully_labeled = True
+            except Exception as e:
+                logger.error(f"Error parsing LLM response: {response.text}, Error: {e}")
+                llm_label = self.NULL_LABEL
+                error = LabelingError(
+                    error_type=ErrorType.PARSING_ERROR, error_message=str(e)
+                )
 
         # TODO(rajas): Handle output guidelines not followed error (for options case)
 
