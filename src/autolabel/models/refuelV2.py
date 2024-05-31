@@ -64,6 +64,7 @@ class RefuelLLMV2(BaseModel):
         self.read_timeout = self.model_params.get(
             "request_timeout", self.DEFAULT_READ_TIMEOUT
         )
+        self.adapter_path = self.model_params.get("adapter_id", None)
         del self.model_params["request_timeout"]
 
         # initialize runtime
@@ -86,8 +87,9 @@ class RefuelLLMV2(BaseModel):
     def _label_with_retry(self, prompt: str) -> Tuple[requests.Response, float]:
         payload = {
             "messages": [{"role": "user", "content": prompt}],
-            "params": {**self.model_params},
+            "parameters": {**self.model_params},
             "confidence": self.config.confidence(),
+            "adapter_path": self.adapter_path,
         }
         headers = {"refuel_api_key": self.REFUEL_API_KEY}
         start_time = time()
@@ -122,8 +124,9 @@ class RefuelLLMV2(BaseModel):
     async def _alabel_with_retry(self, prompt: str) -> Tuple[requests.Response, float]:
         payload = {
             "messages": [{"role": "user", "content": prompt}],
-            "params": {**self.model_params},
+            "parameters": {**self.model_params},
             "confidence": self.config.confidence(),
+            "adapter_path": self.adapter_path,
         }
         headers = {"refuel_api_key": self.REFUEL_API_KEY}
         async with httpx.AsyncClient() as client:
@@ -162,7 +165,13 @@ class RefuelLLMV2(BaseModel):
                         Generation(
                             text=response["generated_text"],
                             generation_info=(
-                                {"logprobs": {"top_logprobs": response["logprobs"]}}
+                                {
+                                    "logprobs": {
+                                        "top_logprobs": response["details"][
+                                            "output_logprobs"
+                                        ]
+                                    }
+                                }
                                 if self.config.confidence()
                                 else None
                             ),
@@ -201,7 +210,13 @@ class RefuelLLMV2(BaseModel):
                         Generation(
                             text=response["generated_text"],
                             generation_info=(
-                                {"logprobs": {"top_logprobs": response["logprobs"]}}
+                                {
+                                    "logprobs": {
+                                        "top_logprobs": response["details"][
+                                            "output_logprobs"
+                                        ]
+                                    }
+                                }
                                 if self.config.confidence()
                                 else None
                             ),
