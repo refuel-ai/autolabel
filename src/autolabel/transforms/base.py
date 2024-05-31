@@ -90,6 +90,8 @@ class BaseTransform(ABC):
 
             if output is not None:
                 # Cache hit
+                for col in self.transform_error_columns:
+                    output[col] = None
                 return output
 
         try:
