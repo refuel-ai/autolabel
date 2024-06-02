@@ -85,6 +85,7 @@ class LabelingAgent:
         transform_cache: Optional[BaseCache] = SQLAlchemyTransformCache(),
         confidence_cache: Optional[BaseCache] = SQLAlchemyConfidenceCache(),
         confidence_tokenizer: Optional[AutoTokenizer] = None,
+        confidence_endpoint: Optional[str] = None,
         use_tqdm: Optional[bool] = False,
     ) -> None:
         self.generation_cache = generation_cache
@@ -129,6 +130,7 @@ class LabelingAgent:
             score_type = "logprob_average_per_key"
         self.confidence = ConfidenceCalculator(
             score_type=score_type,
+            endpoint=confidence_endpoint,
             llm=self.llm,
             cache=self.confidence_cache,
         )
