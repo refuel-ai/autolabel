@@ -26,7 +26,10 @@ logger = logging.getLogger(__name__)
 
 
 class TGILLM(BaseModel):
-    DEFAULT_TOKENIZATION_MODEL = "NousResearch/Llama-2-13b-chat-hf"
+    DEFAULT_TOKENIZATION_MODEL = {
+        "pretrained_model_name_or_path": "NousResearch/Llama-2-13b-chat-hf",
+        "revision": "d73f5fa9c4bc135502e04c27b39660747172d76b",
+    }
     DEFAULT_CONTEXT_LENGTH = 3250
     DEFAULT_CONNECT_TIMEOUT = 10
     DEFAULT_READ_TIMEOUT = 120
@@ -52,7 +55,9 @@ class TGILLM(BaseModel):
         self.model_params = {**self.DEFAULT_PARAMS, **model_params}
         if self.config.confidence():
             self.model_params["decoder_input_details"] = True
-        self.tokenizer = AutoTokenizer.from_pretrained(self.DEFAULT_TOKENIZATION_MODEL)
+        self.tokenizer = AutoTokenizer.from_pretrained(
+            **self.DEFAULT_TOKENIZATION_MODEL
+        )
 
     @retry(
         reraise=True,
