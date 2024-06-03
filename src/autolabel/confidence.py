@@ -15,6 +15,7 @@ from autolabel.cache import BaseCache
 from tenacity import (
     before_sleep_log,
     retry,
+    retry_if_not_exception_type,
     stop_after_attempt,
     wait_exponential,
 )
@@ -245,6 +246,7 @@ class ConfidenceCalculator:
         stop=stop_after_attempt(5),
         wait=wait_exponential(multiplier=1, min=2, max=10),
         before_sleep=before_sleep_log(logger, logging.WARNING),
+        retry=retry_if_not_exception_type(ValueError),
     )
     async def _call_with_retry(self, model_input, model_output):
         payload = {
@@ -255,7 +257,7 @@ class ConfidenceCalculator:
         }
         headers = {"refuel_api_key": self.REFUEL_API_KEY}
         if self.endpoint is None:
-            logger.error("Endpoint not provided")
+            raise ValueError("Endpoint not provided")
         async with httpx.AsyncClient() as client:
             response = await client.post(
                 self.endpoint, json=payload, headers=headers, timeout=30
