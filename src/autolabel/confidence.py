@@ -254,6 +254,8 @@ class ConfidenceCalculator:
             ]
         }
         headers = {"refuel_api_key": self.REFUEL_API_KEY}
+        if self.endpoint is None:
+            logger.error("Endpoint not provided")
         async with httpx.AsyncClient() as client:
             response = await client.post(
                 self.endpoint, json=payload, headers=headers, timeout=30
