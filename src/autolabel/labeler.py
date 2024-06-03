@@ -60,6 +60,11 @@ COST_TABLE_STYLES = {
 }
 METRIC_TABLE_STYLE = "cyan bold"
 
+DEFAULT_TOKENIZATION_MODEL = {
+    "pretrained_model_name_or_path": "NousResearch/Llama-2-13b-chat-hf",
+    "revision": "d73f5fa9c4bc135502e04c27b39660747172d76b",
+}
+
 MERGE_FUNCTION = {
     AggregationFunction.MAX: np.max,
     AggregationFunction.MEAN: np.mean,
@@ -115,7 +120,7 @@ class LabelingAgent:
         if self.config.confidence_chunk_column():
             if not confidence_tokenizer:
                 self.confidence_tokenizer = AutoTokenizer.from_pretrained(
-                    "NousResearch/Llama-2-13b-chat-hf"
+                    **DEFAULT_TOKENIZATION_MODEL
                 )
             else:
                 self.confidence_tokenizer = confidence_tokenizer
@@ -705,7 +710,7 @@ class LabelingAgent:
         if not self.confidence_tokenizer:
             logger.warning("Confidence tokenizer is not set. Using default tokenizer.")
             self.confidence_tokenizer = AutoTokenizer.from_pretrained(
-                "NousResearch/Llama-2-13b-chat-hf"
+                **DEFAULT_TOKENIZATION_MODEL
             )
         """Returns the number of tokens in the prompt"""
         return len(self.confidence_tokenizer.encode(str(inp)))

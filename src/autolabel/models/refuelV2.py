@@ -30,7 +30,10 @@ class UnretryableError(Exception):
 
 
 class RefuelLLMV2(BaseModel):
-    DEFAULT_TOKENIZATION_MODEL = "NousResearch/Llama-2-13b-chat-hf"
+    DEFAULT_TOKENIZATION_MODEL = {
+        "pretrained_model_name_or_path": "NousResearch/Llama-2-13b-chat-hf",
+        "revision": "d73f5fa9c4bc135502e04c27b39660747172d76b",
+    }
     DEFAULT_CONTEXT_LENGTH = 3250
     DEFAULT_CONNECT_TIMEOUT = 10
     DEFAULT_READ_TIMEOUT = 120
@@ -60,7 +63,9 @@ class RefuelLLMV2(BaseModel):
         model_params = config.model_params()
         self.model_params = {**self.DEFAULT_PARAMS, **model_params}
         self.model_endpoint = config.model_endpoint()
-        self.tokenizer = AutoTokenizer.from_pretrained(self.DEFAULT_TOKENIZATION_MODEL)
+        self.tokenizer = AutoTokenizer.from_pretrained(
+            **self.DEFAULT_TOKENIZATION_MODEL
+        )
         self.read_timeout = self.model_params.get(
             "request_timeout", self.DEFAULT_READ_TIMEOUT
         )
