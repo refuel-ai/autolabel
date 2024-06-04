@@ -76,7 +76,7 @@ class CustomApi(BaseTransform):
         return TransformType.CUSTOM_API
 
     async def _get_result(
-        self, url: str, verify=True, headers=HEADERS, retry_count=0
+        self, url: str, params: Dict, verify=True, headers=HEADERS, retry_count=0
     ) -> Dict[str, Any]:
         if retry_count >= self.max_retries:
             logger.warning(f"Max retries reached for URL: {url}")
@@ -89,7 +89,7 @@ class CustomApi(BaseTransform):
             client = self.client
             if not verify:
                 client = self.client_with_no_verify
-            response = await client.get(url, headers=headers)
+            response = await client.get(url, headers=headers, params=params)
             response.raise_for_status()
             return response.text
         except self.httpx.ConnectTimeout as e:
@@ -111,18 +111,16 @@ class CustomApi(BaseTransform):
             raise e
 
     async def _apply(self, row: Dict[str, Any]) -> Dict[str, Any]:
+        params = {}
         for col in self.request_columns:
             if col not in row:
                 logger.error(
                     f"Missing request column: {col} in row {row}",
                 )
-        request_template = f"{self.base_url}?" + "&".join(
-            [f"{col}={{{col}}}" for col in self.request_columns if col in row]
-        )
-        url = request_template.format_map(defaultdict(str, row))
-        result = await self._get_result(url)
+            else:
+                params[col] = row.get(col)
+        result = await self._get_result(self.base_url, params)
         transformed_row = {self.output_columns["result"]: result}
-        logger.info(f"Transformed row: {transformed_row}")
         return self._return_output_row(transformed_row)
 
     def params(self):
