@@ -4,6 +4,7 @@ from .base import BaseTransform
 from .pdf import PDFTransform
 from .serp_api import SerpApi
 from .serper_api import SerperApi
+from .custom_api import CustomApi
 from .webpage_transform import WebpageTransform
 from .webpage_scrape import WebpageScrape
 from .image import ImageTransform
@@ -20,6 +21,7 @@ TRANSFORM_REGISTRY = {
     TransformType.IMAGE: ImageTransform,
     TransformType.WEB_SEARCH_SERP_API: SerpApi,
     TransformType.WEB_SEARCH_SERPER: SerperApi,
+    TransformType.CUSTOM_API: CustomApi,
 }
 
 
