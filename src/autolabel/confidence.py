@@ -15,6 +15,7 @@ from autolabel.cache import BaseCache
 from tenacity import (
     before_sleep_log,
     retry,
+    retry_if_not_exception_type,
     stop_after_attempt,
     wait_exponential,
 )
@@ -28,10 +29,12 @@ class ConfidenceCalculator:
     def __init__(
         self,
         score_type: str = "logprob_average",
+        endpoint: str = None,
         llm: Optional[BaseModel] = None,
         cache: Optional[BaseCache] = None,
     ) -> None:
         self.score_type = score_type
+        self.endpoint = endpoint
         self.llm = llm
         self.cache = cache
         self.tokens_to_ignore = {"<unk>", "", "\\n"}
@@ -40,7 +43,6 @@ class ConfidenceCalculator:
             "p_true": self.p_true,
             "logprob_average_per_key": self.logprob_average_per_key,
         }
-        self.BASE_API = "https://llm.refuel.ai/models/refuel-llm-v2-small/v2/confidence"
         self.REFUEL_API_ENV = "REFUEL_API_KEY"
         if self.REFUEL_API_ENV in os.environ and os.environ[self.REFUEL_API_ENV]:
             self.REFUEL_API_KEY = os.environ[self.REFUEL_API_ENV]
@@ -244,6 +246,7 @@ class ConfidenceCalculator:
         stop=stop_after_attempt(5),
         wait=wait_exponential(multiplier=1, min=2, max=10),
         before_sleep=before_sleep_log(logger, logging.WARNING),
+        retry=retry_if_not_exception_type(ValueError),
     )
     async def _call_with_retry(self, model_input, model_output):
         payload = {
@@ -253,9 +256,11 @@ class ConfidenceCalculator:
             ]
         }
         headers = {"refuel_api_key": self.REFUEL_API_KEY}
+        if self.endpoint is None:
+            raise ValueError("Endpoint not provided")
         async with httpx.AsyncClient() as client:
             response = await client.post(
-                self.BASE_API, json=payload, headers=headers, timeout=30
+                self.endpoint, json=payload, headers=headers, timeout=30
             )
             # raise Exception if status != 200
             response.raise_for_status()
