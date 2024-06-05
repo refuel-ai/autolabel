@@ -621,6 +621,7 @@ class LabelingAgent:
             explanation_prompt = self.task.get_explanation_prompt(
                 seed_example, include_label=include_label
             )
+            logger.info(f"Explanation prompt: {explanation_prompt}")
             if self.task.image_cols is not None and len(self.task.image_cols) > 0:
                 explanation_prompt = {"text": explanation_prompt}
                 for col in self.task.image_cols:
@@ -629,6 +630,7 @@ class LabelingAgent:
                 explanation_prompt = json.dumps(explanation_prompt)
             response = await self.llm.label([explanation_prompt])
             explanation = response.generations[0][0].text
+            logger.info(f"Explanation: {explanation}")
             seed_example[explanation_column] = str(explanation) if explanation else ""
             if return_annotations:
                 error = response.errors[0]
