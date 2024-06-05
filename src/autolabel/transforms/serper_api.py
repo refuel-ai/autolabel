@@ -90,7 +90,7 @@ class SerperApi(BaseTransform):
             search_result = await self.serper_api_wrapper.arun(query=query)
         except Exception as e:
             raise TransformError(
-                TransformErrorType.SERPER_API_ERROR,
+                TransformErrorType.TRANSFORM_API_ERROR,
                 f"Error while making request to Serper API: {e}",
             )
         return search_result
