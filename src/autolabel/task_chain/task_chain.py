@@ -80,6 +80,7 @@ class TaskGraph:
         for task in self.task_chain:
             if visited[task.get("task_name")] == False:
                 if self.check_cycle_helper(task.get("task_name"), visited, rec_stack):
+                    logger.error("Invalid task chain. Cycle detected")
                     return True
         return False
 

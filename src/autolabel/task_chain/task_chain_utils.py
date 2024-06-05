@@ -90,5 +90,5 @@ def validate_task_chain(task_chain_config: TaskChainConfig) -> bool:
     Returns:
         bool: True if the graph is valid, False otherwise
     """
-    task_graph = TaskGraph(task_chain_config.subtasks())
+    task_graph = initialize_task_graph(task_chain_config.subtasks())
     return not task_graph.check_cycle()
