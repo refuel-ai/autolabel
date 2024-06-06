@@ -87,7 +87,7 @@ class ConfidenceCalculator:
         """
         # Find the logprob for each key
         logprob_per_key = {}
-        if len(logprobs) == 0:
+        if logprobs is None or len(logprobs) == 0:
             return logprob_per_key
 
         # Suppose the output for which we compute confidence is {"A": "B", "C": "D"}
