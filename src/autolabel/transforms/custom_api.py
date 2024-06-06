@@ -84,31 +84,37 @@ class CustomApi(BaseTransform):
                 TransformErrorType.MAX_RETRIES_REACHED,
                 f"Max retries reached for URL: {url}",
             )
-
+        request_url = url
         try:
             client = self.client
             if not verify:
                 client = self.client_with_no_verify
             response = await client.get(url, headers=headers, params=params)
+            request_url = response.url
             response.raise_for_status()
             return response.text
         except self.httpx.ConnectTimeout as e:
-            logger.error(f"Timeout when fetching content from URL: {url}")
+            logger.error(f"Timeout when making request to URL: {request_url}")
             raise TransformError(
                 TransformErrorType.TRANSFORM_TIMEOUT,
-                "Timeout when fetching content from URL",
+                f"Timeout when making request to URL: {request_url}",
             )
         except ssl.SSLCertVerificationError as e:
             logger.warning(
-                f"SSL verification error when fetching content from URL: {url}, retrying with verify=False"
+                f"SSL verification error when making request to URL: {request_url}, retrying with verify=False"
             )
             await asyncio.sleep(BACKOFF**retry_count)
             return await self._get_result(
                 url, verify=False, headers=headers, retry_count=retry_count + 1
             )
         except Exception as e:
-            logger.error(f"Error fetching content from URL: {url}. Exception: {e}")
-            raise e
+            logger.error(
+                f"Error when making request to URL: {request_url}. Exception: {str(e)}"
+            )
+            raise TransformError(
+                TransformErrorType.TRANSFORM_API_ERROR,
+                f"Error when making request to URL: {request_url}",
+            )
 
     async def _apply(self, row: Dict[str, Any]) -> Dict[str, Any]:
         params = {}

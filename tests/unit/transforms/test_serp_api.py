@@ -84,8 +84,14 @@ async def test_error_handling():
             "organic_search_results_error",
         ]
     )
-    assert "Invalid API key" in transformed_row["knowledge_graph_results"]
-    assert "Invalid API key" in transformed_row["knowledge_graph_results_error"]
+    assert (
+        "Error while making request with query"
+        in transformed_row["knowledge_graph_results"]
+    )
+    assert (
+        "Error while making request with query"
+        in transformed_row["knowledge_graph_results_error"]
+    )
 
 
 @pytest.mark.asyncio
