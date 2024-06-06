@@ -79,9 +79,9 @@ async def test_unreachable_url():
     )
     assert (
         transformed_row["webpage_content"]
-        == "TRANSFORM_TIMEOUT: Timeout when fetching content from URL"
+        == "ENRICHMENT_TIMEOUT: Timeout when fetching content from URL"
     )
     assert (
         transformed_row["webpage_content_error"]
-        == "TRANSFORM_TIMEOUT: Timeout when fetching content from URL"
+        == "ENRICHMENT_TIMEOUT: Timeout when fetching content from URL"
     )

@@ -92,9 +92,10 @@ class SerpApi(BaseTransform):
         try:
             search_result = await self.serp_api_wrapper.arun(query=query)
         except Exception as e:
+            logger.error(f"Error while making request to Serp API: {str(e)}")
             raise TransformError(
                 TransformErrorType.TRANSFORM_API_ERROR,
-                f"Error while making request to Serp API: {e}",
+                f"Error while making request with query: {query}",
             )
         return search_result
 
