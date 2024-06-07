@@ -245,7 +245,7 @@ class BaseTask(ABC):
             logger.warning("LLM response is empty")
             error = LabelingError(
                 error_type=ErrorType.EMPTY_RESPONSE_ERROR,
-                error_message="Empty response from LLM",
+                error_message="LLM response was empty.",
             )
         elif not completion_text:
             successfully_labeled = False
@@ -253,7 +253,7 @@ class BaseTask(ABC):
             logger.warning(f"Error parsing LLM response: {response.text}")
             error = LabelingError(
                 error_type=ErrorType.PARSING_ERROR,
-                error_message=f"Error parsing LLM response: {response.text}",
+                error_message=f"Error parsing LLM response.",
             )
         else:
             llm_label = completion_text.strip()
@@ -276,7 +276,7 @@ class BaseTask(ABC):
                     successfully_labeled = False
                     error = LabelingError(
                         error_type=ErrorType.OUTPUT_GUIDELINES_NOT_FOLLOWED_ERROR,
-                        error_message=f"LLM response: {llm_label} is not in the labels list",
+                        error_message=f"LLM response is not in the labels list.",
                     )
                     llm_label = self.NULL_LABEL_TOKEN
             elif self.config.task_type() == TaskType.MULTILABEL_CLASSIFICATION:
@@ -292,7 +292,7 @@ class BaseTask(ABC):
                     successfully_labeled = False
                     error = LabelingError(
                         error_type=ErrorType.OUTPUT_GUIDELINES_NOT_FOLLOWED_ERROR,
-                        error_message=f"LLM response: {llm_label} does not contain any valid labels in the labels list",
+                        error_message=f"LLM response does not contain any valid labels in the labels list.",
                     )
                     llm_label = self.NULL_LABEL_TOKEN
                 else:

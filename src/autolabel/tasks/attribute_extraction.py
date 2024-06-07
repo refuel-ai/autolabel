@@ -227,11 +227,21 @@ class AttributeExtractionTask(BaseTask):
                     ).items()
                 }
                 successfully_labeled = True
+            except json.JSONDecodeError as e:
+                logger.error(
+                    f"Invalid JSON in LLM response: {response.text}, Error: {e}"
+                )
+                llm_label = self.NULL_LABEL
+                error = LabelingError(
+                    error_type=ErrorType.PARSING_ERROR,
+                    error_message=f"Unable to parse invalid JSON in LLM response.",
+                )
             except Exception as e:
                 logger.error(f"Error parsing LLM response: {response.text}, Error: {e}")
                 llm_label = self.NULL_LABEL
                 error = LabelingError(
-                    error_type=ErrorType.PARSING_ERROR, error_message=str(e)
+                    error_type=ErrorType.INVALID_LLM_RESPONSE_ERROR,
+                    error_message=str(e),
                 )
 
         # TODO(rajas): Handle output guidelines not followed error (for options case)

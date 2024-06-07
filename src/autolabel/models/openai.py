@@ -1,4 +1,5 @@
 import copy
+import ast
 import logging
 import os
 from functools import cached_property
@@ -111,6 +112,10 @@ class OpenAILLM(BaseModel):
         "gpt-4-0125-preview": 0.03 / 1000,
         "gpt-4o": 0.015 / 1000,
     }
+    ERROR_TYPE_MAPPING = {
+        "context_length_exceeded": ErrorType.CONTEXT_LENGTH_ERROR,
+        "rate_limit_exceeded": ErrorType.RATE_LIMIT_ERROR,
+    }
 
     @cached_property
     def _engine(self) -> str:
@@ -221,12 +226,27 @@ class OpenAILLM(BaseModel):
             )
         except Exception as e:
             logger.exception(f"Unable to generate prediction: {e}")
+            error_message = str(e)
+            error_type = ErrorType.LLM_PROVIDER_ERROR
+            try:
+                json_start, json_end = error_message.find("{"), error_message.rfind("}")
+                error_json = ast.literal_eval(error_message[json_start : json_end + 1])[
+                    "error"
+                ]
+                error_code = error_json.get("code")
+                error_type = self.ERROR_TYPE_MAPPING.get(
+                    error_code, ErrorType.LLM_PROVIDER_ERROR
+                )
+                error_message = error_json.get("message")
+            except Exception as e:
+                logger.error(f"Unable to parse OpenAI error message: {e}")
+
             return RefuelLLMResult(
                 generations=[[Generation(text="")] for _ in prompts],
                 errors=[
                     LabelingError(
-                        error_type=ErrorType.LLM_PROVIDER_ERROR,
-                        error_message=str(e),
+                        error_type=error_type,
+                        error_message=error_message,
                     )
                     for _ in prompts
                 ],
@@ -251,12 +271,27 @@ class OpenAILLM(BaseModel):
             )
         except Exception as e:
             logger.exception(f"Unable to generate prediction: {e}")
+
+            error_message = str(e)
+            error_type = ErrorType.LLM_PROVIDER_ERROR
+            try:
+                json_start, json_end = error_message.find("{"), error_message.rfind("}")
+                error_json = ast.literal_eval(error_message[json_start : json_end + 1])[
+                    "error"
+                ]
+                error_code = error_json.get("code")
+                error_type = self.ERROR_TYPE_MAPPING.get(
+                    error_code, ErrorType.LLM_PROVIDER_ERROR
+                )
+                error_message = error_json.get("message")
+            except Exception as e:
+                logger.error(f"Unable to parse OpenAI error message: {e}")
             return RefuelLLMResult(
                 generations=[[Generation(text="")] for _ in prompts],
                 errors=[
                     LabelingError(
-                        error_type=ErrorType.LLM_PROVIDER_ERROR,
-                        error_message=str(e),
+                        error_type=error_type,
+                        error_message=error_message,
                     )
                     for _ in prompts
                 ],
