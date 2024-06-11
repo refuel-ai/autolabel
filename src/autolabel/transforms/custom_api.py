@@ -1,13 +1,10 @@
 import asyncio
 from collections import defaultdict
-import json
 from urllib.parse import urlparse
 from autolabel.cache import BaseCache
 from autolabel.transforms import BaseTransform
-from langchain_community.utilities import GoogleSerperAPIWrapper
 from typing import Dict, Any, List
 import logging
-import pandas as pd
 import ssl
 
 from autolabel.transforms.schema import (
@@ -33,16 +30,16 @@ class CustomApi(BaseTransform):
         self,
         cache: BaseCache,
         output_columns: Dict[str, Any],
-        base_url: str,
+        api_url: str,
         request_columns: List[str],
         headers: Dict[str, str] = HEADERS,
         timeout: int = 60,
     ) -> None:
         super().__init__(cache, output_columns)
         self.request_columns = request_columns
-        if not urlparse(base_url).scheme:
-            base_url = f"https://{base_url}"
-        self.base_url = base_url
+        if not urlparse(api_url).scheme:
+            api_url = f"https://{api_url}"
+        self.api_url = api_url
         self.headers = headers
         self.max_retries = MAX_RETRIES
         try:
@@ -76,7 +73,7 @@ class CustomApi(BaseTransform):
         return TransformType.CUSTOM_API
 
     async def _get_result(
-        self, url: str, params: Dict, verify=True, headers=HEADERS, retry_count=0
+        self, url: str, params: Dict = {}, verify=True, headers=HEADERS, retry_count=0
     ) -> Dict[str, Any]:
         if retry_count >= self.max_retries:
             logger.warning(f"Max retries reached for URL: {url}")
@@ -117,22 +114,20 @@ class CustomApi(BaseTransform):
             )
 
     async def _apply(self, row: Dict[str, Any]) -> Dict[str, Any]:
-        params = {}
         for col in self.request_columns:
             if col not in row:
-                logger.error(
+                logger.warning(
                     f"Missing request column: {col} in row {row}",
                 )
-            else:
-                params[col] = row.get(col)
-        result = await self._get_result(self.base_url, params)
+        url = self.api_url.format_map(defaultdict(str, row))
+        result = await self._get_result(url)
         transformed_row = {self.output_columns["result"]: result}
         return self._return_output_row(transformed_row)
 
     def params(self):
         return {
             "output_columns": self.output_columns,
-            "base_url": self.base_url,
+            "api_url": self.api_url,
             "request_columns": self.request_columns,
         }
 
