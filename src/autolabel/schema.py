@@ -94,10 +94,14 @@ class MetricResult(BaseModel):
 class ErrorType(str, Enum):
     """Enum of supported error types"""
 
+    CONTEXT_LENGTH_ERROR = "context_length_exceeded_error"
+    RATE_LIMIT_ERROR = "rate_limit_exceeded_error"
     LLM_PROVIDER_ERROR = "llm_provider_error"
     PARSING_ERROR = "parsing_error"
     OUTPUT_GUIDELINES_NOT_FOLLOWED_ERROR = "output_guidelines_not_followed_error"
     EMPTY_RESPONSE_ERROR = "empty_response_error"
+    INVALID_LLM_RESPONSE_ERROR = "invalid_llm_response_error"
+    NO_EXTRACTION_ERROR = "no_extraction_error"
 
 
 class LabelingError(BaseModel):

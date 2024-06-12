@@ -231,7 +231,8 @@ class AttributeExtractionTask(BaseTask):
                 logger.error(f"Error parsing LLM response: {response.text}, Error: {e}")
                 llm_label = self.NULL_LABEL
                 error = LabelingError(
-                    error_type=ErrorType.PARSING_ERROR, error_message=str(e)
+                    error_type=ErrorType.INVALID_LLM_RESPONSE_ERROR,
+                    error_message=str(e),
                 )
 
         # TODO(rajas): Handle output guidelines not followed error (for options case)
