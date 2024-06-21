@@ -140,7 +140,11 @@ class RefuelLLMV2(BaseModel):
             )
             start_time = time()
             response = await client.post(
-                self.model_endpoint, json=payload, headers=headers, timeout=timeout
+                self.model_endpoint,
+                json=payload,
+                headers=headers,
+                timeout=timeout,
+                follow_redirects=True,
             )
             end_time = time()
             # raise Exception if status != 200
