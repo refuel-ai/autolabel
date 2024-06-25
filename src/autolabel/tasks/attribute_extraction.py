@@ -33,7 +33,7 @@ logger = logging.getLogger(__name__)
 class AttributeExtractionTask(BaseTask):
     NULL_LABEL = {}
     DEFAULT_TASK_GUIDELINES = "You are an expert at extracting attributes from text. Given a piece of text, extract the required attributes."
-    DEFAULT_OUTPUT_GUIDELINES = "You will return the extracted attributes as a json with the following keys:\n{attribute_json}. \n Do not include keys in the final JSON that don't have any valid value extracted."
+    DEFAULT_OUTPUT_GUIDELINES = "You will return the extracted attributes as a json with the following keys:\n{attribute_json}."
     LABEL_FORMAT_IN_EXPLANATION = (
         " The explanation should end with - 'so, the answer is <label>.'"
     )
