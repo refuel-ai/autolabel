@@ -39,11 +39,12 @@ class WebpageScrape(BaseTransform):
         url_column: str,
         timeout: int = 60,
         headers: Dict[str, str] = HEADERS,
+        max_retries: int = MAX_RETRIES,
     ) -> None:
         super().__init__(cache, output_columns)
         self.url_column = url_column
         self.headers = headers
-        self.max_retries = MAX_RETRIES
+        self.max_retries = max_retries
         try:
             from bs4 import BeautifulSoup
             import httpx
