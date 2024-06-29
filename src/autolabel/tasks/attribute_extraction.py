@@ -238,18 +238,13 @@ class AttributeExtractionTask(BaseTask):
         if successfully_labeled:
             for attribute in self.config.attributes():
                 attr_options = attribute.get("options")
-                if attr_options is not None:
+                if attr_options is not None and len(attr_options) > 0:
                     attr_label = llm_label.get(attribute["name"])
                     if attr_label is not None and attr_label not in attr_options:
                         logger.warning(
                             f"Attribute {attr_label} from the LLM response {llm_label} is not in the labels list"
                         )
-                        successfully_labeled = False
-                        error = LabelingError(
-                            error_type=ErrorType.OUTPUT_GUIDELINES_NOT_FOLLOWED_ERROR,
-                            error_message=f"LLM response is not in the labels list.",
-                        )
-                        llm_label = self.NULL_LABEL_TOKEN
+                        llm_label.pop(attribute["name"], None)
 
         return LLMAnnotation(
             curr_sample=pickle.dumps(curr_sample),
