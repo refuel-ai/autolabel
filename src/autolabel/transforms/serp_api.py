@@ -105,7 +105,9 @@ class SerpApi(BaseTransform):
                 logger.error(
                     f"Missing query column: {col} in row {row}",
                 )
-        query = self.query_template.format_map(defaultdict(str, row))
+        query = self.query_template.format_map(
+            defaultdict(str, {key: val for key, val in row.items() if val is not None})
+        )
         search_result = self.NULL_TRANSFORM_TOKEN
         if pd.isna(query) or query == self.NULL_TRANSFORM_TOKEN:
             raise TransformError(
