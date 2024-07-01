@@ -54,7 +54,8 @@ class OpenAIVisionLLM(BaseModel):
 
         # populate model name
         self.model_name = config.model_name() or self.DEFAULT_MODEL
-        self.model_params = self.DEFAULT_PARAMS_CHAT_ENGINE
+        model_params = config.model_params()
+        self.model_params = {**self.DEFAULT_PARAMS_CHAT_ENGINE, **model_params}
 
         if os.getenv("OPENAI_API_KEY") is None:
             raise ValueError("OPENAI_API_KEY environment variable not set")
@@ -63,7 +64,7 @@ class OpenAIVisionLLM(BaseModel):
         self.llm = partial(
             self.client.chat.completions.create,
             model=self.model_name,
-            max_tokens=self.DEFAULT_PARAMS_CHAT_ENGINE["max_tokens"],
+            max_tokens=self.model_params["max_tokens"],
         )
         self.tiktoken = tiktoken
         self.image_cols = config.image_columns()
