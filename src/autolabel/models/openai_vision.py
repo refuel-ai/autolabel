@@ -16,7 +16,7 @@ logger = logging.getLogger(__name__)
 
 
 class OpenAIVisionLLM(BaseModel):
-    CHAT_ENGINE_MODELS = ["gpt-4-vision-preview"]
+    CHAT_ENGINE_MODELS = ["gpt-4o", "gpt-4-vision-preview"]
     MODELS_WITH_TOKEN_PROBS = []
 
     # Default parameters for OpenAIVisionLLM
@@ -30,9 +30,11 @@ class OpenAIVisionLLM(BaseModel):
     # Reference: https://openai.com/pricing
     COST_PER_PROMPT_TOKEN = {
         "gpt-4-vision-preview": 0.01 / 1000,
+        "gpt-4o": 0.005 / 1000,
     }
     COST_PER_COMPLETION_TOKEN = {
         "gpt-4-vision-preview": 0.03 / 1000,
+        "gpt-4o": 0.015 / 1000,
     }
 
     @cached_property
