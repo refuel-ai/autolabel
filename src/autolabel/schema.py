@@ -128,6 +128,7 @@ class LLMAnnotation(BaseModel):
     cost: Optional[float] = None
     latency: Optional[float] = None
     error: Optional[LabelingError] = None
+    examples: Optional[List[Dict]] = None
 
 
 class GenerationCacheEntry(BaseModel):

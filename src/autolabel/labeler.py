@@ -308,6 +308,7 @@ class LabelingAgent:
                         input_tokens=input_tokens,
                         cost=0,
                         latency=0,
+                        examples=examples,
                     )
                 else:
                     annotations = []
@@ -315,6 +316,7 @@ class LabelingAgent:
                         annotation = self.task.parse_llm_response(
                             generation, chunk, final_prompt
                         )
+                        annotation.examples = examples
                         annotation.input_tokens = input_tokens
                         annotation.output_tokens = self.llm.get_num_tokens(
                             annotation.raw_response
@@ -652,6 +654,7 @@ class LabelingAgent:
                         input_tokens=input_tokens,
                         cost=0,
                         latency=0,
+                        examples=[],
                     )
                 else:
                     annotation = LLMAnnotation(
@@ -665,6 +668,7 @@ class LabelingAgent:
                         output_tokens=self.llm.get_num_tokens(explanation),
                         cost=sum(response.costs),
                         latency=response.latencies[0],
+                        examples=[],
                     )
                 llm_annotations.append(annotation)
 
