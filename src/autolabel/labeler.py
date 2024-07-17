@@ -128,8 +128,6 @@ class LabelingAgent:
         score_type = "logprob_average"
         if self.config.task_type() == TaskType.ATTRIBUTE_EXTRACTION:
             score_type = "logprob_average_per_key"
-        if self.config.task_type() == TaskType.MULTILABEL_CLASSIFICATION:
-            score_type = "logprob_average_per_label"
         self.confidence = ConfidenceCalculator(
             score_type=score_type,
             endpoint=confidence_endpoint,
@@ -339,6 +337,16 @@ class LabelingAgent:
                                         model_generation=annotation
                                     )
                                 )
+                                if (
+                                    self.config.task_type()
+                                    == TaskType.MULTILABEL_CLASSIFICATION
+                                ):
+                                    annotation.multilabel_confidence = (
+                                        self.confidence.logprob_average_per_label(
+                                            model_generation=annotation
+                                        )
+                                    )
+
                             except Exception as e:
                                 logger.exception(
                                     f"Error calculating confidence score: {e}"

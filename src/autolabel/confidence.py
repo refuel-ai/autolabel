@@ -78,7 +78,7 @@ class ConfidenceCalculator:
 
     def logprob_average_per_label(
         self,
-        logprobs: List,
+        model_generation: LLMAnnotation,
         delimiter: str = ";",
         **kwargs,
     ) -> float:
@@ -87,6 +87,7 @@ class ConfidenceCalculator:
         a confidence score per label.
         """
         logprob_per_label = {}
+        logprobs = model_generation.generation_info["logprobs"]["top_logprobs"]
         if logprobs is None or len(logprobs) == 0:
             return logprob_per_label
 
@@ -98,8 +99,9 @@ class ConfidenceCalculator:
         for i in range(len(logprobs)):
             for char in list(logprobs[i].keys())[0]:
                 if char == delimiter:
+                    logprob_end_idx = i if logprob_start_idx < i else i + 1
                     logprob_per_label[curr_label] = self.logprob_average(
-                        logprobs[logprob_start_idx:i]
+                        logprobs[logprob_start_idx:logprob_end_idx]
                     )
                     curr_label = ""
                     logprob_start_idx = i + 1
