@@ -32,7 +32,6 @@ logger = logging.getLogger(__name__)
 
 class QuestionAnsweringTask(BaseTask):
     DEFAULT_OUTPUT_GUIDELINES = "You will return just the answer and nothing else\n"
-    LLAMA_DEFAULT_OUTPUT_GUIDELINES = ""
     DEFAULT_TASK_GUIDELINES = "Your job is to answer the following questions using the options provided for each question. Choose the best answer for the question.\n"
     NULL_LABEL_TOKEN = "NO_LABEL"
 
@@ -64,7 +63,6 @@ class QuestionAnsweringTask(BaseTask):
         input: Dict,
         examples: List[Dict],
         prompt_template_override: PromptTemplate = None,
-        refuel_prompt_override: bool = False,
         output_guidelines_override: str = None,
         max_input_tokens: int = None,
         get_num_tokens: Optional[Callable] = None,
@@ -138,18 +136,6 @@ class QuestionAnsweringTask(BaseTask):
             return json.dumps(prompt_dict)
         else:
             return curr_text_prompt
-
-    def construct_confidence_prompt(self, input: str, examples: List, **kwargs) -> str:
-        output_guidelines_override = (
-            self.config.output_guidelines() or self.LLAMA_DEFAULT_OUTPUT_GUIDELINES
-        )
-        refuel_prompt = super().construct_confidence_prompt(
-            input,
-            examples,
-            output_guidelines_override=output_guidelines_override,
-            **kwargs,
-        )
-        return refuel_prompt
 
     def get_explanation_prompt(self, example: Dict, include_label=True) -> str:
         pt = PromptTemplate(

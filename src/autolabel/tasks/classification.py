@@ -66,7 +66,6 @@ class ClassificationTask(BaseTask):
         examples: List,
         selected_labels: List[str] = None,
         prompt_template_override: PromptTemplate = None,
-        refuel_prompt_override: bool = False,
         output_guidelines_override: str = None,
         max_input_tokens: int = None,
         get_num_tokens: Optional[Callable] = None,
@@ -81,19 +80,12 @@ class ClassificationTask(BaseTask):
         )
         num_labels = len(labels_list)
 
-        if self.use_llama_prompt_schema:
-            labels = (
-                ", ".join([f'\\"{i}\\"' for i in labels_list[:-1]])
-                + " or "
-                + f'\\"{labels_list[-1]}\\"'
-            )
+        if self.config.label_descriptions():
+            labels = ""
+            for label, description in self.config.label_descriptions().items():
+                labels = labels + f"{label} : {description}\n"
         else:
-            if self.config.label_descriptions():
-                labels = ""
-                for label, description in self.config.label_descriptions().items():
-                    labels = labels + f"{label} : {description}\n"
-            else:
-                labels = "\n".join(labels_list)
+            labels = "\n".join(labels_list)
 
         fmt_task_guidelines = self.task_guidelines.format(
             num_labels=num_labels, labels=labels

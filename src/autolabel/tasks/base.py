@@ -30,20 +30,6 @@ REFUEL_LLM_MODEL = "refuel-llm"
 class BaseTask(ABC):
     ZERO_SHOT_TEMPLATE = "{task_guidelines}\n\n{output_guidelines}\n\nNow I want you to label the following example:\n{current_example}"
     FEW_SHOT_TEMPLATE = "{task_guidelines}\n\n{output_guidelines}\n\nSome examples with their output answers are provided below:\n\n{seed_examples}\n\nNow I want you to label the following example:\n{current_example}"
-
-    ZERO_SHOT_TEMPLATE_LLAMA = """
-    <s>[INST] <<SYS>>
-    {task_guidelines}\n{output_guidelines}
-    <</SYS>>
-    {current_example}[/INST]
-    """
-    FEW_SHOT_TEMPLATE_LLAMA = """
-    <s>[INST] <<SYS>>
-    {task_guidelines}\n{output_guidelines}\n{seed_examples}
-    <</SYS>>
-    {current_example}[/INST]
-    """
-
     # Downstream classes should override these
     NULL_LABEL_TOKEN = "NO_LABEL"
     DEFAULT_TASK_GUIDELINES = ""
@@ -69,26 +55,10 @@ class BaseTask(ABC):
         self._prompt_schema_init()
 
     def _prompt_schema_init(self) -> None:
-        self.use_llama_prompt_schema = (
-            self.config.provider() == ModelProvider.REFUEL
-            and self.config.model_name() == REFUEL_LLM_MODEL
-        ) or (
-            self.config.provider() == ModelProvider.TGI
-            and self.config.model_params().get("base_model", REFUEL_LLM_MODEL)
-            == REFUEL_LLM_MODEL
-        )
         if self._is_few_shot_mode():
-            self.example_template = (
-                self.FEW_SHOT_TEMPLATE_LLAMA
-                if self.use_llama_prompt_schema
-                else self.FEW_SHOT_TEMPLATE
-            )
+            self.example_template = self.FEW_SHOT_TEMPLATE
         else:
-            self.example_template = (
-                self.ZERO_SHOT_TEMPLATE_LLAMA
-                if self.use_llama_prompt_schema
-                else self.ZERO_SHOT_TEMPLATE
-            )
+            self.example_template = self.ZERO_SHOT_TEMPLATE
         self.prompt_template = PromptTemplate(
             input_variables=get_format_variables(self.example_template),
             template=self.example_template,
@@ -106,41 +76,12 @@ class BaseTask(ABC):
         input: str,
         examples: List,
         prompt_template_override: PromptTemplate = None,
-        refuel_prompt_override: bool = False,
         output_guidelines_override: str = None,
         max_input_tokens: int = None,
         get_num_tokens: Optional[Callable] = None,
         **kwargs,
     ) -> str:
         pass
-
-    def construct_confidence_prompt(
-        self,
-        input: str,
-        examples: List,
-        max_input_tokens: int = None,
-        get_num_tokens: Optional[Callable] = None,
-        **kwargs,
-    ) -> str:
-        curr_template = (
-            self.FEW_SHOT_TEMPLATE_LLAMA
-            if self._is_few_shot_mode()
-            else self.ZERO_SHOT_TEMPLATE_LLAMA
-        )
-        prompt_template = PromptTemplate(
-            input_variables=get_format_variables(curr_template),
-            template=curr_template,
-        )
-        refuel_prompt = self.construct_prompt(
-            input=input,
-            examples=examples,
-            prompt_template_override=prompt_template,
-            refuel_prompt_override=True,
-            max_input_tokens=max_input_tokens,
-            get_num_tokens=get_num_tokens,
-            **kwargs,
-        )
-        return refuel_prompt
 
     def trim_prompt(
         self,

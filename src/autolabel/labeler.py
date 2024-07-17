@@ -323,14 +323,6 @@ class LabelingAgent:
                         annotation.latency = latency
 
                         if self.config.confidence():
-                            annotation.confidence_prompt = (
-                                self.task.construct_confidence_prompt(
-                                    chunk,
-                                    examples,
-                                    max_input_tokens=self.CONFIDENCE_MAX_CONTEXT_LENGTH,
-                                    get_num_tokens=self.get_num_tokens,
-                                )
-                            )
                             try:
                                 annotation.confidence_score = (
                                     await self.confidence.calculate(

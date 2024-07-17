@@ -97,7 +97,6 @@ class AttributeExtractionTask(BaseTask):
         input: Dict,
         examples: List,
         prompt_template_override: PromptTemplate = None,
-        refuel_prompt_override: bool = False,
         output_guidelines_override: str = None,
         max_input_tokens: int = None,
         get_num_tokens: Optional[Callable] = None,

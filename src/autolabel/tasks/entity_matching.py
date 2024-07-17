@@ -63,7 +63,6 @@ class EntityMatchingTask(BaseTask):
         input: Dict,
         examples: List[Dict],
         prompt_template_override: PromptTemplate = None,
-        refuel_prompt_override: bool = False,
         output_guidelines_override: str = None,
         max_input_tokens: int = None,
         get_num_tokens: Optional[Callable] = None,
