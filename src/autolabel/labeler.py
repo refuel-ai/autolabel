@@ -134,6 +134,13 @@ class LabelingAgent:
             llm=self.llm,
             cache=self.confidence_cache,
         )
+        if self.config.task_type() == TaskType.MULTILABEL_CLASSIFICATION:
+            self.multilabel_confidence = ConfidenceCalculator(
+                score_type="logprob_average_per_label",
+                endpoint=confidence_endpoint,
+                llm=self.llm,
+                cache=self.confidence_cache,
+            )
 
         self.example_selector = example_selector
 
@@ -342,7 +349,7 @@ class LabelingAgent:
                                     == TaskType.MULTILABEL_CLASSIFICATION
                                 ):
                                     annotation.multilabel_confidence = (
-                                        self.confidence.logprob_average_per_label(
+                                        await self.multilabel_confidence.calculate(
                                             model_generation=annotation
                                         )
                                     )

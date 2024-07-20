@@ -78,7 +78,7 @@ class ConfidenceCalculator:
 
     def logprob_average_per_label(
         self,
-        model_generation: LLMAnnotation,
+        logprobs: Union[list, dict],
         delimiter: str = ";",
         **kwargs,
     ) -> float:
@@ -87,9 +87,9 @@ class ConfidenceCalculator:
         a confidence score per label.
         """
         logprob_per_label = {}
-        logprobs = model_generation.generation_info["logprobs"]["top_logprobs"]
         if logprobs is None or len(logprobs) == 0:
             return logprob_per_label
+        logger.info(f"Logprobs: {logprobs}")
 
         # Suppose the output for which we compute confidence is "Abc;Bcd;C"
         # In this case the logprobs can be a list of dictionaries like
@@ -215,6 +215,9 @@ class ConfidenceCalculator:
         if self.score_type == "logprob_average_per_key":
             keys = model_generation.label.keys()
             model_generation.confidence_score = {key: 0 for key in keys}
+        elif self.score_type == "logprob_average_per_label":
+            model_generation.multilabel_confidence = {}
+            return model_generation.multilabel_confidence
         else:
             model_generation.confidence_score = 0
         return model_generation.confidence_score
@@ -278,6 +281,9 @@ class ConfidenceCalculator:
             keys=keys,
             **kwargs,
         )
+        if self.score_type == "logprob_average_per_label":
+            model_generation.multilabel_confidence = confidence
+            return confidence
         model_generation.confidence_score = confidence
         return confidence
 
