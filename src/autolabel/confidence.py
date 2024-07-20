@@ -78,7 +78,7 @@ class ConfidenceCalculator:
 
     def logprob_average_per_label(
         self,
-        logprobs: Union[list, dict],
+        logprobs: List,
         delimiter: str = ";",
         **kwargs,
     ) -> float:
@@ -89,7 +89,6 @@ class ConfidenceCalculator:
         logprob_per_label = {}
         if logprobs is None or len(logprobs) == 0:
             return logprob_per_label
-        logger.info(f"Logprobs: {logprobs}")
 
         # Suppose the output for which we compute confidence is "Abc;Bcd;C"
         # In this case the logprobs can be a list of dictionaries like
