@@ -102,11 +102,10 @@ class ConfidenceCalculator:
                 new_key = cur_key.split("\n")[-1].strip()
                 if not new_key:
                     logprobs = logprobs[i + 1 :]
-                    break
                 else:
                     logprobs[i] = {new_key: logprobs[i][cur_key]}
                     logprobs = logprobs[i:]
-                    break
+                break
 
         # Suppose the output for which we compute confidence is "Abc;Bcd;C"
         # In this case the logprobs can be a list of dictionaries like
