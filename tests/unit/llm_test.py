@@ -9,7 +9,7 @@ from autolabel.configs import AutolabelConfig
 from autolabel.models.anthropic import AnthropicLLM
 from autolabel.models.openai import OpenAILLM
 from autolabel.models.openai_vision import OpenAIVisionLLM
-from autolabel.models.refuel import RefuelLLM
+from autolabel.models.refuelV2 import RefuelLLMV2
 
 
 ################### ANTHROPIC TESTS #######################
@@ -201,7 +201,7 @@ def test_gpt4V_return_probs():
 
 ################### REFUEL TESTS #######################
 def test_refuel_initialization():
-    model = RefuelLLM(
+    model = RefuelLLMV2(
         config=AutolabelConfig(config="tests/assets/banking/config_banking_refuel.json")
     )
 
@@ -218,7 +218,7 @@ async def test_refuel_label(mocker):
         def raise_for_status(self):
             pass
 
-    model = RefuelLLM(
+    model = RefuelLLMV2(
         config=AutolabelConfig(config="tests/assets/banking/config_banking_refuel.json")
     )
     prompts = ["test1", "test2"]
@@ -246,7 +246,7 @@ async def test_refuel_label_non_retryable(mocker):
         def raise_for_status(self):
             pass
 
-    model = RefuelLLM(
+    model = RefuelLLMV2(
         config=AutolabelConfig(config="tests/assets/banking/config_banking_refuel.json")
     )
     prompts = ["test1", "test2"]
@@ -276,7 +276,7 @@ async def test_refuel_label_retryable(mocker):
         def raise_for_status(self):
             pass
 
-    model = RefuelLLM(
+    model = RefuelLLMV2(
         config=AutolabelConfig(config="tests/assets/banking/config_banking_refuel.json")
     )
     prompts = ["test1", "test2"]
@@ -294,7 +294,7 @@ async def test_refuel_label_retryable(mocker):
 
 
 def test_refuel_get_cost():
-    model = RefuelLLM(
+    model = RefuelLLMV2(
         config=AutolabelConfig(config="tests/assets/banking/config_banking_refuel.json")
     )
     example_prompt = "TestingExamplePrompt"
@@ -303,7 +303,7 @@ def test_refuel_get_cost():
 
 
 def test_refuel_return_probs():
-    model = RefuelLLM(
+    model = RefuelLLMV2(
         config=AutolabelConfig(config="tests/assets/banking/config_banking_refuel.json")
     )
     assert model.returns_token_probs() is True

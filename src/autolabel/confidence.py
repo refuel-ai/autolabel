@@ -190,7 +190,7 @@ class ConfidenceCalculator:
                 "top_logprobs"
             ]
         else:
-            p_true_prompt = model_generation.confidence_prompt + p_true_prompt
+            p_true_prompt = model_generation.prompt + p_true_prompt
             yes_logprob = await self.compute_confidence(p_true_prompt, "Yes")
             no_logprob = await self.compute_confidence(p_true_prompt, "No")
             if not yes_logprob or not no_logprob:
@@ -230,7 +230,7 @@ class ConfidenceCalculator:
                 return model_generation.confidence_score
             if self.cache:
                 cache_entry = ConfidenceCacheEntry(
-                    prompt=model_generation.confidence_prompt,
+                    prompt=model_generation.prompt,
                     raw_response=model_generation.raw_response,
                     score_type=self.score_type,
                 )
@@ -239,13 +239,13 @@ class ConfidenceCalculator:
                 # On cache miss, compute logprobs using API call and update cache
                 if logprobs == None:
                     logprobs = await self.compute_confidence(
-                        model_generation.confidence_prompt,
+                        model_generation.prompt,
                         model_generation.raw_response,
                     )
                     if not logprobs:
                         return self.return_empty_logprob(model_generation)
                     cache_entry = ConfidenceCacheEntry(
-                        prompt=model_generation.confidence_prompt,
+                        prompt=model_generation.prompt,
                         raw_response=model_generation.raw_response,
                         logprobs=logprobs,
                         score_type=self.score_type,
@@ -254,7 +254,7 @@ class ConfidenceCalculator:
                     self.cache.update(cache_entry)
             else:
                 logprobs = await self.compute_confidence(
-                    model_generation.confidence_prompt, model_generation.raw_response
+                    model_generation.prompt, model_generation.raw_response
                 )
                 if not logprobs:
                     return self.return_empty_logprob(model_generation)
