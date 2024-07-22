@@ -9,8 +9,6 @@ from autolabel.configs import AutolabelConfig
 from autolabel.models.anthropic import AnthropicLLM
 from autolabel.models.openai import OpenAILLM
 from autolabel.models.openai_vision import OpenAIVisionLLM
-from autolabel.models.refuel import RefuelLLM
-
 
 ################### ANTHROPIC TESTS #######################
 def test_anthropic_initialization():
