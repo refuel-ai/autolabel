@@ -91,6 +91,23 @@ class ConfidenceCalculator:
         if logprobs is None or len(logprobs) == 0:
             return logprob_per_label
 
+        # Remove all characters before a '\n' character in the logprobs, as
+        # this is parsed during the generation process
+        # In this case if input logprobs is
+        # [{"xx\nc": -1.2},{"Ab\n": -1.2}, {"Abc": -1.2}, {";": -1.3}, {"B": -1.4}, {"cd": -1.6}, {";": -1.5}, {"C": -1.4}]
+        # The output logprobs would be [{"Abc": -1.2}, {";": -1.3}, {"B": -1.4}, {"cd": -1.6}, {";": -1.5}, {"C": -1.4}]
+        for i in range(len(logprobs) - 1, -1, -1):
+            cur_key = list(logprobs[i].keys())[0]
+            if "\n" in cur_key:
+                new_key = cur_key.split("\n")[-1].strip()
+                if not new_key:
+                    logprobs = logprobs[i + 1 :]
+                    break
+                else:
+                    logprobs[i] = {new_key: logprobs[i][cur_key]}
+                    logprobs = logprobs[i:]
+                    break
+
         # Suppose the output for which we compute confidence is "Abc;Bcd;C"
         # In this case the logprobs can be a list of dictionaries like
         # [{"Abc": -1.2}, {";": -1.3}, {"B": -1.4}, {"cd": -1.6}, {";": -1.5}, {"C": -1.4}]
