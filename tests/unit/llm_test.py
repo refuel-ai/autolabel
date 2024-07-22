@@ -10,6 +10,7 @@ from autolabel.models.anthropic import AnthropicLLM
 from autolabel.models.openai import OpenAILLM
 from autolabel.models.openai_vision import OpenAIVisionLLM
 
+
 ################### ANTHROPIC TESTS #######################
 def test_anthropic_initialization():
     model = AnthropicLLM(
