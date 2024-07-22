@@ -70,7 +70,8 @@ class RefuelLLMV2(BaseModel):
             "request_timeout", self.DEFAULT_READ_TIMEOUT
         )
         self.adapter_path = self.model_params.get("adapter_id", None)
-        del self.model_params["request_timeout"]
+        if "request_timeout" in self.model_params:
+            del self.model_params["request_timeout"]
 
         # initialize runtime
         self.REFUEL_API_ENV = "REFUEL_API_KEY"
