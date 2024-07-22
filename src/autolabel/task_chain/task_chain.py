@@ -116,6 +116,7 @@ class TaskChainOrchestrator:
         transform_cache: Optional[BaseCache] = SQLAlchemyTransformCache(),
         confidence_cache: Optional[BaseCache] = SQLAlchemyConfidenceCache(),
         confidence_tokenizer: Optional[AutoTokenizer] = None,
+        confidence_endpoint: Optional[str] = None,
         column_name_map: Optional[Dict[str, str]] = None,
     ):
         self.task_chain_config = task_chain_config
@@ -125,6 +126,7 @@ class TaskChainOrchestrator:
         self.transform_cache = transform_cache
         self.confidence_cache = confidence_cache
         self.confidence_tokenizer = confidence_tokenizer
+        self.confidence_endpoint = confidence_endpoint
         self.column_name_map = column_name_map
 
     # TODO: For now, we run each separate step of the task chain serially and aggregate at the end.
@@ -153,6 +155,7 @@ class TaskChainOrchestrator:
                     transform_cache=self.transform_cache,
                     confidence_cache=self.confidence_cache,
                     confidence_tokenizer=self.confidence_tokenizer,
+                    confidence_endpoint=self.confidence_endpoint,
                     console_output=False,
                 )
                 for transform_dict in autolabel_config.transforms():
@@ -170,6 +173,7 @@ class TaskChainOrchestrator:
                     transform_cache=self.transform_cache,
                     confidence_cache=self.confidence_cache,
                     confidence_tokenizer=self.confidence_tokenizer,
+                    confidence_endpoint=self.confidence_endpoint,
                     console_output=False,
                 )
                 dataset = await agent.arun(

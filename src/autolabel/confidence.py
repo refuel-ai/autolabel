@@ -42,6 +42,7 @@ class ConfidenceCalculator:
             "logprob_average": self.logprob_average,
             "p_true": self.p_true,
             "logprob_average_per_key": self.logprob_average_per_key,
+            "logprob_average_per_label": self.logprob_average_per_label,
         }
         self.REFUEL_API_ENV = "REFUEL_API_KEY"
         if self.REFUEL_API_ENV in os.environ and os.environ[self.REFUEL_API_ENV]:
@@ -74,6 +75,45 @@ class ConfidenceCalculator:
                 )
                 count += 1
         return logprob_cumulative ** (1.0 / count) if count > 0 else 0
+
+    def logprob_average_per_label(
+        self,
+        model_generation: LLMAnnotation,
+        delimiter: str = ";",
+        **kwargs,
+    ) -> float:
+        """
+        This function calculates the confidence score per label when there are multiple labels in the response (i.e. multilabel tasks). This will return
+        a confidence score per label.
+        """
+        logprob_per_label = {}
+        logprobs = model_generation.generation_info["logprobs"]["top_logprobs"]
+        if logprobs is None or len(logprobs) == 0:
+            return logprob_per_label
+
+        # Suppose the output for which we compute confidence is "Abc;Bcd;C"
+        # In this case the logprobs can be a list of dictionaries like
+        # [{"Abc": -1.2}, {";": -1.3}, {"B": -1.4}, {"cd": -1.6}, {";": -1.5}, {"C": -1.4}]
+        curr_label = ""
+        logprob_start_idx = 0
+        for i in range(len(logprobs)):
+            for char in list(logprobs[i].keys())[0]:
+                if char == delimiter:
+                    logprob_end_idx = i if logprob_start_idx < i else i + 1
+                    logprob_per_label[curr_label] = self.logprob_average(
+                        logprobs[logprob_start_idx:logprob_end_idx]
+                    )
+                    curr_label = ""
+                    logprob_start_idx = i + 1
+                else:
+                    curr_label += char
+
+        # Average the logprobs for the last label (or only label if there is just one label)
+        if logprob_start_idx < len(logprobs):
+            logprob_per_label[curr_label] = self.logprob_average(
+                logprobs[logprob_start_idx:]
+            )
+        return logprob_per_label
 
     def logprob_average_per_key(
         self,

@@ -329,6 +329,16 @@ class LabelingAgent:
                                         model_generation=annotation
                                     )
                                 )
+                                if (
+                                    self.config.task_type()
+                                    == TaskType.MULTILABEL_CLASSIFICATION
+                                ):
+                                    annotation.multilabel_confidence = (
+                                        self.confidence.logprob_average_per_label(
+                                            model_generation=annotation
+                                        )
+                                    )
+
                             except Exception as e:
                                 logger.exception(
                                     f"Error calculating confidence score: {e}"
