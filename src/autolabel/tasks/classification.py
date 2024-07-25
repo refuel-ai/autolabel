@@ -115,13 +115,21 @@ class ClassificationTask(BaseTask):
         try:
             current_example = example_template.format(**input)
         except KeyError as e:
-            current_example = example_template.format_map(defaultdict(str, input))
-            logger.warn(
-                f'\n\nKey {e} in the "example_template" in the given config'
-                f"\n\n{example_template}\n\nis not present in the datsaset columns - {input.keys()}.\n\n"
-                f"Input - {input}\n\n"
-                "Continuing with the prompt as {current_example}"
-            )
+            try:
+                current_example = example_template.format_map(defaultdict(str, input))
+                logger.warn(
+                    f'\n\nKey {e} in the "example_template" in the given config'
+                    f"\n\n{example_template}\n\nis not present in the datsaset columns - {input.keys()}.\n\n"
+                    f"Input - {input}\n\n"
+                    "Continuing with the prompt as {current_example}"
+                )
+            except AttributeError as e:
+                for key in input.keys():
+                    if input[key] is not None:
+                        example_template = example_template.replace(
+                            f"{{{key}}}", input[key]
+                        )
+                current_example = example_template
 
         # populate the current example in the prompt
         prompt_template = (
