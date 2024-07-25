@@ -34,7 +34,7 @@ class RefuelLLMV2(BaseModel):
         "pretrained_model_name_or_path": "NousResearch/Llama-2-13b-chat-hf",
         "revision": "d73f5fa9c4bc135502e04c27b39660747172d76b",
     }
-    DEFAULT_CONTEXT_LENGTH = 3250
+    DEFAULT_CONTEXT_LENGTH = 8192
     DEFAULT_CONNECT_TIMEOUT = 10
     DEFAULT_READ_TIMEOUT = 120
     DEFAULT_PARAMS = {
@@ -61,6 +61,9 @@ class RefuelLLMV2(BaseModel):
         # be used to decide which refuel model is queried
         self.model_name = config.model_name()
         model_params = config.model_params()
+        self.max_context_length = config.max_context_length(
+            default=self.DEFAULT_CONTEXT_LENGTH
+        )
         self.model_params = {**self.DEFAULT_PARAMS, **model_params}
         self.model_endpoint = config.model_endpoint()
         self.tokenizer = AutoTokenizer.from_pretrained(

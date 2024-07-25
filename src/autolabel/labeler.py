@@ -73,7 +73,6 @@ MERGE_FUNCTION = {
 
 class LabelingAgent:
     COST_KEY = "Cost in $"
-    CONFIDENCE_MAX_CONTEXT_LENGTH = 3400
 
     def __init__(
         self,
@@ -285,7 +284,7 @@ class LabelingAgent:
                 chunk,
                 examples,
                 selected_labels=selected_labels,
-                max_input_tokens=self.llm.DEFAULT_CONTEXT_LENGTH,
+                max_input_tokens=self.llm.max_context_length,
                 get_num_tokens=self.llm.get_num_tokens,
             )
             response = await self.llm.label([final_prompt])
@@ -514,14 +513,14 @@ class LabelingAgent:
                     input_i,
                     examples,
                     selected_labels=selected_labels,
-                    max_input_tokens=self.llm.DEFAULT_CONTEXT_LENGTH,
+                    max_input_tokens=self.llm.max_context_length,
                     get_num_tokens=self.llm.get_num_tokens,
                 )
             else:
                 final_prompt = self.task.construct_prompt(
                     input_i,
                     examples,
-                    max_input_tokens=self.llm.DEFAULT_CONTEXT_LENGTH,
+                    max_input_tokens=self.llm.max_context_length,
                     get_num_tokens=self.llm.get_num_tokens,
                 )
             prompt_list.append(final_prompt)
