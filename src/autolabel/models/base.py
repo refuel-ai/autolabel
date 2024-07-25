@@ -22,6 +22,9 @@ class BaseModel(ABC):
         self.config = config
         self.cache = cache
         self.model_params = config.model_params()
+        self.max_context_length = config.max_context_length(
+            default=self.DEFAULT_CONTEXT_LENGTH
+        )
         # Specific classes that implement this interface should run initialization steps here
         # E.g. initializing the LLM model with required parameters from ModelConfig
 

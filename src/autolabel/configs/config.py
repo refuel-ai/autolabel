@@ -33,6 +33,7 @@ class AutolabelConfig(BaseConfig):
     # Model config keys (config["model"][<key>])
     PROVIDER_KEY = "provider"
     MODEL_NAME_KEY = "name"
+    MODEL_MAX_CONTEXT_LENGTH_KEY = "max_context_length"
     MODEL_PARAMS_KEY = "params"
     MODEL_ENDPOINT_KEY = "endpoint"
     COMPUTE_CONFIDENCE_KEY = "compute_confidence"
@@ -169,6 +170,10 @@ class AutolabelConfig(BaseConfig):
     def model_params(self) -> Dict:
         """Returns a dict of configured settings for the model (e.g. hyperparameters)"""
         return self._model_config.get(self.MODEL_PARAMS_KEY, {})
+
+    def max_context_length(self, default=None) -> int:
+        """Returns the maximum number of tokens allowed in the context for the model"""
+        return self._model_config.get(self.MODEL_MAX_CONTEXT_LENGTH_KEY, default)
 
     def model_endpoint(self) -> str:
         """Returns the endpoint to use for the model"""
