@@ -246,7 +246,7 @@ class AttributeExtractionTask(BaseTask):
             for attribute in self.config.attributes():
                 attr_options = attribute.get("options")
                 if attr_options is not None and len(attr_options) > 0:
-                    attr_label = llm_label.get(attribute["name"])
+                    attr_label = str(llm_label.get(attribute["name"]))
                     if attr_label is not None and attr_label not in attr_options:
                         logger.warning(
                             f"Attribute {attr_label} from the LLM response {llm_label} is not in the labels list"
