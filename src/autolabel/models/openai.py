@@ -32,6 +32,7 @@ class OpenAILLM(BaseModel):
         "gpt-4-1106-preview",
         "gpt-4-0125-preview",
         "gpt-4o",
+        "gpt-4o-mini",
     ]
     MODELS_WITH_TOKEN_PROBS = [
         "text-curie-001",
@@ -50,6 +51,7 @@ class OpenAILLM(BaseModel):
         "gpt-4-1106-preview",
         "gpt-4-0125-preview",
         "gpt-4o",
+        "gpt-4o-mini",
     ]
     JSON_MODE_MODELS = [
         "gpt-3.5-turbo-0125",
@@ -58,6 +60,7 @@ class OpenAILLM(BaseModel):
         "gpt-4-1106-preview",
         "gpt-4-turbo-preview",
         "gpt-4o",
+        "gpt-4o-mini",
     ]
 
     # Default parameters for OpenAILLM
@@ -93,6 +96,7 @@ class OpenAILLM(BaseModel):
         "gpt-4-1106-preview": 0.01 / 1000,
         "gpt-4-0125-preview": 0.01 / 1000,
         "gpt-4o": 0.005 / 1000,
+        "gpt-4o-mini": 0.15 / 1_000_000,
     }
     COST_PER_COMPLETION_TOKEN = {
         "text-davinci-003": 0.02 / 1000,
@@ -111,6 +115,7 @@ class OpenAILLM(BaseModel):
         "gpt-4-1106-preview": 0.03 / 1000,
         "gpt-4-0125-preview": 0.03 / 1000,
         "gpt-4o": 0.015 / 1000,
+        "gpt-4o-mini": 0.60 / 1_000_000,
     }
     ERROR_TYPE_MAPPING = {
         "context_length_exceeded": ErrorType.CONTEXT_LENGTH_ERROR,
