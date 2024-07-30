@@ -39,7 +39,7 @@ class RefuelLLMV2(BaseModel):
     DEFAULT_READ_TIMEOUT = 120
     DEFAULT_PARAMS = {
         "max_tokens": 128,
-        "temperature": 0.05,
+        "temperature": 0,
         "top_p": 1.0,
     }
 
