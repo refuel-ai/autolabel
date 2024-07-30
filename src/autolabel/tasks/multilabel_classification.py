@@ -22,7 +22,7 @@ logger = logging.getLogger(__name__)
 
 
 class MultilabelClassificationTask(BaseTask):
-    DEFAULT_OUTPUT_GUIDELINES = 'You will return the answer as a semicolon-separated list of labels. For example: label1;label2;label3'
+    DEFAULT_OUTPUT_GUIDELINES = "You will return the answer as a semicolon-separated list of labels. For example: label1;label2;label3"
     DEFAULT_TASK_GUIDELINES = "Your job is to correctly label the provided input example into one or more of the following {num_labels} categories.\nCategories:\n{labels}\n"
 
     LABEL_FORMAT_IN_EXPLANATION = " The last line of the explanation should be - So, the answer is <list of label separated by semicolon>."
