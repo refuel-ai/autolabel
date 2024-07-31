@@ -147,8 +147,8 @@ def main():
             config["model"]["params"] = {
                 "tensor_parallel_size": NUM_GPUS,
                 "max_tokens": 1024,
-                "temperature": 0.05,
-                "top_p": 0.999999999999,
+                "temperature": 0.0,
+                "top_p": 1.0,
             }
         config["prompt"]["few_shot_num"] = (
             FEW_SHOT_OVERRIDES[dataset] if dataset in FEW_SHOT_OVERRIDES else few_shot
