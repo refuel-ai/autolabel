@@ -332,11 +332,23 @@ class LabelingAgent:
                                     self.config.task_type()
                                     == TaskType.MULTILABEL_CLASSIFICATION
                                 ):
-                                    annotation.multilabel_confidence = (
+                                    multilabel_confidence = (
                                         self.confidence.logprob_average_per_label(
                                             model_generation=annotation
                                         )
                                     )
+                                    multilabels = (
+                                        annotation.label.split(
+                                            self.config.label_separator()
+                                        )
+                                        if annotation.label
+                                        else []
+                                    )
+                                    multilabel_confidence = {
+                                        k: v
+                                        for k, v in multilabel_confidence.items()
+                                        if k in multilabels
+                                    }
 
                             except Exception as e:
                                 logger.exception(
