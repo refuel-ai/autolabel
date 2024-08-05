@@ -349,6 +349,9 @@ class LabelingAgent:
                                         for k, v in multilabel_confidence.items()
                                         if k in multilabels
                                     }
+                                    annotation.multilabel_confidence = (
+                                        multilabel_confidence
+                                    )
 
                             except Exception as e:
                                 logger.exception(
