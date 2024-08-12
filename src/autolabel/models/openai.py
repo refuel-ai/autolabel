@@ -31,6 +31,7 @@ class OpenAILLM(BaseModel):
         "gpt-4-32k-0613",
         "gpt-4-1106-preview",
         "gpt-4-0125-preview",
+        "gpt-4-turbo-preview",
         "gpt-4o",
         "gpt-4o-mini",
     ]
@@ -50,6 +51,7 @@ class OpenAILLM(BaseModel):
         "gpt-4-32k-0613",
         "gpt-4-1106-preview",
         "gpt-4-0125-preview",
+        "gpt-4-turbo-preview",
         "gpt-4o",
         "gpt-4o-mini",
     ]
@@ -95,6 +97,7 @@ class OpenAILLM(BaseModel):
         "gpt-4-32k-0314": 0.06 / 1000,
         "gpt-4-1106-preview": 0.01 / 1000,
         "gpt-4-0125-preview": 0.01 / 1000,
+        "gpt-4-turbo-preview": 0.01 / 1000,
         "gpt-4o": 0.005 / 1000,
         "gpt-4o-mini": 0.15 / 1_000_000,
     }
@@ -114,6 +117,7 @@ class OpenAILLM(BaseModel):
         "gpt-4-32k-0314": 0.12 / 1000,
         "gpt-4-1106-preview": 0.03 / 1000,
         "gpt-4-0125-preview": 0.03 / 1000,
+        "gpt-4-turbo-preview": 0.03 / 1000,
         "gpt-4o": 0.015 / 1000,
         "gpt-4o-mini": 0.60 / 1_000_000,
     }
