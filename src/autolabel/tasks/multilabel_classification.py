@@ -46,6 +46,16 @@ class MultilabelClassificationTask(BaseTask):
         if self.config.confidence():
             self.metrics.append(AUROCMetric())
 
+    def _validate_example(self, example: Dict) -> bool:
+        label_column = self.config.label_column()
+        if label_column:
+            labels = example.get(label_column)
+            if labels is None or len(labels) == 0:
+                return False
+            return True
+        else:
+            return False
+
     def construct_prompt(
         self,
         input: Dict,
@@ -76,6 +86,11 @@ class MultilabelClassificationTask(BaseTask):
         fmt_examples = []
         for eg in examples:
             eg_copy = eg.copy()
+            if not self._validate_example(eg_copy):
+                logger.warn(
+                    f"Example: {eg_copy} does not have a valid label. Skipping this example."
+                )
+                continue
             # If chain of thought is enabled
             if label_column and self.config.chain_of_thought():
                 eg_copy[label_column] = json.dumps({label_column: eg[label_column]})

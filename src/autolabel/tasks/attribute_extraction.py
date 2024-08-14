@@ -90,7 +90,28 @@ class AttributeExtractionTask(BaseTask):
         for attribute in self.config.attributes():
             attribute_name = attribute["name"]
             output_dict[attribute_name] = input.get(attribute_name, "")
+        if not self._validate_output_dict(output_dict):
+            logger.warn(
+                f"Generated output dict: {output_dict} does not contain all the expected output attributes. Skipping example."
+            )
+            return None
         return json.dumps(output_dict)
+
+    def _validate_output_dict(self, output_dict: Dict) -> bool:
+        """Validate the output dictionary
+
+        Args:
+            output_dict (Dict): The output dictionary
+
+        Returns:
+            bool: True if the output dictionary is valid, False otherwise
+        """
+        for attribute in self.config.attributes():
+            attribute_name = attribute.get("name")
+            attribute_value = output_dict.get(attribute_name)
+            if attribute_value is None or len(str(attribute_value)) == 0:
+                return False
+        return True
 
     def construct_prompt(
         self,
@@ -118,6 +139,8 @@ class AttributeExtractionTask(BaseTask):
         for eg in examples:
             if self.OUTPUT_DICT_KEY not in eg:
                 output_dict = self._generate_output_dict(eg)
+                if output_dict is None:
+                    continue
                 eg.update({self.OUTPUT_DICT_KEY: output_dict})
             fmt_examples.append(example_template.format_map(defaultdict(str, eg)))
 
