@@ -189,10 +189,11 @@ class ConfidenceCalculator:
             logprob_per_key[locations[i][2]] = self.logprob_average(
                 logprobs[locations[i][1] + 1 : locations[i + 1][0]]
             )
-        # Average the logprobs from the end of the last token to the end of the logprobs
-        logprob_per_key[locations[-1][2]] = self.logprob_average(
-            logprobs[locations[-1][1] + 1 :]
-        )
+        if len(locations) > 0 and len(logprobs) > locations[-1][1] + 1:
+            # Average the logprobs from the end of the last token to the end of the logprobs
+            logprob_per_key[locations[-1][2]] = self.logprob_average(
+                logprobs[locations[-1][1] + 1 :]
+            )
 
         return logprob_per_key
 
