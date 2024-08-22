@@ -104,6 +104,7 @@ minimal = [
     "scrapingbee==2.0.1",
     "pillow >= 9.5.0",
     "pydantic == 1.10.9",
+    "json5==0.9.25",
 ]
 all = [
     "black",
@@ -140,6 +141,7 @@ all = [
     "scrapingbee==2.0.1",
     "pillow >= 9.5.0",
     "pydantic == 1.10.9",
+    "json5==0.9.25",
 ]
 
 [project.urls]

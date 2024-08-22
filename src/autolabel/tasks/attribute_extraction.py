@@ -1,4 +1,5 @@
 import json
+import json5
 import logging
 import pickle
 from collections import defaultdict
@@ -219,7 +220,7 @@ class AttributeExtractionTask(BaseTask):
             completion_text = completion_text.lstrip("```json")
             completion_text = completion_text.rstrip("```")
 
-            llm_label = {k: str(v) for k, v in json.loads(completion_text).items()}
+            llm_label = {k: str(v) for k, v in json5.loads(completion_text).items()}
             successfully_labeled = True
         except Exception as e:
             logger.info(
@@ -229,7 +230,7 @@ class AttributeExtractionTask(BaseTask):
                 json_start, json_end = response.text.find("{"), response.text.rfind("}")
                 llm_label = {
                     k: str(v)
-                    for k, v in json.loads(
+                    for k, v in json5.loads(
                         response.text[json_start : json_end + 1]
                     ).items()
                 }
