@@ -116,7 +116,7 @@ class ConfidenceCalculator:
             for char in list(logprobs[i].keys())[0]:
                 if char == delimiter:
                     logprob_end_idx = i if logprob_start_idx < i else i + 1
-                    logprob_per_label[curr_label] = self.logprob_average(
+                    logprob_per_label[curr_label.strip()] = self.logprob_average(
                         logprobs[logprob_start_idx:logprob_end_idx]
                     )
                     curr_label = ""
@@ -126,7 +126,7 @@ class ConfidenceCalculator:
 
         # Average the logprobs for the last label (or only label if there is just one label)
         if logprob_start_idx < len(logprobs):
-            logprob_per_label[curr_label] = self.logprob_average(
+            logprob_per_label[curr_label.strip()] = self.logprob_average(
                 logprobs[logprob_start_idx:]
             )
         return logprob_per_label
