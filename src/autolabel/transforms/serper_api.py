@@ -19,11 +19,8 @@ logger = logging.getLogger(__name__)
 class RefuelSerperAPIWrapper(GoogleSerperAPIWrapper):
     DEFAULT_ORGANIC_RESULTS_KEYS = ["position", "title", "link", "snippet"]
 
-    def __init__(self, params=None, serper_api_key=None):
-        super().__init__(
-            params=params,
-            serper_api_key=serper_api_key,
-        )
+    def __init__(self, params=None, serper_api_key=None, num_results=10):
+        super().__init__(params=params, serper_api_key=serper_api_key, k=num_results)
 
     async def arun(self, query: str, **kwargs: Any) -> Dict:
         """Run query through Serper.dev API and parse result async."""
@@ -67,6 +64,7 @@ class SerperApi(BaseTransform):
         query_template: str,
         serper_api_key: str,
         serper_args: dict = DEFAULT_ARGS,
+        num_results: int = 10,
     ) -> None:
         super().__init__(cache, output_columns)
         self.query_columns = query_columns
@@ -76,6 +74,7 @@ class SerperApi(BaseTransform):
         self.serper_api_wrapper = RefuelSerperAPIWrapper(
             params=self.serper_args,
             serper_api_key=self.serper_api_key,
+            num_results=num_results,
         )
 
     def name(self) -> str:
