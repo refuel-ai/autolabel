@@ -222,6 +222,7 @@ class BaseTask(ABC):
                     llm_label = self.NULL_LABEL_TOKEN
             elif self.config.task_type() == TaskType.MULTILABEL_CLASSIFICATION:
                 llm_multi_labels = llm_label.split(self.config.label_separator())
+                llm_multi_labels = list(map(str.strip, llm_multi_labels))
                 llm_multi_labels = list(
                     filter(
                         lambda label: label in self.config.labels_list(),
