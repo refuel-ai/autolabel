@@ -19,11 +19,8 @@ logger = logging.getLogger(__name__)
 class RefuelSerperAPIWrapper(GoogleSerperAPIWrapper):
     DEFAULT_ORGANIC_RESULTS_KEYS = ["position", "title", "link", "snippet"]
 
-    def __init__(self, params=None, serper_api_key=None):
-        super().__init__(
-            params=params,
-            serper_api_key=serper_api_key,
-        )
+    def __init__(self, **kwargs: Any) -> None:
+        super().__init__(**kwargs)
 
     async def arun(self, query: str, **kwargs: Any) -> Dict:
         """Run query through Serper.dev API and parse result async."""
@@ -57,26 +54,16 @@ class RefuelSerperAPIWrapper(GoogleSerperAPIWrapper):
 class SerperApi(BaseTransform):
     COLUMN_NAMES = ["knowledge_graph_results", "organic_search_results"]
 
-    DEFAULT_ARGS = {"gl": "us", "hl": "en"}
-
     def __init__(
         self,
         cache: BaseCache,
-        output_columns: Dict[str, Any],
-        query_columns: List[str],
-        query_template: str,
-        serper_api_key: str,
-        serper_args: dict = DEFAULT_ARGS,
+        **kwargs: Any,
     ) -> None:
-        super().__init__(cache, output_columns)
-        self.query_columns = query_columns
-        self.query_template = query_template
-        self.serper_api_key = serper_api_key
-        self.serper_args = serper_args
-        self.serper_api_wrapper = RefuelSerperAPIWrapper(
-            params=self.serper_args,
-            serper_api_key=self.serper_api_key,
-        )
+        super().__init__(cache, kwargs.pop("output_columns", {}))
+        self.query_columns = kwargs.pop("query_columns", [])
+        self.query_template = kwargs.pop("query_template", "")
+        self.serper_args = kwargs
+        self.serper_api_wrapper = RefuelSerperAPIWrapper(**self.serper_args)
 
     def name(self) -> str:
         return TransformType.WEB_SEARCH_SERPER
@@ -129,8 +116,7 @@ class SerperApi(BaseTransform):
             "query_columns": self.query_columns,
             "query_template": self.query_template,
             "output_columns": self.output_columns,
-            "serper_api_key": self.serper_api_key,
-            "serper_args": self.serper_args,
+            "params": self.serper_args,
         }
 
     def input_columns(self) -> List[str]:
