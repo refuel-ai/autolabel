@@ -4,6 +4,7 @@ from .base import BaseTransform
 from .pdf import PDFTransform
 from .serp_api import SerpApi
 from .serper_api import SerperApi
+from .serper_maps import SerperMaps
 from .custom_api import CustomApi
 from .webpage_transform import WebpageTransform
 from .webpage_scrape import WebpageScrape
@@ -22,6 +23,7 @@ TRANSFORM_REGISTRY = {
     TransformType.WEB_SEARCH_SERP_API: SerpApi,
     TransformType.WEB_SEARCH_SERPER: SerperApi,
     TransformType.CUSTOM_API: CustomApi,
+    TransformType.MAPS_SEARCH: SerperMaps,
 }
 
 
