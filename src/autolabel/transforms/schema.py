@@ -14,6 +14,7 @@ class TransformType(str, Enum):
     IMAGE = "image"
     WEB_SEARCH_SERP_API = "web_search_serp_api"
     WEB_SEARCH_SERPER = "web_search"
+    MAPS_SEARCH = "map_search"
     CUSTOM_API = "custom_api"
 
 
