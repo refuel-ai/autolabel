@@ -146,7 +146,7 @@ class WebpageScrape(BaseTransform):
             if not validate_url(url):
                 raise TransformError(
                     TransformErrorType.INVALID_INPUT,
-                    f"Invalid url in row {row}",
+                    f"Invalid url: {url}",
                 )
             url_response_data = await self._load_url(url)
 
