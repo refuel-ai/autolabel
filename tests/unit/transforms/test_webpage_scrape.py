@@ -79,9 +79,9 @@ async def test_unreachable_url():
     )
     assert (
         transformed_row["webpage_content"]
-        == "ENRICHMENT_TIMEOUT: Timeout when fetching content from URL"
+        == "INVALID_INPUT: Invalid url: http://portal.net.kp/"
     )
     assert (
         transformed_row["webpage_content_error"]
-        == "ENRICHMENT_TIMEOUT: Timeout when fetching content from URL"
+        == "INVALID_INPUT: Invalid url: http://portal.net.kp/"
     )
