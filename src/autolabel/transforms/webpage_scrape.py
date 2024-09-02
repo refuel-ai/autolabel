@@ -1,4 +1,3 @@
-from autolabel.utils import validate_url
 from autolabel.transforms.schema import (
     TransformType,
     TransformError,
@@ -143,11 +142,6 @@ class WebpageScrape(BaseTransform):
         else:
             if not urlparse(url).scheme:
                 url = f"https://{url}"
-            if not validate_url(url):
-                raise TransformError(
-                    TransformErrorType.INVALID_INPUT,
-                    f"Invalid url: {url}",
-                )
             url_response_data = await self._load_url(url)
 
         transformed_row = {
