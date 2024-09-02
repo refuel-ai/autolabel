@@ -426,12 +426,3 @@ def safe_serialize_to_string(data: Dict) -> Dict:
         except Exception:
             ret[k] = ""
     return ret
-
-
-def validate_url(url: str) -> bool:
-    """
-    Validate URL. Taken from https://stackoverflow.com/questions/71035383"""
-    pattern = (
-        r"^(?:https?:\/\/(?:www\.)?|https:(?:\/\/)?)?\w+(?:[-.]\w+)+(?:\/[^\/\s]+)*$"
-    )
-    return bool(re.match(pattern, url))
