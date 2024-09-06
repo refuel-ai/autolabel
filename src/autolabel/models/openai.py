@@ -119,7 +119,7 @@ class OpenAILLM(BaseModel):
         "gpt-4-1106-preview": 0.03 / 1000,
         "gpt-4-0125-preview": 0.03 / 1000,
         "gpt-4o": 0.015 / 1000,
-        "gpt-4o-2024-08-06": 0.0075 / 1000,
+        "gpt-4o-2024-08-06": 0.01 / 1000,
         "gpt-4o-mini": 0.60 / 1_000_000,
     }
     ERROR_TYPE_MAPPING = {
