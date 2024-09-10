@@ -23,7 +23,7 @@ class AutolabelConfig(BaseConfig):
     LABEL_COLUMN_KEY = "label_column"
     LABEL_SEPARATOR_KEY = "label_separator"
     EXPLANATION_COLUMN_KEY = "explanation_column"
-    IMAGE_COLUMNS_KEY = "image_url_columns"
+    IMAGE_COLUMNS_KEY = "image_columns"
     TEXT_COLUMN_KEY = "text_column"
     INPUT_COLUMNS_KEY = "input_columns"
     OUTPUT_COLUMNS_KEY = "output_columns"

@@ -4,7 +4,7 @@
     "dataset": {
         "label_column": "label",
         "delimiter": ",",
-        "image_url_column": "image_url"
+        "image_column": "image_url"
     },
     "model": {
         "provider": "openai_vision",
