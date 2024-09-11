@@ -55,16 +55,6 @@ class OpenAILLM(BaseModel):
         "gpt-4o-2024-08-06",
         "gpt-4o-mini",
     ]
-    JSON_MODE_MODELS = [
-        "gpt-3.5-turbo-0125",
-        "gpt-3.5-turbo",
-        "gpt-4-0125-preview",
-        "gpt-4-1106-preview",
-        "gpt-4-turbo-preview",
-        "gpt-4o",
-        "gpt-4o-2024-08-06",
-        "gpt-4o-mini",
-    ]
 
     # Default parameters for OpenAILLM
     DEFAULT_MODEL = "gpt-3.5-turbo"
