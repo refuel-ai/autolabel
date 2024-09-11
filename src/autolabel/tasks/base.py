@@ -80,7 +80,7 @@ class BaseTask(ABC):
         max_input_tokens: int = None,
         get_num_tokens: Optional[Callable] = None,
         **kwargs,
-    ) -> str:
+    ) -> Tuple[str, str]:
         pass
 
     def trim_prompt(
@@ -196,50 +196,6 @@ class BaseTask(ABC):
                 error_type=ErrorType.PARSING_ERROR,
                 error_message=f"Error parsing LLM response.",
             )
-        else:
-            llm_label = completion_text.strip()
-            if self.config.task_type() in [
-                TaskType.CLASSIFICATION,
-                TaskType.ENTITY_MATCHING,
-            ]:
-                if llm_label in self.config.labels_list():
-                    successfully_labeled = True
-                elif llm_label.replace("\_", "_") in self.config.labels_list():
-                    llm_label = llm_label.replace("\_", "_")
-                    successfully_labeled = True
-                elif llm_label.lower() in self.config.labels_list():
-                    llm_label = llm_label.lower()
-                    successfully_labeled = True
-                else:
-                    logger.warning(
-                        f"LLM response {llm_label} is not in the labels list"
-                    )
-                    successfully_labeled = False
-                    error = LabelingError(
-                        error_type=ErrorType.OUTPUT_GUIDELINES_NOT_FOLLOWED_ERROR,
-                        error_message=f"LLM response is not in the labels list.",
-                    )
-                    llm_label = self.NULL_LABEL_TOKEN
-            elif self.config.task_type() == TaskType.MULTILABEL_CLASSIFICATION:
-                llm_multi_labels = llm_label.split(self.config.label_separator())
-                llm_multi_labels = list(map(str.strip, llm_multi_labels))
-                llm_multi_labels = list(
-                    filter(
-                        lambda label: label in self.config.labels_list(),
-                        llm_multi_labels,
-                    )
-                )
-                llm_multi_labels = list(set(llm_multi_labels))
-                if len(llm_multi_labels) == 0:
-                    successfully_labeled = False
-                    error = LabelingError(
-                        error_type=ErrorType.OUTPUT_GUIDELINES_NOT_FOLLOWED_ERROR,
-                        error_message=f"LLM response does not contain any valid labels in the labels list.",
-                    )
-                    llm_label = self.NULL_LABEL_TOKEN
-                else:
-                    llm_label = self.config.label_separator().join(llm_multi_labels)
-                    successfully_labeled = True
             else:
                 successfully_labeled = True
 

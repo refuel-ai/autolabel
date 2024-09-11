@@ -280,14 +280,14 @@ class LabelingAgent:
                     )
 
             # Construct Prompt to pass to LLM
-            final_prompt = self.task.construct_prompt(
+            final_prompt, output_schema = self.task.construct_prompt(
                 chunk,
                 examples,
                 selected_labels=selected_labels,
                 max_input_tokens=self.llm.max_context_length,
                 get_num_tokens=self.llm.get_num_tokens,
             )
-            response = await self.llm.label([final_prompt])
+            response = await self.llm.label([final_prompt], [output_schema])
             for i, generations, error, latency in zip(
                 range(len(response.generations)),
                 response.generations,
@@ -524,7 +524,7 @@ class LabelingAgent:
                 and self.config.task_type() == TaskType.CLASSIFICATION
             ):
                 selected_labels = self.label_selector.select_labels(input_i["example"])
-                final_prompt = self.task.construct_prompt(
+                final_prompt, output_schema = self.task.construct_prompt(
                     input_i,
                     examples,
                     selected_labels=selected_labels,
@@ -532,13 +532,13 @@ class LabelingAgent:
                     get_num_tokens=self.llm.get_num_tokens,
                 )
             else:
-                final_prompt = self.task.construct_prompt(
+                final_prompt, output_schema = self.task.construct_prompt(
                     input_i,
                     examples,
                     max_input_tokens=self.llm.max_context_length,
                     get_num_tokens=self.llm.get_num_tokens,
                 )
-            prompt_list.append(final_prompt)
+            prompt_list.append((final_prompt, output_schema))
 
             # Calculate the number of tokens
             curr_cost = self.llm.get_cost(prompt=final_prompt, label="")

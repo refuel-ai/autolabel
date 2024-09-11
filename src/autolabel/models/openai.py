@@ -4,7 +4,7 @@ import logging
 import os
 from functools import cached_property
 from time import time
-from typing import List, Optional
+from typing import Dict, List, Optional, Tuple
 
 from langchain.schema import HumanMessage, Generation, LLMResult
 
@@ -157,7 +157,6 @@ class OpenAILLM(BaseModel):
                 **model_params,
                 **self._generate_logit_bias(),
             }
-
         self.query_params = {}
         if self._engine == "chat":
             self.model_params = {**self.DEFAULT_PARAMS_CHAT_ENGINE, **model_params}
@@ -165,13 +164,6 @@ class OpenAILLM(BaseModel):
             self.llm = ChatOpenAI(
                 model_name=self.model_name, verbose=False, **self.model_params
             )
-            if config.json_mode():
-                if self.model_name not in self.JSON_MODE_MODELS:
-                    logger.warning(
-                        f"json_mode is not supported for model {self.model_name}. Disabling json_mode."
-                    )
-                else:
-                    self.query_params["response_format"] = {"type": "json_object"}
         else:
             self.model_params = {
                 **self.DEFAULT_PARAMS_COMPLETION_ENGINE,
@@ -218,10 +210,13 @@ class OpenAILLM(BaseModel):
                 curr_generation.generation_info["logprobs"] = new_logprobs
         return generations
 
-    async def _alabel(self, prompts: List[str]) -> RefuelLLMResult:
+    async def _alabel(
+        self, prompts: List[str], output_schemas: List[Dict]
+    ) -> RefuelLLMResult:
         try:
             start_time = time()
             if self._engine == "chat":
+                # TODO @dhruva: start using the new schema sent in as well
                 prompts = [[HumanMessage(content=prompt)] for prompt in prompts]
                 result = await self.llm.agenerate(prompts, **self.query_params)
                 generations = self._chat_backward_compatibility(result.generations)
@@ -263,10 +258,11 @@ class OpenAILLM(BaseModel):
                 latencies=[0 for _ in prompts],
             )
 
-    def _label(self, prompts: List[str]) -> RefuelLLMResult:
+    def _label(self, prompts: List[str], output_schemas: List[Dict]) -> RefuelLLMResult:
         try:
             start_time = time()
             if self._engine == "chat":
+                # TODO @dhruva: start using the new schema sent in as well
                 prompts = [[HumanMessage(content=prompt)] for prompt in prompts]
                 result = self.llm.generate(prompts, **self.query_params)
                 generations = self._chat_backward_compatibility(result.generations)

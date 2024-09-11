@@ -2,12 +2,14 @@ import json
 import json5
 import logging
 import pickle
+import copy
 from collections import defaultdict
-from typing import Callable, Dict, List, Optional, Union
+from typing import Callable, Dict, List, Optional, Union, Tuple
 
 from langchain.prompts.prompt import PromptTemplate
 from langchain.schema import ChatGeneration, Generation
 
+from autolabel.schema import TaskType
 from autolabel.configs import AutolabelConfig
 from autolabel.metrics import (
     AccuracyMetric,
@@ -54,7 +56,7 @@ class AttributeExtractionTask(BaseTask):
         if self.config.confidence():
             self.metrics.append(AUROCMetric())
 
-    def _construct_attribute_json(self) -> str:
+    def _construct_attribute_json(self) -> Tuple[str, str]:
         """This function is used to construct the attribute json string for the output guidelines.
         Args:
             attributes (List[Dict]): A list of dictionaries containing the output attributes.
@@ -62,8 +64,15 @@ class AttributeExtractionTask(BaseTask):
         Returns:
             str: A string containing the output attributes.
         """
-        output_json = {}
+        output_json, output_schema = {}, {
+            "title": "AnswerFormat",
+            "type": "object",
+            "properties": {},
+            "required": [],
+            "definitions": {},
+        }
         for attribute_dict in self.config.attributes():
+            curr_property = {"title": attribute_dict["name"], "type": "string"}
             if "name" not in attribute_dict or "description" not in attribute_dict:
                 raise ValueError(
                     "Attribute dictionary must contain 'name' and 'description' keys"
@@ -74,9 +83,23 @@ class AttributeExtractionTask(BaseTask):
             if "options" in attribute_dict:
                 attribute_options = attribute_dict["options"]
                 attribute_desc += f"\nOptions:\n{','.join(attribute_options)}"
+                if TaskType.CLASSIFICATION == attribute_dict.get("task_type", ""):
+                    curr_property = {"$ref": "#/definitions/" + attribute_name}
+                    output_schema["definitions"][attribute_name] = {
+                        "title": attribute_name,
+                        "description": "An enumeration.",
+                        "enum": attribute_options,
+                    }
+
+            if TaskType.MULTILABEL_CLASSIFICATION == attribute_dict.get(
+                "task_type", ""
+            ):
+                attribute_desc += "Output should be a list of labels from the options provided below, separated by semicolons."
 
             output_json[attribute_name] = attribute_desc
-        return json.dumps(output_json, indent=4)
+            output_schema["properties"][attribute_name] = copy.deepcopy(curr_property)
+            output_scema["required"].append(attribute_name)
+        return json.dumps(output_json, indent=4), output_schema
 
     def _generate_output_dict(self, input: Dict) -> Dict:
         """Generate the output dictionary from the input
@@ -123,10 +146,10 @@ class AttributeExtractionTask(BaseTask):
         max_input_tokens: int = None,
         get_num_tokens: Optional[Callable] = None,
         **kwargs,
-    ) -> str:
+    ) -> Tuple[str, str]:
         fmt_task_guidelines = self.task_guidelines
 
-        attribute_json = self._construct_attribute_json()
+        attribute_json, output_schema = self._construct_attribute_json()
         output_guidelines = (
             self.output_guidelines
             if output_guidelines_override is None
@@ -198,9 +221,9 @@ class AttributeExtractionTask(BaseTask):
                 if input.get(col) is not None and len(input.get(col)) > 0:
                     prompt_dict[col] = input[col]
                 prompt_dict[col] = input[col]
-            return json.dumps(prompt_dict)
+            return json.dumps(prompt_dict), output_schema
         else:
-            return curr_text_prompt
+            return curr_text_prompt, output_schema
 
     def get_explanation_prompt(self, example: Dict, include_label=True) -> str:
         pt = PromptTemplate(

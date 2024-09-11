@@ -1,5 +1,5 @@
 from time import time
-from typing import List, Optional
+from typing import Dict, List, Optional
 
 from langchain.schema import HumanMessage, Generation
 
@@ -57,7 +57,9 @@ class AnthropicLLM(BaseModel):
 
         self.tokenizer = sync_get_tokenizer()
 
-    async def _alabel(self, prompts: List[str]) -> RefuelLLMResult:
+    async def _alabel(
+        self, prompts: List[str], output_schemas: List[Dict]
+    ) -> RefuelLLMResult:
         try:
             prompts = [[HumanMessage(content=prompt)] for prompt in prompts]
             start_time = time()
@@ -81,7 +83,7 @@ class AnthropicLLM(BaseModel):
                 latencies=[0 for _ in prompts],
             )
 
-    def _label(self, prompts: List[str]) -> RefuelLLMResult:
+    def _label(self, prompts: List[str], output_schemas: List[Dict]) -> RefuelLLMResult:
         try:
             prompts = [[HumanMessage(content=prompt)] for prompt in prompts]
             start_time = time()

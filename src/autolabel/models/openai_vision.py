@@ -3,7 +3,7 @@ import logging
 import os
 from functools import cached_property, partial
 from time import time
-from typing import List, Optional
+from typing import Dict, List, Optional
 
 from langchain.schema import Generation, HumanMessage
 
@@ -95,7 +95,7 @@ class OpenAIVisionLLM(BaseModel):
 
         return {"logit_bias": logit_bias, "max_tokens": max_tokens}
 
-    def _label(self, prompts: List[str]) -> RefuelLLMResult:
+    def _label(self, prompts: List[str], output_schemas: List[Dict]) -> RefuelLLMResult:
         generations = []
         start_time = time()
         for prompt in prompts:

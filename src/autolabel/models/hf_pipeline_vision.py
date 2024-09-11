@@ -110,7 +110,7 @@ class HFPipelineMultimodal(BaseModel):
             "max_new_tokens": max_new_tokens,
         }
 
-    def _label(self, prompts: List[str]) -> RefuelLLMResult:
+    def _label(self, prompts: List[str], output_schemas: List[Dict]) -> RefuelLLMResult:
         generations = []
         for prompt in prompts:
             parsed_prompt = json.loads(prompt)

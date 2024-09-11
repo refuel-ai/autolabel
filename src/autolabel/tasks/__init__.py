@@ -13,11 +13,6 @@ from autolabel.configs import AutolabelConfig
 from autolabel.schema import TaskType
 
 TASK_TYPE_TO_IMPLEMENTATION: Dict[TaskType, BaseTask] = {
-    TaskType.CLASSIFICATION: ClassificationTask,
-    TaskType.NAMED_ENTITY_RECOGNITION: NamedEntityRecognitionTask,
-    TaskType.QUESTION_ANSWERING: QuestionAnsweringTask,
-    TaskType.ENTITY_MATCHING: EntityMatchingTask,
-    TaskType.MULTILABEL_CLASSIFICATION: MultilabelClassificationTask,
     TaskType.ATTRIBUTE_EXTRACTION: AttributeExtractionTask,
 }
 

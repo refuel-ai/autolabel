@@ -1,6 +1,6 @@
 import os
 from time import time
-from typing import List, Optional
+from typing import Dict, List, Optional
 
 from langchain.schema import Generation
 
@@ -43,7 +43,7 @@ class CohereLLM(BaseModel):
         self.llm = Cohere(model=self.model_name, **self.model_params)
         self.co = cohere.Client(api_key=os.environ["COHERE_API_KEY"])
 
-    def _label(self, prompts: List[str]) -> RefuelLLMResult:
+    def _label(self, prompts: List[str], output_schemas: List[Dict]) -> RefuelLLMResult:
         try:
             start_time = time()
             result = self.llm.generate(prompts)

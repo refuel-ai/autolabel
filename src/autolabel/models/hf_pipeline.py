@@ -131,7 +131,7 @@ class HFPipelineLLM(BaseModel):
             "max_new_tokens": max_new_tokens,
         }
 
-    def _label(self, prompts: List[str]) -> RefuelLLMResult:
+    def _label(self, prompts: List[str], output_schemas: List[Dict]) -> RefuelLLMResult:
         try:
             start_time = time()
             result = self.llm.generate(prompts)
