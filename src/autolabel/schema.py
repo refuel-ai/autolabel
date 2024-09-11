@@ -5,7 +5,7 @@ from typing import Any, Dict, List, Optional, Union
 import json
 import pandas as pd
 from langchain.schema import Generation, ChatGeneration
-from pydantic import BaseModel
+from pydantic.v1 import BaseModel
 
 from autolabel.configs import AutolabelConfig
 from autolabel.utils import calculate_md5
@@ -14,6 +14,7 @@ from autolabel.utils import calculate_md5
 class ModelProvider(str, Enum):
     """Enum containing all LLM providers currently supported by autolabeler"""
 
+    AZURE = "azure"
     OPENAI = "openai"
     OPENAI_VISION = "openai_vision"
     ANTHROPIC = "anthropic"
