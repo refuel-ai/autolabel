@@ -37,7 +37,6 @@ class AutolabelConfig(BaseConfig):
     MODEL_PARAMS_KEY = "params"
     MODEL_ENDPOINT_KEY = "endpoint"
     COMPUTE_CONFIDENCE_KEY = "compute_confidence"
-    LOGIT_BIAS_KEY = "logit_bias"
 
     # Embedding config keys (config["embedding"][<key>])
     EMBEDDING_PROVIDER_KEY = "provider"

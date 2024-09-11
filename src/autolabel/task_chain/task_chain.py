@@ -200,17 +200,9 @@ class TaskChainOrchestrator:
         if autolabel_config.transforms():
             dataset.df.rename(columns=self.column_name_map, inplace=True)
         else:
-            if autolabel_config.task_type() == TaskType.ATTRIBUTE_EXTRACTION:
-                for attribute in autolabel_config.output_columns():
-                    dataset.df[attribute] = dataset.df[
-                        dataset.generate_label_name("label")
-                    ].apply(
-                        lambda x: x.get(attribute) if x and type(x) is dict else None
-                    )
-            elif autolabel_config.task_type() == TaskType.MULTILABEL_CLASSIFICATION:
-                for output_column in autolabel_config.output_columns():
-                    dataset.df[output_column] = dataset.df[
-                        dataset.generate_label_name("label")
-                    ]
+            for attribute in autolabel_config.output_columns():
+                dataset.df[attribute] = dataset.df[
+                    dataset.generate_label_name("label")
+                ].apply(lambda x: x.get(attribute) if x and type(x) is dict else None)
 
         return dataset
