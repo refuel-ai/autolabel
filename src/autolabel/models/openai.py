@@ -77,10 +77,9 @@ class OpenAILLM(BaseModel):
     DEFAULT_PARAMS_CHAT_ENGINE = {
         "max_tokens": 1000,
         "temperature": 0.0,
+        "model_kwargs": {"logprobs": 1},
         "request_timeout": 30,
     }
-    DEFAULT_QUERY_PARAMS_CHAT_ENGINE = {"logprobs": True, "top_logprobs": 1}
-
     # Reference: https://openai.com/pricing
     COST_PER_PROMPT_TOKEN = {
         "text-davinci-003": 0.02 / 1000,
@@ -152,10 +151,8 @@ class OpenAILLM(BaseModel):
 
         # populate model params and initialize the LLM
         model_params = config.model_params()
-        self.query_params = {}
         if self._engine == "chat":
             self.model_params = {**self.DEFAULT_PARAMS_CHAT_ENGINE, **model_params}
-            self.query_params = copy.deepcopy(self.DEFAULT_QUERY_PARAMS_CHAT_ENGINE)
             self.llm = ChatOpenAI(
                 model_name=self.model_name, verbose=False, **self.model_params
             )
@@ -199,14 +196,12 @@ class OpenAILLM(BaseModel):
                     structured_llm = self.llm.with_structured_output(
                         schema=output_schema, method="json_schema"
                     )
-                    result = await structured_llm.agenerate(
-                        prompts, **self.query_params
-                    )
+                    result = await structured_llm.ainvoke(prompts)
                 else:
                     logger.error(
                         "Not using structured output despite output_schema provided"
                     )
-                    result = await self.llm.agenerate(prompts, **self.query_params)
+                    result = await self.llm.agenerate(prompts)
                 generations = self._chat_backward_compatibility(result.generations)
             else:
                 result = await self.llm.agenerate(prompts)
@@ -262,12 +257,12 @@ class OpenAILLM(BaseModel):
                     structured_llm = self.llm.with_structured_output(
                         schema=output_schema, method="json_schema"
                     )
-                    result = structured_llm.generate(prompts, **self.query_params)
+                    result = structured_llm.invoke(prompts)
                 else:
                     logger.error(
                         "Not using structured output despite output_schema provided"
                     )
-                    result = self.llm.generate(prompts, **self.query_params)
+                    result = self.llm.generate(prompts)
                 generations = self._chat_backward_compatibility(result.generations)
             else:
                 result = self.llm.generate(prompts)

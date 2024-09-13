@@ -63,6 +63,7 @@ class AttributeExtractionTask(BaseTask):
         """
         output_json, output_schema = {}, {
             "title": "AnswerFormat",
+            "description": "Answer to the provided prompt.",
             "type": "object",
             "properties": {},
             "required": [],
