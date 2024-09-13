@@ -73,28 +73,6 @@ class OpenAIVisionLLM(BaseModel):
         self.tiktoken = tiktoken
         self.image_cols = config.image_columns()
 
-    def _generate_logit_bias(self) -> None:
-        """Generates logit bias for the labels specified in the config
-        Returns:
-            Dict: logit bias and max tokens
-        """
-        if len(self.config.labels_list()) == 0:
-            logger.warning(
-                "No labels specified in the config. Skipping logit bias generation."
-            )
-            return {}
-        encoding = self.tiktoken.encoding_for_model(self.model_name)
-        logit_bias = {}
-        max_tokens = 0
-        for label in self.config.labels_list():
-            if label not in logit_bias:
-                tokens = encoding.encode(label)
-                for token in tokens:
-                    logit_bias[token] = self.config.logit_bias()
-                max_tokens = max(max_tokens, len(tokens))
-
-        return {"logit_bias": logit_bias, "max_tokens": max_tokens}
-
     def _label(self, prompts: List[str], output_schemas: List[Dict]) -> RefuelLLMResult:
         generations = []
         start_time = time()
