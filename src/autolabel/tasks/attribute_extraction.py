@@ -79,6 +79,15 @@ class AttributeExtractionTask(BaseTask):
 
             attribute_name = attribute_dict["name"]
             attribute_desc = attribute_dict["description"]
+            if (
+                "schema" in attribute_dict
+                and attribute_dict["schema"] is not None
+                and len(attribute_dict["schema"]) > 0
+            ):
+                curr_property = {"$ref": "#/definitions/" + attribute_name}
+                output_schema["definitions"][attribute_name] = json5.loads(
+                    attribute_dict["schema"]
+                )
             if "options" in attribute_dict:
                 attribute_options = attribute_dict["options"]
                 attribute_desc += f"\nOptions:\n{','.join(attribute_options)}"
