@@ -7,7 +7,7 @@ from tabulate import tabulate
 
 from autolabel.configs import AutolabelConfig
 from autolabel.dataset.validation import TaskDataValidation
-from autolabel.schema import LLMAnnotation, MetricResult, TaskType
+from autolabel.schema import LLMAnnotation, MetricResult
 from autolabel.tasks import BaseTask, TaskFactory
 from autolabel.utils import print_table
 
@@ -156,9 +156,9 @@ class AutolabelDataset:
                         )
                     else:
                         attr_confidence_scores.append(0.0)
-                self.df[
-                    self.generate_label_name("confidence", attr["name"])
-                ] = attr_confidence_scores
+                self.df[self.generate_label_name("confidence", attr["name"])] = (
+                    attr_confidence_scores
+                )
 
         # Add the LLM explanations to the dataframe if chain of thought is set in config
         if self.config.chain_of_thought():

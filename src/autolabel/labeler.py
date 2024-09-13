@@ -22,20 +22,15 @@ from autolabel.confidence import ConfidenceCalculator
 from autolabel.configs import AutolabelConfig
 from autolabel.dataset import AutolabelDataset
 from autolabel.few_shot import (
-    DEFAULT_EMBEDDING_PROVIDER,
-    PROVIDER_TO_MODEL,
     BaseExampleSelector,
     ExampleSelectorFactory,
 )
-from autolabel.few_shot.label_selector import LabelSelector
 from autolabel.metrics import BaseMetric
 from autolabel.models import BaseModel, ModelFactory
 from autolabel.schema import (
-    AUTO_CONFIDENCE_CHUNKING_COLUMN,
     AggregationFunction,
     LLMAnnotation,
     MetricResult,
-    TaskType,
 )
 from autolabel.tasks import TaskFactory
 from autolabel.transforms import BaseTransform, TransformFactory

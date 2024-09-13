@@ -2,11 +2,6 @@ from typing import Dict
 import logging
 
 from .base import BaseTask
-from .classification import ClassificationTask
-from .entity_matching import EntityMatchingTask
-from .question_answering import QuestionAnsweringTask
-from .named_entity_recognition import NamedEntityRecognitionTask
-from .multilabel_classification import MultilabelClassificationTask
 from .attribute_extraction import AttributeExtractionTask
 
 from autolabel.configs import AutolabelConfig
@@ -26,7 +21,7 @@ class TaskFactory:
             task_type = TaskType(config.task_type())
             task_cls = TASK_TYPE_TO_IMPLEMENTATION[task_type]
             return task_cls(config)
-        except ValueError as e:
+        except ValueError as _:
             logger.error(
                 f"{config.task_type()} is not in the list of supported tasks: {TASK_TYPE_TO_IMPLEMENTATION.keys()}"
             )

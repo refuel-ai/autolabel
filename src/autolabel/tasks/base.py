@@ -4,7 +4,7 @@ import json
 import logging
 import pickle
 from abc import ABC, abstractmethod
-from typing import Callable, Dict, List, Optional, Union
+from typing import Callable, Dict, List, Optional, Tuple, Union
 
 from langchain.prompts.prompt import PromptTemplate
 from langchain.schema import ChatGeneration, Generation
@@ -17,8 +17,6 @@ from autolabel.schema import (
     LabelingError,
     LLMAnnotation,
     MetricResult,
-    ModelProvider,
-    TaskType,
 )
 from autolabel.utils import extract_valid_json_substring, get_format_variables
 
@@ -75,9 +73,9 @@ class BaseTask(ABC):
         self,
         input: str,
         examples: List,
-        prompt_template_override: PromptTemplate = None,
-        output_guidelines_override: str = None,
-        max_input_tokens: int = None,
+        prompt_template_override: Optional[PromptTemplate] = None,
+        output_guidelines_override: Optional[str] = None,
+        max_input_tokens: Optional[int] = None,
         get_num_tokens: Optional[Callable] = None,
         **kwargs,
     ) -> Tuple[str, str]:
@@ -85,12 +83,12 @@ class BaseTask(ABC):
 
     def trim_prompt(
         self,
-        prompt_template: str,
+        prompt_template: PromptTemplate,
         task_guidelines: str,
         output_guidelines: str,
         current_example: str,
-        seed_examples: str = None,
-        max_input_tokens: int = None,
+        seed_examples: Optional[str] = None,
+        max_input_tokens: Optional[int] = None,
         get_num_tokens: Optional[Callable] = None,
     ) -> str:
         complete_prompt = prompt_template.format(
@@ -156,7 +154,7 @@ class BaseTask(ABC):
 
     @abstractmethod
     def get_generate_dataset_prompt(
-        self, label: str, num_rows: int, guidelines: str = None
+        self, label: str, num_rows: int, guidelines: Optional[str] = None
     ) -> str:
         raise NotImplementedError("Dataset generation not implemented for this task")
 
@@ -176,7 +174,7 @@ class BaseTask(ABC):
                     response.text.strip().split("\n")[-1].strip()
                 )
                 completion_text = json.loads(completion_text)["label"]
-            except:
+            except Exception as _:
                 completion_text = None
         else:
             completion_text = response.text.strip().split("\n")[-1].strip()
@@ -194,10 +192,8 @@ class BaseTask(ABC):
             logger.warning(f"Error parsing LLM response: {response.text}")
             error = LabelingError(
                 error_type=ErrorType.PARSING_ERROR,
-                error_message=f"Error parsing LLM response.",
+                error_message="Error parsing LLM response.",
             )
-            else:
-                successfully_labeled = True
 
         return LLMAnnotation(
             successfully_labeled=successfully_labeled,

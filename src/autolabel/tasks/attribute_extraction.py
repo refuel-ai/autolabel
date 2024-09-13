@@ -9,7 +9,6 @@ from typing import Callable, Dict, List, Optional, Union, Tuple
 from langchain.prompts.prompt import PromptTemplate
 from langchain.schema import ChatGeneration, Generation
 
-from autolabel.schema import TaskType
 from autolabel.configs import AutolabelConfig
 from autolabel.metrics import (
     AccuracyMetric,
@@ -20,11 +19,9 @@ from autolabel.metrics import (
 )
 from autolabel.schema import (
     ErrorType,
-    F1Type,
     LabelingError,
     LLMAnnotation,
     MetricResult,
-    MetricType,
     TaskType,
 )
 from autolabel.tasks import BaseTask
@@ -56,7 +53,7 @@ class AttributeExtractionTask(BaseTask):
         if self.config.confidence():
             self.metrics.append(AUROCMetric())
 
-    def _construct_attribute_json(self) -> Tuple[str, str]:
+    def _construct_attribute_json(self) -> Tuple[str, Dict]:
         """This function is used to construct the attribute json string for the output guidelines.
         Args:
             attributes (List[Dict]): A list of dictionaries containing the output attributes.
@@ -98,10 +95,10 @@ class AttributeExtractionTask(BaseTask):
 
             output_json[attribute_name] = attribute_desc
             output_schema["properties"][attribute_name] = copy.deepcopy(curr_property)
-            output_scema["required"].append(attribute_name)
+            output_schema["required"].append(attribute_name)
         return json.dumps(output_json, indent=4), output_schema
 
-    def _generate_output_dict(self, input: Dict) -> Dict:
+    def _generate_output_dict(self, input: Dict) -> Optional[str]:
         """Generate the output dictionary from the input
 
         Args:
@@ -141,9 +138,9 @@ class AttributeExtractionTask(BaseTask):
         self,
         input: Dict,
         examples: List,
-        prompt_template_override: PromptTemplate = None,
-        output_guidelines_override: str = None,
-        max_input_tokens: int = None,
+        prompt_template_override: Optional[PromptTemplate] = None,
+        output_guidelines_override: Optional[str] = None,
+        max_input_tokens: Optional[int] = None,
         get_num_tokens: Optional[Callable] = None,
         **kwargs,
     ) -> Tuple[str, str]:

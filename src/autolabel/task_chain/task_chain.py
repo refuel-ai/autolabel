@@ -1,7 +1,4 @@
 from collections import defaultdict
-import copy
-from itertools import accumulate, groupby
-import uuid
 from autolabel.configs import AutolabelConfig
 import logging
 from typing import Dict, List, Optional
@@ -15,9 +12,7 @@ from autolabel.cache.sqlalchemy_generation_cache import SQLAlchemyGenerationCach
 from autolabel.cache.sqlalchemy_transform_cache import SQLAlchemyTransformCache
 from autolabel.cache.sqlalchemy_confidence_cache import SQLAlchemyConfidenceCache
 from autolabel.cache.base import BaseCache
-from pydantic import BaseModel
 from autolabel.configs import TaskChainConfig
-from autolabel.schema import TaskType
 from autolabel.transforms import TransformFactory
 from transformers import AutoTokenizer
 import pandas as pd

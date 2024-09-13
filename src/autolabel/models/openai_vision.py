@@ -46,7 +46,7 @@ class OpenAIVisionLLM(BaseModel):
         else:
             return "completion"
 
-    def __init__(self, config: AutolabelConfig, cache: BaseCache = None) -> None:
+    def __init__(self, config: AutolabelConfig, cache: Optional[BaseCache] = None) -> None:
         super().__init__(config, cache)
         try:
             import tiktoken
