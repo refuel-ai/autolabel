@@ -67,7 +67,7 @@ openai = [
     "tiktoken >= 0.7.0"
 ]
 anthropic = [
-    "anthropic == 0.17.0"
+    "anthropic == 0.34.2"
 ]
 huggingface = [
     "transformers >= 4.25.0",
@@ -75,8 +75,8 @@ huggingface = [
 ]
 google = [
     "tiktoken >= 0.7.0",
-    "google-cloud-aiplatform>=1.25.0",
-    "langchain_google_vertexai==0.0.5",
+    "google-cloud-aiplatform==1.56.0",
+    "langchain-google-vertexai==1.0.10",
 ]
 cohere = [
     "cohere>=4.11.2"
@@ -90,9 +90,9 @@ minimal = [
     "langchain-openai==0.1.24",
     "langchain-google-vertexai==1.0.10",
     "tiktoken >= 0.7.0",
-    "anthropic == 0.17.0",
+    "anthropic == 0.34.2",
     "transformers >= 4.25.0",
-    "google-cloud-aiplatform>=1.25.0",
+    "google-cloud-aiplatform==1.56.0",
     "google-search-results>=2.4.2",
     "redis >= 3.5.3",
     "pdfplumber >= 0.10.2",
@@ -122,9 +122,9 @@ all = [
     "langchain-openai==0.1.24",
     "langchain-google-vertexai==1.0.10",
     "tiktoken >= 0.7.0",
-    "anthropic == 0.17.0",
+    "anthropic == 0.34.2",
     "transformers >= 4.25.0",
-    "google-cloud-aiplatform>=1.25.0",
+    "google-cloud-aiplatform==1.56.0",
     "google-search-results>=2.4.2",
     "cohere>=4.11.2",
     "redis >= 3.5.3",
