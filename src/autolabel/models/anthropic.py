@@ -57,9 +57,7 @@ class AnthropicLLM(BaseModel):
 
         self.tokenizer = sync_get_tokenizer()
 
-    async def _alabel(
-        self, prompts: List[str], output_schemas: List[Dict]
-    ) -> RefuelLLMResult:
+    async def _alabel(self, prompts: List[str], output_schema: Dict) -> RefuelLLMResult:
         try:
             prompts = [[HumanMessage(content=prompt)] for prompt in prompts]
             start_time = time()
@@ -83,7 +81,7 @@ class AnthropicLLM(BaseModel):
                 latencies=[0 for _ in prompts],
             )
 
-    def _label(self, prompts: List[str], output_schemas: List[Dict]) -> RefuelLLMResult:
+    def _label(self, prompts: List[str], output_schema: Dict) -> RefuelLLMResult:
         try:
             prompts = [[HumanMessage(content=prompt)] for prompt in prompts]
             start_time = time()

@@ -171,13 +171,13 @@ class RefuelLLMV2(BaseModel):
                 response.raise_for_status()
             return response, end_time - start_time
 
-    def _label(self, prompts: List[str], output_schemas: List[Dict]) -> RefuelLLMResult:
+    def _label(self, prompts: List[str], output_schema: Dict) -> RefuelLLMResult:
         generations = []
         errors = []
         latencies = []
         for i, prompt in enumerate(prompts):
             try:
-                response, latency = self._label_with_retry(prompt, output_schemas[i])
+                response, latency = self._label_with_retry(prompt, output_schema[i])
                 response = json.loads(response.json())
                 generations.append(
                     [
@@ -215,15 +215,13 @@ class RefuelLLMV2(BaseModel):
             generations=generations, errors=errors, latencies=latencies
         )
 
-    async def _alabel(
-        self, prompts: List[str], output_schemas: List[Dict]
-    ) -> RefuelLLMResult:
+    async def _alabel(self, prompts: List[str], output_schema: Dict) -> RefuelLLMResult:
         generations = []
         errors = []
         latencies = []
         try:
             requests = [
-                self._alabel_with_retry(prompt, output_schemas[i])
+                self._alabel_with_retry(prompt, output_schema[i])
                 for i, prompt in enumerate(prompts)
             ]
             responses = await asyncio.gather(*requests)

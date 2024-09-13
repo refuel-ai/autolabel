@@ -16,7 +16,7 @@ logger = logging.getLogger(__name__)
 
 
 class OpenAIVisionLLM(BaseModel):
-    CHAT_ENGINE_MODELS = ["gpt-4o", "gpt-4o-2024-08-06", "gpt-4-vision-preview"]
+    CHAT_ENGINE_MODELS = set(["gpt-4o", "gpt-4o-2024-08-06", "gpt-4-vision-preview"])
     MODELS_WITH_TOKEN_PROBS = []
 
     # Default parameters for OpenAIVisionLLM
@@ -46,7 +46,9 @@ class OpenAIVisionLLM(BaseModel):
         else:
             return "completion"
 
-    def __init__(self, config: AutolabelConfig, cache: Optional[BaseCache] = None) -> None:
+    def __init__(
+        self, config: AutolabelConfig, cache: Optional[BaseCache] = None
+    ) -> None:
         super().__init__(config, cache)
         try:
             import tiktoken
@@ -73,7 +75,7 @@ class OpenAIVisionLLM(BaseModel):
         self.tiktoken = tiktoken
         self.image_cols = config.image_columns()
 
-    def _label(self, prompts: List[str], output_schemas: List[Dict]) -> RefuelLLMResult:
+    def _label(self, prompts: List[str], output_schema: Dict) -> RefuelLLMResult:
         generations = []
         start_time = time()
         for prompt in prompts:

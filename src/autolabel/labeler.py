@@ -224,9 +224,7 @@ class LabelingAgent:
                 console=self.console,
             )
             if self.console_output
-            else tqdm(indices)
-            if self.use_tqdm
-            else indices
+            else tqdm(indices) if self.use_tqdm else indices
         ):
             chunk = dataset.inputs[current_index]
             examples = []
@@ -244,7 +242,7 @@ class LabelingAgent:
                 max_input_tokens=self.llm.max_context_length,
                 get_num_tokens=self.llm.get_num_tokens,
             )
-            response = await self.llm.label([final_prompt], [output_schema])
+            response = await self.llm.label([final_prompt], output_schema)
             for i, generations, error, latency in zip(
                 range(len(response.generations)),
                 response.generations,

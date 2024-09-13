@@ -92,7 +92,7 @@ class HFPipelineLLM(BaseModel):
         # initialize LLM
         self.llm = HuggingFacePipeline(pipeline=pipe, model_kwargs=model_kwargs)
 
-    def _label(self, prompts: List[str], output_schemas: List[Dict]) -> RefuelLLMResult:
+    def _label(self, prompts: List[str], output_schema: Dict) -> RefuelLLMResult:
         try:
             start_time = time()
             result = self.llm.generate(prompts)

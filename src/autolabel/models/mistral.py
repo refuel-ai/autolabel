@@ -137,7 +137,7 @@ class MistralLLM(BaseModel):
                 response.raise_for_status()
             return response, end_time - start_time
 
-    def _label(self, prompts: List[str], output_schemas: List[Dict]) -> RefuelLLMResult:
+    def _label(self, prompts: List[str], output_schema: Dict) -> RefuelLLMResult:
         generations = []
         errors = []
         latencies = []
@@ -166,9 +166,7 @@ class MistralLLM(BaseModel):
             generations=generations, errors=errors, latencies=latencies
         )
 
-    async def _alabel(
-        self, prompts: List[str], output_schemas: List[Dict]
-    ) -> RefuelLLMResult:
+    async def _alabel(self, prompts: List[str], output_schema: Dict) -> RefuelLLMResult:
         generations = []
         errors = []
         latencies = []

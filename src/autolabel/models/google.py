@@ -75,9 +75,7 @@ class GoogleLLM(BaseModel):
         self.vertexaiModel = generative_models.GenerativeModel(self.model_name)
         self.tiktoken = tiktoken
 
-    async def _alabel(
-        self, prompts: List[str], output_schemas: List[Dict]
-    ) -> RefuelLLMResult:
+    async def _alabel(self, prompts: List[str], output_schema: Dict) -> RefuelLLMResult:
         try:
             start_time = time()
             result = await self.llm.agenerate(prompts)
@@ -115,7 +113,7 @@ class GoogleLLM(BaseModel):
                 latencies=[0 for _ in prompts],
             )
 
-    def _label(self, prompts: List[str], output_schemas: List[Dict]) -> RefuelLLMResult:
+    def _label(self, prompts: List[str], output_schema: Dict) -> RefuelLLMResult:
         try:
             start_time = time()
             result = self.llm.generate(prompts)

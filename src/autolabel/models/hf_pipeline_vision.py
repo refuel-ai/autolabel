@@ -71,7 +71,7 @@ class HFPipelineMultimodal(BaseModel):
             ["<image>", "<fake_token_around_image>"], add_special_tokens=False
         ).input_ids
 
-    def _label(self, prompts: List[str], output_schemas: List[Dict]) -> RefuelLLMResult:
+    def _label(self, prompts: List[str], output_schema: Dict) -> RefuelLLMResult:
         generations = []
         for prompt in prompts:
             parsed_prompt = json.loads(prompt)

@@ -28,9 +28,7 @@ class BaseModel(ABC):
         # Specific classes that implement this interface should run initialization steps here
         # E.g. initializing the LLM model with required parameters from ModelConfig
 
-    async def label(
-        self, prompts: List[str], output_schemas: List[Dict]
-    ) -> RefuelLLMResult:
+    async def label(self, prompts: List[str], output_schema: Dict) -> RefuelLLMResult:
         """Label a list of prompts."""
         existing_prompts = {}
         missing_prompt_idxs = list(range(len(prompts)))
@@ -47,9 +45,9 @@ class BaseModel(ABC):
         # label missing prompts
         if len(missing_prompts) > 0:
             if hasattr(self, "_alabel"):
-                new_results = await self._alabel(missing_prompts, output_schemas)
+                new_results = await self._alabel(missing_prompts, output_schema)
             else:
-                new_results = self._label(missing_prompts, output_schemas)
+                new_results = self._label(missing_prompts, output_schema)
             for ind, prompt in enumerate(missing_prompts):
                 costs.append(
                     self.get_cost(prompt, label=new_results.generations[ind][0].text)
@@ -74,7 +72,7 @@ class BaseModel(ABC):
         )
 
     @abstractmethod
-    def _label(self, prompts: List[str], output_schemas: List[Dict]) -> RefuelLLMResult:
+    def _label(self, prompts: List[str], output_schema: Dict) -> RefuelLLMResult:
         # TODO: change return type to do parsing in the Model class
         pass
 

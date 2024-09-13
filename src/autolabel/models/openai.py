@@ -4,7 +4,7 @@ import logging
 import os
 from functools import cached_property
 from time import time
-from typing import Dict, List, Optional, Tuple
+from typing import Dict, List, Optional
 
 from langchain.schema import HumanMessage, Generation, LLMResult
 
@@ -17,44 +17,54 @@ logger = logging.getLogger(__name__)
 
 
 class OpenAILLM(BaseModel):
-    CHAT_ENGINE_MODELS = [
-        "gpt-3.5-turbo",
-        "gpt-3.5-turbo-0301",
-        "gpt-3.5-turbo-0613",
-        "gpt-3.5-turbo-16k",
-        "gpt-3.5-turbo-16k-0613",
-        "gpt-4",
-        "gpt-4-0314",
-        "gpt-4-32k-0314",
-        "gpt-4-0613",
-        "gpt-4-32k",
-        "gpt-4-32k-0613",
-        "gpt-4-1106-preview",
-        "gpt-4-0125-preview",
-        "gpt-4o",
-        "gpt-4o-2024-08-06",
-        "gpt-4o-mini",
-    ]
-    MODELS_WITH_TOKEN_PROBS = [
-        "text-curie-001",
-        "text-davinci-003",
-        "gpt-3.5-turbo",
-        "gpt-3.5-turbo-0301",
-        "gpt-3.5-turbo-0613",
-        "gpt-3.5-turbo-16k",
-        "gpt-3.5-turbo-16k-0613",
-        "gpt-4",
-        "gpt-4-0314",
-        "gpt-4-32k-0314",
-        "gpt-4-0613",
-        "gpt-4-32k",
-        "gpt-4-32k-0613",
-        "gpt-4-1106-preview",
-        "gpt-4-0125-preview",
-        "gpt-4o",
-        "gpt-4o-2024-08-06",
-        "gpt-4o-mini",
-    ]
+    CHAT_ENGINE_MODELS = set(
+        [
+            "gpt-3.5-turbo",
+            "gpt-3.5-turbo-0301",
+            "gpt-3.5-turbo-0613",
+            "gpt-3.5-turbo-16k",
+            "gpt-3.5-turbo-16k-0613",
+            "gpt-4",
+            "gpt-4-0314",
+            "gpt-4-32k-0314",
+            "gpt-4-0613",
+            "gpt-4-32k",
+            "gpt-4-32k-0613",
+            "gpt-4-1106-preview",
+            "gpt-4-0125-preview",
+            "gpt-4o",
+            "gpt-4o-2024-08-06",
+            "gpt-4o-mini",
+        ]
+    )
+    MODELS_WITH_TOKEN_PROBS = set(
+        [
+            "text-curie-001",
+            "text-davinci-003",
+            "gpt-3.5-turbo",
+            "gpt-3.5-turbo-0301",
+            "gpt-3.5-turbo-0613",
+            "gpt-3.5-turbo-16k",
+            "gpt-3.5-turbo-16k-0613",
+            "gpt-4",
+            "gpt-4-0314",
+            "gpt-4-32k-0314",
+            "gpt-4-0613",
+            "gpt-4-32k",
+            "gpt-4-32k-0613",
+            "gpt-4-1106-preview",
+            "gpt-4-0125-preview",
+            "gpt-4o",
+            "gpt-4o-2024-08-06",
+            "gpt-4o-mini",
+        ]
+    )
+    SUPPORTS_STRUCTURED_OUTPUTS = set(
+        [
+            "gpt-4o-mini",
+            "gpt-4o-2024-08-06",
+        ]
+    )
 
     # Default parameters for OpenAILLM
     DEFAULT_MODEL = "gpt-3.5-turbo"
@@ -172,15 +182,31 @@ class OpenAILLM(BaseModel):
                 curr_generation.generation_info["logprobs"] = new_logprobs
         return generations
 
-    async def _alabel(
-        self, prompts: List[str], output_schemas: List[Dict]
-    ) -> RefuelLLMResult:
+    async def _alabel(self, prompts: List[str], output_schema: Dict) -> RefuelLLMResult:
+        logger.error(f"Current schema: {output_schema}")
         try:
             start_time = time()
             if self._engine == "chat":
                 # TODO @dhruva: start using the new schema sent in as well
                 prompts = [[HumanMessage(content=prompt)] for prompt in prompts]
-                result = await self.llm.agenerate(prompts, **self.query_params)
+                if (
+                    output_schema is not None
+                    and self.model_name in self.SUPPORTS_STRUCTURED_OUTPUTS
+                ):
+                    logger.error(
+                        f"Using structured output with current schema: {output_schema}"
+                    )
+                    structured_llm = self.llm.with_structured_output(
+                        schema=output_schema, method="json_schema"
+                    )
+                    result = await structured_llm.agenerate(
+                        prompts, **self.query_params
+                    )
+                else:
+                    logger.error(
+                        "Not using structured output despite output_schema provided"
+                    )
+                    result = await self.llm.agenerate(prompts, **self.query_params)
                 generations = self._chat_backward_compatibility(result.generations)
             else:
                 result = await self.llm.agenerate(prompts)
@@ -220,13 +246,28 @@ class OpenAILLM(BaseModel):
                 latencies=[0 for _ in prompts],
             )
 
-    def _label(self, prompts: List[str], output_schemas: List[Dict]) -> RefuelLLMResult:
+    def _label(self, prompts: List[str], output_schema: Dict) -> RefuelLLMResult:
         try:
             start_time = time()
             if self._engine == "chat":
                 # TODO @dhruva: start using the new schema sent in as well
                 prompts = [[HumanMessage(content=prompt)] for prompt in prompts]
-                result = self.llm.generate(prompts, **self.query_params)
+                if (
+                    output_schema is not None
+                    and self.model_name in self.SUPPORTS_STRUCTURED_OUTPUTS
+                ):
+                    logger.error(
+                        f"Using structured output with current schema: {output_schema}"
+                    )
+                    structured_llm = self.llm.with_structured_output(
+                        schema=output_schema, method="json_schema"
+                    )
+                    result = structured_llm.generate(prompts, **self.query_params)
+                else:
+                    logger.error(
+                        "Not using structured output despite output_schema provided"
+                    )
+                    result = self.llm.generate(prompts, **self.query_params)
                 generations = self._chat_backward_compatibility(result.generations)
             else:
                 result = self.llm.generate(prompts)
