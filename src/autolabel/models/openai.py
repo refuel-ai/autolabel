@@ -71,14 +71,14 @@ class OpenAILLM(BaseModel):
     DEFAULT_PARAMS_COMPLETION_ENGINE = {
         "max_tokens": 1000,
         "temperature": 0.0,
-        "logprobs": True,
-        "top_logprobs": 1,
+        "model_kwargs": {"logprobs": 1},
         "request_timeout": 30,
     }
     DEFAULT_PARAMS_CHAT_ENGINE = {
         "max_tokens": 1000,
         "temperature": 0.0,
-        "model_kwargs": {"logprobs": 1},
+        "logprobs": True,
+        "top_logprobs": 1,
         "request_timeout": 30,
     }
     # Reference: https://openai.com/pricing
@@ -181,23 +181,26 @@ class OpenAILLM(BaseModel):
         return generations
 
     async def _alabel(self, prompts: List[str], output_schema: Dict) -> RefuelLLMResult:
-        logger.error(f"Current schema: {output_schema}")
         try:
             start_time = time()
             if self._engine == "chat":
-                # TODO @dhruva: start using the new schema sent in as well
                 prompts = [[HumanMessage(content=prompt)] for prompt in prompts]
+                generations = None
                 if (
                     output_schema is not None
                     and self.model_name in self.SUPPORTS_STRUCTURED_OUTPUTS
                 ):
-                    logger.error(
-                        f"Using structured output with current schema: {output_schema}"
+                    result = await self.llm.agenerate(
+                        prompts,
+                        response_format={
+                            "type": "json_schema",
+                            "json_schema": {
+                                "name": "response_format",
+                                "schema": output_schema,
+                                "strict": True,
+                            },
+                        },
                     )
-                    structured_llm = self.llm.with_structured_output(
-                        schema=output_schema, method="json_schema"
-                    )
-                    result = await structured_llm.ainvoke(prompts)
                 else:
                     logger.error(
                         "Not using structured output despite output_schema provided"
@@ -246,19 +249,22 @@ class OpenAILLM(BaseModel):
         try:
             start_time = time()
             if self._engine == "chat":
-                # TODO @dhruva: start using the new schema sent in as well
                 prompts = [[HumanMessage(content=prompt)] for prompt in prompts]
                 if (
                     output_schema is not None
                     and self.model_name in self.SUPPORTS_STRUCTURED_OUTPUTS
                 ):
-                    logger.error(
-                        f"Using structured output with current schema: {output_schema}"
+                    result = self.llm.generate(
+                        prompts,
+                        response_format={
+                            "type": "json_schema",
+                            "json_schema": {
+                                "name": "response_format",
+                                "schema": output_schema,
+                                "strict": True,
+                            },
+                        },
                     )
-                    structured_llm = self.llm.with_structured_output(
-                        schema=output_schema, method="json_schema"
-                    )
-                    result = structured_llm.invoke(prompts)
                 else:
                     logger.error(
                         "Not using structured output despite output_schema provided"

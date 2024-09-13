@@ -67,6 +67,7 @@ class AttributeExtractionTask(BaseTask):
             "type": "object",
             "properties": {},
             "required": [],
+            "additionalProperties": False,
             "definitions": {},
         }
         for attribute_dict in self.config.attributes():
