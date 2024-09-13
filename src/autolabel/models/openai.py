@@ -71,7 +71,8 @@ class OpenAILLM(BaseModel):
     DEFAULT_PARAMS_COMPLETION_ENGINE = {
         "max_tokens": 1000,
         "temperature": 0.0,
-        "model_kwargs": {"logprobs": 1},
+        "logprobs": True,
+        "top_logprobs": 1,
         "request_timeout": 30,
     }
     DEFAULT_PARAMS_CHAT_ENGINE = {
