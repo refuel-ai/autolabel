@@ -132,7 +132,9 @@ class ConfidenceCalculator:
         if logprobs is None or len(logprobs) == 0:
             return {}
         return self._logprob_average_per_label(
-            logprobs, delimiter, label=model_generation.label
+            logprobs=logprobs,
+            label=model_generation.label,
+            delimiter=delimiter,
         )
 
     def logprob_average_per_key(
@@ -179,10 +181,6 @@ class ConfidenceCalculator:
             end_token = mapping[loc + len(key_to_find) - 1]
             locations.append((start_token, end_token, key))
         locations.sort()
-
-        logger.error(f"Keys: {keys}")
-        logger.error(f"Locations: {locations}")
-        logger.error(f"Logprobs: {logprobs}")
         # Here, the locations consist of the start and end *token* indices for each key
         # i.e for the keys A and B, we find the start and end tokens where they are found in the logprobs list
         # and store them in locations. For eg - locations can be [(1, 3, "A"), (9, 12, "C")]
