@@ -107,7 +107,6 @@ class ConfidenceCalculator:
         for conf_label_candiate in conf_label_keys:
             closest_match, closest_match_score = None, 0
             for label in logprob_per_label:
-
                 # The SequenceMatcher class is used to compare two sequences. It is especially useful for comparing sequences of characters.
                 # None - This is a function that is used to compare the two sequences. If it is None, the default function is used.
                 # label - The first sequence to compare
