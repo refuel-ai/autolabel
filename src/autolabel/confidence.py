@@ -107,12 +107,28 @@ class ConfidenceCalculator:
         for conf_label_candiate in conf_label_keys:
             closest_match, closest_match_score = None, 0
             for label in logprob_per_label:
+
+                # The SequenceMatcher class is used to compare two sequences. It is especially useful for comparing sequences of characters.
+                # None - This is a function that is used to compare the two sequences. If it is None, the default function is used.
+                # label - The first sequence to compare
+                # conf_label_candiate - The second sequence to compare
+
+                # The find_longest_match function returns a named tuple with the following fields:
+                # a - The start of the matching subsequence in the first sequence
+                # b - The start of the matching subsequence in the second sequence
+                # size - The length of the matching subsequence
+
                 longest_substring = difflib.SequenceMatcher(
                     None, label, conf_label_candiate
                 ).find_longest_match(0, len(label), 0, len(conf_label_candiate))
-                if longest_substring.size > closest_match_score:
+                if (
+                    longest_substring.size
+                    / (1e-6 + max(len(label), len(conf_label_candiate)))
+                ) > closest_match_score:
                     closest_match = label
-                    closest_match_score = longest_substring.size
+                    closest_match_score = longest_substring.size / (
+                        1e-6 + max(len(label), len(conf_label_candiate))
+                    )
             if closest_match is not None:
                 logprob_per_label[closest_match] = conf_label_keys[conf_label_candiate]
 
@@ -208,7 +224,6 @@ class ConfidenceCalculator:
                 logprob_per_key[curr_key] = self.logprob_average(
                     logprobs[locations[i][1] + 1 : locations[i + 1][0]]
                 )
-        logger.error(f"Logprob per key: {logprob_per_key}")
         return logprob_per_key
 
     async def p_true(self, model_generation: LLMAnnotation, **kwargs) -> float:
