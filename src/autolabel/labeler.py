@@ -323,9 +323,20 @@ class LabelingAgent:
 
                         if self.config.confidence():
                             try:
+                                keys = (
+                                    {
+                                        attribute_dict.get(
+                                            "name", ""
+                                        ): attribute_dict.get("task_type", "")
+                                        for attribute_dict in self.config.attributes()
+                                    }
+                                    if self.config.task_type()
+                                    == TaskType.ATTRIBUTE_EXTRACTION
+                                    else None
+                                )
                                 annotation.confidence_score = (
                                     await self.confidence.calculate(
-                                        model_generation=annotation
+                                        model_generation=annotation, keys=keys
                                     )
                                 )
                                 if (

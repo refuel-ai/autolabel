@@ -71,6 +71,11 @@ class AttributeExtractionTask(BaseTask):
 
             attribute_name = attribute_dict["name"]
             attribute_desc = attribute_dict["description"]
+            if TaskType.MULTILABEL_CLASSIFICATION == attribute_dict.get(
+                "task_type", ""
+            ):
+                attribute_desc += " Output should be a list of labels from the options provided below, separated by semicolons."
+
             if "options" in attribute_dict:
                 attribute_options = attribute_dict["options"]
                 attribute_desc += f"\nOptions:\n{','.join(attribute_options)}"
@@ -268,14 +273,17 @@ class AttributeExtractionTask(BaseTask):
 
         if successfully_labeled:
             for attribute in self.config.attributes():
-                attr_options = attribute.get("options")
+                attr_options, attr_type = attribute.get("options"), attribute.get(
+                    "task_type"
+                )
                 if attr_options is not None and len(attr_options) > 0:
                     attr_label = str(llm_label.get(attribute["name"]))
-                    if attr_label is not None and attr_label not in attr_options:
-                        logger.warning(
-                            f"Attribute {attr_label} from the LLM response {llm_label} is not in the labels list"
-                        )
-                        llm_label.pop(attribute["name"], None)
+                    if attr_type == TaskType.CLASSIFICATION:
+                        if attr_label is not None and attr_label not in attr_options:
+                            logger.warning(
+                                f"Attribute {attr_label} from the LLM response {llm_label} is not in the labels list"
+                            )
+                            llm_label.pop(attribute["name"], None)
 
         return LLMAnnotation(
             curr_sample=pickle.dumps(curr_sample),
