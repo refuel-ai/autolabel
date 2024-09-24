@@ -74,7 +74,7 @@ class AttributeExtractionTask(BaseTask):
             if TaskType.MULTILABEL_CLASSIFICATION == attribute_dict.get(
                 "task_type", ""
             ):
-                attribute_desc += " Output should be a list of labels from the options provided below, separated by semicolons."
+                attribute_desc += " The output format should be all the labels separated by semicolons. For example: label1;label2;label3"
 
             if "options" in attribute_dict:
                 attribute_options = attribute_dict["options"]
