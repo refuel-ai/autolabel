@@ -18,6 +18,7 @@ from autolabel.models.refuelV2 import RefuelLLMV2
 from autolabel.models.vllm import VLLMModel
 
 MODEL_REGISTRY = {
+    ModelProvider.AZURE: OpenAILLM,
     ModelProvider.OPENAI: OpenAILLM,
     ModelProvider.OPENAI_VISION: OpenAIVisionLLM,
     ModelProvider.ANTHROPIC: AnthropicLLM,

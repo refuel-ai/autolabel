@@ -11,7 +11,7 @@ from langchain.schema import HumanMessage, Generation, LLMResult
 from autolabel.cache import BaseCache
 from autolabel.configs import AutolabelConfig
 from autolabel.models import BaseModel
-from autolabel.schema import ErrorType, RefuelLLMResult, LabelingError
+from autolabel.schema import ErrorType, RefuelLLMResult, LabelingError, ModelProvider
 
 logger = logging.getLogger(__name__)
 
@@ -138,11 +138,12 @@ class OpenAILLM(BaseModel):
         super().__init__(config, cache)
         try:
             import tiktoken
-            from langchain_openai import ChatOpenAI, OpenAI
+            from langchain_openai import ChatOpenAI, OpenAI, AzureChatOpenAI
         except ImportError:
             raise ImportError(
                 "openai is required to use the OpenAILLM. Please install it with the following command: pip install 'refuel-autolabel[openai]'"
             )
+        provider = ModelProvider(config.provider())
         self.tiktoken = tiktoken
         # populate model name
         self.model_name = config.model_name() or self.DEFAULT_MODEL
@@ -159,12 +160,10 @@ class OpenAILLM(BaseModel):
             }
 
         self.query_params = {}
-        if self._engine == "chat":
+        if provider == "azure":
             self.model_params = {**self.DEFAULT_PARAMS_CHAT_ENGINE, **model_params}
             self.query_params = copy.deepcopy(self.DEFAULT_QUERY_PARAMS_CHAT_ENGINE)
-            self.llm = ChatOpenAI(
-                model_name=self.model_name, verbose=False, **self.model_params
-            )
+            self.llm = AzureChatOpenAI(**self.model_params)
             if config.json_mode():
                 if self.model_name not in self.JSON_MODE_MODELS:
                     logger.warning(
@@ -173,13 +172,27 @@ class OpenAILLM(BaseModel):
                 else:
                     self.query_params["response_format"] = {"type": "json_object"}
         else:
-            self.model_params = {
-                **self.DEFAULT_PARAMS_COMPLETION_ENGINE,
-                **model_params,
-            }
-            self.llm = OpenAI(
-                model_name=self.model_name, verbose=False, **self.model_params
-            )
+            if self._engine == "chat":
+                self.model_params = {**self.DEFAULT_PARAMS_CHAT_ENGINE, **model_params}
+                self.query_params = copy.deepcopy(self.DEFAULT_QUERY_PARAMS_CHAT_ENGINE)
+                self.llm = ChatOpenAI(
+                    model_name=self.model_name, verbose=False, **self.model_params
+                )
+                if config.json_mode():
+                    if self.model_name not in self.JSON_MODE_MODELS:
+                        logger.warning(
+                            f"json_mode is not supported for model {self.model_name}. Disabling json_mode."
+                        )
+                    else:
+                        self.query_params["response_format"] = {"type": "json_object"}
+            else:
+                self.model_params = {
+                    **self.DEFAULT_PARAMS_COMPLETION_ENGINE,
+                    **model_params,
+                }
+                self.llm = OpenAI(
+                    model_name=self.model_name, verbose=False, **self.model_params
+                )
 
     def _generate_logit_bias(self) -> None:
         """Generates logit bias for the labels specified in the config
