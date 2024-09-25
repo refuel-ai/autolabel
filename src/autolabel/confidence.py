@@ -192,9 +192,10 @@ class ConfidenceCalculator:
                 # We did not find the key in the logprobs so we set its confidence as 0
                 # This should not be possible if the LLM followed its guidelines.
                 logprob_per_key[key] = 0
-            start_token = mapping[loc]
-            end_token = mapping[loc + len(key_to_find) - 1]
-            locations.append((start_token, end_token, key))
+            else:
+                start_token = mapping[loc]
+                end_token = mapping[loc + len(key_to_find) - 1]
+                locations.append((start_token, end_token, key))
         locations.sort()
         # Here, the locations consist of the start and end *token* indices for each key
         # i.e for the keys A and B, we find the start and end tokens where they are found in the logprobs list
