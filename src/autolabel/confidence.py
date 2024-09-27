@@ -7,8 +7,9 @@ import httpx
 import scipy.stats as stats
 import os
 import logging
+import difflib
 
-from autolabel.schema import LLMAnnotation, ConfidenceCacheEntry
+from autolabel.schema import LLMAnnotation, ConfidenceCacheEntry, TaskType
 from autolabel.models import BaseModel
 from autolabel.cache import BaseCache
 
@@ -76,6 +77,62 @@ class ConfidenceCalculator:
                 count += 1
         return logprob_cumulative ** (1.0 / count) if count > 0 else 0
 
+    def _logprob_average_per_label(
+        self,
+        logprobs: list,
+        label: str,
+        delimiter: str = ";",
+        **kwargs,
+    ) -> Dict[str, float]:
+        logprob_per_label = {}
+        curr_logprob_average = self.logprob_average(logprobs)
+        logprob_per_label = {
+            curr_label: curr_logprob_average for curr_label in label.split(delimiter)
+        }
+        conf_label_keys, prev_key_index, curr_key = {}, 0, ""
+        for i in range(len(logprobs)):
+            for curr_chars in list(logprobs[i].keys())[0]:
+                if delimiter in curr_chars:
+                    curr_key += curr_chars.split(delimiter)[0]
+                    conf_label_keys[curr_key] = self.logprob_average(
+                        logprobs[prev_key_index:i]
+                    )
+                    prev_key_index = i
+                    curr_key = curr_chars.split(delimiter)[-1]
+                else:
+                    curr_key += curr_chars
+        if len(curr_key) > 0:
+            conf_label_keys[curr_key] = self.logprob_average(logprobs[prev_key_index:])
+
+        for conf_label_candiate in conf_label_keys:
+            closest_match, closest_match_score = None, 0
+            for label in logprob_per_label:
+                # The SequenceMatcher class is used to compare two sequences. It is especially useful for comparing sequences of characters.
+                # None - This is a function that is used to compare the two sequences. If it is None, the default function is used.
+                # label - The first sequence to compare
+                # conf_label_candiate - The second sequence to compare
+
+                # The find_longest_match function returns a named tuple with the following fields:
+                # a - The start of the matching subsequence in the first sequence
+                # b - The start of the matching subsequence in the second sequence
+                # size - The length of the matching subsequence
+
+                longest_substring = difflib.SequenceMatcher(
+                    None, label, conf_label_candiate
+                ).find_longest_match(0, len(label), 0, len(conf_label_candiate))
+                if (
+                    longest_substring.size
+                    / (1e-6 + max(len(label), len(conf_label_candiate)))
+                ) > closest_match_score:
+                    closest_match = label
+                    closest_match_score = longest_substring.size / (
+                        1e-6 + max(len(label), len(conf_label_candiate))
+                    )
+            if closest_match is not None:
+                logprob_per_label[closest_match] = conf_label_keys[conf_label_candiate]
+
+        return logprob_per_label
+
     def logprob_average_per_label(
         self,
         model_generation: LLMAnnotation,
@@ -86,55 +143,20 @@ class ConfidenceCalculator:
         This function calculates the confidence score per label when there are multiple labels in the response (i.e. multilabel tasks). This will return
         a confidence score per label.
         """
-        logprob_per_label = {}
         logprobs = model_generation.generation_info["logprobs"]["top_logprobs"]
         if logprobs is None or len(logprobs) == 0:
-            return logprob_per_label
-
-        # Remove all characters before a '\n' character in the logprobs, as
-        # this is parsed during the generation process
-        # In this case if input logprobs is
-        # [{"xx\nc": -1.2},{"Ab\n": -1.2}, {"Abc": -1.2}, {";": -1.3}, {"B": -1.4}, {"cd": -1.6}, {";": -1.5}, {"C": -1.4}]
-        # The output logprobs would be [{"Abc": -1.2}, {";": -1.3}, {"B": -1.4}, {"cd": -1.6}, {";": -1.5}, {"C": -1.4}]
-        for i in range(len(logprobs) - 1, -1, -1):
-            cur_key = list(logprobs[i].keys())[0]
-            if "\n" in cur_key:
-                new_key = cur_key.split("\n")[-1].strip()
-                if not new_key:
-                    logprobs = logprobs[i + 1 :]
-                else:
-                    logprobs[i] = {new_key: logprobs[i][cur_key]}
-                    logprobs = logprobs[i:]
-                break
-
-        # Suppose the output for which we compute confidence is "Abc;Bcd;C"
-        # In this case the logprobs can be a list of dictionaries like
-        # [{"Abc": -1.2}, {";": -1.3}, {"B": -1.4}, {"cd": -1.6}, {";": -1.5}, {"C": -1.4}]
-        curr_label = ""
-        logprob_start_idx = 0
-        for i in range(len(logprobs)):
-            for char in list(logprobs[i].keys())[0]:
-                if char == delimiter:
-                    logprob_end_idx = i if logprob_start_idx < i else i + 1
-                    logprob_per_label[curr_label.strip()] = self.logprob_average(
-                        logprobs[logprob_start_idx:logprob_end_idx]
-                    )
-                    curr_label = ""
-                    logprob_start_idx = i + 1
-                else:
-                    curr_label += char
-
-        # Average the logprobs for the last label (or only label if there is just one label)
-        if logprob_start_idx < len(logprobs):
-            logprob_per_label[curr_label.strip()] = self.logprob_average(
-                logprobs[logprob_start_idx:]
-            )
-        return logprob_per_label
+            return {}
+        return self._logprob_average_per_label(
+            logprobs=logprobs,
+            label=model_generation.label,
+            delimiter=delimiter,
+        )
 
     def logprob_average_per_key(
         self,
+        model_generation: LLMAnnotation,
         logprobs: Union[list, dict],
-        keys: list,
+        keys: Dict[str, str],
         **kwargs,
     ):
         """
@@ -162,7 +184,7 @@ class ConfidenceCalculator:
 
         # Find the locations of each key in the logprobs as indices
         # into the logprobs list
-        locations = []
+        locations = [(len(logprobs), len(logprobs), "")]
         for key in keys:
             key_to_find = f'"{key}":'
             loc = full_string.find(key_to_find)
@@ -170,9 +192,10 @@ class ConfidenceCalculator:
                 # We did not find the key in the logprobs so we set its confidence as 0
                 # This should not be possible if the LLM followed its guidelines.
                 logprob_per_key[key] = 0
-            start_token = mapping[loc]
-            end_token = mapping[loc + len(key_to_find) - 1]
-            locations.append((start_token, end_token, key))
+            else:
+                start_token = mapping[loc]
+                end_token = mapping[loc + len(key_to_find) - 1]
+                locations.append((start_token, end_token, key))
         locations.sort()
         # Here, the locations consist of the start and end *token* indices for each key
         # i.e for the keys A and B, we find the start and end tokens where they are found in the logprobs list
@@ -180,21 +203,24 @@ class ConfidenceCalculator:
 
         if len(logprob_per_key) != 0:
             logger.warning("Some keys not found in logprobs")
-
         for i in range(len(locations) - 1):
             # Average the logprobs from the end of this to the start of the next token
             # This means that we average the logprobs of all tokens from the end of the key token
             # to the start of the next key token thus for the key "A" this would average the tokens
             # responsible for generating "B",
-            logprob_per_key[locations[i][2]] = self.logprob_average(
-                logprobs[locations[i][1] + 1 : locations[i + 1][0]]
-            )
-        if len(locations) > 0 and len(logprobs) > locations[-1][1] + 1:
-            # Average the logprobs from the end of the last token to the end of the logprobs
-            logprob_per_key[locations[-1][2]] = self.logprob_average(
-                logprobs[locations[-1][1] + 1 :]
-            )
-
+            curr_key = locations[i][2]
+            if (
+                curr_key in keys
+                and keys[curr_key] == TaskType.MULTILABEL_CLASSIFICATION
+            ):
+                logprob_per_key[curr_key] = self._logprob_average_per_label(
+                    logprobs[locations[i][1] + 1 : locations[i + 1][0]],
+                    label=model_generation.label[curr_key],
+                )
+            else:
+                logprob_per_key[curr_key] = self.logprob_average(
+                    logprobs[locations[i][1] + 1 : locations[i + 1][0]]
+                )
         return logprob_per_key
 
     async def p_true(self, model_generation: LLMAnnotation, **kwargs) -> float:
@@ -236,7 +262,12 @@ class ConfidenceCalculator:
             model_generation.confidence_score = 0
         return model_generation.confidence_score
 
-    async def calculate(self, model_generation: LLMAnnotation, **kwargs) -> float:
+    async def calculate(
+        self,
+        model_generation: LLMAnnotation,
+        keys: Optional[Dict] = None,
+        **kwargs,
+    ) -> float:
         if self.score_type not in self.SUPPORTED_CALCULATORS:
             raise NotImplementedError()
 
@@ -282,12 +313,11 @@ class ConfidenceCalculator:
                 return model_generation
             logprobs = model_generation.generation_info["logprobs"]["top_logprobs"]
 
-        keys = None
         if self.score_type == "logprob_average_per_key":
             assert isinstance(
                 model_generation.label, dict
             ), "logprob_average_per_key requires a dict label from attribute extraction"
-            keys = model_generation.label.keys()
+            assert keys is not None, "Keys must be provided for logprob_average_per_key"
 
         confidence = self.SUPPORTED_CALCULATORS[self.score_type](
             model_generation=model_generation,

@@ -114,7 +114,7 @@ class LLMAnnotation(BaseModel):
     successfully_labeled: bool
     label: Any
     curr_sample: Optional[bytes] = ""
-    confidence_score: Optional[float] = None
+    confidence_score: Optional[Union[float, Dict[str, float]]] = None
     generation_info: Optional[Dict[str, Any]] = None
     raw_response: Optional[str] = ""
     explanation: Optional[str] = ""
