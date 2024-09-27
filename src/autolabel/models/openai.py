@@ -181,7 +181,6 @@ class OpenAILLM(BaseModel):
         return generations
 
     async def _alabel(self, prompts: List[str], output_schema: Dict) -> RefuelLLMResult:
-        logger.error(f"Passed in output_schema: {output_schema}")
         try:
             start_time = time()
             if self._engine == "chat":
