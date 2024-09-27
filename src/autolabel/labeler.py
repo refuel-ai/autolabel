@@ -18,6 +18,7 @@ from autolabel.cache import (
     SQLAlchemyGenerationCache,
     SQLAlchemyTransformCache,
 )
+from autolabel.schema import TaskType
 from autolabel.confidence import ConfidenceCalculator
 from autolabel.configs import AutolabelConfig
 from autolabel.dataset import AutolabelDataset
@@ -224,9 +225,7 @@ class LabelingAgent:
                 console=self.console,
             )
             if self.console_output
-            else tqdm(indices)
-            if self.use_tqdm
-            else indices
+            else tqdm(indices) if self.use_tqdm else indices
         ):
             chunk = dataset.inputs[current_index]
             examples = []

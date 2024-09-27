@@ -1,21 +1,28 @@
 {
     "task_name": "ProductCatalogEntityMatch",
-    "task_type": "entity_matching",
+    "task_type": "attribute_extraction",
     "dataset": {
         "label_column": "label",
         "delimiter": ","
     },
     "model": {
         "provider": "openai",
-        "name": "gpt-3.5-turbo"
+        "name": "gpt-4o-mini"
     },
     "prompt": {
-        "task_guidelines": "You are an expert at identifying duplicate products from online product catalogs.\nYour job is to tell if the two given entities are duplicates or not duplicate. Your answer must be from one of the following options:\n{labels}",
-        "labels": [
-            "duplicate",
-            "not duplicate"
-        ],
+        "task_guidelines": "You are an expert at identifying duplicate products from online product catalogs.\nYour job is to tell if the two given entities are duplicates or not duplicates.",
         "example_template": "Title of entity1: {Title_entity1}; category of entity1: {Category_entity1}; brand of entity1: {Brand_entity1}; model number of entity1: {ModelNo_entity1}; price of entity1: {Price_entity1}\nTitle of entity2: {Title_entity2}; category of entity2: {Category_entity2}; brand of entity2: {Brand_entity2}; model number of entity2: {ModelNo_entity2}; price of entity2: {Price_entity2}\nDuplicate or not: {label}",
+        "attributes": [
+            {
+                "name": "label",
+                "options": [
+                    "duplicate",
+                    "not duplicate"
+                ],
+                "example_template": "Title of entity1: {Title_entity1}; category of entity1: {Category_entity1}; brand of entity1: {Brand_entity1}; model number of entity1: {ModelNo_entity1}; price of entity1: {Price_entity1}\nTitle of entity2: {Title_entity2}; category of entity2: {Category_entity2}; brand of entity2: {Brand_entity2}; model number of entity2: {ModelNo_entity2}; price of entity2: {Price_entity2}\nDuplicate or not: {label}",
+                "description": "Whether the two entities are duplicates or not duplicates"
+            }
+        ],
         "few_shot_examples": [
             {
                 "Title_entity1": "lexmark extra high yield return pgm print cartridge - magenta",

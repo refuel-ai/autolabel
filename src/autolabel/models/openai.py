@@ -203,7 +203,7 @@ class OpenAILLM(BaseModel):
                         },
                     )
                 else:
-                    logger.error(
+                    logger.info(
                         "Not using structured output despite output_schema provided"
                     )
                     result = await self.llm.agenerate(prompts)
@@ -267,7 +267,7 @@ class OpenAILLM(BaseModel):
                         },
                     )
                 else:
-                    logger.error(
+                    logger.info(
                         "Not using structured output despite output_schema provided"
                     )
                     result = self.llm.generate(prompts)

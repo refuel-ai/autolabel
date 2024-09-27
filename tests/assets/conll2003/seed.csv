@@ -1,16 +1,201 @@
-example,IndividualLabels,CategorizedLabels
-"The role of the 70,000 mainly Kurdish village guards who fight Kurdistan Workers Party ( PKK ) guerrillas in the southeast has been questioned recently after media allegations that many of them are involved in common crime .","[{""Description"": ""Miscellaneous"", ""Text"": ""Kurdish""}, {""Description"": ""Organization"", ""Text"": ""Kurdistan Workers Party""}, {""Description"": ""Organization"", ""Text"": ""PKK""}]","{""Location"": [], ""Organization"": [""Kurdistan Workers Party"", ""PKK""], ""Person"": [], ""Miscellaneous"": [""Kurdish""]}"
-The head of the region 's main pro-state militia is at the centre of a security scandal that has shaken the government .,[],"{""Location"": [], ""Organization"": [], ""Person"": [], ""Miscellaneous"": []}"
-"More than 21,000 people have been killed in the 12-year-old conflict between Turkish security forces and the PKK , fighting for Kurdish autonomy or independence .","[{""Description"": ""Miscellaneous"", ""Text"": ""Turkish""}, {""Description"": ""Organization"", ""Text"": ""PKK""}, {""Description"": ""Miscellaneous"", ""Text"": ""Kurdish""}]","{""Location"": [], ""Organization"": [""PKK""], ""Person"": [], ""Miscellaneous"": [""Turkish"", ""Kurdish""]}"
-Texas / w Okla fed cattle roundup - USDA .,"[{""Description"": ""Location"", ""Text"": ""Texas""}, {""Description"": ""Location"", ""Text"": ""Okla""}, {""Description"": ""Organization"", ""Text"": ""USDA""}]","{""Location"": [""Texas"", ""Okla""], ""Organization"": [""USDA""], ""Person"": [], ""Miscellaneous"": []}"
-AMARILLO 1996-12-06,"[{""Description"": ""Location"", ""Text"": ""AMARILLO""}]","{""Location"": [""AMARILLO""], ""Organization"": [], ""Person"": [], ""Miscellaneous"": []}"
-Trade very slow in the Panhandle area Thursday .,"[{""Description"": ""Location"", ""Text"": ""Panhandle""}]","{""Location"": [""Panhandle""], ""Organization"": [], ""Person"": [], ""Miscellaneous"": []}"
-Slaughter steers and heifers not well tested .,[],"{""Location"": [], ""Organization"": [], ""Person"": [], ""Miscellaneous"": []}"
-Feedlots reporting light inquiry from buyers .,[],"{""Location"": [], ""Organization"": [], ""Person"": [], ""Miscellaneous"": []}"
-- USDA,"[{""Description"": ""Organization"", ""Text"": ""USDA""}]","{""Location"": [], ""Organization"": [""USDA""], ""Person"": [], ""Miscellaneous"": []}"
-"Thursday 200 Week Ago Holiday Year Ago 10,900",[],"{""Location"": [], ""Organization"": [], ""Person"": [], ""Miscellaneous"": []}"
-"Wk to Date 69,100 Week Ago 58,100 Year Ago 30,800",[],"{""Location"": [], ""Organization"": [], ""Person"": [], ""Miscellaneous"": []}"
-"Sales reported on 200 head steers ; 69,100 head confirmed for week to date which includes 14,000 formulated and 3,400 contracted cattle to be shipped this week .",[],"{""Location"": [], ""Organization"": [], ""Person"": [], ""Miscellaneous"": []}"
-"Slaughter Steers : Pen Select and Choice 2-3 , 1150 lbs 67.00 .",[],"{""Location"": [], ""Organization"": [], ""Person"": [], ""Miscellaneous"": []}"
-"Pen Select , few choice 2-3 1150 lbs 66.00 .",[],"{""Location"": [], ""Organization"": [], ""Person"": [], ""Miscellaneous"": []}"
-Kansas feedlot cattle roundup - USDA .,"[{""Description"": ""Location"", ""Text"": ""Kansas""}, {""Description"": ""Organization"", ""Text"": ""USDA""}]","{""Location"": [""Kansas""], ""Organization"": [""USDA""], ""Person"": [], ""Miscellaneous"": []}"
+example,Location,Organization,Person,Miscellaneous
+"The role of the 70,000 mainly Kurdish village guards who fight Kurdistan Workers Party ( PKK ) guerrillas in the southeast has been questioned recently after media allegations that many of them are involved in common crime .",[],"[""Kurdistan Workers Party"", ""PKK""]",[],"[""Kurdish""]"
+The head of the region 's main pro-state militia is at the centre of a security scandal that has shaken the government .,[],[],[],[]
+"More than 21,000 people have been killed in the 12-year-old conflict between Turkish security forces and the PKK , fighting for Kurdish autonomy or independence .",[],"[""PKK""]",[],"[""Turkish"", ""Kurdish""]"
+Texas / w Okla fed cattle roundup - USDA .,"[""Texas"", ""Okla""]","[""USDA""]",[],[]
+AMARILLO 1996-12-06,"[""AMARILLO""]",[],[],[]
+Trade very slow in the Panhandle area Thursday .,"[""Panhandle""]",[],[],[]
+Slaughter steers and heifers not well tested .,[],[],[],[]
+Feedlots reporting light inquiry from buyers .,[],[],[],[]
+- USDA,[],"[""USDA""]",[],[]
+"Thursday 200 Week Ago Holiday Year Ago 10,900",[],[],[],[]
+"Wk to Date 69,100 Week Ago 58,100 Year Ago 30,800",[],[],[],[]
+"Sales reported on 200 head steers ; 69,100 head confirmed for week to date which includes 14,000 formulated and 3,400 contracted cattle to be shipped this week .",[],[],[],[]
+"Slaughter Steers : Pen Select and Choice 2-3 , 1150 lbs 67.00 .",[],[],[],[]
+"Pen Select , few choice 2-3 1150 lbs 66.00 .",[],[],[],[]
+Kansas feedlot cattle roundup - USDA .,"[""Kansas""]","[""USDA""]",[],[]
+DODGE CITY 1996-12-06,"[""DODGE CITY""]",[],[],[]
+Trade slow .,[],[],[],[]
+Not enough slaughter steer or heifer sales confirmed for an adequate market test .,[],[],[],[]
+- USDA,[],"[""USDA""]",[],[]
+"Thursday 600 week ago holiday year ago 14,200",[],[],[],[]
+"week to date 89,300 week ago 71,000 year ago 47,200",[],[],[],[]
+"Inquiry good , demand light .",[],[],[],[]
+Sales confirmed on 500 slaughter steers and 100 slaughter heifers Thursday .,[],[],[],[]
+"For the week to date 89,300 head confirmed including 30,600 head of contracted or formulated cattle .",[],[],[],[]
+"Steers : Select and Choice 2-3 , 1200 lbs 67.00 .",[],[],[],[]
+"Heifers : Select and Choice 2-3 , 1150 lbs 67.00 .",[],[],[],[]
+Delphis Hanover weekly municipal bond yields .,[],"[""Delphis Hanover""]",[],[]
+Delphis Hanover weekly muni bond yields calculated Dec 5,[],"[""Delphis Hanover""]",[],[]
+Aaa Aa A Baa,[],[],[],[]
+1997 3.50 3.60* 3.70 3.75 4.00 4.00 4.30 4.35,[],[],[],[]
+2001 4.20 4.20 4.35 4.40 4.65 4.65 5.00 5.00,[],[],[],[]
+2006 4.70 4.70 4.85 4.85 5.15 5.15 5.50 5.50,[],[],[],[]
+2011 5.15 5.15 5.30 5.30 5.60 5.60 5.90 5.90,[],[],[],[]
+2016 5.35 5.30 5.50 5.45 5.80 5.75 6.10 6.05,[],[],[],[]
+2021 5.45 5.40 5.60 5.55 5.90 5.85 6.20 6.15,[],[],[],[]
+2026 5.50 5.45 5.65 5.60 5.95 5.90 6.25 6.20,[],[],[],[]
+*from previous calculation on Nov 27,[],[],[],[]
+"-- U.S. Municipal Desk , 212-859-1650",[],"[""U.S. Municipal Desk""]",[],[]
+ACCESS energy futures prices add to daytime gains .,[],[],[],"[""ACCESS""]"
+LOS ANGELES 1996-12-05,[],"[""LOS ANGELES""]",[],[]
+"U.S. energy futures added to floor session gains in light NYMEX ACCESS trade Thursday , as forecasts for colder temperatures in distillate-hungry Northeastern markets raised supply concerns .","[""U.S.""]",[],[],"[""NYMEX ACCESS""]"
+" The cold weather forecasts are helping right now ,  a trader said .",[],[],[],[]
+"Earlier , NYMEX crude ended daytime trade 78 cents higher at $ 25.58 a barrel , following breakthroughs of key technical levels and reports of tighter supplies .",[],"[""NYMEX""]",[],[]
+Front-month heating oil firmed 0.09 cents a gallon to 75.20 cents as roughly 100 lots changed hands within the first few hours of ACCESS .,[],[],[],"[""ACCESS""]"
+"About 112 lots were exchanged overall , traders said .",[],[],[],[]
+NYMEX gasoline for January delivery climbed 0.12 cents a gallon to 69.80 cents as a light 33 lots traded in the nearby month and 35 moved overall .,[],"[""NYMEX""]",[],[]
+"January crude was barely changed from its settlement , edging up one cent to $ 25.66 a barrel .",[],[],[],[]
+About 350 lots were traded for January and 870 in all months .,[],[],[],[]
+"-- David Brinkerhoff , Los Angeles bureau +1 213 380 2014","[""Los Angeles""]",[],"[""David Brinkerhoff""]",[]
+U.S. blasts release of convicted bomber .,"[""U.S.""]",[],[],[]
+WASHINGTON 1996-12-05,"[""WASHINGTON""]",[],[],[]
+"The United States Thursday blasted the release from a Greek prison of a Palestinian guerrilla convicted of bombing an airliner and killing a teenager in 1982 , saying the move  does not make sense . ","[""United States""]",[],[],"[""Greek"", ""Palestinian""]"
+ All of us who have been victimised by terrorists ... need to stand together against terrorists .,[],[],[],[]
+"We ca n't let terrorists out of jail when they are a danger to civilians all around the world ,  State Department spokesman Nicholas Burns said . '",[],"[""State Department""]","[""Nicholas Burns""]",[]
+Mohammed Rashid  is a terrorist who deserves to be behind bars .,[],[],"[""Mohammed Rashid""]",[]
+It is inexplicable to us why he would have been allowed to leave Greece before serving his just sentence ... This is an incomprehensible move .,"[""Greece""]",[],[],[]
+"It does not make sense ,  Burns told a news briefing .",[],[],"[""Burns""]",[]
+He spoke after Rashid left Greece Thursday on being freed from prison early for good behaviour after serving 8-1/2 years .,"[""Greece""]",[],"[""Rashid""]",[]
+"The Clinton administration 's strong views on this subject have been conveyed to the Greek government , Burns said .",[],[],"[""Clinton"", ""Burns""]","[""Greek""]"
+Mahammad Rashid was whisked from Korydallos maximum security prison just outside Athens to the airport where he boarded a regular Olympic Airways flight to Cairo where he would transit to Tunis and the former Palestine Liberation Organisation headquarters .,"[""Korydallos"", ""Athens"", ""Cairo"", ""Tunis""]","[""Olympic Airways"", ""Palestine Liberation Organisation""]","[""Mahammad Rashid""]",[]
+"Rashid , 46 , was sentenced to 18 years in prison by a Greek court in 1992 after being convicted of premeditated murder in the mid-air bombing of a Pan American airliner in 1982 .",[],[],"[""Rashid""]","[""Greek"", ""Pan American""]"
+His sentence had been reduced to 15 years in 1993 .,[],[],[],[]
+"A parole court ruled recently that Rashid could be freed after serving 8-1/2 years , with time in pre-trial detention counted towards his term , but said he must be expelled immediately from Greece .","[""Greece""]",[],"[""Rashid""]",[]
+The United States accuses Rashid of belonging to the May 15 Palestinian guerrilla group and being an accomplished student of master Palestinian bombmaker Abu Ibrahim .,"[""United States""]",[],"[""Rashid"", ""Abu Ibrahim""]","[""Palestinian"", ""Palestinian""]"
+"Three FBI agents who testified against Rashid during the trial , held at Korydallos prison , said they had ample evidence against Rashid for a bomb planted on a Pan American plane in Brazil in 1982 and a mid-air bomb blast on a TWA airliner approaching Athens in 1986 which killed four U.S. citizens .","[""Korydallos"", ""Brazil"", ""Athens"", ""U.S.""]","[""FBI"", ""TWA""]","[""Rashid"", ""Rashid""]","[""Pan American""]"
+School football player banned for slashing opponents .,[],[],[],[]
+"ALBUQUERQUE , N.M. 1996-12-05","[""ALBUQUERQUE"", ""N.M.""]",[],[],[]
+A New Mexico high school football player who used razor-sharp helmet buckles to slash opponents and a referee was expelled from high school banned Thursday from competition for one year .,"[""New Mexico""]",[],[],[]
+"Mike Cito , 17 , was expelled from St Pius X High School in Albuquerque after an October game in which he used the sharpened chin strap buckles to injure two opposing players and the referee .","[""Albuquerque""]","[""St Pius X High School""]","[""Mike Cito""]",[]
+One of the players need 10 stitches to a cut on his forearm .,[],[],[],[]
+"Officials said the New Mexico Activities Association decided to bar Cito from any inter-scholastic competition until next October , regardless of the school he attends .",[],"[""New Mexico Activities Association""]","[""Cito""]",[]
+"Cito 's father , Stephen Cito , had admitted filing the metal buckles to a fine edge , saying he did it to get even with the referee and with players who had roughed up his son in a previous game .",[],[],"[""Cito"", ""Stephen Cito""]",[]
+Cyberspace squabbles overshadow copyright talks .,[],[],[],[]
+Elif Kaban,[],[],"[""Elif Kaban""]",[]
+GENEVA 1996-12-06,"[""GENEVA""]",[],[],[]
+"In a gloomy Geneva conference centre built before the dawn of the Internet , groups of staid officials made a first stab on Friday at rewriting copyright laws for the digital age .","[""Geneva""]",[],[],"[""Internet""]"
+But critics at the first government-level meeting to revise copyright laws in 25 years said the officials and legislators might as well be trying to police the ether .,[],[],[],[]
+"After four days of diplomatic wrangling over procedures , some 600 delegates from nations small and large got down to the nitty-gritty of setting the digital agenda for the first time .",[],[],[],[]
+"Cyberspace squabbles overshadowed the debate on a stack of proposals covering literary and artistic works , the rights of performers and producers of music and producers of databases .",[],[],[],[]
+" If it goes on like this , we wo n't have enough time to finish all the discussions ,  a frustrated Western delegate said . ",[],[],[],[]
+They announced they will start evening sessions next week . ,[],[],[],[]
+Attempts by copyright-based industries to ensure they get a cut from online works led to a storm of protests by Internet companies and critics who say the pacts would curb public access to online information from soccer results to stock prices .,[],[],[],"[""Internet""]"
+ It 's not illegal to make photocopies of newspaper articles .,[],[],[],[]
+It 's fair use .,[],[],[],[]
+We can read sports statistics or stock prices .,[],[],[],[]
+"But with the treaty , this kind of fact will be owned and subject to licensing ,  said James Love , a consumer lobbyist heading the Washington-based Consumer Project on Technology .",[],[],"[""James Love"", ""Consumer Project""]","[""Washington-based""]"
+ None of the treaties are ready to move .,[],[],[],[]
+These people do n't understand what they 're doing . ,[],[],[],[]
+"At stake are billions of dollars and the future of the electronic information industry -- the coming medium for the distribution of music , films , literature , software and commerce .",[],[],[],[]
+"Supporters of the three pacts say they are only an extension of existing intellectual property rights , covered by the century-old Berne Convention .",[],[],[],"[""Berne Convention""]"
+"But an array of opponents from the network industry to consumer , scientific and academic groups say the pacts will give sweeping powers to entertainment and copyright-based industries .",[],[],[],[]
+A quick survey at the conference centre found few officials who had actually surfed the Internet .,[],[],[],"[""Internet""]"
+"Mongolia 's state copyright official , Gundegma Jargalshaihan , said apologetically that he had just arrived from Ulan Bator and was not aware of the details of the digital agenda .","[""Mongolia"", ""Ulan Bator""]",[],"[""Gundegma Jargalshaihan""]",[]
+" We do n't have money for Internet in Mongolia ,  he added .","[""Mongolia""]",[],[],"[""Internet""]"
+"Alexander Bavykin , deputy legal chief at Russia 's foreign ministry , said Moscow had yet to formulate a policy on copyright in cybersppace .","[""Russia"", ""Moscow""]",[],"[""Alexander Bavykin""]",[]
+He too had never browsed the Net .,[],[],[],[]
+ I 've never tried it and why should I ?,[],[],[],[]
+"There are lots of other things in this life I have n't tried either ,  he said .",[],[],[],[]
+A visit to the computer centre offering Internet services found a lone European official clicking away on his mouse .,[],[],[],"[""Internet"", ""European""]"
+" Internet is a potential cash cow for copyright-based industries and we need roadmaps on the information superhighway ,  said Marc Pearl , vice-president of the Information Technology Association of America , a trade association of U.S. network companies opposing the treaties .","[""U.S.""]","[""Information Technology Association of America""]","[""Marc Pearl""]","[""Internet""]"
+ But there are a lot of dinosaurs here .,[],[],[],[]
+People here do n't understand Internet technology .,[],[],[],"[""Internet""]"
+"Because they do n't understand technology , they fear the unknown . ",[],[],[],[]
+"Before the Internet , those whose business was to protect copyrights knew where they stood .",[],[],[],"[""Internet""]"
+"Their enemies were tangible if elusive , such as the people who pirated music cassettes .",[],[],[],[]
+"But the Internet , a global computer network where anything from music to software can be duplicated and distributed at the click of a computer mouse , has ripped up the rulebooks .",[],[],[],"[""Internet""]"
+Network operators said the draft laws would hold them responsible for copyright infringements in the system and expose them to multi-billion-dollar liabilities .,[],[],[],"[""Network""]"
+" There are 500 million messages transmitted through the Internet everyday ,  said Tim Casey of the U.S.-based MCI Communications Corporation . ",[],"[""MCI Communications Corporation""]","[""Tim Casey""]","[""Internet"", ""U.S.-based""]"
+How can we control them all ? ,[],[],[],[]
+Italy evacuates 17 nuns and priests from Zaire .,"[""Italy"", ""Zaire""]",[],[],[]
+ROME 1996-12-06,"[""ROME""]",[],[],[]
+Italy said on Friday it had evacuated 17 Roman Catholic nuns and priests from Zaire where they had been at risk from fighting between government troops and ethnic Tutsi rebels .,"[""Italy"", ""Zaire""]",[],[],"[""Roman Catholic"", ""Tutsi""]"
+The Foreign Ministry said the 10 Europeans and seven Africans took a special flight from the Garamba national park in northern Zaire to the Ugandan capital Kampala where they were being looked after at the Italian embassy .,"[""Garamba"", ""Zaire"", ""Kampala""]","[""Foreign Ministry""]",[],"[""Europeans"", ""Africans"", ""Ugandan"", ""Italian""]"
+"The group had travelled from their mission on the edge of the park to a landing strip to make the rendezvous , a ministry official said .",[],[],[],[]
+"The ministry said the group consisted of 13 nuns , seven Italians and six Zaireans , and four priests , two from Belgium , one from Spain and one from Zambia .","[""Belgium"", ""Spain"", ""Zambia""]",[],[],"[""Italians"", ""Zaireans""]"
+Third Paris blast victim was Moroccan student .,"[""Paris""]",[],[],"[""Moroccan""]"
+PARIS 1996-12-06,"[""PARIS""]",[],[],[]
+"Moroccan Mohamed Benchaou , the third person to die after a bombing on a Paris train , was a 25-year-old student about to submit a mathematics doctorate , the Moroccan embassy said on Friday .","[""Paris""]",[],"[""Mohamed Benchaou""]","[""Moroccan"", ""Moroccan""]"
+"Benchaou died of his injuries on Thursday night , two days after the blast .",[],[],"[""Benchaou""]",[]
+A newly-married Canadian woman and a man from New Caledonia died instantly in the bomb that injured 90 others in the rush-hour train .,"[""New Caledonia""]",[],[],"[""Canadian""]"
+"An embassy spokesman said Benchaou , the son of a Moroccan army colonel , had been due to take his doctorate in March and hoped to become a teacher .",[],[],"[""Benchaou""]","[""Moroccan""]"
+Investigators have said the explosion bore the hallmarks of Algerian Moslem fundamentalists who staged a series of bombings last year which killed eight people and injured more than 160 .,[],[],[],"[""Algerian"", ""Moslem""]"
+Italian President urges separatists to turn back .,[],[],[],"[""Italian""]"
+"MANTUA , Italy 1996-12-06","[""Italy""]",[],[],[]
+Italian President Oscar Luigi Scalfaro visited the symbolic heartland of the separatist Northern League on Friday and appealed to its supporters to drop their campaign for a breakaway state .,[],"[""Northern League""]","[""Oscar Luigi Scalfaro""]","[""Italian""]"
+"Addressing a convention on Italian unity in Mantua , where the party has set up its own  parliament of the north  , Scalfaro made a direct appeal to what he called  my friends from the League  to work instead for federal reform .",[],"[""League""]","[""Scalfaro""]","[""Italian""]"
+" It is an invitation , a commitment , a promise .",[],[],[],[]
+"Let 's march together ,  Scalfaro , a northerner himself , said .","[""Let""]",[],"[""Scalfaro""]",[]
+" Help Italy to teach , to propose a capacity for strong local autonomy , for the federalism which can give new vigour to our blood .","[""Italy""]",[],[],[]
+"But turn back from the line you are taking now ,  he said .",[],[],[],[]
+Scalfaro was in Mantua to attend a ceremony commemorating the executions there by Austrian rulers in 1852 and 1853 of a group of Italians who had campaigned for national unity .,"[""Mantua""]",[],"[""Scalfaro""]","[""Austrian"", ""Italians""]"
+He was jeered and whistled at by a small group of League supporters when he arrived for a visit marked by heavy security .,"[""League""]",[],[],[]
+"Witnesses said the protesters were outnumbered by other Italians who waved tricolour flags in the national red , white and green or shouted  Viva Italia  .","[""Italia""]",[],[],"[""Italians""]"
+The League won more than eight percent of votes at the last general election in April on a federalist platform but its leader Umberto Bossi later switched to a separatist agenda .,[],"[""League""]","[""Umberto Bossi""]",[]
+"A three-day  independence  march along the Po River in September , culminating in a declaration in Venice of a self-styled  Republic of Padania  , flopped badly .","[""Po"", ""Venice"", ""Republic of Padania""]",[],[],[]
+Denmark 's Radiometer H1 result seen flat .,"[""Denmark""]",[],[],[]
+COPENHAGEN 1996-12-06,"[""COPENHAGEN""]",[],[],[]
+A Reuter consensus survey sees medical equipment group Radiometer reporting largely unchanged earnings when it publishes first half 19996/97 results next Wednesday .,[],"[""Reuter"", ""Radiometer"", ""Wednesday""]",[],[]
+An average of four analysts ' forecasts predicted pre-tax profit of 147.3 million crowns compared to 144.5 million in the first six months of 1995/96 .,[],[],[],[]
+"They said that the group 's failure to introduce new products was behind the share 's weak performance in 1996 , during which it has lost seven percent so far .",[],[],[],[]
+"-- Soeren Linding Jakobsen , Copenhagen newsroom +45 33969650","[""Copenhagen""]",[],"[""Soeren Linding Jakobsen""]",[]
+Moslem fundamentalists kill 19 Algerians - agency .,[],[],[],"[""Moslem"", ""Algerians""]"
+PARIS 1996-12-06,"[""PARIS""]",[],[],[]
+"Moslem fundamentalists killed 19 civilians overnight in Blida province south of Algiers , Algerian security forces said on Friday .","[""Blida"", ""Algiers""]",[],[],"[""Moslem"", ""Algerian""]"
+"In a statement carried on the official Algerian news agency APS , the security forces said the 19 had been killed by  a group of terrorists  .",[],"[""APS""]",[],"[""Algerian""]"
+"Belgian police smash major drugs rings , 30 arrested .",[],[],[],"[""Belgian""]"
+BRUSSELS 1996-12-06,"[""BRUSSELS""]",[],[],[]
+"Police smashed two drugs smuggling rings and arrested 30 people after a taxidriver in Spain alerted them to a suitcase of heroin left in his cab , Belgian police said on Friday .","[""Spain""]",[],[],"[""Belgian""]"
+"Police seized dozens of kilos of heroin with a street value of hundreds of millions of Belgian francs , a public prosecutor 's office spokesman in the port city of Antwerp said .",[],"[""Antwerp""]",[],"[""Belgian""]"
+He said a 24-year-old Belgian woman left a suitcase containing 13 kg ( 29 lb ) of heroin in a taxi in Barcelona .,"[""Barcelona""]",[],[],"[""Belgian""]"
+The taxidriver alerted police who arrested a 33-year-old Turkish man when he came to pick up the suitcase at a lost luggage office .,[],[],[],"[""Turkish""]"
+The woman was later arrested in Belgium .,"[""Belgium""]",[],[],[]
+"She and the Turkish man smuggled heroin from Turkey to Antwerp from where it was taken to Spain , France and Germany by others , the spokesman said .","[""Turkey"", ""Spain"", ""France"", ""Germany""]","[""Antwerp""]",[],"[""Turkish""]"
+He said 14 people were arrested in Belgium and 16 others in other European nations after an investigation lasting nearly a year .,"[""Belgium""]",[],[],"[""European""]"
+( $ 1=32.14 Belgian Franc ),[],[],[],"[""Belgian""]"
+Port conditions update - Lloyds Shipping .,[],"[""Lloyds Shipping""]",[],[]
+"GREECE , Dec 5 - Greek port workers called off a strike which had kept the country 's ports closed , giving the government until Feb 1 to introduce a promised bonus scheme .","[""GREECE""]",[],[],"[""Greek""]"
+German Jan-August coffee imports detailed .,[],[],[],"[""German""]"
+HAMBURG 1996-12-06,"[""HAMBURG""]",[],[],[]
+"German net green coffee imports from outside the EU totalled 7.73 million bags in January-August compared with 7.66 million in the year-ago period , the DKV coffee association said .",[],"[""EU"", ""DKV""]",[],"[""German""]"
+"Imports of 1.04 million bags in August were down from 1.08 million in August 1995 but up from 992,860 bags in July 1996 .",[],[],[],[]
+"Colombia shipped 198,226 bags in August after 164,185 in July , El Salvador 160,553 ( 129,184 ) , Indonesia 72,218 ( 78,959 ) , Ethiopia 69,252 ( 60,456 ) and Kenya 63,969 ( 60,043 ) .","[""Colombia"", ""El Salvador"", ""Indonesia"", ""Ethiopia"", ""Kenya""]",[],[],[]
+"Brazil was in seventh position with 54,333 bags ( 29,055 ) .","[""Brazil""]",[],[],[]
+-- Hamburg newsroom +49-40-41903275,"[""Hamburg""]",[],[],[]
+Munich Re says to split stock .,[],"[""Munich Re""]",[],[]
+"MUNICH , Germany 1996-12-06","[""MUNICH"", ""Germany""]",[],[],[]
+"Muenchener Rueckversicherungs AG , the world 's largest reinsurer , said on Friday it expected to switch its shares to a lower par value by September 1997 at the earliest .",[],"[""Rueckversicherungs AG""]",[],"[""Muenchener""]"
+"The group , known as Munich Re , plans to seek approval for the move at its shareholders ' meeting today .",[],"[""Munich Re""]",[],[]
+The company said the switch would probably become effective in September .,[],[],[],[]
+"The planned 10-for-one stock split would reduce the par value of Munich Re 's shares to five marks from 50 , causing their price to drop to around one tenth of the present value .",[],"[""Munich Re""]",[],[]
+"Munich Re 's registered shares , part of the blue-chip DAX index , were trading at 3,710 marks on Friday .",[],"[""Munich Re""]",[],"[""DAX""]"
+"-- Frankfurt Newsroom , +49 69 756525",[],"[""Frankfurt Newsroom""]",[],[]
+EU experts postpone talks on rice area aid .,[],"[""EU""]",[],[]
+BRUSSELS 1996-12-06,"[""BRUSSELS""]",[],[],[]
+"European Union rice experts on Thursday postponed discussion on area aid payments to rice producers because the documents were not available in all the EU languages , an EU offcial said on Friday .",[],"[""European Union"", ""EU"", ""EU""]",[],[]
+" The discussion in the experts group had to be postponed because the documents needed to be translated into the official languages and the item will be on next week 's agenda ,  the offcial said .",[],[],[],[]
+European rice producers are due to get compensatory area aid payments similar to those paid to cereal producers because of cuts in intervention prices .,[],[],[],"[""European""]"
+-- Brussels Newsroom 32 2 287 6800,[],"[""Brussels Newsroom""]",[],[]
+Frankfurt dollar fix 1.5338 marks .,"[""Frankfurt""]",[],[],[]
+FRANKFURT 1996-12-06,"[""FRANKFURT""]",[],[],[]
+"The dollar was fixed at 1.5338 marks in Frankfurt on Friday , after 1.5607 marks on Thursday .","[""Frankfurt""]",[],[],[]
+There was no Bundesbank intervention .,[],"[""Bundesbank""]",[],[]
+John Lewis UK store sales up 4.5   in week .,[],"[""John Lewis UK""]",[],[]
+LONDON 1996-12-06,"[""LONDON""]",[],[],[]
+The John Lewis Partnership said its UK department store sales rose 4.5 percent in the week to November 30 compared with the same week a year earlier .,"[""UK""]",[],"[""John Lewis""]",[]
+"In the 18 weeks to November 30 , sales were up 13.6 percent year-on-year .",[],[],[],[]
+"Total sales , including the Waitrose supermarket chain , rose 5.8 percent in the week and were up 11.4 percent in the 18-week period .",[],"[""Waitrose""]",[],[]
+"-- Rosemary Bennett , London Newsroom 44 171 542 2774",[],"[""London Newsroom""]","[""Rosemary Bennett""]",[]
+Timah at 15.625 in London at 0931 GMT .,"[""London""]","[""Timah""]",[],"[""GMT""]"
+LONDON 1996-12-06,"[""LONDON""]",[],[],[]
+PT Tambang Timah was traded at $ 15.625 per GDR in London on Friday at around 0931 GMT .,"[""London""]","[""PT Tambang Timah""]",[],"[""GMT""]"
+It recorded a low of $ 15.625 and a high of $ 15.725 .,[],[],[],[]
+Its previous close on Thursday was $ 15.80 .,[],[],[],[]
+One Global Depository Receipt represents 10 common shares .,[],[],[],[]
+-- Jakarta newsroom +6221 384-6364,"[""Jakarta""]",[],[],[]
+British  Euro-sceptic  says Clarke should resign .,[],[],"[""Clarke""]","[""British"", ""Euro-sceptic""]"
+LONDON 1996-12-06,"[""LONDON""]",[],[],[]
+A  Euro-sceptic  member of the ruling Conservative party said on Thursday British finance minister Kenneth Clarke had to resign to prevent the party disintegrating over the issue of a single European currency .,[],[],"[""Kenneth Clarke""]","[""Euro-sceptic"", ""Conservative"", ""British"", ""European""]"
+Member of Parliament Tony Marlow said the resignation of the chancellor of the exchequer was the only way to make the Conservatives electable in a general election which must take place by May next year .,[],[],"[""Tony Marlow""]",[]
+ We have a divided and split Cabinet .,[],"[""Cabinet""]",[],[]
