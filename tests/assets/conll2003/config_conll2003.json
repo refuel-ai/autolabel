@@ -11,7 +11,6 @@
     },
     "prompt": {
         "task_guidelines": "You are an expert at extracting Location, Organization, Person, and Miscellaneous entities from text. Your job is to extract named entities mentioned in text, grouped by entity type.",
-        "output_guidelines": "You will return the extracted attributes as a json with the following keys:\n{attribute_json}. Don't output anything other than the final JSON in your response.",
         "attributes": [
             {
               "name": "Location",

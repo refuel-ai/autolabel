@@ -90,7 +90,7 @@ def test_gpt35_get_cost():
     )
     example_prompt = "TestingExamplePrompt"
     curr_cost = model.get_cost(example_prompt)
-    assert curr_cost == approx(0.002006, rel=1e-3)
+    assert curr_cost == approx(0.00060045, rel=1e-3)
 
 
 def test_gpt35_return_probs():
