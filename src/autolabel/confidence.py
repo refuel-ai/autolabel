@@ -213,9 +213,6 @@ class ConfidenceCalculator:
                 curr_key in keys
                 and keys[curr_key] == TaskType.MULTILABEL_CLASSIFICATION
             ):
-                logger.error(
-                    f"Calculating logprob average per label for key {curr_key} with logprobs {logprobs[locations[i][1] + 1 : locations[i + 1][0]]}"
-                )
                 logprob_per_key[curr_key] = self._logprob_average_per_label(
                     logprobs[locations[i][1] + 1 : locations[i + 1][0]],
                     label=model_generation.label[curr_key],
