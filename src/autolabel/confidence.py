@@ -228,7 +228,7 @@ class ConfidenceCalculator:
 
         if self.llm.returns_token_probs():
             p_true_prompt = model_generation.prompt + p_true_prompt
-            response = self.llm.label([p_true_prompt])
+            response = self.llm.label([p_true_prompt], output_schema=None)
             response_logprobs = response.generations[0][0].generation_info["logprobs"][
                 "top_logprobs"
             ]

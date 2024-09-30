@@ -225,9 +225,7 @@ class LabelingAgent:
                 console=self.console,
             )
             if self.console_output
-            else tqdm(indices)
-            if self.use_tqdm
-            else indices
+            else tqdm(indices) if self.use_tqdm else indices
         ):
             chunk = dataset.inputs[current_index]
             examples = []
@@ -562,7 +560,7 @@ class LabelingAgent:
                     if col in seed_example and seed_example[col] is not None:
                         explanation_prompt[col] = seed_example[col]
                 explanation_prompt = json.dumps(explanation_prompt)
-            response = await self.llm.label([explanation_prompt])
+            response = await self.llm.label([explanation_prompt], output_schema=None)
             explanation = response.generations[0][0].text
             seed_example[explanation_column] = str(explanation) if explanation else ""
             if return_annotations:
@@ -613,7 +611,7 @@ class LabelingAgent:
         ):
             prompt = self.task.get_generate_dataset_prompt(label)
 
-            result = self.llm.label([prompt])
+            result = self.llm.label([prompt], output_schema=None)
             if result.errors[0] is not None:
                 self.console.print(
                     f"Error generating rows for label {label}: {result.errors[0]}"
