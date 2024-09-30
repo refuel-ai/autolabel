@@ -1,16 +1,14 @@
 from __future__ import annotations
 
-import bisect
 from collections.abc import Callable
-from typing import Dict, List, Optional, Tuple, Union
-
-from sqlalchemy.sql import text as sql_text
+from typing import Dict, List, Optional, Union
 
 from autolabel.configs import AutolabelConfig
-from autolabel.few_shot.vector_store import VectorStoreWrapper, cos_sim
+from autolabel.few_shot.base_label_selector import BaseLabelSelector
+from autolabel.few_shot.vector_store import VectorStoreWrapper
 
 
-class LabelSelector:
+class LabelSelector(BaseLabelSelector):
     """Returns the most similar labels to a given input. Used for
     classification tasks with a large number of possible classes."""
 
@@ -34,37 +32,40 @@ class LabelSelector:
         cache: bool = True,
     ) -> None:
         self.config = config
-        self.labels = self.config.labels_list()
-        self.label_descriptions = self.config.label_descriptions()
+        self.label_selection_attribute = self.config.label_selection_attribute()
+        self.labels = []
+        self.label_descriptions = None
+
+        attributes = self.config.attributes()
+        matching_attribute = next(
+            (
+                attr
+                for attr in attributes
+                if attr["name"] == self.label_selection_attribute
+            ),
+            None,
+        )
+
+        if matching_attribute is None:
+            raise ValueError(
+                f"No attribute found with name '{self.label_selection_attribute}'"
+            )
+
+        self.labels = matching_attribute.get("options", [])
+        if not self.labels:
+            raise ValueError(
+                f"Attribute '{self.label_selection_attribute}' does not have any options"
+            )
+
         self.k = min(self.config.max_selected_labels(), len(self.labels))
-        self.threshold = self.config.label_selection_threshold()
         self.cache = cache
         self.vectorStore = VectorStoreWrapper(
             embedding_function=embedding_func, cache=self.cache
         )
 
-        # Get the embeddings of the labels
-        if self.label_descriptions is not None:
-            (labels, descriptions) = zip(*self.label_descriptions.items())
-            self.labels = list(labels)
-            self.labels_embeddings = torch.Tensor(
-                self.vectorStore._get_embeddings(descriptions)
-            )
-        else:
-            self.labels_embeddings = torch.Tensor(
-                self.vectorStore._get_embeddings(self.labels)
-            )
+        self.vectorStore.add_texts(self.labels)
 
     def select_labels(self, input: str) -> List[str]:
         """Select which labels to use based on the similarity to input"""
-        input_embedding = torch.Tensor(self.vectorStore._get_embeddings([input]))
-        scores = cos_sim(input_embedding, self.labels_embeddings).view(-1)
-        scores = list(zip(scores, self.labels))
-        scores.sort(key=lambda x: x[0])
-
-        # remove labels with similarity score less than self.threshold*topScore
-        return [
-            label
-            for (score, label) in scores[-self.k :]
-            if score > self.threshold * scores[-1][0]
-        ]
+        documents = self.vectorStore.similarity_search(input, k=self.k)
+        return [doc.page_content for doc in documents]

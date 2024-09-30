@@ -119,8 +119,6 @@ schema = {
                 },
                 "few_shot_num": {"type": ["number", "null"]},
                 "chain_of_thought": {"type": ["boolean", "null"]},
-                "label_selection": {"type": ["boolean", "null"]},
-                "label_selection_count": {"type": ["number", "null"]},
                 "attributes": {
                     "anyOf": [
                         {"type": "array", "items": {"type": "object"}},

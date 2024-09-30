@@ -3,6 +3,7 @@ from autolabel.configs import AutolabelConfig
 import logging
 from typing import Dict, List, Optional
 
+from autolabel.few_shot.base_label_selector import BaseLabelSelector
 from autolabel.labeler import LabelingAgent
 from autolabel.dataset import AutolabelDataset
 from autolabel.few_shot import (
@@ -113,6 +114,7 @@ class TaskChainOrchestrator:
         confidence_tokenizer: Optional[AutoTokenizer] = None,
         confidence_endpoint: Optional[str] = None,
         column_name_map: Optional[Dict[str, str]] = None,
+        label_selector: Optional[BaseLabelSelector] = None,
     ):
         self.task_chain_config = task_chain_config
         self.cache = cache
@@ -123,6 +125,7 @@ class TaskChainOrchestrator:
         self.confidence_tokenizer = confidence_tokenizer
         self.confidence_endpoint = confidence_endpoint
         self.column_name_map = column_name_map
+        self.label_selector = label_selector
 
     # TODO: For now, we run each separate step of the task chain serially and aggregate at the end.
     # We can optimize this with parallelization where possible/no dependencies.
@@ -152,6 +155,7 @@ class TaskChainOrchestrator:
                     confidence_tokenizer=self.confidence_tokenizer,
                     confidence_endpoint=self.confidence_endpoint,
                     console_output=False,
+                    label_selector=self.label_selector,
                 )
                 for transform_dict in autolabel_config.transforms():
                     transform = TransformFactory.from_dict(
@@ -170,6 +174,7 @@ class TaskChainOrchestrator:
                     confidence_tokenizer=self.confidence_tokenizer,
                     confidence_endpoint=self.confidence_endpoint,
                     console_output=False,
+                    label_selector=self.label_selector,
                 )
                 dataset = await agent.arun(
                     dataset,

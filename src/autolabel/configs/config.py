@@ -53,11 +53,10 @@ class AutolabelConfig(BaseConfig):
     OUTPUT_GUIDELINE_KEY = "output_guidelines"
     OUTPUT_FORMAT_KEY = "output_format"
     CHAIN_OF_THOUGHT_KEY = "chain_of_thought"
-    LABEL_SELECTION_KEY = "label_selection"
-    LABEL_SELECTION_COUNT_KEY = "label_selection_count"
-    LABEL_SELECTION_THRESHOLD = "label_selection_threshold"
     ATTRIBUTES_KEY = "attributes"
     TRANSFORM_KEY = "transforms"
+    LABEL_SELECTION_KEY = "label_selection"
+    LABEL_SELECTION_COUNT_KEY = "label_selection_count"
 
     # Dataset generation config keys (config["dataset_generation"][<key>])
     DATASET_GENERATION_GUIDELINES_KEY = "guidelines"
@@ -243,22 +242,27 @@ class AutolabelConfig(BaseConfig):
 
     def label_selection(self) -> bool:
         """Returns true if label selection is enabled. Label selection is the process of
-        narrowing down the list of possible labels by similarity to a given input. Useful for
-        classification tasks with a large number of possible classes."""
-        return self._prompt_config.get(self.LABEL_SELECTION_KEY, False)
+        narrowing down the list of possible labels by similarity to a given input."""
+        for attribute in self.attributes():
+            if attribute.get(self.LABEL_SELECTION_KEY, False):
+                return True
+        return False
+
+    def label_selection_attribute(self) -> str:
+        """Returns the attribute to use for label selection"""
+        for attribute in self.attributes():
+            if attribute.get(self.LABEL_SELECTION_KEY, False):
+                return attribute["name"]
+        return None
 
     def max_selected_labels(self) -> int:
         """Returns the number of labels to select in LabelSelector"""
-        k = self._prompt_config.get(self.LABEL_SELECTION_COUNT_KEY, 10)
-        if k < 1:
-            return len(self.labels_list())
-        return k
-
-    def label_selection_threshold(self) -> float:
-        """Returns the threshold for label selection in LabelSelector
-        If the similarity score ratio with the top Score is above this threshold,
-        the label is selected."""
-        return self._prompt_config.get(self.LABEL_SELECTION_THRESHOLD, 0.0)
+        for attribute in self.attributes():
+            if attribute.get(self.LABEL_SELECTION_KEY, False):
+                return attribute.get(self.LABEL_SELECTION_KEY, {}).get(
+                    self.LABEL_SELECTION_COUNT_KEY, 10
+                )
+        return None
 
     def attributes(self) -> List[Dict]:
         """Returns a list of attributes to extract from the text."""

@@ -19,6 +19,8 @@ from .label_diversity_example_selector import (
     LabelDiversitySimilarityExampleSelector,
 )
 from .vector_store import VectorStoreWrapper
+from .base_label_selector import BaseLabelSelector
+from .label_selector import LabelSelector
 
 ALGORITHM_TO_IMPLEMENTATION: Dict[FewShotAlgorithm, BaseExampleSelector] = {
     FewShotAlgorithm.FIXED: FixedExampleSelector,
