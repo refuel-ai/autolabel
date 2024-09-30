@@ -1,4 +1,5 @@
 import asyncio
+import copy
 import json
 import os
 import requests
@@ -175,9 +176,11 @@ class RefuelLLMV2(BaseModel):
         generations = []
         errors = []
         latencies = []
-        for i, prompt in enumerate(prompts):
+        for prompt in prompts:
             try:
-                response, latency = self._label_with_retry(prompt, output_schema[i])
+                response, latency = self._label_with_retry(
+                    prompt, self._prepare_output_schema(output_schema)
+                )
                 response = json.loads(response.json())
                 generations.append(
                     [
@@ -201,7 +204,7 @@ class RefuelLLMV2(BaseModel):
                 latencies.append(latency)
             except Exception as e:
                 # This signifies an error in generating the response using RefuelLLm
-                logger.error(
+                logger.exception(
                     f"Unable to generate prediction: {e}",
                 )
                 generations.append([Generation(text="")])
@@ -221,8 +224,10 @@ class RefuelLLMV2(BaseModel):
         latencies = []
         try:
             requests = [
-                self._alabel_with_retry(prompt, output_schema[i])
-                for i, prompt in enumerate(prompts)
+                self._alabel_with_retry(
+                    prompt, self._prepare_output_schema(output_schema)
+                )
+                for prompt in prompts
             ]
             responses = await asyncio.gather(*requests)
             for response, latency in responses:
@@ -249,7 +254,7 @@ class RefuelLLMV2(BaseModel):
                 latencies.append(latency)
         except Exception as e:
             # This signifies an error in generating the response using RefuelLLm
-            logger.error(
+            logger.exception(
                 f"Unable to generate prediction: {e}",
             )
             generations.append([Generation(text="")])
@@ -262,6 +267,18 @@ class RefuelLLMV2(BaseModel):
         return RefuelLLMResult(
             generations=generations, errors=errors, latencies=latencies
         )
+
+    def _prepare_output_schema(self, schema: Dict) -> Dict:
+        curr_schema = copy.deepcopy(schema)
+        if isinstance(curr_schema, dict):
+            curr_schema_keys = list(curr_schema.keys())
+            for key in curr_schema_keys:
+                if key == "additionalProperties" and isinstance(curr_schema[key], bool):
+                    del curr_schema[key]
+                else:
+                    curr_schema[key] = self._prepare_output_schema(curr_schema[key])
+        else:
+            return curr_schema
 
     def get_cost(self, prompt: str, label: Optional[str] = "") -> float:
         return 0
