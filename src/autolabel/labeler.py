@@ -18,24 +18,20 @@ from autolabel.cache import (
     SQLAlchemyGenerationCache,
     SQLAlchemyTransformCache,
 )
+from autolabel.schema import TaskType
 from autolabel.confidence import ConfidenceCalculator
 from autolabel.configs import AutolabelConfig
 from autolabel.dataset import AutolabelDataset
 from autolabel.few_shot import (
-    DEFAULT_EMBEDDING_PROVIDER,
-    PROVIDER_TO_MODEL,
     BaseExampleSelector,
     ExampleSelectorFactory,
 )
-from autolabel.few_shot.label_selector import LabelSelector
 from autolabel.metrics import BaseMetric
 from autolabel.models import BaseModel, ModelFactory
 from autolabel.schema import (
-    AUTO_CONFIDENCE_CHUNKING_COLUMN,
     AggregationFunction,
     LLMAnnotation,
     MetricResult,
-    TaskType,
 )
 from autolabel.tasks import TaskFactory
 from autolabel.transforms import BaseTransform, TransformFactory
@@ -124,9 +120,7 @@ class LabelingAgent:
                 )
             else:
                 self.confidence_tokenizer = confidence_tokenizer
-        score_type = "logprob_average"
-        if self.config.task_type() == TaskType.ATTRIBUTE_EXTRACTION:
-            score_type = "logprob_average_per_key"
+        score_type = "logprob_average_per_key"
         self.confidence = ConfidenceCalculator(
             score_type=score_type,
             endpoint=confidence_endpoint,
@@ -217,19 +211,6 @@ class LabelingAgent:
                 cache=self.generation_cache is not None,
             )
 
-        if self.config.label_selection():
-            if self.config.task_type() != TaskType.CLASSIFICATION:
-                self.console.print(
-                    "Warning: label_selection only supported for classification tasks!"
-                )
-            else:
-                self.label_selector = LabelSelector(
-                    config=self.config,
-                    embedding_func=PROVIDER_TO_MODEL.get(
-                        self.config.embedding_provider(), DEFAULT_EMBEDDING_PROVIDER
-                    )(model=self.config.embedding_model_name()),
-                )
-
         current_index = 0
         cost = 0.0
         postfix_dict = {}
@@ -251,43 +232,20 @@ class LabelingAgent:
             chunk = dataset.inputs[current_index]
             examples = []
 
-            if (
-                self.config.label_selection()
-                and self.config.task_type() == TaskType.CLASSIFICATION
-            ):
-                # get every column except the one we want to label
-                toEmbed = chunk.copy()
-                if self.config.label_column() and self.config.label_column() in toEmbed:
-                    del toEmbed[self.config.label_column()]
-
-                # convert this to a string
-                toEmbed = json.dumps(toEmbed)
-
-                selected_labels = self.label_selector.select_labels(toEmbed)
-
-                if self.example_selector:
-                    examples = self.example_selector.select_examples(
-                        safe_serialize_to_string(chunk),
-                        selected_labels=selected_labels,
-                        label_column=self.config.label_column(),
-                    )
-                else:
-                    examples = []
-            else:
-                if self.example_selector:
-                    examples = self.example_selector.select_examples(
-                        safe_serialize_to_string(chunk),
-                    )
+            if self.example_selector:
+                examples = self.example_selector.select_examples(
+                    safe_serialize_to_string(chunk),
+                )
 
             # Construct Prompt to pass to LLM
-            final_prompt = self.task.construct_prompt(
+            final_prompt, output_schema = self.task.construct_prompt(
                 chunk,
                 examples,
                 selected_labels=selected_labels,
                 max_input_tokens=self.llm.max_context_length,
                 get_num_tokens=self.llm.get_num_tokens,
             )
-            response = await self.llm.label([final_prompt])
+            response = await self.llm.label([final_prompt], output_schema)
             for i, generations, error, latency in zip(
                 range(len(response.generations)),
                 response.generations,
@@ -339,31 +297,6 @@ class LabelingAgent:
                                         model_generation=annotation, keys=keys
                                     )
                                 )
-                                if (
-                                    self.config.task_type()
-                                    == TaskType.MULTILABEL_CLASSIFICATION
-                                ):
-                                    multilabel_confidence = (
-                                        self.confidence.logprob_average_per_label(
-                                            model_generation=annotation
-                                        )
-                                    )
-                                    multilabels = (
-                                        annotation.label.split(
-                                            self.config.label_separator()
-                                        )
-                                        if annotation.label
-                                        else []
-                                    )
-                                    multilabel_confidence = {
-                                        k: v
-                                        for k, v in multilabel_confidence.items()
-                                        if k in multilabels
-                                    }
-                                    annotation.multilabel_confidence = (
-                                        multilabel_confidence
-                                    )
-
                             except Exception as e:
                                 logger.exception(
                                     f"Error calculating confidence score: {e}"
@@ -371,14 +304,7 @@ class LabelingAgent:
                                 logger.warning(
                                     f"Could not calculate confidence score for annotation: {annotation}"
                                 )
-                                if (
-                                    self.config.task_type()
-                                    == TaskType.ATTRIBUTE_EXTRACTION
-                                ):
-                                    annotation.confidence_score = {}
-                                else:
-                                    annotation.confidence_score = 0
-
+                                annotation.confidence_score = {}
                         annotations.append(annotation)
                     annotation = self.majority_annotation(annotations)
 
@@ -504,19 +430,6 @@ class LabelingAgent:
             cache=self.generation_cache is not None,
         )
 
-        if self.config.label_selection():
-            if self.config.task_type() != TaskType.CLASSIFICATION:
-                self.console.print(
-                    "Warning: label_selection only supported for classification tasks!"
-                )
-            else:
-                self.label_selector = LabelSelector(
-                    config=self.config,
-                    embedding_func=PROVIDER_TO_MODEL.get(
-                        self.config.embedding_provider(), DEFAULT_EMBEDDING_PROVIDER
-                    )(model=self.config.embedding_model_name()),
-                )
-
         input_limit = min(len(dataset.inputs), 100) if max_items is None else max_items  # type: ignore
         for input_i in track(
             dataset.inputs[:input_limit],
@@ -530,26 +443,14 @@ class LabelingAgent:
                 )
             else:
                 examples = []
-            if (
-                self.config.label_selection()
-                and self.config.task_type() == TaskType.CLASSIFICATION
-            ):
-                selected_labels = self.label_selector.select_labels(input_i["example"])
-                final_prompt = self.task.construct_prompt(
-                    input_i,
-                    examples,
-                    selected_labels=selected_labels,
-                    max_input_tokens=self.llm.max_context_length,
-                    get_num_tokens=self.llm.get_num_tokens,
-                )
-            else:
-                final_prompt = self.task.construct_prompt(
-                    input_i,
-                    examples,
-                    max_input_tokens=self.llm.max_context_length,
-                    get_num_tokens=self.llm.get_num_tokens,
-                )
-            prompt_list.append(final_prompt)
+
+            final_prompt, output_schema = self.task.construct_prompt(
+                input_i,
+                examples,
+                max_input_tokens=self.llm.max_context_length,
+                get_num_tokens=self.llm.get_num_tokens,
+            )
+            prompt_list.append((final_prompt, output_schema))
 
             # Calculate the number of tokens
             curr_cost = self.llm.get_cost(prompt=final_prompt, label="")

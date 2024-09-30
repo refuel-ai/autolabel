@@ -1,16 +1,235 @@
-example,IndividualLabels,CategorizedLabels
-"SOCCER - JAPAN GET LUCKY WIN , CHINA IN SURPRISE DEFEAT .","[{""Description"": ""Location"", ""Text"": ""JAPAN""}, {""Description"": ""Person"", ""Text"": ""CHINA""}]","{""Location"": [""JAPAN""], ""Organization"": [], ""Person"": [""CHINA""], ""Miscellaneous"": []}"
-Nadim Ladki,"[{""Description"": ""Person"", ""Text"": ""Nadim Ladki""}]","{""Location"": [], ""Organization"": [], ""Person"": [""Nadim Ladki""], ""Miscellaneous"": []}"
-"AL-AIN , United Arab Emirates 1996-12-06","[{""Description"": ""Location"", ""Text"": ""AL-AIN""}, {""Description"": ""Location"", ""Text"": ""United Arab Emirates""}]","{""Location"": [""AL-AIN"", ""United Arab Emirates""], ""Organization"": [], ""Person"": [], ""Miscellaneous"": []}"
-Japan began the defence of their Asian Cup title with a lucky 2-1 win against Syria in a Group C championship match on Friday .,"[{""Description"": ""Location"", ""Text"": ""Japan""}, {""Description"": ""Miscellaneous"", ""Text"": ""Asian Cup""}, {""Description"": ""Location"", ""Text"": ""Syria""}]","{""Location"": [""Japan"", ""Syria""], ""Organization"": [], ""Person"": [], ""Miscellaneous"": [""Asian Cup""]}"
-"But China saw their luck desert them in the second match of the group , crashing to a surprise 2-0 defeat to newcomers Uzbekistan .","[{""Description"": ""Location"", ""Text"": ""China""}, {""Description"": ""Location"", ""Text"": ""Uzbekistan""}]","{""Location"": [""China"", ""Uzbekistan""], ""Organization"": [], ""Person"": [], ""Miscellaneous"": []}"
-China controlled most of the match and saw several chances missed until the 78th minute when Uzbek striker Igor Shkvyrin took advantage of a misdirected defensive header to lob the ball over the advancing Chinese keeper and into an empty net .,"[{""Description"": ""Location"", ""Text"": ""China""}, {""Description"": ""Miscellaneous"", ""Text"": ""Uzbek""}, {""Description"": ""Person"", ""Text"": ""Igor Shkvyrin""}, {""Description"": ""Miscellaneous"", ""Text"": ""Chinese""}]","{""Location"": [""China""], ""Organization"": [], ""Person"": [""Igor Shkvyrin""], ""Miscellaneous"": [""Uzbek"", ""Chinese""]}"
-"Oleg Shatskiku made sure of the win in injury time , hitting an unstoppable left foot shot from just outside the area .","[{""Description"": ""Person"", ""Text"": ""Oleg Shatskiku""}]","{""Location"": [], ""Organization"": [], ""Person"": [""Oleg Shatskiku""], ""Miscellaneous"": []}"
-The former Soviet republic was playing in an Asian Cup finals tie for the first time .,"[{""Description"": ""Miscellaneous"", ""Text"": ""Soviet""}, {""Description"": ""Miscellaneous"", ""Text"": ""Asian Cup""}]","{""Location"": [], ""Organization"": [], ""Person"": [], ""Miscellaneous"": [""Soviet"", ""Asian Cup""]}"
-"Despite winning the Asian Games title two years ago , Uzbekistan are in the finals as outsiders .","[{""Description"": ""Miscellaneous"", ""Text"": ""Asian Games""}, {""Description"": ""Location"", ""Text"": ""Uzbekistan""}]","{""Location"": [""Uzbekistan""], ""Organization"": [], ""Person"": [], ""Miscellaneous"": [""Asian Games""]}"
-Two goals from defensive errors in the last six minutes allowed Japan to come from behind and collect all three points from their opening meeting against Syria .,"[{""Description"": ""Location"", ""Text"": ""Japan""}, {""Description"": ""Location"", ""Text"": ""Syria""}]","{""Location"": [""Japan"", ""Syria""], ""Organization"": [], ""Person"": [], ""Miscellaneous"": []}"
-"Takuya Takagi scored the winner in the 88th minute , rising to head a Hiroshige Yanagimoto cross towards the Syrian goal which goalkeeper Salem Bitar appeared to have covered but then allowed to slip into the net .","[{""Description"": ""Person"", ""Text"": ""Takuya Takagi""}, {""Description"": ""Person"", ""Text"": ""Hiroshige Yanagimoto""}, {""Description"": ""Miscellaneous"", ""Text"": ""Syrian""}, {""Description"": ""Person"", ""Text"": ""Salem Bitar""}]","{""Location"": [], ""Organization"": [], ""Person"": [""Takuya Takagi"", ""Hiroshige Yanagimoto"", ""Salem Bitar""], ""Miscellaneous"": [""Syrian""]}"
-It was the second costly blunder by Syria in four minutes .,"[{""Description"": ""Location"", ""Text"": ""Syria""}]","{""Location"": [""Syria""], ""Organization"": [], ""Person"": [], ""Miscellaneous"": []}"
-Defender Hassan Abbas rose to intercept a long ball into the area in the 84th minute but only managed to divert it into the top corner of Bitar 's goal .,"[{""Description"": ""Person"", ""Text"": ""Hassan Abbas""}, {""Description"": ""Person"", ""Text"": ""Bitar""}]","{""Location"": [], ""Organization"": [], ""Person"": [""Hassan Abbas"", ""Bitar""], ""Miscellaneous"": []}"
-Nader Jokhadar had given Syria the lead with a well-struck header in the seventh minute .,"[{""Description"": ""Person"", ""Text"": ""Nader Jokhadar""}, {""Description"": ""Location"", ""Text"": ""Syria""}]","{""Location"": [""Syria""], ""Organization"": [], ""Person"": [""Nader Jokhadar""], ""Miscellaneous"": []}"
-Japan then laid siege to the Syrian penalty area for most of the game but rarely breached the Syrian defence .,"[{""Description"": ""Location"", ""Text"": ""Japan""}, {""Description"": ""Miscellaneous"", ""Text"": ""Syrian""}, {""Description"": ""Miscellaneous"", ""Text"": ""Syrian""}]","{""Location"": [""Japan""], ""Organization"": [], ""Person"": [], ""Miscellaneous"": [""Syrian"", ""Syrian""]}"
+example,Location,Organization,Person,Miscellaneous
+"SOCCER - JAPAN GET LUCKY WIN , CHINA IN SURPRISE DEFEAT .","[""JAPAN""]",[],"[""CHINA""]",[]
+Nadim Ladki,[],[],"[""Nadim Ladki""]",[]
+"AL-AIN , United Arab Emirates 1996-12-06","[""AL-AIN"", ""United Arab Emirates""]",[],[],[]
+Japan began the defence of their Asian Cup title with a lucky 2-1 win against Syria in a Group C championship match on Friday .,"[""Japan"", ""Syria""]",[],[],"[""Asian Cup""]"
+"But China saw their luck desert them in the second match of the group , crashing to a surprise 2-0 defeat to newcomers Uzbekistan .","[""China"", ""Uzbekistan""]",[],[],[]
+China controlled most of the match and saw several chances missed until the 78th minute when Uzbek striker Igor Shkvyrin took advantage of a misdirected defensive header to lob the ball over the advancing Chinese keeper and into an empty net .,"[""China""]",[],"[""Igor Shkvyrin""]","[""Uzbek"", ""Chinese""]"
+"Oleg Shatskiku made sure of the win in injury time , hitting an unstoppable left foot shot from just outside the area .",[],[],"[""Oleg Shatskiku""]",[]
+The former Soviet republic was playing in an Asian Cup finals tie for the first time .,[],[],[],"[""Soviet"", ""Asian Cup""]"
+"Despite winning the Asian Games title two years ago , Uzbekistan are in the finals as outsiders .","[""Uzbekistan""]",[],[],"[""Asian Games""]"
+Two goals from defensive errors in the last six minutes allowed Japan to come from behind and collect all three points from their opening meeting against Syria .,"[""Japan"", ""Syria""]",[],[],[]
+"Takuya Takagi scored the winner in the 88th minute , rising to head a Hiroshige Yanagimoto cross towards the Syrian goal which goalkeeper Salem Bitar appeared to have covered but then allowed to slip into the net .",[],[],"[""Takuya Takagi"", ""Hiroshige Yanagimoto"", ""Salem Bitar""]","[""Syrian""]"
+It was the second costly blunder by Syria in four minutes .,"[""Syria""]",[],[],[]
+Defender Hassan Abbas rose to intercept a long ball into the area in the 84th minute but only managed to divert it into the top corner of Bitar 's goal .,[],[],"[""Hassan Abbas"", ""Bitar""]",[]
+Nader Jokhadar had given Syria the lead with a well-struck header in the seventh minute .,"[""Syria""]",[],"[""Nader Jokhadar""]",[]
+Japan then laid siege to the Syrian penalty area for most of the game but rarely breached the Syrian defence .,"[""Japan""]",[],[],"[""Syrian"", ""Syrian""]"
+Bitar pulled off fine saves whenever they did .,[],[],"[""Bitar""]",[]
+Japan coach Shu Kamo said : ' ' The Syrian own goal proved lucky for us .,"[""Japan""]",[],"[""Shu Kamo""]","[""Syrian""]"
+The Syrians scored early and then played defensively and adopted long balls which made it hard for us . ',[],[],[],"[""Syrians""]"
+',[],[],[],[]
+"Japan , co-hosts of the World Cup in 2002 and ranked 20th in the world by FIFA , are favourites to regain their title here .","[""Japan""]","[""FIFA""]",[],"[""World Cup""]"
+Hosts UAE play Kuwait and South Korea take on Indonesia on Saturday in Group A matches .,"[""UAE"", ""Kuwait"", ""South Korea"", ""Indonesia""]",[],[],[]
+All four teams are level with one point each from one game .,[],[],[],[]
+RUGBY UNION - CUTTITTA BACK FOR ITALY AFTER A YEAR .,"[""ITALY""]","[""RUGBY UNION""]","[""CUTTITTA""]",[]
+ROME 1996-12-06,"[""ROME""]",[],[],[]
+Italy recalled Marcello Cuttitta,"[""Italy""]",[],"[""Marcello Cuttitta""]",[]
+on Friday for their friendly against Scotland at Murrayfield more than a year after the 30-year-old wing announced he was retiring following differences over selection .,"[""Scotland"", ""Murrayfield""]",[],[],[]
+"Cuttitta , who trainer George Coste said was certain to play on Saturday week , was named in a 21-man squad lacking only two of the team beaten 54-21 by England at Twickenham last month .","[""England"", ""Twickenham""]",[],"[""Cuttitta"", ""George Coste""]",[]
+"Stefano Bordon is out through illness and Coste said he had dropped back row Corrado Covi , who had been recalled for the England game after five years out of the national team .","[""England""]",[],"[""Stefano Bordon"", ""Coste"", ""Corrado Covi""]",[]
+"Cuttitta announced his retirement after the 1995 World Cup , where he took issue with being dropped from the Italy side that faced England in the pool stages .","[""Italy"", ""England""]",[],"[""Cuttitta""]","[""1995 World Cup""]"
+Coste said he had approached the player two months ago about a comeback .,[],[],"[""Coste""]",[]
+" He ended the World Cup on the wrong note ,  Coste said .",[],[],"[""Coste""]","[""World Cup""]"
+ I thought it would be useful to have him back and he said he would be available .,[],[],[],[]
+I think now is the right time for him to return . ,[],[],[],[]
+"Squad : Javier Pertile , Paolo Vaccari , Marcello Cuttitta , Ivan Francescato , Leandro Manteri , Diego Dominguez , Francesco Mazzariol , Alessandro Troncon , Orazio Arancio , Andrea Sgorlon , Massimo Giovanelli , Carlo Checchinato , Walter Cristofoletto , Franco Properzi Curti , Carlo Orlandi , Massimo Cuttitta , Giambatista Croci , Gianluca Guidi , Nicola Mazzucato , Alessandro Moscardi , Andrea Castellani .",[],[],"[""Javier Pertile"", ""Paolo Vaccari"", ""Marcello Cuttitta"", ""Ivan Francescato"", ""Leandro Manteri"", ""Diego Dominguez"", ""Francesco Mazzariol"", ""Alessandro Troncon"", ""Orazio Arancio"", ""Andrea Sgorlon"", ""Massimo Giovanelli"", ""Carlo Checchinato"", ""Walter Cristofoletto"", ""Franco Properzi Curti"", ""Carlo Orlandi"", ""Massimo Cuttitta"", ""Giambatista Croci"", ""Gianluca Guidi"", ""Nicola Mazzucato"", ""Alessandro Moscardi"", ""Andrea Castellani""]",[]
+SOCCER - LATE GOALS GIVE JAPAN WIN OVER SYRIA .,"[""JAPAN"", ""SYRIA""]",[],[],[]
+"AL-AIN , United Arab Emirates 1996-12-06","[""AL-AIN"", ""United Arab Emirates""]",[],[],[]
+Two goals in the last six minutes gave holders Japan an uninspiring 2-1 Asian Cup victory over Syria on Friday .,"[""Japan"", ""Syria""]",[],[],"[""Asian Cup""]"
+Takuya Takagi headed the winner in the 88th minute of the group C game after goalkeeper Salem Bitar spoiled a mistake-free display by allowing the ball to slip under his body .,[],[],"[""Takuya Takagi"", ""Salem Bitar""]",[]
+It was the second Syrian defensive blunder in four minutes .,[],[],[],"[""Syrian""]"
+Defender Hassan Abbas rose to intercept a long ball into the area in the 84th minute but only managed to divert it into the top corner of Bitar 's goal .,[],[],"[""Hassan Abbas"", ""Bitar""]",[]
+Syria had taken the lead from their first serious attack in the seventh minute .,"[""Syria""]",[],[],[]
+Nader Jokhadar headed a cross from the right by Ammar Awad into the top right corner of Kenichi Shimokawa 's goal .,[],[],"[""Nader Jokhadar"", ""Ammar Awad"", ""Kenichi Shimokawa""]",[]
+Japan then laid siege to the Syrian penalty area and had a goal disallowed for offside in the 16th minute .,"[""Japan""]",[],[],"[""Syrian""]"
+"A minute later , Bitar produced a good double save , first from Kazuyoshi Miura 's header and then blocked a Takagi follow-up shot .",[],[],"[""Bitar"", ""Kazuyoshi Miura"", ""Takagi""]",[]
+"Bitar saved well again from Miura in the 37th minute , parrying away his header from a corner .",[],[],"[""Bitar"", ""Miura""]",[]
+Japan started the second half brightly but Bitar denied them an equaliser when he dived to his right to save Naoki Soma 's low drive in the 53rd minute .,"[""Japan""]",[],"[""Bitar"", ""Naoki Soma""]",[]
+"Japan : 19 - Kenichi Shimokawa , 2 - Hiroshige Yanagimoto , 3 - Naoki Soma , 4 - Masami Ihara , 5 - Norio Omura , 6 - Motohiro Yamaguchi , 8 - Masakiyo Maezono ( 7 - Yasuto Honda 71 ) , 9 - Takuya Takagi , 10 - Hiroshi Nanami , 11 - Kazuyoshi Miura , 15 - Hiroaki Morishima ( 14 - Masayuki Okano 75 ) .","[""Japan""]",[],"[""Kenichi Shimokawa"", ""Hiroshige Yanagimoto"", ""Naoki Soma"", ""Masami Ihara"", ""Norio Omura"", ""Motohiro Yamaguchi"", ""Masakiyo Maezono"", ""Yasuto Honda"", ""Takuya Takagi"", ""Hiroshi Nanami"", ""Kazuyoshi Miura"", ""Hiroaki Morishima"", ""Masayuki Okano""]",[]
+"Syria : 24 - Salem Bitar , 3 - Bachar Srour ; 4 - Hassan Abbas , 5 - Tarek Jabban , 6 - Ammar Awad ( 9 - Louay Taleb 69 ) , 8 - Nihad al-Boushi , 10 - Mohammed Afash , 12 - Ali Dib , 13 - Abdul Latif Helou ( 17 - Ammar Rihawiy 46 ) , 14 - Khaled Zaher ; 16 - Nader Jokhadar .","[""Syria""]",[],"[""Salem Bitar"", ""Bachar Srour"", ""Hassan Abbas"", ""Tarek Jabban"", ""Ammar Awad"", ""Louay Taleb"", ""Nihad al-Boushi"", ""Mohammed Afash"", ""Ali Dib"", ""Abdul Latif Helou"", ""Ammar Rihawiy"", ""Khaled Zaher"", ""Nader Jokhadar""]",[]
+FREESTYLE SKIING-WORLD CUP MOGUL RESULTS .,[],[],[],"[""SKIING-WORLD CUP""]"
+"TIGNES , France 1996-12-06","[""TIGNES"", ""France""]",[],[],[]
+Results of the World Cup,[],[],[],"[""World Cup""]"
+freestyle skiing moguls competition on Friday :,[],[],[],[]
+Men,[],[],[],[]
+1. Jesper Ronnback ( Sweden ) 25.76 points,"[""Sweden""]",[],"[""Jesper Ronnback""]",[]
+2. Andrei Ivanov ( Russia ) 24.88,"[""Russia""]",[],"[""Andrei Ivanov""]",[]
+3. Ryan Johnson ( Canada ) 24.57,"[""Canada""]",[],"[""Ryan Johnson""]",[]
+4. Jean-Luc Brassard ( Canada ) 24.40,"[""Canada""]",[],"[""Jean-Luc Brassard""]",[]
+5. Korneilus Hole ( Norway ) 23.92,"[""Norway""]",[],"[""Korneilus Hole""]",[]
+6. Jeremie Collomb-Patton ( France ) 23.87,"[""France""]",[],"[""Jeremie Collomb-Patton""]",[]
+7. Jim Moran ( U.S. ) 23.25,"[""U.S.""]",[],"[""Jim Moran""]",[]
+8. Dominick Gauthier ( Canada ) 22.73,"[""Canada""]",[],"[""Dominick Gauthier""]",[]
+9. Johann Gregoire ( France ) 22.58,"[""France""]",[],"[""Johann Gregoire""]",[]
+10. Troy Benson ( U.S. ) 22.56,"[""U.S.""]",[],"[""Troy Benson""]",[]
+Women,[],[],[],[]
+1. Tatjana Mittermayer ( Germany ) 24.32,"[""Germany""]",[],"[""Tatjana Mittermayer""]",[]
+2. Candice Gilg ( France ) 24.31,"[""France""]",[],"[""Candice Gilg""]",[]
+3. Minna Karhu ( Finland ) 24.05,"[""Finland""]",[],"[""Minna Karhu""]",[]
+4. Tae Satoya ( Japan ) 23.75,"[""Japan""]",[],"[""Tae Satoya""]",[]
+5. Ann Battellle ( U.S. ) 23.56,"[""U.S.""]",[],"[""Ann Battellle""]",[]
+6. Donna Weinbrecht ( U.S. ) 22.48,"[""U.S.""]",[],"[""Donna Weinbrecht""]",[]
+7. Liz McIntyre ( U.S. ) 22.00,"[""U.S.""]",[],"[""Liz McIntyre""]",[]
+8. Elena Koroleva ( Russia ) 21.77,"[""Russia""]",[],"[""Elena Koroleva""]",[]
+9. Ljudmila Dymchenko ( Russia ) 21.59,"[""Russia""]",[],"[""Ljudmila Dymchenko""]",[]
+10. Katleen Allais ( France ) 21.58,"[""France""]",[],"[""Katleen Allais""]",[]
+SOCCER - ASIAN CUP GROUP C RESULTS .,[],[],[],"[""ASIAN CUP""]"
+"AL-AIN , United Arab Emirates 1996-12-06","[""AL-AIN"", ""United Arab Emirates""]",[],[],[]
+Results of Asian Cup group C matches played on Friday :,[],[],[],"[""Asian Cup""]"
+Japan 2 Syria 1 ( halftime 0-1 ),"[""Japan"", ""Syria""]",[],[],[]
+Scorers :,[],[],[],[]
+"Japan - Hassan Abbas 84 own goal , Takuya Takagi 88 .","[""Japan""]",[],"[""Hassan Abbas"", ""Takuya Takagi""]",[]
+Syria - Nader Jokhadar 7,"[""Syria""]",[],"[""Nader Jokhadar""]",[]
+"Attendance : 10,000 .",[],[],[],[]
+China 0 Uzbekistan 2 ( halftime 0-0 ),"[""China"", ""Uzbekistan""]",[],[],[]
+"Scorers : Shkvyrin Igor 78 , Shatskikh Oleg 90",[],[],"[""Shkvyrin Igor"", ""Shatskikh Oleg""]",[]
+"Attendence : 3,000",[],[],[],[]
+"Standings ( tabulate under played , won , drawn , lost , goals",[],[],[],[]
+"for , goals against , points ) :",[],[],[],[]
+Uzbekistan 1 1 0 0 2 0 3,"[""Uzbekistan""]",[],[],[]
+Japan 1 1 0 0 2 1 3,"[""Japan""]",[],[],[]
+Syria 1 0 0 1 1 2 0,"[""Syria""]",[],[],[]
+China 1 0 0 1 0 2 0,"[""China""]",[],[],[]
+CRICKET - PAKISTAN V NEW ZEALAND ONE-DAY SCOREBOARD .,"[""PAKISTAN"", ""NEW ZEALAND""]",[],[],[]
+[ CORRECTED 14:06 GMT ],[],[],[],"[""GMT""]"
+"SIALKOT , Pakistan 1996-12-06","[""SIALKOT"", ""Pakistan""]",[],[],[]
+Scoreboard in the second,[],[],[],[]
+one-day cricket international between Pakistan and New Zealand,"[""Pakistan"", ""New Zealand""]",[],[],[]
+on Friday :,[],[],[],[]
+Pakistan,"[""Pakistan""]",[],[],[]
+Saeed Anwar run out 91 ( corrects from 90 ),[],[],"[""Saeed Anwar""]",[]
+Zahoor Elahi b Cairns 86 ( corrects from 87 ),[],[],"[""Zahoor Elahi"", ""Cairns""]",[]
+Ijaz Ahmad c Spearman b Vaughan 59,[],[],"[""Ijaz Ahmad"", ""Spearman"", ""Vaughan""]",[]
+Inzamamul Haq st Germon b Astle 2,[],[],"[""Inzamamul Haq"", ""Germon"", ""Astle""]",[]
+Wasim Akram b Harris 4,[],[],"[""Wasim Akram"", ""Harris""]",[]
+Shahid Afridi b Harris 2,[],[],"[""Shahid Afridi"", ""Harris""]",[]
+Moin Khan c Astle b Harris 1,[],[],"[""Moin Khan"", ""Astle"", ""Harris""]",[]
+Waqar Younis st Germon b Harris 0,[],[],"[""Waqar Younis"", ""Germon"", ""Harris""]",[]
+Saqlain Mushtaq b Harris 2,[],[],"[""Saqlain Mushtaq"", ""Harris""]",[]
+Mushtaq Ahmad not out 5,[],[],"[""Mushtaq Ahmad""]",[]
+Salim Malik not out 1,[],[],"[""Salim Malik""]",[]
+Extras ( lb-8 nb-2 w-14 ) 24,[],[],[],[]
+Total ( for 9 wickets in 47 overs ) 277,[],[],[],[]
+Fall of wicket : 1-177 ( corrects from 1-178 ) 2-225 3-240 4-247 5-252 6-260 7-261 8-269 9-276,[],[],[],[]
+"Bowling : Doull 8-1-60-0 ( w-3 ) , Kennedy 3-0-24-0 ( w-7 nb-1 ) ,",[],[],"[""Doull"", ""Kennedy""]",[]
+"Cairns 8-1-35-1 ( w-2 ) , Vaughan 9-1-55-1 , Harris 10-0-42-5 ( w-1 ) ,",[],[],"[""Cairns"", ""Vaughan"", ""Harris""]",[]
+Astle 9-0-53-1 ( w-1 nb-1 ),[],[],"[""Astle""]",[]
+New Zealand innings,"[""New Zealand""]",[],[],[]
+B. Young c Moin Khan b Waqar 5,[],[],"[""B. Young"", ""Moin Khan"", ""Waqar""]",[]
+C. Spearman c Moin Khan b Wasim 0,[],[],"[""C. Spearman"", ""Moin Khan"", ""Wasim""]",[]
+A. Parore c Ijaz Ahmad b Saqlain 37,[],[],"[""A. Parore"", ""Ijaz Ahmad"", ""Saqlain""]",[]
+S. Fleming c and b Afridi 88,[],[],"[""S. Fleming"", ""Afridi""]",[]
+C. Cairns b Saqlain 10,[],[],"[""C. Cairns"", ""Saqlain""]",[]
+N. Astle c Ijaz Ahmad b Salim Malik 20,[],[],"[""N. Astle"", ""Ijaz Ahmad"", ""Salim Malik""]",[]
+C. Harris lbw b Wasim 22,[],[],"[""C. Harris"", ""Wasim""]",[]
+L. Germon lbw b Afridi 2,[],[],"[""L. Germon"", ""Afridi""]",[]
+J. Vaughan c Moin Khan b Wasim 13,[],[],"[""J. Vaughan"", ""Moin Khan"", ""Wasim""]",[]
+S. Doull c subs ( M. Wasim ) b Waqar 1,[],[],"[""S. Doull"", ""M. Wasim"", ""Waqar""]",[]
+R. Kennedy not out 7,[],[],"[""R. Kennedy""]",[]
+Extras ( b-9 lb-3 w-12 nb-2 ) 26,[],[],[],[]
+Total ( all out in 42.1 overs ) 231,[],[],[],[]
+Fall of wickets : 1-3 2-7 3-125 4-146 5-170 6-190 7-195,[],[],[],[]
+8-213 9-216 .,[],[],[],[]
+"Bowling : Wasim Akram 8.1-0-43-3 ( 9w , 1nb ) , Waqar Younis",[],[],"[""Wasim Akram"", ""Waqar Younis""]",[]
+"6-0-32-2 ( 2w , 1nb ) , Saqlain Mushtaq 8-0-54-2 , Mushtaq Ahmad",[],[],"[""Saqlain Mushtaq"", ""Mushtaq Ahmad""]",[]
+"10-0-42-0 ( 1w ) , Shahid Afridi 7-0-40-2 , Salim Malik 2.5-0-8-1 ,",[],[],"[""Shahid Afridi"", ""Salim Malik""]",[]
+Ijaz Ahmad 0.1-0-0-0 .,[],[],"[""Ijaz Ahmad""]",[]
+Result : Pakistan won by 46 runs .,"[""Pakistan""]",[],[],[]
+"Third one-day match : December 8 , in Karachi .","[""Karachi""]",[],[],[]
+SOCCER - ENGLISH F.A. CUP SECOND ROUND RESULT .,[],[],[],"[""ENGLISH F.A. CUP""]"
+LONDON 1996-12-06,"[""LONDON""]",[],[],[]
+Result of an English F.A. Challenge,[],[],[],"[""English F.A. Challenge""]"
+Cup second round match on Friday :,[],[],[],"[""Cup""]"
+Plymouth 4 Exeter 1,[],"[""Plymouth"", ""Exeter""]",[],[]
+SOCCER - BLINKER BAN LIFTED .,[],[],"[""BLINKER""]",[]
+LONDON 1996-12-06,"[""LONDON""]",[],[],[]
+Dutch forward Reggie Blinker had his indefinite suspension lifted by FIFA on Friday and was set to make his Sheffield Wednesday comeback against Liverpool on Saturday .,[],"[""FIFA"", ""Sheffield Wednesday"", ""Liverpool""]","[""Reggie Blinker""]","[""Dutch""]"
+Blinker missed his club 's last two games after FIFA slapped a worldwide ban on him for appearing to sign contracts for both Wednesday and Udinese while he was playing for Feyenoord .,[],"[""FIFA"", ""Wednesday"", ""Udinese"", ""Feyenoord""]","[""Blinker""]",[]
+"FIFA 's players ' status committee , meeting in Barcelona , decided that although the Udinese document was basically valid , it could not be legally protected .","[""Barcelona""]","[""FIFA"", ""Udinese""]",[],[]
+"The committee said the Italian club had violated regulations by failing to inform Feyenoord , with whom the player was under contract .",[],"[""Feyenoord""]",[],"[""Italian""]"
+"Blinker was fined 75,000 Swiss francs ( $ 57,600 ) for failing to inform the Engllsh club of his previous commitment to Udinese .",[],"[""Udinese""]","[""Blinker""]","[""Swiss"", ""Engllsh""]"
+SOCCER - LEEDS ' BOWYER FINED FOR PART IN FAST-FOOD FRACAS .,[],"[""LEEDS""]","[""BOWYER""]",[]
+LONDON 1996-12-06,"[""LONDON""]",[],[],[]
+"Leeds ' England under-21 striker Lee Bowyer was fined 4,500 pounds ( $ 7,400 ) on Friday for hurling chairs at restaurant staff during a disturbance at a McDonald 's fast-food restaurant .","[""England""]","[""Leeds"", ""McDonald 's""]","[""Lee Bowyer""]",[]
+"Bowyer , 19 , who was caught in the act by security cameras , pleaded guilty to a charge of affray at a court in London .","[""London""]",[],"[""Bowyer""]",[]
+He was fined and ordered to pay a total of 175 pounds to two members of staff injured in the fracas in an east London restaurant in October .,"[""London""]",[],[],[]
+"Leeds had already fined Bowyer 4,000 pounds ( $ 6,600 ) and warned him a repeat of his criminal behaviour could cost him his place in the side .",[],"[""Leeds""]","[""Bowyer""]",[]
+"Bowyer , who moved to the Yorkshire club in August for 3.5 million pounds ( $ 5.8 million ) , was expected to play against Middlesbrough on Saturday .","[""Yorkshire""]","[""Middlesbrough""]","[""Bowyer""]",[]
+BASKETBALL - EUROLEAGUE STANDINGS .,[],[],[],"[""EUROLEAGUE""]"
+LONDON 1996-12-06,"[""LONDON""]",[],[],[]
+Standings in the men 's EuroLeague,[],[],[],"[""EuroLeague""]"
+basketball championship after Thursday 's matches ( tabulate under,[],[],[],[]
+"played , won , lost , points ) :",[],[],[],[]
+Group A,[],[],[],[]
+CSKA Moscow ( Russia 9 6 3 15,"[""Russia""]","[""CSKA Moscow""]",[],[]
+Stefanel Milan ( Italy ) 9 6 3 15,"[""Italy""]","[""Stefanel Milan""]",[],[]
+Maccabi Tel Aviv ( Israel ) 9 5 4 14,"[""Israel""]","[""Maccabi Tel Aviv""]",[],[]
+Ulker Spor ( Turkey ) 9 4 5 13,"[""Turkey""]","[""Ulker Spor""]",[],[]
+Limoges ( France ) 9 3 6 12,"[""France""]","[""Limoges""]",[],[]
+Panionios ( Greece ) 9 3 6 12,"[""Greece""]","[""Panionios""]",[],[]
+Group B,[],[],[],[]
+Teamsystem Bologna ( Italy ) 9 7 2 16,"[""Italy""]","[""Teamsystem Bologna""]",[],[]
+Olympiakos ( Greece ) 9 5 4 14,"[""Greece""]","[""Olympiakos""]",[],[]
+Cibona Zagreb ( Croatia ) 9 5 4 14,"[""Croatia""]","[""Cibona Zagreb""]",[],[]
+Alba Berlin ( Germany ) 9 5 4 14,"[""Germany""]","[""Alba Berlin""]",[],[]
+Estudiantes Madrid ( Spain ) 9 5 4 14,"[""Spain""]","[""Estudiantes Madrid""]",[],[]
+Charleroi ( Belgium ) 9 0 9 9,"[""Belgium""]","[""Charleroi""]",[],[]
+Group C,[],[],[],[]
+Panathinaikos ( Greece ) 9 7 2 16,"[""Greece""]","[""Panathinaikos""]",[],[]
+Ljubljana ( Slovenia ) 9 6 3 15,"[""Slovenia""]","[""Ljubljana""]",[],[]
+Villeurbanne ( France ) 9 6 3 15,"[""France""]","[""Villeurbanne""]",[],[]
+Barcelona ( Spain ) 9 4 5 13,"[""Spain""]","[""Barcelona""]",[],[]
+Split ( Croatia ) 9 4 5 13,"[""Croatia""]","[""Split""]",[],[]
+Bayer Leverkusen ( Germany ) 9 0 9 9,"[""Germany""]","[""Bayer Leverkusen""]",[],[]
+Group D,[],[],[],[]
+Efes Pilsen ( Turkey ) 9 7 2 16,"[""Turkey""]","[""Efes Pilsen""]",[],[]
+Pau-Orthez ( France ) 9 5 4 14,"[""France""]","[""Pau-Orthez""]",[],[]
+Partizan Belgrade ( Yugoslavia ) 9 5 4 14,"[""Yugoslavia""]","[""Partizan Belgrade""]",[],[]
+Kinder Bologna ( Italy ) 9 4 5 13,"[""Italy""]","[""Kinder Bologna""]",[],[]
+Sevilla ( Spain ) 9 4 5 13,"[""Spain""]","[""Sevilla""]",[],[]
+Dynamo Moscow ( Russia ) 9 2 7 11,"[""Russia""]","[""Dynamo Moscow""]",[],[]
+RUGBY UNION - LITTLE TO MISS CAMPESE FAREWELL .,[],"[""RUGBY UNION""]","[""LITTLE"", ""CAMPESE""]",[]
+Robert Kitson,[],[],"[""Robert Kitson""]",[]
+LONDON 1996-12-06,"[""LONDON""]",[],[],[]
+Centre Jason Little will miss Australia 's end-of-tour fixture against the Barbarians at Twickenham on Saturday .,"[""Australia"", ""Twickenham""]","[""Barbarians""]","[""Jason Little""]",[]
+Little has opted not to risk aggravating the knee injury which ruled him out of a large chunk of the tour and is replaced by fellow Queenslander Daniel Herbert .,[],[],"[""Little"", ""Daniel Herbert""]","[""Queenslander""]"
+Owen Finegan has recovered from the knocks he took in last weekend 's test against Wales and retains his place in the back-row ahead of Daniel Manu .,"[""Wales""]",[],"[""Owen Finegan"", ""Daniel Manu""]",[]
+The Wallabies have their sights set on a 13th successive victory to end their European tour with a 100 percent record but also want to turn on the style and provide David Campese with a fitting send-off in his final match in Australian colours .,[],"[""Wallabies""]","[""David Campese""]","[""European"", ""Australian""]"
+"The Wallabies currently have no plans to make any special presentation to the 34-year-old winger but a full house of 75,000 spectators will still gather in the hope of witnessing one last moment of magic .",[],"[""Wallabies""]",[],[]
+"Campese will be up against a familiar foe in the shape of Barbarians captain Rob Andrew , the man who kicked Australia to defeat with a last-ditch drop-goal in the World Cup quarter-final in Cape Town .","[""Australia"", ""Cape Town""]","[""Barbarians""]","[""Campese"", ""Rob Andrew""]","[""World Cup""]"
+" Campo has a massive following in this country and has had the public with him ever since he first played here in 1984 ,  said Andrew , also likely to be making his final Twickenham appearance .","[""Twickenham""]",[],"[""Campo"", ""Andrew""]",[]
+"On tour , Australia have won all four tests against Italy , Scotland , Ireland and Wales , and scored 414 points at an average of almost 35 points a game .","[""Australia"", ""Italy"", ""Scotland"", ""Ireland"", ""Wales""]",[],[],[]
+"League duties restricted the Barbarians ' selectorial options but they still boast 13 internationals including England full-back Tim Stimpson and recalled wing Tony Underwood , plus All Black forwards Ian Jones and Norm Hewitt .","[""England""]","[""Barbarians"", ""All Black""]","[""Tim Stimpson"", ""Tony Underwood"", ""Ian Jones"", ""Norm Hewitt""]",[]
+Teams :,[],[],[],[]
+"Barbarians - 15 - Tim Stimpson ( England ) ; 14 - Nigel Walker ( Wales ) , 13 - Allan Bateman ( Wales ) , 12 - Gregor Townsend ( Scotland ) , 11 - Tony Underwood ( England ) ; 10 - Rob Andrew ( England ) , 9 - Rob Howley ( Wales ) ; 8 - Scott Quinnell ( Wales ) , 7 - Neil Back ( England ) , 6 - Dale McIntosh ( Pontypridd ) , 5 - Ian Jones ( New Zealand ) , 4 - Craig Quinnell ( Wales ) , 3 - Darren Garforth ( Leicester ) , 2 - Norm Hewitt ( New Zealand ) , 1 - Nick Popplewell ( Ireland ) .","[""England"", ""Wales"", ""Wales"", ""Scotland"", ""England"", ""England"", ""Wales"", ""Wales"", ""England"", ""Pontypridd"", ""New Zealand"", ""Wales"", ""Leicester"", ""New Zealand"", ""Ireland""]","[""Barbarians""]","[""Tim Stimpson"", ""Nigel Walker"", ""Allan Bateman"", ""Gregor Townsend"", ""Tony Underwood"", ""Rob Andrew"", ""Rob Howley"", ""Scott Quinnell"", ""Neil Back"", ""Dale McIntosh"", ""Ian Jones"", ""Craig Quinnell"", ""Darren Garforth"", ""Norm Hewitt"", ""Nick Popplewell""]",[]
+"Australia - 15 - Matthew Burke ; 14 - Joe Roff , 13 - Daniel Herbert , 12 - Tim Horan ( captain ) , 11 - David Campese ; 10 - Pat Howard , 9 - Sam Payne ; 8 - Michael Brial , 7 - David Wilson , 6 - Owen Finegan , 5 - David Giffin , 4 - Tim Gavin , 3 - Andrew Blades , 2 - Marco Caputo , 1 - Dan Crowley .","[""Australia""]",[],"[""Matthew Burke"", ""Joe Roff"", ""Daniel Herbert"", ""Tim Horan"", ""David Campese"", ""Pat Howard"", ""Sam Payne"", ""Michael Brial"", ""David Wilson"", ""Owen Finegan"", ""David Giffin"", ""Tim Gavin"", ""Andrew Blades"", ""Marco Caputo"", ""Dan Crowley""]",[]
+GOLF - ZIMBABWE OPEN SECOND ROUND SCORES .,[],[],[],"[""ZIMBABWE OPEN""]"
+HARARE 1996-12-06,"[""HARARE""]",[],[],[]
+"Leading second round scores in the Zimbabwe Open at the par-72 Chapman Golf Club on Friday ( South African unless stated ) : 132 Des Terblanche 65 67 133 Mark McNulty ( Zimbabwe ) 72 61 134 Steve van Vuuren 65 69 136 Nick Price ( Zimbabwe ) 68 68 , Justin Hobday 71 65 ,","[""Chapman Golf Club"", ""Zimbabwe"", ""Zimbabwe""]",[],"[""Des Terblanche"", ""Mark McNulty"", ""Steve van Vuuren"", ""Nick Price"", ""Justin Hobday""]","[""Zimbabwe Open"", ""South African""]"
+"Andrew Pitts ( U.S. ) 69 67 138 Mark Cayeux ( Zimbabwe ) 69 69 , Mark Murless 71 67 139 Hennie Swart 75 64 , Andrew Park 72 67 140 Schalk van der Merwe ( Namibia ) 67 73 , Desvonde","[""U.S."", ""Zimbabwe"", ""Namibia""]",[],"[""Andrew Pitts"", ""Mark Cayeux"", ""Mark Murless"", ""Hennie Swart"", ""Andrew Park"", ""Schalk van der Merwe"", ""Desvonde""]",[]
+"Botes 72 68 , Greg Reid 72 68 , Clinton Whitelaw 70",[],[],"[""Botes"", ""Greg Reid"", ""Clinton Whitelaw""]",[]
+"70 , Brett Liddle 75 65 , Hugh Baiocchi 73 67 141 Adilson da Silva ( Brazil ) 72 69 , Sammy Daniels 73","[""Brazil""]",[],"[""Brett Liddle"", ""Hugh Baiocchi"", ""Adilson da Silva"", ""Sammy Daniels""]",[]
+"68 , Trevor Dodds ( Namibia ) 72 69 142 Don Robertson ( U.S. ) 73 69 , Dion Fourie 69 73 ,","[""Namibia"", ""U.S.""]",[],"[""Trevor Dodds"", ""Don Robertson"", ""Dion Fourie""]",[]
+"Steve Waltman 72 70 , Ian Dougan 73 69",[],[],"[""Steve Waltman"", ""Ian Dougan""]",[]
+SOCCER - UNCAPPED PLAYERS CALLED TO FACE MACEDONIA .,"[""MACEDONIA""]",[],[],[]
+BUCHAREST 1996-12-06,"[""BUCHAREST""]",[],[],[]
+Romania trainer Anghel Iordanescu called up three uncapped players on Friday in his squad to face Macedonia next week in a World Cup qualifier .,"[""Romania"", ""Macedonia""]",[],"[""Anghel Iordanescu""]","[""World Cup""]"
+Midfielder Valentin Stefan and striker Viorel Ion of Otelul Galati and defender Liviu Ciobotariu of National Bucharest are the newcomers for the European group eight clash in Macedonia on December 14 .,"[""Macedonia""]","[""Otelul Galati"", ""National Bucharest""]","[""Valentin Stefan"", ""Viorel Ion"", ""Liviu Ciobotariu""]","[""European""]"
+Iordanescu said he had picked them because of their good performances in the domestic championship in which National Bucharest are top and Otelul Galati third . ,[],"[""National Bucharest"", ""Otelul Galati""]","[""Iordanescu""]",[]
+"I think it 's fair to give them a chance ,  he told reporters .",[],[],[],[]
+"League title-holders Steaua Bucharest , who finished bottom of their Champions ' League group in the European Cup , have only two players in the squad .",[],"[""Steaua Bucharest""]",[],"[""Champions ' League"", ""European Cup""]"
+"Attacking midfielder Adrian Ilie , who recently moved from Steaua to Turkish club Galatasaray , is ruled out after two yellow-card offences .",[],"[""Steaua"", ""Galatasaray""]","[""Adrian Ilie""]","[""Turkish""]"
+Squad :,[],[],[],[]
+"Goalkeepers - Bogdan Stelea , Florin Prunea .",[],[],"[""Bogdan Stelea"", ""Florin Prunea""]",[]
+"Defenders - Dan Petrescu , Daniel Prodan , Anton Dobos , Cornel Papura , Liviu Ciobotariu , Tibor Selymess , Iulian Filipescu .",[],[],"[""Dan Petrescu"", ""Daniel Prodan"", ""Anton Dobos"", ""Cornel Papura"", ""Liviu Ciobotariu"", ""Tibor Selymess"", ""Iulian Filipescu""]",[]
+"Midfielders - Gheorghe Hagi , Gheorghe Popescu , Constantin Galca , Valentin Stefan , Basarab Panduru , Dorinel Munteanu , Ovidiu Stinga .",[],[],"[""Gheorghe Hagi"", ""Gheorghe Popescu"", ""Constantin Galca"", ""Valentin Stefan"", ""Basarab Panduru"", ""Dorinel Munteanu"", ""Ovidiu Stinga""]",[]
+"Forwards - Ioan Vladoiu , Gheorghe Craioveanu , Ionel Danciulescu , Viorel Ion .",[],[],"[""Ioan Vladoiu"", ""Gheorghe Craioveanu"", ""Ionel Danciulescu"", ""Viorel Ion""]",[]
+REUTER,[],"[""REUTER""]",[],[]
+SOCCER - BRAZILIAN CHAMPIONSHIP RESULTS .,[],[],[],"[""BRAZILIAN""]"
+RIO DE JANEIRO 1996-12-05,"[""RIO DE JANEIRO""]",[],[],[]
+Results of Brazilian,[],[],[],"[""Brazilian""]"
+"soccer championship semifinal , first leg matches on Thursday .",[],[],[],[]
+Goias 1 Gremio 3,[],"[""Goias"", ""Gremio""]",[],[]
+Portuguesa 1 Atletico Mineiro 0,[],"[""Portuguesa"", ""Atletico Mineiro""]",[],[]
+CRICKET - LARA ENDURES ANOTHER MISERABLE DAY .,[],[],"[""LARA""]",[]
+Robert Galvin,[],[],"[""Robert Galvin""]",[]

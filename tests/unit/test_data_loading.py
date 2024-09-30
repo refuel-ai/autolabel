@@ -23,7 +23,6 @@ def test_read_csv():
     assert dataset_loader_max_5_index_5.df.shape[0] == 5
     assert dataset_loader_max_5_index_5.df.iloc[0].equals(dataset.df.iloc[5])
     assert len(dataset_loader_max_5_index_5.inputs) == 5
-    assert len(dataset_loader_max_5_index_5.gt_labels) == 5
 
 
 def test_read_dataframe():
@@ -44,7 +43,6 @@ def test_read_dataframe():
     assert dataset_loader_max_5_index_5.df.shape[0] == 5
     assert dataset_loader_max_5_index_5.df.iloc[0].equals(dataset.df.iloc[5])
     assert len(dataset_loader_max_5_index_5.inputs) == 5
-    assert len(dataset_loader_max_5_index_5.gt_labels) == 5
 
 
 def test_read_jsonl():
@@ -62,4 +60,3 @@ def test_read_jsonl():
     assert dataset_loader_max_5_index_5.df.shape[0] == 5
     assert dataset_loader_max_5_index_5.df.iloc[0].equals(dataset.df.iloc[5])
     assert len(dataset_loader_max_5_index_5.inputs) == 5
-    assert len(dataset_loader_max_5_index_5.gt_labels) == 5

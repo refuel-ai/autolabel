@@ -4,7 +4,7 @@ import logging
 import os
 from functools import cached_property
 from time import time
-from typing import List, Optional
+from typing import Dict, List, Optional
 
 from langchain.schema import HumanMessage, Generation, LLMResult
 
@@ -17,54 +17,54 @@ logger = logging.getLogger(__name__)
 
 
 class OpenAILLM(BaseModel):
-    CHAT_ENGINE_MODELS = [
-        "gpt-3.5-turbo",
-        "gpt-3.5-turbo-0301",
-        "gpt-3.5-turbo-0613",
-        "gpt-3.5-turbo-16k",
-        "gpt-3.5-turbo-16k-0613",
-        "gpt-4",
-        "gpt-4-0314",
-        "gpt-4-32k-0314",
-        "gpt-4-0613",
-        "gpt-4-32k",
-        "gpt-4-32k-0613",
-        "gpt-4-1106-preview",
-        "gpt-4-0125-preview",
-        "gpt-4o",
-        "gpt-4o-2024-08-06",
-        "gpt-4o-mini",
-    ]
-    MODELS_WITH_TOKEN_PROBS = [
-        "text-curie-001",
-        "text-davinci-003",
-        "gpt-3.5-turbo",
-        "gpt-3.5-turbo-0301",
-        "gpt-3.5-turbo-0613",
-        "gpt-3.5-turbo-16k",
-        "gpt-3.5-turbo-16k-0613",
-        "gpt-4",
-        "gpt-4-0314",
-        "gpt-4-32k-0314",
-        "gpt-4-0613",
-        "gpt-4-32k",
-        "gpt-4-32k-0613",
-        "gpt-4-1106-preview",
-        "gpt-4-0125-preview",
-        "gpt-4o",
-        "gpt-4o-2024-08-06",
-        "gpt-4o-mini",
-    ]
-    JSON_MODE_MODELS = [
-        "gpt-3.5-turbo-0125",
-        "gpt-3.5-turbo",
-        "gpt-4-0125-preview",
-        "gpt-4-1106-preview",
-        "gpt-4-turbo-preview",
-        "gpt-4o",
-        "gpt-4o-2024-08-06",
-        "gpt-4o-mini",
-    ]
+    CHAT_ENGINE_MODELS = set(
+        [
+            "gpt-3.5-turbo",
+            "gpt-3.5-turbo-0301",
+            "gpt-3.5-turbo-0613",
+            "gpt-3.5-turbo-16k",
+            "gpt-3.5-turbo-16k-0613",
+            "gpt-4",
+            "gpt-4-0314",
+            "gpt-4-32k-0314",
+            "gpt-4-0613",
+            "gpt-4-32k",
+            "gpt-4-32k-0613",
+            "gpt-4-1106-preview",
+            "gpt-4-0125-preview",
+            "gpt-4o",
+            "gpt-4o-2024-08-06",
+            "gpt-4o-mini",
+        ]
+    )
+    MODELS_WITH_TOKEN_PROBS = set(
+        [
+            "text-curie-001",
+            "text-davinci-003",
+            "gpt-3.5-turbo",
+            "gpt-3.5-turbo-0301",
+            "gpt-3.5-turbo-0613",
+            "gpt-3.5-turbo-16k",
+            "gpt-3.5-turbo-16k-0613",
+            "gpt-4",
+            "gpt-4-0314",
+            "gpt-4-32k-0314",
+            "gpt-4-0613",
+            "gpt-4-32k",
+            "gpt-4-32k-0613",
+            "gpt-4-1106-preview",
+            "gpt-4-0125-preview",
+            "gpt-4o",
+            "gpt-4o-2024-08-06",
+            "gpt-4o-mini",
+        ]
+    )
+    SUPPORTS_STRUCTURED_OUTPUTS = set(
+        [
+            "gpt-4o-mini",
+            "gpt-4o-2024-08-06",
+        ]
+    )
 
     # Default parameters for OpenAILLM
     DEFAULT_MODEL = "gpt-3.5-turbo"
@@ -77,10 +77,10 @@ class OpenAILLM(BaseModel):
     DEFAULT_PARAMS_CHAT_ENGINE = {
         "max_tokens": 1000,
         "temperature": 0.0,
+        "logprobs": True,
+        "top_logprobs": 1,
         "request_timeout": 30,
     }
-    DEFAULT_QUERY_PARAMS_CHAT_ENGINE = {"logprobs": True, "top_logprobs": 1}
-
     # Reference: https://openai.com/pricing
     COST_PER_PROMPT_TOKEN = {
         "text-davinci-003": 0.02 / 1000,
@@ -152,26 +152,11 @@ class OpenAILLM(BaseModel):
 
         # populate model params and initialize the LLM
         model_params = config.model_params()
-        if config.logit_bias() != 0:
-            model_params = {
-                **model_params,
-                **self._generate_logit_bias(),
-            }
-
-        self.query_params = {}
         if self._engine == "chat":
             self.model_params = {**self.DEFAULT_PARAMS_CHAT_ENGINE, **model_params}
-            self.query_params = copy.deepcopy(self.DEFAULT_QUERY_PARAMS_CHAT_ENGINE)
             self.llm = ChatOpenAI(
                 model_name=self.model_name, verbose=False, **self.model_params
             )
-            if config.json_mode():
-                if self.model_name not in self.JSON_MODE_MODELS:
-                    logger.warning(
-                        f"json_mode is not supported for model {self.model_name}. Disabling json_mode."
-                    )
-                else:
-                    self.query_params["response_format"] = {"type": "json_object"}
         else:
             self.model_params = {
                 **self.DEFAULT_PARAMS_COMPLETION_ENGINE,
@@ -180,29 +165,6 @@ class OpenAILLM(BaseModel):
             self.llm = OpenAI(
                 model_name=self.model_name, verbose=False, **self.model_params
             )
-
-    def _generate_logit_bias(self) -> None:
-        """Generates logit bias for the labels specified in the config
-
-        Returns:
-            Dict: logit bias and max tokens
-        """
-        if len(self.config.labels_list()) == 0:
-            logger.warning(
-                "No labels specified in the config. Skipping logit bias generation."
-            )
-            return {}
-        encoding = self.tiktoken.encoding_for_model(self.model_name)
-        logit_bias = {}
-        max_tokens = 0
-        for label in self.config.labels_list():
-            if label not in logit_bias:
-                tokens = encoding.encode(label)
-                for token in tokens:
-                    logit_bias[token] = self.config.logit_bias()
-                max_tokens = max(max_tokens, len(tokens))
-        logit_bias[encoding.eot_token] = self.config.logit_bias()
-        return {"logit_bias": logit_bias, "max_tokens": max_tokens}
 
     def _chat_backward_compatibility(
         self, generations: List[LLMResult]
@@ -218,12 +180,32 @@ class OpenAILLM(BaseModel):
                 curr_generation.generation_info["logprobs"] = new_logprobs
         return generations
 
-    async def _alabel(self, prompts: List[str]) -> RefuelLLMResult:
+    async def _alabel(self, prompts: List[str], output_schema: Dict) -> RefuelLLMResult:
         try:
             start_time = time()
             if self._engine == "chat":
                 prompts = [[HumanMessage(content=prompt)] for prompt in prompts]
-                result = await self.llm.agenerate(prompts, **self.query_params)
+                generations = None
+                if (
+                    output_schema is not None
+                    and self.model_name in self.SUPPORTS_STRUCTURED_OUTPUTS
+                ):
+                    result = await self.llm.agenerate(
+                        prompts,
+                        response_format={
+                            "type": "json_schema",
+                            "json_schema": {
+                                "name": "response_format",
+                                "schema": output_schema,
+                                "strict": True,
+                            },
+                        },
+                    )
+                else:
+                    logger.info(
+                        "Not using structured output despite output_schema provided"
+                    )
+                    result = await self.llm.agenerate(prompts)
                 generations = self._chat_backward_compatibility(result.generations)
             else:
                 result = await self.llm.agenerate(prompts)
@@ -263,12 +245,31 @@ class OpenAILLM(BaseModel):
                 latencies=[0 for _ in prompts],
             )
 
-    def _label(self, prompts: List[str]) -> RefuelLLMResult:
+    def _label(self, prompts: List[str], output_schema: Dict) -> RefuelLLMResult:
         try:
             start_time = time()
             if self._engine == "chat":
                 prompts = [[HumanMessage(content=prompt)] for prompt in prompts]
-                result = self.llm.generate(prompts, **self.query_params)
+                if (
+                    output_schema is not None
+                    and self.model_name in self.SUPPORTS_STRUCTURED_OUTPUTS
+                ):
+                    result = self.llm.generate(
+                        prompts,
+                        response_format={
+                            "type": "json_schema",
+                            "json_schema": {
+                                "name": "response_format",
+                                "schema": output_schema,
+                                "strict": True,
+                            },
+                        },
+                    )
+                else:
+                    logger.info(
+                        "Not using structured output despite output_schema provided"
+                    )
+                    result = self.llm.generate(prompts)
                 generations = self._chat_backward_compatibility(result.generations)
             else:
                 result = self.llm.generate(prompts)

@@ -42,11 +42,6 @@ class HFPipelineMultimodal(BaseModel):
         # populate model params
         model_params = config.model_params()
         self.model_params = {**self.DEFAULT_PARAMS, **model_params}
-        if config.logit_bias() != 0:
-            self.model_params = {
-                **self._generate_sequence_bias(),
-                **self.model_params,
-            }
 
         processor = AutoProcessor.from_pretrained(self.model_name)
         quantize_bits = self.model_params["quantize"]
@@ -76,41 +71,7 @@ class HFPipelineMultimodal(BaseModel):
             ["<image>", "<fake_token_around_image>"], add_special_tokens=False
         ).input_ids
 
-    def _generate_sequence_bias(self) -> Dict:
-        """Generates sequence bias dict to add to the config for the labels specified
-
-        Returns:
-            Dict: sequence bias, max new tokens, and num beams
-        """
-        if len(self.config.labels_list()) == 0:
-            logger.warning(
-                "No labels specified in the config. Skipping logit bias generation."
-            )
-            return {}
-        try:
-            from transformers import AutoTokenizer
-        except ImportError:
-            raise ValueError(
-                "Could not import transformers python package. "
-                "Please it install it with `pip install transformers`."
-            )
-        tokenizer = AutoTokenizer.from_pretrained(
-            self.model_name, use_fast=False, add_prefix_space=True
-        )
-        sequence_bias = {tuple([tokenizer.eos_token_id]): self.config.logit_bias()}
-        max_new_tokens = 0
-        for label in self.config.labels_list():
-            tokens = tuple(tokenizer([label], add_special_tokens=False).input_ids[0])
-            for token in tokens:
-                sequence_bias[tuple([token])] = self.config.logit_bias()
-            max_new_tokens = max(max_new_tokens, len(tokens))
-
-        return {
-            "sequence_bias": sequence_bias,
-            "max_new_tokens": max_new_tokens,
-        }
-
-    def _label(self, prompts: List[str]) -> RefuelLLMResult:
+    def _label(self, prompts: List[str], output_schema: Dict) -> RefuelLLMResult:
         generations = []
         for prompt in prompts:
             parsed_prompt = json.loads(prompt)

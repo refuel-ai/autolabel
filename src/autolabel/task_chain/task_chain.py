@@ -1,7 +1,4 @@
 from collections import defaultdict
-import copy
-from itertools import accumulate, groupby
-import uuid
 from autolabel.configs import AutolabelConfig
 import logging
 from typing import Dict, List, Optional
@@ -15,9 +12,7 @@ from autolabel.cache.sqlalchemy_generation_cache import SQLAlchemyGenerationCach
 from autolabel.cache.sqlalchemy_transform_cache import SQLAlchemyTransformCache
 from autolabel.cache.sqlalchemy_confidence_cache import SQLAlchemyConfidenceCache
 from autolabel.cache.base import BaseCache
-from pydantic import BaseModel
 from autolabel.configs import TaskChainConfig
-from autolabel.schema import TaskType
 from autolabel.transforms import TransformFactory
 from transformers import AutoTokenizer
 import pandas as pd
@@ -200,17 +195,9 @@ class TaskChainOrchestrator:
         if autolabel_config.transforms():
             dataset.df.rename(columns=self.column_name_map, inplace=True)
         else:
-            if autolabel_config.task_type() == TaskType.ATTRIBUTE_EXTRACTION:
-                for attribute in autolabel_config.output_columns():
-                    dataset.df[attribute] = dataset.df[
-                        dataset.generate_label_name("label")
-                    ].apply(
-                        lambda x: x.get(attribute) if x and type(x) is dict else None
-                    )
-            elif autolabel_config.task_type() == TaskType.MULTILABEL_CLASSIFICATION:
-                for output_column in autolabel_config.output_columns():
-                    dataset.df[output_column] = dataset.df[
-                        dataset.generate_label_name("label")
-                    ]
+            for attribute in autolabel_config.output_columns():
+                dataset.df[attribute] = dataset.df[
+                    dataset.generate_label_name("label")
+                ].apply(lambda x: x.get(attribute) if x and type(x) is dict else None)
 
         return dataset

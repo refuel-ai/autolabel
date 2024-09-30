@@ -2,7 +2,7 @@ import asyncio
 import os
 import requests
 from time import time
-from typing import List, Optional, Tuple
+from typing import Dict, List, Optional, Tuple
 import httpx
 
 from autolabel.cache import BaseCache
@@ -137,7 +137,7 @@ class MistralLLM(BaseModel):
                 response.raise_for_status()
             return response, end_time - start_time
 
-    def _label(self, prompts: List[str]) -> RefuelLLMResult:
+    def _label(self, prompts: List[str], output_schema: Dict) -> RefuelLLMResult:
         generations = []
         errors = []
         latencies = []
@@ -166,7 +166,7 @@ class MistralLLM(BaseModel):
             generations=generations, errors=errors, latencies=latencies
         )
 
-    async def _alabel(self, prompts: List[str]) -> RefuelLLMResult:
+    async def _alabel(self, prompts: List[str], output_schema: Dict) -> RefuelLLMResult:
         generations = []
         errors = []
         latencies = []

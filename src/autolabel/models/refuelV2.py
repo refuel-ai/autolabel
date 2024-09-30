@@ -1,9 +1,10 @@
 import asyncio
+import copy
 import json
 import os
 import requests
 import logging
-from typing import List, Optional, Tuple
+from typing import Dict, List, Optional, Tuple
 from time import time
 import httpx
 
@@ -93,12 +94,15 @@ class RefuelLLMV2(BaseModel):
         before_sleep=before_sleep_log(logger, logging.WARNING),
         retry=retry_if_not_exception_type(UnretryableError),
     )
-    def _label_with_retry(self, prompt: str) -> Tuple[requests.Response, float]:
+    def _label_with_retry(
+        self, prompt: str, output_schema: Dict
+    ) -> Tuple[requests.Response, float]:
         payload = {
             "messages": [{"role": "user", "content": prompt}],
             "parameters": {**self.model_params},
             "confidence": self.config.confidence(),
             "adapter_path": self.adapter_path,
+            "response_format": output_schema,
         }
         headers = {"refuel_api_key": self.REFUEL_API_KEY}
         start_time = time()
@@ -130,12 +134,15 @@ class RefuelLLMV2(BaseModel):
         before_sleep=before_sleep_log(logger, logging.WARNING),
         retry=retry_if_not_exception_type(UnretryableError),
     )
-    async def _alabel_with_retry(self, prompt: str) -> Tuple[requests.Response, float]:
+    async def _alabel_with_retry(
+        self, prompt: str, output_schema: Dict
+    ) -> Tuple[requests.Response, float]:
         payload = {
             "messages": [{"role": "user", "content": prompt}],
             "parameters": {**self.model_params},
             "confidence": self.config.confidence(),
             "adapter_path": self.adapter_path,
+            "response_format": output_schema,
         }
         headers = {"refuel_api_key": self.REFUEL_API_KEY}
         async with httpx.AsyncClient() as client:
@@ -165,13 +172,15 @@ class RefuelLLMV2(BaseModel):
                 response.raise_for_status()
             return response, end_time - start_time
 
-    def _label(self, prompts: List[str]) -> RefuelLLMResult:
+    def _label(self, prompts: List[str], output_schema: Dict) -> RefuelLLMResult:
         generations = []
         errors = []
         latencies = []
         for prompt in prompts:
             try:
-                response, latency = self._label_with_retry(prompt)
+                response, latency = self._label_with_retry(
+                    prompt, self._prepare_output_schema(output_schema)
+                )
                 response = json.loads(response.json())
                 generations.append(
                     [
@@ -195,7 +204,7 @@ class RefuelLLMV2(BaseModel):
                 latencies.append(latency)
             except Exception as e:
                 # This signifies an error in generating the response using RefuelLLm
-                logger.error(
+                logger.exception(
                     f"Unable to generate prediction: {e}",
                 )
                 generations.append([Generation(text="")])
@@ -209,12 +218,17 @@ class RefuelLLMV2(BaseModel):
             generations=generations, errors=errors, latencies=latencies
         )
 
-    async def _alabel(self, prompts: List[str]) -> RefuelLLMResult:
+    async def _alabel(self, prompts: List[str], output_schema: Dict) -> RefuelLLMResult:
         generations = []
         errors = []
         latencies = []
         try:
-            requests = [self._alabel_with_retry(prompt) for prompt in prompts]
+            requests = [
+                self._alabel_with_retry(
+                    prompt, self._prepare_output_schema(output_schema)
+                )
+                for prompt in prompts
+            ]
             responses = await asyncio.gather(*requests)
             for response, latency in responses:
                 response = json.loads(response.json())
@@ -240,7 +254,7 @@ class RefuelLLMV2(BaseModel):
                 latencies.append(latency)
         except Exception as e:
             # This signifies an error in generating the response using RefuelLLm
-            logger.error(
+            logger.exception(
                 f"Unable to generate prediction: {e}",
             )
             generations.append([Generation(text="")])
@@ -253,6 +267,18 @@ class RefuelLLMV2(BaseModel):
         return RefuelLLMResult(
             generations=generations, errors=errors, latencies=latencies
         )
+
+    def _prepare_output_schema(self, schema: Dict) -> Dict:
+        curr_schema = copy.deepcopy(schema)
+        if isinstance(curr_schema, dict):
+            curr_schema_keys = list(curr_schema.keys())
+            for key in curr_schema_keys:
+                if key == "additionalProperties" and isinstance(curr_schema[key], bool):
+                    del curr_schema[key]
+                else:
+                    curr_schema[key] = self._prepare_output_schema(curr_schema[key])
+        else:
+            return curr_schema
 
     def get_cost(self, prompt: str, label: Optional[str] = "") -> float:
         return 0

@@ -1,24 +1,36 @@
 {
     "task_name": "PersonLocationOrgMiscNER",
-    "task_type": "named_entity_recognition",
+    "task_type": "attribute_extraction",
     "dataset": {
-        "label_column": "CategorizedLabels",
         "text_column": "example",
         "delimiter": ","
     },
     "model": {
         "provider": "openai",
-        "name": "gpt-3.5-turbo"
+        "name": "gpt-4o-mini"
     },
     "prompt": {
-        "task_guidelines": "You are an expert at extracting Person, Organization, Location, and Miscellaneous entities from text. Your job is to extract named entities mentioned in text, and classify them into one of the following categories.\nCategories:\n{labels}\n ",
-        "labels": [
-            "Location",
-            "Organization",
-            "Person",
-            "Miscellaneous"
+        "task_guidelines": "You are an expert at extracting Location, Organization, Person, and Miscellaneous entities from text. Your job is to extract named entities mentioned in text, grouped by entity type.",
+        "attributes": [
+            {
+              "name": "Location",
+              "description": "A list containing all instances of locations in the input. Output an empty list if no such entities exist."
+            },
+            {
+              "name": "Organization",
+              "description": "A list containing all instances of all organizations in the input. Output an empty list if no such entities exist."
+            },
+            {
+              "name": "Person",
+              "description": "A list containing all instances of all people in the input. Output an empty list if no such entities exist."
+            },
+            {
+              "name": "Miscellaneous",
+              "description": "A list containing all instances of all miscellaneous entities in the input. Output an empty list if no such entities exist."
+            }
+            
         ],
-        "example_template": "Example: {example}\nOutput:\n{CategorizedLabels}",
+        "example_template": "Example: {example}\nOutput:\n{output_dict}",
         "few_shot_examples": "seed.csv",
         "few_shot_selection": "semantic_similarity",
         "few_shot_num": 5

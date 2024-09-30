@@ -2,8 +2,9 @@ import json
 import json5
 import logging
 import pickle
+import copy
 from collections import defaultdict
-from typing import Callable, Dict, List, Optional, Union
+from typing import Callable, Dict, List, Optional, Union, Tuple
 
 from langchain.prompts.prompt import PromptTemplate
 from langchain.schema import ChatGeneration, Generation
@@ -18,11 +19,9 @@ from autolabel.metrics import (
 )
 from autolabel.schema import (
     ErrorType,
-    F1Type,
     LabelingError,
     LLMAnnotation,
     MetricResult,
-    MetricType,
     TaskType,
 )
 from autolabel.tasks import BaseTask
@@ -54,7 +53,7 @@ class AttributeExtractionTask(BaseTask):
         if self.config.confidence():
             self.metrics.append(AUROCMetric())
 
-    def _construct_attribute_json(self) -> str:
+    def _construct_attribute_json(self) -> Tuple[str, Dict]:
         """This function is used to construct the attribute json string for the output guidelines.
         Args:
             attributes (List[Dict]): A list of dictionaries containing the output attributes.
@@ -62,28 +61,60 @@ class AttributeExtractionTask(BaseTask):
         Returns:
             str: A string containing the output attributes.
         """
-        output_json = {}
+        output_json, output_schema = {}, {
+            "title": "AnswerFormat",
+            "description": "Answer to the provided prompt.",
+            "type": "object",
+            "properties": {},
+            "required": [],
+            "additionalProperties": False,
+            "definitions": {},
+        }
         for attribute_dict in self.config.attributes():
             if "name" not in attribute_dict or "description" not in attribute_dict:
                 raise ValueError(
                     "Attribute dictionary must contain 'name' and 'description' keys"
                 )
 
-            attribute_name = attribute_dict["name"]
             attribute_desc = attribute_dict["description"]
+            attribute_name = attribute_dict["name"]
+
             if TaskType.MULTILABEL_CLASSIFICATION == attribute_dict.get(
                 "task_type", ""
             ):
                 attribute_desc += " The output format should be all the labels separated by semicolons. For example: label1;label2;label3"
 
-            if "options" in attribute_dict:
+            if "options" in attribute_dict and len(attribute_dict["options"]) > 0:
                 attribute_options = attribute_dict["options"]
                 attribute_desc += f"\nOptions:\n{','.join(attribute_options)}"
 
             output_json[attribute_name] = attribute_desc
-        return json.dumps(output_json, indent=4)
 
-    def _generate_output_dict(self, input: Dict) -> Dict:
+            if (
+                "schema" in attribute_dict
+                and attribute_dict["schema"] is not None
+                and len(attribute_dict["schema"]) > 0
+            ):
+                curr_property = {"$ref": "#/definitions/" + attribute_name}
+                output_schema["definitions"][attribute_name] = json5.loads(
+                    attribute_dict["schema"]
+                )
+            else:
+                curr_property = {"title": attribute_dict["name"], "type": "string"}
+                if "options" in attribute_dict:
+                    if TaskType.CLASSIFICATION == attribute_dict.get("task_type", ""):
+                        curr_property = {"$ref": "#/definitions/" + attribute_name}
+                        output_schema["definitions"][attribute_name] = {
+                            "title": attribute_name,
+                            "description": "An enumeration.",
+                            "enum": attribute_options,
+                        }
+
+            output_schema["properties"][attribute_name] = copy.deepcopy(curr_property)
+            output_schema["required"].append(attribute_name)
+        return json.dumps(output_json, indent=4), output_schema
+
+    def _generate_output_dict(self, input: Dict) -> Optional[str]:
         """Generate the output dictionary from the input
 
         Args:
@@ -123,15 +154,15 @@ class AttributeExtractionTask(BaseTask):
         self,
         input: Dict,
         examples: List,
-        prompt_template_override: PromptTemplate = None,
-        output_guidelines_override: str = None,
-        max_input_tokens: int = None,
+        prompt_template_override: Optional[PromptTemplate] = None,
+        output_guidelines_override: Optional[str] = None,
+        max_input_tokens: Optional[int] = None,
         get_num_tokens: Optional[Callable] = None,
         **kwargs,
-    ) -> str:
+    ) -> Tuple[str, str]:
         fmt_task_guidelines = self.task_guidelines
 
-        attribute_json = self._construct_attribute_json()
+        attribute_json, output_schema = self._construct_attribute_json()
         output_guidelines = (
             self.output_guidelines
             if output_guidelines_override is None
@@ -203,9 +234,9 @@ class AttributeExtractionTask(BaseTask):
                 if input.get(col) is not None and len(input.get(col)) > 0:
                     prompt_dict[col] = input[col]
                 prompt_dict[col] = input[col]
-            return json.dumps(prompt_dict)
+            return json.dumps(prompt_dict), output_schema
         else:
-            return curr_text_prompt
+            return curr_text_prompt, output_schema
 
     def get_explanation_prompt(self, example: Dict, include_label=True) -> str:
         pt = PromptTemplate(
