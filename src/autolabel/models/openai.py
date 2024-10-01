@@ -60,16 +60,18 @@ class OpenAILLM(BaseModel):
         ]
     )
 
-    SUPPORTS_JSON_OUTPUTS = [
-        "gpt-3.5-turbo-0125",
-        "gpt-3.5-turbo",
-        "gpt-4-0125-preview",
-        "gpt-4-1106-preview",
-        "gpt-4-turbo-preview",
-        "gpt-4o",
-        "gpt-4o-2024-08-06",
-        "gpt-4o-mini",
-    ]
+    SUPPORTS_JSON_OUTPUTS = set(
+        [
+            "gpt-3.5-turbo-0125",
+            "gpt-3.5-turbo",
+            "gpt-4-0125-preview",
+            "gpt-4-1106-preview",
+            "gpt-4-turbo-preview",
+            "gpt-4o",
+            "gpt-4o-2024-08-06",
+            "gpt-4o-mini",
+        ]
+    )
 
     SUPPORTS_STRUCTURED_OUTPUTS = set(
         [
