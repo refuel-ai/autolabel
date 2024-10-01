@@ -277,8 +277,7 @@ class RefuelLLMV2(BaseModel):
                     del curr_schema[key]
                 else:
                     curr_schema[key] = self._prepare_output_schema(curr_schema[key])
-        else:
-            return curr_schema
+        return curr_schema
 
     def get_cost(self, prompt: str, label: Optional[str] = "") -> float:
         return 0
