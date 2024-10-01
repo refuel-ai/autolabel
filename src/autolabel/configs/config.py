@@ -258,10 +258,8 @@ class AutolabelConfig(BaseConfig):
     def max_selected_labels(self) -> int:
         """Returns the number of labels to select in LabelSelector"""
         for attribute in self.attributes():
-            if attribute.get(self.LABEL_SELECTION_KEY, False):
-                return attribute.get(self.LABEL_SELECTION_KEY, {}).get(
-                    self.LABEL_SELECTION_COUNT_KEY, 10
-                )
+            if attribute.get(self.LABEL_SELECTION_KEY):
+                return attribute.get(self.LABEL_SELECTION_KEY, 10)
         return None
 
     def attributes(self) -> List[Dict]:
