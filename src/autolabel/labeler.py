@@ -218,19 +218,17 @@ class LabelingAgent:
                 cache=self.generation_cache is not None,
             )
 
-        if self.config.label_selection():
-            if self.config.task_type() != TaskType.ATTRIBUTE_EXTRACTION:
-                self.console.print(
-                    "Warning: label_selection only supported for attribute extraction tasks!"
-                )
-            else:
-                if not self.label_selector:
-                    self.label_selector = LabelSelector(
-                        config=self.config,
-                        embedding_func=PROVIDER_TO_MODEL.get(
-                            self.config.embedding_provider(), DEFAULT_EMBEDDING_PROVIDER
-                        )(model=self.config.embedding_model_name()),
-                    )
+        if (
+            self.config.label_selection()
+            and self.config.task_type() == TaskType.ATTRIBUTE_EXTRACTION
+            and not self.label_selector
+        ):
+            self.label_selector = LabelSelector(
+                config=self.config,
+                embedding_func=PROVIDER_TO_MODEL.get(
+                    self.config.embedding_provider(), DEFAULT_EMBEDDING_PROVIDER
+                )(model=self.config.embedding_model_name()),
+            )
 
         current_index = 0
         cost = 0.0
@@ -253,10 +251,7 @@ class LabelingAgent:
             chunk = dataset.inputs[current_index]
             examples = []
 
-            if (
-                self.config.label_selection()
-                and self.config.task_type() == TaskType.ATTRIBUTE_EXTRACTION
-            ):
+            if self.label_selector:
                 # Create toEmbed string using the example template from the config
                 example_template = self.config.example_template()
                 toEmbed = example_template.format_map(defaultdict(str, chunk))
@@ -280,7 +275,9 @@ class LabelingAgent:
             final_prompt, output_schema = self.task.construct_prompt(
                 chunk,
                 examples,
-                selected_labels_map=selected_labels_map,
+                selected_labels_map=selected_labels_map
+                if self.label_selector
+                else None,
                 max_input_tokens=self.llm.max_context_length,
                 get_num_tokens=self.llm.get_num_tokens,
             )
