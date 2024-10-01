@@ -199,6 +199,9 @@ class RefuelLLMResult(BaseModel):
 
     generations: List[List[Union[Generation, ChatGeneration]]]
 
+    """Arbitrary LLM provider-specific output."""
+    llm_output: Optional[dict] = None
+
     """Errors encountered while running the labeling job"""
     errors: List[Optional[LabelingError]]
 

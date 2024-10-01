@@ -151,7 +151,9 @@ class GoogleLLM(BaseModel):
                 latencies=[0 for _ in prompts],
             )
 
-    def get_cost(self, prompt: str, label: Optional[str] = "") -> float:
+    def get_cost(
+        self, prompt: str, label: Optional[str] = "", llm_output: Optional[Dict] = None
+    ) -> float:
         if self.model_name is None:
             return 0.0
         cost_per_prompt_token = self.COST_PER_PROMPT_TOKEN[self.model_name]

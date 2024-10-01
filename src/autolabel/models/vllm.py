@@ -1,5 +1,5 @@
 import logging
-from typing import List, Optional
+from typing import Dict, List, Optional
 
 from autolabel.models import BaseModel
 from autolabel.configs import AutolabelConfig
@@ -115,7 +115,9 @@ class VLLMModel(BaseModel):
             resp.append({curr_logprob_obj.decoded_token: curr_logprob_obj.logprob})
         return resp
 
-    def get_cost(self, prompt: str, label: Optional[str] = "") -> float:
+    def get_cost(
+        self, prompt: str, label: Optional[str] = "", llm_output: Optional[Dict] = None
+    ) -> float:
         return 0
 
     def returns_token_probs(self) -> bool:

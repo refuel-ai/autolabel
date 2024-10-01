@@ -235,6 +235,7 @@ class OpenAILLM(BaseModel):
             end_time = time()
             return RefuelLLMResult(
                 generations=generations,
+                llm_output=result.llm_output,
                 errors=[None] * len(generations),
                 latencies=[end_time - start_time] * len(generations),
             )
@@ -307,6 +308,7 @@ class OpenAILLM(BaseModel):
             end_time = time()
             return RefuelLLMResult(
                 generations=generations,
+                llm_output=result.llm_output,
                 errors=[None] * len(generations),
                 latencies=[end_time - start_time] * len(generations),
             )
@@ -339,19 +341,35 @@ class OpenAILLM(BaseModel):
                 latencies=[0 for _ in prompts],
             )
 
-    def get_cost(self, prompt: str, label: Optional[str] = "") -> float:
-        encoding = self.tiktoken.encoding_for_model(self.model_name)
-        num_prompt_toks = len(encoding.encode(prompt))
-        if label:
-            num_label_toks = len(encoding.encode(label))
+    def get_cost(
+        self, prompt: str, label: Optional[str] = "", llm_output: Optional[Dict] = None
+    ) -> float:
+        num_cached_toks = 0
+        if llm_output and "token_usage" in llm_output:
+            num_prompt_toks = llm_output["token_usage"]["prompt_tokens"]
+            num_label_toks = llm_output["token_usage"]["completion_tokens"]
+            num_cached_toks = (
+                llm_output["token_usage"]
+                .get("prompt_tokens_details", {})
+                .get("cached_tokens", 0)
+            )
+            num_prompt_toks -= num_cached_toks
         else:
-            # get an upper bound
-            num_label_toks = self.model_params["max_tokens"]
+            encoding = self.tiktoken.encoding_for_model(self.model_name)
+            num_prompt_toks = len(encoding.encode(prompt))
+            if label:
+                num_label_toks = len(encoding.encode(label))
+            else:
+                # get an upper bound
+                num_label_toks = self.model_params["max_tokens"]
 
         cost_per_prompt_token = self.COST_PER_PROMPT_TOKEN[self.model_name]
+        cost_per_cached_prompt_token = cost_per_prompt_token / 2.0
         cost_per_completion_token = self.COST_PER_COMPLETION_TOKEN[self.model_name]
-        return (num_prompt_toks * cost_per_prompt_token) + (
-            num_label_toks * cost_per_completion_token
+        return (
+            (num_prompt_toks * cost_per_prompt_token)
+            + (num_cached_toks * cost_per_cached_prompt_token)
+            + (num_label_toks * cost_per_completion_token)
         )
 
     def returns_token_probs(self) -> bool:

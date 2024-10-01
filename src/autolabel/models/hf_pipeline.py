@@ -116,7 +116,9 @@ class HFPipelineLLM(BaseModel):
                 latencies=[0 for _ in prompts],
             )
 
-    def get_cost(self, prompt: str, label: Optional[str] = "") -> float:
+    def get_cost(
+        self, prompt: str, label: Optional[str] = "", llm_output: Optional[Dict] = None
+    ) -> float:
         # Model inference for this model is being run locally
         # Revisit this in the future when we support HF inference endpoints
         return 0.0

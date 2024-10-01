@@ -197,7 +197,9 @@ class MistralLLM(BaseModel):
             generations=generations, errors=errors, latencies=latencies
         )
 
-    def get_cost(self, prompt: str, label: Optional[str] = "") -> float:
+    def get_cost(
+        self, prompt: str, label: Optional[str] = "", llm_output: Optional[Dict] = None
+    ) -> float:
         cost_per_prompt_char = self.COST_PER_PROMPT_TOKEN[self.model_name]
         cost_per_completion_char = self.COST_PER_COMPLETION_TOKEN[self.model_name]
         return cost_per_prompt_char * len(prompt) + cost_per_completion_char * (
