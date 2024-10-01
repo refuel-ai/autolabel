@@ -59,10 +59,22 @@ class OpenAILLM(BaseModel):
             "gpt-4o-mini",
         ]
     )
+
+    SUPPORTS_JSON_OUTPUTS = [
+        "gpt-3.5-turbo-0125",
+        "gpt-3.5-turbo",
+        "gpt-4-0125-preview",
+        "gpt-4-1106-preview",
+        "gpt-4-turbo-preview",
+        "gpt-4o",
+        "gpt-4o-2024-08-06",
+        "gpt-4o-mini",
+    ]
+
     SUPPORTS_STRUCTURED_OUTPUTS = set(
         [
-            "gpt-4o-mini",
             "gpt-4o-2024-08-06",
+            "gpt-4o-mini",
         ]
     )
 
@@ -201,6 +213,14 @@ class OpenAILLM(BaseModel):
                             },
                         },
                     )
+                elif (
+                    output_schema is not None
+                    and self.model_name in self.SUPPORTS_JSON_OUTPUTS
+                ):
+                    result = await self.llm.agenerate(
+                        prompts,
+                        response_format={"type": "json_object"},
+                    )
                 else:
                     logger.info(
                         "Not using structured output despite output_schema provided"
@@ -264,6 +284,14 @@ class OpenAILLM(BaseModel):
                                 "strict": True,
                             },
                         },
+                    )
+                elif (
+                    output_schema is not None
+                    and self.model_name in self.SUPPORTS_JSON_OUTPUTS
+                ):
+                    result = self.llm.generate(
+                        prompts,
+                        response_format={"type": "json_object"},
                     )
                 else:
                     logger.info(
