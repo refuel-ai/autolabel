@@ -105,7 +105,7 @@ class AttributeExtractionTask(BaseTask):
                 )
             else:
                 curr_property = {"title": attribute_dict["name"], "type": "string"}
-                if "options" in attribute_dict:
+                if "options" in attribute_dict and len(attribute_dict["options"]) < 500:
                     if TaskType.CLASSIFICATION == attribute_dict.get("task_type", ""):
                         curr_property = {"$ref": "#/definitions/" + attribute_name}
                         output_schema["definitions"][attribute_name] = {
