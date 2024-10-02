@@ -276,6 +276,7 @@ class AttributeExtractionTask(BaseTask):
         response: Union[Generation, ChatGeneration],
         curr_sample: Dict,
         prompt: str,
+        selected_labels_map: Dict[str, List[str]] = None,
     ) -> LLMAnnotation:
         successfully_labeled = False
         error = None
@@ -311,9 +312,10 @@ class AttributeExtractionTask(BaseTask):
 
         if successfully_labeled:
             for attribute in self.config.attributes():
-                attr_options, attr_type = attribute.get("options"), attribute.get(
-                    "task_type"
-                )
+                attr_options = attribute.get("options")
+                if selected_labels_map and attribute["name"] in selected_labels_map:
+                    attr_options = selected_labels_map[attribute["name"]]
+                attr_type = attribute.get("task_type")
                 if attr_options is not None and len(attr_options) > 0:
                     attr_label = str(llm_label.get(attribute["name"]))
                     if attr_type == TaskType.CLASSIFICATION:

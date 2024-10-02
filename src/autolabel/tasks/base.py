@@ -163,6 +163,7 @@ class BaseTask(ABC):
         response: Union[Generation, ChatGeneration],
         curr_sample: Dict,
         prompt: str,
+        selected_labels_map: Optional[Dict[str, List[str]]] = None,
     ) -> LLMAnnotation:
         # The last line of the response is the label
         # This is done to handle the case where the model generates an explanation before generating the label
