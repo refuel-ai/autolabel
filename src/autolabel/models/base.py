@@ -50,7 +50,11 @@ class BaseModel(ABC):
                 new_results = self._label(missing_prompts, output_schema)
             for ind, prompt in enumerate(missing_prompts):
                 costs.append(
-                    self.get_cost(prompt, label=new_results.generations[ind][0].text)
+                    self.get_cost(
+                        prompt,
+                        label=new_results.generations[ind][0].text,
+                        llm_output=new_results.llm_output,
+                    )
                 )
 
             # Set the existing prompts to the new results
@@ -77,7 +81,9 @@ class BaseModel(ABC):
         pass
 
     @abstractmethod
-    def get_cost(self, prompt: str, label: Optional[str] = "") -> float:
+    def get_cost(
+        self, prompt: str, label: Optional[str] = "", llm_output: Optional[Dict] = None
+    ) -> float:
         pass
 
     def get_cached_prompts(self, prompts: List[str]) -> Optional[str]:

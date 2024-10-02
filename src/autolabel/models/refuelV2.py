@@ -279,7 +279,9 @@ class RefuelLLMV2(BaseModel):
                     curr_schema[key] = self._prepare_output_schema(curr_schema[key])
         return curr_schema
 
-    def get_cost(self, prompt: str, label: Optional[str] = "") -> float:
+    def get_cost(
+        self, prompt: str, label: Optional[str] = "", llm_output: Optional[Dict] = None
+    ) -> float:
         return 0
 
     def returns_token_probs(self) -> bool:

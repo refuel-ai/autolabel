@@ -105,7 +105,9 @@ class AnthropicLLM(BaseModel):
                 latencies=[0 for _ in prompts],
             )
 
-    def get_cost(self, prompt: str, label: Optional[str] = "") -> float:
+    def get_cost(
+        self, prompt: str, label: Optional[str] = "", llm_output: Optional[Dict] = None
+    ) -> float:
         num_prompt_toks = len(self.tokenizer.encode(prompt).ids)
         if label:
             num_label_toks = len(self.tokenizer.encode(label).ids)

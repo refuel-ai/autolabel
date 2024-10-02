@@ -136,7 +136,9 @@ class OpenAIVisionLLM(BaseModel):
             latencies=[time() - start_time] * len(generations),
         )
 
-    def get_cost(self, prompt: str, label: Optional[str] = "") -> float:
+    def get_cost(
+        self, prompt: str, label: Optional[str] = "", llm_output: Optional[Dict] = None
+    ) -> float:
         encoding = self.tiktoken.encoding_for_model(self.model_name)
         num_prompt_toks = len(encoding.encode(prompt))
         if label:
