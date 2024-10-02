@@ -306,7 +306,12 @@ class LabelingAgent:
                     annotations = []
                     for generation in generations:
                         annotation = self.task.parse_llm_response(
-                            generation, chunk, final_prompt, selected_labels_map
+                            generation,
+                            chunk,
+                            final_prompt,
+                            selected_labels_map=selected_labels_map
+                            if self.label_selector
+                            else None,
                         )
                         annotation.input_tokens = input_tokens
                         annotation.output_tokens = self.llm.get_num_tokens(
