@@ -32,22 +32,22 @@ class FixedExampleSelector(BaseExampleSelector, BaseModel):
         **kwargs,
     ) -> List[dict]:
         """Select which examples to use based on the input lengths."""
-        label_column = kwargs.get("label_column")
-        selected_labels = kwargs.get("selected_labels")
+        selected_labels_map = kwargs.get("selected_labels_map")
 
-        if not selected_labels:
-            return self.examples[: self.k]
-
-        if not label_column:
-            print("No label column provided, returning all examples")
+        if not selected_labels_map:
             return self.examples[: self.k]
 
         # get the examples where label matches the selected labels
-        valid_examples = [
-            example
-            for example in self.examples
-            if example.get(label_column) in selected_labels
-        ]
+        valid_examples = []
+        for example in self.examples:
+            valid = True
+            for label_column, selected_labels in selected_labels_map.items():
+                if example.get(label_column) not in selected_labels:
+                    valid = False
+                    break
+            if valid:
+                valid_examples.append(example)
+
         return valid_examples[: min(self.k, len(valid_examples))]
 
     @classmethod

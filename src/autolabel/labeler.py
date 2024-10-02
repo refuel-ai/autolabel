@@ -80,7 +80,7 @@ class LabelingAgent:
         config: Union[AutolabelConfig, str, dict],
         cache: Optional[bool] = True,
         example_selector: Optional[BaseExampleSelector] = None,
-        label_selector: Optional[BaseLabelSelector] = None,
+        label_selector_map: Optional[Dict[str, BaseLabelSelector]] = {},
         console_output: Optional[bool] = True,
         generation_cache: Optional[BaseCache] = SQLAlchemyGenerationCache(),
         transform_cache: Optional[BaseCache] = SQLAlchemyTransformCache(),
@@ -135,7 +135,7 @@ class LabelingAgent:
         )
 
         self.example_selector = example_selector
-        self.label_selector = label_selector
+        self.label_selector_map = label_selector_map
 
         if in_notebook():
             import nest_asyncio
@@ -221,14 +221,22 @@ class LabelingAgent:
         if (
             self.config.label_selection()
             and self.config.task_type() == TaskType.ATTRIBUTE_EXTRACTION
-            and not self.label_selector
+            and not self.label_selector_map
         ):
-            self.label_selector = LabelSelector(
-                config=self.config,
-                embedding_func=PROVIDER_TO_MODEL.get(
-                    self.config.embedding_provider(), DEFAULT_EMBEDDING_PROVIDER
-                )(model=self.config.embedding_model_name()),
-            )
+            self.label_selector_map = {}
+            for attribute in self.config.attributes():
+                label_selection_count = attribute.get(
+                    AutolabelConfig.LABEL_SELECTION_KEY
+                )
+                if label_selection_count:
+                    label_selector = LabelSelector(
+                        config=self.config,
+                        embedding_func=PROVIDER_TO_MODEL.get(
+                            self.config.embedding_provider(),
+                            DEFAULT_EMBEDDING_PROVIDER,
+                        )(model=self.config.embedding_model_name()),
+                    )
+                    self.label_selector_map[attribute["name"]] = label_selector
 
         current_index = 0
         cost = 0.0
@@ -251,19 +259,21 @@ class LabelingAgent:
             chunk = dataset.inputs[current_index]
             examples = []
 
-            if self.label_selector:
+            if self.label_selector_map:
                 # Create toEmbed string using the example template from the config
                 example_template = self.config.example_template()
                 toEmbed = example_template.format_map(defaultdict(str, chunk))
-                selected_labels = self.label_selector.select_labels(toEmbed)
-                selected_labels_map = {
-                    self.config.label_selection_attribute(): selected_labels
-                }
+                selected_labels_map = {}
+                for attribute in self.config.attributes():
+                    attribute_name = attribute.get("name")
+                    label_selector = self.label_selector_map.get(attribute_name)
+                    if label_selector:
+                        selected_labels = label_selector.select_labels(toEmbed)
+                        selected_labels_map[attribute_name] = selected_labels
                 if self.example_selector:
                     examples = self.example_selector.select_examples(
                         safe_serialize_to_string(chunk),
-                        selected_labels=selected_labels,
-                        label_column=self.config.label_selection_attribute(),
+                        selected_labels_map=selected_labels_map,
                     )
             else:
                 if self.example_selector:
@@ -276,7 +286,7 @@ class LabelingAgent:
                 chunk,
                 examples,
                 selected_labels_map=selected_labels_map
-                if self.label_selector
+                if self.label_selector_map
                 else None,
                 max_input_tokens=self.llm.max_context_length,
                 get_num_tokens=self.llm.get_num_tokens,
@@ -310,7 +320,7 @@ class LabelingAgent:
                             chunk,
                             final_prompt,
                             selected_labels_map=selected_labels_map
-                            if self.label_selector
+                            if self.label_selector_map
                             else None,
                         )
                         annotation.input_tokens = input_tokens
