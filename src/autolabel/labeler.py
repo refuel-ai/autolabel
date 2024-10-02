@@ -6,6 +6,7 @@ from tqdm import tqdm
 import os
 import pickle
 from typing import Dict, List, Optional, Tuple, Union
+from collections import defaultdict
 
 import numpy as np
 import pandas as pd
@@ -23,8 +24,12 @@ from autolabel.confidence import ConfidenceCalculator
 from autolabel.configs import AutolabelConfig
 from autolabel.dataset import AutolabelDataset
 from autolabel.few_shot import (
+    PROVIDER_TO_MODEL,
+    DEFAULT_EMBEDDING_PROVIDER,
     BaseExampleSelector,
     ExampleSelectorFactory,
+    LabelSelector,
+    BaseLabelSelector,
 )
 from autolabel.metrics import BaseMetric
 from autolabel.models import BaseModel, ModelFactory
@@ -75,6 +80,7 @@ class LabelingAgent:
         config: Union[AutolabelConfig, str, dict],
         cache: Optional[bool] = True,
         example_selector: Optional[BaseExampleSelector] = None,
+        label_selector: Optional[BaseLabelSelector] = None,
         console_output: Optional[bool] = True,
         generation_cache: Optional[BaseCache] = SQLAlchemyGenerationCache(),
         transform_cache: Optional[BaseCache] = SQLAlchemyTransformCache(),
@@ -129,6 +135,7 @@ class LabelingAgent:
         )
 
         self.example_selector = example_selector
+        self.label_selector = label_selector
 
         if in_notebook():
             import nest_asyncio
@@ -211,12 +218,24 @@ class LabelingAgent:
                 cache=self.generation_cache is not None,
             )
 
+        if (
+            self.config.label_selection()
+            and self.config.task_type() == TaskType.ATTRIBUTE_EXTRACTION
+            and not self.label_selector
+        ):
+            self.label_selector = LabelSelector(
+                config=self.config,
+                embedding_func=PROVIDER_TO_MODEL.get(
+                    self.config.embedding_provider(), DEFAULT_EMBEDDING_PROVIDER
+                )(model=self.config.embedding_model_name()),
+            )
+
         current_index = 0
         cost = 0.0
         postfix_dict = {}
 
         indices = range(current_index, len(dataset.inputs))
-        selected_labels = self.config.labels_list()
+        selected_labels = None
         for current_index in (
             track_with_stats(
                 indices,
@@ -232,16 +251,33 @@ class LabelingAgent:
             chunk = dataset.inputs[current_index]
             examples = []
 
-            if self.example_selector:
-                examples = self.example_selector.select_examples(
-                    safe_serialize_to_string(chunk),
-                )
+            if self.label_selector:
+                # Create toEmbed string using the example template from the config
+                example_template = self.config.example_template()
+                toEmbed = example_template.format_map(defaultdict(str, chunk))
+                selected_labels = self.label_selector.select_labels(toEmbed)
+                selected_labels_map = {
+                    self.config.label_selection_attribute(): selected_labels
+                }
+                if self.example_selector:
+                    examples = self.example_selector.select_examples(
+                        safe_serialize_to_string(chunk),
+                        selected_labels=selected_labels,
+                        label_column=self.config.label_selection_attribute(),
+                    )
+            else:
+                if self.example_selector:
+                    examples = self.example_selector.select_examples(
+                        safe_serialize_to_string(chunk),
+                    )
 
             # Construct Prompt to pass to LLM
             final_prompt, output_schema = self.task.construct_prompt(
                 chunk,
                 examples,
-                selected_labels=selected_labels,
+                selected_labels_map=selected_labels_map
+                if self.label_selector
+                else None,
                 max_input_tokens=self.llm.max_context_length,
                 get_num_tokens=self.llm.get_num_tokens,
             )

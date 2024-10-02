@@ -53,7 +53,9 @@ class AttributeExtractionTask(BaseTask):
         if self.config.confidence():
             self.metrics.append(AUROCMetric())
 
-    def _construct_attribute_json(self) -> Tuple[str, Dict]:
+    def _construct_attribute_json(
+        self, selected_labels_map: Dict[str, List[str]] = None
+    ) -> Tuple[str, Dict]:
         """This function is used to construct the attribute json string for the output guidelines.
         Args:
             attributes (List[Dict]): A list of dictionaries containing the output attributes.
@@ -86,6 +88,8 @@ class AttributeExtractionTask(BaseTask):
 
             if "options" in attribute_dict and len(attribute_dict["options"]) > 0:
                 attribute_options = attribute_dict["options"]
+                if selected_labels_map and attribute_name in selected_labels_map:
+                    attribute_options = selected_labels_map[attribute_name]
                 attribute_desc += f"\nOptions:\n{','.join(attribute_options)}"
 
             output_json[attribute_name] = attribute_desc
@@ -158,11 +162,14 @@ class AttributeExtractionTask(BaseTask):
         output_guidelines_override: Optional[str] = None,
         max_input_tokens: Optional[int] = None,
         get_num_tokens: Optional[Callable] = None,
+        selected_labels_map: Dict[str, List[str]] = None,
         **kwargs,
     ) -> Tuple[str, str]:
         fmt_task_guidelines = self.task_guidelines
 
-        attribute_json, output_schema = self._construct_attribute_json()
+        attribute_json, output_schema = self._construct_attribute_json(
+            selected_labels_map=selected_labels_map
+        )
         output_guidelines = (
             self.output_guidelines
             if output_guidelines_override is None

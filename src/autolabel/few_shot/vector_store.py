@@ -17,13 +17,6 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-try:
-    import torch
-except ImportError:
-    logger.warning(
-        "Torch is not installed. Please install torch to use the VectorStoreWrapper."
-    )
-
 from sqlalchemy.sql import text as sql_text
 
 EMBEDDINGS_TABLE = "autolabel_embeddings"
@@ -46,21 +39,21 @@ def cos_sim(a, b):
     Returns:
         cos_sim: Matrix with res(i)(j) = cos_sim(a[i], b[j])
     """
-    if not isinstance(a, torch.Tensor):
-        a = torch.tensor(a)
+    if not isinstance(a, np.ndarray):
+        a = np.array(a)
 
-    if not isinstance(b, torch.Tensor):
-        b = torch.tensor(b)
+    if not isinstance(b, np.ndarray):
+        b = np.array(b)
 
     if len(a.shape) == 1:
-        a = a.unsqueeze(0)
+        a = a.reshape(1, -1)
 
     if len(b.shape) == 1:
-        b = b.unsqueeze(0)
+        b = b.reshape(1, -1)
 
-    a_norm = torch.nn.functional.normalize(a, p=2, dim=1)
-    b_norm = torch.nn.functional.normalize(b, p=2, dim=1)
-    return torch.mm(a_norm, b_norm.transpose(0, 1))
+    a_norm = a / np.linalg.norm(a, axis=1, keepdims=True)
+    b_norm = b / np.linalg.norm(b, axis=1, keepdims=True)
+    return np.dot(a_norm, b_norm.T)
 
 
 def semantic_search(
@@ -75,22 +68,14 @@ def semantic_search(
     Semantic similarity search based on cosine similarity score. Implementation from this project: https://github.com/UKPLab/sentence-transformers
     """
 
-    if isinstance(query_embeddings, (np.ndarray, np.generic)):
-        query_embeddings = torch.from_numpy(query_embeddings)
-    elif isinstance(query_embeddings, list):
-        query_embeddings = torch.stack(query_embeddings)
+    if isinstance(query_embeddings, list):
+        query_embeddings = np.array(query_embeddings)
 
     if len(query_embeddings.shape) == 1:
-        query_embeddings = query_embeddings.unsqueeze(0)
+        query_embeddings = query_embeddings.reshape(1, -1)
 
-    if isinstance(corpus_embeddings, (np.ndarray, np.generic)):
-        corpus_embeddings = torch.from_numpy(corpus_embeddings)
-    elif isinstance(corpus_embeddings, list):
-        corpus_embeddings = torch.stack(corpus_embeddings)
-
-    # Check that corpus and queries are on the same device
-    if corpus_embeddings.device != query_embeddings.device:
-        query_embeddings = query_embeddings.to(corpus_embeddings.device)
+    if isinstance(corpus_embeddings, list):
+        corpus_embeddings = np.array(corpus_embeddings)
 
     queries_result_list = [[] for _ in range(len(query_embeddings))]
 
@@ -106,15 +91,10 @@ def semantic_search(
             )
 
             # Get top-k scores
-            cos_scores_top_k_values, cos_scores_top_k_idx = torch.topk(
-                cos_scores,
-                min(top_k, len(cos_scores[0])),
-                dim=1,
-                largest=True,
-                sorted=False,
-            )
-            cos_scores_top_k_values = cos_scores_top_k_values.cpu().tolist()
-            cos_scores_top_k_idx = cos_scores_top_k_idx.cpu().tolist()
+            cos_scores_top_k_values = np.sort(cos_scores, axis=1)[:, -top_k:][:, ::-1]
+            cos_scores_top_k_idx = np.argsort(cos_scores, axis=1)[:, -top_k:][:, ::-1]
+            cos_scores_top_k_values = cos_scores_top_k_values.tolist()
+            cos_scores_top_k_idx = cos_scores_top_k_idx.tolist()
 
             for query_itr in range(len(cos_scores)):
                 for sub_corpus_id, score in zip(
@@ -256,9 +236,9 @@ class VectorStoreWrapper(VectorStore):
         if self._embedding_function is not None:
             embeddings = self._get_embeddings(texts)
 
-        self._corpus_embeddings = torch.tensor(embeddings)
+        self._corpus_embeddings = np.array(embeddings)
         self._texts = texts
-        self._metadatas = metadatas
+        self._metadatas = metadatas or [{} for _ in texts]
         return metadatas
 
     def similarity_search(
@@ -295,7 +275,7 @@ class VectorStoreWrapper(VectorStore):
             List[Tuple[Document, float]]: List of documents most similar to the query
                 text with distance in float.
         """
-        query_embeddings = torch.tensor([self._get_embeddings([query])[0]])
+        query_embeddings = np.array([self._get_embeddings([query])[0]])
         result_ids_and_scores = semantic_search(
             corpus_embeddings=self._corpus_embeddings,
             query_embeddings=query_embeddings,
@@ -347,7 +327,7 @@ class VectorStoreWrapper(VectorStore):
             List[Tuple[Document, float]]: List of documents most similar to the query
                 text with distance in float.
         """
-        query_embeddings = torch.tensor([self._get_embeddings([query])[0]])
+        query_embeddings = np.array([self._get_embeddings([query])[0]])
         data = []
         data = zip(self._corpus_embeddings, self._texts, self._metadatas)
         sorted_data = sorted(data, key=lambda item: item[2].get(label_key))
@@ -395,7 +375,7 @@ class VectorStoreWrapper(VectorStore):
         **kwargs: Any,
     ) -> List[Document]:
         query_embedding = self._get_embeddings([query])[0]
-        query_embeddings = torch.tensor([query_embedding])
+        query_embeddings = np.array([query_embedding])
         result_ids_and_scores = semantic_search(
             corpus_embeddings=self._corpus_embeddings,
             query_embeddings=query_embeddings,
@@ -404,9 +384,7 @@ class VectorStoreWrapper(VectorStore):
         result_ids = [result["corpus_id"] for result in result_ids_and_scores[0]]
         scores = [result["score"] for result in result_ids_and_scores[0]]
 
-        fetched_embeddings = torch.index_select(
-            input=self._corpus_embeddings, dim=0, index=torch.tensor(result_ids)
-        ).tolist()
+        fetched_embeddings = self._corpus_embeddings[result_ids].tolist()
         mmr_selected = maximal_marginal_relevance(
             np.array([query_embedding], dtype=np.float32),
             fetched_embeddings,
