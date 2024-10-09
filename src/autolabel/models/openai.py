@@ -75,6 +75,7 @@ class OpenAILLM(BaseModel):
 
     SUPPORTS_STRUCTURED_OUTPUTS = set(
         [
+            "gpt-4o",
             "gpt-4o-2024-08-06",
             "gpt-4o-mini",
         ]
