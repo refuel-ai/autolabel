@@ -167,6 +167,21 @@ class AttributeExtractionTask(BaseTask):
     ) -> Tuple[str, str]:
         fmt_task_guidelines = self.task_guidelines
 
+        # add additional labels to the selected_labels_map for attributes
+        # if they are present in the few shot examples
+        if self._is_few_shot_mode() and selected_labels_map:
+            for eg in examples:
+                for attribute_name in selected_labels_map:
+                    if (
+                        attribute_name in eg
+                        and eg.get(attribute_name)
+                        and eg.get(attribute_name)
+                        not in selected_labels_map[attribute_name]
+                    ):
+                        selected_labels_map[attribute_name].append(
+                            eg.get(attribute_name)
+                        )
+
         attribute_json, output_schema = self._construct_attribute_json(
             selected_labels_map=selected_labels_map
         )
