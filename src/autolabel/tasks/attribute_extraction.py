@@ -294,12 +294,25 @@ class AttributeExtractionTask(BaseTask):
                     llm_label[k] = str(v)
             successfully_labeled = True
         except Exception as e:
-            logger.error(f"Error parsing LLM response: {response.text}, Error: {e}")
-            llm_label = self.NULL_LABEL
-            error = LabelingError(
-                error_type=ErrorType.INVALID_LLM_RESPONSE_ERROR,
-                error_message=str(e),
+            logger.info(
+                f"Error parsing LLM response: {response.text}, Error: {e}. Now searching for valid JSON in response"
             )
+            try:
+                json_start, json_end = response.text.find("{"), response.text.rfind("}")
+                llm_label = {}
+                for k, v in json5.loads(response.text[json_start : json_end + 1]).items():
+                    if isinstance(v, list) or isinstance(v, dict):
+                        llm_label[k] = json.dumps(v)
+                    else:
+                        llm_label[k] = str(v)
+                successfully_labeled = True
+            except Exception as e:
+                logger.error(f"Error parsing LLM response: {response.text}, Error: {e}")
+                llm_label = self.NULL_LABEL
+                error = LabelingError(
+                    error_type=ErrorType.INVALID_LLM_RESPONSE_ERROR,
+                    error_message=str(e),
+                )
 
         if successfully_labeled:
             for attribute in self.config.attributes():
