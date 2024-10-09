@@ -287,7 +287,9 @@ class AttributeExtractionTask(BaseTask):
             completion_text = completion_text.lstrip("```json")
             completion_text = completion_text.rstrip("```")
 
-            llm_label = {k: json.dumps(v) for k, v in json5.loads(completion_text).items()}
+            llm_label = {
+                k: json.dumps(v) for k, v in json5.loads(completion_text).items()
+            }
             successfully_labeled = True
         except Exception as e:
             logger.error(f"Error parsing LLM response: {response.text}, Error: {e}")
