@@ -125,6 +125,7 @@ class LLMAnnotation(BaseModel):
     latency: Optional[float] = None
     error: Optional[LabelingError] = None
     multilabel_confidence: Optional[Dict[str, float]] = None
+    selected_labels_map: Optional[Dict[str, List[str]]] = None
 
 
 class GenerationCacheEntry(BaseModel):
