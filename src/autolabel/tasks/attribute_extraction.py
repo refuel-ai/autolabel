@@ -286,10 +286,12 @@ class AttributeExtractionTask(BaseTask):
             # Remove markdown formatting from the completion text
             completion_text = completion_text.lstrip("```json")
             completion_text = completion_text.rstrip("```")
-
-            llm_label = {
-                k: json.dumps(v) for k, v in json5.loads(completion_text).items()
-            }
+            llm_label = {}
+            for k, v in json5.loads(completion_text).items():
+                if isinstance(v, list) or isinstance(v, dict):
+                    llm_label[k] = json.dumps(v)
+                else:
+                    llm_label[k] = str(v)
             successfully_labeled = True
         except Exception as e:
             logger.error(f"Error parsing LLM response: {response.text}, Error: {e}")
