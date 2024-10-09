@@ -300,7 +300,9 @@ class AttributeExtractionTask(BaseTask):
             try:
                 json_start, json_end = response.text.find("{"), response.text.rfind("}")
                 llm_label = {}
-                for k, v in json5.loads(response.text[json_start : json_end + 1]).items():
+                for k, v in json5.loads(
+                    response.text[json_start : json_end + 1]
+                ).items():
                     if isinstance(v, list) or isinstance(v, dict):
                         llm_label[k] = json.dumps(v)
                     else:
