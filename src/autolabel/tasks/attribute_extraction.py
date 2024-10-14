@@ -354,6 +354,7 @@ class AttributeExtractionTask(BaseTask):
             raw_response=response.text,
             prompt=prompt,
             error=error,
+            selected_labels_map=selected_labels_map,
         )
 
     def eval(
