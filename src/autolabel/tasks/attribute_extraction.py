@@ -345,6 +345,14 @@ class AttributeExtractionTask(BaseTask):
                                 f"Attribute {attr_label} from the LLM response {llm_label} is not in the labels list"
                             )
                             llm_label.pop(attribute["name"], None)
+                    elif attr_type == TaskType.MULTILABEL_CLASSIFICATION:
+                        attr_labels = attr_label.split(self.config.label_separator())
+                        for label in attr_labels:
+                            if label not in attr_options:
+                                logger.warning(
+                                    f"Attribute {label} from the LLM response {llm_label} with value {attr_label} is not in the labels list"
+                                )
+                                llm_label.pop(attribute["name"], None)
 
         return LLMAnnotation(
             curr_sample=pickle.dumps(curr_sample),
