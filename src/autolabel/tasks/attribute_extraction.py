@@ -171,16 +171,24 @@ class AttributeExtractionTask(BaseTask):
         # if they are present in the few shot examples
         if self._is_few_shot_mode() and selected_labels_map:
             for eg in examples:
-                for attribute_name in selected_labels_map:
-                    if (
-                        attribute_name in eg
-                        and eg.get(attribute_name)
-                        and eg.get(attribute_name)
-                        not in selected_labels_map[attribute_name]
-                    ):
-                        selected_labels_map[attribute_name].append(
-                            eg.get(attribute_name)
-                        )
+                for attribute in self.config.attributes():
+                    attribute_name = attribute["name"]
+                    if attribute_name not in selected_labels_map:
+                        continue
+
+                    label = eg.get(attribute_name)
+                    if not label:
+                        continue
+
+                    attr_type = attribute.get("task_type")
+                    if attr_type == TaskType.MULTILABEL_CLASSIFICATION:
+                        labels = label.split(self.config.label_separator())
+                    else:
+                        labels = [label]
+
+                    for l in labels:
+                        if l not in selected_labels_map[attribute_name]:
+                            selected_labels_map[attribute_name].append(l)
 
         attribute_json, output_schema = self._construct_attribute_json(
             selected_labels_map=selected_labels_map
