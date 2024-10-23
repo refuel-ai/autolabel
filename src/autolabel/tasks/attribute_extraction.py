@@ -365,7 +365,7 @@ class AttributeExtractionTask(BaseTask):
                         )
                         if len(filtered_attr_labels) != len(original_attr_labels):
                             logger.warning(
-                                f"Attribute {attr_label} from the LLM response {llm_label} is not in the labels list"
+                                f"Attribute {attr_label} from the LLM response {llm_label} is not in the labels list. Filtered list: {filtered_attr_labels}"
                             )
         return LLMAnnotation(
             curr_sample=pickle.dumps(curr_sample),
