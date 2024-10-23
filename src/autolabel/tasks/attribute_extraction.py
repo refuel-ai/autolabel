@@ -367,6 +367,8 @@ class AttributeExtractionTask(BaseTask):
                             logger.warning(
                                 f"Attribute {attr_label} from the LLM response {llm_label} is not in the labels list. Filtered list: {filtered_attr_labels}"
                             )
+                        if len(filtered_attr_labels) == 0:
+                            llm_label.pop(attribute["name"], None)
         return LLMAnnotation(
             curr_sample=pickle.dumps(curr_sample),
             successfully_labeled=successfully_labeled,
