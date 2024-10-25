@@ -1,11 +1,13 @@
-import logging
 import json
-from typing import List, Optional, Dict
-from autolabel.models import BaseModel
-from autolabel.configs import AutolabelConfig
-from autolabel.cache import BaseCache
-from autolabel.schema import RefuelLLMResult, Generation
+import logging
+from typing import Dict, List, Optional
 
+from transformers import AutoTokenizer
+
+from autolabel.cache import BaseCache
+from autolabel.configs import AutolabelConfig
+from autolabel.models import BaseModel
+from autolabel.schema import Generation, RefuelLLMResult
 
 logger = logging.getLogger(__name__)
 
@@ -14,13 +16,13 @@ class HFPipelineMultimodal(BaseModel):
     DEFAULT_MODEL = "HuggingFaceM4/idefics-9b-instruct"
     DEFAULT_PARAMS = {"temperature": 0.0, "quantize": 8}
 
-    def __init__(self, config: AutolabelConfig, cache: BaseCache = None) -> None:
-        super().__init__(config, cache)
+    def __init__(self, config: AutolabelConfig, cache: BaseCache = None, tokenizer: Optional[AutoTokenizer] = None) -> None:
+        super().__init__(config, cache, tokenizer)
         try:
             from transformers import (
                 AutoConfig,
-                AutoProcessor,
                 AutoModelForPreTraining,
+                AutoProcessor,
                 pipeline,
             )
         except ImportError:

@@ -1,19 +1,23 @@
 import logging
-from .base import BaseModel
+
+from transformers import AutoTokenizer
+
+from autolabel.cache import BaseCache
 from autolabel.configs import AutolabelConfig
 from autolabel.schema import ModelProvider
-from autolabel.cache import BaseCache
+
+from .base import BaseModel
 
 logger = logging.getLogger(__name__)
 
-from autolabel.models.openai import OpenAILLM
-from autolabel.models.openai_vision import OpenAIVisionLLM
 from autolabel.models.anthropic import AnthropicLLM
 from autolabel.models.cohere import CohereLLM
 from autolabel.models.google import GoogleLLM
-from autolabel.models.mistral import MistralLLM
 from autolabel.models.hf_pipeline import HFPipelineLLM
 from autolabel.models.hf_pipeline_vision import HFPipelineMultimodal
+from autolabel.models.mistral import MistralLLM
+from autolabel.models.openai import OpenAILLM
+from autolabel.models.openai_vision import OpenAIVisionLLM
 from autolabel.models.refuelV2 import RefuelLLMV2
 from autolabel.models.vllm import VLLMModel
 
@@ -40,7 +44,7 @@ class ModelFactory:
     """The ModelFactory class is used to create a BaseModel object from the given AutoLabelConfig configuration."""
 
     @staticmethod
-    def from_config(config: AutolabelConfig, cache: BaseCache = None) -> BaseModel:
+    def from_config(config: AutolabelConfig, cache: BaseCache = None, tokenizer: AutoTokenizer = None) -> BaseModel:
         """
         Returns a BaseModel object configured with the settings found in the provided AutolabelConfig.
         Args:
@@ -52,7 +56,7 @@ class ModelFactory:
         provider = ModelProvider(config.provider())
         try:
             model_cls = MODEL_REGISTRY[provider]
-            model_obj = model_cls(config=config, cache=cache)
+            model_obj = model_cls(config=config, cache=cache, tokenizer=tokenizer)
             # The below ensures that users should based off of the BaseModel
             # when creating/registering custom models.
             assert isinstance(

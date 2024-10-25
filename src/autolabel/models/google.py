@@ -1,9 +1,10 @@
-import os
 import logging
+import os
 from time import time
 from typing import Dict, List, Optional
 
 from langchain.schema import Generation
+from transformers import AutoTokenizer
 
 from autolabel.cache import BaseCache
 from autolabel.configs import AutolabelConfig
@@ -34,13 +35,14 @@ class GoogleLLM(BaseModel):
         self,
         config: AutolabelConfig,
         cache: BaseCache = None,
+        tokenizer: Optional[AutoTokenizer] = None,
     ) -> None:
         try:
             import tiktoken
             from langchain_google_vertexai import (
-                VertexAI,
                 HarmBlockThreshold,
                 HarmCategory,
+                VertexAI,
             )
             from vertexai import generative_models
         except ImportError:
@@ -59,7 +61,7 @@ class GoogleLLM(BaseModel):
             },
         }
 
-        super().__init__(config, cache)
+        super().__init__(config, cache, tokenizer)
 
         if os.getenv("GOOGLE_APPLICATION_CREDENTIALS") is None:
             raise ValueError(

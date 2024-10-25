@@ -1,5 +1,4 @@
 import asyncio
-import copy
 import json
 import os
 import requests
@@ -7,6 +6,7 @@ import logging
 from typing import Dict, List, Optional, Tuple
 from time import time
 import httpx
+from transformers import AutoTokenizer
 
 from autolabel.models import BaseModel
 from autolabel.configs import AutolabelConfig
@@ -48,8 +48,9 @@ class RefuelLLMV2(BaseModel):
         self,
         config: AutolabelConfig,
         cache: BaseCache = None,
+        tokenizer: Optional[AutoTokenizer] = None,
     ) -> None:
-        super().__init__(config, cache)
+        super().__init__(config, cache, tokenizer)
         try:
             from transformers import AutoTokenizer
         except Exception as e:
@@ -67,7 +68,7 @@ class RefuelLLMV2(BaseModel):
         )
         self.model_params = {**self.DEFAULT_PARAMS, **model_params}
         self.model_endpoint = config.model_endpoint()
-        self.tokenizer = AutoTokenizer.from_pretrained(
+        self.tokenizer = tokenizer if tokenizer else AutoTokenizer.from_pretrained(
             **self.DEFAULT_TOKENIZATION_MODEL
         )
         self.read_timeout = self.model_params.get(

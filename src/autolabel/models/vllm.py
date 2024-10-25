@@ -1,12 +1,13 @@
 import logging
 from typing import List, Optional
 
-from autolabel.models import BaseModel
-from autolabel.configs import AutolabelConfig
-from autolabel.cache import BaseCache
-from autolabel.schema import LabelingError, ErrorType, RefuelLLMResult
-
 from langchain.schema import Generation
+from transformers import AutoTokenizer
+
+from autolabel.cache import BaseCache
+from autolabel.configs import AutolabelConfig
+from autolabel.models import BaseModel
+from autolabel.schema import ErrorType, LabelingError, RefuelLLMResult
 
 logger = logging.getLogger(__name__)
 
@@ -22,17 +23,18 @@ class VLLMModel(BaseModel):
         self,
         config: AutolabelConfig,
         cache: BaseCache = None,
+        tokenizer: Optional[AutoTokenizer] = None
     ) -> None:
-        super().__init__(config, cache)
+        super().__init__(config, cache, tokenizer)
         try:
-            from vllm import LLM, SamplingParams
             from transformers import AutoTokenizer
+            from vllm import LLM, SamplingParams
         except ImportError:
             raise ImportError(
                 "vllm is required to use the vllm LLM. Please install it with the following command: pip install vllm"
             )
 
-        self.tokenizer = AutoTokenizer.from_pretrained(self.config.model_name())
+        self.tokenizer = tokenizer if tokenizer else AutoTokenizer.from_pretrained(self.config.model_name())
         self.params = SamplingParams(
             max_tokens=self.DEFAULT_PARAMS["max_tokens"],
             temperature=self.DEFAULT_PARAMS["temperature"],

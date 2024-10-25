@@ -116,7 +116,7 @@ class LabelingAgent:
         )
         self.task = TaskFactory.from_config(self.config)
         self.llm: BaseModel = ModelFactory.from_config(
-            self.config, cache=self.generation_cache
+            self.config, cache=self.generation_cache, tokenizer=confidence_tokenizer
         )
 
         if self.config.confidence_chunk_column():

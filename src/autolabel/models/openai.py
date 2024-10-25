@@ -1,4 +1,3 @@
-import copy
 import ast
 import logging
 import os
@@ -6,12 +5,13 @@ from functools import cached_property
 from time import time
 from typing import Dict, List, Optional
 
-from langchain.schema import HumanMessage, Generation, LLMResult
+from langchain.schema import Generation, HumanMessage, LLMResult
+from transformers import AutoTokenizer
 
 from autolabel.cache import BaseCache
 from autolabel.configs import AutolabelConfig
 from autolabel.models import BaseModel
-from autolabel.schema import ErrorType, RefuelLLMResult, LabelingError
+from autolabel.schema import ErrorType, LabelingError, RefuelLLMResult
 
 logger = logging.getLogger(__name__)
 
@@ -149,8 +149,8 @@ class OpenAILLM(BaseModel):
         else:
             return "completion"
 
-    def __init__(self, config: AutolabelConfig, cache: BaseCache = None) -> None:
-        super().__init__(config, cache)
+    def __init__(self, config: AutolabelConfig, cache: BaseCache = None, tokenizer: Optional[AutoTokenizer] = None) -> None:
+        super().__init__(config, cache, tokenizer)
         try:
             import tiktoken
             from langchain_openai import ChatOpenAI, OpenAI

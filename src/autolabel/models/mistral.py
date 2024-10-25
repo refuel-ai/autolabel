@@ -1,27 +1,25 @@
 import asyncio
+import logging
 import os
-import requests
 from time import time
 from typing import Dict, List, Optional, Tuple
+
 import httpx
+import requests
+from langchain.schema import Generation
+from tenacity import (
+    before_sleep_log,
+    retry,
+    retry_if_not_exception_type,
+    stop_after_attempt,
+    wait_exponential,
+)
+from transformers import AutoTokenizer
 
 from autolabel.cache import BaseCache
 from autolabel.configs import AutolabelConfig
 from autolabel.models import BaseModel
-from autolabel.schema import LabelingError, ErrorType, RefuelLLMResult
-import json
-import logging
-from transformers import AutoTokenizer
-
-from tenacity import (
-    before_sleep_log,
-    retry,
-    stop_after_attempt,
-    wait_exponential,
-    retry_if_not_exception_type,
-)
-
-from langchain.schema import Generation
+from autolabel.schema import ErrorType, LabelingError, RefuelLLMResult
 
 logger = logging.getLogger(__name__)
 
@@ -55,8 +53,8 @@ class MistralLLM(BaseModel):
         "mistral-large-latest": (24 / 1_000_000),
     }
 
-    def __init__(self, config: AutolabelConfig, cache: BaseCache = None) -> None:
-        super().__init__(config, cache)
+    def __init__(self, config: AutolabelConfig, cache: BaseCache = None, tokenizer: Optional[AutoTokenizer] = None) -> None:
+        super().__init__(config, cache, tokenizer)
 
         if os.getenv("MISTRAL_API_KEY") is None:
             raise ValueError("MISTRAL_API_KEY environment variable not set")
