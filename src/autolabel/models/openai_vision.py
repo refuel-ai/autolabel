@@ -5,7 +5,8 @@ from functools import cached_property, partial
 from time import time
 from typing import Dict, List, Optional
 
-from langchain.schema import Generation, HumanMessage
+from langchain.schema import Generation
+from transformers import AutoTokenizer
 
 from autolabel.cache import BaseCache
 from autolabel.configs import AutolabelConfig
@@ -54,9 +55,12 @@ class OpenAIVisionLLM(BaseModel):
             return "completion"
 
     def __init__(
-        self, config: AutolabelConfig, cache: Optional[BaseCache] = None
+        self,
+        config: AutolabelConfig,
+        cache: Optional[BaseCache] = None,
+        tokenizer: Optional[AutoTokenizer] = None,
     ) -> None:
-        super().__init__(config, cache)
+        super().__init__(config, cache, tokenizer)
         try:
             import tiktoken
             from openai import OpenAI

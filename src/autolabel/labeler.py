@@ -2,15 +2,15 @@ import asyncio
 import io
 import json
 import logging
-from tqdm import tqdm
 import os
 import pickle
-from typing import Dict, List, Optional, Tuple, Union
 from collections import defaultdict
+from typing import Dict, List, Optional, Tuple, Union
 
 import numpy as np
 import pandas as pd
 from rich.console import Console
+from tqdm import tqdm
 from transformers import AutoTokenizer
 
 from autolabel.cache import (
@@ -19,17 +19,16 @@ from autolabel.cache import (
     SQLAlchemyGenerationCache,
     SQLAlchemyTransformCache,
 )
-from autolabel.schema import TaskType
 from autolabel.confidence import ConfidenceCalculator
 from autolabel.configs import AutolabelConfig
 from autolabel.dataset import AutolabelDataset
 from autolabel.few_shot import (
-    PROVIDER_TO_MODEL,
     DEFAULT_EMBEDDING_PROVIDER,
+    PROVIDER_TO_MODEL,
     BaseExampleSelector,
+    BaseLabelSelector,
     ExampleSelectorFactory,
     LabelSelector,
-    BaseLabelSelector,
 )
 from autolabel.metrics import BaseMetric
 from autolabel.models import BaseModel, ModelFactory
@@ -37,6 +36,7 @@ from autolabel.schema import (
     AggregationFunction,
     LLMAnnotation,
     MetricResult,
+    TaskType,
 )
 from autolabel.tasks import TaskFactory
 from autolabel.transforms import BaseTransform, TransformFactory
@@ -94,7 +94,7 @@ class LabelingAgent:
         self.confidence_cache = confidence_cache
         if not cache:
             logger.warning(
-                f"cache parameter is deprecated and will be removed soon. Please use generation_cache, transform_cache and confidence_cache instead."
+                "cache parameter is deprecated and will be removed soon. Please use generation_cache, transform_cache and confidence_cache instead."
             )
             self.generation_cache = None
             self.transform_cache = None
@@ -116,7 +116,7 @@ class LabelingAgent:
         )
         self.task = TaskFactory.from_config(self.config)
         self.llm: BaseModel = ModelFactory.from_config(
-            self.config, cache=self.generation_cache
+            self.config, cache=self.generation_cache, tokenizer=confidence_tokenizer
         )
 
         if self.config.confidence_chunk_column():

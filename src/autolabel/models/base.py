@@ -1,10 +1,9 @@
 """Base interface that all model providers will implement."""
 
 from abc import ABC, abstractmethod
-from time import time
 from typing import Dict, List, Optional
 
-from langchain.schema import Generation
+from transformers import AutoTokenizer
 
 from autolabel.cache import BaseCache
 from autolabel.configs import AutolabelConfig
@@ -18,9 +17,12 @@ class BaseModel(ABC):
     TTL_MS = 60 * 60 * 24 * 7 * 1000  # 1 week
     DEFAULT_CONTEXT_LENGTH = None
 
-    def __init__(self, config: AutolabelConfig, cache: BaseCache) -> None:
+    def __init__(
+        self, config: AutolabelConfig, cache: BaseCache, tokenizer: AutoTokenizer
+    ) -> None:
         self.config = config
         self.cache = cache
+        self.tokenizer = tokenizer
         self.model_params = config.model_params()
         self.max_context_length = config.max_context_length(
             default=self.DEFAULT_CONTEXT_LENGTH
