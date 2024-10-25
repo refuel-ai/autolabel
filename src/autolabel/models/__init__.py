@@ -44,7 +44,11 @@ class ModelFactory:
     """The ModelFactory class is used to create a BaseModel object from the given AutoLabelConfig configuration."""
 
     @staticmethod
-    def from_config(config: AutolabelConfig, cache: BaseCache = None, tokenizer: AutoTokenizer = None) -> BaseModel:
+    def from_config(
+        config: AutolabelConfig,
+        cache: BaseCache = None,
+        tokenizer: AutoTokenizer = None,
+    ) -> BaseModel:
         """
         Returns a BaseModel object configured with the settings found in the provided AutolabelConfig.
         Args:

@@ -149,7 +149,12 @@ class OpenAILLM(BaseModel):
         else:
             return "completion"
 
-    def __init__(self, config: AutolabelConfig, cache: BaseCache = None, tokenizer: Optional[AutoTokenizer] = None) -> None:
+    def __init__(
+        self,
+        config: AutolabelConfig,
+        cache: BaseCache = None,
+        tokenizer: Optional[AutoTokenizer] = None,
+    ) -> None:
         super().__init__(config, cache, tokenizer)
         try:
             import tiktoken

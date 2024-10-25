@@ -16,7 +16,12 @@ class HFPipelineMultimodal(BaseModel):
     DEFAULT_MODEL = "HuggingFaceM4/idefics-9b-instruct"
     DEFAULT_PARAMS = {"temperature": 0.0, "quantize": 8}
 
-    def __init__(self, config: AutolabelConfig, cache: BaseCache = None, tokenizer: Optional[AutoTokenizer] = None) -> None:
+    def __init__(
+        self,
+        config: AutolabelConfig,
+        cache: BaseCache = None,
+        tokenizer: Optional[AutoTokenizer] = None,
+    ) -> None:
         super().__init__(config, cache, tokenizer)
         try:
             from transformers import (

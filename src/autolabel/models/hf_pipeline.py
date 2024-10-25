@@ -17,7 +17,12 @@ class HFPipelineLLM(BaseModel):
     DEFAULT_MODEL = "google/flan-t5-xxl"
     DEFAULT_PARAMS = {"temperature": 0.0, "quantize": 8}
 
-    def __init__(self, config: AutolabelConfig, cache: BaseCache = None, tokenizer: Optional[AutoTokenizer] = None) -> None:
+    def __init__(
+        self,
+        config: AutolabelConfig,
+        cache: BaseCache = None,
+        tokenizer: Optional[AutoTokenizer] = None,
+    ) -> None:
         super().__init__(config, cache, tokenizer)
 
         from langchain.llms import HuggingFacePipeline

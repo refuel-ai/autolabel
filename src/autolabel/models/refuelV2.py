@@ -1,26 +1,26 @@
 import asyncio
 import json
-import os
-import requests
 import logging
-from typing import Dict, List, Optional, Tuple
+import os
 from time import time
+from typing import Dict, List, Optional, Tuple
+
 import httpx
-from transformers import AutoTokenizer
-
-from autolabel.models import BaseModel
-from autolabel.configs import AutolabelConfig
-from autolabel.cache import BaseCache
-from autolabel.schema import LabelingError, ErrorType, RefuelLLMResult
-
+import requests
+from langchain.schema import Generation
 from tenacity import (
     before_sleep_log,
     retry,
+    retry_if_not_exception_type,
     stop_after_attempt,
     wait_exponential,
-    retry_if_not_exception_type,
 )
-from langchain.schema import Generation
+from transformers import AutoTokenizer
+
+from autolabel.cache import BaseCache
+from autolabel.configs import AutolabelConfig
+from autolabel.models import BaseModel
+from autolabel.schema import ErrorType, LabelingError, RefuelLLMResult
 
 UNRETRYABLE_ERROR_CODES = [400, 422]
 logger = logging.getLogger(__name__)
@@ -53,7 +53,7 @@ class RefuelLLMV2(BaseModel):
         super().__init__(config, cache, tokenizer)
         try:
             from transformers import AutoTokenizer
-        except Exception as e:
+        except Exception:
             raise Exception(
                 "Unable to import transformers. Please install transformers to use RefuelLLM"
             )
@@ -68,8 +68,10 @@ class RefuelLLMV2(BaseModel):
         )
         self.model_params = {**self.DEFAULT_PARAMS, **model_params}
         self.model_endpoint = config.model_endpoint()
-        self.tokenizer = tokenizer if tokenizer else AutoTokenizer.from_pretrained(
-            **self.DEFAULT_TOKENIZATION_MODEL
+        self.tokenizer = (
+            tokenizer
+            if tokenizer
+            else AutoTokenizer.from_pretrained(**self.DEFAULT_TOKENIZATION_MODEL)
         )
         self.read_timeout = self.model_params.get(
             "request_timeout", self.DEFAULT_READ_TIMEOUT

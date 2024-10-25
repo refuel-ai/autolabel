@@ -37,7 +37,12 @@ class AnthropicLLM(BaseModel):
         "claude-3-5-sonnet-20240620": (15 / 1_000_000),
     }
 
-    def __init__(self, config: AutolabelConfig, cache: BaseCache = None, tokenizer: Optional[AutoTokenizer] = None) -> None:
+    def __init__(
+        self,
+        config: AutolabelConfig,
+        cache: BaseCache = None,
+        tokenizer: Optional[AutoTokenizer] = None,
+    ) -> None:
         super().__init__(config, cache, tokenizer)
 
         try:

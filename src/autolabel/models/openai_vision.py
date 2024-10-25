@@ -55,7 +55,10 @@ class OpenAIVisionLLM(BaseModel):
             return "completion"
 
     def __init__(
-        self, config: AutolabelConfig, cache: Optional[BaseCache] = None, tokenizer: Optional[AutoTokenizer] = None
+        self,
+        config: AutolabelConfig,
+        cache: Optional[BaseCache] = None,
+        tokenizer: Optional[AutoTokenizer] = None,
     ) -> None:
         super().__init__(config, cache, tokenizer)
         try:

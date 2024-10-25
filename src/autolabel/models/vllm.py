@@ -23,7 +23,7 @@ class VLLMModel(BaseModel):
         self,
         config: AutolabelConfig,
         cache: BaseCache = None,
-        tokenizer: Optional[AutoTokenizer] = None
+        tokenizer: Optional[AutoTokenizer] = None,
     ) -> None:
         super().__init__(config, cache, tokenizer)
         try:
@@ -34,7 +34,11 @@ class VLLMModel(BaseModel):
                 "vllm is required to use the vllm LLM. Please install it with the following command: pip install vllm"
             )
 
-        self.tokenizer = tokenizer if tokenizer else AutoTokenizer.from_pretrained(self.config.model_name())
+        self.tokenizer = (
+            tokenizer
+            if tokenizer
+            else AutoTokenizer.from_pretrained(self.config.model_name())
+        )
         self.params = SamplingParams(
             max_tokens=self.DEFAULT_PARAMS["max_tokens"],
             temperature=self.DEFAULT_PARAMS["temperature"],

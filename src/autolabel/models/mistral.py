@@ -53,7 +53,12 @@ class MistralLLM(BaseModel):
         "mistral-large-latest": (24 / 1_000_000),
     }
 
-    def __init__(self, config: AutolabelConfig, cache: BaseCache = None, tokenizer: Optional[AutoTokenizer] = None) -> None:
+    def __init__(
+        self,
+        config: AutolabelConfig,
+        cache: BaseCache = None,
+        tokenizer: Optional[AutoTokenizer] = None,
+    ) -> None:
         super().__init__(config, cache, tokenizer)
 
         if os.getenv("MISTRAL_API_KEY") is None:
