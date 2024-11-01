@@ -312,7 +312,7 @@ class AttributeExtractionTask(BaseTask):
             llm_label = {}
             for k, v in json5.loads(completion_text).items():
                 if isinstance(v, list) or isinstance(v, dict):
-                    llm_label[k] = json.dumps(v)
+                    llm_label[k] = v
                 else:
                     llm_label[k] = str(v)
             successfully_labeled = True
@@ -327,7 +327,7 @@ class AttributeExtractionTask(BaseTask):
                     response.text[json_start : json_end + 1]
                 ).items():
                     if isinstance(v, list) or isinstance(v, dict):
-                        llm_label[k] = json.dumps(v)
+                        llm_label[k] = v
                     else:
                         llm_label[k] = str(v)
                 successfully_labeled = True
