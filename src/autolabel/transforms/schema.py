@@ -9,7 +9,6 @@ class TransformType(str, Enum):
     """Enum containing all Transforms supported by autolabel"""
 
     WEBPAGE_TRANSFORM = "webpage_transform"
-    WEBPAGE_SCRAPE = "webpage_scrape"
     PDF = "pdf"
     IMAGE = "image"
     WEB_SEARCH_SERP_API = "web_search_serp_api"
