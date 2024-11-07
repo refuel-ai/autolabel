@@ -48,6 +48,7 @@ class WebpageTransform(BaseTransform):
         timeout: int = DEFAULT_TIMEOUT,
         scrapingbee_api_key: str = None,
         max_retries: int = MAX_RETRIES,
+        v2_enabled: bool = False,
         v2_api_key: str = None,
     ) -> None:
         super().__init__(cache, output_columns)
@@ -62,6 +63,7 @@ class WebpageTransform(BaseTransform):
             "transparent_status_code": "True",
             "js_scenario": JS_SCENARIO,
         }
+        self.v2_enabled = v2_enabled
         self.v2_api_key = v2_api_key
 
     def name(self) -> str:
@@ -85,7 +87,8 @@ class WebpageTransform(BaseTransform):
 
     # On error, retry fetching the URL with a premium proxy. Only use exponential backoff for certain status codes.
     async def _load_url(self, url: str, retry_count=0) -> str:
-        return self._load_url_v2(url)
+        if self.v2_enabled:
+            return self._load_url_v2(url)
         if retry_count >= self.max_retries:
             logger.warning(f"Max retries reached for URL: {url}")
             raise TransformError(
