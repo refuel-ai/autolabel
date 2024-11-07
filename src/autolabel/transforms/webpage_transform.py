@@ -68,14 +68,12 @@ class WebpageTransform(BaseTransform):
 
     def name(self) -> str:
         return TransformType.WEBPAGE_TRANSFORM
-    
+
     def _load_url_v2(self, url: str) -> str:
         try:
-            headers = {
-                'Authorization': f'Bearer {self.v2_api_key}'
-            }
+            headers = {"Authorization": f"Bearer {self.v2_api_key}"}
 
-            url = f'https://r.jina.ai/{url}'
+            url = f"https://r.jina.ai/{url}"
             response = requests.get(url, headers=headers)
             return response.text
         except Exception as e:
