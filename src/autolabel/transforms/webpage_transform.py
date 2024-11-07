@@ -15,6 +15,7 @@ from langchain_community.document_transformers import Html2TextTransformer
 from langchain.docstore.document import Document
 from autolabel.cache import BaseCache
 from scrapingbee import ScrapingBeeClient
+import requests
 
 logger = logging.getLogger(__name__)
 
@@ -47,6 +48,8 @@ class WebpageTransform(BaseTransform):
         timeout: int = DEFAULT_TIMEOUT,
         scrapingbee_api_key: str = None,
         max_retries: int = MAX_RETRIES,
+        v2_enabled: bool = False,
+        v2_api_key: str = None,
     ) -> None:
         super().__init__(cache, output_columns)
         self.url_column = url_column
@@ -60,12 +63,30 @@ class WebpageTransform(BaseTransform):
             "transparent_status_code": "True",
             "js_scenario": JS_SCENARIO,
         }
+        self.v2_enabled = v2_enabled
+        self.v2_api_key = v2_api_key
 
     def name(self) -> str:
         return TransformType.WEBPAGE_TRANSFORM
 
+    def _load_url_v2(self, url: str) -> str:
+        try:
+            headers = {"Authorization": f"Bearer {self.v2_api_key}"}
+
+            url = f"https://r.jina.ai/{url}"
+            response = requests.get(url, headers=headers)
+            return response.text
+        except Exception as e:
+            logger.warning(f"Error fetching content from URL: {url}. Exception: {e}")
+            raise TransformError(
+                TransformErrorType.TRANSFORM_ERROR,
+                f"Error fetching content from URL: {url}. Exception: {e}",
+            )
+
     # On error, retry fetching the URL with a premium proxy. Only use exponential backoff for certain status codes.
     async def _load_url(self, url: str, retry_count=0) -> str:
+        if self.v2_enabled:
+            return self._load_url_v2(url)
         if retry_count >= self.max_retries:
             logger.warning(f"Max retries reached for URL: {url}")
             raise TransformError(
