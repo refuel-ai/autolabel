@@ -537,6 +537,10 @@ class LabelingAgent:
         output_df = pd.DataFrame.from_records(outputs)
         final_df = pd.concat([dataset.df, output_df], axis=1)
         dataset = AutolabelDataset(final_df, self.config)
+        error_columns = transform.transform_error_columns
+        # check if any of the output columns have errors
+        if not any(dataset.df[error_columns].notnull().any()):
+            dataset.df[dataset.generate_label_name("transform")] = transform.name()
         return dataset
 
     def transform(self, dataset: AutolabelDataset) -> AutolabelDataset:
