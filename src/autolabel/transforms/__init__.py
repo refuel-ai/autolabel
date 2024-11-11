@@ -6,6 +6,7 @@ from .serp_api import SerpApi
 from .serper_api import SerperApi
 from .serper_maps import SerperMaps
 from .custom_api import CustomApi
+from .ocr import OCRTransform
 from .webpage_transform import WebpageTransform
 from .image import ImageTransform
 from typing import Dict
@@ -15,6 +16,7 @@ from autolabel.cache import BaseCache
 logger = logging.getLogger(__name__)
 
 TRANSFORM_REGISTRY = {
+    TransformType.OCR: OCRTransform,
     TransformType.PDF: PDFTransform,
     TransformType.WEBPAGE_TRANSFORM: WebpageTransform,
     TransformType.IMAGE: ImageTransform,
