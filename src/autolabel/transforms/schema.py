@@ -15,6 +15,7 @@ class TransformType(str, Enum):
     WEB_SEARCH_SERPER = "web_search"
     MAPS_SEARCH = "map_search"
     CUSTOM_API = "custom_api"
+    OCR = "ocr"
 
 
 class TransformCacheEntry(BaseModel):
