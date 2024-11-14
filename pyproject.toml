@@ -82,6 +82,7 @@ cohere = [
     "cohere>=4.11.2"
 ]
 minimal = [
+    "boto3==1.33.3",
     "openai==1.45.0",
     "langchain==0.2.16",
     "langchain-anthropic==0.1.23",
@@ -108,6 +109,7 @@ minimal = [
 ]
 all = [
     "black",
+    "boto3==1.33.3",
     "bumpver",
     "pip-tools",
     "pytest",
