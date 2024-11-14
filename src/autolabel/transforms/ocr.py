@@ -58,9 +58,7 @@ class OCRTransform(BaseTransform):
             self.convert_from_path = convert_from_path
             self.pytesseract.get_tesseract_version()
 
-            self.session = boto3.Session()
-            self.s3_connection = self.session.resource("s3")
-            self.client = self.session.client("textract")
+            self.client = boto3.client("textract")
 
         except ImportError:
             msg = (
