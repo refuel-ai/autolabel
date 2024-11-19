@@ -1,12 +1,14 @@
-from collections import defaultdict
 import json
+import logging
+import time
+from collections import defaultdict
+from typing import Any, Dict, List
+
+import pandas as pd
+from langchain_community.utilities import GoogleSerperAPIWrapper
+
 from autolabel.cache import BaseCache
 from autolabel.transforms import BaseTransform
-from langchain_community.utilities import GoogleSerperAPIWrapper
-from typing import Dict, Any, List
-import logging
-import pandas as pd
-
 from autolabel.transforms.schema import (
     TransformError,
     TransformErrorType,
@@ -31,21 +33,21 @@ class RefuelSerperAPIWrapper(GoogleSerperAPIWrapper):
         Processes the response from Serper.dev API and returns the search results.
         """
         cleaned_res = {}
-        if "error" in res.keys():
+        if "error" in res:
             raise ValueError(f"Got error from Serper.dev API: {res['error']}")
-        if "knowledgeGraph" in res.keys():
+        if "knowledgeGraph" in res:
             cleaned_res["knowledge_graph"] = json.dumps(res["knowledgeGraph"])
-        if "organic" in res.keys():
+        if "organic" in res:
             organic_results = list(
                 map(
                     lambda result: dict(
                         filter(
                             lambda item: item[0] in self.DEFAULT_ORGANIC_RESULTS_KEYS,
                             result.items(),
-                        )
+                        ),
                     ),
                     res["organic"],
-                )
+                ),
             )
             cleaned_res["organic_results"] = json.dumps(organic_results)
         return cleaned_res
@@ -76,7 +78,7 @@ class SerperApi(BaseTransform):
         try:
             search_result = await self.serper_api_wrapper.arun(query=query)
         except Exception as e:
-            logger.error(f"Error while making request to Serper API: {str(e)}")
+            logger.error(f"Error while making request to Serper API: {e!s}")
             raise TransformError(
                 TransformErrorType.TRANSFORM_API_ERROR,
                 f"Error while making request with query: {query}",
@@ -84,13 +86,14 @@ class SerperApi(BaseTransform):
         return search_result
 
     async def _apply(self, row: Dict[str, Any]) -> Dict[str, Any]:
+        start_time = time.time()
         for col in self.query_columns:
             if col not in row:
                 logger.warning(
                     f"Missing query column: {col} in row {row}",
                 )
         query = self.query_template.format_map(
-            defaultdict(str, {key: val for key, val in row.items() if val is not None})
+            defaultdict(str, {key: val for key, val in row.items() if val is not None}),
         )
         search_result = self.NULL_TRANSFORM_TOKEN
         if pd.isna(query) or query == self.NULL_TRANSFORM_TOKEN:
@@ -98,16 +101,19 @@ class SerperApi(BaseTransform):
                 TransformErrorType.INVALID_INPUT,
                 f"Empty query in row {row}",
             )
-        else:
-            search_result = await self._get_result(query)
+        search_result = await self._get_result(query)
         transformed_row = {
             self.output_columns["knowledge_graph_results"]: search_result.get(
-                "knowledge_graph"
+                "knowledge_graph",
             ),
             self.output_columns["organic_search_results"]: search_result.get(
-                "organic_results"
+                "organic_results",
             ),
         }
+        end_time = time.time()
+        logger.error(
+            f"Time taken to run Serper API: {end_time - start_time} seconds",
+        )
 
         return self._return_output_row(transformed_row)
 
