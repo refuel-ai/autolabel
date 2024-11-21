@@ -86,8 +86,11 @@ class AttributeExtractionTask(BaseTask):
             ):
                 attribute_desc += " The output format should be all the labels separated by semicolons. For example: label1;label2;label3"
 
-            if "options" in attribute_dict and len(attribute_dict["options"]) > 0:
-                attribute_options = attribute_dict["options"]
+            if len(attribute_dict.get("options", [])) > 0 or (
+                selected_labels_map
+                and len(selected_labels_map.get(attribute_name, [])) > 0
+            ):
+                attribute_options = attribute_dict.get("options", [])
                 if selected_labels_map and attribute_name in selected_labels_map:
                     attribute_options = selected_labels_map[attribute_name]
                 attribute_desc += f"\nOptions:\n{','.join(attribute_options)}"
