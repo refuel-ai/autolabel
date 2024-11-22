@@ -1,12 +1,14 @@
-from collections import defaultdict
 import json
+import logging
+import time
+from collections import defaultdict
+from typing import Any, Dict, List
+
+import pandas as pd
+from langchain_community.utilities import SerpAPIWrapper
+
 from autolabel.cache import BaseCache
 from autolabel.transforms import BaseTransform
-from langchain_community.utilities import SerpAPIWrapper
-from typing import Dict, Any, List
-import logging
-import pandas as pd
-
 from autolabel.transforms.schema import (
     TransformError,
     TransformErrorType,
@@ -21,7 +23,9 @@ class RefuelSerpAPIWrapper(SerpAPIWrapper):
 
     def __init__(self, search_engine=None, params=None, serpapi_api_key=None):
         super().__init__(
-            search_engine=search_engine, params=params, serpapi_api_key=serpapi_api_key
+            search_engine=search_engine,
+            params=params,
+            serpapi_api_key=serpapi_api_key,
         )
 
     async def arun(self, query: str, **kwargs: Any) -> Dict:
@@ -33,21 +37,21 @@ class RefuelSerpAPIWrapper(SerpAPIWrapper):
         Processes the response from Serp API and returns the search results.
         """
         cleaned_res = {}
-        if "error" in res.keys():
+        if "error" in res:
             raise ValueError(f"Got error from SerpAPI: {res['error']}")
-        if "knowledge_graph" in res.keys():
+        if "knowledge_graph" in res:
             cleaned_res["knowledge_graph"] = json.dumps(res["knowledge_graph"])
-        if "organic_results" in res.keys():
+        if "organic_results" in res:
             organic_results = list(
                 map(
                     lambda result: dict(
                         filter(
                             lambda item: item[0] in self.DEFAULT_ORGANIC_RESULTS_KEYS,
                             result.items(),
-                        )
+                        ),
                     ),
                     res["organic_results"],
-                )
+                ),
             )
             cleaned_res["organic_results"] = json.dumps(organic_results)
         return cleaned_res
@@ -78,7 +82,9 @@ class SerpApi(BaseTransform):
         self.serp_api_key = serp_api_key
         self.serp_args = serp_args
         self.serp_api_wrapper = RefuelSerpAPIWrapper(
-            search_engine=None, params=self.serp_args, serpapi_api_key=self.serp_api_key
+            search_engine=None,
+            params=self.serp_args,
+            serpapi_api_key=self.serp_api_key,
         )
 
     def name(self) -> str:
@@ -92,7 +98,7 @@ class SerpApi(BaseTransform):
         try:
             search_result = await self.serp_api_wrapper.arun(query=query)
         except Exception as e:
-            logger.error(f"Error while making request to Serp API: {str(e)}")
+            logger.error(f"Error while making request to Serp API: {e!s}")
             raise TransformError(
                 TransformErrorType.TRANSFORM_API_ERROR,
                 f"Error while making request with query: {query}",
@@ -100,13 +106,14 @@ class SerpApi(BaseTransform):
         return search_result
 
     async def _apply(self, row: Dict[str, Any]) -> Dict[str, Any]:
+        start_time = time.time()
         for col in self.query_columns:
             if col not in row:
                 logger.warning(
                     f"Missing query column: {col} in row {row}",
                 )
         query = self.query_template.format_map(
-            defaultdict(str, {key: val for key, val in row.items() if val is not None})
+            defaultdict(str, {key: val for key, val in row.items() if val is not None}),
         )
         search_result = self.NULL_TRANSFORM_TOKEN
         if pd.isna(query) or query == self.NULL_TRANSFORM_TOKEN:
@@ -114,16 +121,19 @@ class SerpApi(BaseTransform):
                 TransformErrorType.INVALID_INPUT,
                 f"Empty query in row {row}",
             )
-        else:
-            search_result = await self._get_result(query)
+        search_result = await self._get_result(query)
         transformed_row = {
             self.output_columns["knowledge_graph_results"]: search_result.get(
-                "knowledge_graph"
+                "knowledge_graph",
             ),
             self.output_columns["organic_search_results"]: search_result.get(
-                "organic_results"
+                "organic_results",
             ),
         }
+        end_time = time.time()
+        logger.error(
+            f"Time taken to run Serp API: {end_time - start_time} seconds",
+        )
 
         return self._return_output_row(transformed_row)
 
