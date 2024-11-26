@@ -8,6 +8,7 @@ import shutil
 import string
 from string import Formatter
 from typing import Any, Dict, Iterable, List, Optional, Sequence, Union
+from urllib.parse import urlparse
 
 import regex
 import wget
@@ -74,7 +75,7 @@ def calculate_md5(input_data: Any) -> str:
     if isinstance(input_data, dict):
         # Convert dictionary to a JSON-formatted string
         input_str = json.dumps(input_data, sort_keys=True, skipkeys=True).encode(
-            "utf-8"
+            "utf-8",
         )
     elif hasattr(input_data, "read"):
         # Read binary data from file-like object
@@ -116,7 +117,7 @@ def _autolabel_progress(
             MofNCompleteColumn(),
             TimeElapsedColumn(),
             TimeRemainingColumn(),
-        )
+        ),
     )
     return Progress(
         *columns,
@@ -151,7 +152,8 @@ def track(
     console: Optional[Console] = None,
     disable: bool = False,
 ) -> Iterable[ProgressType]:
-    """Track progress by iterating over a sequence.
+    """
+    Track progress by iterating over a sequence.
 
     Args:
         sequence (Iterable[ProgressType]): A sequence (must support "len") you wish to iterate over.
@@ -161,8 +163,10 @@ def track(
         transient (bool, optional): Clear the progress on exit. Defaults to False.
         console (Console, optional): Console to write to. Default creates internal Console instance.
         disable (bool, optional): Disable display of progress.
+
     Returns:
         Iterable[ProgressType]: An iterable of the values in the sequence.
+
     """
     progress = _autolabel_progress(
         description=description,
@@ -194,7 +198,8 @@ async def gather_async_tasks_with_progress(
     console: Optional[Console] = None,
     disable: bool = False,
 ) -> Iterable:
-    """Gather async tasks with progress bar
+    """
+    Gather async tasks with progress bar
 
     Args:
         tasks (Iterable): A sequence of async tasks you wish to gather.
@@ -204,8 +209,10 @@ async def gather_async_tasks_with_progress(
         transient (bool, optional): Clear the progress on exit. Defaults to False.
         console (Console, optional): Console to write to. Default creates internal Console instance.
         disable (bool, optional): Disable display of progress.
+
     Returns:
         Iterable: Returns an iterable of the results of the async tasks.
+
     """
     progress = _autolabel_progress(
         description=description,
@@ -247,7 +254,8 @@ def track_with_stats(
     console: Optional[Console] = None,
     disable: bool = False,
 ) -> Iterable[ProgressType]:
-    """Track progress and displays stats by iterating over a sequence.
+    """
+    Track progress and displays stats by iterating over a sequence.
 
     Args:
         sequence (Iterable[ProgressType]): A sequence (must support "len") you wish to iterate over.
@@ -258,8 +266,10 @@ def track_with_stats(
         transient (bool, optional): Clear the progress on exit. Defaults to False.
         console (Console, optional): Console to write to. Default creates internal Console instance.
         disable (bool, optional): Disable display of progress.
+
     Returns:
         Iterable[ProgressType]: An iterable of the values in the sequence.
+
     """
     progress = _autolabel_progress(
         description=description,
@@ -281,7 +291,8 @@ def track_with_stats(
     with live:
         progress_task = progress.add_task(description=description, total=total)
         stats_task = stats_progress.add_task(
-            "Stats", stats=", ".join(f"{k}={v}" for k, v in stats.items())
+            "Stats",
+            stats=", ".join(f"{k}={v}" for k, v in stats.items()),
         )
         for value in sequence:
             yield value
@@ -290,7 +301,8 @@ def track_with_stats(
                 advance=min(advance, total - progress.tasks[progress_task].completed),
             )
             stats_progress.update(
-                stats_task, stats=", ".join(f"{k}={v}" for k, v in stats.items())
+                stats_task,
+                stats=", ".join(f"{k}={v}" for k, v in stats.items()),
             )
             live.refresh()
 
@@ -299,8 +311,7 @@ def maybe_round(value: Any) -> Any:
     """Round's value only if it has a round function"""
     if hasattr(value, "__round__"):
         return round(value, 4)
-    else:
-        return value
+    return value
 
 
 def print_table(
@@ -310,7 +321,8 @@ def print_table(
     default_style: str = "bold",
     styles: Dict = {},
 ) -> None:
-    """Print a table of data.
+    """
+    Print a table of data.
 
     Args:
         data (Dict[str, List]): A dictionary of data to print.
@@ -318,6 +330,7 @@ def print_table(
         console (Console, optional): Console to write to. Default creates internal Console instance.
         default_style (str, optional): Default style to apply to the table. Defaults to "bold".
         styles (Dict, optional): A dictionary of styles to apply to the table.
+
     """
     # Convert all values to strings
     data = {
@@ -338,16 +351,18 @@ def print_table(
 
 
 def get_data(dataset_name: str, force: bool = False):
-    """Download Datasets
+    """
+    Download Datasets
 
     Args:
         dataset_name (str): dataset name
         force (bool, optional): if set to True, downloads and overwrites the local test and seed files
             if false then downloads onlyif the files are not present locally
+
     """
 
     def download_bar(current, total, width=80):
-        """custom progress bar for downloading data"""
+        """Custom progress bar for downloading data"""
         width = shutil.get_terminal_size()[0] // 2
         print(
             f"{current//total*100}% [{'.' * (current//total * int(width))}] [{current}/{total}] bytes",
@@ -368,7 +383,7 @@ def get_data(dataset_name: str, force: bool = False):
 
     if dataset_name not in EXAMPLE_DATASETS:
         logger.error(
-            f"{dataset_name} not in list of available datasets: {str(EXAMPLE_DATASETS)}. Exiting..."
+            f"{dataset_name} not in list of available datasets: {EXAMPLE_DATASETS!s}. Exiting...",
         )
         return
     seed_url = DATASET_URL.format(dataset=dataset_name, partition="seed")
@@ -426,3 +441,38 @@ def safe_serialize_to_string(data: Dict) -> Dict:
         except Exception:
             ret[k] = ""
     return ret
+
+
+def is_s3_uri(uri_string: str) -> bool:
+    return uri_string is not None and (
+        uri_string.startswith("s3://") or uri_string.startswith("s3a://")
+    )
+
+
+def extract_bucket_key_from_s3_url(s3_path: str):
+    # Refer: https://stackoverflow.com/a/48245084
+    if not is_s3_uri(s3_path):
+        logger.warning("URI is not actually an S3 URI: {}", s3_path)
+        return None
+
+    path_object = urlparse(s3_path)
+    bucket = path_object.netloc
+    key = path_object.path
+    return {"Bucket": bucket, "Key": key.lstrip("/")}
+
+
+def generate_s3_uri_from_bucket_key(bucket: str, key: str) -> str:
+    return f"s3://{bucket}/{key}"
+
+
+def generate_presigned_url(client, s3_uri, expiration=86400):
+    s3_params = extract_bucket_key_from_s3_url(s3_uri)
+
+    if not s3_params:
+        return s3_uri
+
+    return client.generate_presigned_url(
+        ClientMethod="get_object",
+        Params={"Bucket": s3_params["Bucket"], "Key": s3_params["Key"]},
+        ExpiresIn=expiration,
+    )

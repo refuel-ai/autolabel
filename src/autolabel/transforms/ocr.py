@@ -159,7 +159,7 @@ class OCRTransform(BaseTransform):
             ) from exc
 
         ocr_output = []
-        if curr_file_path.endswith(".pdf"):
+        if Path(curr_file_path).suffix.lower().startswith(".pdf"):
             pages = self.convert_from_path(curr_file_path)
             ocr_output = [
                 self.default_ocr_processor(page, lang=self.lang) for page in pages

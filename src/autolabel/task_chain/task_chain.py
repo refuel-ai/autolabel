@@ -1,22 +1,25 @@
-from collections import defaultdict
-from autolabel.configs import AutolabelConfig
+import copy
 import logging
-from typing import Dict, List, Optional
+from collections import defaultdict
+from typing import Dict, List, Optional, Tuple
 
-from autolabel.few_shot.base_label_selector import BaseLabelSelector
-from autolabel.labeler import LabelingAgent
+import boto3
+import pandas as pd
+from transformers import AutoTokenizer
+
+from autolabel.cache.base import BaseCache
+from autolabel.cache.sqlalchemy_confidence_cache import SQLAlchemyConfidenceCache
+from autolabel.cache.sqlalchemy_generation_cache import SQLAlchemyGenerationCache
+from autolabel.cache.sqlalchemy_transform_cache import SQLAlchemyTransformCache
+from autolabel.configs import AutolabelConfig, TaskChainConfig
 from autolabel.dataset import AutolabelDataset
 from autolabel.few_shot import (
     BaseExampleSelector,
 )
-from autolabel.cache.sqlalchemy_generation_cache import SQLAlchemyGenerationCache
-from autolabel.cache.sqlalchemy_transform_cache import SQLAlchemyTransformCache
-from autolabel.cache.sqlalchemy_confidence_cache import SQLAlchemyConfidenceCache
-from autolabel.cache.base import BaseCache
-from autolabel.configs import TaskChainConfig
+from autolabel.few_shot.base_label_selector import BaseLabelSelector
+from autolabel.labeler import LabelingAgent
 from autolabel.transforms import TransformFactory
-from transformers import AutoTokenizer
-import pandas as pd
+from autolabel.utils import generate_presigned_url, is_s3_uri
 
 logger = logging.getLogger(__name__)
 logging.getLogger("httpx").setLevel(logging.WARNING)
@@ -28,21 +31,25 @@ class TaskGraph:
         self.task_chain = task_chain
 
     def add_dependency(self, pre_task: str, post_task: str):
-        """Add dependencies between pairs of tasks
+        """
+        Add dependencies between pairs of tasks
 
         Args:
             pre_task (str): The task that must be completed before post_task
             post_task (str): The task that depends on pre_task
+
         """
         self.graph[pre_task].add(post_task)
 
     def topological_sort_helper(self, pre_task: str, visited: Dict, stack: List):
-        """Recursive helper function to perform topological sort
+        """
+        Recursive helper function to perform topological sort
 
         Args:
             pre_task (str): The task we are currently visiting
             visited (Dict): Dict of visited tasks
             stack (List): Stack to store the sorted tasks (in reverse order)
+
         """
         visited[pre_task] = True
 
@@ -52,10 +59,12 @@ class TaskGraph:
         stack.append(pre_task)
 
     def topological_sort(self) -> List[str]:
-        """Topological sort of the task graph
+        """
+        Topological sort of the task graph
 
         Returns:
             List[str]: List of task names in topological order
+
         """
         visited = defaultdict(bool)
         stack = []
@@ -66,10 +75,13 @@ class TaskGraph:
         return stack[::-1]
 
     def check_cycle(self):
-        """Check for cycles in the task graph
+        """
+        Check for cycles in the task graph
 
         Returns:
-            bool: True if cycle is present, False otherwise"""
+            bool: True if cycle is present, False otherwise
+
+        """
         visited = defaultdict(bool)
         rec_stack = defaultdict(bool)
 
@@ -81,7 +93,8 @@ class TaskGraph:
         return False
 
     def check_cycle_helper(self, pre_task: str, visited: Dict, rec_stack: Dict):
-        """Recursive helper function to check for cycles
+        """
+        Recursive helper function to check for cycles
         Args:
             pre_task (str): The task we are currently visiting
             visited (Dict): List of visited tasks
@@ -126,6 +139,7 @@ class TaskChainOrchestrator:
         self.confidence_endpoint = confidence_endpoint
         self.column_name_map = column_name_map
         self.label_selector_map = label_selector_map
+        self.s3_client = boto3.client("s3")
 
     # TODO: For now, we run each separate step of the task chain serially and aggregate at the end.
     # We can optimize this with parallelization where possible/no dependencies.
@@ -137,6 +151,7 @@ class TaskChainOrchestrator:
             dataset_df (pd.DataFrame): Input dataset
         Returns:
             AutolabelDataset: Output dataset with the results of the task chain
+
         """
         subtasks = self.task_chain_config.subtasks()
         if len(subtasks) == 0:
@@ -144,6 +159,10 @@ class TaskChainOrchestrator:
         for task in subtasks:
             autolabel_config = AutolabelConfig(task)
             dataset = AutolabelDataset(dataset_df, autolabel_config)
+            dataset, original_inputs = self.safe_convert_uri_to_presigned_url(
+                dataset,
+                autolabel_config,
+            )
             if autolabel_config.transforms():
                 agent = LabelingAgent(
                     config=autolabel_config,
@@ -180,12 +199,19 @@ class TaskChainOrchestrator:
                     dataset,
                     skip_eval=True,
                 )
+            dataset = self.reset_presigned_url_to_uri(
+                dataset,
+                original_inputs,
+                autolabel_config,
+            )
             dataset = self.rename_output_columns(dataset, autolabel_config)
             dataset_df = dataset.df
         return dataset
 
     def rename_output_columns(
-        self, dataset: AutolabelDataset, autolabel_config: AutolabelConfig
+        self,
+        dataset: AutolabelDataset,
+        autolabel_config: AutolabelConfig,
     ):
         """
         Rename the output columns of the dataset for each intermediate step in the task chain so that
@@ -196,6 +222,7 @@ class TaskChainOrchestrator:
             task (ChainTask): The current task in the task chain
         Returns:
             AutolabelDataset: The dataset with renamed output columns
+
         """
         if autolabel_config.transforms():
             dataset.df.rename(columns=self.column_name_map, inplace=True)
@@ -205,4 +232,35 @@ class TaskChainOrchestrator:
                     dataset.generate_label_name("label")
                 ].apply(lambda x: x.get(attribute) if x and type(x) is dict else None)
 
+        return dataset
+
+    def safe_convert_uri_to_presigned_url(
+        self,
+        dataset: AutolabelDataset,
+        autolabel_config: AutolabelConfig,
+    ) -> Tuple[AutolabelDataset, List[Dict]]:
+        original_inputs = copy.deepcopy(dataset.inputs)
+        for col in autolabel_config.input_columns():
+            for i in range(len(dataset.inputs)):
+                dataset.inputs[i][col] = (
+                    generate_presigned_url(
+                        self.s3_client,
+                        dataset.inputs[i][col],
+                    )
+                    if is_s3_uri(dataset.inputs[i][col])
+                    else dataset.inputs[i][col]
+                )
+                dataset.df.loc[i, col] = dataset.inputs[i][col]
+        return dataset, original_inputs
+
+    def reset_presigned_url_to_uri(
+        self,
+        dataset: AutolabelDataset,
+        original_inputs: List[Dict],
+        autolabel_config: AutolabelConfig,
+    ) -> AutolabelDataset:
+        for col in autolabel_config.input_columns():
+            for i in range(len(dataset.inputs)):
+                dataset.inputs[i][col] = original_inputs[i][col]
+                dataset.df.loc[i, col] = dataset.inputs[i][col]
         return dataset
