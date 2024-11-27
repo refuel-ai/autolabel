@@ -1,7 +1,8 @@
 from typing import List
 
-from autolabel.metrics import BaseMetric
 from autolabel.schema import LLMAnnotation, MetricResult, MetricType
+
+from .base import BaseMetric
 
 
 class CompletionRateMetric(BaseMetric):
@@ -9,7 +10,9 @@ class CompletionRateMetric(BaseMetric):
         super().__init__()
 
     def compute(
-        self, llm_labels: List[LLMAnnotation], gt_labels: List[str],
+        self,
+        llm_labels: List[LLMAnnotation],
+        gt_labels: List[str],
     ) -> List[MetricResult]:
         completed = 0
         for label in llm_labels:

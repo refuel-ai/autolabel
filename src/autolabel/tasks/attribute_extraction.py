@@ -24,8 +24,9 @@ from autolabel.schema import (
     MetricResult,
     TaskType,
 )
-from autolabel.tasks import BaseTask
 from autolabel.utils import get_format_variables
+
+from .base import BaseTask
 
 logger = logging.getLogger(__name__)
 
@@ -54,7 +55,8 @@ class AttributeExtractionTask(BaseTask):
             self.metrics.append(AUROCMetric())
 
     def _construct_attribute_json(
-        self, selected_labels_map: Dict[str, List[str]] = None,
+        self,
+        selected_labels_map: Dict[str, List[str]] = None,
     ) -> Tuple[str, Dict]:
         """
         This function is used to construct the attribute json string for the output guidelines.
@@ -66,15 +68,18 @@ class AttributeExtractionTask(BaseTask):
             str: A string containing the output attributes.
 
         """
-        output_json, output_schema = {}, {
-            "title": "AnswerFormat",
-            "description": "Answer to the provided prompt.",
-            "type": "object",
-            "properties": {},
-            "required": [],
-            "additionalProperties": False,
-            "definitions": {},
-        }
+        output_json, output_schema = (
+            {},
+            {
+                "title": "AnswerFormat",
+                "description": "Answer to the provided prompt.",
+                "type": "object",
+                "properties": {},
+                "required": [],
+                "additionalProperties": False,
+                "definitions": {},
+            },
+        )
         for attribute_dict in self.config.attributes():
             if "name" not in attribute_dict or "description" not in attribute_dict:
                 raise ValueError(
@@ -84,9 +89,13 @@ class AttributeExtractionTask(BaseTask):
             attribute_desc = attribute_dict["description"]
             attribute_name = attribute_dict["name"]
 
-            if attribute_dict.get(
-                "task_type", "",
-            ) == TaskType.MULTILABEL_CLASSIFICATION:
+            if (
+                attribute_dict.get(
+                    "task_type",
+                    "",
+                )
+                == TaskType.MULTILABEL_CLASSIFICATION
+            ):
                 attribute_desc += " The output format should be all the labels separated by semicolons. For example: label1;label2;label3"
 
             if len(attribute_dict.get("options", [])) > 0 or (
@@ -239,7 +248,8 @@ class AttributeExtractionTask(BaseTask):
                 for key in input:
                     if input[key] is not None:
                         example_template = example_template.replace(
-                            f"{{{key}}}", input[key],
+                            f"{{{key}}}",
+                            input[key],
                         )
                 current_example = example_template
 
@@ -299,7 +309,10 @@ class AttributeExtractionTask(BaseTask):
         )
 
     def get_generate_dataset_prompt(
-        self, label: str, num_rows: int, guidelines: str = None,
+        self,
+        label: str,
+        num_rows: int,
+        guidelines: str = None,
     ) -> str:
         raise NotImplementedError("Dataset generation not implemented for this task")
 
@@ -372,9 +385,9 @@ class AttributeExtractionTask(BaseTask):
                                 original_attr_labels,
                             ),
                         )
-                        llm_label[
-                            attribute["name"]
-                        ] = self.config.label_separator().join(filtered_attr_labels)
+                        llm_label[attribute["name"]] = (
+                            self.config.label_separator().join(filtered_attr_labels)
+                        )
                         if len(filtered_attr_labels) != len(original_attr_labels):
                             logger.warning(
                                 f"Attribute {attr_label} from the LLM response {llm_label} is not in the labels list. Filtered list: {filtered_attr_labels}",

@@ -5,8 +5,9 @@ import numpy as np
 import pylcs
 from sklearn.metrics import roc_auc_score
 
-from autolabel.metrics import BaseMetric
 from autolabel.schema import LLMAnnotation, MetricResult, MetricType
+
+from .base import BaseMetric
 
 logger = logging.getLogger(__name__)
 
@@ -23,7 +24,9 @@ class AUROCMetric(BaseMetric):
         return substring_lengths / max(len(a) + 1e-5, len(b) + 1e-5)
 
     def compute(
-        self, llm_labels: List[LLMAnnotation], gt_labels: List[str],
+        self,
+        llm_labels: List[LLMAnnotation],
+        gt_labels: List[str],
     ) -> List[MetricResult]:
         if not gt_labels:
             logger.warning(
