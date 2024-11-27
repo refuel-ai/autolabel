@@ -1,6 +1,6 @@
 from .base import BaseCache
 from .redis_cache import RedisCache
 from .redis_transform_cache import RedisTransformCache
+from .sqlalchemy_confidence_cache import SQLAlchemyConfidenceCache
 from .sqlalchemy_generation_cache import SQLAlchemyGenerationCache
 from .sqlalchemy_transform_cache import SQLAlchemyTransformCache
-from .sqlalchemy_confidence_cache import SQLAlchemyConfidenceCache

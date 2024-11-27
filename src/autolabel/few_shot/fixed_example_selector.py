@@ -1,13 +1,15 @@
 from __future__ import annotations
 
-from typing import Dict, List, Optional
+from typing import Dict, List
 
 from langchain.prompts.example_selector.base import BaseExampleSelector
 from pydantic import BaseModel, Extra
 
 
 class FixedExampleSelector(BaseExampleSelector, BaseModel):
-    """Example selector to handle the case of fixed few-shot context
+
+    """
+    Example selector to handle the case of fixed few-shot context
     i.e. every input prompt to the labeling model has the same few-shot examples
     """
 
@@ -18,6 +20,7 @@ class FixedExampleSelector(BaseExampleSelector, BaseModel):
     """Number of examples to select"""
 
     class Config:
+
         """Configuration for this pydantic object."""
 
         extra = Extra.forbid
@@ -56,10 +59,11 @@ class FixedExampleSelector(BaseExampleSelector, BaseModel):
         examples: List,
         k: int = 4,
     ) -> FixedExampleSelector:
-        """Create pass-through example selector using example list
+        """
+        Create pass-through example selector using example list
 
         Returns:
             The FixedExampleSelector instantiated
-        """
 
+        """
         return cls(examples=examples, k=k)

@@ -9,7 +9,7 @@ class CompletionRateMetric(BaseMetric):
         super().__init__()
 
     def compute(
-        self, llm_labels: List[LLMAnnotation], gt_labels: List[str]
+        self, llm_labels: List[LLMAnnotation], gt_labels: List[str],
     ) -> List[MetricResult]:
         completed = 0
         for label in llm_labels:
@@ -24,6 +24,6 @@ class CompletionRateMetric(BaseMetric):
             MetricResult(
                 name=MetricType.COMPLETION_RATE,
                 value=completion_rate,
-            )
+            ),
         ]
         return value

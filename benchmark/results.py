@@ -1,6 +1,7 @@
 import argparse
-import os
 import json
+import os
+
 import pandas as pd
 
 METRICS = {
@@ -58,14 +59,14 @@ def main():
     header_created = False
     header = []
     for file in eval_files:
-        d = json.load(open(f"{args.eval_dir}/{file}", "r"))
+        d = json.load(open(f"{args.eval_dir}/{file}"))
         row = []
         row.append("-".join(file.split(".")[0].split("/")))
         if not header_created:
             header.append("model")
         for i, dataset in enumerate(DATASETS):
             print(dataset)
-            config = json.load(open(f"configs/{dataset}.json", "r"))
+            config = json.load(open(f"configs/{dataset}.json"))
             metrics_to_add = METRICS[config["task_type"]]
             for metric_to_add in metrics_to_add:
                 for metric in d[i]:

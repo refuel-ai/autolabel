@@ -41,6 +41,7 @@ def register_model(name, model_cls):
 
 
 class ModelFactory:
+
     """The ModelFactory class is used to create a BaseModel object from the given AutoLabelConfig configuration."""
 
     @staticmethod
@@ -51,11 +52,13 @@ class ModelFactory:
     ) -> BaseModel:
         """
         Returns a BaseModel object configured with the settings found in the provided AutolabelConfig.
+
         Args:
             config: AutolabelConfig object containing project settings
             cache: cache allows for saving results in between labeling runs for future use
         Returns:
             model: a fully configured BaseModel object
+
         """
         provider = ModelProvider(config.provider())
         try:
@@ -64,14 +67,14 @@ class ModelFactory:
             # The below ensures that users should based off of the BaseModel
             # when creating/registering custom models.
             assert isinstance(
-                model_obj, BaseModel
+                model_obj, BaseModel,
             ), f"{model_obj} should inherit from autolabel.models.BaseModel"
         except KeyError as e:
             # We should never get here as the config should have already
             # been validated by the pydantic model.
             logger.error(
                 f"{config.provider()} is not in the list of supported providers: \
-                {list(ModelProvider.__members__.keys())}"
+                {list(ModelProvider.__members__.keys())}",
             )
             raise e
 

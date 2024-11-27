@@ -1,10 +1,11 @@
-from typing import List, Optional
 import logging
+from typing import List, Optional
+
+from sklearn.metrics import f1_score
+from sklearn.preprocessing import MultiLabelBinarizer
 
 from autolabel.metrics import BaseMetric
-from autolabel.schema import LLMAnnotation, MetricResult, MetricType, F1Type
-from sklearn.preprocessing import MultiLabelBinarizer
-from sklearn.metrics import f1_score
+from autolabel.schema import F1Type, LLMAnnotation, MetricResult, MetricType
 from autolabel.utils import normalize_text
 
 logger = logging.getLogger(__name__)
@@ -25,7 +26,7 @@ class F1Metric(BaseMetric):
         self.average = average
 
     def multi_label_compute(
-        self, llm_labels: List[LLMAnnotation], gt_labels: List[str]
+        self, llm_labels: List[LLMAnnotation], gt_labels: List[str],
     ) -> List[MetricResult]:
         filtered_llm_labels = []
         filtered_gt_labels = []
@@ -51,7 +52,7 @@ class F1Metric(BaseMetric):
         return value
 
     def text_compute(
-        self, llm_labels: List[LLMAnnotation], gt_labels: List[str]
+        self, llm_labels: List[LLMAnnotation], gt_labels: List[str],
     ) -> List[MetricResult]:
         truth = [normalize_text(gt_label).split(self.sep) for gt_label in gt_labels]
         prediction = [
@@ -100,7 +101,7 @@ class F1Metric(BaseMetric):
         return values
 
     def compute(
-        self, llm_labels: List[LLMAnnotation], gt_labels: List[str]
+        self, llm_labels: List[LLMAnnotation], gt_labels: List[str],
     ) -> List[MetricResult]:
         # If there are not ground truth labels, return an empty list
         if not gt_labels:
@@ -109,5 +110,4 @@ class F1Metric(BaseMetric):
 
         if self.type == F1Type.MULTI_LABEL:
             return self.multi_label_compute(llm_labels, gt_labels)
-        else:
-            return self.text_compute(llm_labels, gt_labels)
+        return self.text_compute(llm_labels, gt_labels)

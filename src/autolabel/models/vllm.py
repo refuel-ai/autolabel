@@ -31,7 +31,7 @@ class VLLMModel(BaseModel):
             from vllm import LLM, SamplingParams
         except ImportError:
             raise ImportError(
-                "vllm is required to use the vllm LLM. Please install it with the following command: pip install vllm"
+                "vllm is required to use the vllm LLM. Please install it with the following command: pip install vllm",
             )
 
         self.tokenizer = (
@@ -51,7 +51,7 @@ class VLLMModel(BaseModel):
         self.llm = LLM(
             model=self.config.model_name(),
             tensor_parallel_size=self.config.model_params().get(
-                "tensor_parallel_size", 1
+                "tensor_parallel_size", 1,
             ),
         )
 
@@ -63,11 +63,11 @@ class VLLMModel(BaseModel):
             try:
                 messages = [{"role": "user", "content": prompt}]
                 tokenized_prompt = self.tokenizer.apply_chat_template(
-                    messages, add_generation_prompt=True
+                    messages, add_generation_prompt=True,
                 )
                 if len(tokenized_prompt) > 4096:
                     logger.warning(
-                        f"Input is greater than 4096 tokens: {len(tokenized_prompt)}"
+                        f"Input is greater than 4096 tokens: {len(tokenized_prompt)}",
                     )
                 response = self.llm.generate(
                     prompt_token_ids=[tokenized_prompt],
@@ -85,15 +85,15 @@ class VLLMModel(BaseModel):
                                 {
                                     "logprobs": {
                                         "top_logprobs": self._process_confidence_request(
-                                            response[0].outputs[0].logprobs
-                                        )
-                                    }
+                                            response[0].outputs[0].logprobs,
+                                        ),
+                                    },
                                 }
                                 if self.config.confidence()
                                 else None
                             ),
-                        )
-                    ]
+                        ),
+                    ],
                 )
                 errors.append(None)
                 latencies.append(0)
@@ -105,12 +105,12 @@ class VLLMModel(BaseModel):
                 generations.append([Generation(text="")])
                 errors.append(
                     LabelingError(
-                        error_type=ErrorType.LLM_PROVIDER_ERROR, error_message=str(e)
-                    )
+                        error_type=ErrorType.LLM_PROVIDER_ERROR, error_message=str(e),
+                    ),
                 )
                 latencies.append(0)
         return RefuelLLMResult(
-            generations=generations, errors=errors, latencies=latencies
+            generations=generations, errors=errors, latencies=latencies,
         )
 
     def _process_confidence_request(self, logprobs):

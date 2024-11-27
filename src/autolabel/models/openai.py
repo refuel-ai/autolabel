@@ -35,7 +35,7 @@ class OpenAILLM(BaseModel):
             "gpt-4o",
             "gpt-4o-2024-08-06",
             "gpt-4o-mini",
-        ]
+        ],
     )
     MODELS_WITH_TOKEN_PROBS = set(
         [
@@ -57,7 +57,7 @@ class OpenAILLM(BaseModel):
             "gpt-4o",
             "gpt-4o-2024-08-06",
             "gpt-4o-mini",
-        ]
+        ],
     )
 
     SUPPORTS_JSON_OUTPUTS = set(
@@ -70,7 +70,7 @@ class OpenAILLM(BaseModel):
             "gpt-4o",
             "gpt-4o-2024-08-06",
             "gpt-4o-mini",
-        ]
+        ],
     )
 
     SUPPORTS_STRUCTURED_OUTPUTS = set(
@@ -78,7 +78,7 @@ class OpenAILLM(BaseModel):
             "gpt-4o",
             "gpt-4o-2024-08-06",
             "gpt-4o-mini",
-        ]
+        ],
     )
 
     # Default parameters for OpenAILLM
@@ -146,8 +146,7 @@ class OpenAILLM(BaseModel):
     def _engine(self) -> str:
         if self.model_name is not None and self.model_name in self.CHAT_ENGINE_MODELS:
             return "chat"
-        else:
-            return "completion"
+        return "completion"
 
     def __init__(
         self,
@@ -161,7 +160,7 @@ class OpenAILLM(BaseModel):
             from langchain_openai import ChatOpenAI, OpenAI
         except ImportError:
             raise ImportError(
-                "openai is required to use the OpenAILLM. Please install it with the following command: pip install 'refuel-autolabel[openai]'"
+                "openai is required to use the OpenAILLM. Please install it with the following command: pip install 'refuel-autolabel[openai]'",
             )
         self.tiktoken = tiktoken
         # populate model name
@@ -175,7 +174,7 @@ class OpenAILLM(BaseModel):
         if self._engine == "chat":
             self.model_params = {**self.DEFAULT_PARAMS_CHAT_ENGINE, **model_params}
             self.llm = ChatOpenAI(
-                model_name=self.model_name, verbose=False, **self.model_params
+                model_name=self.model_name, verbose=False, **self.model_params,
             )
         else:
             self.model_params = {
@@ -183,11 +182,11 @@ class OpenAILLM(BaseModel):
                 **model_params,
             }
             self.llm = OpenAI(
-                model_name=self.model_name, verbose=False, **self.model_params
+                model_name=self.model_name, verbose=False, **self.model_params,
             )
 
     def _chat_backward_compatibility(
-        self, generations: List[LLMResult]
+        self, generations: List[LLMResult],
     ) -> List[LLMResult]:
         for generation_options in generations:
             for curr_generation in generation_options:
@@ -195,7 +194,7 @@ class OpenAILLM(BaseModel):
                 new_logprobs = {"top_logprobs": []}
                 for curr_token in generation_info["logprobs"]["content"]:
                     new_logprobs["top_logprobs"].append(
-                        {curr_token["token"]: curr_token["logprob"]}
+                        {curr_token["token"]: curr_token["logprob"]},
                     )
                 curr_generation.generation_info["logprobs"] = new_logprobs
         return generations
@@ -231,7 +230,7 @@ class OpenAILLM(BaseModel):
                     )
                 else:
                     logger.info(
-                        "Not using structured output despite output_schema provided"
+                        "Not using structured output despite output_schema provided",
                     )
                     result = await self.llm.agenerate(prompts)
                 generations = self._chat_backward_compatibility(result.generations)
@@ -255,7 +254,7 @@ class OpenAILLM(BaseModel):
                 ]
                 error_code = error_json.get("code")
                 error_type = self.ERROR_TYPE_MAPPING.get(
-                    error_code, ErrorType.LLM_PROVIDER_ERROR
+                    error_code, ErrorType.LLM_PROVIDER_ERROR,
                 )
                 error_message = error_json.get("message")
             except Exception as e:
@@ -303,7 +302,7 @@ class OpenAILLM(BaseModel):
                     )
                 else:
                     logger.info(
-                        "Not using structured output despite output_schema provided"
+                        "Not using structured output despite output_schema provided",
                     )
                     result = self.llm.generate(prompts)
                 generations = self._chat_backward_compatibility(result.generations)
@@ -328,7 +327,7 @@ class OpenAILLM(BaseModel):
                 ]
                 error_code = error_json.get("code")
                 error_type = self.ERROR_TYPE_MAPPING.get(
-                    error_code, ErrorType.LLM_PROVIDER_ERROR
+                    error_code, ErrorType.LLM_PROVIDER_ERROR,
                 )
                 error_message = error_json.get("message")
             except Exception as e:

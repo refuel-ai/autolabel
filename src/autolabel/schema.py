@@ -1,14 +1,15 @@
+import json
 from enum import Enum
 from typing import Any, Dict, List, Optional, Union
 
-import json
-from langchain.schema import Generation, ChatGeneration
+from langchain.schema import ChatGeneration, Generation
 from pydantic import BaseModel
 
 from autolabel.utils import calculate_md5
 
 
 class ModelProvider(str, Enum):
+
     """Enum containing all LLM providers currently supported by autolabeler"""
 
     OPENAI = "openai"
@@ -27,6 +28,7 @@ class ModelProvider(str, Enum):
 
 
 class TaskType(str, Enum):
+
     """Enum containing all the types of tasks that autolabeler currently supports"""
 
     CLASSIFICATION = "classification"
@@ -38,6 +40,7 @@ class TaskType(str, Enum):
 
 
 class FewShotAlgorithm(str, Enum):
+
     """Enum of supported algorithms for choosing which examples to provide the LLM in its instruction prompt"""
 
     FIXED = "fixed"
@@ -48,6 +51,7 @@ class FewShotAlgorithm(str, Enum):
 
 
 class MetricType(str, Enum):
+
     """Enum of supported performance metrics. Some metrics are always available (task agnostic), while others are only supported by certain types of tasks"""
 
     # Task agnostic
@@ -81,6 +85,7 @@ class F1Type(str, Enum):
 
 
 class MetricResult(BaseModel):
+
     """Contains performance metrics gathered from autolabeler runs"""
 
     name: str
@@ -89,6 +94,7 @@ class MetricResult(BaseModel):
 
 
 class ErrorType(str, Enum):
+
     """Enum of supported error types"""
 
     CONTEXT_LENGTH_ERROR = "context_length_exceeded_error"
@@ -102,6 +108,7 @@ class ErrorType(str, Enum):
 
 
 class LabelingError(BaseModel):
+
     """Contains information about an error that occurred during the labeling process"""
 
     error_type: ErrorType
@@ -109,6 +116,7 @@ class LabelingError(BaseModel):
 
 
 class LLMAnnotation(BaseModel):
+
     """Contains label information of a given data point, including the generated label, the prompt given to the LLM, and the LLMs response. Optionally includes a confidence_score if supported by the model"""
 
     successfully_labeled: bool
@@ -152,7 +160,7 @@ class GenerationCacheEntry(BaseModel):
         return json.dumps([gen.dict() for gen in self.generations])
 
     def deserialize_output(
-        self, output: str
+        self, output: str,
     ) -> List[Union[Generation, ChatGeneration]]:
         """
         Deserializes the cache entry output
@@ -195,8 +203,11 @@ class ConfidenceCacheEntry(BaseModel):
 
 
 class RefuelLLMResult(BaseModel):
-    """List of generated outputs. This is a List[List[]] because
-    each input could have multiple candidate generations."""
+
+    """
+    List of generated outputs. This is a List[List[]] because
+    each input could have multiple candidate generations.
+    """
 
     generations: List[List[Union[Generation, ChatGeneration]]]
 
@@ -211,6 +222,7 @@ class RefuelLLMResult(BaseModel):
 
 
 class AggregationFunction(str, Enum):
+
     """Enum of supported aggregation functions"""
 
     MAX = "max"

@@ -1,7 +1,8 @@
-from autolabel import LabelingAgent
-from autolabel.dataset import AutolabelDataset
 from pandas import DataFrame
+
+from autolabel import LabelingAgent
 from autolabel.configs import AutolabelConfig
+from autolabel.dataset import AutolabelDataset
 
 csv_path = "tests/assets/banking/test.csv"
 jsonl_path = "tests/assets/banking/test.jsonl"
@@ -18,7 +19,7 @@ def test_read_csv():
     assert isinstance(dataset.gt_labels, list) or dataset.gt_labels is None
     # test reading_csv with max_items = 5, start_index = 5
     dataset_loader_max_5_index_5 = AutolabelDataset(
-        csv_path, agent.config, max_items=5, start_index=5
+        csv_path, agent.config, max_items=5, start_index=5,
     )
     assert dataset_loader_max_5_index_5.df.shape[0] == 5
     assert dataset_loader_max_5_index_5.df.iloc[0].equals(dataset.df.iloc[5])
@@ -38,7 +39,7 @@ def test_read_dataframe():
     assert df.equals(dataset.df)
     # test loading data with max_items = 5, start_index = 5
     dataset_loader_max_5_index_5 = AutolabelDataset(
-        df, agent.config, max_items=5, start_index=5
+        df, agent.config, max_items=5, start_index=5,
     )
     assert dataset_loader_max_5_index_5.df.shape[0] == 5
     assert dataset_loader_max_5_index_5.df.iloc[0].equals(dataset.df.iloc[5])
@@ -55,7 +56,7 @@ def test_read_jsonl():
     assert isinstance(dataset.gt_labels, list) or dataset.gt_labels is None
     # test reading_csv with max_items = 5, start_index = 5
     dataset_loader_max_5_index_5 = AutolabelDataset(
-        jsonl_path, agent.config, max_items=5, start_index=5
+        jsonl_path, agent.config, max_items=5, start_index=5,
     )
     assert dataset_loader_max_5_index_5.df.shape[0] == 5
     assert dataset_loader_max_5_index_5.df.iloc[0].equals(dataset.df.iloc[5])

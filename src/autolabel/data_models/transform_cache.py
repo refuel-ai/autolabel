@@ -1,12 +1,15 @@
-from .base import Base
-from sqlalchemy import Column, String, TEXT, Integer
-import time
 import pickle
+import time
+
+from sqlalchemy import TEXT, Column, Integer, String
 
 from autolabel.transforms.schema import TransformCacheEntry
 
+from .base import Base
+
 
 class TransformCacheEntryModel(Base):
+
     """an SQLAlchemy based Cache system for storing and retriving CacheEntries"""
 
     __tablename__ = "transform_cache"
@@ -60,7 +63,7 @@ class TransformCacheEntryModel(Base):
         if use_ttl:
             current_time_ms = int(time.time() * 1000)
             db.query(cls).filter(
-                current_time_ms - cls.creation_time_ms > cls.ttl_ms
+                current_time_ms - cls.creation_time_ms > cls.ttl_ms,
             ).delete()
         else:
             db.query(cls).delete()

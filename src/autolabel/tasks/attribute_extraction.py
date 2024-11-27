@@ -1,11 +1,11 @@
+import copy
 import json
-import json5
 import logging
 import pickle
-import copy
 from collections import defaultdict
-from typing import Callable, Dict, List, Optional, Union, Tuple
+from typing import Callable, Dict, List, Optional, Tuple, Union
 
+import json5
 from langchain.prompts.prompt import PromptTemplate
 from langchain.schema import ChatGeneration, Generation
 
@@ -54,14 +54,17 @@ class AttributeExtractionTask(BaseTask):
             self.metrics.append(AUROCMetric())
 
     def _construct_attribute_json(
-        self, selected_labels_map: Dict[str, List[str]] = None
+        self, selected_labels_map: Dict[str, List[str]] = None,
     ) -> Tuple[str, Dict]:
-        """This function is used to construct the attribute json string for the output guidelines.
+        """
+        This function is used to construct the attribute json string for the output guidelines.
+
         Args:
             attributes (List[Dict]): A list of dictionaries containing the output attributes.
 
         Returns:
             str: A string containing the output attributes.
+
         """
         output_json, output_schema = {}, {
             "title": "AnswerFormat",
@@ -75,15 +78,15 @@ class AttributeExtractionTask(BaseTask):
         for attribute_dict in self.config.attributes():
             if "name" not in attribute_dict or "description" not in attribute_dict:
                 raise ValueError(
-                    "Attribute dictionary must contain 'name' and 'description' keys"
+                    "Attribute dictionary must contain 'name' and 'description' keys",
                 )
 
             attribute_desc = attribute_dict["description"]
             attribute_name = attribute_dict["name"]
 
-            if TaskType.MULTILABEL_CLASSIFICATION == attribute_dict.get(
-                "task_type", ""
-            ):
+            if attribute_dict.get(
+                "task_type", "",
+            ) == TaskType.MULTILABEL_CLASSIFICATION:
                 attribute_desc += " The output format should be all the labels separated by semicolons. For example: label1;label2;label3"
 
             if len(attribute_dict.get("options", [])) > 0 or (
@@ -104,12 +107,12 @@ class AttributeExtractionTask(BaseTask):
             ):
                 curr_property = {"$ref": "#/definitions/" + attribute_name}
                 output_schema["definitions"][attribute_name] = json5.loads(
-                    attribute_dict["schema"]
+                    attribute_dict["schema"],
                 )
             else:
                 curr_property = {"title": attribute_dict["name"], "type": "string"}
                 if "options" in attribute_dict and len(attribute_dict["options"]) < 500:
-                    if TaskType.CLASSIFICATION == attribute_dict.get("task_type", ""):
+                    if attribute_dict.get("task_type", "") == TaskType.CLASSIFICATION:
                         curr_property = {"$ref": "#/definitions/" + attribute_name}
                         output_schema["definitions"][attribute_name] = {
                             "title": attribute_name,
@@ -122,33 +125,37 @@ class AttributeExtractionTask(BaseTask):
         return json.dumps(output_json, indent=4), output_schema
 
     def _generate_output_dict(self, input: Dict) -> Optional[str]:
-        """Generate the output dictionary from the input
+        """
+        Generate the output dictionary from the input
 
         Args:
             input (Dict): The input dictionary
 
         Returns:
             Dict: The output dictionary
+
         """
         output_dict = {}
         for attribute in self.config.attributes():
             attribute_name = attribute["name"]
             output_dict[attribute_name] = input.get(attribute_name, "")
         if not self._validate_output_dict(output_dict):
-            logger.warn(
-                f"Generated output dict: {output_dict} does not contain all the expected output attributes. Skipping example."
+            logger.warning(
+                f"Generated output dict: {output_dict} does not contain all the expected output attributes. Skipping example.",
             )
             return None
         return json.dumps(output_dict)
 
     def _validate_output_dict(self, output_dict: Dict) -> bool:
-        """Validate the output dictionary
+        """
+        Validate the output dictionary
 
         Args:
             output_dict (Dict): The output dictionary
 
         Returns:
             bool: True if the output dictionary is valid, False otherwise
+
         """
         for attribute in self.config.attributes():
             attribute_name = attribute.get("name")
@@ -194,7 +201,7 @@ class AttributeExtractionTask(BaseTask):
                             selected_labels_map[attribute_name].append(l)
 
         attribute_json, output_schema = self._construct_attribute_json(
-            selected_labels_map=selected_labels_map
+            selected_labels_map=selected_labels_map,
         )
         output_guidelines = (
             self.output_guidelines
@@ -222,17 +229,17 @@ class AttributeExtractionTask(BaseTask):
         except KeyError as e:
             try:
                 current_example = example_template.format_map(defaultdict(str, input))
-                logger.warn(
+                logger.warning(
                     f'\n\nKey {e} in the "example_template" in the given config'
                     f"\n\n{example_template}\n\nis not present in the datsaset columns - {input.keys()}.\n\n"
                     f"Input - {input}\n\n"
-                    "Continuing with the prompt as {current_example}"
+                    "Continuing with the prompt as {current_example}",
                 )
             except AttributeError as e:
-                for key in input.keys():
+                for key in input:
                     if input[key] is not None:
                         example_template = example_template.replace(
-                            f"{{{key}}}", input[key]
+                            f"{{{key}}}", input[key],
                         )
                 current_example = example_template
 
@@ -268,8 +275,7 @@ class AttributeExtractionTask(BaseTask):
                     prompt_dict[col] = input[col]
                 prompt_dict[col] = input[col]
             return json.dumps(prompt_dict), output_schema
-        else:
-            return curr_text_prompt, output_schema
+        return curr_text_prompt, output_schema
 
     def get_explanation_prompt(self, example: Dict, include_label=True) -> str:
         pt = PromptTemplate(
@@ -293,7 +299,7 @@ class AttributeExtractionTask(BaseTask):
         )
 
     def get_generate_dataset_prompt(
-        self, label: str, num_rows: int, guidelines: str = None
+        self, label: str, num_rows: int, guidelines: str = None,
     ) -> str:
         raise NotImplementedError("Dataset generation not implemented for this task")
 
@@ -321,13 +327,13 @@ class AttributeExtractionTask(BaseTask):
             successfully_labeled = True
         except Exception as e:
             logger.info(
-                f"Error parsing LLM response: {response.text}, Error: {e}. Now searching for valid JSON in response"
+                f"Error parsing LLM response: {response.text}, Error: {e}. Now searching for valid JSON in response",
             )
             try:
                 json_start, json_end = response.text.find("{"), response.text.rfind("}")
                 llm_label = {}
                 for k, v in json5.loads(
-                    response.text[json_start : json_end + 1]
+                    response.text[json_start : json_end + 1],
                 ).items():
                     if isinstance(v, list) or isinstance(v, dict):
                         llm_label[k] = v
@@ -353,25 +359,25 @@ class AttributeExtractionTask(BaseTask):
                     if attr_type == TaskType.CLASSIFICATION:
                         if attr_label is not None and attr_label not in attr_options:
                             logger.warning(
-                                f"Attribute {attr_label} from the LLM response {llm_label} is not in the labels list"
+                                f"Attribute {attr_label} from the LLM response {llm_label} is not in the labels list",
                             )
                             llm_label.pop(attribute["name"], None)
                     elif attr_type == TaskType.MULTILABEL_CLASSIFICATION:
                         original_attr_labels = attr_label.split(
-                            self.config.label_separator()
+                            self.config.label_separator(),
                         )
                         filtered_attr_labels = list(
                             filter(
                                 lambda x: x.strip() in attr_options,
                                 original_attr_labels,
-                            )
+                            ),
                         )
                         llm_label[
                             attribute["name"]
                         ] = self.config.label_separator().join(filtered_attr_labels)
                         if len(filtered_attr_labels) != len(original_attr_labels):
                             logger.warning(
-                                f"Attribute {attr_label} from the LLM response {llm_label} is not in the labels list. Filtered list: {filtered_attr_labels}"
+                                f"Attribute {attr_label} from the LLM response {llm_label} is not in the labels list. Filtered list: {filtered_attr_labels}",
                             )
                         if len(filtered_attr_labels) == 0:
                             llm_label.pop(attribute["name"], None)
@@ -393,7 +399,6 @@ class AttributeExtractionTask(BaseTask):
         additional_metrics: List[BaseMetric] = [],
     ) -> List[MetricResult]:
         """Evaluate the LLM generated labels by comparing them against ground truth"""
-
         # Convert the llm labels into a mapping from
         # name -> List[LLMAnnotation]
         llm_labels_dict = defaultdict(list)
@@ -412,7 +417,7 @@ class AttributeExtractionTask(BaseTask):
                             if llm_label.confidence_score
                             else 0
                         ),
-                    )
+                    ),
                 )
 
         eval_metrics = []
@@ -432,7 +437,7 @@ class AttributeExtractionTask(BaseTask):
                         MetricResult(
                             name=f"{attribute}:{m.name}",
                             value=m.value,
-                        )
+                        ),
                     )
                     if m.name not in macro_metrics:
                         macro_metrics[m.name] = []
@@ -443,7 +448,7 @@ class AttributeExtractionTask(BaseTask):
                 MetricResult(
                     name=f"Macro:{key}",
                     value=sum(macro_metrics[key]) / len(macro_metrics[key]),
-                )
+                ),
             )
 
         return eval_metrics

@@ -7,6 +7,7 @@ from .base import BaseConfig
 
 
 class AutolabelConfig(BaseConfig):
+
     """Class to parse and store configs passed to Autolabel agent."""
 
     # Top-level config keys
@@ -197,15 +198,13 @@ class AutolabelConfig(BaseConfig):
         """Returns a list of valid labels"""
         if isinstance(self._prompt_config.get(self.VALID_LABELS_KEY, []), List):
             return self._prompt_config.get(self.VALID_LABELS_KEY, [])
-        else:
-            return list(self._prompt_config.get(self.VALID_LABELS_KEY, {}).keys())
+        return list(self._prompt_config.get(self.VALID_LABELS_KEY, {}).keys())
 
     def label_descriptions(self) -> Dict[str, str]:
         """Returns a dict of label descriptions"""
         if isinstance(self._prompt_config.get(self.VALID_LABELS_KEY, []), List):
             return None
-        else:
-            return self._prompt_config.get(self.VALID_LABELS_KEY, {})
+        return self._prompt_config.get(self.VALID_LABELS_KEY, {})
 
     def few_shot_example_set(self) -> Union[str, List]:
         """Returns examples of how data should be labeled, used to guide context to the model about the task it is performing"""
@@ -241,8 +240,10 @@ class AutolabelConfig(BaseConfig):
         return self._prompt_config.get(self.CHAIN_OF_THOUGHT_KEY, False)
 
     def label_selection(self) -> bool:
-        """Returns true if label selection is enabled. Label selection is the process of
-        narrowing down the list of possible labels by similarity to a given input."""
+        """
+        Returns true if label selection is enabled. Label selection is the process of
+        narrowing down the list of possible labels by similarity to a given input.
+        """
         for attribute in self.attributes():
             if attribute.get(self.LABEL_SELECTION_KEY, False):
                 return True
@@ -273,13 +274,13 @@ class AutolabelConfig(BaseConfig):
     def dataset_generation_guidelines(self) -> str:
         """Returns a string containing guidelines for how to generate a synthetic dataset"""
         return self._dataset_generation_config.get(
-            self.DATASET_GENERATION_GUIDELINES_KEY, ""
+            self.DATASET_GENERATION_GUIDELINES_KEY, "",
         )
 
     def dataset_generation_num_rows(self) -> int:
         """Returns the number of rows to generate for the synthetic dataset"""
         return self._dataset_generation_config.get(
-            self.DATASET_GENERATION_NUM_ROWS_KEY, 1
+            self.DATASET_GENERATION_NUM_ROWS_KEY, 1,
         )
 
     def confidence_chunk_column(self) -> str:

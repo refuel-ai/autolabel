@@ -9,8 +9,11 @@ from autolabel.few_shot.vector_store import VectorStoreWrapper
 
 
 class LabelSelector(BaseLabelSelector):
-    """Returns the most similar labels to a given input. Used for
-    classification tasks with a large number of possible classes."""
+
+    """
+    Returns the most similar labels to a given input. Used for
+    classification tasks with a large number of possible classes.
+    """
 
     labels: List[str]
     """A list of the possible labels to choose from."""
@@ -48,19 +51,19 @@ class LabelSelector(BaseLabelSelector):
 
         if matching_attribute is None:
             raise ValueError(
-                f"No attribute found with name '{self.label_selection_attribute}'"
+                f"No attribute found with name '{self.label_selection_attribute}'",
             )
 
         self.labels = matching_attribute.get("options", [])
         if not self.labels:
             raise ValueError(
-                f"Attribute '{self.label_selection_attribute}' does not have any options"
+                f"Attribute '{self.label_selection_attribute}' does not have any options",
             )
 
         self.k = min(self.config.max_selected_labels(), len(self.labels))
         self.cache = cache
         self.vectorStore = VectorStoreWrapper(
-            embedding_function=embedding_func, cache=self.cache
+            embedding_function=embedding_func, cache=self.cache,
         )
 
         self.vectorStore.add_texts(self.labels)

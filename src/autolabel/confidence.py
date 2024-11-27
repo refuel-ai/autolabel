@@ -1,18 +1,14 @@
-from typing import List, Optional, Tuple, Union, Dict
-import math
-import numpy as np
-import pickle as pkl
-import json
-import httpx
-import scipy.stats as stats
-import os
-import logging
 import difflib
+import json
+import logging
+import math
+import os
+import pickle as pkl
+from typing import Dict, List, Optional, Tuple, Union
 
-from autolabel.schema import LLMAnnotation, ConfidenceCacheEntry, TaskType
-from autolabel.models import BaseModel
-from autolabel.cache import BaseCache
-
+import httpx
+import numpy as np
+from scipy import stats
 from tenacity import (
     before_sleep_log,
     retry,
@@ -20,6 +16,10 @@ from tenacity import (
     stop_after_attempt,
     wait_exponential,
 )
+
+from autolabel.cache import BaseCache
+from autolabel.models import BaseModel
+from autolabel.schema import ConfidenceCacheEntry, LLMAnnotation, TaskType
 
 logger = logging.getLogger(__name__)
 
@@ -46,7 +46,7 @@ class ConfidenceCalculator:
             "logprob_average_per_label": self.logprob_average_per_label,
         }
         self.REFUEL_API_ENV = "REFUEL_API_KEY"
-        if self.REFUEL_API_ENV in os.environ and os.environ[self.REFUEL_API_ENV]:
+        if os.environ.get(self.REFUEL_API_ENV):
             self.REFUEL_API_KEY = os.environ[self.REFUEL_API_ENV]
         else:
             self.REFUEL_API_KEY = None
@@ -95,7 +95,7 @@ class ConfidenceCalculator:
                 if delimiter in curr_chars:
                     curr_key += curr_chars.split(delimiter)[0]
                     conf_label_keys[curr_key] = self.logprob_average(
-                        logprobs[prev_key_index:i]
+                        logprobs[prev_key_index:i],
                     )
                     prev_key_index = i
                     curr_key = curr_chars.split(delimiter)[-1]
@@ -118,7 +118,7 @@ class ConfidenceCalculator:
                 # size - The length of the matching subsequence
 
                 longest_substring = difflib.SequenceMatcher(
-                    None, label, conf_label_candiate
+                    None, label, conf_label_candiate,
                 ).find_longest_match(0, len(label), 0, len(conf_label_candiate))
                 if (
                     longest_substring.size
@@ -219,7 +219,7 @@ class ConfidenceCalculator:
                 )
             else:
                 logprob_per_key[curr_key] = self.logprob_average(
-                    logprobs[locations[i][1] + 1 : locations[i + 1][0]]
+                    logprobs[locations[i][1] + 1 : locations[i + 1][0]],
                 )
         return logprob_per_key
 
@@ -248,12 +248,12 @@ class ConfidenceCalculator:
             token_str = list(token.keys())[0]
             if token_str.lower() == "yes":
                 return math.e ** token[token_str]
-            elif token_str.lower() == "no":
+            if token_str.lower() == "no":
                 return -math.e ** token[token_str]
         return 0
 
     def return_empty_logprob(
-        self, model_generation: LLMAnnotation
+        self, model_generation: LLMAnnotation,
     ) -> Union[float, Dict]:
         if self.score_type == "logprob_average_per_key":
             keys = model_generation.label.keys()
@@ -269,7 +269,7 @@ class ConfidenceCalculator:
         **kwargs,
     ) -> float:
         if self.score_type not in self.SUPPORTED_CALCULATORS:
-            raise NotImplementedError()
+            raise NotImplementedError
 
         logprobs = None
         if not self.llm.returns_token_probs():
@@ -302,7 +302,7 @@ class ConfidenceCalculator:
                     self.cache.update(cache_entry)
             else:
                 logprobs = await self.compute_confidence(
-                    model_generation.prompt, model_generation.raw_response
+                    model_generation.prompt, model_generation.raw_response,
                 )
                 if not logprobs:
                     return self.return_empty_logprob(model_generation)
@@ -315,7 +315,7 @@ class ConfidenceCalculator:
 
         if self.score_type == "logprob_average_per_key":
             assert isinstance(
-                model_generation.label, dict
+                model_generation.label, dict,
             ), "logprob_average_per_key requires a dict label from attribute extraction"
             assert keys is not None, "Keys must be provided for logprob_average_per_key"
 
@@ -340,21 +340,21 @@ class ConfidenceCalculator:
             "messages": [
                 {"role": "user", "content": model_input},
                 {"role": "assistant", "content": model_output},
-            ]
+            ],
         }
         headers = {"refuel_api_key": self.REFUEL_API_KEY}
         if self.endpoint is None:
             raise ValueError("Endpoint not provided")
         async with httpx.AsyncClient() as client:
             response = await client.post(
-                self.endpoint, json=payload, headers=headers, timeout=30
+                self.endpoint, json=payload, headers=headers, timeout=30,
             )
             # raise Exception if status != 200
             response.raise_for_status()
             return response
 
     async def compute_confidence(
-        self, model_input, model_output
+        self, model_input, model_output,
     ) -> Union[dict, List[dict]]:
         """
         This function computes the confidence score for the given model_input and model_output
@@ -364,12 +364,11 @@ class ConfidenceCalculator:
             if self.REFUEL_API_KEY is None:
                 logger.error(
                     f"Did not find {self.REFUEL_API_ENV}, please add an environment variable"
-                    f" `{self.REFUEL_API_ENV}` which contains it"
+                    f" `{self.REFUEL_API_ENV}` which contains it",
                 )
                 return None
-            else:
-                response = await self._call_with_retry(model_input, model_output)
-                return json.loads(response.json())["logprobs"]
+            response = await self._call_with_retry(model_input, model_output)
+            return json.loads(response.json())["logprobs"]
         except Exception as e:
             # This signifies an error in computing confidence score
             # using the API. We give it a score of 0.5 and go ahead
@@ -385,14 +384,14 @@ class ConfidenceCalculator:
 
     @classmethod
     def compute_auroc(
-        cls, match: List[int], confidence: List[float], plot: bool = False
+        cls, match: List[int], confidence: List[float], plot: bool = False,
     ) -> Tuple[float, List[float]]:
         try:
             import sklearn
         except ImportError:
             raise ValueError(
                 "Could not import sklearn python package. "
-                "Please it install it with `pip install scikit-learn`."
+                "Please it install it with `pip install scikit-learn`.",
             )
 
         if len(set(match)) == 1:
@@ -412,13 +411,13 @@ class ConfidenceCalculator:
             except ImportError:
                 raise ValueError(
                     "Could not import matplotlib python package. "
-                    "Please it install it with `pip install matplotlib`."
+                    "Please it install it with `pip install matplotlib`.",
                 )
             print(f"FPR: {fpr}")
             print(f"TPR: {tpr}")
             print(f"Thresholds: {thresholds}")
             print(
-                f"Completion Rate: {[ConfidenceCalculator.compute_completion(confidence, i) for i in thresholds]}"
+                f"Completion Rate: {[ConfidenceCalculator.compute_completion(confidence, i) for i in thresholds]}",
             )
             plt.plot(
                 fpr,
@@ -450,7 +449,7 @@ class ConfidenceCalculator:
         except ImportError:
             raise ValueError(
                 "Could not import matplotlib python package. "
-                "Please it install it with `pip install matplotlib`."
+                "Please it install it with `pip install matplotlib`.",
             )
 
         if save_data:

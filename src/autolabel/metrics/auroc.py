@@ -1,10 +1,9 @@
-from typing import List
 import logging
-import pylcs
+from typing import List
 
-
-from sklearn.metrics import roc_auc_score
 import numpy as np
+import pylcs
+from sklearn.metrics import roc_auc_score
 
 from autolabel.metrics import BaseMetric
 from autolabel.schema import LLMAnnotation, MetricResult, MetricType
@@ -24,11 +23,11 @@ class AUROCMetric(BaseMetric):
         return substring_lengths / max(len(a) + 1e-5, len(b) + 1e-5)
 
     def compute(
-        self, llm_labels: List[LLMAnnotation], gt_labels: List[str]
+        self, llm_labels: List[LLMAnnotation], gt_labels: List[str],
     ) -> List[MetricResult]:
         if not gt_labels:
             logger.warning(
-                "No ground truth labels were provided. Skipping AUROC metric."
+                "No ground truth labels were provided. Skipping AUROC metric.",
             )
             return []
 
@@ -56,6 +55,6 @@ class AUROCMetric(BaseMetric):
             MetricResult(
                 name=MetricType.AUROC,
                 value=auroc,
-            )
+            ),
         ]
         return value

@@ -1,5 +1,5 @@
-from typing import List
 import logging
+from typing import List
 
 from sklearn.metrics import classification_report
 
@@ -14,12 +14,12 @@ class ClassificationReportMetric(BaseMetric):
         super().__init__()
 
     def compute(
-        self, llm_labels: List[LLMAnnotation], gt_labels: List[str]
+        self, llm_labels: List[LLMAnnotation], gt_labels: List[str],
     ) -> List[MetricResult]:
         # If there are not ground truth labels, return an empty list
         if not gt_labels:
             logger.warning(
-                "No ground truth labels were provided. Skipping classification report metric."
+                "No ground truth labels were provided. Skipping classification report metric.",
             )
             return []
 
@@ -47,6 +47,6 @@ class ClassificationReportMetric(BaseMetric):
                 name=MetricType.CLASSIFICATION_REPORT,
                 value=report,
                 show_running=False,
-            )
+            ),
         ]
         return value

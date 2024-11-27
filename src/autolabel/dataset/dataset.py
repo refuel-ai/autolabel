@@ -1,5 +1,5 @@
 import logging
-from typing import Callable, Dict, List, Union, Optional
+from typing import Callable, Dict, List, Optional, Union
 
 import pandas as pd
 from rich.console import Console
@@ -17,6 +17,7 @@ METRIC_TABLE_STYLE = "cyan bold"
 
 
 class AutolabelDataset:
+
     """The dataset for handling all operations on the dataset."""
 
     inputs: List[Dict]
@@ -39,12 +40,14 @@ class AutolabelDataset:
     ) -> None:
         """
         Initializes the dataset.
+
         Args:
             dataset: The dataset to be used for labeling. Could be a path to a csv/jsonl file or a pandas dataframe.
             config: The config to be used for labeling. Could be a path to a json file or a dictionary.
             max_items: The maximum number of items to be parsed into the dataset object.
             start_index: The index to start parsing the dataset from.
             validate: Whether to validate the dataset or not.
+
         """
         if not (isinstance(config, AutolabelConfig)):
             self.config = AutolabelConfig(config)
@@ -105,7 +108,7 @@ class AutolabelDataset:
         return AutolabelDataset(df, self.config)
 
     def process_labels(
-        self, llm_labels: List[LLMAnnotation], metrics: List[MetricResult] = None
+        self, llm_labels: List[LLMAnnotation], metrics: List[MetricResult] = None,
     ):
         # Add the LLM labels to the dataframe
         self.df[self.generate_label_name("label")] = [x.label for x in llm_labels]
@@ -152,7 +155,7 @@ class AutolabelDataset:
                 for x in llm_labels:
                     if x.successfully_labeled:
                         attr_confidence_scores.append(
-                            x.confidence_score.get(attr["name"], 0.0)
+                            x.confidence_score.get(attr["name"], 0.0),
                         )
                     else:
                         attr_confidence_scores.append(0.0)
@@ -169,8 +172,10 @@ class AutolabelDataset:
     def save(self, output_file_name: str):
         """
         Saves the dataset to a file based on the file extension.
+
         Args:
             output_file_name: The name of the file to save the dataset to. Based on the extension we can save to a csv or jsonl file.
+
         """
         if output_file_name.endswith(".csv"):
             self.df.to_csv(
@@ -245,21 +250,23 @@ class AutolabelDataset:
         return AutolabelDataset(filtered_df, self.config)
 
     def incorrect(
-        self, label: str = None, ground_truth: str = None, label_column: str = None
+        self, label: str = None, ground_truth: str = None, label_column: str = None,
     ):
         """
         Filter the dataset to only include incorrect items. This means the labels
         where the llm label was incorrect.
+
         Args:
             label: The llm label to filter on.
             ground_truth: The ground truth label to filter on.
             label_column: The column to filter on. This is only used for attribute extraction tasks.
+
         """
         gt_label_column = label_column or self.config.label_column()
 
         if gt_label_column is None:
             raise ValueError(
-                "Cannot compute mistakes without ground truth label column"
+                "Cannot compute mistakes without ground truth label column",
             )
 
         filtered_df = self.df[
@@ -281,8 +288,10 @@ class AutolabelDataset:
         """
         Filter the dataset to only include correct items. This means the labels
         where the llm label was correct.
+
         Args:
             label_column: The column to filter on. This is only used for attribute extraction tasks.
+
         """
         gt_label_column = label_column or self.config.label_column()
 
@@ -298,12 +307,14 @@ class AutolabelDataset:
     def filter_by_confidence(self, threshold: float = 0.5):
         """
         Filter the dataset to only include items with confidence scores greater than the threshold.
+
         Args:
             threshold: The threshold to filter on. This means that only items with confidence scores greater than the threshold will be included.
+
         """
         if not self.config.confidence():
             raise ValueError(
-                "Cannot compute correct and confident without confidence scores"
+                "Cannot compute correct and confident without confidence scores",
             )
 
         filtered_df = self.df[
@@ -360,10 +371,10 @@ class AutolabelDataset:
 
         if len(self.__malformed_records) > 0:
             logger.warning(
-                f"Data Validation failed for {len(self.__malformed_records)} records: \n Stats: \n {table}"
+                f"Data Validation failed for {len(self.__malformed_records)} records: \n Stats: \n {table}",
             )
             raise DataValidationFailed(
-                f"Validation failed for {len(self.__malformed_records)} rows."
+                f"Validation failed for {len(self.__malformed_records)} rows.",
             )
 
     def generate_label_name(self, col_name: str, label_column: str = None):

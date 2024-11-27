@@ -6,16 +6,19 @@ from functools import cached_property
 from json.decoder import JSONDecodeError
 from typing import Dict, List, Optional, Union
 
-from autolabel.configs import AutolabelConfig
 from pydantic import BaseModel, ValidationError, create_model, root_validator
 from pydantic.types import StrictStr
+
+from autolabel.configs import AutolabelConfig
 
 # Regex pattern to extract expected column from onfig.example_template()
 EXPECTED_COLUMN_PATTERN = r"\{([^}]*)\}"
 
 
 class NERTaskValidate(BaseModel):
-    """Validate NER Task
+
+    """
+    Validate NER Task
 
     The label column can either be a string or a json
     """
@@ -24,7 +27,8 @@ class NERTaskValidate(BaseModel):
     labels_set: Optional[set]  # A NER Task should have a unique set of labels in config
 
     def validate(self, value: str):
-        """Validate NER
+        """
+        Validate NER
 
         A NER label can only be a dictionary
         """
@@ -35,7 +39,7 @@ class NERTaskValidate(BaseModel):
                 unmatched_label = set(seed_labels.keys()) - self.labels_set
                 if len(unmatched_label) != 0:
                     raise ValueError(
-                        f"labels: '{unmatched_label}' not in prompt/labels provided in config "
+                        f"labels: '{unmatched_label}' not in prompt/labels provided in config ",
                     )
             except JSONDecodeError:
                 raise
@@ -44,7 +48,9 @@ class NERTaskValidate(BaseModel):
 
 
 class ClassificationTaskValidate(BaseModel):
-    """Validate Classification Task
+
+    """
+    Validate Classification Task
 
     The label column can either be a string or a string of list
     """
@@ -55,7 +61,8 @@ class ClassificationTaskValidate(BaseModel):
     ]  # A classification Task should have a unique set of labels in config
 
     def validate(self, value: str):
-        """Validate classification
+        """
+        Validate classification
 
         A classification label(ground_truth) could either be a list or string
         """
@@ -68,19 +75,20 @@ class ClassificationTaskValidate(BaseModel):
                 unmatched_label = set(seed_labels) - self.labels_set
                 if len(unmatched_label) != 0:
                     raise ValueError(
-                        f"labels: '{unmatched_label}' not in prompt/labels provided in config "
+                        f"labels: '{unmatched_label}' not in prompt/labels provided in config ",
                     )
             except SyntaxError:
                 raise
-        else:
-            if value not in self.labels_set:
-                raise ValueError(
-                    f"labels: '{value}' not in prompt/labels provided in config "
-                )
+        elif value not in self.labels_set:
+            raise ValueError(
+                f"labels: '{value}' not in prompt/labels provided in config ",
+            )
 
 
 class EMTaskValidate(BaseModel):
-    """Validate Entity Matching Task
+
+    """
+    Validate Entity Matching Task
 
     As of now we assume that the input label_column is a string
     """
@@ -93,12 +101,14 @@ class EMTaskValidate(BaseModel):
     def validate(self, value: str):
         if value not in self.labels_set:
             raise ValueError(
-                f"labels: '{value}' not in prompt/labels provided in config "
+                f"labels: '{value}' not in prompt/labels provided in config ",
             )
 
 
 class QATaskValidate(BaseModel):
-    """Validate Question Answering Task
+
+    """
+    Validate Question Answering Task
 
     As of now we assume that the input label_column is a string
     """
@@ -110,11 +120,12 @@ class QATaskValidate(BaseModel):
 
     def validate(self, value: str):
         """Since question answering is arbitarary task we have no validation"""
-        pass
 
 
 class MLCTaskValidate(BaseModel):
-    """Validate Multilabel Classification Task
+
+    """
+    Validate Multilabel Classification Task
 
     As of now we assume that the input label_column is a string
 
@@ -132,12 +143,12 @@ class MLCTaskValidate(BaseModel):
                 seed_labels = eval(value)
                 if not isinstance(seed_labels, list):
                     raise ValueError(
-                        f"value: '{value}' is not a list of labels as expected"
+                        f"value: '{value}' is not a list of labels as expected",
                     )
                 unmatched_label = set(seed_labels) - self.labels_set
                 if len(unmatched_label) != 0:
                     raise ValueError(
-                        f"labels: '{unmatched_label}' not in prompt/labels provided in config "
+                        f"labels: '{unmatched_label}' not in prompt/labels provided in config ",
                     )
             except SyntaxError:
                 raise
@@ -164,13 +175,16 @@ class DataValidationTasks(BaseModel):
 
 
 class TaskDataValidation:
+
     """Task Validation"""
 
     def __init__(self, config: AutolabelConfig):
-        """Task Validation
+        """
+        Task Validation
 
         Args:
             config: AutolabelConfig = User passed parsed configuration
+
         """
         # the type of task, classification, named_entity_recognition, etc.., "config/task_type"
         task_type: str = config.task_type()
@@ -190,10 +204,10 @@ class TaskDataValidation:
         self.__schema = {col: (StrictStr, ...) for col in self.expected_columns}
 
         self.__validation_task = DataValidationTasks.__dict__[task_type](
-            label_column=label_column, labels_set=set(labels_list)
+            label_column=label_column, labels_set=set(labels_list),
         )
         self.__data_validation = self.data_validation_and_schema_check(
-            self.__validation_task
+            self.__validation_task,
         )
 
     @cached_property
@@ -222,7 +236,8 @@ class TaskDataValidation:
         return self.__validation_task
 
     def data_validation_and_schema_check(self, validation_task: BaseModel):
-        """Validate data format and datatype
+        """
+        Validate data format and datatype
 
         Args:
             validation_task (TaskTypeValidate): validation task
@@ -233,10 +248,12 @@ class TaskDataValidation:
 
         Returns:
             DataValidation: Pydantic Model for validation
+
         """
         Model = create_model("Model", **self.__schema)
 
         class DataValidation(BaseModel):
+
             """Data Validation"""
 
             # We define validate as a classmethod such that a dynamic `data` can be passed
@@ -282,12 +299,13 @@ class TaskDataValidation:
                             "loc": field,
                             "msg": err["msg"],
                             "type": err["type"],
-                        }
+                        },
                     ]
         return error_messages
 
     def validate_dataset_columns(self, dataset_columns: List):
-        """Validate columns
+        """
+        Validate columns
 
         Validate if the columns mentioned in example_template dataset are correct
         and are contained within the columns of the dataset(seed.csv)

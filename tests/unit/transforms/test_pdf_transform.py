@@ -23,7 +23,7 @@ async def test_pdf_transform():
     transformed_row = await transform.apply(row)
     # Check the output
     assert set(transformed_row.keys()) == set(
-        ["content", "metadata", "content_error", "metadata_error"]
+        ["content", "metadata", "content_error", "metadata_error"],
     )
     assert transformed_row["content_error"] == None
     assert isinstance(transformed_row["content"], str)
@@ -36,7 +36,7 @@ async def test_pdf_transform():
 async def test_pdf_transform_ocr(mocker):
     mocker.patch(
         "subprocess.check_output",
-        return_value="5.3.2".encode("utf-8"),
+        return_value=b"5.3.2",
     )
     mocker.patch(
         "autolabel.transforms.pdf.PDFTransform.get_page_texts",
@@ -58,7 +58,7 @@ async def test_pdf_transform_ocr(mocker):
     transformed_row = await transform.apply(row)
     # Check the output
     assert set(transformed_row.keys()) == set(
-        ["content", "metadata", "content_error", "metadata_error"]
+        ["content", "metadata", "content_error", "metadata_error"],
     )
     assert transformed_row["content_error"] == None
     assert transformed_row["content"] == "Page 1: This is a test"

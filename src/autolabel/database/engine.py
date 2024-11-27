@@ -1,4 +1,4 @@
-from typing import Any, Optional
+from typing import Optional
 
 from sqlalchemy import create_engine
 from sqlalchemy.engine.base import Engine

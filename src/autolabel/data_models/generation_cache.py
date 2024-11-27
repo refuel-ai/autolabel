@@ -1,15 +1,17 @@
-from .base import Base
-from pydantic import BaseModel
-from sqlalchemy import Column, Integer, String, Text, JSON
-from sqlalchemy.orm import relationship
-from langchain.schema import Generation, ChatGeneration
 import json
 import time
 
+from langchain.schema import ChatGeneration, Generation
+from pydantic import BaseModel
+from sqlalchemy import JSON, Column, Integer, String, Text
+
 from autolabel.schema import GenerationCacheEntry
+
+from .base import Base
 
 
 class GenerationCacheEntryModel(Base):
+
     """an SQLAlchemy based Cache system for storing and retriving CacheEntries"""
 
     __tablename__ = "generation_cache"
@@ -76,7 +78,7 @@ class GenerationCacheEntryModel(Base):
         if use_ttl:
             current_time_ms = int(time.time() * 1000)
             db.query(cls).filter(
-                current_time_ms - cls.creation_time_ms > cls.ttl_ms
+                current_time_ms - cls.creation_time_ms > cls.ttl_ms,
             ).delete()
         else:
             db.query(cls).delete()

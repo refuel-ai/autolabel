@@ -1,17 +1,19 @@
-from sqlalchemy.orm import sessionmaker
-from typing import Dict, Any
-from autolabel.transforms.schema import TransformCacheEntry
-from autolabel.database import create_db_engine
-from autolabel.data_models import Base
-from typing import Optional
-from autolabel.data_models import TransformCacheEntryModel
-from .base import BaseCache
 import logging
+from typing import Any, Dict, Optional
+
+from sqlalchemy.orm import sessionmaker
+
+from autolabel.data_models import Base, TransformCacheEntryModel
+from autolabel.database import create_db_engine
+from autolabel.transforms.schema import TransformCacheEntry
+
+from .base import BaseCache
 
 logger = logging.getLogger(__name__)
 
 
 class SQLAlchemyTransformCache(BaseCache):
+
     """
     A cache system implemented with SQL Alchemy for storing the output of transforms.
     This cache system is used to avoid re-computing the output of transforms that have already been computed.
@@ -30,11 +32,14 @@ class SQLAlchemyTransformCache(BaseCache):
         self.session = sessionmaker(bind=self.engine)()
 
     def lookup(self, entry: TransformCacheEntry) -> Optional[Dict[str, Any]]:
-        """Retrieves an entry from the Cache. Returns None if not found.
+        """
+        Retrieves an entry from the Cache. Returns None if not found.
+
         Args:
             entry: TransformCacheEntry we wish to retrieve from the Cache
         Returns:
             result: The output of the transform for this input. None if not found.
+
         """
         cache_entry = TransformCacheEntryModel.get(self.session, entry)
         if cache_entry is None:
@@ -43,7 +48,8 @@ class SQLAlchemyTransformCache(BaseCache):
         return cache_entry.output
 
     def update(self, entry: TransformCacheEntry) -> None:
-        """Inserts the provided TransformCacheEntry into the Cache, overriding it if it already exists
+        """
+        Inserts the provided TransformCacheEntry into the Cache, overriding it if it already exists
         Args:
             entry: TransformCacheEntry we wish to put into the Cache
         """

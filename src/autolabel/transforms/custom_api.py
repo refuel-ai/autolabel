@@ -1,12 +1,12 @@
 import asyncio
-from collections import defaultdict
-from urllib.parse import urlparse
-from autolabel.cache import BaseCache
-from autolabel.transforms import BaseTransform
-from typing import Dict, Any, List
 import logging
 import ssl
+from collections import defaultdict
+from typing import Any, Dict, List
+from urllib.parse import urlparse
 
+from autolabel.cache import BaseCache
+from autolabel.transforms import BaseTransform
 from autolabel.transforms.schema import (
     TransformError,
     TransformErrorType,
@@ -59,21 +59,21 @@ class CustomApi(BaseTransform):
                 keepalive_expiry=timeout,
             )
             self.client = httpx.AsyncClient(
-                timeout=self.timeout, limits=limits, follow_redirects=True
+                timeout=self.timeout, limits=limits, follow_redirects=True,
             )
             self.client_with_no_verify = httpx.AsyncClient(
-                timeout=self.timeout, limits=limits, follow_redirects=True, verify=False
+                timeout=self.timeout, limits=limits, follow_redirects=True, verify=False,
             )
         except ImportError:
             raise ImportError(
-                "httpx and fake_useragent are required to use the custom API transform. Please install them with the following command: pip install httpx fake_useragent"
+                "httpx and fake_useragent are required to use the custom API transform. Please install them with the following command: pip install httpx fake_useragent",
             )
 
     def name(self) -> str:
         return TransformType.CUSTOM_API
 
     async def _get_result(
-        self, url: str, params: Dict = {}, verify=True, headers=HEADERS, retry_count=0
+        self, url: str, params: Dict = {}, verify=True, headers=HEADERS, retry_count=0,
     ) -> Dict[str, Any]:
         if retry_count >= self.max_retries:
             logger.warning(f"Max retries reached for URL: {url}")
@@ -90,23 +90,23 @@ class CustomApi(BaseTransform):
             request_url = response.url
             response.raise_for_status()
             return response.text
-        except self.httpx.ConnectTimeout as e:
+        except self.httpx.ConnectTimeout:
             logger.error(f"Timeout when making request to URL: {request_url}")
             raise TransformError(
                 TransformErrorType.TRANSFORM_TIMEOUT,
                 f"Timeout when making request to URL: {request_url}",
             )
-        except ssl.SSLCertVerificationError as e:
+        except ssl.SSLCertVerificationError:
             logger.warning(
-                f"SSL verification error when making request to URL: {request_url}, retrying with verify=False"
+                f"SSL verification error when making request to URL: {request_url}, retrying with verify=False",
             )
             await asyncio.sleep(BACKOFF**retry_count)
             return await self._get_result(
-                url, verify=False, headers=headers, retry_count=retry_count + 1
+                url, verify=False, headers=headers, retry_count=retry_count + 1,
             )
         except Exception as e:
             logger.error(
-                f"Error when making request to URL: {request_url}. Exception: {str(e)}"
+                f"Error when making request to URL: {request_url}. Exception: {e!s}",
             )
             raise TransformError(
                 TransformErrorType.TRANSFORM_API_ERROR,

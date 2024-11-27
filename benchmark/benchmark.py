@@ -1,27 +1,26 @@
 # Before running this file run the following command in the same folder as this file:
 # aws s3 cp --recursive s3://autolabel-benchmarking data
 
-import json
-from argparse import ArgumentParser
-from rich.console import Console
-from typing import List
-import json
-import pickle as pkl
 import ast
-from sklearn.metrics import f1_score
-import torch
-import pylcs
+import json
 import os
+import pickle as pkl
+from argparse import ArgumentParser
+from typing import List
 
-from autolabel import LabelingAgent, AutolabelConfig, AutolabelDataset
-from autolabel.tasks import TaskFactory
+import pylcs
+import torch
+from sklearn.metrics import f1_score
+
+from autolabel import AutolabelConfig, AutolabelDataset, LabelingAgent
 from autolabel.metrics import BaseMetric
 from autolabel.schema import LLMAnnotation, MetricResult
+from autolabel.tasks import TaskFactory
 
 
 class F1Metric(BaseMetric):
     def compute(
-        llm_labels: List[LLMAnnotation], gt_labels: List[str]
+        llm_labels: List[LLMAnnotation], gt_labels: List[str],
     ) -> List[MetricResult]:
         def construct_binary_preds(curr_input: List[str], positive_tokens: List[str]):
             curr_token_index = 0
@@ -44,14 +43,14 @@ class F1Metric(BaseMetric):
             try:
                 curr_pred = " ".join(ast.literal_eval(llm_labels[i].label)).split(" ")
                 predictions.extend(construct_binary_preds(curr_input, curr_pred))
-            except Exception as e:
+            except Exception:
                 curr_pred = llm_labels[i].label.split(" ")
                 predictions.extend(construct_binary_preds(curr_input, curr_pred))
                 # print(e, llm_labels[i].label)
                 # predictions.extend([0 for _ in range(len(curr_input))])
             try:
                 curr_gt = " ".join(ast.literal_eval(gt_labels[i])).split(" ")
-            except Exception as e:
+            except Exception:
                 curr_gt = gt_labels[i].split(" ")
             gt.extend(construct_binary_preds(curr_input, curr_gt))
         return [MetricResult(name="F1", value=f1_score(gt, predictions))]
@@ -59,7 +58,7 @@ class F1Metric(BaseMetric):
 
 class TextSimilarity(BaseMetric):
     def compute(
-        llm_labels: List[LLMAnnotation], gt_labels: List[str]
+        llm_labels: List[LLMAnnotation], gt_labels: List[str],
     ) -> List[MetricResult]:
         def get_similarity(str_a, str_b):
             substring_lengths = pylcs.lcs_string_length(str_a, str_b)
@@ -70,8 +69,8 @@ class TextSimilarity(BaseMetric):
             text_similarity.append(get_similarity(llm_labels[i].label, gt_labels[i]))
         return [
             MetricResult(
-                name="TextSimilarity", value=sum(text_similarity) / len(text_similarity)
-            )
+                name="TextSimilarity", value=sum(text_similarity) / len(text_similarity),
+            ),
         ]
 
 
@@ -138,7 +137,7 @@ def main():
         if dataset in LONG_DATASETS:
             few_shot = 0
 
-        config = json.load(open(f"configs/{dataset}.json", "r"))
+        config = json.load(open(f"configs/{dataset}.json"))
         config["model"]["name"] = args.model
         provider = MODEL_TO_PROVIDER.get(args.model, "vllm")
         config["model"]["provider"] = provider
@@ -174,7 +173,7 @@ def main():
             [F1Metric, TextSimilarity] if dataset in NER_DATASETS else []
         )
         new_ds = agent.run(
-            ds, max_items=args.max_items, additional_metrics=additional_metrics
+            ds, max_items=args.max_items, additional_metrics=additional_metrics,
         )
         new_ds.df.to_csv(f"outputs_{dataset}.csv")
         eval_result.append([x.dict() for x in agent.eval_result])

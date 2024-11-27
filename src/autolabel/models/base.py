@@ -18,14 +18,14 @@ class BaseModel(ABC):
     DEFAULT_CONTEXT_LENGTH = None
 
     def __init__(
-        self, config: AutolabelConfig, cache: BaseCache, tokenizer: AutoTokenizer
+        self, config: AutolabelConfig, cache: BaseCache, tokenizer: AutoTokenizer,
     ) -> None:
         self.config = config
         self.cache = cache
         self.tokenizer = tokenizer
         self.model_params = config.model_params()
         self.max_context_length = config.max_context_length(
-            default=self.DEFAULT_CONTEXT_LENGTH
+            default=self.DEFAULT_CONTEXT_LENGTH,
         )
         # Specific classes that implement this interface should run initialization steps here
         # E.g. initializing the LLM model with required parameters from ModelConfig
@@ -52,7 +52,7 @@ class BaseModel(ABC):
                 new_results = self._label(missing_prompts, output_schema)
             for ind, prompt in enumerate(missing_prompts):
                 costs.append(
-                    self.get_cost(prompt, label=new_results.generations[ind][0].text)
+                    self.get_cost(prompt, label=new_results.generations[ind][0].text),
                 )
 
             # Set the existing prompts to the new results
@@ -70,7 +70,7 @@ class BaseModel(ABC):
                 self.update_cache(missing_prompt_idxs, new_results, prompts)
         generations = [existing_prompts[i] for i in range(len(prompts))]
         return RefuelLLMResult(
-            generations=generations, costs=costs, errors=errors, latencies=latencies
+            generations=generations, costs=costs, errors=errors, latencies=latencies,
         )
 
     @abstractmethod
@@ -85,7 +85,7 @@ class BaseModel(ABC):
     def get_cached_prompts(self, prompts: List[str]) -> Optional[str]:
         """Get prompts that are already cached."""
         model_params_string = str(
-            sorted([(k, v) for k, v in self.model_params.items()])
+            sorted([(k, v) for k, v in self.model_params.items()]),
         )
         missing_prompts = []
         missing_prompt_idxs = []
@@ -111,11 +111,11 @@ class BaseModel(ABC):
     def update_cache(self, missing_prompt_idxs, new_results, prompts):
         """Update the cache with new results."""
         model_params_string = str(
-            sorted([(k, v) for k, v in self.model_params.items()])
+            sorted([(k, v) for k, v in self.model_params.items()]),
         )
 
         for i, result, error in zip(
-            missing_prompt_idxs, new_results.generations, new_results.errors
+            missing_prompt_idxs, new_results.generations, new_results.errors,
         ):
             # If there was an error, don't cache the result
             if error is not None:
@@ -132,15 +132,15 @@ class BaseModel(ABC):
 
     @abstractmethod
     def returns_token_probs(self) -> bool:
-        """Whether the LLM supports returning logprobs of generated tokens
+        """
+        Whether the LLM supports returning logprobs of generated tokens
 
         Returns:
             bool: whether the LLM returns supports returning logprobs of generated tokens
+
         """
-        pass
 
     @abstractmethod
     def get_num_tokens(self, prompt: str) -> int:
         """
         Get the number of tokens in the prompt"""
-        pass
