@@ -51,8 +51,7 @@ class OpenAIVisionLLM(BaseModel):
     def _engine(self) -> str:
         if self.model_name is not None and self.model_name in self.CHAT_ENGINE_MODELS:
             return "chat"
-        else:
-            return "completion"
+        return "completion"
 
     def __init__(
         self,
@@ -66,7 +65,7 @@ class OpenAIVisionLLM(BaseModel):
             from openai import OpenAI
         except ImportError:
             raise ImportError(
-                "openai is required to use the OpenAIVisionLLM. Please install it with the following command: pip install 'refuel-autolabel[openai]'"
+                "openai is required to use the OpenAIVisionLLM. Please install it with the following command: pip install 'refuel-autolabel[openai]'",
             )
 
         # populate model name
@@ -106,7 +105,7 @@ class OpenAIVisionLLM(BaseModel):
                                         "url": parsed_prompt[col],
                                         "detail": "high",
                                     },
-                                }
+                                },
                             )
                 result = self.llm(
                     messages=[
@@ -114,15 +113,15 @@ class OpenAIVisionLLM(BaseModel):
                             "role": "user",
                             "content": content,
                         },
-                    ]
+                    ],
                 )
                 generations.append(
                     [
                         Generation(
                             text=result.choices[0].message.content,
                             generation_info=None,
-                        )
-                    ]
+                        ),
+                    ],
                 )
             except Exception as e:
                 logger.error(f"Error generating label: {e}")
@@ -131,8 +130,8 @@ class OpenAIVisionLLM(BaseModel):
                         Generation(
                             text="",
                             generation_info=None,
-                        )
-                    ]
+                        ),
+                    ],
                 )
         return RefuelLLMResult(
             generations=generations,

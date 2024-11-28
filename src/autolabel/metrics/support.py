@@ -9,7 +9,7 @@ class SupportMetric(BaseMetric):
         super().__init__()
 
     def compute(
-        self, llm_labels: List[LLMAnnotation], gt_labels: List[str]
+        self, llm_labels: List[LLMAnnotation], gt_labels: List[str],
     ) -> List[MetricResult]:
         value = [MetricResult(name=MetricType.SUPPORT, value=len(llm_labels))]
         return value

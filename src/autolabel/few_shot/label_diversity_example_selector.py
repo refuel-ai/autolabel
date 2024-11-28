@@ -19,6 +19,7 @@ def sorted_values(values: Dict[str, str]) -> List[Any]:
 
 
 class LabelDiversityRandomExampleSelector(BaseExampleSelector, BaseModel):
+
     """Example selector that selects examples based on label diversity at random."""
 
     examples: List[dict]
@@ -31,6 +32,7 @@ class LabelDiversityRandomExampleSelector(BaseExampleSelector, BaseModel):
     """Number of different labels."""
 
     class Config:
+
         """Configuration for this pydantic object."""
 
         extra = Extra.forbid
@@ -44,7 +46,7 @@ class LabelDiversityRandomExampleSelector(BaseExampleSelector, BaseModel):
         sorted_examples = sorted(self.examples, key=itemgetter(self.label_key))
         num_examples_per_label = math.ceil(self.k / self.num_labels)
         for label, label_examples in groupby(
-            sorted_examples, key=itemgetter(self.label_key)
+            sorted_examples, key=itemgetter(self.label_key),
         ):
             label_examples_list = list(label_examples)
             selected_examples.extend(label_examples_list[:num_examples_per_label])
@@ -58,7 +60,8 @@ class LabelDiversityRandomExampleSelector(BaseExampleSelector, BaseModel):
         num_labels: int,
         k: int = 4,
     ) -> LabelDiversityRandomExampleSelector:
-        """Create label diversity example selector using example list and embeddings.
+        """
+        Create label diversity example selector using example list and embeddings.
 
         Args:
             examples: List of examples to use in the prompt.
@@ -67,11 +70,13 @@ class LabelDiversityRandomExampleSelector(BaseExampleSelector, BaseModel):
 
         Returns:
             The ExampleSelector instantiated
+
         """
         return cls(k=k, examples=examples, label_key=label_key, num_labels=num_labels)
 
 
 class LabelDiversitySimilarityExampleSelector(BaseExampleSelector, BaseModel):
+
     """ExampleSelector that selects examples based on label diversity, while choosing the most similar examples for each label"""
 
     vectorstore: VectorStore
@@ -87,6 +92,7 @@ class LabelDiversitySimilarityExampleSelector(BaseExampleSelector, BaseModel):
     """Number of different labels."""
 
     class Config:
+
         """Configuration for this pydantic object."""
 
         extra = Extra.forbid
@@ -96,7 +102,7 @@ class LabelDiversitySimilarityExampleSelector(BaseExampleSelector, BaseModel):
         """Add new example to vectorstore."""
         if self.input_keys:
             string_example = " ".join(
-                sorted_values({key: example[key] for key in self.input_keys})
+                sorted_values({key: example[key] for key in self.input_keys}),
             )
         else:
             string_example = " ".join(sorted_values(example))
@@ -113,7 +119,7 @@ class LabelDiversitySimilarityExampleSelector(BaseExampleSelector, BaseModel):
         query = " ".join(sorted_values(input_variables))
         num_examples_per_label = math.ceil(self.k / self.num_labels)
         example_docs = self.vectorstore.label_diversity_similarity_search(
-            query, self.label_key, k=num_examples_per_label
+            query, self.label_key, k=num_examples_per_label,
         )
         # Get the examples from the metadata.
         # This assumes that examples are stored in metadata.
@@ -132,7 +138,8 @@ class LabelDiversitySimilarityExampleSelector(BaseExampleSelector, BaseModel):
         input_keys: Optional[List[str]] = None,
         **vectorstore_cls_kwargs: Any,
     ) -> LabelDiversitySimilarityExampleSelector:
-        """Create k-shot example selector using example list and embeddings, taking both label diversity and semantic similarity into account.
+        """
+        Create k-shot example selector using example list and embeddings, taking both label diversity and semantic similarity into account.
 
         Args:
             examples: List of examples to use in the prompt.
@@ -146,6 +153,7 @@ class LabelDiversitySimilarityExampleSelector(BaseExampleSelector, BaseModel):
 
         Returns:
             The ExampleSelector instantiated, backed by a vector store.
+
         """
         if input_keys:
             string_examples = [
@@ -155,7 +163,7 @@ class LabelDiversitySimilarityExampleSelector(BaseExampleSelector, BaseModel):
         else:
             string_examples = [" ".join(sorted_values(eg)) for eg in examples]
         vectorstore = vectorstore_cls.from_texts(
-            string_examples, embeddings, metadatas=examples, **vectorstore_cls_kwargs
+            string_examples, embeddings, metadatas=examples, **vectorstore_cls_kwargs,
         )
         return cls(
             vectorstore=vectorstore,

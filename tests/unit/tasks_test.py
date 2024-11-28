@@ -4,26 +4,22 @@ import json
 from langchain.schema import Generation
 
 from autolabel.configs import AutolabelConfig
-from autolabel.schema import ErrorType, LabelingError, LLMAnnotation, MetricType
 from autolabel.tasks import (
     AttributeExtractionTask,
 )
 
-from loguru import logger
-
-BANKING_CONFIG = json.load(open("tests/assets/banking/config_banking.json", "r"))
+BANKING_CONFIG = json.load(open("tests/assets/banking/config_banking.json"))
 
 WALMART_AMAZON_CONFIG = json.load(
-    open("tests/assets/walmart_amazon/config_walmart_amazon.json", "r")
+    open("tests/assets/walmart_amazon/config_walmart_amazon.json"),
 )
 
-CONLL_CONFIG = json.load(open("tests/assets/conll2003/config_conll2003.json", "r"))
+CONLL_CONFIG = json.load(open("tests/assets/conll2003/config_conll2003.json"))
 
 TWITTER_EMOTION_DETECTION_CONFIG = json.load(
     open(
         "tests/assets/twitter_emotion_detection/config_twitter_emotion_detection.json",
-        "r",
-    )
+    ),
 )
 
 

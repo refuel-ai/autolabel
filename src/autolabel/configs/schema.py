@@ -6,7 +6,8 @@ from autolabel.schema import FewShotAlgorithm, ModelProvider, TaskType
 
 
 def populate_vendors() -> List[str]:
-    """Generate Predefined Vendors
+    """
+    Generate Predefined Vendors
 
     this function retrives the list of vendors from ModelProvider which acts
     as the central storage for all the vendors/providers
@@ -15,7 +16,8 @@ def populate_vendors() -> List[str]:
 
 
 def populate_task_types() -> List[str]:
-    """Generate Predefined Tasktypes
+    """
+    Generate Predefined Tasktypes
 
     this function retrives the list of acceptable task_types from TaskType
     """
@@ -23,7 +25,8 @@ def populate_task_types() -> List[str]:
 
 
 def populate_few_shot_selection() -> List[str]:
-    """Generate Predefined Few shot selections
+    """
+    Generate Predefined Few shot selections
 
     this function retrives the list of acceptable few_shot_selections
     """
@@ -98,7 +101,7 @@ schema = {
                     "anyOf": [
                         {"type": "array", "items": {"type": "string"}},
                         {
-                            "type": "object"
+                            "type": "object",
                         },  # This is for when the labels are provided with descriptions
                     ],
                     # "uniqueItems": True
@@ -111,7 +114,7 @@ schema = {
                         # filepath of a csv/other files containing the few shot examples
                         {"type": "string"},
                         {"type": "null"},
-                    ]
+                    ],
                 },
                 "few_shot_selection": {
                     "enum": populate_few_shot_selection(),
@@ -123,7 +126,7 @@ schema = {
                     "anyOf": [
                         {"type": "array", "items": {"type": "object"}},
                         {"type": "null"},
-                    ]
+                    ],
                 },
             },
             "required": ["task_guidelines"],

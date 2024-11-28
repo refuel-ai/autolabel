@@ -33,7 +33,7 @@ class HFPipelineMultimodal(BaseModel):
         except ImportError:
             raise ValueError(
                 "Could not import transformers python package. "
-                "Please it install it with `pip install transformers`."
+                "Please it install it with `pip install transformers`.",
             )
 
         try:
@@ -41,7 +41,7 @@ class HFPipelineMultimodal(BaseModel):
         except ImportError:
             raise ValueError(
                 "Could not import torch package. "
-                "Please it install it with `pip install torch`."
+                "Please it install it with `pip install torch`.",
             )
         # populate model name
         self.model_name = config.model_name() or self.DEFAULT_MODEL
@@ -58,24 +58,24 @@ class HFPipelineMultimodal(BaseModel):
             model = AutoModelForPreTraining.from_pretrained(self.model_name)
         elif quantize_bits == 8:
             model = AutoModelForPreTraining.from_pretrained(
-                self.model_name, load_in_8bit=True, device_map="auto"
+                self.model_name, load_in_8bit=True, device_map="auto",
             )
         elif quantize_bits == "16":
             model = AutoModelForPreTraining.from_pretrained(
-                self.model_name, torch_dtype=torch.float16, device_map="auto"
+                self.model_name, torch_dtype=torch.float16, device_map="auto",
             )
         else:
             model = AutoModelForPreTraining.from_pretrained(
-                self.model_name, device_map="auto"
+                self.model_name, device_map="auto",
             )
 
         self.preprocessor = processor
         self.llm = model
         self.exit_condition = processor.tokenizer(
-            "<end_of_utterance>", add_special_tokens=False
+            "<end_of_utterance>", add_special_tokens=False,
         ).input_ids
         self.bad_words_ids = processor.tokenizer(
-            ["<image>", "<fake_token_around_image>"], add_special_tokens=False
+            ["<image>", "<fake_token_around_image>"], add_special_tokens=False,
         ).input_ids
 
     def _label(self, prompts: List[str], output_schema: Dict) -> RefuelLLMResult:
@@ -90,7 +90,7 @@ class HFPipelineMultimodal(BaseModel):
                 "\nAssistant:",
             ]
             inputs = self.preprocessor(
-                prompt, add_end_of_utterance_token=False, return_tensors="pt"
+                prompt, add_end_of_utterance_token=False, return_tensors="pt",
             ).to(self.device)
             generated_ids = self.llm.generate(
                 **inputs,
@@ -99,7 +99,7 @@ class HFPipelineMultimodal(BaseModel):
                 max_length=512,
             )
             generated_text = self.preprocessor.batch_decode(
-                generated_ids, skip_special_tokens=True
+                generated_ids, skip_special_tokens=True,
             )[0]
             generated_text = generated_text.split(prompt[-1])[-1].strip()
             generations.append(
@@ -107,11 +107,11 @@ class HFPipelineMultimodal(BaseModel):
                     Generation(
                         text=generated_text,
                         generation_info=None,
-                    )
-                ]
+                    ),
+                ],
             )
         return RefuelLLMResult(
-            generations=generations, errors=[None] * len(generations)
+            generations=generations, errors=[None] * len(generations),
         )
 
     def get_cost(self, prompt: str, label: Optional[str] = "") -> float:

@@ -74,7 +74,7 @@ def calculate_md5(input_data: Any) -> str:
     if isinstance(input_data, dict):
         # Convert dictionary to a JSON-formatted string
         input_str = json.dumps(input_data, sort_keys=True, skipkeys=True).encode(
-            "utf-8"
+            "utf-8",
         )
     elif hasattr(input_data, "read"):
         # Read binary data from file-like object
@@ -116,7 +116,7 @@ def _autolabel_progress(
             MofNCompleteColumn(),
             TimeElapsedColumn(),
             TimeRemainingColumn(),
-        )
+        ),
     )
     return Progress(
         *columns,
@@ -151,7 +151,8 @@ def track(
     console: Optional[Console] = None,
     disable: bool = False,
 ) -> Iterable[ProgressType]:
-    """Track progress by iterating over a sequence.
+    """
+    Track progress by iterating over a sequence.
 
     Args:
         sequence (Iterable[ProgressType]): A sequence (must support "len") you wish to iterate over.
@@ -161,8 +162,10 @@ def track(
         transient (bool, optional): Clear the progress on exit. Defaults to False.
         console (Console, optional): Console to write to. Default creates internal Console instance.
         disable (bool, optional): Disable display of progress.
+
     Returns:
         Iterable[ProgressType]: An iterable of the values in the sequence.
+
     """
     progress = _autolabel_progress(
         description=description,
@@ -194,7 +197,8 @@ async def gather_async_tasks_with_progress(
     console: Optional[Console] = None,
     disable: bool = False,
 ) -> Iterable:
-    """Gather async tasks with progress bar
+    """
+    Gather async tasks with progress bar
 
     Args:
         tasks (Iterable): A sequence of async tasks you wish to gather.
@@ -204,8 +208,10 @@ async def gather_async_tasks_with_progress(
         transient (bool, optional): Clear the progress on exit. Defaults to False.
         console (Console, optional): Console to write to. Default creates internal Console instance.
         disable (bool, optional): Disable display of progress.
+
     Returns:
         Iterable: Returns an iterable of the results of the async tasks.
+
     """
     progress = _autolabel_progress(
         description=description,
@@ -247,7 +253,8 @@ def track_with_stats(
     console: Optional[Console] = None,
     disable: bool = False,
 ) -> Iterable[ProgressType]:
-    """Track progress and displays stats by iterating over a sequence.
+    """
+    Track progress and displays stats by iterating over a sequence.
 
     Args:
         sequence (Iterable[ProgressType]): A sequence (must support "len") you wish to iterate over.
@@ -258,8 +265,10 @@ def track_with_stats(
         transient (bool, optional): Clear the progress on exit. Defaults to False.
         console (Console, optional): Console to write to. Default creates internal Console instance.
         disable (bool, optional): Disable display of progress.
+
     Returns:
         Iterable[ProgressType]: An iterable of the values in the sequence.
+
     """
     progress = _autolabel_progress(
         description=description,
@@ -281,7 +290,7 @@ def track_with_stats(
     with live:
         progress_task = progress.add_task(description=description, total=total)
         stats_task = stats_progress.add_task(
-            "Stats", stats=", ".join(f"{k}={v}" for k, v in stats.items())
+            "Stats", stats=", ".join(f"{k}={v}" for k, v in stats.items()),
         )
         for value in sequence:
             yield value
@@ -290,7 +299,7 @@ def track_with_stats(
                 advance=min(advance, total - progress.tasks[progress_task].completed),
             )
             stats_progress.update(
-                stats_task, stats=", ".join(f"{k}={v}" for k, v in stats.items())
+                stats_task, stats=", ".join(f"{k}={v}" for k, v in stats.items()),
             )
             live.refresh()
 
@@ -299,8 +308,7 @@ def maybe_round(value: Any) -> Any:
     """Round's value only if it has a round function"""
     if hasattr(value, "__round__"):
         return round(value, 4)
-    else:
-        return value
+    return value
 
 
 def print_table(
@@ -310,7 +318,8 @@ def print_table(
     default_style: str = "bold",
     styles: Dict = {},
 ) -> None:
-    """Print a table of data.
+    """
+    Print a table of data.
 
     Args:
         data (Dict[str, List]): A dictionary of data to print.
@@ -318,6 +327,7 @@ def print_table(
         console (Console, optional): Console to write to. Default creates internal Console instance.
         default_style (str, optional): Default style to apply to the table. Defaults to "bold".
         styles (Dict, optional): A dictionary of styles to apply to the table.
+
     """
     # Convert all values to strings
     data = {
@@ -338,16 +348,18 @@ def print_table(
 
 
 def get_data(dataset_name: str, force: bool = False):
-    """Download Datasets
+    """
+    Download Datasets
 
     Args:
         dataset_name (str): dataset name
         force (bool, optional): if set to True, downloads and overwrites the local test and seed files
             if false then downloads onlyif the files are not present locally
+
     """
 
     def download_bar(current, total, width=80):
-        """custom progress bar for downloading data"""
+        """Custom progress bar for downloading data"""
         width = shutil.get_terminal_size()[0] // 2
         print(
             f"{current//total*100}% [{'.' * (current//total * int(width))}] [{current}/{total}] bytes",
@@ -368,7 +380,7 @@ def get_data(dataset_name: str, force: bool = False):
 
     if dataset_name not in EXAMPLE_DATASETS:
         logger.error(
-            f"{dataset_name} not in list of available datasets: {str(EXAMPLE_DATASETS)}. Exiting..."
+            f"{dataset_name} not in list of available datasets: {EXAMPLE_DATASETS!s}. Exiting...",
         )
         return
     seed_url = DATASET_URL.format(dataset=dataset_name, partition="seed")

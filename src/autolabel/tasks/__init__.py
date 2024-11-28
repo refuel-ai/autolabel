@@ -1,11 +1,11 @@
-from typing import Dict
 import logging
-
-from .base import BaseTask
-from .attribute_extraction import AttributeExtractionTask
+from typing import Dict
 
 from autolabel.configs import AutolabelConfig
 from autolabel.schema import TaskType
+
+from .attribute_extraction import AttributeExtractionTask
+from .base import BaseTask
 
 TASK_TYPE_TO_IMPLEMENTATION: Dict[TaskType, BaseTask] = {
     TaskType.ATTRIBUTE_EXTRACTION: AttributeExtractionTask,
@@ -23,6 +23,6 @@ class TaskFactory:
             return task_cls(config)
         except ValueError as _:
             logger.error(
-                f"{config.task_type()} is not in the list of supported tasks: {TASK_TYPE_TO_IMPLEMENTATION.keys()}"
+                f"{config.task_type()} is not in the list of supported tasks: {TASK_TYPE_TO_IMPLEMENTATION.keys()}",
             )
             return None

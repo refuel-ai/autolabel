@@ -1,9 +1,9 @@
-from autolabel.configs import AutolabelConfig
 import logging
-from autolabel.configs import TaskChainConfig
+from typing import Dict, List
+
+from autolabel.configs import AutolabelConfig, TaskChainConfig
 from autolabel.schema import TASK_CHAIN_TYPE
 from autolabel.task_chain import TaskGraph
-from typing import Dict, List
 
 logger = logging.getLogger(__name__)
 logging.getLogger("httpx").setLevel(logging.WARNING)
@@ -11,7 +11,8 @@ logging.getLogger("httpx").setLevel(logging.WARNING)
 
 # TODO: allow this to take in a list of dicts or autolabel configs and infer accordingly
 def initialize_task_chain_config(task_chain_name: str, configs: List[Dict]) -> Dict:
-    """Initialize the task chain config
+    """
+    Initialize the task chain config
 
     Args:
         task_chain_name (str): The name of the task chain
@@ -19,6 +20,7 @@ def initialize_task_chain_config(task_chain_name: str, configs: List[Dict]) -> D
 
     Returns:
         Dict: The task chain config
+
     """
     task_graph = initialize_task_graph(configs)
     subtasks = sort_subtasks(configs, task_graph)
@@ -37,6 +39,7 @@ def initialize_task_graph(subtasks: List[Dict]) -> TaskGraph:
         subtasks (List[Dict]): The list of subtasks in the task chain
     Returns:
         TaskGraph: A task graph object representing the dependencies between tasks
+
     """
     task_graph = TaskGraph(subtasks)
     chain_output_columns = {}
@@ -54,7 +57,8 @@ def initialize_task_graph(subtasks: List[Dict]) -> TaskGraph:
 
 
 def sort_subtasks(subtasks: List[Dict], task_graph: TaskGraph) -> List[Dict]:
-    """Sort subtasks in topological order
+    """
+    Sort subtasks in topological order
     Args:
         subtasks (List[Dict]): The list of unsorted subtasks in the task chain
         task_graph (TaskGraph): The task graph representing the dependencies between tasks
@@ -67,10 +71,12 @@ def sort_subtasks(subtasks: List[Dict], task_graph: TaskGraph) -> List[Dict]:
 
 # TODO: we should also validate that the subtasks are indeed sorted in topological order
 def validate_task_chain(task_chain_config: TaskChainConfig) -> bool:
-    """Validate the task graph by checking for cycles
+    """
+    Validate the task graph by checking for cycles
 
     Returns:
         bool: True if the graph is valid, False otherwise
+
     """
     task_graph = initialize_task_graph(task_chain_config.subtasks())
     return not task_graph.check_cycle()

@@ -50,7 +50,7 @@ class AnthropicLLM(BaseModel):
             from langchain_anthropic import ChatAnthropic
         except ImportError:
             raise ImportError(
-                "anthropic is required to use the anthropic LLM. Please install it with the following command: pip install 'refuel-autolabel[anthropic]'"
+                "anthropic is required to use the anthropic LLM. Please install it with the following command: pip install 'refuel-autolabel[anthropic]'",
             )
 
         # populate model name

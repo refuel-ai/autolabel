@@ -10,7 +10,9 @@ from autolabel.transforms.schema import TransformType
 
 
 class ImageTransform(BaseTransform):
-    """Extract text from images using OCR.
+
+    """
+    Extract text from images using OCR.
 
     The output columns dictionary for this class should include the keys 'content_column'
     and 'metadata_column'.
@@ -31,7 +33,8 @@ class ImageTransform(BaseTransform):
         file_path_column: str,
         lang: str | None = None,
     ) -> None:
-        """Initialize the ImageTransform.
+        """
+        Initialize the ImageTransform.
 
         Args:
             cache: Cache instance to use
@@ -68,7 +71,8 @@ class ImageTransform(BaseTransform):
 
     @staticmethod
     def name() -> str:
-        """Get transform name.
+        """
+        Get transform name.
 
         Returns:
             Transform type name
@@ -77,7 +81,8 @@ class ImageTransform(BaseTransform):
         return TransformType.IMAGE
 
     def get_image_metadata(self, file_path: str) -> dict[str, Any]:
-        """Get metadata from image file.
+        """
+        Get metadata from image file.
 
         Args:
             file_path: Path to image file
@@ -101,7 +106,8 @@ class ImageTransform(BaseTransform):
             return {"error": str(exc)}
 
     async def _apply(self, row: dict[str, Any]) -> dict[str, Any]:
-        """Transform an image into text using OCR.
+        """
+        Transform an image into text using OCR.
 
         Args:
             row: The row of data to be transformed
@@ -122,7 +128,8 @@ class ImageTransform(BaseTransform):
         return transformed_row
 
     def params(self) -> dict[str, Any]:
-        """Get transform parameters.
+        """
+        Get transform parameters.
 
         Returns:
             Dictionary of parameters
@@ -135,7 +142,8 @@ class ImageTransform(BaseTransform):
         }
 
     def input_columns(self) -> list[str]:
-        """Get required input columns.
+        """
+        Get required input columns.
 
         Returns:
             List of input column names

@@ -42,7 +42,7 @@ class HFPipelineLLM(BaseModel):
         except ImportError:
             raise ValueError(
                 "Could not import transformers python package. "
-                "Please it install it with `pip install transformers`."
+                "Please it install it with `pip install transformers`.",
             )
 
         try:
@@ -50,7 +50,7 @@ class HFPipelineLLM(BaseModel):
         except ImportError:
             raise ValueError(
                 "Could not import torch package. "
-                "Please it install it with `pip install torch`."
+                "Please it install it with `pip install torch`.",
             )
         # populate model name
         self.model_name = config.model_name() or self.DEFAULT_MODEL
@@ -60,7 +60,7 @@ class HFPipelineLLM(BaseModel):
         self.model_params = {**self.DEFAULT_PARAMS, **model_params}
         # initialize HF pipeline
         self.tokenizer = AutoTokenizer.from_pretrained(
-            self.model_name, use_fast=False, add_prefix_space=True
+            self.model_name, use_fast=False, add_prefix_space=True,
         )
         quantize_bits = self.model_params["quantize"]
         model_config = AutoConfig.from_pretrained(self.model_name)
@@ -70,18 +70,18 @@ class HFPipelineLLM(BaseModel):
             AutoModel = AutoModelForSeq2SeqLM
         else:
             raise ValueError(
-                "model_name is neither a causal LM nor a seq2seq LM. Please check the model_name."
+                "model_name is neither a causal LM nor a seq2seq LM. Please check the model_name.",
             )
 
         if not torch.cuda.is_available():
             model = AutoModel.from_pretrained(self.model_name)
         elif quantize_bits == 8:
             model = AutoModel.from_pretrained(
-                self.model_name, load_in_8bit=True, device_map="auto"
+                self.model_name, load_in_8bit=True, device_map="auto",
             )
         elif quantize_bits == "16":
             model = AutoModel.from_pretrained(
-                self.model_name, torch_dtype=torch.float16, device_map="auto"
+                self.model_name, torch_dtype=torch.float16, device_map="auto",
             )
         else:
             model = AutoModel.from_pretrained(self.model_name, device_map="auto")

@@ -1,12 +1,14 @@
+import logging
+from typing import Any, Dict, Optional
+
 from autolabel.cache import BaseCache
 from autolabel.transforms.schema import TransformCacheEntry
-from typing import Any, Dict, Optional
-import logging
 
 logger = logging.getLogger(__name__)
 
 
 class RedisTransformCache(BaseCache):
+
     """A cache system implemented with Redis"""
 
     def __init__(self, endpoint: str, db: int = 0):
@@ -20,15 +22,18 @@ class RedisTransformCache(BaseCache):
             self.redis = Redis.from_url(self.endpoint, db=self.db)
         except ImportError:
             raise ImportError(
-                "redis is required to use the Redis Cache. Please install it with the following command: pip install redis"
+                "redis is required to use the Redis Cache. Please install it with the following command: pip install redis",
             )
 
     def lookup(self, entry: TransformCacheEntry) -> Optional[Dict[str, Any]]:
-        """Retrieves an entry from the Cache. Returns an empty list [] if not found.
+        """
+        Retrieves an entry from the Cache. Returns an empty list [] if not found.
+
         Args:
             entry: Entry we wish to retrieve from the Cache
         Returns:
             result: Deserialized cache entry. None if entry not found.
+
         """
         redis_key = entry.get_id()
         if self.redis.exists(redis_key):
@@ -40,7 +45,8 @@ class RedisTransformCache(BaseCache):
         return None
 
     def update(self, entry: TransformCacheEntry) -> None:
-        """Inserts the provided entry into the Cache, overriding it if it already exists
+        """
+        Inserts the provided entry into the Cache, overriding it if it already exists
         Args:
             entry: Entry we wish to put into the Cache
         """

@@ -10,6 +10,6 @@ class BaseMetric(ABC):
 
     @abstractmethod
     def compute(
-        self, llm_labels: List[LLMAnnotation], gt_labels: List[str]
+        self, llm_labels: List[LLMAnnotation], gt_labels: List[str],
     ) -> List[MetricResult]:
         pass

@@ -13,14 +13,14 @@ from langchain_openai import OpenAIEmbeddings
 from autolabel.configs import AutolabelConfig
 from autolabel.schema import FewShotAlgorithm, ModelProvider
 
+from .base_label_selector import BaseLabelSelector
 from .fixed_example_selector import FixedExampleSelector
 from .label_diversity_example_selector import (
     LabelDiversityRandomExampleSelector,
     LabelDiversitySimilarityExampleSelector,
 )
-from .vector_store import VectorStoreWrapper
-from .base_label_selector import BaseLabelSelector
 from .label_selector import LabelSelector
+from .vector_store import VectorStoreWrapper
 
 ALGORITHM_TO_IMPLEMENTATION: Dict[FewShotAlgorithm, BaseExampleSelector] = {
     FewShotAlgorithm.FIXED: FixedExampleSelector,
@@ -57,10 +57,10 @@ class ExampleSelectorFactory:
             return None
         try:
             algorithm = FewShotAlgorithm(algorithm)
-        except ValueError as e:
+        except ValueError:
             logger.error(
                 f"{algorithm} is not in the list of supported few-shot algorithms: \
-                {ALGORITHM_TO_IMPLEMENTATION.keys()}"
+                {ALGORITHM_TO_IMPLEMENTATION.keys()}",
             )
             return None
 
@@ -75,7 +75,7 @@ class ExampleSelectorFactory:
         ]:
             model_provider = config.embedding_provider()
             embedding_model_class = PROVIDER_TO_MODEL.get(
-                model_provider, DEFAULT_EMBEDDING_PROVIDER
+                model_provider, DEFAULT_EMBEDDING_PROVIDER,
             )
             model_name = config.embedding_model_name()
             if model_name:

@@ -18,26 +18,28 @@ def test_get_data(mocker) -> None:
     os.makedirs("data/banking", exist_ok=True)
 
     def assert_text_remove(file_name_: str, text: str):
-        """Assert text and remove temp file
+        """
+        Assert text and remove temp file
 
         Args:
             file_name_ (str): Temporary file name
             text (str): text to check
+
         """
         file_name_ = os.path.join("data/banking", file_name_)
-        with open(file_name_, "r") as tmp_file_read:
+        with open(file_name_) as tmp_file_read:
             file_content = tmp_file_read.read()
             assert file_content == text
         os.remove(file_name_)
 
     def generate_tempfile_with_content(
-        input_url: str, out: str = None, bar: Optional[Any] = None
+        input_url: str, out: str = None, bar: Optional[Any] = None,
     ) -> None:
         """Generate a Temporary file with dummy content"""
-        with tempfile.NamedTemporaryFile(dir=f"./", delete=False) as tmp_file:
+        with tempfile.NamedTemporaryFile(dir="./", delete=False) as tmp_file:
             file_name = os.path.join("data/banking", input_url.split("/")[-1])
             os.rename(tmp_file.name, file_name)
-            tmp_file.write(f"{input_url}".encode("utf-8"))
+            tmp_file.write(f"{input_url}".encode())
             tmp_file.flush()
 
     mocker.patch("wget.download", side_effect=generate_tempfile_with_content)
@@ -66,7 +68,7 @@ def test_get_data(mocker) -> None:
         assert_text_remove(
             file_name,
             text=utils.DATASET_URL.format(
-                dataset=dataset_name, partition=file_name[0:-4]
+                dataset=dataset_name, partition=file_name[0:-4],
             ),
         )
 

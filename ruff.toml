@@ -1,0 +1,37 @@
+target-version = "py38"
+lint.select = ["ALL"]
+lint.ignore = [
+    "D100",
+    "D101",
+    "D102",
+    "D103",
+    "D104",
+    "D105",
+    "D106",
+    "D107",
+    "D200",
+    "D205",
+    "D211",
+    "D212",
+    "D400",
+    "D401",
+    "D415",
+    "E402",
+    "G004",
+    "TD002",
+    "TD003",
+    "FIX002",
+    "INP001",
+]
+
+# Define known first-party and third-party imports
+[lint.isort]
+known-first-party = ["refuel_utils", "refuel_cloud_core", "forge", "forge_core", "autolabel"]
+# Ensure "from" imports are grouped by package
+combine-as-imports = true
+
+# Group imports
+[lint.isort.sections]
+default = ["third-party"]
+first_party = ["first-party"]
+standard_library = ["stdlib"]

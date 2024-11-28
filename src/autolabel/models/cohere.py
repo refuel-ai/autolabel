@@ -34,7 +34,7 @@ class CohereLLM(BaseModel):
             from langchain_community.llms import Cohere
         except ImportError:
             raise ImportError(
-                "cohere is required to use the cohere LLM. Please install it with the following command: pip install 'refuel-autolabel[cohere]'"
+                "cohere is required to use the cohere LLM. Please install it with the following command: pip install 'refuel-autolabel[cohere]'",
             )
 
         # populate model name

@@ -1,11 +1,9 @@
 """Test Configuration"""
 
 import pytest
-from jsonschema import validate, exceptions
-from autolabel import LabelingAgent
-from autolabel.configs.schema import schema
-from autolabel.configs import AutolabelConfig
+from jsonschema import exceptions, validate
 
+from autolabel.configs.schema import schema
 
 CONFIG_SAMPLE_DICT = {
     "task_name": "ToxicCommentClassification",
@@ -25,11 +23,11 @@ CONFIG_SAMPLE_DICT = {
 
 
 def test_schema_validation():
-    """Validate config
+    """
+    Validate config
 
     This test case tests several validation scenarios.
     """
-
     # Case 1:
     # ----------
     # Here we do not probide the task_guideline field which is required.1
@@ -39,7 +37,7 @@ def test_schema_validation():
         "example_template": "Input: {example}\nOutput: {label}",
     }
     with pytest.raises(
-        exceptions.ValidationError, match=r"'task_guidelines' is a required property"
+        exceptions.ValidationError, match=r"'task_guidelines' is a required property",
     ):
         validate(
             instance=config_dict_copy,

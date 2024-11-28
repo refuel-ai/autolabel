@@ -27,6 +27,7 @@ logger = logging.getLogger(__name__)
 
 
 class UnretryableError(Exception):
+
     """This is an error which is unretriable from autolabel."""
 
 
@@ -55,7 +56,7 @@ class RefuelLLMV2(BaseModel):
             from transformers import AutoTokenizer
         except Exception:
             raise Exception(
-                "Unable to import transformers. Please install transformers to use RefuelLLM"
+                "Unable to import transformers. Please install transformers to use RefuelLLM",
             )
 
         # populate model name
@@ -64,7 +65,7 @@ class RefuelLLMV2(BaseModel):
         self.model_name = config.model_name()
         model_params = config.model_params()
         self.max_context_length = config.max_context_length(
-            default=self.DEFAULT_CONTEXT_LENGTH
+            default=self.DEFAULT_CONTEXT_LENGTH,
         )
         self.model_params = {**self.DEFAULT_PARAMS, **model_params}
         self.model_endpoint = config.model_endpoint()
@@ -74,7 +75,7 @@ class RefuelLLMV2(BaseModel):
             else AutoTokenizer.from_pretrained(**self.DEFAULT_TOKENIZATION_MODEL)
         )
         self.read_timeout = self.model_params.get(
-            "request_timeout", self.DEFAULT_READ_TIMEOUT
+            "request_timeout", self.DEFAULT_READ_TIMEOUT,
         )
         self.adapter_path = self.model_params.get("adapter_id", None)
         if "request_timeout" in self.model_params:
@@ -82,12 +83,12 @@ class RefuelLLMV2(BaseModel):
 
         # initialize runtime
         self.REFUEL_API_ENV = "REFUEL_API_KEY"
-        if self.REFUEL_API_ENV in os.environ and os.environ[self.REFUEL_API_ENV]:
+        if os.environ.get(self.REFUEL_API_ENV):
             self.REFUEL_API_KEY = os.environ[self.REFUEL_API_ENV]
         else:
             raise ValueError(
                 f"Did not find {self.REFUEL_API_ENV}, please add an environment variable"
-                f" `{self.REFUEL_API_ENV}` which contains it"
+                f" `{self.REFUEL_API_ENV}` which contains it",
             )
 
     @retry(
@@ -98,7 +99,7 @@ class RefuelLLMV2(BaseModel):
         retry=retry_if_not_exception_type(UnretryableError),
     )
     def _label_with_retry(
-        self, prompt: str, output_schema: Dict
+        self, prompt: str, output_schema: Dict,
     ) -> Tuple[requests.Response, float]:
         payload = {
             "messages": [{"role": "user", "content": prompt}],
@@ -121,11 +122,11 @@ class RefuelLLMV2(BaseModel):
             if response.status_code in UNRETRYABLE_ERROR_CODES:
                 # This is a bad request, and we should not retry
                 raise UnretryableError(
-                    f"NonRetryable Error: Received status code {response.status_code} from Refuel API. Response: {response.text}"
+                    f"NonRetryable Error: Received status code {response.status_code} from Refuel API. Response: {response.text}",
                 )
 
             logger.warning(
-                f"Received status code {response.status_code} from Refuel API. Response: {response.text}"
+                f"Received status code {response.status_code} from Refuel API. Response: {response.text}",
             )
             response.raise_for_status()
         return response, end_time - start_time
@@ -138,7 +139,7 @@ class RefuelLLMV2(BaseModel):
         retry=retry_if_not_exception_type(UnretryableError),
     )
     async def _alabel_with_retry(
-        self, prompt: str, output_schema: Dict
+        self, prompt: str, output_schema: Dict,
     ) -> Tuple[requests.Response, float]:
         payload = {
             "messages": [{"role": "user", "content": prompt}],
@@ -150,7 +151,7 @@ class RefuelLLMV2(BaseModel):
         headers = {"refuel_api_key": self.REFUEL_API_KEY}
         async with httpx.AsyncClient() as client:
             timeout = httpx.Timeout(
-                self.DEFAULT_CONNECT_TIMEOUT, read=self.read_timeout
+                self.DEFAULT_CONNECT_TIMEOUT, read=self.read_timeout,
             )
             start_time = time()
             response = await client.post(
@@ -166,11 +167,11 @@ class RefuelLLMV2(BaseModel):
                 if response.status_code in UNRETRYABLE_ERROR_CODES:
                     # This is a bad request, and we should not retry
                     raise UnretryableError(
-                        f"NonRetryable Error: Received status code {response.status_code} from Refuel API. Response: {response.text}"
+                        f"NonRetryable Error: Received status code {response.status_code} from Refuel API. Response: {response.text}",
                     )
 
                 logger.warning(
-                    f"Received status code {response.status_code} from Refuel API. Response: {response.text}"
+                    f"Received status code {response.status_code} from Refuel API. Response: {response.text}",
                 )
                 response.raise_for_status()
             return response, end_time - start_time
@@ -182,7 +183,7 @@ class RefuelLLMV2(BaseModel):
         for prompt in prompts:
             try:
                 response, latency = self._label_with_retry(
-                    prompt, output_schema=output_schema
+                    prompt, output_schema=output_schema,
                 )
                 response = json.loads(response.json())
                 generations.append(
@@ -194,14 +195,14 @@ class RefuelLLMV2(BaseModel):
                                     "logprobs": {
                                         "top_logprobs": response["details"][
                                             "output_logprobs"
-                                        ]
-                                    }
+                                        ],
+                                    },
                                 }
                                 if self.config.confidence()
                                 else None
                             ),
-                        )
-                    ]
+                        ),
+                    ],
                 )
                 errors.append(None)
                 latencies.append(latency)
@@ -213,12 +214,12 @@ class RefuelLLMV2(BaseModel):
                 generations.append([Generation(text="")])
                 errors.append(
                     LabelingError(
-                        error_type=ErrorType.LLM_PROVIDER_ERROR, error_message=str(e)
-                    )
+                        error_type=ErrorType.LLM_PROVIDER_ERROR, error_message=str(e),
+                    ),
                 )
                 latencies.append(0)
         return RefuelLLMResult(
-            generations=generations, errors=errors, latencies=latencies
+            generations=generations, errors=errors, latencies=latencies,
         )
 
     async def _alabel(self, prompts: List[str], output_schema: Dict) -> RefuelLLMResult:
@@ -242,14 +243,14 @@ class RefuelLLMV2(BaseModel):
                                     "logprobs": {
                                         "top_logprobs": response["details"][
                                             "output_logprobs"
-                                        ]
-                                    }
+                                        ],
+                                    },
                                 }
                                 if self.config.confidence()
                                 else None
                             ),
-                        )
-                    ]
+                        ),
+                    ],
                 )
                 errors.append(None)
                 latencies.append(latency)
@@ -261,12 +262,12 @@ class RefuelLLMV2(BaseModel):
             generations.append([Generation(text="")])
             errors.append(
                 LabelingError(
-                    error_type=ErrorType.LLM_PROVIDER_ERROR, error_message=str(e)
-                )
+                    error_type=ErrorType.LLM_PROVIDER_ERROR, error_message=str(e),
+                ),
             )
             latencies.append(0)
         return RefuelLLMResult(
-            generations=generations, errors=errors, latencies=latencies
+            generations=generations, errors=errors, latencies=latencies,
         )
 
     def get_cost(self, prompt: str, label: Optional[str] = "") -> float:

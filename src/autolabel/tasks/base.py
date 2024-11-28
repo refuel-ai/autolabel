@@ -149,12 +149,12 @@ class BaseTask(ABC):
     @abstractmethod
     def get_explanation_prompt(self, example: Dict, include_label=True) -> str:
         raise NotImplementedError(
-            "Explanation generation not implemented for this task"
+            "Explanation generation not implemented for this task",
         )
 
     @abstractmethod
     def get_generate_dataset_prompt(
-        self, label: str, num_rows: int, guidelines: Optional[str] = None
+        self, label: str, num_rows: int, guidelines: Optional[str] = None,
     ) -> str:
         raise NotImplementedError("Dataset generation not implemented for this task")
 
@@ -172,7 +172,7 @@ class BaseTask(ABC):
             try:
                 explanation = response.text.strip().split("\n")[0].strip()
                 completion_text = extract_valid_json_substring(
-                    response.text.strip().split("\n")[-1].strip()
+                    response.text.strip().split("\n")[-1].strip(),
                 )
                 completion_text = json.loads(completion_text)["label"]
             except Exception as _:

@@ -13,7 +13,7 @@ async def test_webpage_transform():
     serper_api_wrapper_mock = Mock(spec=RefuelSerperAPIWrapper)
     serper_api_wrapper_mock.arun.return_value = {
         "knowledge_graph": json.dumps(
-            {"title": "Joe Biden", "type": "46th U.S. President"}
+            {"title": "Joe Biden", "type": "46th U.S. President"},
         ),
         "organic_results": json.dumps(
             [
@@ -21,8 +21,8 @@ async def test_webpage_transform():
                     "position": 1,
                     "title": "Presidents",
                     "link": "https://www.whitehouse.gov/about-the-white-house/presidents/",
-                }
-            ]
+                },
+            ],
         ),
     }
     # Initialize the transform class
@@ -50,7 +50,7 @@ async def test_webpage_transform():
             "organic_search_results",
             "knowledge_graph_results_error",
             "organic_search_results_error",
-        ]
+        ],
     )
     assert (
         json.loads(transformed_row["knowledge_graph_results"])["title"] == "Joe Biden"
@@ -86,7 +86,7 @@ async def test_null_query():
             "knowledge_graph_results_error",
             "organic_search_results",
             "organic_search_results_error",
-        ]
+        ],
     )
     assert (
         transformed_row["knowledge_graph_results"]

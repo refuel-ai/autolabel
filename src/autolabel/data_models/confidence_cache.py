@@ -1,13 +1,16 @@
-from .base import Base
-from pydantic import BaseModel
-from sqlalchemy import Column, Integer, String, Text, JSON
 import json
 import time
 
+from pydantic import BaseModel
+from sqlalchemy import JSON, Column, Integer, String, Text
+
 from autolabel.schema import ConfidenceCacheEntry
+
+from .base import Base
 
 
 class ConfidenceCacheEntryModel(Base):
+
     """an SQLAlchemy based Cache system for storing and retriving CacheEntries"""
 
     __tablename__ = "confidence_cache"
@@ -67,7 +70,7 @@ class ConfidenceCacheEntryModel(Base):
         if use_ttl:
             current_time_ms = int(time.time() * 1000)
             db.query(cls).filter(
-                current_time_ms - cls.creation_time_ms > cls.ttl_ms
+                current_time_ms - cls.creation_time_ms > cls.ttl_ms,
             ).delete()
         else:
             db.query(cls).delete()

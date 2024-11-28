@@ -1,11 +1,11 @@
-from typing import List
 import logging
+from typing import List
 
 from sklearn.metrics import accuracy_score
 
-from autolabel.metrics import BaseMetric
 from autolabel.schema import LLMAnnotation, MetricResult, MetricType
 
+from .base import BaseMetric
 
 logger = logging.getLogger(__name__)
 
@@ -15,12 +15,14 @@ class AccuracyMetric(BaseMetric):
         super().__init__()
 
     def compute(
-        self, llm_labels: List[LLMAnnotation], gt_labels: List[str]
+        self,
+        llm_labels: List[LLMAnnotation],
+        gt_labels: List[str],
     ) -> List[MetricResult]:
         # If there are not ground truth labels, return an empty list
         if not gt_labels:
             logger.warning(
-                "No ground truth labels were provided. Skipping accuracy metric."
+                "No ground truth labels were provided. Skipping accuracy metric.",
             )
             return []
 
@@ -42,6 +44,6 @@ class AccuracyMetric(BaseMetric):
             MetricResult(
                 name=MetricType.ACCURACY,
                 value=accuracy,
-            )
+            ),
         ]
         return value
