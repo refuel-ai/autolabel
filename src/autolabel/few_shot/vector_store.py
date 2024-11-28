@@ -1,19 +1,18 @@
 from __future__ import annotations
 
 import heapq
+import logging
+import pickle
 from itertools import groupby
-from typing import Any, Callable, Dict, Iterable, List, Optional, Tuple, Type
-
-from autolabel.database import create_db_engine
+from typing import Any, Dict, Iterable, List, Optional, Tuple, Type
 
 import numpy as np
 from langchain.docstore.document import Document
 from langchain.embeddings.base import Embeddings
 from langchain.vectorstores.base import VectorStore
 from langchain.vectorstores.utils import maximal_marginal_relevance
-import pickle
 
-import logging
+from autolabel.database import create_db_engine
 
 logger = logging.getLogger(__name__)
 
@@ -36,8 +35,10 @@ def _results_to_docs_and_scores(results: Any) -> List[Tuple[Document, float]]:
 def cos_sim(a, b):
     """
     Computes the cosine similarity cos_sim(a[i], b[j]) for all i and j.
+
     Returns:
         cos_sim: Matrix with res(i)(j) = cos_sim(a[i], b[j])
+
     """
     if not isinstance(a, np.ndarray):
         a = np.array(a)
@@ -67,7 +68,6 @@ def semantic_search(
     """
     Semantic similarity search based on cosine similarity score. Implementation from this project: https://github.com/UKPLab/sentence-transformers
     """
-
     if isinstance(query_embeddings, list):
         query_embeddings = np.array(query_embeddings)
 
@@ -98,17 +98,17 @@ def semantic_search(
 
             for query_itr in range(len(cos_scores)):
                 for sub_corpus_id, score in zip(
-                    cos_scores_top_k_idx[query_itr], cos_scores_top_k_values[query_itr]
+                    cos_scores_top_k_idx[query_itr], cos_scores_top_k_values[query_itr],
                 ):
                     corpus_id = corpus_start_idx + sub_corpus_id
                     query_id = query_start_idx + query_itr
                     if len(queries_result_list[query_id]) < top_k:
                         heapq.heappush(
-                            queries_result_list[query_id], (score, corpus_id)
+                            queries_result_list[query_id], (score, corpus_id),
                         )  # heaqp tracks the quantity of the first element in the tuple
                     else:
                         heapq.heappushpop(
-                            queries_result_list[query_id], (score, corpus_id)
+                            queries_result_list[query_id], (score, corpus_id),
                         )
 
     # change the data format and sort
@@ -120,7 +120,7 @@ def semantic_search(
                 "score": score,
             }
         queries_result_list[query_id] = sorted(
-            queries_result_list[query_id], key=lambda x: x["score"], reverse=True
+            queries_result_list[query_id], key=lambda x: x["score"], reverse=True,
         )
     return queries_result_list
 
@@ -148,14 +148,17 @@ class VectorStoreWrapper(VectorStore):
             self._db_engine = None
 
     def _get_embeddings(self, texts: Iterable[str]) -> List[List[float]]:
-        """Get embeddings from the database. If not found, compute them and add them to the database.
+        """
+        Get embeddings from the database. If not found, compute them and add them to the database.
 
         If no database is used, compute the embeddings and return them.
 
         Args:
             texts (Iterable[str]): Iterable of texts to embed.
+
         Returns:
             List[List[float]]: List of embeddings.
+
         """
         if self._db_engine:
             with self._db_engine.connect() as conn:
@@ -184,7 +187,7 @@ class VectorStoreWrapper(VectorStore):
                         uncached_texts_indices.append(idx)
 
                 uncached_embeddings = self._embedding_function.embed_documents(
-                    uncached_texts
+                    uncached_texts,
                 )
                 self._add_embeddings_to_cache(uncached_texts, uncached_embeddings)
                 for idx, embedding in zip(uncached_texts_indices, uncached_embeddings):
@@ -195,18 +198,21 @@ class VectorStoreWrapper(VectorStore):
             return self._embedding_function.embed_documents(list(texts))
 
     def _add_embeddings_to_cache(
-        self, texts: Iterable[str], embeddings: List[List[float]]
+        self, texts: Iterable[str], embeddings: List[List[float]],
     ) -> None:
-        """Save embeddings to the database. If self._db_engine is None, do nothing.
+        """
+        Save embeddings to the database. If self._db_engine is None, do nothing.
+
         Args:
             texts (Iterable[str]): Iterable of texts.
             embeddings (List[List[float]]): List of embeddings.
+
         """
         if self._db_engine:
             with self._db_engine.connect() as conn:
                 for text, embedding in zip(texts, embeddings):
                     query = sql_text(
-                        f"INSERT INTO {EMBEDDINGS_TABLE} (embedding_function, text, embedding) VALUES (:x, :y, :z)"
+                        f"INSERT INTO {EMBEDDINGS_TABLE} (embedding_function, text, embedding) VALUES (:x, :y, :z)",
                     )
                     params = {
                         "x": (
@@ -226,12 +232,16 @@ class VectorStoreWrapper(VectorStore):
         texts: Iterable[str],
         metadatas: Optional[List[Dict[str, str]]] = None,
     ) -> List[str]:
-        """Run texts through the embeddings and add to the vectorstore. Currently, the vectorstore is reinitialized each time, because we do not require a persistent vector store for example selection.
+        """
+        Run texts through the embeddings and add to the vectorstore. Currently, the vectorstore is reinitialized each time, because we do not require a persistent vector store for example selection.
+
         Args:
             texts (Iterable[str]): Texts to add to the vectorstore.
             metadatas (Optional[List[dict]], optional): Optional list of metadatas.
+
         Returns:
             List[str]: List of IDs of the added texts.
+
         """
         if self._embedding_function is not None:
             embeddings = self._get_embeddings(texts)
@@ -248,13 +258,17 @@ class VectorStoreWrapper(VectorStore):
         filter: Optional[Dict[str, str]] = None,
         **kwargs: Any,
     ) -> List[Document]:
-        """Run semantic similarity search.
+        """
+        Run semantic similarity search.
+
         Args:
             query (str): Query text to search for.
             k (int): Number of results to return. Defaults to 4.
             filter (Optional[Dict[str, str]]): Filter by metadata. Defaults to None.
+
         Returns:
             List[Document]: List of documents most similar to the query text.
+
         """
         docs_and_scores = self.similarity_search_with_score(query, k, filter=filter)
         return [doc for doc, _ in docs_and_scores]
@@ -266,14 +280,18 @@ class VectorStoreWrapper(VectorStore):
         filter: Optional[Dict[str, str]] = None,
         **kwargs: Any,
     ) -> List[Tuple[Document, float]]:
-        """Run semantic similarity search and retrieve distances.
+        """
+        Run semantic similarity search and retrieve distances.
+
         Args:
             query (str): Query text to search for.
             k (int): Number of results to return. Defaults to 4.
             filter (Optional[Dict[str, str]]): Filter by metadata. Defaults to None.
+
         Returns:
             List[Tuple[Document, float]]: List of documents most similar to the query
                 text with distance in float.
+
         """
         query_embeddings = np.array([self._get_embeddings([query])[0]])
         result_ids_and_scores = semantic_search(
@@ -297,16 +315,20 @@ class VectorStoreWrapper(VectorStore):
         filter: Optional[Dict[str, str]] = None,
         **kwargs: Any,
     ) -> List[Document]:
-        """Run semantic similarity search.
+        """
+        Run semantic similarity search.
+
         Args:
             query (str): Query text to search for.
             k (int): Number of results to return per label.
             filter (Optional[Dict[str, str]]): Filter by metadata. Defaults to None.
+
         Returns:
             List[Document]: List of documents most similar to the query text.
+
         """
         docs_and_scores = self.label_diversity_similarity_search_with_score(
-            query, label_key, k, filter=filter
+            query, label_key, k, filter=filter,
         )
         return [doc for doc, _ in docs_and_scores]
 
@@ -318,14 +340,18 @@ class VectorStoreWrapper(VectorStore):
         filter: Optional[Dict[str, str]] = None,
         **kwargs: Any,
     ) -> List[Tuple[Document, float]]:
-        """Run semantic similarity search and retrieve distances.
+        """
+        Run semantic similarity search and retrieve distances.
+
         Args:
             query (str): Query text to search for.
             k (int): Number of results to return. Defaults to 4.
             filter (Optional[Dict[str, str]]): Filter by metadata. Defaults to None.
+
         Returns:
             List[Tuple[Document, float]]: List of documents most similar to the query
                 text with distance in float.
+
         """
         query_embeddings = np.array([self._get_embeddings([query])[0]])
         data = []
@@ -336,17 +362,17 @@ class VectorStoreWrapper(VectorStore):
         scores = []
         metadatas = []
         for label, label_examples in groupby(
-            sorted_data, key=lambda item: item[2].get(label_key)
+            sorted_data, key=lambda item: item[2].get(label_key),
         ):
             label_examples_list = list(label_examples)
             label_embeddings = list(
-                map(lambda label_example: label_example[0], label_examples_list)
+                map(lambda label_example: label_example[0], label_examples_list),
             )
             label_texts = list(
-                map(lambda label_example: label_example[1], label_examples_list)
+                map(lambda label_example: label_example[1], label_examples_list),
             )
             label_metadatas = list(
-                map(lambda label_example: label_example[2], label_examples_list)
+                map(lambda label_example: label_example[2], label_examples_list),
             )
 
             result_ids_and_scores = semantic_search(
@@ -397,7 +423,7 @@ class VectorStoreWrapper(VectorStore):
         results["documents"] = [[self._texts[index] for index in selected_result_ids]]
         results["distances"] = [selected_scores]
         results["metadatas"] = [
-            [self._metadatas[index] for index in selected_result_ids]
+            [self._metadatas[index] for index in selected_result_ids],
         ]
 
         return _results_to_docs_and_scores(results)
@@ -411,7 +437,7 @@ class VectorStoreWrapper(VectorStore):
         **kwargs: Any,
     ) -> List[Document]:
         docs_and_scores = self.max_marginal_relevance_search_by_vector(
-            query, k, fetch_k, lambda_mult=lambda_mult
+            query, k, fetch_k, lambda_mult=lambda_mult,
         )
         return [doc for doc, _ in docs_and_scores]
 
@@ -424,15 +450,19 @@ class VectorStoreWrapper(VectorStore):
         cache: bool = True,
         **kwargs: Any,
     ) -> VectorStoreWrapper:
-        """Create a vectorstore from raw text.
+        """
+        Create a vectorstore from raw text.
         The data will be ephemeral in-memory.
+
         Args:
             texts (List[str]): List of texts to add to the collection.
             embedding (Optional[Embeddings]): Embedding function. Defaults to None.
             metadatas (Optional[List[dict]]): List of metadatas. Defaults to None.
             cache (bool): Whether to cache the embeddings. Defaults to True.
+
         Returns:
             vector_store: Vectorstore with seedset embeddings
+
         """
         vector_store = cls(
             embedding_function=embedding,

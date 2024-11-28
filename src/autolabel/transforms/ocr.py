@@ -19,6 +19,7 @@ from autolabel.transforms.schema import (
 
 
 class OCRTransform(BaseTransform):
+
     """
     Extract text from documents using OCR.
 

@@ -291,8 +291,7 @@ def track_with_stats(
     with live:
         progress_task = progress.add_task(description=description, total=total)
         stats_task = stats_progress.add_task(
-            "Stats",
-            stats=", ".join(f"{k}={v}" for k, v in stats.items()),
+            "Stats", stats=", ".join(f"{k}={v}" for k, v in stats.items()),
         )
         for value in sequence:
             yield value
@@ -301,8 +300,7 @@ def track_with_stats(
                 advance=min(advance, total - progress.tasks[progress_task].completed),
             )
             stats_progress.update(
-                stats_task,
-                stats=", ".join(f"{k}={v}" for k, v in stats.items()),
+                stats_task, stats=", ".join(f"{k}={v}" for k, v in stats.items()),
             )
             live.refresh()
 

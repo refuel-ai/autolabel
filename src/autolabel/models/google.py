@@ -47,7 +47,7 @@ class GoogleLLM(BaseModel):
             from vertexai import generative_models
         except ImportError:
             raise ImportError(
-                "tiktoken and langchain_google_vertexai. Please install it with the following command: pip install 'refuel-autolabel[google]'"
+                "tiktoken and langchain_google_vertexai. Please install it with the following command: pip install 'refuel-autolabel[google]'",
             )
 
         self.DEFAULT_PARAMS = {
@@ -65,7 +65,7 @@ class GoogleLLM(BaseModel):
 
         if os.getenv("GOOGLE_APPLICATION_CREDENTIALS") is None:
             raise ValueError(
-                "GOOGLE_APPLICATION_CREDENTIALS environment variable not set"
+                "GOOGLE_APPLICATION_CREDENTIALS environment variable not set",
             )
 
         # populate model name
@@ -91,7 +91,7 @@ class GoogleLLM(BaseModel):
                         LabelingError(
                             error_type=ErrorType.LABELING_FAILED,
                             error_message="No generation",
-                        )
+                        ),
                     )
                 else:
                     generations.append(generation)
@@ -129,7 +129,7 @@ class GoogleLLM(BaseModel):
                         LabelingError(
                             error_type=ErrorType.LABELING_FAILED,
                             error_message="No generation",
-                        )
+                        ),
                     )
                 else:
                     generations.append(generation)
@@ -159,7 +159,7 @@ class GoogleLLM(BaseModel):
         cost_per_prompt_token = self.COST_PER_PROMPT_TOKEN[self.model_name]
         cost_per_completion_token = self.COST_PER_COMPLETION_TOKEN[self.model_name]
         return cost_per_prompt_token * self.get_num_tokens(
-            prompt
+            prompt,
         ) + cost_per_completion_token * (self.get_num_tokens(label) if label else 0.0)
 
     def returns_token_probs(self) -> bool:

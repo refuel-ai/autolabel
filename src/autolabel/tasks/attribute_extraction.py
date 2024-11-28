@@ -24,8 +24,9 @@ from autolabel.schema import (
     MetricResult,
     TaskType,
 )
-from autolabel.tasks import BaseTask
 from autolabel.utils import get_format_variables
+
+from .base import BaseTask
 
 logger = logging.getLogger(__name__)
 

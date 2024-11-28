@@ -1,6 +1,5 @@
 import json
 import logging
-import time
 from collections import defaultdict
 from typing import Any, Dict, List
 
@@ -23,9 +22,7 @@ class RefuelSerpAPIWrapper(SerpAPIWrapper):
 
     def __init__(self, search_engine=None, params=None, serpapi_api_key=None):
         super().__init__(
-            search_engine=search_engine,
-            params=params,
-            serpapi_api_key=serpapi_api_key,
+            search_engine=search_engine, params=params, serpapi_api_key=serpapi_api_key,
         )
 
     async def arun(self, query: str, **kwargs: Any) -> Dict:
@@ -82,9 +79,7 @@ class SerpApi(BaseTransform):
         self.serp_api_key = serp_api_key
         self.serp_args = serp_args
         self.serp_api_wrapper = RefuelSerpAPIWrapper(
-            search_engine=None,
-            params=self.serp_args,
-            serpapi_api_key=self.serp_api_key,
+            search_engine=None, params=self.serp_args, serpapi_api_key=self.serp_api_key,
         )
 
     def name(self) -> str:

@@ -25,6 +25,7 @@ logger = logging.getLogger(__name__)
 
 
 class UnretryableError(Exception):
+
     """This is an error which is unretriable from autolabel."""
 
 
@@ -96,13 +97,13 @@ class MistralLLM(BaseModel):
         }
         start_time = time()
         response = requests.post(
-            self.url, json=data, headers=headers, timeout=self.timeout
+            self.url, json=data, headers=headers, timeout=self.timeout,
         )
         end_time = time()
         # raise Exception if status != 200
         if response.status_code != 200:
             logger.warning(
-                f"Received status code {response.status_code} from Mistral API. Response: {response.text}"
+                f"Received status code {response.status_code} from Mistral API. Response: {response.text}",
             )
             response.raise_for_status()
         return response, end_time - start_time
@@ -129,13 +130,13 @@ class MistralLLM(BaseModel):
             timeout = httpx.Timeout(self.DEFAULT_CONNECT_TIMEOUT, read=self.timeout)
             start_time = time()
             response = await client.post(
-                self.url, json=data, headers=headers, timeout=timeout
+                self.url, json=data, headers=headers, timeout=timeout,
             )
             end_time = time()
             # raise Exception if status != 200
             if response.status_code != 200:
                 logger.warning(
-                    f"Received status code {response.status_code} from Mistral API. Response: {response.text}"
+                    f"Received status code {response.status_code} from Mistral API. Response: {response.text}",
                 )
                 response.raise_for_status()
             return response, end_time - start_time
@@ -149,7 +150,7 @@ class MistralLLM(BaseModel):
                 response, latency = self._label_with_retry(prompt)
                 response = response.json()
                 generations.append(
-                    [Generation(text=response["choices"][0]["message"]["content"])]
+                    [Generation(text=response["choices"][0]["message"]["content"])],
                 )
                 errors.append(None)
                 latencies.append(latency)
@@ -161,12 +162,12 @@ class MistralLLM(BaseModel):
                 generations.append([Generation(text="")])
                 errors.append(
                     LabelingError(
-                        error_type=ErrorType.LLM_PROVIDER_ERROR, error_message=str(e)
-                    )
+                        error_type=ErrorType.LLM_PROVIDER_ERROR, error_message=str(e),
+                    ),
                 )
                 latencies.append(0)
         return RefuelLLMResult(
-            generations=generations, errors=errors, latencies=latencies
+            generations=generations, errors=errors, latencies=latencies,
         )
 
     async def _alabel(self, prompts: List[str], output_schema: Dict) -> RefuelLLMResult:
@@ -179,7 +180,7 @@ class MistralLLM(BaseModel):
             for response, latency in responses:
                 response = response.json()
                 generations.append(
-                    [Generation(text=response["choices"][0]["message"]["content"])]
+                    [Generation(text=response["choices"][0]["message"]["content"])],
                 )
                 errors.append(None)
                 latencies.append(latency)
@@ -192,12 +193,12 @@ class MistralLLM(BaseModel):
             generations.append([Generation(text="")])
             errors.append(
                 LabelingError(
-                    error_type=ErrorType.LLM_PROVIDER_ERROR, error_message=str(e)
-                )
+                    error_type=ErrorType.LLM_PROVIDER_ERROR, error_message=str(e),
+                ),
             )
             latencies.append(0)
         return RefuelLLMResult(
-            generations=generations, errors=errors, latencies=latencies
+            generations=generations, errors=errors, latencies=latencies,
         )
 
     def get_cost(self, prompt: str, label: Optional[str] = "") -> float:

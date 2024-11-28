@@ -174,9 +174,7 @@ class OpenAILLM(BaseModel):
         if self._engine == "chat":
             self.model_params = {**self.DEFAULT_PARAMS_CHAT_ENGINE, **model_params}
             self.llm = ChatOpenAI(
-                model_name=self.model_name,
-                verbose=False,
-                **self.model_params,
+                model_name=self.model_name, verbose=False, **self.model_params,
             )
         else:
             self.model_params = {
@@ -184,14 +182,11 @@ class OpenAILLM(BaseModel):
                 **model_params,
             }
             self.llm = OpenAI(
-                model_name=self.model_name,
-                verbose=False,
-                **self.model_params,
+                model_name=self.model_name, verbose=False, **self.model_params,
             )
 
     def _chat_backward_compatibility(
-        self,
-        generations: List[LLMResult],
+        self, generations: List[LLMResult],
     ) -> List[LLMResult]:
         for generation_options in generations:
             for curr_generation in generation_options:
@@ -259,8 +254,7 @@ class OpenAILLM(BaseModel):
                 ]
                 error_code = error_json.get("code")
                 error_type = self.ERROR_TYPE_MAPPING.get(
-                    error_code,
-                    ErrorType.LLM_PROVIDER_ERROR,
+                    error_code, ErrorType.LLM_PROVIDER_ERROR,
                 )
                 error_message = error_json.get("message")
             except Exception as e:
@@ -333,8 +327,7 @@ class OpenAILLM(BaseModel):
                 ]
                 error_code = error_json.get("code")
                 error_type = self.ERROR_TYPE_MAPPING.get(
-                    error_code,
-                    ErrorType.LLM_PROVIDER_ERROR,
+                    error_code, ErrorType.LLM_PROVIDER_ERROR,
                 )
                 error_message = error_json.get("message")
             except Exception as e:

@@ -1,18 +1,20 @@
-from sqlalchemy.orm import sessionmaker
-from typing import Optional
-from autolabel.schema import GenerationCacheEntry
-from autolabel.database import create_db_engine
-from autolabel.data_models import Base
-from .base import BaseCache
-from typing import List, Union
-from langchain.schema import Generation, ChatGeneration
-from autolabel.data_models import GenerationCacheEntryModel
 import logging
+from typing import List, Union
+
+from langchain.schema import ChatGeneration, Generation
+from sqlalchemy.orm import sessionmaker
+
+from autolabel.data_models import Base, GenerationCacheEntryModel
+from autolabel.database import create_db_engine
+from autolabel.schema import GenerationCacheEntry
+
+from .base import BaseCache
 
 logger = logging.getLogger(__name__)
 
 
 class SQLAlchemyGenerationCache(BaseCache):
+
     """A cache system implemented with SQL Alchemy"""
 
     def __init__(self):
@@ -26,13 +28,16 @@ class SQLAlchemyGenerationCache(BaseCache):
         self.session = sessionmaker(bind=self.engine)()
 
     def lookup(
-        self, entry: GenerationCacheEntry
+        self, entry: GenerationCacheEntry,
     ) -> List[Union[Generation, ChatGeneration]]:
-        """Retrieves an entry from the Cache. Returns an empty list [] if not found.
+        """
+        Retrieves an entry from the Cache. Returns an empty list [] if not found.
+
         Args:
             entry: GenerationCacheEntry we wish to retrieve from the Cache
         Returns:
             result: A list of langchain Generation objects, containing the results of the labeling run for this GenerationCacheEntry. Empty list [] if not found.
+
         """
         cache_entry = GenerationCacheEntryModel.get(self.session, entry)
         if cache_entry is None:
@@ -43,7 +48,8 @@ class SQLAlchemyGenerationCache(BaseCache):
         return cache_entry.generations
 
     def update(self, entry: GenerationCacheEntry) -> None:
-        """Inserts the provided GenerationCacheEntry into the Cache, overriding it if it already exists
+        """
+        Inserts the provided GenerationCacheEntry into the Cache, overriding it if it already exists
         Args:
             entry: GenerationCacheEntry we wish to put into the Cache
         """

@@ -9,7 +9,7 @@ pytest_plugins = ("pytest_asyncio",)
 async def test_image_transform(mocker):
     mocker.patch(
         "subprocess.check_output",
-        return_value="5.3.2".encode("utf-8"),
+        return_value=b"5.3.2",
     )
     mocker.patch(
         "pytesseract.pytesseract.run_and_get_output",
@@ -32,7 +32,7 @@ async def test_image_transform(mocker):
     transformed_row = await transform.apply(row)
     # Check the output
     assert set(transformed_row.keys()) == set(
-        ["content", "metadata", "content_error", "metadata_error"]
+        ["content", "metadata", "content_error", "metadata_error"],
     )
     assert transformed_row["content_error"] is None
     assert transformed_row["content"] == "This is a test"

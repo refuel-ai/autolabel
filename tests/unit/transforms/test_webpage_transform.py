@@ -1,6 +1,8 @@
 from unittest.mock import Mock
-from autolabel.transforms.webpage_transform import WebpageTransform
+
 import pytest
+
+from autolabel.transforms.webpage_transform import WebpageTransform
 
 pytest_plugins = ("pytest_asyncio",)
 
@@ -27,7 +29,7 @@ async def test_webpage_transform():
     transformed_row = await transform.apply(row)
     # Check the output
     assert set(transformed_row.keys()) == set(
-        ["webpage_content", "webpage_content_error"]
+        ["webpage_content", "webpage_content_error"],
     )
     assert isinstance(transformed_row["webpage_content"], str)
     assert len(transformed_row["webpage_content"]) > 0
@@ -51,7 +53,7 @@ async def test_error_handling():
     transformed_row = await transform.apply(row)
     # Check the output
     assert set(transformed_row.keys()) == set(
-        ["webpage_content", "webpage_content_error"]
+        ["webpage_content", "webpage_content_error"],
     )
     assert (
         transformed_row["webpage_content"]

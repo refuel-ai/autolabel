@@ -17,6 +17,7 @@ METRIC_TABLE_STYLE = "cyan bold"
 
 
 class AutolabelDataset:
+
     """The dataset for handling all operations on the dataset."""
 
     inputs: List[Dict]
@@ -107,9 +108,7 @@ class AutolabelDataset:
         return AutolabelDataset(df, self.config)
 
     def process_labels(
-        self,
-        llm_labels: List[LLMAnnotation],
-        metrics: List[MetricResult] = None,
+        self, llm_labels: List[LLMAnnotation], metrics: List[MetricResult] = None,
     ):
         # Add the LLM labels to the dataframe
         self.df[self.generate_label_name("label")] = [x.label for x in llm_labels]
@@ -251,10 +250,7 @@ class AutolabelDataset:
         return AutolabelDataset(filtered_df, self.config)
 
     def incorrect(
-        self,
-        label: str = None,
-        ground_truth: str = None,
-        label_column: str = None,
+        self, label: str = None, ground_truth: str = None, label_column: str = None,
     ):
         """
         Filter the dataset to only include incorrect items. This means the labels

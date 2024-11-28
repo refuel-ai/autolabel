@@ -1,17 +1,18 @@
 import logging
+from typing import Dict
+
+from autolabel.cache import BaseCache
+from autolabel.transforms.schema import TransformType
 
 from .base import BaseTransform
+from .custom_api import CustomApi
+from .image import ImageTransform
+from .ocr import OCRTransform
 from .pdf import PDFTransform
 from .serp_api import SerpApi
 from .serper_api import SerperApi
 from .serper_maps import SerperMaps
-from .custom_api import CustomApi
-from .ocr import OCRTransform
 from .webpage_transform import WebpageTransform
-from .image import ImageTransform
-from typing import Dict
-from autolabel.transforms.schema import TransformType
-from autolabel.cache import BaseCache
 
 logger = logging.getLogger(__name__)
 
@@ -28,6 +29,7 @@ TRANSFORM_REGISTRY = {
 
 
 class TransformFactory:
+
     """The ModelFactory class is used to create a BaseModel object from the given AutoLabelConfig configuration."""
 
     @staticmethod

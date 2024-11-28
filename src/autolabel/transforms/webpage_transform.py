@@ -1,21 +1,21 @@
-from urllib.parse import urlparse
-from autolabel.transforms.schema import (
-    TransformType,
-    TransformError,
-    TransformErrorType,
-)
-from autolabel.transforms import BaseTransform
-from typing import Dict, Any
 import asyncio
 import logging
+from typing import Any, Dict
+from urllib.parse import urlparse
+
 import pandas as pd
-import ssl
-import json
-from langchain_community.document_transformers import Html2TextTransformer
-from langchain.docstore.document import Document
-from autolabel.cache import BaseCache
-from scrapingbee import ScrapingBeeClient
 import requests
+from langchain.docstore.document import Document
+from langchain_community.document_transformers import Html2TextTransformer
+from scrapingbee import ScrapingBeeClient
+
+from autolabel.cache import BaseCache
+from autolabel.transforms import BaseTransform
+from autolabel.transforms.schema import (
+    TransformError,
+    TransformErrorType,
+    TransformType,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -29,9 +29,9 @@ JS_SCENARIO = {
             "infinite_scroll": {
                 "max_count": 0,
                 "delay": 1000,
-            }
-        }
-    ]
+            },
+        },
+    ],
 }
 
 
@@ -101,7 +101,7 @@ class WebpageTransform(BaseTransform):
             response = self.client.get(url, params=self.scrapingbee_params)
             response.raise_for_status()
             documents = [
-                Document(page_content=response.content, metadata={"source": url})
+                Document(page_content=response.content, metadata={"source": url}),
             ]
             text = self.html2text_transformer.transform_documents(documents)[
                 0

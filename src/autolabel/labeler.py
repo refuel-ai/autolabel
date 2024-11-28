@@ -116,9 +116,7 @@ class LabelingAgent:
         )
         self.task = TaskFactory.from_config(self.config)
         self.llm: BaseModel = ModelFactory.from_config(
-            self.config,
-            cache=self.generation_cache,
-            tokenizer=confidence_tokenizer,
+            self.config, cache=self.generation_cache, tokenizer=confidence_tokenizer,
         )
 
         if self.config.confidence_chunk_column():
@@ -337,8 +335,7 @@ class LabelingAgent:
                                 keys = (
                                     {
                                         attribute_dict.get(
-                                            "name",
-                                            "",
+                                            "name", "",
                                         ): attribute_dict.get("task_type", "")
                                         for attribute_dict in self.config.attributes()
                                     }
@@ -348,8 +345,7 @@ class LabelingAgent:
                                 )
                                 annotation.confidence_score = (
                                     await self.confidence.calculate(
-                                        model_generation=annotation,
-                                        keys=keys,
+                                        model_generation=annotation, keys=keys,
                                     )
                                 )
                             except Exception as e:
@@ -522,19 +518,14 @@ class LabelingAgent:
         table = {"parameter": list(table.keys()), "value": list(table.values())}
 
         print_table(
-            table,
-            show_header=False,
-            console=self.console,
-            styles=COST_TABLE_STYLES,
+            table, show_header=False, console=self.console, styles=COST_TABLE_STYLES,
         )
         self.console.rule("Prompt Example")
         self.console.print(f"{prompt_list[0]}", markup=False)
         self.console.rule()
 
     async def async_run_transform(
-        self,
-        transform: BaseTransform,
-        dataset: AutolabelDataset,
+        self, transform: BaseTransform, dataset: AutolabelDataset,
     ) -> AutolabelDataset:
         transform_outputs = [
             transform.apply(input_dict) for input_dict in dataset.inputs
@@ -566,8 +557,7 @@ class LabelingAgent:
         return dataset
 
     def majority_annotation(
-        self,
-        annotation_list: List[LLMAnnotation],
+        self, annotation_list: List[LLMAnnotation],
     ) -> LLMAnnotation:
         labels = [a.label for a in annotation_list]
         counts = {}
@@ -621,8 +611,7 @@ class LabelingAgent:
             console=self.console,
         ):
             explanation_prompt = self.task.get_explanation_prompt(
-                seed_example,
-                include_label=include_label,
+                seed_example, include_label=include_label,
             )
             if self.task.image_cols is not None and len(self.task.image_cols) > 0:
                 explanation_prompt = {"text": explanation_prompt}

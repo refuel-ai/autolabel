@@ -6,6 +6,7 @@ from .base import BaseConfig
 
 
 class TaskChainConfig(BaseConfig):
+
     """Class to parse and store configs for Task Chain"""
 
     # Top-level config keys

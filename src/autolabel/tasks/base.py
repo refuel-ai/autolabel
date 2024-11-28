@@ -154,10 +154,7 @@ class BaseTask(ABC):
 
     @abstractmethod
     def get_generate_dataset_prompt(
-        self,
-        label: str,
-        num_rows: int,
-        guidelines: Optional[str] = None,
+        self, label: str, num_rows: int, guidelines: Optional[str] = None,
     ) -> str:
         raise NotImplementedError("Dataset generation not implemented for this task")
 

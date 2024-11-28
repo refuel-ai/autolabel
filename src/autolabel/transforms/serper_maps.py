@@ -1,12 +1,13 @@
-from collections import defaultdict
 import json
+import logging
+from collections import defaultdict
+from typing import Any, Dict, List
+
+import pandas as pd
+from langchain_community.utilities import GoogleSerperAPIWrapper
+
 from autolabel.cache import BaseCache
 from autolabel.transforms import BaseTransform
-from langchain_community.utilities import GoogleSerperAPIWrapper
-from typing import Dict, Any, List
-import logging
-import pandas as pd
-
 from autolabel.transforms.schema import (
     TransformError,
     TransformErrorType,
@@ -29,9 +30,9 @@ class RefuelSerperMapsWrapper(GoogleSerperAPIWrapper):
         Processes the response from Serper.dev API and returns the search results.
         """
         cleaned_res = {}
-        if "error" in res.keys():
+        if "error" in res:
             raise ValueError(f"Got error from Serper.dev API: {res['error']}")
-        if "places" in res.keys():
+        if "places" in res:
             cleaned_res["places"] = json.dumps(res["places"])
         return cleaned_res
 
@@ -62,7 +63,7 @@ class SerperMaps(BaseTransform):
         try:
             search_result = await self.serper_api_wrapper.arun(query=query)
         except Exception as e:
-            logger.error(f"Error while making request to Serper API: {str(e)}")
+            logger.error(f"Error while making request to Serper API: {e!s}")
             raise TransformError(
                 TransformErrorType.TRANSFORM_API_ERROR,
                 f"Error while making request with query: {query}",
@@ -76,7 +77,7 @@ class SerperMaps(BaseTransform):
                     f"Missing query column: {col} in row {row}",
                 )
         query = self.query_template.format_map(
-            defaultdict(str, {key: val for key, val in row.items() if val is not None})
+            defaultdict(str, {key: val for key, val in row.items() if val is not None}),
         )
         search_result = self.NULL_TRANSFORM_TOKEN
         if pd.isna(query) or query == self.NULL_TRANSFORM_TOKEN:
@@ -84,8 +85,7 @@ class SerperMaps(BaseTransform):
                 TransformErrorType.INVALID_INPUT,
                 f"Empty query in row {row}",
             )
-        else:
-            search_result = await self._get_result(query)
+        search_result = await self._get_result(query)
         transformed_row = {
             self.output_columns["places"]: search_result.get("places"),
         }

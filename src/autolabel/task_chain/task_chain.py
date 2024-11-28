@@ -1,9 +1,7 @@
-import copy
 import logging
 from collections import defaultdict
-from typing import Dict, List, Optional, Tuple
+from typing import Dict, List, Optional
 
-import boto3
 import pandas as pd
 from transformers import AutoTokenizer
 
@@ -19,7 +17,6 @@ from autolabel.few_shot import (
 from autolabel.few_shot.base_label_selector import BaseLabelSelector
 from autolabel.labeler import LabelingAgent
 from autolabel.transforms import TransformFactory
-from autolabel.utils import generate_presigned_url, is_s3_uri
 
 logger = logging.getLogger(__name__)
 logging.getLogger("httpx").setLevel(logging.WARNING)
@@ -209,9 +206,7 @@ class TaskChainOrchestrator:
         return dataset
 
     def rename_output_columns(
-        self,
-        dataset: AutolabelDataset,
-        autolabel_config: AutolabelConfig,
+        self, dataset: AutolabelDataset, autolabel_config: AutolabelConfig,
     ):
         """
         Rename the output columns of the dataset for each intermediate step in the task chain so that

@@ -1,10 +1,10 @@
 from importlib import metadata
 
-from .labeler import LabelingAgent
-from .utils import get_data
-from .dataset import AutolabelDataset
 from .configs import AutolabelConfig
+from .dataset import AutolabelDataset
+from .labeler import LabelingAgent
 from .task_chain import TaskChainOrchestrator
+from .utils import get_data
 
 try:
     __version__ = metadata.version("refuel-autolabel")

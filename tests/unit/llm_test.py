@@ -16,22 +16,22 @@ from autolabel.models.refuelV2 import RefuelLLMV2
 def test_anthropic_initialization():
     model = AnthropicLLM(
         config=AutolabelConfig(
-            config="tests/assets/banking/config_banking_anthropic.json"
-        )
+            config="tests/assets/banking/config_banking_anthropic.json",
+        ),
     )
 
 
 async def test_anthropic_label(mocker):
     model = AnthropicLLM(
         config=AutolabelConfig(
-            config="tests/assets/banking/config_banking_anthropic.json"
-        )
+            config="tests/assets/banking/config_banking_anthropic.json",
+        ),
     )
     prompts = ["test1", "test2"]
     mocker.patch(
         "langchain.chat_models.ChatAnthropic.generate",
         return_value=LLMResult(
-            generations=[[Generation(text="Answers")] for _ in prompts]
+            generations=[[Generation(text="Answers")] for _ in prompts],
         ),
     )
     x = await model.label(prompts)
@@ -42,8 +42,8 @@ async def test_anthropic_label(mocker):
 def test_anthropic_get_cost():
     model = AnthropicLLM(
         config=AutolabelConfig(
-            config="tests/assets/banking/config_banking_anthropic.json"
-        )
+            config="tests/assets/banking/config_banking_anthropic.json",
+        ),
     )
     example_prompt = "TestingExamplePrompt"
     curr_cost = model.get_cost(example_prompt)
@@ -53,8 +53,8 @@ def test_anthropic_get_cost():
 def test_anthropic_return_probs():
     model = AnthropicLLM(
         config=AutolabelConfig(
-            config="tests/assets/banking/config_banking_anthropic.json"
-        )
+            config="tests/assets/banking/config_banking_anthropic.json",
+        ),
     )
     assert model.returns_token_probs() is False
 
@@ -65,19 +65,19 @@ def test_anthropic_return_probs():
 ################### OPENAI GPT 3.5 TESTS #######################
 def test_gpt35_initialization():
     model = OpenAILLM(
-        config=AutolabelConfig(config="tests/assets/banking/config_banking.json")
+        config=AutolabelConfig(config="tests/assets/banking/config_banking.json"),
     )
 
 
 async def test_gpt35_label(mocker):
     model = OpenAILLM(
-        config=AutolabelConfig(config="tests/assets/banking/config_banking.json")
+        config=AutolabelConfig(config="tests/assets/banking/config_banking.json"),
     )
     prompts = ["test1", "test2"]
     mocker.patch(
         "langchain.chat_models.ChatOpenAI.generate",
         return_value=LLMResult(
-            generations=[[Generation(text="Answers")] for _ in prompts]
+            generations=[[Generation(text="Answers")] for _ in prompts],
         ),
     )
     x = await model.label(prompts)
@@ -86,7 +86,7 @@ async def test_gpt35_label(mocker):
 
 def test_gpt35_get_cost():
     model = OpenAILLM(
-        config=AutolabelConfig(config="tests/assets/banking/config_banking.json")
+        config=AutolabelConfig(config="tests/assets/banking/config_banking.json"),
     )
     example_prompt = "TestingExamplePrompt"
     curr_cost = model.get_cost(example_prompt)
@@ -95,7 +95,7 @@ def test_gpt35_get_cost():
 
 def test_gpt35_return_probs():
     model = OpenAILLM(
-        config=AutolabelConfig(config="tests/assets/banking/config_banking.json")
+        config=AutolabelConfig(config="tests/assets/banking/config_banking.json"),
     )
     assert model.returns_token_probs() is True
 
@@ -106,19 +106,19 @@ def test_gpt35_return_probs():
 ################### OPENAI GPT 4 TESTS #######################
 def test_gpt4_initialization():
     model = OpenAILLM(
-        config=AutolabelConfig(config="tests/assets/banking/config_banking_gpt4.json")
+        config=AutolabelConfig(config="tests/assets/banking/config_banking_gpt4.json"),
     )
 
 
 async def test_gpt4_label(mocker):
     model = OpenAILLM(
-        config=AutolabelConfig(config="tests/assets/banking/config_banking_gpt4.json")
+        config=AutolabelConfig(config="tests/assets/banking/config_banking_gpt4.json"),
     )
     prompts = ["test1", "test2"]
     mocker.patch(
         "langchain.chat_models.ChatOpenAI.generate",
         return_value=LLMResult(
-            generations=[[Generation(text="Answers")] for _ in prompts]
+            generations=[[Generation(text="Answers")] for _ in prompts],
         ),
     )
     x = await model.label(prompts)
@@ -128,7 +128,7 @@ async def test_gpt4_label(mocker):
 
 def test_gpt4_get_cost():
     model = OpenAILLM(
-        config=AutolabelConfig(config="tests/assets/banking/config_banking_gpt4.json")
+        config=AutolabelConfig(config="tests/assets/banking/config_banking_gpt4.json"),
     )
     example_prompt = "TestingExamplePrompt"
     curr_cost = model.get_cost(example_prompt)
@@ -137,7 +137,7 @@ def test_gpt4_get_cost():
 
 def test_gpt4_return_probs():
     model = OpenAILLM(
-        config=AutolabelConfig(config="tests/assets/banking/config_banking_gpt4.json")
+        config=AutolabelConfig(config="tests/assets/banking/config_banking_gpt4.json"),
     )
     assert model.returns_token_probs() is True
 
@@ -148,13 +148,13 @@ def test_gpt4_return_probs():
 ################### OPENAI GPT 4V TESTS #######################
 def test_gpt4V_initialization():
     model = OpenAIVisionLLM(
-        config=AutolabelConfig(config="tests/assets/banking/config_banking_gpt4V.json")
+        config=AutolabelConfig(config="tests/assets/banking/config_banking_gpt4V.json"),
     )
 
 
 async def test_gpt4V_label(mocker):
     model = OpenAIVisionLLM(
-        config=AutolabelConfig(config="tests/assets/banking/config_banking_gpt4V.json")
+        config=AutolabelConfig(config="tests/assets/banking/config_banking_gpt4V.json"),
     )
     prompts = [
         json.dumps({"text": "test1", "image_url": "dummy1.jpg"}),
@@ -167,7 +167,7 @@ async def test_gpt4V_label(mocker):
                 finish_reason="stop",
                 index=0,
                 message=ChatCompletionMessage(content="Answers", role="assistant"),
-            )
+            ),
         ],
         created=0,
         model="test",
@@ -180,10 +180,10 @@ async def test_gpt4V_label(mocker):
 
 def test_gpt4V_get_cost():
     model = OpenAIVisionLLM(
-        config=AutolabelConfig(config="tests/assets/banking/config_banking_gpt4V.json")
+        config=AutolabelConfig(config="tests/assets/banking/config_banking_gpt4V.json"),
     )
     example_prompt = json.dumps(
-        {"text": "TestingExamplePrompt", "image_url": "dummy1.jpg"}
+        {"text": "TestingExamplePrompt", "image_url": "dummy1.jpg"},
     )
     curr_cost = model.get_cost(example_prompt)
     assert curr_cost == approx(0.01682, rel=1e-3)
@@ -191,7 +191,7 @@ def test_gpt4V_get_cost():
 
 def test_gpt4V_return_probs():
     model = OpenAIVisionLLM(
-        config=AutolabelConfig(config="tests/assets/banking/config_banking_gpt4V.json")
+        config=AutolabelConfig(config="tests/assets/banking/config_banking_gpt4V.json"),
     )
     assert model.returns_token_probs() is False
 
@@ -202,7 +202,7 @@ def test_gpt4V_return_probs():
 ################### REFUEL TESTS #######################
 def test_refuel_initialization():
     model = RefuelLLMV2(
-        config=AutolabelConfig(config="tests/assets/banking/config_banking_refuel.json")
+        config=AutolabelConfig(config="tests/assets/banking/config_banking_refuel.json"),
     )
 
 
@@ -219,13 +219,13 @@ async def test_refuel_label(mocker):
             pass
 
     model = RefuelLLMV2(
-        config=AutolabelConfig(config="tests/assets/banking/config_banking_refuel.json")
+        config=AutolabelConfig(config="tests/assets/banking/config_banking_refuel.json"),
     )
     prompts = ["test1", "test2"]
     mocker.patch(
         "requests.post",
         return_value=PostRequestMockResponse(
-            resp='{"generated_text": "Answers"}', status_code=200
+            resp='{"generated_text": "Answers"}', status_code=200,
         ),
     )
     x = await model.label(prompts)
@@ -247,13 +247,13 @@ async def test_refuel_label_non_retryable(mocker):
             pass
 
     model = RefuelLLMV2(
-        config=AutolabelConfig(config="tests/assets/banking/config_banking_refuel.json")
+        config=AutolabelConfig(config="tests/assets/banking/config_banking_refuel.json"),
     )
     prompts = ["test1", "test2"]
     mocker.patch(
         "requests.post",
         return_value=PostRequestMockResponse(
-            resp='{"error_message": "Error123"}', status_code=422
+            resp='{"error_message": "Error123"}', status_code=422,
         ),
     )
     x = await model.label(prompts)
@@ -277,13 +277,13 @@ async def test_refuel_label_retryable(mocker):
             pass
 
     model = RefuelLLMV2(
-        config=AutolabelConfig(config="tests/assets/banking/config_banking_refuel.json")
+        config=AutolabelConfig(config="tests/assets/banking/config_banking_refuel.json"),
     )
     prompts = ["test1", "test2"]
     mocker.patch(
         "requests.post",
         return_value=PostRequestMockResponse(
-            resp='{"error_message": "Error123"}', status_code=500
+            resp='{"error_message": "Error123"}', status_code=500,
         ),
     )
     x = await model.label(prompts)
@@ -295,7 +295,7 @@ async def test_refuel_label_retryable(mocker):
 
 def test_refuel_get_cost():
     model = RefuelLLMV2(
-        config=AutolabelConfig(config="tests/assets/banking/config_banking_refuel.json")
+        config=AutolabelConfig(config="tests/assets/banking/config_banking_refuel.json"),
     )
     example_prompt = "TestingExamplePrompt"
     curr_cost = model.get_cost(example_prompt)
@@ -304,7 +304,7 @@ def test_refuel_get_cost():
 
 def test_refuel_return_probs():
     model = RefuelLLMV2(
-        config=AutolabelConfig(config="tests/assets/banking/config_banking_refuel.json")
+        config=AutolabelConfig(config="tests/assets/banking/config_banking_refuel.json"),
     )
     assert model.returns_token_probs() is True
 

@@ -1,6 +1,7 @@
 """Test Validation"""
 
 import pytest
+
 from autolabel.configs import AutolabelConfig
 from autolabel.dataset.validation import TaskDataValidation
 
@@ -104,7 +105,7 @@ def test_validate_classification_task():
         },
     ]
     data_validation = TaskDataValidation(
-        config=AutolabelConfig(CLASSIFICATION_CONFIG_SAMPLE_DICT)
+        config=AutolabelConfig(CLASSIFICATION_CONFIG_SAMPLE_DICT),
     )
     error_table = data_validation.validate(data=data)
 
@@ -202,8 +203,8 @@ def test_columns():
     data_validation = TaskDataValidation(config=AutolabelConfig(NER_CONFIG_SAMPLE_DICT))
 
     with pytest.raises(
-        AssertionError, match=r"columns={'example'} missing in seed.csv file"
+        AssertionError, match=r"columns={'example'} missing in seed.csv file",
     ):
         data_validation.validate_dataset_columns(
-            dataset_columns=["input", "CategorizedLabels"]
+            dataset_columns=["input", "CategorizedLabels"],
         )
