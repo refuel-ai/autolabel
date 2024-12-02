@@ -1,6 +1,6 @@
 import logging
 from collections import defaultdict
-from typing import Dict, List, Optional
+from typing import Dict, List, Optional, Tuple
 
 import pandas as pd
 from transformers import AutoTokenizer
@@ -206,7 +206,9 @@ class TaskChainOrchestrator:
         return dataset
 
     def rename_output_columns(
-        self, dataset: AutolabelDataset, autolabel_config: AutolabelConfig,
+        self,
+        dataset: AutolabelDataset,
+        autolabel_config: AutolabelConfig,
     ):
         """
         Rename the output columns of the dataset for each intermediate step in the task chain so that
