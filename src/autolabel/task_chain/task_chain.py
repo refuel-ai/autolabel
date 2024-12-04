@@ -242,15 +242,16 @@ class TaskChainOrchestrator:
         original_inputs = copy.deepcopy(dataset.inputs)
         for col in autolabel_config.input_columns():
             for i in range(len(dataset.inputs)):
-                dataset.inputs[i][col] = (
-                    generate_presigned_url(
-                        self.s3_client,
-                        dataset.inputs[i][col],
+                if col in dataset.inputs[i]:
+                    dataset.inputs[i][col] = (
+                        generate_presigned_url(
+                            self.s3_client,
+                            dataset.inputs[i][col],
+                        )
+                        if is_s3_uri(dataset.inputs[i][col])
+                        else dataset.inputs[i][col]
                     )
-                    if is_s3_uri(dataset.inputs[i][col])
-                    else dataset.inputs[i][col]
-                )
-                dataset.df.loc[i, col] = dataset.inputs[i][col]
+                    dataset.df.loc[i, col] = dataset.inputs[i][col]
         return dataset, original_inputs
 
     def reset_presigned_url_to_uri(
