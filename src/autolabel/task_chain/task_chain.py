@@ -262,6 +262,7 @@ class TaskChainOrchestrator:
     ) -> AutolabelDataset:
         for col in autolabel_config.input_columns():
             for i in range(len(dataset.inputs)):
-                dataset.inputs[i][col] = original_inputs[i][col]
-                dataset.df.loc[i, col] = dataset.inputs[i][col]
+                if col in dataset.inputs[i] and col in original_inputs[i]:
+                    dataset.inputs[i][col] = original_inputs[i][col]
+                    dataset.df.loc[i, col] = dataset.inputs[i][col]
         return dataset
