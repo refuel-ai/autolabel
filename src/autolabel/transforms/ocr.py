@@ -19,7 +19,6 @@ from autolabel.transforms.schema import (
 
 
 class OCRTransform(BaseTransform):
-
     """
     Extract text from documents using OCR.
 
@@ -126,7 +125,7 @@ class OCRTransform(BaseTransform):
 
         import requests
 
-        ext = Path(file_location).suffix
+        ext = Path(file_location).suffix.split("?")[0]
         with tempfile.NamedTemporaryFile(suffix=ext, delete=False) as temp_file:
             response = requests.get(file_location, timeout=30)
             response.raise_for_status()
