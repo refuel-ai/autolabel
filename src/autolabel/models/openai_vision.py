@@ -84,6 +84,7 @@ class OpenAIVisionLLM(BaseModel):
         )
         self.tiktoken = tiktoken
         self.image_cols = config.image_columns()
+        self.input_cols = config.input_columns()
 
     def _label(self, prompts: List[str], output_schema: Dict) -> RefuelLLMResult:
         generations = []
@@ -95,7 +96,8 @@ class OpenAIVisionLLM(BaseModel):
                 if self.image_cols:
                     for col in self.image_cols:
                         if (
-                            parsed_prompt.get(col) is not None
+                            col in self.input_cols
+                            and parsed_prompt.get(col) is not None
                             and len(parsed_prompt[col]) > 0
                         ):
                             content.append(

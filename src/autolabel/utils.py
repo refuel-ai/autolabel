@@ -8,6 +8,7 @@ import shutil
 import string
 from string import Formatter
 from typing import Any, Dict, Iterable, List, Optional, Sequence, Union
+from urllib.parse import urlparse
 
 import regex
 import wget
@@ -438,3 +439,38 @@ def safe_serialize_to_string(data: Dict) -> Dict:
         except Exception:
             ret[k] = ""
     return ret
+
+
+def is_s3_uri(uri_string: str) -> bool:
+    return uri_string is not None and (
+        uri_string.startswith("s3://") or uri_string.startswith("s3a://")
+    )
+
+
+def extract_bucket_key_from_s3_url(s3_path: str):
+    # Refer: https://stackoverflow.com/a/48245084
+    if not is_s3_uri(s3_path):
+        logger.warning("URI is not actually an S3 URI: {}", s3_path)
+        return None
+
+    path_object = urlparse(s3_path)
+    bucket = path_object.netloc
+    key = path_object.path
+    return {"Bucket": bucket, "Key": key.lstrip("/")}
+
+
+def generate_s3_uri_from_bucket_key(bucket: str, key: str) -> str:
+    return f"s3://{bucket}/{key}"
+
+
+def generate_presigned_url(client, s3_uri, expiration=86400):
+    s3_params = extract_bucket_key_from_s3_url(s3_uri)
+
+    if not s3_params:
+        return s3_uri
+
+    return client.generate_presigned_url(
+        ClientMethod="get_object",
+        Params={"Bucket": s3_params["Bucket"], "Key": s3_params["Key"]},
+        ExpiresIn=expiration,
+    )

@@ -159,9 +159,9 @@ class AutolabelDataset:
                         )
                     else:
                         attr_confidence_scores.append(0.0)
-                self.df[
-                    self.generate_label_name("confidence", attr["name"])
-                ] = attr_confidence_scores
+                self.df[self.generate_label_name("confidence", attr["name"])] = (
+                    attr_confidence_scores
+                )
 
         # Add the LLM explanations to the dataframe if chain of thought is set in config
         if self.config.chain_of_thought():
@@ -377,7 +377,7 @@ class AutolabelDataset:
                 f"Validation failed for {len(self.__malformed_records)} rows.",
             )
 
-    def generate_label_name(self, col_name: str, label_column: str = None):
+    def generate_label_name(self, col_name: str, label_column: str = None) -> str:
         label_column = label_column or f"{self.config.task_name()}_task"
         return f"{label_column}_{col_name}"
 

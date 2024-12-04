@@ -1,7 +1,9 @@
+import copy
 import logging
 from collections import defaultdict
-from typing import Dict, List, Optional
+from typing import Dict, List, Optional, Tuple
 
+import boto3
 import pandas as pd
 from transformers import AutoTokenizer
 
@@ -17,6 +19,7 @@ from autolabel.few_shot import (
 from autolabel.few_shot.base_label_selector import BaseLabelSelector
 from autolabel.labeler import LabelingAgent
 from autolabel.transforms import TransformFactory
+from autolabel.utils import generate_presigned_url, is_s3_uri
 
 logger = logging.getLogger(__name__)
 logging.getLogger("httpx").setLevel(logging.WARNING)
@@ -136,6 +139,7 @@ class TaskChainOrchestrator:
         self.confidence_endpoint = confidence_endpoint
         self.column_name_map = column_name_map
         self.label_selector_map = label_selector_map
+        self.s3_client = boto3.client("s3")
 
     # TODO: For now, we run each separate step of the task chain serially and aggregate at the end.
     # We can optimize this with parallelization where possible/no dependencies.
@@ -155,6 +159,10 @@ class TaskChainOrchestrator:
         for task in subtasks:
             autolabel_config = AutolabelConfig(task)
             dataset = AutolabelDataset(dataset_df, autolabel_config)
+            dataset, original_inputs = self.safe_convert_uri_to_presigned_url(
+                dataset,
+                autolabel_config,
+            )
             if autolabel_config.transforms():
                 agent = LabelingAgent(
                     config=autolabel_config,
@@ -191,12 +199,19 @@ class TaskChainOrchestrator:
                     dataset,
                     skip_eval=True,
                 )
+            dataset = self.reset_presigned_url_to_uri(
+                dataset,
+                original_inputs,
+                autolabel_config,
+            )
             dataset = self.rename_output_columns(dataset, autolabel_config)
             dataset_df = dataset.df
         return dataset
 
     def rename_output_columns(
-        self, dataset: AutolabelDataset, autolabel_config: AutolabelConfig,
+        self,
+        dataset: AutolabelDataset,
+        autolabel_config: AutolabelConfig,
     ):
         """
         Rename the output columns of the dataset for each intermediate step in the task chain so that
@@ -217,4 +232,35 @@ class TaskChainOrchestrator:
                     dataset.generate_label_name("label")
                 ].apply(lambda x: x.get(attribute) if x and type(x) is dict else None)
 
+        return dataset
+
+    def safe_convert_uri_to_presigned_url(
+        self,
+        dataset: AutolabelDataset,
+        autolabel_config: AutolabelConfig,
+    ) -> Tuple[AutolabelDataset, List[Dict]]:
+        original_inputs = copy.deepcopy(dataset.inputs)
+        for col in autolabel_config.input_columns():
+            for i in range(len(dataset.inputs)):
+                dataset.inputs[i][col] = (
+                    generate_presigned_url(
+                        self.s3_client,
+                        dataset.inputs[i][col],
+                    )
+                    if is_s3_uri(dataset.inputs[i][col])
+                    else dataset.inputs[i][col]
+                )
+                dataset.df.loc[i, col] = dataset.inputs[i][col]
+        return dataset, original_inputs
+
+    def reset_presigned_url_to_uri(
+        self,
+        dataset: AutolabelDataset,
+        original_inputs: List[Dict],
+        autolabel_config: AutolabelConfig,
+    ) -> AutolabelDataset:
+        for col in autolabel_config.input_columns():
+            for i in range(len(dataset.inputs)):
+                dataset.inputs[i][col] = original_inputs[i][col]
+                dataset.df.loc[i, col] = dataset.inputs[i][col]
         return dataset
