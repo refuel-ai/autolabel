@@ -2,7 +2,6 @@ import logging
 from collections import defaultdict
 from typing import Dict, List, Optional
 
-import boto3
 import pandas as pd
 from transformers import AutoTokenizer
 
@@ -137,7 +136,6 @@ class TaskChainOrchestrator:
         self.confidence_endpoint = confidence_endpoint
         self.column_name_map = column_name_map
         self.label_selector_map = label_selector_map
-        self.s3_client = boto3.client("s3")
 
     # TODO: For now, we run each separate step of the task chain serially and aggregate at the end.
     # We can optimize this with parallelization where possible/no dependencies.
