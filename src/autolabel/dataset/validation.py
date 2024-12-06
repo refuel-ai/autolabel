@@ -1,5 +1,6 @@
 """Data and Schema Validation"""
 
+import ast
 import json
 import re
 from functools import cached_property
@@ -16,7 +17,6 @@ EXPECTED_COLUMN_PATTERN = r"\{([^}]*)\}"
 
 
 class NERTaskValidate(BaseModel):
-
     """
     Validate NER Task
 
@@ -48,7 +48,6 @@ class NERTaskValidate(BaseModel):
 
 
 class ClassificationTaskValidate(BaseModel):
-
     """
     Validate Classification Task
 
@@ -69,7 +68,7 @@ class ClassificationTaskValidate(BaseModel):
         # TODO: This can be made better
         if value.startswith("[") and value.endswith("]"):
             try:
-                seed_labels = eval(value)
+                seed_labels = ast.literal_eval(value)
                 if not isinstance(seed_labels, list):
                     raise
                 unmatched_label = set(seed_labels) - self.labels_set
@@ -86,7 +85,6 @@ class ClassificationTaskValidate(BaseModel):
 
 
 class EMTaskValidate(BaseModel):
-
     """
     Validate Entity Matching Task
 
@@ -106,7 +104,6 @@ class EMTaskValidate(BaseModel):
 
 
 class QATaskValidate(BaseModel):
-
     """
     Validate Question Answering Task
 
@@ -123,7 +120,6 @@ class QATaskValidate(BaseModel):
 
 
 class MLCTaskValidate(BaseModel):
-
     """
     Validate Multilabel Classification Task
 
@@ -140,7 +136,7 @@ class MLCTaskValidate(BaseModel):
     def validate(self, value: str):
         if value.startswith("[") and value.endswith("]"):
             try:
-                seed_labels = eval(value)
+                seed_labels = ast.literal_eval(value)
                 if not isinstance(seed_labels, list):
                     raise ValueError(
                         f"value: '{value}' is not a list of labels as expected",
@@ -175,7 +171,6 @@ class DataValidationTasks(BaseModel):
 
 
 class TaskDataValidation:
-
     """Task Validation"""
 
     def __init__(self, config: AutolabelConfig):
@@ -183,6 +178,7 @@ class TaskDataValidation:
         Task Validation
 
         Args:
+        ----
             config: AutolabelConfig = User passed parsed configuration
 
         """
@@ -204,7 +200,8 @@ class TaskDataValidation:
         self.__schema = {col: (StrictStr, ...) for col in self.expected_columns}
 
         self.__validation_task = DataValidationTasks.__dict__[task_type](
-            label_column=label_column, labels_set=set(labels_list),
+            label_column=label_column,
+            labels_set=set(labels_list),
         )
         self.__data_validation = self.data_validation_and_schema_check(
             self.__validation_task,
@@ -240,20 +237,22 @@ class TaskDataValidation:
         Validate data format and datatype
 
         Args:
+        ----
             validation_task (TaskTypeValidate): validation task
 
         Raises:
+        ------
             e: Validation error if the inputs are not string
             e: Validation error if validation_task fails
 
         Returns:
+        -------
             DataValidation: Pydantic Model for validation
 
         """
         Model = create_model("Model", **self.__schema)
 
         class DataValidation(BaseModel):
-
             """Data Validation"""
 
             # We define validate as a classmethod such that a dynamic `data` can be passed
