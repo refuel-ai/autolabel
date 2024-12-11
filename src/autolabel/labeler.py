@@ -265,12 +265,17 @@ class LabelingAgent:
                 example_template = self.config.example_template()
                 toEmbed = example_template.format_map(defaultdict(str, chunk))
                 selected_labels_map = {}
+                selected_labels_desc_map = {}
                 for attribute in self.config.attributes():
                     attribute_name = attribute.get("name")
                     label_selector = self.label_selector_map.get(attribute_name)
                     if label_selector:
-                        selected_labels = label_selector.select_labels(toEmbed)
+                        (
+                            selected_labels,
+                            selected_labels_desc,
+                        ) = label_selector.select_labels(toEmbed)
                         selected_labels_map[attribute_name] = selected_labels
+                        selected_labels_desc_map[attribute_name] = selected_labels_desc
                 if self.example_selector:
                     examples = self.example_selector.select_examples(
                         safe_serialize_to_string(chunk),
@@ -286,6 +291,9 @@ class LabelingAgent:
                 chunk,
                 examples,
                 selected_labels_map=selected_labels_map
+                if self.label_selector_map
+                else None,
+                selected_labels_desc_map=selected_labels_desc_map
                 if self.label_selector_map
                 else None,
                 max_input_tokens=self.llm.max_context_length,

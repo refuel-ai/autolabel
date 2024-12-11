@@ -57,6 +57,7 @@ class AttributeExtractionTask(BaseTask):
     def _construct_attribute_json(
         self,
         selected_labels_map: Dict[str, List[str]] = None,
+        selected_labels_desc_map: Dict[str, Dict[str, str]] = None,
     ) -> Tuple[str, Dict]:
         """
         This function is used to construct the attribute json string for the output guidelines.
@@ -106,6 +107,20 @@ class AttributeExtractionTask(BaseTask):
                 if selected_labels_map and attribute_name in selected_labels_map:
                     attribute_options = selected_labels_map[attribute_name]
                 attribute_desc += f"\nOptions:\n{','.join(attribute_options)}"
+
+                attribute_options_desc = attribute_dict.get("options_desc", {})
+                if (
+                    selected_labels_desc_map
+                    and attribute_name in selected_labels_desc_map
+                ):
+                    attribute_options_desc = selected_labels_desc_map[attribute_name]
+                attribute_options_desc = {
+                    k: v for k, v in attribute_options_desc.items() if v is not None
+                }
+                if attribute_options_desc:
+                    attribute_desc += "\nDescription for each option:"
+                    for k, v in attribute_options_desc.items():
+                        attribute_desc += f"\n{k}: {v}"
 
             output_json[attribute_name] = attribute_desc
 
@@ -182,6 +197,7 @@ class AttributeExtractionTask(BaseTask):
         max_input_tokens: Optional[int] = None,
         get_num_tokens: Optional[Callable] = None,
         selected_labels_map: Dict[str, List[str]] = None,
+        selected_labels_desc_map: Dict[str, Dict[str, str]] = None,
         **kwargs,
     ) -> Tuple[str, str]:
         fmt_task_guidelines = self.task_guidelines
@@ -211,6 +227,7 @@ class AttributeExtractionTask(BaseTask):
 
         attribute_json, output_schema = self._construct_attribute_json(
             selected_labels_map=selected_labels_map,
+            selected_labels_desc_map=selected_labels_desc_map,
         )
         output_guidelines = (
             self.output_guidelines
@@ -389,9 +406,9 @@ class AttributeExtractionTask(BaseTask):
                                 original_attr_labels,
                             ),
                         )
-                        llm_label[attribute["name"]] = (
-                            self.config.label_separator().join(filtered_attr_labels)
-                        )
+                        llm_label[
+                            attribute["name"]
+                        ] = self.config.label_separator().join(filtered_attr_labels)
                         if len(filtered_attr_labels) != len(original_attr_labels):
                             logger.warning(
                                 f"Attribute {attr_label} from the LLM response {llm_label} is not in the labels list. Filtered list: {filtered_attr_labels}",
