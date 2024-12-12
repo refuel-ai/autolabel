@@ -276,36 +276,9 @@ class ConfidenceCalculator:
             if model_generation.raw_response == "":
                 model_generation.confidence_score = 0
                 return model_generation.confidence_score
-            if self.cache:
-                cache_entry = ConfidenceCacheEntry(
-                    prompt=model_generation.prompt,
-                    raw_response=model_generation.raw_response,
-                    score_type=self.score_type,
-                )
-                logprobs = self.cache.lookup(cache_entry)
-
-                # On cache miss, compute logprobs using API call and update cache
-                if logprobs == None:
-                    logprobs = await self.compute_confidence(
-                        model_generation.prompt,
-                        model_generation.raw_response,
-                    )
-                    if not logprobs:
-                        return self.return_empty_logprob(model_generation)
-                    cache_entry = ConfidenceCacheEntry(
-                        prompt=model_generation.prompt,
-                        raw_response=model_generation.raw_response,
-                        logprobs=logprobs,
-                        score_type=self.score_type,
-                        ttl_ms=self.TTL_MS,
-                    )
-                    self.cache.update(cache_entry)
+            
             else:
-                logprobs = await self.compute_confidence(
-                    model_generation.prompt, model_generation.raw_response,
-                )
-                if not logprobs:
-                    return self.return_empty_logprob(model_generation)
+                return self.return_empty_logprob(model_generation)
         else:
             if model_generation.generation_info is None:
                 logger.debug("No generation info found")
