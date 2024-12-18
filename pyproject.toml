@@ -145,6 +145,7 @@ all = [
     "pillow >= 9.5.0",
     "pydantic == 1.10.9",
     "json5==0.9.25",
+    "modal == 0.63.17",
 ]
 
 [project.urls]
