@@ -41,6 +41,7 @@ dependencies = [
     "transformers >= 4.25.0",
     "html2text == 2020.1.16",
     "pylcs == 0.1.1",
+    "modal == 0.63.17",
 ]
 requires-python = ">=3.9"
 
