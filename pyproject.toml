@@ -40,8 +40,7 @@ dependencies = [
     "simple-term-menu >= 1.6.1",
     "transformers >= 4.25.0",
     "html2text == 2020.1.16",
-    "pylcs == 0.1.1",
-    "modal == 0.63.17",
+    "pylcs == 0.1.1"
 ]
 requires-python = ">=3.9"
 
@@ -144,8 +143,7 @@ all = [
     "scrapingbee==2.0.1",
     "pillow >= 9.5.0",
     "pydantic == 1.10.9",
-    "json5==0.9.25",
-    "modal == 0.63.17",
+    "json5==0.9.25"
 ]
 
 [project.urls]
