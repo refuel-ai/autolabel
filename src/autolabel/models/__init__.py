@@ -18,7 +18,6 @@ from autolabel.models.hf_pipeline_vision import HFPipelineMultimodal
 from autolabel.models.mistral import MistralLLM
 from autolabel.models.openai import OpenAILLM
 from autolabel.models.openai_vision import OpenAIVisionLLM
-from autolabel.models.refuelV2 import RefuelLLMV2
 from autolabel.models.vllm import VLLMModel
 
 MODEL_REGISTRY = {
@@ -31,7 +30,6 @@ MODEL_REGISTRY = {
     ModelProvider.HUGGINGFACE_PIPELINE_VISION: HFPipelineMultimodal,
     ModelProvider.GOOGLE: GoogleLLM,
     ModelProvider.VLLM: VLLMModel,
-    ModelProvider.REFUELV2: RefuelLLMV2,
 }
 
 
@@ -67,7 +65,8 @@ class ModelFactory:
             # The below ensures that users should based off of the BaseModel
             # when creating/registering custom models.
             assert isinstance(
-                model_obj, BaseModel,
+                model_obj,
+                BaseModel,
             ), f"{model_obj} should inherit from autolabel.models.BaseModel"
         except KeyError as e:
             # We should never get here as the config should have already
