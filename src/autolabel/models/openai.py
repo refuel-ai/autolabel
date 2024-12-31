@@ -113,7 +113,7 @@ class OpenAILLM(BaseModel):
         "gpt-4-32k-0314": 0.06 / 1000,
         "gpt-4-1106-preview": 0.01 / 1000,
         "gpt-4-0125-preview": 0.01 / 1000,
-        "gpt-4o": 0.005 / 1000,
+        "gpt-4o": 0.0025 / 1000,
         "gpt-4o-2024-08-06": 0.0025 / 1000,
         "gpt-4o-mini": 0.15 / 1_000_000,
     }
@@ -133,7 +133,7 @@ class OpenAILLM(BaseModel):
         "gpt-4-32k-0314": 0.12 / 1000,
         "gpt-4-1106-preview": 0.03 / 1000,
         "gpt-4-0125-preview": 0.03 / 1000,
-        "gpt-4o": 0.015 / 1000,
+        "gpt-4o": 0.01 / 1000,
         "gpt-4o-2024-08-06": 0.01 / 1000,
         "gpt-4o-mini": 0.60 / 1_000_000,
     }
@@ -174,7 +174,9 @@ class OpenAILLM(BaseModel):
         if self._engine == "chat":
             self.model_params = {**self.DEFAULT_PARAMS_CHAT_ENGINE, **model_params}
             self.llm = ChatOpenAI(
-                model_name=self.model_name, verbose=False, **self.model_params,
+                model_name=self.model_name,
+                verbose=False,
+                **self.model_params,
             )
         else:
             self.model_params = {
@@ -182,11 +184,14 @@ class OpenAILLM(BaseModel):
                 **model_params,
             }
             self.llm = OpenAI(
-                model_name=self.model_name, verbose=False, **self.model_params,
+                model_name=self.model_name,
+                verbose=False,
+                **self.model_params,
             )
 
     def _chat_backward_compatibility(
-        self, generations: List[LLMResult],
+        self,
+        generations: List[LLMResult],
     ) -> List[LLMResult]:
         for generation_options in generations:
             for curr_generation in generation_options:
@@ -254,7 +259,8 @@ class OpenAILLM(BaseModel):
                 ]
                 error_code = error_json.get("code")
                 error_type = self.ERROR_TYPE_MAPPING.get(
-                    error_code, ErrorType.LLM_PROVIDER_ERROR,
+                    error_code,
+                    ErrorType.LLM_PROVIDER_ERROR,
                 )
                 error_message = error_json.get("message")
             except Exception as e:
@@ -327,7 +333,8 @@ class OpenAILLM(BaseModel):
                 ]
                 error_code = error_json.get("code")
                 error_type = self.ERROR_TYPE_MAPPING.get(
-                    error_code, ErrorType.LLM_PROVIDER_ERROR,
+                    error_code,
+                    ErrorType.LLM_PROVIDER_ERROR,
                 )
                 error_message = error_json.get("message")
             except Exception as e:
