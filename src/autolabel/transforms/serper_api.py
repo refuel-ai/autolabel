@@ -3,7 +3,7 @@ import json
 from autolabel.cache import BaseCache
 from autolabel.transforms import BaseTransform
 from langchain_community.utilities import GoogleSerperAPIWrapper
-from typing import Dict, Any, List
+from typing import Dict, Any, List, ClassVar
 import logging
 import pandas as pd
 
@@ -17,7 +17,7 @@ logger = logging.getLogger(__name__)
 
 
 class RefuelSerperAPIWrapper(GoogleSerperAPIWrapper):
-    DEFAULT_ORGANIC_RESULTS_KEYS = ["position", "title", "link", "snippet"]
+    DEFAULT_ORGANIC_RESULTS_KEYS: ClassVar = ["position", "title", "link", "snippet"]
 
     def __init__(self, params=None, serper_api_key=None):
         super().__init__(

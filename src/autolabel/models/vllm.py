@@ -37,8 +37,6 @@ class VLLMModel(BaseModel):
             max_tokens=self.DEFAULT_PARAMS["max_tokens"],
             temperature=self.DEFAULT_PARAMS["temperature"],
             top_p=self.DEFAULT_PARAMS["top_p"],
-            use_beam_search=True,
-            best_of=5,
             logprobs=1,
         )
         self.model_name = self.config.model_name()
