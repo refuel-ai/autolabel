@@ -35,7 +35,7 @@ clean-build:
 clean: clean-pyc clean-test clean-build
 
 test: clean
-	OPENAI_API_KEY=test_key ANTHROPIC_API_KEY=test_key REFUEL_API_KEY=test_key pytest
+	OPENAI_API_KEY=test_key ANTHROPIC_API_KEY=test_key REFUEL_API_KEY=test_key AZURE_OPENAI_API_KEY=test_key AZURE_OPENAI_ENDPOINT=test_key AZURE_OPENAI_API_VERSION=test_key pytest
 
 check: test
 
