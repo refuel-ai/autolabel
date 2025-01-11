@@ -35,3 +35,6 @@ combine-as-imports = true
 default = ["third-party"]
 first_party = ["first-party"]
 standard_library = ["stdlib"]
+
+[format]
+exclude = ["*.pyi", "tests/unit/*"]
