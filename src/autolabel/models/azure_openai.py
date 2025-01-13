@@ -125,17 +125,27 @@ class AzureOpenAILLM(BaseModel):
                                 "strict": True,
                             },
                         },
-                    )
+                    ).to_dict()
                 else:
                     result = self.llm(
                         messages=[{"role": "user", "content": content}],
-                    )
+                    ).to_dict()
+
+                result = result['choices'][0]
+                result_completion = result['message']['content']
+                parsed_logprobs = {"top_logprobs": []}
+                if 'logprobs' in result:
+                    result_logprobs = result['logprobs']['content'] # List of dicts with token and logprob
+                    for curr_token in result_logprobs:
+                        parsed_logprobs["top_logprobs"].append(
+                            {curr_token["token"]: curr_token["logprob"]},
+                        )
 
                 generations.append(
                     [
                         Generation(
-                            text=result.choices[0].message.content,
-                            generation_info=None,
+                            text=result_completion,
+                            generation_info={"logprobs": parsed_logprobs},
                         ),
                     ],
                 )
