@@ -25,6 +25,7 @@ class ModelProvider(str, Enum):
     CUSTOM = "custom"
     TGI = "tgi"
     VLLM = "vllm"
+    AZURE_OPENAI = "azure_openai"
 
 
 class TaskType(str, Enum):

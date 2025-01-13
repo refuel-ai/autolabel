@@ -19,6 +19,7 @@ from autolabel.models.mistral import MistralLLM
 from autolabel.models.openai import OpenAILLM
 from autolabel.models.openai_vision import OpenAIVisionLLM
 from autolabel.models.vllm import VLLMModel
+from autolabel.models.azure_openai import AzureOpenAILLM
 
 MODEL_REGISTRY = {
     ModelProvider.OPENAI: OpenAILLM,
@@ -30,6 +31,7 @@ MODEL_REGISTRY = {
     ModelProvider.HUGGINGFACE_PIPELINE_VISION: HFPipelineMultimodal,
     ModelProvider.GOOGLE: GoogleLLM,
     ModelProvider.VLLM: VLLMModel,
+    ModelProvider.AZURE_OPENAI: AzureOpenAILLM,
 }
 
 

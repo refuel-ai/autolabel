@@ -7,9 +7,9 @@ from pytest import approx
 
 from autolabel.configs import AutolabelConfig
 from autolabel.models.anthropic import AnthropicLLM
+from autolabel.models.azure_openai import AzureOpenAILLM
 from autolabel.models.openai import OpenAILLM
 from autolabel.models.openai_vision import OpenAIVisionLLM
-from autolabel.models.refuelV2 import RefuelLLMV2
 
 
 ################### ANTHROPIC TESTS #######################
@@ -198,115 +198,9 @@ def test_gpt4V_return_probs():
 
 ################### OPENAI GPT 4V TESTS #######################
 
-
-################### REFUEL TESTS #######################
-def test_refuel_initialization():
-    model = RefuelLLMV2(
-        config=AutolabelConfig(config="tests/assets/banking/config_banking_refuel.json"),
+################### AZURE OPENAI TESTS #######################
+def test_azure_openai_initialization():
+    model = AzureOpenAILLM(
+        config=AutolabelConfig(config="tests/assets/banking/config_banking_azureopenai.json"),
     )
-
-
-async def test_refuel_label(mocker):
-    class PostRequestMockResponse:
-        def __init__(self, resp, status_code):
-            self.resp = resp
-            self.status_code = status_code
-
-        def json(self):
-            return self.resp
-
-        def raise_for_status(self):
-            pass
-
-    model = RefuelLLMV2(
-        config=AutolabelConfig(config="tests/assets/banking/config_banking_refuel.json"),
-    )
-    prompts = ["test1", "test2"]
-    mocker.patch(
-        "requests.post",
-        return_value=PostRequestMockResponse(
-            resp='{"generated_text": "Answers"}', status_code=200,
-        ),
-    )
-    x = await model.label(prompts)
-    assert [i[0].text for i in x.generations] == ["Answers", "Answers"]
-    assert sum(x.costs) == 0
-
-
-async def test_refuel_label_non_retryable(mocker):
-    class PostRequestMockResponse:
-        def __init__(self, resp, status_code):
-            self.resp = resp
-            self.status_code = status_code
-            self.text = resp
-
-        def json(self):
-            return self.resp
-
-        def raise_for_status(self):
-            pass
-
-    model = RefuelLLMV2(
-        config=AutolabelConfig(config="tests/assets/banking/config_banking_refuel.json"),
-    )
-    prompts = ["test1", "test2"]
-    mocker.patch(
-        "requests.post",
-        return_value=PostRequestMockResponse(
-            resp='{"error_message": "Error123"}', status_code=422,
-        ),
-    )
-    x = await model.label(prompts)
-    assert [i[0].text for i in x.generations] == ["", ""]
-    for error in x.errors:
-        assert "NonRetryable Error:" in error.error_message
-    assert sum(x.costs) == 0
-
-
-async def test_refuel_label_retryable(mocker):
-    class PostRequestMockResponse:
-        def __init__(self, resp, status_code):
-            self.resp = resp
-            self.status_code = status_code
-            self.text = resp
-
-        def json(self):
-            return self.resp
-
-        def raise_for_status(self):
-            pass
-
-    model = RefuelLLMV2(
-        config=AutolabelConfig(config="tests/assets/banking/config_banking_refuel.json"),
-    )
-    prompts = ["test1", "test2"]
-    mocker.patch(
-        "requests.post",
-        return_value=PostRequestMockResponse(
-            resp='{"error_message": "Error123"}', status_code=500,
-        ),
-    )
-    x = await model.label(prompts)
-    assert [i[0].text for i in x.generations] == ["", ""]
-    for error in x.errors:
-        assert "NonRetryable Error:" not in error.error_message
-    assert sum(x.costs) == 0
-
-
-def test_refuel_get_cost():
-    model = RefuelLLMV2(
-        config=AutolabelConfig(config="tests/assets/banking/config_banking_refuel.json"),
-    )
-    example_prompt = "TestingExamplePrompt"
-    curr_cost = model.get_cost(example_prompt)
-    assert curr_cost == 0
-
-
-def test_refuel_return_probs():
-    model = RefuelLLMV2(
-        config=AutolabelConfig(config="tests/assets/banking/config_banking_refuel.json"),
-    )
-    assert model.returns_token_probs() is True
-
-
-################### REFUEL TESTS #######################
+    assert model.model_name == "gpt-4o-mini"
