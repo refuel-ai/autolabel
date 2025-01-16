@@ -19,7 +19,7 @@ from autolabel.transforms.schema import (
 
 logger = logging.getLogger(__name__)
 
-MAX_RETRIES = 5
+MAX_RETRIES = 3
 BACKOFF = 2
 DEFAULT_TIMEOUT = 60000  # in milliseconds
 PREMIUM_PROXY_PARAM = "premium_proxy"
@@ -109,7 +109,7 @@ class WebpageTransform(BaseTransform):
             return text
         except Exception as e:
             logger.warning(f"Error fetching content from URL: {url}. Exception: {e}")
-            if response.status_code in [408, 425, 429, 500, 502, 503, 504]:
+            if response.status_code in [408, 429, 504]:
                 await asyncio.sleep(BACKOFF**retry_count)
             return await self._load_url(url, retry_count=retry_count + 1)
 
