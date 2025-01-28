@@ -2,6 +2,7 @@ import copy
 import json
 import logging
 import pickle
+import re
 from collections import defaultdict
 from typing import Callable, Dict, List, Optional, Tuple, Union
 
@@ -365,9 +366,14 @@ class AttributeExtractionTask(BaseTask):
             )
             try:
                 json_start, json_end = response.text.find("{"), response.text.rfind("}")
+                json_str = re.sub(
+                    r'"[^"]*"',
+                    lambda m: m.group().replace("\n", "\\n"),
+                    response.text[json_start : json_end + 1],
+                )
                 llm_label = {}
                 for k, v in json5.loads(
-                    response.text[json_start : json_end + 1],
+                    json_str,
                 ).items():
                     if isinstance(v, list) or isinstance(v, dict):
                         llm_label[k] = v
