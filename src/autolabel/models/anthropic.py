@@ -26,6 +26,7 @@ class AnthropicLLM(BaseModel):
         "claude-3-sonnet-20240229": (3 / 1_000_000),
         "claude-3-haiku-20240307": (0.25 / 1_000_000),
         "claude-3-5-sonnet-20240620": (3 / 1_000_000),
+        "claude-3-5-sonnet-20241022": (3 / 1_000_000),
     }
     COST_PER_COMPLETION_TOKEN = {
         "claude-instant-1.2": (2.4 / 1_000_000),
@@ -35,6 +36,7 @@ class AnthropicLLM(BaseModel):
         "claude-3-sonnet-20240229": (15 / 1_000_000),
         "claude-3-haiku-20240307": (1.25 / 1_000_000),
         "claude-3-5-sonnet-20240620": (15 / 1_000_000),
+        "claude-3-5-sonnet-20241022": (15 / 1_000_000),
     }
 
     def __init__(
