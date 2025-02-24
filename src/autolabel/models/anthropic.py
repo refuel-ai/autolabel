@@ -25,6 +25,7 @@ class AnthropicLLM(BaseModel):
         "claude-3-opus-20240229": (15 / 1_000_000),
         "claude-3-sonnet-20240229": (3 / 1_000_000),
         "claude-3-haiku-20240307": (0.25 / 1_000_000),
+        "claude-3-5-haiku-20241022": (0.8 / 1_000_000),
         "claude-3-5-sonnet-20240620": (3 / 1_000_000),
         "claude-3-5-sonnet-20241022": (3 / 1_000_000),
     }
@@ -35,6 +36,7 @@ class AnthropicLLM(BaseModel):
         "claude-3-opus-20240229": (75 / 1_000_000),
         "claude-3-sonnet-20240229": (15 / 1_000_000),
         "claude-3-haiku-20240307": (1.25 / 1_000_000),
+        "claude-3-5-haiku-20241022": (4 / 1_000_000),
         "claude-3-5-sonnet-20240620": (15 / 1_000_000),
         "claude-3-5-sonnet-20241022": (15 / 1_000_000),
     }
