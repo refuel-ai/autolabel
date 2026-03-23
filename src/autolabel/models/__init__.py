@@ -20,6 +20,7 @@ from autolabel.models.openai import OpenAILLM
 from autolabel.models.openai_vision import OpenAIVisionLLM
 from autolabel.models.vllm import VLLMModel
 from autolabel.models.azure_openai import AzureOpenAILLM
+from autolabel.models.minimax import MiniMaxLLM
 
 MODEL_REGISTRY = {
     ModelProvider.OPENAI: OpenAILLM,
@@ -32,6 +33,7 @@ MODEL_REGISTRY = {
     ModelProvider.GOOGLE: GoogleLLM,
     ModelProvider.VLLM: VLLMModel,
     ModelProvider.AZURE_OPENAI: AzureOpenAILLM,
+    ModelProvider.MINIMAX: MiniMaxLLM,
 }
 
 

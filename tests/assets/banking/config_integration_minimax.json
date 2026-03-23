@@ -1,0 +1,21 @@
+{
+    "task_name": "MiniMaxIntegrationTest",
+    "task_type": "classification",
+    "dataset": {
+        "label_column": "label",
+        "delimiter": ","
+    },
+    "model": {
+        "provider": "minimax",
+        "name": "MiniMax-M2.7",
+        "params": {
+            "max_tokens": 100,
+            "temperature": 0.1
+        }
+    },
+    "prompt": {
+        "task_guidelines": "Classify the sentiment of the text.",
+        "labels": ["positive", "negative", "neutral"],
+        "example_template": "Input: {example}\nOutput: {label}"
+    }
+}
