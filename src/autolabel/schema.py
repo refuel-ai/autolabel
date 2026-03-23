@@ -26,6 +26,7 @@ class ModelProvider(str, Enum):
     TGI = "tgi"
     VLLM = "vllm"
     AZURE_OPENAI = "azure_openai"
+    MINIMAX = "minimax"
 
 
 class TaskType(str, Enum):

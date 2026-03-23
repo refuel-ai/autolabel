@@ -1,0 +1,18 @@
+{
+    "task_name": "BankingComplaintsClassification",
+    "task_type": "classification",
+    "dataset": {
+        "label_column": "label",
+        "delimiter": ","
+    },
+    "model": {
+        "provider": "minimax",
+        "name": "MiniMax-M2.5-highspeed"
+    },
+    "prompt": {
+        "task_guidelines": "Classify",
+        "output_guidelines": "Output the label.",
+        "labels": ["a", "b"],
+        "example_template": "Input: {example}\nOutput: {label}"
+    }
+}
